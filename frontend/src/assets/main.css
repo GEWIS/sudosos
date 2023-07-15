@@ -1,0 +1,16 @@
+@import './base.css';
+@import url('https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Raleway:500,500i,700,700i&display=swap');
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  font-weight: normal;
+}
+
+@media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+}
