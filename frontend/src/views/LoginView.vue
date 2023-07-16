@@ -1,21 +1,26 @@
 <template>
   <div class="main-content">
+    <div v-if="loggingIn" class="home-loader">
+      <div>
+        <ProgressSpinner aria-label="Loading" />
+      </div>
+    </div>
     <div class="keypad-container">
       <div class="display-container" :class="displayContainerClasses">
-        <KeypadDisplay :userId="userId" :pinCode="pinCode" :wrong-pin="wrongPin" :isActive="enteringUserId" />
+        <KeypadDisplayComponent :userId="userId" :pinCode="pinCode" :wrong-pin="wrongPin" :isActive="enteringUserId" />
       </div>
-      <Keypad @input="handleInput" @backspace="handleBackspace" @continue="handleContinue" />
+      <KeypadComponent @input="handleInput" @backspace="handleBackspace" @continue="handleContinue" />
       <!-- Your login content here -->
     </div>
   </div>
-  <SettingsIcon />
+  <SettingsIconComponent />
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import SettingsIcon from "@/components/SettingsIcon.vue";
-import Keypad from "@/components/Keypad.vue";
-import KeypadDisplay from "@/components/KeypadDisplay.vue";
+import SettingsIconComponent from "@/components/SettingsIconComponent.vue";
+import KeypadComponent from "@/components/KeypadComponent.vue";
+import KeypadDisplayComponent from "@/components/KeypadDisplayComponent.vue";
 import { useUserStore } from "@/stores/user.store";
 import {useAuthStore} from "@/stores/auth.store";
 import router from "@/router";
@@ -27,6 +32,7 @@ let userId = ref('');
 let pinCode = ref('');
 const enteringUserId = ref(true);
 const animateSwitch = ref(false);
+const loggingIn = ref(false);
 const wrongPin = ref(false);
 const maxUserIdLength = 5;
 const maxPasscodeLength = 4;
@@ -75,6 +81,7 @@ const displayContainerClasses = computed(() => ({
 }));
 
 const login = async () => {
+  loggingIn.value = true;
   await authStore.pinlogin(userId.value, pinCode.value).then(async () => {
     const user = authStore.getUser();
     if (user === null) return;
@@ -90,6 +97,7 @@ const login = async () => {
     pinCode.value = '';
     wrongPin.value = true;
   })
+  loggingIn.value = false;
 };
 
 const handleContinue = () => {
@@ -129,5 +137,12 @@ const handleContinue = () => {
 .keypad-container,
 .display-container {
   align-items: flex-start;
+}
+
+.home-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 </style>

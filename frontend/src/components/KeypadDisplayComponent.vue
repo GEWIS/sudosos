@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: 'KeypadDisplay',
+  name: 'KeypadDisplayComponent',
   props: {
     userId: {
       type: String,

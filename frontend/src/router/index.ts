@@ -1,6 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from "@/views/LoginView.vue";
 import CashierView from "@/views/CashierView.vue";
+import {useAuthStore} from "@/stores/auth.store";
+
+const authGuard = (to, from, next) => {
+  const authStore = useAuthStore();
+
+  if (authStore.getToken()) {
+    // User is logged in, allow navigation to the next route
+    next();
+  } else {
+    // User is not logged in, redirect to the root path
+    next('/');
+  }
+};
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,6 +22,7 @@ const router = createRouter({
       path: '/cashier',
       name: 'cashier',
       component: CashierView,
+      beforeEnter: authGuard, // Apply the navigation guard
     },
     {
       path: '/',

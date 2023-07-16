@@ -9,13 +9,17 @@
 </template>
 
 <script setup lang="ts">
-import {ProductResponse} from "sudosos-client/dist/api";
+import {ContainerWithProductsResponse, ProductResponse} from "@sudosos/sudosos-client";
 
 const props = defineProps({
   product: {
     type: Object as () => ProductResponse,
     required: true,
   },
+  container: {
+    type: Object as () => ContainerWithProductsResponse,
+    required: true,
+  }
 });
 
 const getImageSrc = () => {
@@ -43,6 +47,7 @@ const productPrice = getProductPrice();
   border-radius: $border-radius;
   overflow: hidden;
   width: 128px;
+  text-align: center;
 
   .product {
     > img {
@@ -58,8 +63,7 @@ const productPrice = getProductPrice();
 
 .product-name {
   font-weight: bold;
-  font-size: 16px;
-  height: 22px;
+  font-size: 20px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

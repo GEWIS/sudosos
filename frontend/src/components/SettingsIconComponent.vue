@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'SettingsIcon',
+  name: 'SettingsIconComponent',
   methods: {
     openSettings() {
       // Handle logic to open settings or emit an event

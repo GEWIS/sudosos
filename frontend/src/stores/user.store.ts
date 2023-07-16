@@ -1,11 +1,9 @@
 import {createPinia, defineStore} from 'pinia';
 import ApiService from '@/services/ApiService';
 import {
-  AuthenticationResponse,
   BalanceResponse,
-  BasePointOfSale,
   UserResponse
-} from "sudosos-client";
+} from "@sudosos/sudosos-client";
 import {fetchAllPages} from "@/services/paginationService";
 
 const pinia = createPinia();

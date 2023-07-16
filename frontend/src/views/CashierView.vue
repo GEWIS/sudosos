@@ -6,17 +6,19 @@
       </div>
     </div>
     <div v-else class="main-content">
-      <PointOfSaleDisplay :point-of-sale="currentPos"/>
+      <PointOfSaleDisplayComponent :point-of-sale="currentPos"/>
+      <CartComponent/>
     </div>
   </div>
-  <SettingsIcon />
+  <SettingsIconComponent />
 </template>
 <script lang="ts">
 // import Home from "@/components/Home.vue";
 import {usePointOfSaleStore} from "@/stores/pos.store";
-import {PointOfSaleWithContainersResponse} from "sudosos-client";
-import PointOfSaleDisplay from "@/components/PointOfSaleDisplay.vue";
-import SettingsIcon from "@/components/SettingsIcon.vue";
+import {PointOfSaleWithContainersResponse} from "@sudosos/sudosos-client";
+import PointOfSaleDisplayComponent from "@/components/PointOfSaleDisplayComponent.vue";
+import SettingsIconComponent from "@/components/SettingsIconComponent.vue";
+import CartComponent from "@/components/CartComponent.vue";
 
 interface Data {
   posNotLoaded: boolean;
@@ -25,8 +27,9 @@ interface Data {
 export default {
   name: "CashierView",
   components: {
-    SettingsIcon,
-    PointOfSaleDisplay
+    CartComponent,
+    SettingsIconComponent,
+    PointOfSaleDisplayComponent,
     // Home,
   },
   data() {

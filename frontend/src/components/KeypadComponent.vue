@@ -17,7 +17,7 @@
 
 <script>
 export default {
-  name: 'Keypad',
+  name: 'KeypadComponent',
   data() {
     return {
       keypadBackspace: 'B',

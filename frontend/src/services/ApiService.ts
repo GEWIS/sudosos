@@ -1,6 +1,6 @@
 import {
   AuthenticateApi, BalanceApi, Configuration, PointofsaleApi, ProductCategoriesApi, UsersApi,
-} from 'sudosos-client';
+} from '@sudosos/sudosos-client';
 import axios, { AxiosResponse } from 'axios';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
 import {useAuthStore} from "@/stores/auth.store";

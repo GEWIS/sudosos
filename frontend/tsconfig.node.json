@@ -9,7 +9,17 @@
   ],
   "compilerOptions": {
     "composite": true,
-    "module": "ESNext",
-    "types": ["node"]
+    "target": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": ["esnext", "dom"],
+    "types": ["webpack-env", "jest", "pinia"],
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true
   }
 }

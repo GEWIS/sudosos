@@ -1,10 +1,8 @@
 import { defineStore } from 'pinia';
 import {
-  AuthenticationResponse,
-  BasePointOfSale,
   GEWISAuthenticationPinRequest,
   UserResponse
-} from "sudosos-client";
+} from "@sudosos/sudosos-client";
 import ApiService from "@/services/ApiService";
 import {useUserStore} from "@/stores/user.store";
 
