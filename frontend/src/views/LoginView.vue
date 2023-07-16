@@ -12,13 +12,13 @@
     <Button id="login-button" severity="danger">Login</Button>
     <a href="https://wieditleesttrekteenbak.nl/">Reset password (External accounts only)</a>
   </main>
+  <CopyrightBanner />
 </div>
 </template>
 
-<script>
-export default {
-  name: "LoginView"
-}
+<script setup>
+import CopyrightBanner from "@/components/CopyrightBanner.vue";
+
 </script>
 
 <style scoped lang="scss">

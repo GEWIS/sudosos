@@ -1,6 +1,10 @@
 <template>
-  Haha je moet een bak trekken
+<RouterView />
 </template>
 
 <script setup>
 </script>
+
+<style scoped>
+
+</style>
