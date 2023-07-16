@@ -1,10 +1,10 @@
 <template>
-  <div class="login-container">
+  <div class="main-content">
     <div class="keypad-container">
-      <div class="display-container" :class="{ 'to': enteringUserId, 'from': !enteringUserId, 'animating': animateSwitch, 'switched': !enteringUserId && !animateSwitch}">
-        <KeypadDisplay :userId="userId" :pinCode="pinCode" :isActive="enteringUserId" />
+      <div class="display-container" :class="displayContainerClasses">
+        <KeypadDisplay :userId="userId" :pinCode="pinCode" :wrong-pin="wrongPin" :isActive="enteringUserId" />
       </div>
-      <Keypad :value="keypadInput" @input="handleInput" @backspace="handleBackspace" @continue="handleContinue" />
+      <Keypad @input="handleInput" @backspace="handleBackspace" @continue="handleContinue" />
       <!-- Your login content here -->
     </div>
   </div>
@@ -12,82 +12,112 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import SettingsIcon from "@/components/SettingsIcon.vue";
 import Keypad from "@/components/Keypad.vue";
 import KeypadDisplay from "@/components/KeypadDisplay.vue";
+import { useUserStore } from "@/stores/user.store";
+import {useAuthStore} from "@/stores/auth.store";
+import router from "@/router";
 
-const keypadInput = ref('');
-let userId = keypadInput;
+const userStore = useUserStore();
+const authStore = useAuthStore();
+
+let userId = ref('');
 let pinCode = ref('');
 const enteringUserId = ref(true);
 const animateSwitch = ref(false);
-let translateX = 0;
-const handleInput = (value) => {
-  // Handle input event emitted by the Keypad component
-  keypadInput.value += value;
-};
+const wrongPin = ref(false);
+const maxUserIdLength = 5;
+const maxPasscodeLength = 4;
+const maxUserId = 40000;
 
-const handleBackspace = () => {
-  if (keypadInput.value.length === 0) {
-    if (!enteringUserId.value) {
+const handleInput = (value: string) => {
+  if (wrongPin.value) wrongPin.value = false;
+
+  if (enteringUserId.value) {
+    if (userId.value.length >= maxUserIdLength) return;
+    userId.value += value;
+    if (userId.value.length === maxUserIdLength || Number(userId.value) * 10 > maxUserId) {
       switchInput();
     }
   } else {
-    keypadInput.value = keypadInput.value.slice(0, -1);
+    if (pinCode.value.length >= maxPasscodeLength) return;
+    pinCode.value += value;
+    if (pinCode.value.length === maxPasscodeLength) {
+      login();
+    }
+  }
+};
+
+const handleBackspace = () => {
+  if (pinCode.value.length === 0 && !enteringUserId.value) {
+    switchInput();
+  } else {
+    if (enteringUserId.value) userId.value = userId.value.slice(0, -1);
+    if (!enteringUserId.value) pinCode.value = pinCode.value.slice(0, -1);
   }
 };
 
 const switchInput = () => {
-  if (enteringUserId.value) {
-    userId = keypadInput.value;
-    keypadInput.value = '';
-    pinCode = keypadInput;
-  } else {
-    pinCode = keypadInput.value;
-    keypadInput.value = userId;
-    userId = keypadInput;
-  }
   enteringUserId.value = !enteringUserId.value;
-
   animateSwitch.value = true;
   setTimeout(() => {
     animateSwitch.value = false;
   }, 500);
 };
 
+const displayContainerClasses = computed(() => ({
+  to: enteringUserId.value,
+  from: !enteringUserId.value,
+  animating: animateSwitch.value,
+  switched: !enteringUserId.value && !animateSwitch.value,
+}));
+
+const login = async () => {
+  await authStore.pinlogin(userId.value, pinCode.value).then(async () => {
+    const user = authStore.getUser();
+    if (user === null) return;
+
+    if (userStore.getActiveUsers().length === 0) await userStore.fetchUsers();
+    userStore.fetchCurrentUserBalance(user.id);
+
+    await router.push({ path: '/cashier' });
+    userId.value = '';
+    pinCode.value = '';
+    enteringUserId.value = true;
+  }).catch((error) => {
+    pinCode.value = '';
+    wrongPin.value = true;
+  })
+};
+
 const handleContinue = () => {
   switchInput();
 };
+
 </script>
 
 <style scoped>
-.login-container {
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 25px;
-  font-family: Lato, Arial, sans-serif;
-  height: calc(100vh - 160px);
-  width: calc(100vw - 80px);
-}
-
 .keypad-container {
-  width: 290px;
+  width: calc(3 * var(--key-size) + 2 * var(--key-gap-size));
+  padding-top: 45px;
   margin: auto;
 }
 
 .display-container {
   display: flex;
+  margin-bottom: 40px;
   justify-content: space-between;
-  margin-bottom: 20px;
 }
 
 .display-container.from.animating {
-  transform: translateX(-127%);
+  transform: translateX(-126.5%);
   transition: transform 0.5s ease;
 }
 
 .display-container.to.animating {
-  transform: translateX(127%);
+  transform: translateX(126.5%);
   justify-content: flex-end;
   transition: transform 0.5s ease;
 }

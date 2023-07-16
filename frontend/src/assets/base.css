@@ -23,6 +23,11 @@
   --accent-color: rgba(157,41,62);
 }
 
+:root {
+  --key-size: 95px;
+  --key-gap-size: 8px;
+}
+
 /* semantic color variables for this project */
 :root {
   --color-background: var(--vt-c-white);

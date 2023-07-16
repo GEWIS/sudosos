@@ -18,12 +18,6 @@
 <script>
 export default {
   name: 'Keypad',
-  props: {
-    value: {
-      type: String,
-      required: true,
-    },
-  },
   data() {
     return {
       keypadBackspace: 'B',
@@ -54,14 +48,14 @@ export default {
 .keypad {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--key-gap-size);
   border-radius: 10px;
 }
 
 .key-row {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: var(--key-gap-size);
 }
 
 .key {
@@ -70,8 +64,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 90px;
-  height: 90px;
+  width: var(--key-size);
+  height: var(--key-size);
   border: 1px solid #ccc;
   border-radius: 15px;
   cursor: pointer;

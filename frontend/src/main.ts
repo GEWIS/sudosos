@@ -16,14 +16,17 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 import { far } from '@fortawesome/free-regular-svg-icons'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import ProgressSpinner from "primevue/progressspinner";
 
 //Add all icons to the library so you can use it in your page
 library.add(fas, far, fab);
 
-app.use(createPinia())
 app.use(router)
 app.use(PrimeVue);
 
 app.component('Button', Button);
+app.component('ProgressSpinner', ProgressSpinner);
 app.component("font-awesome-icon", FontAwesomeIcon);
+
+app.use(createPinia())
 app.mount('#app')

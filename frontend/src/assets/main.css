@@ -3,9 +3,16 @@
 @import url('https://fonts.googleapis.com/css?family=Raleway:500,500i,700,700i&display=swap');
 
 #app {
-  max-width: 1280px;
   margin: 0 auto;
   font-weight: normal;
+}
+
+.main-content {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 25px;
+  font-family: Lato, Arial, sans-serif;
+  height: calc(100vh - 120px);
+  width: calc(100vw - 68px);
 }
 
 @media (min-width: 1024px) {

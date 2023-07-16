@@ -1,8 +1,9 @@
 import {
-  AuthenticateApi, BalanceApi, Configuration, UsersApi,
+  AuthenticateApi, BalanceApi, Configuration, PointofsaleApi, ProductCategoriesApi, UsersApi,
 } from 'sudosos-client';
 import axios, { AxiosResponse } from 'axios';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
+import {useAuthStore} from "@/stores/auth.store";
 
 // Create an axios instance
 const axiosInstance = axios.create();
@@ -28,21 +29,25 @@ class ApiService {
 
   private readonly usersApi: UsersApi;
 
-  private jwtToken: string | undefined;
+  private readonly posApi: PointofsaleApi;
+
+  private readonly categoryApi: ProductCategoriesApi;
 
   constructor() {
-    const configuration = new Configuration({ basePath: process.env.VUE_APP_API_BASE });
+    const configuration = new Configuration({ basePath: import.meta.env.VITE_APP_API_BASE });
     const withKeyConfiguration = new Configuration({
-      basePath: process.env.VUE_APP_API_BASE,
+      basePath: import.meta.env.VITE_APP_API_BASE,
       baseOptions: {
         axios: axiosInstance,
       },
-      apiKey: () => `Bearer ${this.jwtToken}`,
+      apiKey: () => `Bearer ${useAuthStore().getToken()}`,
     });
 
     this.authenticateApi = new AuthenticateApi(configuration);
     this.balanceApi = new BalanceApi(withKeyConfiguration);
     this.usersApi = new UsersApi(withKeyConfiguration);
+    this.posApi = new PointofsaleApi(withKeyConfiguration);
+    this.categoryApi = new ProductCategoriesApi(withKeyConfiguration);
   }
 
   get authenticate() {
@@ -57,9 +62,15 @@ class ApiService {
     return this.usersApi;
   }
 
-  setJwtToken(jwtToken: string | undefined) {
-    this.jwtToken = jwtToken;
+  get pos() {
+    return this.posApi;
   }
+
+  get categories() {
+    this.categoryApi.getAllProductCategories()
+    return this.categoryApi;
+  }
+
 }
 
 export default new ApiService();

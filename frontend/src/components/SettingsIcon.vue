@@ -20,9 +20,9 @@ export default {
 .settings-icon {
   height:100px;
   position: fixed;
-  bottom: -10px;
+  bottom: -25px;
   left: 60px;
-  font-size: 100px;
+  font-size: 80px;
   cursor: pointer;
 }
 </style>
