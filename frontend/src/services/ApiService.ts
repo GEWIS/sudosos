@@ -1,5 +1,11 @@
 import {
-  AuthenticateApi, BalanceApi, Configuration, PointofsaleApi, ProductCategoriesApi, UsersApi,
+  AuthenticateApi,
+  BalanceApi,
+  Configuration,
+  PointofsaleApi,
+  ProductCategoriesApi,
+  TransactionsApi,
+  UsersApi,
 } from '@sudosos/sudosos-client';
 import axios, { AxiosResponse } from 'axios';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
@@ -32,6 +38,7 @@ class ApiService {
   private readonly posApi: PointofsaleApi;
 
   private readonly categoryApi: ProductCategoriesApi;
+  private readonly transactionApi: TransactionsApi;
 
   constructor() {
     const configuration = new Configuration({ basePath: import.meta.env.VITE_APP_API_BASE });
@@ -48,6 +55,7 @@ class ApiService {
     this.usersApi = new UsersApi(withKeyConfiguration);
     this.posApi = new PointofsaleApi(withKeyConfiguration);
     this.categoryApi = new ProductCategoriesApi(withKeyConfiguration);
+    this.transactionApi = new TransactionsApi(withKeyConfiguration);
   }
 
   get authenticate() {
@@ -66,8 +74,11 @@ class ApiService {
     return this.posApi;
   }
 
+  get transaction() {
+    return this.transactionApi;
+  }
+
   get categories() {
-    this.categoryApi.getAllProductCategories()
     return this.categoryApi;
   }
 

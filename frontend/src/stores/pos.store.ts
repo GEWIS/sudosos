@@ -21,6 +21,9 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
       const res = Object.entries(categories).map(([key, value]) => ({'id': String(key), 'name': value}))
       return res
     },
+    getPos(): PointOfSaleWithContainersResponse | null {
+      return this.pointOfSale;
+    },
   },
   actions: {
     async fetchPointOfSale(id: number): Promise<void> {

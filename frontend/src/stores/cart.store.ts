@@ -1,15 +1,35 @@
 import { defineStore } from 'pinia';
-import {ProductResponse} from "@sudosos/sudosos-client";
+import {
+  Container,
+  ContainerResponse,
+  ProductResponse,
+  SubTransactionRequest,
+  TransactionRequest,
+  UserResponse
+} from "@sudosos/sudosos-client";
+import ApiService from "@/services/ApiService";
+import {usePointOfSaleStore} from "@/stores/pos.store";
+import {
+  DineroObjectRequest,
+  RevisionRequest,
+  SubTransactionRowRequest
+} from "@sudosos/sudosos-client/src/api";
 
 interface CartProduct {
-  containerId: number,
+  container: ContainerResponse,
   product: ProductResponse,
   count: number,
 }
 
+interface CartState {
+  products: CartProduct[],
+  buyer: UserResponse | null,
+}
+
 export const useCartStore = defineStore('cart', {
-  state: () => ({
+  state: (): CartState => ({
     products: [] as CartProduct[],
+    buyer: null,
   }),
   getters: {
     cartTotalCount(): number {
@@ -24,26 +44,32 @@ export const useCartStore = defineStore('cart', {
         return total + product.count * productPrice;
       }, 0);
     },
+    getBuyer(): UserResponse | null {
+      return this.buyer;
+    }
   },
   actions: {
-    addToCart(product: CartProduct): void {
-      console.error(product);
+    setBuyer(buyer: UserResponse) {
+      this.buyer = buyer;
+    },
+    addToCart(cartProduct: CartProduct): void {
+      console.error(cartProduct);
       const existingProduct = this.products.find(
         (p) =>
-          p.containerId === product.containerId &&
-          p.product.id === product.product.id &&
-          p.product.revision === product.product.revision
+          p.container.id === cartProduct.container.id &&
+          p.product.id === cartProduct.product.id &&
+          p.product.revision === cartProduct.product.revision
       );
       if (existingProduct) {
-        existingProduct.count += product.count;
+        existingProduct.count += cartProduct.count;
       } else {
-        this.products.push(product);
+        this.products.push(cartProduct);
       }
     },
     removeFromCart(product: CartProduct): void {
       const index = this.products.findIndex(
         (p) =>
-          p.containerId === product.containerId &&
+          p.container.id === product.container.id &&
           p.product.id === product.product.id &&
           p.product.revision === product.product.revision
       );
@@ -58,7 +84,71 @@ export const useCartStore = defineStore('cart', {
     clearCart(): void {
       this.products.splice(0, this.products.length);
     },
-    checkout(): void {
+    async checkout(): Promise<void> {
+      const pos = usePointOfSaleStore().getPos;
+      if (!this.buyer || !pos) return;
+
+      const containerSubTransactionsRows: { [key: string]: { container: ContainerResponse, row: SubTransactionRowRequest[] } } = {};
+      this.products.map((cartProduct) => {
+        const request: SubTransactionRowRequest = {
+          amount: cartProduct.count,
+          product: {
+            id: cartProduct.product.id,
+            revision: cartProduct.product.revision,
+          },
+          totalPriceInclVat: {
+            currency: 'EUR',
+            precision: 2,
+            amount: cartProduct.count * cartProduct.product.priceInclVat.amount,
+          }
+        }
+        if (containerSubTransactionsRows[cartProduct.container.id] === undefined) {
+          containerSubTransactionsRows[cartProduct.container.id] = {
+            container: cartProduct.container,
+            row: [request],
+          }
+        } else {
+          containerSubTransactionsRows[cartProduct.container.id].row.push(request);
+        }
+      })
+
+      const subTransactions: SubTransactionRequest[] = Object.values(containerSubTransactionsRows).map((subTransactionRow) => {
+        const {container, row} = subTransactionRow;
+        return {
+          to: container.owner.id,
+          container: {
+            id: container.id,
+            revision: container.revision
+          },
+          subTransactionRows: row,
+          totalPriceInclVat: {
+            currency: 'EUR',
+            precision: 2,
+            amount: row.reduce((total, request) => total + request.totalPriceInclVat.amount, 0)
+          }
+        };
+      });
+
+      console.error(containerSubTransactionsRows);
+      // this.products.map()
+      //
+      const request: TransactionRequest = {
+        createdBy: this.buyer.id,
+        from: this.buyer.id,
+        pointOfSale: {
+          id: pos.id,
+          revision: pos.revision,
+        },
+        subTransactions,
+        totalPriceInclVat: {
+          currency: 'EUR',
+          precision: 2,
+          amount: this.getTotalPrice
+        },
+      }
+
+      console.error(await ApiService.transaction.createTransaction(request));
+      // ApiService.transaction.transactionsValidatePost()
       // Perform checkout logic here, e.g., send cart data to the server
       // Reset the cart after successful checkout
       this.clearCart();

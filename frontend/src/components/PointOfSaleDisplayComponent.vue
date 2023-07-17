@@ -99,9 +99,7 @@ const products = computed(() => {
   font-size: 22px;
   margin-right: 10px;
   margin-bottom: 10px;
-  background-color: #eee;
   cursor: pointer;
-  font-weight: bold;
   border-radius: 50px;
   padding: 13px;
   padding-left: 25px;

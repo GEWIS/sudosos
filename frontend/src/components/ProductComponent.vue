@@ -43,7 +43,7 @@ const cartStore = useCartStore();
 const addToCart = () => {
   cartStore.addToCart({
     product: props.product,
-    containerId: props.container.id,
+    container: props.container,
     count: 1,
   });
 };

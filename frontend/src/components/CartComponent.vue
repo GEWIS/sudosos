@@ -1,7 +1,7 @@
 <template>
   <div class="cart">
     <div class="user-info">
-      {{ current.user.firstName }}
+      {{ current.firstName }}
     </div>
     <div class="cart-items">
       <div v-for="item in cartItems" :key="item">
@@ -13,8 +13,8 @@
         <div class="total-label">Total</div>
         <div class="total-price">€{{ getTotalPrice() }}</div>
       </div>
-      <div class="warning-line">
-        <font-awesome-icon icon="fa-solid fa-exclamation-triangle"/> Your debit after purchase is
+      <div class="warning-line" v-if="balance">
+        <font-awesome-icon icon="fa-solid fa-exclamation-triangle"/> Your debit after purchase is €{{ formattedBalanceAfter }}
       </div>
     </div>
     <div class="cart-actions">
@@ -32,17 +32,42 @@
 <script setup lang="ts">
 import { useCartStore } from '@/stores/cart.store';
 import CartItemComponent from "@/components/CartItemComponent.vue";
-import {computed} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {useUserStore} from "@/stores/user.store";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import ApiService from "@/services/ApiService";
 
 const cartStore = useCartStore();
 const userStore = useUserStore();
 const cartItems = cartStore.getProducts;
 const cartTotalCount = computed( () => cartStore.cartTotalCount);
-const current = computed( () => userStore.getCurrentUser());
+const current = computed( () => cartStore.getBuyer);
 const totalPrice = computed(() => cartStore.getTotalPrice);
 
+const balance = ref<number | null>(null);
+
+const getBalance = async () => {
+  if (!cartStore.buyer) return 0;
+  try {
+    const response = await ApiService.balance.getBalanceId(cartStore.buyer.id);
+    return response.data.amount.amount;
+  } catch (error) {
+    return null;
+  }
+};
+
+onMounted(async () => {
+  balance.value = (await getBalance());
+});
+
+watch(() => cartStore.buyer, async () => {
+  balance.value = (await getBalance());
+});
+
+
+const formattedBalanceAfter = computed(() => {
+  return ((balance.value - totalPrice.value) / 100).toFixed(2);
+})
 const getTotalPrice = () => {
   return (totalPrice.value / 100).toFixed(2);
 };
@@ -65,7 +90,6 @@ const checkout = () => {
   font-size: 20px;
   border-radius: 15px;
   flex-direction: column;
-  margin-left: 20px;
   margin-right:10px;
   padding-left: 15px;
   padding-right: 20px;
@@ -113,7 +137,7 @@ const checkout = () => {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  margin-top: auto;
+  margin-top: 25px;
 }
 
 .buttons {
@@ -139,8 +163,9 @@ const checkout = () => {
   font-size: 27px;
   border: none;
   border-radius: 50px;
-  padding-left: 45px;
-  padding-right: 45px;
+  margin-right: 10px;
+  padding-left: 55px;
+  padding-right: 55px;
   padding-top: 15px;
   padding-bottom: 15px;
   cursor: pointer;

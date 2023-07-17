@@ -24,6 +24,7 @@ import KeypadDisplayComponent from "@/components/KeypadDisplayComponent.vue";
 import { useUserStore } from "@/stores/user.store";
 import {useAuthStore} from "@/stores/auth.store";
 import router from "@/router";
+import {useCartStore} from "@/stores/cart.store";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
@@ -87,6 +88,7 @@ const login = async () => {
     if (user === null) return;
 
     if (userStore.getActiveUsers().length === 0) await userStore.fetchUsers();
+    useCartStore().setBuyer(user);
     userStore.fetchCurrentUserBalance(user.id);
 
     await router.push({ path: '/cashier' });

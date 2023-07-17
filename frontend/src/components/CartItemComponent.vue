@@ -96,7 +96,6 @@ const totalPrice = computed(() => {
 
 .product-category {
   margin: 0;
-  font-weight: bold;
   font-size: 14px;
   color: var(--accent-color);
 }

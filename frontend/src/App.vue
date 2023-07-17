@@ -1,6 +1,6 @@
 <template>
   <RouterView/>
-  <img class="image-overlay" src="@/assets/checkout.jpg" alt="Overlay Image" />
+<!--  <img class="image-overlay" src="@/assets/checkout.jpg" alt="Overlay Image" />-->
 </template>
 
 <style scoped>
@@ -13,7 +13,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  opacity: 0.2;
+  opacity: 0.5;
   pointer-events: none;
 }
 

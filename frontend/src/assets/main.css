@@ -5,10 +5,11 @@
 #app {
   margin: 0 auto;
   font-weight: normal;
+  overflow: hidden;
 }
 
 .main-content {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.4);
   border-radius: 25px;
   font-family: Lato, Arial, sans-serif;
   height: calc(100vh - 120px);

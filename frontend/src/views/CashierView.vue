@@ -63,16 +63,16 @@ export default {
   height: 100%;
   padding-top: 35px;
   padding-left: 60px;
-  padding-right: 10px;
+  padding-right: 15px;
   padding-bottom: 25px;
 }
 
 .pos-wrapper {
-  width: calc(100% - 340px);
+  width: calc(100% - 350px);
 }
 
 .cart-wrapper {
-  width: 340px;
+  width: 350px;
 }
 
 /* Your existing styles */
