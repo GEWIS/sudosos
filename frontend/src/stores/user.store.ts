@@ -34,6 +34,9 @@ export const useUserStore = defineStore('user', {
     getDeletedUsers: (state) => (): UserResponse[] => {
       return state.users.filter((user) => user.deleted);
     },
+    getCurrentUser: (state) => (): UserResponse => {
+      return state.current;
+    }
   },
   actions: {
     async fetchUsers() {

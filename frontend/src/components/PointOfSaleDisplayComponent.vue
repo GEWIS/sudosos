@@ -11,15 +11,19 @@
         {{ category.name }}
       </div>
     </div>
-    <div class="container" v-for="container in filteredContainers" :key="container.id">
-      <div class="products">
-        <div class="product" v-for="product in container.products" :key="product.id">
-          <ProductComponent :product="product" :container="container" />
-        </div>
+    <div class="container-grid-wrapper">
+      <div class="container">
+        <ProductComponent
+          v-for="product in products"
+          :key="product.product.id"
+          :product="product.product"
+          :container="product.container"
+        />
       </div>
     </div>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
@@ -47,8 +51,9 @@ const filteredContainers = computed(() => {
   }
 
   return props.pointOfSale.containers.map((container) => {
+
     const filteredProducts = container.products.filter(
-      (product) => product.category.id === selectedCategoryId.value
+      (product) => product.category.id === Number(selectedCategoryId.value)
     );
     return { ...container, products: filteredProducts };
   });
@@ -65,13 +70,22 @@ function getDefaultCategoryId() {
 const selectCategory = (categoryId: number) => {
   selectedCategoryId.value = categoryId;
 };
+
+const products = computed(() => {
+  return filteredContainers.value.flatMap((container) => {
+    return container.products.map((product) => ({
+      product,
+      container,
+    }));
+  });
+});
 </script>
 
 <style scoped>
-/* Your existing styles */
 .point-of-sale {
-  padding-top: 35px;
-  padding-left: 60px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .categories {
@@ -98,11 +112,19 @@ const selectCategory = (categoryId: number) => {
   background-color: var(--accent-color); /* Replace with your desired background color for selected category */
   color: white;
 }
-</style>
 
-export default {
-name: "PointOfSaleComponent",
-components: {
-ProductComponent,
-},
-};
+.container-grid-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  height: 100%;
+  margin-bottom: 10px;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  gap: 10px; /* Reduce the gap value to 10px */
+  padding-bottom: 20px; /* Add bottom padding to prevent the last row from being cut off */
+  padding-right: 70px;
+}
+</style>

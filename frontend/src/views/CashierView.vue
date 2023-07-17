@@ -1,14 +1,18 @@
 <template>
-  <div className="wrapper">
-    <div v-if="posNotLoaded" class="home-loader">
+  <div v-if="posNotLoaded" class="home-loader">
       <div>
         <ProgressSpinner aria-label="Loading" />
       </div>
     </div>
-    <div v-else class="main-content">
-      <PointOfSaleDisplayComponent :point-of-sale="currentPos"/>
-      <CartComponent/>
-    </div>
+  <div v-else class="main-content">
+      <div class="wrapper">
+        <div class="pos-wrapper">
+          <PointOfSaleDisplayComponent :point-of-sale="currentPos" />
+        </div>
+        <div class="cart-wrapper">
+          <CartComponent />
+        </div>
+      </div>
   </div>
   <SettingsIconComponent />
 </template>
@@ -54,6 +58,24 @@ export default {
 };
 </script>
 <style scoped>
+.wrapper {
+  display: flex;
+  height: 100%;
+  padding-top: 35px;
+  padding-left: 60px;
+  padding-right: 10px;
+  padding-bottom: 25px;
+}
+
+.pos-wrapper {
+  width: calc(100% - 340px);
+}
+
+.cart-wrapper {
+  width: 340px;
+}
+
+/* Your existing styles */
 .home-loader {
   display: flex;
   justify-content: center;

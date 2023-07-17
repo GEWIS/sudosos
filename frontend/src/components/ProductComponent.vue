@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center product-card" @click="$emit('selected')">
+  <div class="text-center product-card" @click="addToCart">
     <div class="product">
       <img :src="image" :alt="product.name" />
       <p class="w-100 product-name mb-0">{{ product.name }}</p>
@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import {ContainerWithProductsResponse, ProductResponse} from "@sudosos/sudosos-client";
+import {useCartStore} from "@/stores/cart.store";
 
 const props = defineProps({
   product: {
@@ -31,19 +32,27 @@ const getImageSrc = () => {
 };
 
 const getProductPrice = () => {
-  console.error(props.product)
   return (props.product.priceInclVat.amount / 100).toFixed(2);
 };
 
 const image = getImageSrc();
 const productPrice = getProductPrice();
+
+const cartStore = useCartStore();
+
+const addToCart = () => {
+  cartStore.addToCart({
+    product: props.product,
+    containerId: props.container.id,
+    count: 1,
+  });
+};
 </script>
 
 <style scoped lang="scss">
 .product-card {
   padding: 0 0 8px 0;
   height: fit-content;
-  background: white;
   border-radius: $border-radius;
   overflow: hidden;
   width: 128px;
