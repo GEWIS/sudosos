@@ -3,6 +3,7 @@ import PublicLayout from "@/layout/PublicLayout.vue";
 import DashboardLayout from "@/layout/DashboardLayout.vue";
 import HomeView from '../views/HomeView.vue';
 import LoginView from "@/views/LoginView.vue";
+import BalanceView from "@/views/BalanceView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -28,6 +29,11 @@ const router = createRouter({
           component: HomeView,
           name: 'home',
         },
+        {
+          path: '/balance',
+          component: BalanceView,
+          name: 'balance',
+        }
         // Add other routes for authenticated users here
       ],
     },
