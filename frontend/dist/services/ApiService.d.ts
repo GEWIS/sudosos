@@ -17,4 +17,5 @@ declare class ApiService {
     get transaction(): TransactionsApi;
     get categories(): ProductCategoriesApi;
 }
-export default ApiService;
+declare const _default: ApiService;
+export default _default;

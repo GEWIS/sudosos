@@ -9263,7 +9263,7 @@ er.interceptors.response.use((t) => {
   }
   return t;
 });
-class _e {
+class Di {
   constructor() {
     X(this, "authenticateApi");
     X(this, "balanceApi");
@@ -9307,8 +9307,9 @@ class _e {
     return this.categoryApi;
   }
 }
+const _e = new Di();
 Wr();
-const Di = Os("user", {
+const Mi = Os("user", {
   state: () => ({
     users: [],
     current: {
@@ -9340,7 +9341,7 @@ const Di = Os("user", {
       i !== -1 && this.users.splice(i, 1);
     }
   }
-}), Ni = Os({
+}), xi = Os({
   id: "auth",
   state: () => ({
     user: null,
@@ -9363,7 +9364,7 @@ const Di = Os("user", {
       await _e.authenticate.gewisPinAuthentication(l).then((e) => {
         const { user: h, token: f, roles: O, organs: b, acceptedToS: y } = e.data;
         this.user = h, this.token = f, this.roles = O, this.organs = b, this.acceptedToS = y, _e.user.getIndividualUser(this.user.id).then((m) => {
-          Di().setCurrentUser(m.data);
+          Mi().setCurrentUser(m.data);
         });
       });
     },
@@ -9375,6 +9376,6 @@ const Di = Os("user", {
 export {
   _e as ApiService,
   Xr as fetchAllPages,
-  Ni as useAuthStore,
-  Di as useUserStore
+  xi as useAuthStore,
+  Mi as useUserStore
 };
