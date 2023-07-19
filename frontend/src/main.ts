@@ -12,6 +12,7 @@ import InputText from "primevue/inputtext";
 import Menubar from "primevue/menubar";
 import Fieldset from "primevue/fieldset";
 import Panel from "primevue/panel";
+import DataTable from "primevue/datatable";
 
 const app = createApp(App)
 
@@ -23,4 +24,5 @@ app.component('Button', Button);
 app.component('InputText', InputText);
 app.component('Menubar', Menubar);
 app.component('Panel', Panel);
+app.component('DataTable', DataTable);
 app.mount('#app')

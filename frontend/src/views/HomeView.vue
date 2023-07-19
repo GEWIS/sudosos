@@ -3,15 +3,25 @@
   <div class="page-container">
     <div class="page-title">Overview</div>
     <div class="content-wrapper">
-      <BalanceComponent/>
+      <BalanceComponent class="balance-component"/>
+      <TransactionsTableComponent class="transactions-table" header="Recent Transactions" action="All Transactions"/>
     </div>
   </div>
 </template>
 
 <script setup>
 import BalanceComponent from "@/components/BalanceComponent.vue";
+import TransactionsTableComponent from "@/components/TransactionsTableComponent.vue";
 </script>
 
 <style scoped lang="scss">
 @import "../styles/BasePage.css";
+
+.balance-component {
+  margin-right: 15px;
+}
+
+.transactions-table {
+  margin-left: 15px;
+}
 </style>

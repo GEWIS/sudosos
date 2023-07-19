@@ -2,8 +2,9 @@
   <Panel :header="header.toUpperCase()" class="card">
     <div class="wrapper">
       <slot/>
+      <Button severity="secondary" id="bottom-left-button">{{ action.toUpperCase() }}</Button>
     </div>
-    <Button severity="secondary" id="bottom-left-button">{{ action.toUpperCase() }}</Button>
+
   </Panel>
 </template>
 
@@ -57,6 +58,7 @@ defineProps({
   background-color: #f8f8f8!important;
   padding-left: 2rem!important;
   padding-right: 2rem!important;
+  padding-bottom: 0!important;
 }
 
 .card {
@@ -64,6 +66,7 @@ defineProps({
 }
 
 .wrapper {
-  margin-bottom: 5rem;
+  margin-bottom: 4.75rem;
 }
+
 </style>

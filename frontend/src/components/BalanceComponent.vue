@@ -1,5 +1,5 @@
 <template>
-  <CardComponent header="jemoeder" action="Increase Online">
+  <CardComponent header="balance" action="Increase Online">
       <div class="body">
         <h1>€420.69</h1>
       </div>
