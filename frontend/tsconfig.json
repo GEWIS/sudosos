@@ -1,25 +1,11 @@
 {
-    "include": [
-        "src/**/*",
-    ],
-    "exclude": [
-        "node_modules",
-    ],
-    "compilerOptions": {
-        "types": [ "node" ],
-        "outDir": "dist",
-        "rootDir": "./src/",
-        "module": "CommonJS",
-        "target": "es2015",
-        "sourceMap": true,
-        "allowJs": true,
-        "declaration": true,
-        "checkJs": false,
-        "strict": true,
-        "alwaysStrict": true,
-        "noImplicitAny": true,
-        "noUnusedLocals": false,
-        "noUnusedParameters": false,
-        "strictNullChecks": false
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
     }
+  ]
 }
