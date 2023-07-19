@@ -47,9 +47,6 @@ const rightItems = ref([
 
 <style scoped lang="scss">
 .container {
-  position: absolute;
-  top: 0;
-  left: 0;
   background-color: #d40000;
   display: flex;
   width: 100%;
