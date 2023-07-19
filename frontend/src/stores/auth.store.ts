@@ -3,8 +3,8 @@ import {
   GEWISAuthenticationPinRequest,
   UserResponse
 } from "@sudosos/sudosos-client";
-import ApiService from "../services/ApiService";
 import {useUserStore} from "./user.store";
+import ApiService from "../services/ApiService";
 
 interface AuthStoreState {
   user: UserResponse | null,
@@ -13,7 +13,7 @@ interface AuthStoreState {
   token: string | null,
   acceptedToS: string | null,
 }
-export const useAuthStore = (service: ApiService) => defineStore({
+export const useAuthStore = defineStore({
   id: 'auth',
   state: (): AuthStoreState => ({
     user: null,
@@ -40,15 +40,15 @@ export const useAuthStore = (service: ApiService) => defineStore({
         pin: pinCode,
       };
 
-      await service.authenticate.gewisPinAuthentication(userDetails).then((res) => {
+      await ApiService.authenticate.gewisPinAuthentication(userDetails).then((res) => {
         const { user, token, roles,organs, acceptedToS} = res.data;
         this.user = user;
         this.token = token;
         this.roles = roles;
         this.organs = organs;
         this.acceptedToS = acceptedToS;
-        service.user.getIndividualUser(this.user.id).then((res) => {
-          (useUserStore(service)).setCurrentUser(res.data)
+        ApiService.user.getIndividualUser(this.user.id).then((res) => {
+          useUserStore().setCurrentUser(res.data)
         })
       })
     },

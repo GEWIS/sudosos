@@ -3,8 +3,8 @@ import {
   BalanceResponse,
   UserResponse
 } from "@sudosos/sudosos-client";
-import ApiService from "../services/ApiService";
 import {fetchAllPages} from "../helpers/index";
+import ApiService from "../services/ApiService";
 
 const pinia = createPinia();
 
@@ -17,7 +17,7 @@ interface UserModuleState {
   current: CurrentState
 }
 
-export const useUserStore = (service: ApiService) => defineStore('user', {
+export const useUserStore = defineStore('user', {
   state: (): UserModuleState => ({
     users: [],
     current: {
@@ -45,7 +45,7 @@ export const useUserStore = (service: ApiService) => defineStore('user', {
       this.users = await fetchAllPages<UserResponse>(0, 500, (take, skip) => ApiService.user.getAllUsers(take, skip));
     },
     async fetchCurrentUserBalance(id: number) {
-      this.current.balance = (await service.balance.getBalanceId(id)).data
+      this.current.balance = (await ApiService.balance.getBalanceId(id)).data
     },
     setCurrentUser(user: UserResponse) {
       this.current.user = user;

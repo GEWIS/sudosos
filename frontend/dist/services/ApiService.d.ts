@@ -5,7 +5,11 @@ declare class ApiService {
     private readonly posApi;
     private readonly categoryApi;
     private readonly transactionApi;
-    constructor(basePath: string, apiKey: () => string);
+    private _apiKey;
+    private _basePath;
+    constructor();
+    set basePath(basePath: string);
+    set apiKey(apiKey: () => string);
     get authenticate(): AuthenticateApi;
     get balance(): BalanceApi;
     get user(): UsersApi;
