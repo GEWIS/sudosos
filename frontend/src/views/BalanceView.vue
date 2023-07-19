@@ -6,6 +6,10 @@
         <p id="cash-notice">It is no longer possible to increase your balance in cash during the 'borrel'</p>
         <div id="balance-increase-form">
           <p id="balance-increase-title">Balance increase amount:</p>
+          <div class="p-inputgroup flex-1">
+            <span class="p-inputgroup-addon">€</span>
+            <InputNumber placeholder="Price" />
+          </div>
         </div>
       </CardComponent>
     </div>
@@ -13,6 +17,7 @@
 </template>
 
 <script setup lang="ts">
+// TODO: Create Modal for Topping up Balance
 
 import CardComponent from "@/components/CardComponent.vue";
 </script>
@@ -26,5 +31,9 @@ import CardComponent from "@/components/CardComponent.vue";
 
 #balance-increase-title {
   font-weight: 700;
+}
+
+.p-inputgroup {
+  width: 25%;
 }
 </style>
