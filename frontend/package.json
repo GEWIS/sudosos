@@ -9,6 +9,7 @@
   },
   "main": "./dist/sudosos-frontend-common.umd.cjs",
   "module": "./dist/sudosos-frontend-common.js",
+  "type": "module",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
