@@ -11,10 +11,12 @@
   "module": "./dist/sudosos-frontend-common.js",
   "type": "module",
   "types": "./dist/index.d.ts",
+  "typings": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/sudosos-frontend-common.js",
-      "require": "./dist/sudosos-frontend-common.umd.cjs"
+      "require": "./dist/sudosos-frontend-common.umd.cjs",
+      "types": "./dist/index.d.ts"
     }
   },
   "files": [
