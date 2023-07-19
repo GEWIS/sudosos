@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
+import {PointOfSaleWithContainersResponse, ProductResponse} from "@sudosos/sudosos-client";
 import ApiService from "@/services/ApiService";
-import { PointOfSaleWithContainersResponse } from "@sudosos/sudosos-client";
-import { Product } from "@/types/Product";
 
 export const usePointOfSaleStore = defineStore('pointOfSale', {
   state: () => ({
@@ -30,7 +29,7 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
       const response = await ApiService.pos.getSinglePointOfSale(id);
       this.pointOfSale = response.data;
     },
-    getProduct(productId: number, revision: number, containerId: number): Product | undefined {
+    getProduct(productId: number, revision: number, containerId: number): ProductResponse | undefined {
       if (this.pointOfSale) {
         const container = this.pointOfSale.containers.find(c => c.id === containerId);
         if (container) {

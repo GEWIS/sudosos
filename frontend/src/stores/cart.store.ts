@@ -1,19 +1,16 @@
 import { defineStore } from 'pinia';
 import {
-  Container,
   ContainerResponse,
   ProductResponse,
   SubTransactionRequest,
   TransactionRequest,
   UserResponse
 } from "@sudosos/sudosos-client";
-import ApiService from "@/services/ApiService";
 import {usePointOfSaleStore} from "@/stores/pos.store";
 import {
-  DineroObjectRequest,
-  RevisionRequest,
   SubTransactionRowRequest
 } from "@sudosos/sudosos-client/src/api";
+import ApiService from "@/services/ApiService";
 
 interface CartProduct {
   container: ContainerResponse,

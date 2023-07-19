@@ -33,9 +33,8 @@
 import { useCartStore } from '@/stores/cart.store';
 import CartItemComponent from "@/components/CartItemComponent.vue";
 import {computed, onMounted, ref, watch} from "vue";
-import {useUserStore} from "@/stores/user.store";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import ApiService from "@/services/ApiService";
+import {ApiService, useUserStore} from "@sudosos/sudosos-frontend-common";
 
 const cartStore = useCartStore();
 const userStore = useUserStore();

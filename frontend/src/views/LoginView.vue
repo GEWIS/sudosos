@@ -21,10 +21,10 @@ import { computed, ref } from 'vue';
 import SettingsIconComponent from "@/components/SettingsIconComponent.vue";
 import KeypadComponent from "@/components/KeypadComponent.vue";
 import KeypadDisplayComponent from "@/components/KeypadDisplayComponent.vue";
-import { useUserStore } from "@/stores/user.store";
-import {useAuthStore} from "@/stores/auth.store";
 import router from "@/router";
 import {useCartStore} from "@/stores/cart.store";
+import {useAuthStore, useUserStore} from "@sudosos/sudosos-frontend-common";
+import ApiService from "@/services/ApiService";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
@@ -83,19 +83,20 @@ const displayContainerClasses = computed(() => ({
 
 const login = async () => {
   loggingIn.value = true;
-  await authStore.pinlogin(userId.value, pinCode.value).then(async () => {
-    const user = authStore.getUser();
+  await authStore.pinlogin(userId.value, pinCode.value, ApiService).then(async () => {
+    const user = authStore.getUser;
     if (user === null) return;
 
-    if (userStore.getActiveUsers().length === 0) await userStore.fetchUsers();
+    if (userStore.getActiveUsers.length === 0) await userStore.fetchUsers;
     useCartStore().setBuyer(user);
-    userStore.fetchCurrentUserBalance(user.id);
+    userStore.fetchCurrentUserBalance(user.id, ApiService);
 
     await router.push({ path: '/cashier' });
     userId.value = '';
     pinCode.value = '';
     enteringUserId.value = true;
   }).catch((error) => {
+    console.error(error);
     pinCode.value = '';
     wrongPin.value = true;
   })

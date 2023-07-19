@@ -1,4 +1,3 @@
-import {ApiService} from "sudosos-frontend-common";
-import {useAuthStore} from "@/stores/auth.store";
+import {ApiService, useAuthStore} from "@sudosos/sudosos-frontend-common";
 
-export default new ApiService(import.meta.env.VITE_APP_API_BASE,() => `Bearer ${useAuthStore().getToken()}`);
+export default new ApiService(import.meta.env.VITE_APP_API_BASE,() => `Bearer ${useAuthStore().getToken}`);

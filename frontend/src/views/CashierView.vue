@@ -36,7 +36,7 @@ export default {
     PointOfSaleDisplayComponent,
     // Home,
   },
-  data() {
+  data(): Data {
     return {
       posNotLoaded: true,
       currentPos: null,
