@@ -45,7 +45,7 @@ const current = computed( () => cartStore.getBuyer);
 const totalPrice = computed(() => cartStore.getTotalPrice);
 
 const balance = ref<number | null>(null);
-
+;
 const getBalance = async () => {
   if (!cartStore.buyer) return 0;
   try {

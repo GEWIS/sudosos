@@ -4,16 +4,17 @@ import {
   BalanceResponse,
   UserResponse
 } from "@sudosos/sudosos-client";
-import {fetchAllPages} from "@/services/paginationService";
+import {fetchAllPages} from "sudosos-frontend-common";
 
 const pinia = createPinia();
 
+interface CurrentState {
+  balance: BalanceResponse | null,
+  user: UserResponse | null,
+}
 interface UserModuleState {
   users: UserResponse[];
-  current: {
-    balance: BalanceResponse | null,
-    user: UserResponse | null,
-  }
+  current: CurrentState
 }
 
 export const useUserStore = defineStore('user', {
@@ -34,12 +35,13 @@ export const useUserStore = defineStore('user', {
     getDeletedUsers: (state) => (): UserResponse[] => {
       return state.users.filter((user) => user.deleted);
     },
-    getCurrentUser: (state) => (): UserResponse => {
+    getCurrentUser: (state) => (): CurrentState => {
       return state.current;
     }
   },
   actions: {
     async fetchUsers() {
+      // @ts-ignore TODO Fix Swagger
       this.users = await fetchAllPages<UserResponse>(0, 500, (take, skip) => ApiService.user.getAllUsers(take, skip));
     },
     async fetchCurrentUserBalance(id: number) {
