@@ -13,11 +13,12 @@
   },
   "dependencies": {
     "@sudosos/sudosos-client": "github:GEWIS/sudosos-client",
+    "@sudosos/sudosos-frontend-common": "github:GEWIS/sudosos-frontend-common",
     "jwt-decode": "^3.1.2",
     "pinia": "^2.1.3",
     "primevue": "^3.30.1",
     "sass": "^1.63.6",
-    "sudosos-frontend-common": "github:GEWIS/sudosos-frontend-common",
+    "uuid": "^9.0.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.2"
   },

@@ -3,13 +3,13 @@
   <main>
     <img id="login-image" src="../assets/img/bier.png" alt="logo">
     <h1>SudoSOS Login</h1>
-    <Button id="login-gewis-button" severity="success"><img id="gewis-branding" src="../assets/img/gewis-branding.svg" alt="GEWIS">Login via GEWIS</Button>
+    <Button id="login-gewis-button" @click="loginViaGEWIS" severity="success"><img id="gewis-branding" src="../assets/img/gewis-branding.svg" alt="GEWIS">Login via GEWIS</Button>
     <hr>
     <label for="username">Username</label>
     <InputText id="username" type="text" v-model="username" placeholder="Enter username"/>
     <label for="password">Password</label>
     <InputText id="password" type="password" v-model="password" placeholder="Enter password" />
-    <Button id="login-button" severity="danger">Login</Button>
+    <Button @click="ldapLogin" id="login-button" severity="danger">Login</Button>
     <a href="https://wieditleesttrekteenbak.nl/">Reset password (External accounts only)</a>
   </main>
   <CopyrightBanner />
@@ -18,6 +18,45 @@
 
 <script setup>
 import CopyrightBanner from "@/components/CopyrightBanner.vue";
+import {onBeforeMount, ref} from "vue";
+import {useUserStore, useAuthStore} from "@sudosos/sudosos-frontend-common";
+import ApiService from "@/services/ApiService.ts"
+import {useRoute} from "vue-router";
+import { v4 as uuid } from 'uuid';
+import router from "@/router";
+
+const authStore = useAuthStore();
+
+
+const username = ref('');
+const password = ref('');
+const route = useRoute();
+
+onBeforeMount(() => {
+  if (route.query.token !== undefined) {
+    const { token } = route.query;
+    authStore.gewisWebLogin({
+      token,
+      nonce: uuid(),
+    }).catch((error) => {
+      console.error(error)
+    })
+  }
+})
+ApiService.categories.getAllProductCategories().then((res) => {
+  console.error(res.data
+})
+const ldapLogin = async () => {
+  await authStore.gewisLdapLogin(username.value, password.value, ApiService).then(() => {
+    router.push('/balance')
+  }).catch((error) => {
+    console.error(error);
+  })
+}
+
+const loginViaGEWIS = () => {
+  window.location.href = `https://gewis.nl/token/${import.meta.env.VITE_APP_GEWIS_TOKEN}`;
+}
 
 </script>
 
