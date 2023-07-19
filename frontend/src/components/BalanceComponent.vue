@@ -1,25 +1,25 @@
 <template>
-  <Panel header="Balance">
-    <h1>€420.69</h1>
-    <Button outlined severity="danger">Increase Online</Button>
-  </Panel>
+  <CardComponent header="jemoeder" action="Increase Online">
+      <div class="body">
+        <h1>€420.69</h1>
+      </div>
+  </CardComponent>
 </template>
-<script setup/>
+
+<script>
+import {defineComponent} from "vue";
+import CardComponent from "@/components/CardComponent.vue";
+
+export default defineComponent({
+  components: {CardComponent}
+})
+</script>
 
 <style scoped lang="scss">
 h1 {
   font-size: 50px;
   text-align: center;
-}
-
-:deep(.p-panel-title) {
-  color: #d40000;
-  font-size: 1rem;
-}
-
-:deep(p-button) {
-  position: relative;
-  left: 0;
-  bottom: 0;
+  font-family: Raleway, sans-serif!important;
+  font-weight: 500;
 }
 </style>
