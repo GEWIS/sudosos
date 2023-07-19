@@ -104,6 +104,15 @@ export const useAuthStore = defineStore({
         this.handleResponse(res.data, service)
       })
     },
+    async gewisLdapLogin(accountName: string, password: string, service: ApiService) {
+      const req: AuthenticationLDAPRequest = {
+        accountName,
+        password
+      }
+      await service.authenticate.gewisLDAPAuthentication(req).then((res) => {
+        this.handleResponse(res.data, service)
+      })
+    },
     logout() {
       this.user = null;
       this.roles = [];

@@ -131,6 +131,15 @@ const Xr = fs("user", {
         this.handleResponse(h.data, l);
       });
     },
+    async gewisLdapLogin(t, i, l) {
+      const e = {
+        accountName: t,
+        password: i
+      };
+      await l.authenticate.gewisLDAPAuthentication(e).then((h) => {
+        this.handleResponse(h.data, l);
+      });
+    },
     logout() {
       this.user = null, this.roles = [], this.token = null, this.organs = [], this.acceptedToS = null, this.user = null;
     }
