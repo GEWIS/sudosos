@@ -1,6 +1,7 @@
 // vite.config.ts
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue'
 import dts from 'vite-plugin-dts';
 
 // https://vitejs.dev/guide/build.html#library-mode
@@ -20,10 +21,10 @@ export default defineConfig({
         // for externalized deps
         globals: {
           vue: 'Vue',
-          pinia: 'Pinia'
+          pinia: 'pinia'
         }
       }
     }
   },
-  plugins: [dts()],
+  plugins: [dts(), vue()],
 });

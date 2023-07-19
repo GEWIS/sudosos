@@ -3,8 +3,8 @@ import {
   BalanceResponse,
   UserResponse
 } from "@sudosos/sudosos-client";
-import {fetchAllPages} from "../helpers/index";
 import ApiService from "../services/ApiService";
+import {fetchAllPages} from "../helpers/PaginationHelper";
 
 const pinia = createPinia();
 
@@ -26,26 +26,26 @@ export const useUserStore = defineStore('user', {
     },
   }),
   getters: {
-    getUserById: (state) => (id: number): UserResponse | undefined => {
-      return state.users.find((user) => user.id === id);
+    getUserById: (state: UserModuleState) => {
+      return (userId: number) => state.users.find((user) => user.id === userId)
     },
-    getActiveUsers: (state) => (): UserResponse[] => {
-      return state.users.filter((user) => user.active);
+    getActiveUsers(): UserResponse[] {
+      return this.users.filter((user) => user.active);
     },
-    getDeletedUsers: (state) => (): UserResponse[] => {
-      return state.users.filter((user) => user.deleted);
+    getDeletedUsers(): UserResponse[] {
+      return this.users.filter((user) => user.deleted);
     },
-    getCurrentUser: (state) => (): CurrentState => {
-      return state.current;
+    getCurrentUser(): CurrentState {
+      return this.current;
     }
   },
   actions: {
-    async fetchUsers() {
+    async fetchUsers(service: ApiService) {
       // @ts-ignore TODO Fix Swagger
-      this.users = await fetchAllPages<UserResponse>(0, 500, (take, skip) => ApiService.user.getAllUsers(take, skip));
+      this.users = await fetchAllPages<UserResponse>(0, 500, (take, skip) => service.user.getAllUsers(take, skip));
     },
-    async fetchCurrentUserBalance(id: number) {
-      this.current.balance = (await ApiService.balance.getBalanceId(id)).data
+    async fetchCurrentUserBalance(id: number, service: ApiService) {
+      this.current.balance = (await service.balance.getBalanceId(id)).data
     },
     setCurrentUser(user: UserResponse) {
       this.current.user = user;

@@ -39,18 +39,14 @@ class ApiService {
   private readonly categoryApi: ProductCategoriesApi;
   private readonly transactionApi: TransactionsApi;
 
-  private _apiKey: () => string;
-
-  private _basePath: string;
-
-  constructor() {
-    const configuration = new Configuration({ basePath: this._basePath });
+  constructor(basePath: string, apiKey: () => string) {
+    const configuration = new Configuration({ basePath });
     const withKeyConfiguration = new Configuration({
-      basePath: this._basePath,
+      basePath,
       baseOptions: {
         axios: axiosInstance,
       },
-      apiKey: this._apiKey,
+      apiKey,
     });
 
     this.authenticateApi = new AuthenticateApi(configuration);
@@ -60,14 +56,6 @@ class ApiService {
     this.categoryApi = new ProductCategoriesApi(withKeyConfiguration);
     this.transactionApi = new TransactionsApi(withKeyConfiguration);
   }
-
-  public set basePath(basePath: string) {
-    this._basePath = basePath;
-  }
-  public set apiKey(apiKey: () => string) {
-    this._apiKey = apiKey;
-  }
-
   get authenticate() {
     return this.authenticateApi;
   }
@@ -94,4 +82,4 @@ class ApiService {
 
 }
 
-export default new ApiService();
+export default ApiService;
