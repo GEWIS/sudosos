@@ -17,11 +17,10 @@
 </template>
 
 <script setup lang="ts">
-import {defineProps, computed, ref} from 'vue';
-import { CartProduct } from "@/types/CartProduct";
-import { useCartStore } from "@/stores/cart.store";
+import {computed, ref} from 'vue';
+import { CartProduct, useCartStore } from "@/stores/cart.store";
 import { usePointOfSaleStore } from "@/stores/pos.store";
-import { Product } from "@sudosos/sudosos-client";
+import { ProductResponse} from "@sudosos/sudosos-client";
 
 const cartStore = useCartStore();
 const posStore = usePointOfSaleStore();
@@ -35,7 +34,7 @@ const props = defineProps({
 
 const product = ref(props.cartProduct.product);
 
-const getImageSrc = (product: Product) => {
+const getImageSrc = (product: ProductResponse) => {
   if (!product.image) {
     return 'https://imgur.com/CS0aauU.png';
   } else {
@@ -86,12 +85,17 @@ const totalPrice = computed(() => {
 .product-details {
   display: flex;
   flex-direction: column;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-right: 10px;
 }
 
 .product-name {
   margin: 0;
   font-size: 18px;
   font-weight: 800;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .product-category {

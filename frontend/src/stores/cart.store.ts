@@ -10,9 +10,9 @@ import {usePointOfSaleStore} from "@/stores/pos.store";
 import {
   SubTransactionRowRequest
 } from "@sudosos/sudosos-client/src/api";
-import ApiService from "@/services/ApiService";
+import apiService from "@/services/ApiService";
 
-interface CartProduct {
+export interface CartProduct {
   container: ContainerResponse,
   product: ProductResponse,
   count: number,
@@ -144,7 +144,8 @@ export const useCartStore = defineStore('cart', {
         },
       }
 
-      console.error(await ApiService.transaction.createTransaction(request));
+      console.error(apiService.transaction);
+      console.error(await (apiService.transaction.validateTransaction(request)));
       // ApiService.transaction.transactionsValidatePost()
       // Perform checkout logic here, e.g., send cart data to the server
       // Reset the cart after successful checkout

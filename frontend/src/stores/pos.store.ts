@@ -8,7 +8,7 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
   }),
   getters: {
     allProductCategories() {
-      const categories = {};
+      const categories: {[key: number]: string} = {};
 
       if (this.pointOfSale) {
         this.pointOfSale.containers.forEach((container) => {

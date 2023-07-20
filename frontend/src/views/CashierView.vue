@@ -17,7 +17,6 @@
   <SettingsIconComponent />
 </template>
 <script lang="ts">
-// import Home from "@/components/Home.vue";
 import {usePointOfSaleStore} from "@/stores/pos.store";
 import {PointOfSaleWithContainersResponse} from "@sudosos/sudosos-client";
 import PointOfSaleDisplayComponent from "@/components/PointOfSaleDisplayComponent.vue";
@@ -26,7 +25,7 @@ import CartComponent from "@/components/CartComponent.vue";
 
 interface Data {
   posNotLoaded: boolean;
-  currentPos: PointOfSaleWithContainersResponse | null;
+  currentPos: PointOfSaleWithContainersResponse | undefined;
 }
 export default {
   name: "CashierView",
@@ -39,14 +38,14 @@ export default {
   data(): Data {
     return {
       posNotLoaded: true,
-      currentPos: null,
+      currentPos: undefined,
     };
   },
   async mounted() {
     const pointOfSaleStore = usePointOfSaleStore();
 
     await pointOfSaleStore.fetchPointOfSale(1).then(() => {
-      this.currentPos = pointOfSaleStore.pointOfSale;
+      if (pointOfSaleStore.pointOfSale) this.currentPos = pointOfSaleStore.pointOfSale;
       this.posNotLoaded = false;
     });
   },

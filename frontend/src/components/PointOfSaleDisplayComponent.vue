@@ -33,19 +33,21 @@ import ProductComponent from "@/components/ProductComponent.vue";
 
 const props = defineProps({
   pointOfSale: {
-    type: Object as () => PointOfSaleWithContainersResponse,
+    type: Object as () => PointOfSaleWithContainersResponse | undefined,
     required: true,
   },
 });
 
 const pointOfSaleStore = usePointOfSaleStore();
-const selectedCategoryId = ref<number | null>(getDefaultCategoryId());
+const selectedCategoryId = ref<string | null>(getDefaultCategoryId());
 
 const computedCategories = computed(() => {
   return pointOfSaleStore.allProductCategories;
 });
 
 const filteredContainers = computed(() => {
+  if (!props.pointOfSale) return [];
+
   if (!selectedCategoryId.value) {
     return props.pointOfSale.containers;
   }
@@ -67,7 +69,7 @@ function getDefaultCategoryId() {
   return nonAlcoholicCategory ? nonAlcoholicCategory.id : null;
 }
 
-const selectCategory = (categoryId: number) => {
+const selectCategory = (categoryId: string) => {
   selectedCategoryId.value = categoryId;
 };
 
@@ -115,14 +117,21 @@ const products = computed(() => {
   flex: 1;
   overflow-y: auto;
   height: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  scrollbar-color: var(--accent-color) rgba(135, 135, 135, 0.3);
 }
+
+/*.custom-scrollbar-container {*/
+/*  scrollbar-color: #888 #f1f1f1;*/
+/*  scrollbar-width: thin;*/
+/*}*/
 
 .container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
   gap: 10px; /* Reduce the gap value to 10px */
   padding-bottom: 20px; /* Add bottom padding to prevent the last row from being cut off */
-  padding-right: 70px;
+  padding-right: 50px;
 }
 </style>

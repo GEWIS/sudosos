@@ -1,10 +1,10 @@
 <template>
   <div class="cart">
     <div class="user-info">
-      {{ current.firstName }}
+      {{ current?.firstName }}
     </div>
     <div class="cart-items">
-      <div v-for="item in cartItems" :key="item">
+      <div v-for="item in cartItems" :key="item.product.id">
         <CartItemComponent :cart-product="item" />
       </div>
     </div>
@@ -34,7 +34,8 @@ import { useCartStore } from '@/stores/cart.store';
 import CartItemComponent from "@/components/CartItemComponent.vue";
 import {computed, onMounted, ref, watch} from "vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {ApiService, useUserStore} from "@sudosos/sudosos-frontend-common";
+import {useUserStore} from "@sudosos/sudosos-frontend-common";
+import apiService from "@/services/ApiService";
 
 const cartStore = useCartStore();
 const userStore = useUserStore();
@@ -48,7 +49,7 @@ const balance = ref<number | null>(null);
 const getBalance = async () => {
   if (!cartStore.buyer) return 0;
   try {
-    const response = await ApiService.balance.getBalanceId(cartStore.buyer.id);
+    const response = await apiService.balance.getBalanceId(cartStore.buyer.id);
     return response.data.amount.amount;
   } catch (error) {
     return null;
@@ -65,6 +66,7 @@ watch(() => cartStore.buyer, async () => {
 
 
 const formattedBalanceAfter = computed(() => {
+  if (!balance.value) return null;
   return ((balance.value - totalPrice.value) / 100).toFixed(2);
 })
 const getTotalPrice = () => {
@@ -114,7 +116,7 @@ const checkout = () => {
 .warning-line {
   margin-top: 10px;
   font-size: 14px;
-  color: #888;
+  color: var(--accent-color);
 }
 
 .cart {

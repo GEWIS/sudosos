@@ -83,7 +83,7 @@ const displayContainerClasses = computed(() => ({
 
 const login = async () => {
   loggingIn.value = true;
-  await authStore.pinlogin(userId.value, pinCode.value, ApiService).then(async () => {
+  await authStore.gewisPinlogin(userId.value, pinCode.value, ApiService).then(async () => {
     const user = authStore.getUser;
     if (user === null) return;
 
@@ -94,7 +94,7 @@ const login = async () => {
     await router.push({ path: '/cashier' });
     userId.value = '';
     pinCode.value = '';
-    enteringUserId.value = true;
+    enteringUserId  .value = true;
   }).catch((error) => {
     console.error(error);
     pinCode.value = '';
