@@ -21,8 +21,8 @@
     }
   },
   "files": [
-    "src",
-    "dist"
+    "src/",
+    "dist/"
   ],
   "author": "SudoSOS WG",
   "repository": {
