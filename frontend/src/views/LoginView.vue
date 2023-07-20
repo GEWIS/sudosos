@@ -26,6 +26,7 @@ import { v4 as uuid } from 'uuid'
 import router from "@/router";
 
 const authStore = useAuthStore();
+const userStore = useUserStore();
 
 
 const username = ref('');
@@ -45,6 +46,7 @@ onBeforeMount(() => {
 
 const ldapLogin = async () => {
   await authStore.gewisLdapLogin(username.value, password.value, apiService).then(() => {
+    if (authStore.getUser) userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
     router.push('/balance')
   }).catch((error) => {
     console.error(error);

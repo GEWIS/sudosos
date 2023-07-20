@@ -15,6 +15,15 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import {useUserStore} from "@sudosos/sudosos-frontend-common";
+import {computed} from "vue";
+
+const userStore = useUserStore();
+const balance = computed((): number | undefined => {
+  const balance = userStore.getCurrentUser.balance;
+  if (!balance) return undefined
+  return balance.amount.amount;
+})
 
 // TODO: Style the hovering of buttons
 const leftItems = ref([ // TODO: Implement Submenus
@@ -38,12 +47,14 @@ const rightItems = ref([
     label: 'Robin' // TODO: Implement User Getter
   },
   {
-    label: '€420.69' // TODO: Implement Balance Getter
+    label: `€${(balance.value / 100).toFixed(2)}`, // TODO: Implement Balance Getter
   },
   {
     label: 'World'
   },
 ])
+
+
 </script>
 
 <style scoped lang="scss">
