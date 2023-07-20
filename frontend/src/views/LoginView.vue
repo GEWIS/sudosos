@@ -16,13 +16,13 @@
 </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CopyrightBanner from "@/components/CopyrightBanner.vue";
 import {onBeforeMount, ref} from "vue";
 import {useUserStore, useAuthStore} from "@sudosos/sudosos-frontend-common";
-import ApiService from "@/services/ApiService.ts"
+import apiService from "@/services/ApiService"
 import {useRoute} from "vue-router";
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from 'uuid'
 import router from "@/router";
 
 const authStore = useAuthStore();
@@ -34,20 +34,17 @@ const route = useRoute();
 
 onBeforeMount(() => {
   if (route.query.token !== undefined) {
-    const { token } = route.query;
-    authStore.gewisWebLogin({
-      token,
-      nonce: uuid(),
-    }).catch((error) => {
+    const token  = route.query.token as string;
+    authStore.gewisWebLogin(
+      uuid(), token, apiService,
+    ).catch((error) => {
       console.error(error)
     })
   }
 })
-ApiService.categories.getAllProductCategories().then((res) => {
-  console.error(res.data
-})
+
 const ldapLogin = async () => {
-  await authStore.gewisLdapLogin(username.value, password.value, ApiService).then(() => {
+  await authStore.gewisLdapLogin(username.value, password.value, apiService).then(() => {
     router.push('/balance')
   }).catch((error) => {
     console.error(error);

@@ -9,7 +9,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import BalanceComponent from "@/components/BalanceComponent.vue";
 import TransactionsTableComponent from "@/components/TransactionsTableComponent.vue";
 </script>

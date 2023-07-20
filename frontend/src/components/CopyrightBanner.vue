@@ -8,10 +8,7 @@
 </footer>
 </template>
 
-<script>
-export default {
-  name: "CopyrightBanner"
-}
+<script setup lang="ts">
 </script>
 
 <style scoped>

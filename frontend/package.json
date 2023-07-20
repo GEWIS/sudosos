@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@sudosos/sudosos-client": "github:GEWIS/sudosos-client",
-    "@sudosos/sudosos-frontend-common": "github:GEWIS/sudosos-frontend-common",
+    "@sudosos/sudosos-frontend-common": "github:GEWIS/sudosos-frontend-common#5ac5e0d",
     "jwt-decode": "^3.1.2",
     "pinia": "^2.1.3",
     "primevue": "^3.30.1",
@@ -26,6 +26,7 @@
     "@rushstack/eslint-patch": "^1.2.0",
     "@tsconfig/node18": "^2.0.1",
     "@types/node": "^18.16.17",
+    "@types/uuid": "^9.0.2",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/eslint-config-prettier": "^7.1.0",
     "@vue/eslint-config-typescript": "^11.0.3",

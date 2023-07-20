@@ -11,7 +11,7 @@
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import CardComponent from "@/components/CardComponent.vue";
-import {PaginatedFinancialMutationResponse} from "@sudosos/sudosos-client";
+import type {PaginatedFinancialMutationResponse} from "@sudosos/sudosos-client";
 import {onMounted, ref} from "vue";
 
 const props = defineProps({

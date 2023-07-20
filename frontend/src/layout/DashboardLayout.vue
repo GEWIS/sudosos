@@ -4,7 +4,7 @@
   <CopyrightBanner />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {RouterView} from "vue-router";
 import CopyrightBanner from "@/components/CopyrightBanner.vue";
 import TopNavbar from "@/components/TopNavbar.vue";
