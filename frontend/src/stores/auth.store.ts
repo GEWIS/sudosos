@@ -6,9 +6,8 @@ import {
   GEWISAuthenticationPinRequest, GewiswebAuthenticationRequest,
   UserResponse
 } from "@sudosos/sudosos-client";
-import ApiService from "../services/ApiService";
-import {AxiosResponse} from "axios";
 import {useUserStore} from "./user.store";
+import {ApiService} from "../services/ApiService";
 
 interface AuthStoreState {
   user: UserResponse | null,

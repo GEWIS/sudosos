@@ -1,5 +1,4 @@
 import { BalanceResponse, UserResponse } from "@sudosos/sudosos-client";
-import ApiService from "../services/ApiService";
 interface CurrentState {
     balance: BalanceResponse | null;
     user: UserResponse | null;

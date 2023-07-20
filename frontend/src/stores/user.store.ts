@@ -3,7 +3,7 @@ import {
   BalanceResponse,
   UserResponse
 } from "@sudosos/sudosos-client";
-import ApiService from "../services/ApiService";
+import {ApiService} from "../services/ApiService";
 import {fetchAllPages} from "../helpers/PaginationHelper";
 
 const pinia = createPinia();

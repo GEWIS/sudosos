@@ -27,7 +27,7 @@ axiosInstance.interceptors.response.use((response: AxiosResponse) => {
 
   return response;
 });
-class ApiService {
+export class ApiService {
   private readonly authenticateApi: AuthenticateApi;
 
   private readonly balanceApi: BalanceApi;
@@ -81,5 +81,3 @@ class ApiService {
   }
 
 }
-
-export default ApiService;

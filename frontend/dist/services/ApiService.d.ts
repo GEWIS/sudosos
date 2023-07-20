@@ -1,5 +1,5 @@
 import { AuthenticateApi, BalanceApi, PointofsaleApi, ProductCategoriesApi, TransactionsApi, UsersApi } from '@sudosos/sudosos-client';
-declare class ApiService {
+export declare class ApiService {
     private readonly authenticateApi;
     private readonly balanceApi;
     private readonly usersApi;
@@ -14,4 +14,3 @@ declare class ApiService {
     get transaction(): TransactionsApi;
     get categories(): ProductCategoriesApi;
 }
-export default ApiService;
