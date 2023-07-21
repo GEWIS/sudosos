@@ -1,10 +1,9 @@
 <template>
   <Panel :header="header.toUpperCase()" class="card">
-    <div class="wrapper">
-      <slot/>
+    <slot />
+    <template v-if="action" #footer>
       <Button severity="secondary" id="bottom-left-button" @click="handleClick">{{ action.toUpperCase() }}</Button>
-    </div>
-
+    </template>
   </Panel>
 </template>
 
@@ -23,7 +22,7 @@ const props = defineProps({
   },
   action: {
     type: String,
-    required: true,
+    required: false,
   },
   func: {
     type: Function,
@@ -49,20 +48,15 @@ const handleClick = () => {
 }
 #bottom-left-button {
   width: 100%;
-  position: absolute;
-  left: 0;
-  bottom: 0;
   color: #d40000!important;
   background-color: #f2f2f2;
-  border-top: none;
-  padding: 1rem 1.25rem!important;
+  padding: 1rem 1.25rem;
   font-family: Lato,Arial,sans-serif!important;
   font-weight: 400;
-  border-color: #dee2e6;
+  border: none #dee2e6;
 }
 
 :deep(.p-panel-header) {
-  border-bottom: none!important;
   color: #d40000!important;
   font-family: Lato,Arial,sans-serif!important;
   font-weight: 400;
@@ -73,17 +67,14 @@ const handleClick = () => {
 
 :deep(.p-panel-content) {
   background-color: #f8f8f8!important;
-  padding-left: 2rem!important;
-  padding-right: 2rem!important;
-  padding-bottom: 0!important;
+  padding: 1rem 2rem!important;
+}
+
+:deep(.p-panel-footer) {
+  padding: 0!important;
 }
 
 .card {
   color: #d40000!important;
 }
-
-.wrapper {
-  margin-bottom: 4.75rem;
-}
-
 </style>
