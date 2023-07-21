@@ -1,5 +1,5 @@
 <template>
-  <CardComponent header="balance" action="Increase Online">
+  <CardComponent header="balance" action="Increase Online" routerLink="balance">
       <div class="body">
         <h1>€420.69</h1>
       </div>
@@ -8,6 +8,9 @@
 
 <script setup lang="ts">
 import CardComponent from "@/components/CardComponent.vue";
+
+
+
 </script>
 
 <style scoped lang="scss">
