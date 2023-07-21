@@ -3,7 +3,6 @@
     <div class="page-title">Balance</div>
     <div class="content-wrapper">
       <CardComponent action="start payment" header="increase saldo" class="increase-saldo-card">
-        <div v-if="balance"> {{ balance.amount.amount }} </div>
         <p id="cash-notice">It is no longer possible to increase your balance in cash during the 'borrel'</p>
         <div id="balance-increase-form">
           <p id="balance-increase-title">Balance increase amount:</p>

@@ -47,7 +47,7 @@ onBeforeMount(() => {
 const ldapLogin = async () => {
   await authStore.gewisLdapLogin(username.value, password.value, apiService).then(() => {
     if (authStore.getUser) userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
-    router.push('/balance')
+    router.push({name: 'home'})
   }).catch((error) => {
     console.error(error);
   })
@@ -83,7 +83,6 @@ main {
   text-align: center;
   max-width: 350px;
   margin: 4rem auto;
-
 }
 
 .p-button {

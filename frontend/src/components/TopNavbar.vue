@@ -4,7 +4,7 @@
     <nav>
       <Menubar :model="leftItems" >
         <template #start>
-          <a id="sudosos" href="https://sudosos.gewis.nl/">SudoSOS<img id="logo" src="../assets/img/gewis-branding.svg"></a>
+          <a id="sudosos" href="/">SudoSOS<img id="logo" src="../assets/img/gewis-branding.svg" /></a>
 
         </template>
       </Menubar>
@@ -26,7 +26,9 @@ const balance = computed((): string | undefined => {
   return `€${balanceInEuros}`;
 });
 
-
+const firstName = computed((): string | undefined => {
+  return userStore.getCurrentUser.user ? userStore.getCurrentUser.user.firstName : undefined;
+});
 // TODO: Style the hovering of buttons
 const leftItems = ref([ // TODO: Implement Submenus
   {
@@ -46,7 +48,7 @@ const leftItems = ref([ // TODO: Implement Submenus
 
 const rightItems = ref([
   {
-    label: 'Robin' // TODO: Implement User Getter
+    label: firstName // TODO: Implement User Getter
   },
   {
     label: balance, // TODO: Implement Balance Getter
