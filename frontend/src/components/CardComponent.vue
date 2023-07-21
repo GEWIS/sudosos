@@ -2,7 +2,7 @@
   <Panel :header="header.toUpperCase()" class="card">
     <div class="wrapper">
       <slot/>
-      <Button severity="secondary" id="bottom-left-button">{{ action.toUpperCase() }}</Button>
+      <Button severity="secondary" id="bottom-left-button" @click="handleClick">{{ action.toUpperCase() }}</Button>
     </div>
 
   </Panel>
@@ -10,7 +10,9 @@
 
 <script setup lang="ts">
 // TODO: Clean up all the fucking important statements
-defineProps({
+import {useRouter} from "vue-router";
+
+const props = defineProps({
   header: {
     type: String,
     required: true,
@@ -22,8 +24,23 @@ defineProps({
   action: {
     type: String,
     required: true,
-  }
+  },
+  func: {
+    type: Function,
+    required: false,
+  },
 })
+
+const router = useRouter();
+const handleClick = () => {
+  if (props.routerLink) {
+    // If routerLink is defined, use router.push to navigate
+    router.push({ name: props.routerLink });
+  } else if (props.func) {
+    // If routerLink is not defined and func is provided, execute the func
+    props.func();
+  }
+}
 </script>
 
 <style scoped>

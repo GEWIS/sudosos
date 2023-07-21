@@ -1,14 +1,15 @@
 <template>
   <div class="page-container">
     <div class="page-title">Balance</div>
+    <TopupModal v-model:visible="visible" :amount="amountValue"/>
     <div class="content-wrapper">
-      <CardComponent action="start payment" header="increase saldo" class="increase-saldo-card">
+      <CardComponent action="start payment" header="increase saldo" class="increase-saldo-card" :func="showDialog">
         <p id="cash-notice">It is no longer possible to increase your balance in cash during the 'borrel'</p>
         <div id="balance-increase-form">
           <p id="balance-increase-title">Balance increase amount:</p>
           <div class="p-inputgroup flex-1">
             <span class="p-inputgroup-addon">€</span>
-            <InputNumber placeholder="Price" />
+            <InputNumber v-model="amountValue" placeholder="Price" inputId="amount"/>
           </div>
         </div>
       </CardComponent>
@@ -19,16 +20,21 @@
 <script setup lang="ts">
 // TODO: Create Modal for Topping up Balance
 import CardComponent from "@/components/CardComponent.vue";
-import {useUserStore} from "@sudosos/sudosos-frontend-common";
-import {computed} from "vue";
-import {BalanceResponse} from "@sudosos/sudosos-client";
+import { ref } from "vue";
+import TopupModal from "@/components/TopupModalComponent.vue";
 
-const userStore = useUserStore();
-const balance = computed((): BalanceResponse | undefined => {
-  const balance = userStore.getCurrentUser.balance;
-  if (!balance) return undefined
-  return balance;
-})
+
+
+// Define the 'visible' ref variable to control dialog visibility
+const visible = ref(false);
+const amountValue = ref();
+
+// Function to set 'visible' to true, showing the dialog
+const showDialog = () => {
+  visible.value = true;
+
+  console.error(amountValue.value);
+};
 </script>
 
 <style scoped>
