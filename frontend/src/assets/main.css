@@ -34,3 +34,7 @@ a,
   font-weight: 500;
   font-family: Raleway, sans-serif;
 }
+
+:deep(.p-button-label){
+  text-transform: uppercase!important;
+}

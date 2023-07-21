@@ -13,6 +13,7 @@ import Menubar from "primevue/menubar";
 import Panel from "primevue/panel";
 import DataTable from "primevue/datatable";
 import InputNumber from "primevue/inputnumber";
+import Dialog from "primevue/dialog";
 
 const app = createApp(App)
 
@@ -26,4 +27,5 @@ app.component('Menubar', Menubar);
 app.component('Panel', Panel);
 app.component('DataTable', DataTable);
 app.component('InputNumber', InputNumber);
+app.component('Dialog', Dialog);
 app.mount('#app')
