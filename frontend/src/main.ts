@@ -14,6 +14,7 @@ import Panel from "primevue/panel";
 import DataTable from "primevue/datatable";
 import InputNumber from "primevue/inputnumber";
 import Dialog from "primevue/dialog";
+import 'primeicons/primeicons.css';
 
 const app = createApp(App)
 

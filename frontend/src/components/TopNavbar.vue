@@ -106,7 +106,7 @@ const rightItems = ref([
   },
   {
     label: '',
-    icon: 'pi pi-fw pi-globe',
+    icon: 'pi pi-globe',
     items: [
       {
         label: 'Nederlands',
@@ -122,6 +122,7 @@ const rightItems = ref([
 </script>
 
 <style scoped lang="scss">
+
 // TODO: fix wonky fucking background colors man
 .container {
   background-color: #d40000;
