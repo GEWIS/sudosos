@@ -82,7 +82,7 @@ main {
   flex-direction: column;
   text-align: center;
   max-width: 350px;
-  margin: 0 auto;
+  margin: 4rem auto;
 
 }
 

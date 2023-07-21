@@ -19,11 +19,13 @@ import {useUserStore} from "@sudosos/sudosos-frontend-common";
 import {computed} from "vue";
 
 const userStore = useUserStore();
-const balance = computed((): number | undefined => {
-  const balance = userStore.getCurrentUser.balance;
-  if (!balance) return undefined
-  return balance.amount.amount;
-})
+const balance = computed((): string | undefined => {
+  const balanceInCents = userStore.getCurrentUser.balance;
+  if (!balanceInCents) return undefined;
+  const balanceInEuros = (balanceInCents.amount.amount / 100).toFixed(2);
+  return `€${balanceInEuros}`;
+});
+
 
 // TODO: Style the hovering of buttons
 const leftItems = ref([ // TODO: Implement Submenus
@@ -47,7 +49,7 @@ const rightItems = ref([
     label: 'Robin' // TODO: Implement User Getter
   },
   {
-    label: `€${(balance.value / 100).toFixed(2)}`, // TODO: Implement Balance Getter
+    label: balance, // TODO: Implement Balance Getter
   },
   {
     label: 'World'
