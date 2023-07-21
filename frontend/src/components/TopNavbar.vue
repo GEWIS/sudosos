@@ -4,11 +4,15 @@
     <nav>
       <Menubar :model="leftItems" >
         <template #start>
-          <a id="sudosos" href="/">SudoSOS<img id="logo" src="../assets/img/gewis-branding.svg" /></a>
+          <router-link to="/" id="sudosos">SudoSOS<img id="logo" src="../assets/img/gewis-branding.svg" /></router-link>
 
         </template>
       </Menubar>
-      <Menubar :model="rightItems" />
+      <Menubar :model="rightItems">
+        <template #start>
+          <img id="bier" src="../assets/img/bier.png"/>
+        </template>
+      </Menubar>
     </nav>
   </div>
 </template>
@@ -39,22 +43,78 @@ const leftItems = ref([ // TODO: Implement Submenus
     to: 'balance',
   },
   {
-    label: 'Points of Sale'
+    label: 'Points of Sale',
+    items: [
+      {
+        label: 'POS Overview',
+      },
+      {
+        label: 'Create',
+      }
+    ]
   },
   {
-    label: 'BAC' // TODO: Implement RBAC Determination for permissions
+    label: 'Admin',
+    items: [
+      {
+        label: 'Manage POS',
+      },
+      {
+        label: 'TV Screens',
+      },
+      {
+        label: 'Banners',
+      },
+    ],
+  },
+  {
+    label: 'BAC', // TODO: Implement RBAC Determination for permissions
+    items: [
+      {
+        label: 'Manage POS',
+      },
+      {
+        label: 'User Overview',
+      },
+      {
+        label: 'Flagged Transactions',
+      },
+      {
+        label: 'Manage Products',
+      },
+      {
+        label: 'Social Drink Cards',
+      }
+    ]
   },
     ])
 
 const rightItems = ref([
   {
-    label: firstName // TODO: Implement User Getter
+    label: firstName, // TODO: Implement User Getter
+    items: [
+      {
+        label: 'Profile',
+      },
+      {
+        label: 'Sign Out'
+      },
+    ]
   },
   {
     label: balance, // TODO: Implement Balance Getter
   },
   {
-    label: 'World'
+    label: '',
+    icon: 'pi pi-globe',
+    items: [
+      {
+        label: 'Nederlands',
+      },
+      {
+        label: 'English',
+      },
+    ]
   },
 ])
 
@@ -62,6 +122,8 @@ const rightItems = ref([
 </script>
 
 <style scoped lang="scss">
+
+// TODO: fix wonky fucking background colors man
 .container {
   background-color: #d40000;
   display: flex;
@@ -83,6 +145,14 @@ nav {
   }
 }
 
+:deep(.p-menuitem-icon) {
+  color: white!important;
+}
+
+:deep(.p-menubar){
+  padding: 0 1rem;
+}
+
 :deep(.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-text) {
   color: white;
   font-family: Raleway, sans-serif;
@@ -93,6 +163,8 @@ nav {
 
 #logo {
   height: 65px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 #sudosos {
@@ -102,6 +174,72 @@ nav {
   display: flex;
   flex-direction: row;
   align-items: center;
+  padding: 0.3125rem 0;
 }
 
+:deep(svg){
+  margin: 0!important;
+}
+
+:deep(.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-submenu-icon){
+  color: white;
+}
+
+:deep(a:hover){
+  background-color: transparent;
+}
+
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover .p-menuitem-link .p-menuitem-text){
+  color: hsla(0,0%,100%,.5)!important;
+}
+
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content .p-menuitem-link .p-menuitem-text) {
+  transition: color .2s linear;
+}
+
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover .p-menuitem-link svg){
+  color: hsla(0,0%,100%,.5)!important;
+
+}
+
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content .p-menuitem-link svg){
+  transition: color .2s linear;
+}
+
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content){
+  background-color: transparent;
+}
+
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content .p-menuitem-link .p-menuitem-text){
+  color: hsla(0,0%,100%,.5)!important;
+}
+
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content .p-menuitem-link svg){
+  color: hsla(0,0%,100%,.5)!important;
+}
+
+:deep(.p-menubar .p-menuitem.p-highlight > .p-menuitem-content){
+  background-color: transparent!important;
+
+}
+
+:deep(.p-menubar .p-menuitem.p-highlight > .p-menuitem-content .p-menuitem-link .p-menuitem-text){
+  color: hsla(0, 0%, 100%, .5)!important;
+}
+
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover) {
+  background-color: lightgray;
+}
+
+:deep(.p-menubar .p-menubar-root-list .p-menuitem-active .p-submenu-list > .p-menuitem > .p-menuitem-content:hover .p-menuitem-link .p-menuitem-text){
+  color: black!important;
+}
+
+:deep(.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link) {
+  padding: 0 0.5rem;
+}
+
+#bier {
+  height: 12px;
+}
 </style>
