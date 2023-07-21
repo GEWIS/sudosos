@@ -39,10 +39,38 @@ const leftItems = ref([ // TODO: Implement Submenus
     to: 'balance',
   },
   {
-    label: 'Points of Sale'
+    label: 'Points of Sale',
+    items: [
+      {
+        label: 'POS Overview',
+      },
+      {
+        label: 'Create',
+      }
+    ]
   },
   {
-    label: 'BAC' // TODO: Implement RBAC Determination for permissions
+    label: 'Admin',
+    items: [
+      {
+        label: 'Manage POS',
+      },
+      {
+        label: 'TV Screens',
+      },
+      {
+        label: 'Banners',
+      },
+    ],
+  },
+  {
+    label: 'BAC', // TODO: Implement RBAC Determination for permissions
+    items: [
+      {
+        label: 'Manage POS',
+      },
+
+    ]
   },
     ])
 
