@@ -1,6 +1,6 @@
 var Qr = Object.defineProperty;
 var Yr = (t, i, l) => i in t ? Qr(t, i, { enumerable: !0, configurable: !0, writable: !0, value: l }) : t[i] = l;
-var D = (t, i, l) => (Yr(t, typeof i != "symbol" ? i + "" : i, l), l);
+var I = (t, i, l) => (Yr(t, typeof i != "symbol" ? i + "" : i, l), l);
 import { createPinia as Wr, defineStore as fs } from "pinia";
 async function Jr(t, i, l) {
   let e = t, h = [];
@@ -595,15 +595,15 @@ function $t() {
   var t = x, i = Ra(), l = Va(), e = gs, h = Vs, f = Ba(), O = _a(), b = js, y = he, g = we(), S = Ca();
   return et = function(j) {
     return new Promise(function(V, F) {
-      var N = j.data, I = j.headers, z = j.responseType, G;
+      var N = j.data, D = j.headers, z = j.responseType, G;
       function ie() {
         j.cancelToken && j.cancelToken.unsubscribe(G), j.signal && j.signal.removeEventListener("abort", G);
       }
-      t.isFormData(N) && t.isStandardBrowserEnv() && delete I["Content-Type"];
+      t.isFormData(N) && t.isStandardBrowserEnv() && delete D["Content-Type"];
       var B = new XMLHttpRequest();
       if (j.auth) {
         var ze = j.auth.username || "", ke = j.auth.password ? unescape(encodeURIComponent(j.auth.password)) : "";
-        I.Authorization = "Basic " + btoa(ze + ":" + ke);
+        D.Authorization = "Basic " + btoa(ze + ":" + ke);
       }
       var Ae = h(j.baseURL, j.url);
       B.open(j.method.toUpperCase(), e(Ae, j.params, j.paramsSerializer), !0), B.timeout = j.timeout;
@@ -640,10 +640,10 @@ function $t() {
         )), B = null;
       }, t.isStandardBrowserEnv()) {
         var Ue = (j.withCredentials || O(Ae)) && j.xsrfCookieName ? l.read(j.xsrfCookieName) : void 0;
-        Ue && (I[j.xsrfHeaderName] = Ue);
+        Ue && (D[j.xsrfHeaderName] = Ue);
       }
-      "setRequestHeader" in B && t.forEach(I, function(te, Z) {
-        typeof N > "u" && Z.toLowerCase() === "content-type" ? delete I[Z] : B.setRequestHeader(Z, te);
+      "setRequestHeader" in B && t.forEach(D, function(te, Z) {
+        typeof N > "u" && Z.toLowerCase() === "content-type" ? delete D[Z] : B.setRequestHeader(Z, te);
       }), t.isUndefined(j.withCredentials) || (B.withCredentials = !!j.withCredentials), z && z !== "json" && (B.responseType = j.responseType), typeof j.onDownloadProgress == "function" && B.addEventListener("progress", j.onDownloadProgress), typeof j.onUploadProgress == "function" && B.upload && B.upload.addEventListener("progress", j.onUploadProgress), (j.cancelToken || j.signal) && (G = function(K) {
         B && (F(!K || K && K.type ? new g() : K), B.abort(), B = null);
       }, j.cancelToken && j.cancelToken.subscribe(G), j.signal && (j.signal.aborted ? G() : j.signal.addEventListener("abort", G))), N || (N = null);
@@ -2503,7 +2503,7 @@ L.createRequestFunction = On;
     }
   }
   t.BannersApi = N;
-  const I = function(u) {
+  const D = function(u) {
     return {
       /**
        *  Returns all existing borrelkaart groups
@@ -2584,7 +2584,7 @@ L.createRequestFunction = On;
       })
     };
   };
-  t.BorrelkaartgroupsApiAxiosParamCreator = I;
+  t.BorrelkaartgroupsApiAxiosParamCreator = D;
   const z = function(u) {
     const o = (0, t.BorrelkaartgroupsApiAxiosParamCreator)(u);
     return {
@@ -8241,12 +8241,12 @@ function Ne(t, i, l) {
     return m.isArrayBuffer(V) || m.isTypedArray(V) ? y && typeof Blob == "function" ? new Blob([V]) : Buffer.from(V) : V;
   }
   function S(V, F, N) {
-    let I = V;
+    let D = V;
     if (V && !N && typeof V == "object") {
       if (m.endsWith(F, "{}"))
         F = e ? F : F.slice(0, -2), V = JSON.stringify(V);
-      else if (m.isArray(V) && Zn(V) || (m.isFileList(V) || m.endsWith(F, "[]")) && (I = m.toArray(V)))
-        return F = zs(F), I.forEach(function(G, ie) {
+      else if (m.isArray(V) && Zn(V) || (m.isFileList(V) || m.endsWith(F, "[]")) && (D = m.toArray(V)))
+        return F = zs(F), D.forEach(function(G, ie) {
           !(m.isUndefined(G) || G === null) && i.append(
             // eslint-disable-next-line no-nested-ternary
             O === !0 ? is([F], ie, f) : O === null ? F : F + "[]",
@@ -8265,14 +8265,14 @@ function Ne(t, i, l) {
     if (!m.isUndefined(V)) {
       if (R.indexOf(V) !== -1)
         throw Error("Circular reference detected in " + F.join("."));
-      R.push(V), m.forEach(V, function(I, z) {
-        (!(m.isUndefined(I) || I === null) && h.call(
+      R.push(V), m.forEach(V, function(D, z) {
+        (!(m.isUndefined(D) || D === null) && h.call(
           i,
-          I,
+          D,
           m.isString(z) ? z.trim() : z,
           F,
           j
-        )) === !0 && _(I, F ? F.concat(z) : [z]);
+        )) === !0 && _(D, F ? F.concat(z) : [z]);
       }), R.pop();
     }
   }
@@ -8853,10 +8853,10 @@ const Vi = typeof XMLHttpRequest < "u", vi = Vi && function(t) {
         config: t,
         request: g
       };
-      mi(function(I) {
-        l(I), y();
-      }, function(I) {
-        e(I), y();
+      mi(function(D) {
+        l(D), y();
+      }, function(D) {
+        e(D), y();
       }, F), g = null;
     }
     if ("onloadend" in g ? g.onloadend = R : g.onreadystatechange = function() {
@@ -9398,24 +9398,25 @@ Zs.interceptors.response.use((t) => {
 });
 class Ni {
   constructor(i, l) {
-    D(this, "_authenticateApi");
-    D(this, "_balanceApi");
-    D(this, "_usersApi");
-    D(this, "_posApi");
-    D(this, "_categoryApi");
-    D(this, "_transactionApi");
-    D(this, "_bannerApi");
-    D(this, "_rootApi");
-    D(this, "_borrelkaartApi");
-    D(this, "_containerApi");
-    D(this, "_filesApi");
-    D(this, "_invoicesApi");
-    D(this, "_payoutsApi");
-    D(this, "_productsApi");
-    D(this, "_transfersApi");
-    D(this, "_vatGroupsApi");
-    D(this, "_stripeApi");
-    D(this, "_rbacApi");
+    I(this, "_authenticateApi");
+    I(this, "_balanceApi");
+    I(this, "_usersApi");
+    I(this, "_posApi");
+    I(this, "_categoryApi");
+    I(this, "_transactionApi");
+    I(this, "_bannerApi");
+    I(this, "_rootApi");
+    I(this, "_borrelkaartApi");
+    I(this, "_containerApi");
+    I(this, "_filesApi");
+    I(this, "_invoicesApi");
+    I(this, "_payoutsApi");
+    I(this, "_productsApi");
+    I(this, "_transfersApi");
+    I(this, "_vatGroupsApi");
+    I(this, "_stripeApi");
+    I(this, "_rbacApi");
+    I(this, "_openBannerApi");
     const e = new q.Configuration({ basePath: i }), h = new q.Configuration({
       basePath: i,
       baseOptions: {
@@ -9423,7 +9424,7 @@ class Ni {
       },
       apiKey: l
     });
-    this._authenticateApi = new q.AuthenticateApi(e), this._balanceApi = new q.BalanceApi(h), this._usersApi = new q.UsersApi(h), this._posApi = new q.PointofsaleApi(h), this._categoryApi = new q.ProductCategoriesApi(h), this._transactionApi = new q.TransactionsApi(h), this._bannerApi = new q.BannersApi(h), this._rootApi = new Root(), this._borrelkaartApi = new q.BorrelkaartgroupsApi(h), this._containerApi = new q.ContainersApi(h), this._filesApi = new q.FilesApi(h), this._invoicesApi = new q.InvoicesApi(h), this._payoutsApi = new q.PayoutRequestsApi(h), this._productsApi = new q.ProductsApi(h), this._transfersApi = new q.TransfersApi(h), this._vatGroupsApi = new q.VatGroupsApi(h), this._stripeApi = new q.StripeApi(h), this._rbacApi = new q.RbacApi(h);
+    this._authenticateApi = new q.AuthenticateApi(e), this._balanceApi = new q.BalanceApi(h), this._usersApi = new q.UsersApi(h), this._posApi = new q.PointofsaleApi(h), this._categoryApi = new q.ProductCategoriesApi(h), this._transactionApi = new q.TransactionsApi(h), this._bannerApi = new q.BannersApi(h), this._openBannerApi = new q.BannersApi(e), this._rootApi = new Root(), this._borrelkaartApi = new q.BorrelkaartgroupsApi(h), this._containerApi = new q.ContainersApi(h), this._filesApi = new q.FilesApi(h), this._invoicesApi = new q.InvoicesApi(h), this._payoutsApi = new q.PayoutRequestsApi(h), this._productsApi = new q.ProductsApi(h), this._transfersApi = new q.TransfersApi(h), this._vatGroupsApi = new q.VatGroupsApi(h), this._stripeApi = new q.StripeApi(h), this._rbacApi = new q.RbacApi(h);
   }
   get authenticate() {
     return this._authenticateApi;
@@ -9487,6 +9488,9 @@ class Ni {
   }
   get borrelKaart() {
     return this._borrelkaartApi;
+  }
+  get openBanner() {
+    return this._openBannerApi;
   }
 }
 export {

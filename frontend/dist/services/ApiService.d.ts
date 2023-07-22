@@ -18,6 +18,7 @@ export declare class ApiService {
     private readonly _vatGroupsApi;
     private readonly _stripeApi;
     private readonly _rbacApi;
+    private readonly _openBannerApi;
     constructor(basePath: string, apiKey: () => string);
     get authenticate(): AuthenticateApi;
     get balance(): BalanceApi;
@@ -40,4 +41,5 @@ export declare class ApiService {
     get user(): UsersApi;
     get categories(): ProductCategoriesApi;
     get borrelKaart(): BorrelkaartgroupsApi;
+    get openBanner(): BannersApi;
 }

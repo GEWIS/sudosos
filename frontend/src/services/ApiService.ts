@@ -30,6 +30,7 @@ axiosInstance.interceptors.response.use((response: AxiosResponse) => {
 });
 
 export class ApiService {
+
     private readonly _authenticateApi: AuthenticateApi;
 
     private readonly _balanceApi: BalanceApi;
@@ -66,6 +67,8 @@ export class ApiService {
 
     private readonly _rbacApi: RbacApi;
 
+    private readonly _openBannerApi: BannersApi;
+
 
     constructor(basePath: string, apiKey: () => string) {
         const configuration = new Configuration({basePath});
@@ -84,6 +87,7 @@ export class ApiService {
         this._categoryApi = new ProductCategoriesApi(withKeyConfiguration);
         this._transactionApi = new TransactionsApi(withKeyConfiguration);
         this._bannerApi = new BannersApi(withKeyConfiguration);
+        this._openBannerApi = new BannersApi(configuration);
         this._rootApi = new Root();
         this._borrelkaartApi = new BorrelkaartgroupsApi(withKeyConfiguration);
         this._containerApi = new ContainersApi(withKeyConfiguration);
@@ -179,6 +183,10 @@ export class ApiService {
 
     get borrelKaart(): BorrelkaartgroupsApi {
         return this._borrelkaartApi;
+    }
+
+    get openBanner(): BannersApi {
+        return this._openBannerApi;
     }
 
 }
