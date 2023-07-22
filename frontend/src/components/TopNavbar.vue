@@ -47,6 +47,7 @@ const leftItems = ref([ // TODO: Implement Submenus
     items: [
       {
         label: 'POS Overview',
+        to: 'point-of-sale/overview',
       },
       {
         label: 'Create',

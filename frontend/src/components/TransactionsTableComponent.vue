@@ -1,8 +1,8 @@
 <template>
 <CardComponent :action="action" :header="header" :router-link="routerLink">
   <DataTable :value="products" tableStyle="min-width: 50rem">
-    <Column field="when" header="When"></Column>
-    <Column field="what" header="What"></Column>
+    <Column field="when" header="When" />
+    <Column field="what" header="What" />
   </DataTable>
 </CardComponent>
 </template>
