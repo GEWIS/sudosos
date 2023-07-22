@@ -108,10 +108,6 @@ export class ApiService {
         return this._balanceApi;
     }
 
-    get users(): UsersApi {
-        return this._usersApi;
-    }
-
     get pos(): PointofsaleApi {
         return this._posApi;
     }

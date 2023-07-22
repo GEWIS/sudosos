@@ -53,6 +53,10 @@ export const useUserStore = defineStore('user', {
     addUser(user: UserResponse) {
       this.users.push(user);
     },
+    clearCurrent() {
+      this.current.balance = undefined;
+      this.current.user = undefined;
+    },
     deleteUser(id: number) {
       const index = this.users.findIndex((user) => user.id === id);
       if (index !== -1) {

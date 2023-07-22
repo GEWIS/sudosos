@@ -22,7 +22,6 @@ export declare class ApiService {
     constructor(basePath: string, apiKey: () => string);
     get authenticate(): AuthenticateApi;
     get balance(): BalanceApi;
-    get users(): UsersApi;
     get pos(): PointofsaleApi;
     get category(): ProductCategoriesApi;
     get transaction(): TransactionsApi;
