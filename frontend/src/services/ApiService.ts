@@ -1,83 +1,184 @@
 import {
-  AuthenticateApi,
-  BalanceApi,
-  Configuration,
-  PointofsaleApi,
-  ProductCategoriesApi,
-  TransactionsApi,
-  UsersApi,
+    AuthenticateApi,
+    BalanceApi, BannersApi, BorrelkaartgroupsApi,
+    Configuration, ContainersApi, FilesApi, InvoicesApi, PayoutRequestsApi,
+    PointofsaleApi,
+    ProductCategoriesApi, ProductsApi, RbacApi, RootApi, StripeApi,
+    TransactionsApi, TransfersApi,
+    UsersApi, VatGroupsApi,
 } from '@sudosos/sudosos-client';
-import axios, { AxiosResponse } from 'axios';
-import jwtDecode, { JwtPayload } from 'jwt-decode';
+import axios, {AxiosResponse} from 'axios';
+import jwtDecode, {JwtPayload} from 'jwt-decode';
+import {BaseAPI} from "@sudosos/sudosos-client/dist/base";
 
 // Create an axios instance
 const axiosInstance = axios.create();
 
 function setTokenInStorage(jwtToken: string) {
-  localStorage.setItem('jwt_expires', String(Number(jwtDecode<JwtPayload>(jwtToken).exp) * 1000));
-  localStorage.setItem('jwt_token', jwtToken);
+    localStorage.setItem('jwt_expires', String(Number(jwtDecode<JwtPayload>(jwtToken).exp) * 1000));
+    localStorage.setItem('jwt_token', jwtToken);
 }
 
 // Add a response interceptor to the axios instance
 axiosInstance.interceptors.response.use((response: AxiosResponse) => {
-  if (response.headers['Set-Authorization']) {
-    const newToken = response.headers['Set-Authorization'];
-    setTokenInStorage(newToken);
-  }
+    if (response.headers['Set-Authorization']) {
+        const newToken = response.headers['Set-Authorization'];
+        setTokenInStorage(newToken);
+    }
 
-  return response;
+    return response;
 });
+
 export class ApiService {
-  private readonly authenticateApi: AuthenticateApi;
+    private readonly _authenticateApi: AuthenticateApi;
 
-  private readonly balanceApi: BalanceApi;
+    private readonly _balanceApi: BalanceApi;
 
-  private readonly usersApi: UsersApi;
+    private readonly _usersApi: UsersApi;
 
-  private readonly posApi: PointofsaleApi;
+    private readonly _posApi: PointofsaleApi;
 
-  private readonly categoryApi: ProductCategoriesApi;
-  private readonly transactionApi: TransactionsApi;
+    private readonly _categoryApi: ProductCategoriesApi;
 
-  constructor(basePath: string, apiKey: () => string) {
-    const configuration = new Configuration({ basePath });
-    const withKeyConfiguration = new Configuration({
-      basePath,
-      baseOptions: {
-        axios: axiosInstance,
-      },
-      apiKey,
-    });
+    private readonly _transactionApi: TransactionsApi;
 
-    this.authenticateApi = new AuthenticateApi(configuration);
-    this.balanceApi = new BalanceApi(withKeyConfiguration);
-    this.usersApi = new UsersApi(withKeyConfiguration);
-    this.posApi = new PointofsaleApi(withKeyConfiguration);
-    this.categoryApi = new ProductCategoriesApi(withKeyConfiguration);
-    this.transactionApi = new TransactionsApi(withKeyConfiguration);
-  }
-  get authenticate() {
-    return this.authenticateApi;
-  }
+    private readonly _bannerApi: BannersApi;
 
-  get balance() {
-    return this.balanceApi;
-  }
+    private readonly _rootApi: RootApi
 
-  get user() {
-    return this.usersApi;
-  }
+    private readonly _borrelkaartApi: BorrelkaartgroupsApi;
 
-  get pos() {
-    return this.posApi;
-  }
+    private readonly _containerApi: ContainersApi;
 
-  get transaction() {
-    return this.transactionApi;
-  }
+    private readonly _filesApi: FilesApi;
 
-  get categories() {
-    return this.categoryApi;
-  }
+    private readonly _invoicesApi: InvoicesApi;
+
+    private readonly _payoutsApi: PayoutRequestsApi;
+
+    private readonly _productsApi: ProductsApi;
+
+    private readonly _transfersApi: TransfersApi;
+
+    private readonly _vatGroupsApi: VatGroupsApi;
+
+    private readonly _stripeApi: StripeApi;
+
+    private readonly _rbacApi: RbacApi;
+
+
+    constructor(basePath: string, apiKey: () => string) {
+        const configuration = new Configuration({basePath});
+        const withKeyConfiguration = new Configuration({
+            basePath,
+            baseOptions: {
+                axios: axiosInstance,
+            },
+            apiKey,
+        });
+
+        this._authenticateApi = new AuthenticateApi(configuration);
+        this._balanceApi = new BalanceApi(withKeyConfiguration);
+        this._usersApi = new UsersApi(withKeyConfiguration);
+        this._posApi = new PointofsaleApi(withKeyConfiguration);
+        this._categoryApi = new ProductCategoriesApi(withKeyConfiguration);
+        this._transactionApi = new TransactionsApi(withKeyConfiguration);
+        this._bannerApi = new BannersApi(withKeyConfiguration);
+        this._rootApi = new Root();
+        this._borrelkaartApi = new BorrelkaartgroupsApi(withKeyConfiguration);
+        this._containerApi = new ContainersApi(withKeyConfiguration);
+        this._filesApi = new FilesApi(withKeyConfiguration);
+        this._invoicesApi = new InvoicesApi(withKeyConfiguration);
+        this._payoutsApi = new PayoutRequestsApi(withKeyConfiguration);
+        this._productsApi = new ProductsApi(withKeyConfiguration);
+        this._transfersApi = new TransfersApi(withKeyConfiguration);
+        this._vatGroupsApi = new VatGroupsApi(withKeyConfiguration);
+        this._stripeApi = new StripeApi(withKeyConfiguration);
+        this._rbacApi = new RbacApi(withKeyConfiguration);
+    }
+
+    get authenticate(): AuthenticateApi {
+        return this._authenticateApi;
+    }
+
+    get balance(): BalanceApi {
+        return this._balanceApi;
+    }
+
+    get users(): UsersApi {
+        return this._usersApi;
+    }
+
+    get pos(): PointofsaleApi {
+        return this._posApi;
+    }
+
+    get category(): ProductCategoriesApi {
+        return this._categoryApi;
+    }
+
+    get transaction(): TransactionsApi {
+        return this._transactionApi;
+    }
+
+    get banner(): BannersApi {
+        return this._bannerApi;
+    }
+
+    get root(): RootApi {
+        return this._rootApi;
+    }
+
+    get borrelkaart(): BorrelkaartgroupsApi {
+        return this._borrelkaartApi;
+    }
+
+    get container(): ContainersApi {
+        return this._containerApi;
+    }
+
+    get files(): FilesApi {
+        return this._filesApi;
+    }
+
+    get invoices(): InvoicesApi {
+        return this._invoicesApi;
+    }
+
+    get payouts(): PayoutRequestsApi {
+        return this._payoutsApi;
+    }
+
+    get products(): ProductsApi {
+        return this._productsApi;
+    }
+
+    get transfers(): TransfersApi {
+        return this._transfersApi;
+    }
+
+    get vatGroups(): VatGroupsApi {
+        return this._vatGroupsApi;
+    }
+
+    get stripe(): StripeApi {
+        return this._stripeApi;
+    }
+
+    get rbac(): RbacApi {
+        return this._rbacApi;
+    }
+
+    get user(): UsersApi {
+        return this._usersApi;
+    }
+
+    get categories(): ProductCategoriesApi {
+        return this._categoryApi;
+    }
+
+    get borrelKaart(): BorrelkaartgroupsApi {
+        return this._borrelkaartApi;
+    }
 
 }

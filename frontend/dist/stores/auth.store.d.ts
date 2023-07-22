@@ -1,4 +1,5 @@
 import { AuthenticationResponse, UserResponse } from "@sudosos/sudosos-client";
+import { ApiService } from "../services/ApiService";
 interface AuthStoreState {
     user: UserResponse | null;
     roles: string[];
