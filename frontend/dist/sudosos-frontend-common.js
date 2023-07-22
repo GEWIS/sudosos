@@ -145,7 +145,7 @@ const Xr = fs("user", {
     }
   }
 });
-var ae = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, q = {}, Os = {}, gt = { exports: {} }, Ps = function(i, l) {
+var ae = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, L = {}, Os = {}, gt = { exports: {} }, Ps = function(i, l) {
   return function() {
     for (var h = new Array(arguments.length), f = 0; f < h.length; f++)
       h[f] = arguments[f];
@@ -1070,7 +1070,7 @@ k.spread = en();
 k.isAxiosError = tn();
 gt.exports = k;
 gt.exports.default = k;
-var nn = gt.exports, Cs = nn, L = {}, Tt = {};
+var nn = gt.exports, Cs = nn, q = {}, Tt = {};
 (function(t) {
   Object.defineProperty(t, "__esModule", { value: !0 }), t.RequiredError = t.BaseAPI = t.COLLECTION_FORMATS = t.BASE_PATH = void 0;
   const i = Cs;
@@ -1120,15 +1120,15 @@ var Et = ae && ae.__awaiter || function(t, i, l, e) {
     g((e = e.apply(t, i || [])).next());
   });
 };
-Object.defineProperty(L, "__esModule", { value: !0 });
-L.createRequestFunction = L.toPathString = L.serializeDataIfNeeded = L.setSearchParams = L.setOAuthToObject = L.setBearerAuthToObject = L.setBasicAuthToObject = L.setApiKeyToObject = L.assertParamExists = L.DUMMY_BASE_URL = void 0;
+Object.defineProperty(q, "__esModule", { value: !0 });
+q.createRequestFunction = q.toPathString = q.serializeDataIfNeeded = q.setSearchParams = q.setOAuthToObject = q.setBearerAuthToObject = q.setBasicAuthToObject = q.setApiKeyToObject = q.assertParamExists = q.DUMMY_BASE_URL = void 0;
 const on = Tt;
-L.DUMMY_BASE_URL = "https://example.com";
+q.DUMMY_BASE_URL = "https://example.com";
 const cn = function(t, i, l) {
   if (l == null)
     throw new on.RequiredError(i, `Required parameter ${i} was null or undefined when calling ${t}.`);
 };
-L.assertParamExists = cn;
+q.assertParamExists = cn;
 const ln = function(t, i, l) {
   return Et(this, void 0, void 0, function* () {
     if (l && l.apiKey) {
@@ -1137,11 +1137,11 @@ const ln = function(t, i, l) {
     }
   });
 };
-L.setApiKeyToObject = ln;
+q.setApiKeyToObject = ln;
 const un = function(t, i) {
   i && (i.username || i.password) && (t.auth = { username: i.username, password: i.password });
 };
-L.setBasicAuthToObject = un;
+q.setBasicAuthToObject = un;
 const dn = function(t, i) {
   return Et(this, void 0, void 0, function* () {
     if (i && i.accessToken) {
@@ -1150,7 +1150,7 @@ const dn = function(t, i) {
     }
   });
 };
-L.setBearerAuthToObject = dn;
+q.setBearerAuthToObject = dn;
 const hn = function(t, i, l, e) {
   return Et(this, void 0, void 0, function* () {
     if (e && e.accessToken) {
@@ -1159,7 +1159,7 @@ const hn = function(t, i, l, e) {
     }
   });
 };
-L.setOAuthToObject = hn;
+q.setOAuthToObject = hn;
 function At(t, i, l = "") {
   i != null && (typeof i == "object" ? Array.isArray(i) ? i.forEach((e) => At(t, e, l)) : Object.keys(i).forEach((e) => At(t, i[e], `${l}${l !== "" ? "." : ""}${e}`)) : t.has(l) ? t.append(l, i) : t.set(l, i));
 }
@@ -1167,23 +1167,23 @@ const pn = function(t, ...i) {
   const l = new URLSearchParams(t.search);
   At(l, i), t.search = l.toString();
 };
-L.setSearchParams = pn;
+q.setSearchParams = pn;
 const An = function(t, i, l) {
   const e = typeof t != "string";
   return (e && l && l.isJsonMime ? l.isJsonMime(i.headers["Content-Type"]) : e) ? JSON.stringify(t !== void 0 ? t : {}) : t || "";
 };
-L.serializeDataIfNeeded = An;
+q.serializeDataIfNeeded = An;
 const fn = function(t) {
   return t.pathname + t.search + t.hash;
 };
-L.toPathString = fn;
+q.toPathString = fn;
 const On = function(t, i, l, e) {
   return (h = i, f = l) => {
     const O = Object.assign(Object.assign({}, t.options), { url: ((e == null ? void 0 : e.basePath) || f) + t.url });
     return h.request(O);
   };
 };
-L.createRequestFunction = On;
+q.createRequestFunction = On;
 (function(t) {
   var i = ae && ae.__awaiter || function(u, o, s, n) {
     function a(r) {
@@ -1213,7 +1213,7 @@ L.createRequestFunction = On;
     });
   };
   Object.defineProperty(t, "__esModule", { value: !0 }), t.RootApiFp = t.RootApiAxiosParamCreator = t.RbacApi = t.RbacApiFactory = t.RbacApiFp = t.RbacApiAxiosParamCreator = t.ProductsApi = t.ProductsApiFactory = t.ProductsApiFp = t.ProductsApiAxiosParamCreator = t.ProductCategoriesApi = t.ProductCategoriesApiFactory = t.ProductCategoriesApiFp = t.ProductCategoriesApiAxiosParamCreator = t.PointofsaleApi = t.PointofsaleApiFactory = t.PointofsaleApiFp = t.PointofsaleApiAxiosParamCreator = t.PayoutRequestsApi = t.PayoutRequestsApiFactory = t.PayoutRequestsApiFp = t.PayoutRequestsApiAxiosParamCreator = t.InvoicesApi = t.InvoicesApiFactory = t.InvoicesApiFp = t.InvoicesApiAxiosParamCreator = t.FilesApi = t.FilesApiFactory = t.FilesApiFp = t.FilesApiAxiosParamCreator = t.ContainersApi = t.ContainersApiFactory = t.ContainersApiFp = t.ContainersApiAxiosParamCreator = t.BorrelkaartgroupsApi = t.BorrelkaartgroupsApiFactory = t.BorrelkaartgroupsApiFp = t.BorrelkaartgroupsApiAxiosParamCreator = t.BannersApi = t.BannersApiFactory = t.BannersApiFp = t.BannersApiAxiosParamCreator = t.BalanceApi = t.BalanceApiFactory = t.BalanceApiFp = t.BalanceApiAxiosParamCreator = t.AuthenticateApi = t.AuthenticateApiFactory = t.AuthenticateApiFp = t.AuthenticateApiAxiosParamCreator = void 0, t.VatGroupsApi = t.VatGroupsApiFactory = t.VatGroupsApiFp = t.VatGroupsApiAxiosParamCreator = t.UsersApi = t.UsersApiFactory = t.UsersApiFp = t.UsersApiAxiosParamCreator = t.TransfersApi = t.TransfersApiFactory = t.TransfersApiFp = t.TransfersApiAxiosParamCreator = t.TransactionsApi = t.TransactionsApiFactory = t.TransactionsApiFp = t.TransactionsApiAxiosParamCreator = t.TestApi = t.TestApiFactory = t.TestApiFp = t.TestApiAxiosParamCreator = t.StripeApi = t.StripeApiFactory = t.StripeApiFp = t.StripeApiAxiosParamCreator = t.RootApi = t.RootApiFactory = void 0;
-  const l = Cs, e = L, h = Tt, f = function(u) {
+  const l = Cs, e = q, h = Tt, f = function(u) {
     return {
       /**
        *  Key login and hand out token.
@@ -7925,7 +7925,7 @@ Ie.Configuration = Pn;
       f !== "default" && !Object.prototype.hasOwnProperty.call(h, f) && i(h, e, f);
   };
   Object.defineProperty(t, "__esModule", { value: !0 }), l(Os, t), l(Ie, t);
-})(q);
+})(L);
 function ws(t, i) {
   return function() {
     return t.apply(i, arguments);
@@ -9417,14 +9417,14 @@ class Ni {
     I(this, "_stripeApi");
     I(this, "_rbacApi");
     I(this, "_openBannerApi");
-    const e = new q.Configuration({ basePath: i }), h = new q.Configuration({
+    const e = new L.Configuration({ basePath: i }), h = new L.Configuration({
       basePath: i,
       baseOptions: {
         axios: Zs
       },
       apiKey: l
     });
-    this._authenticateApi = new q.AuthenticateApi(e), this._balanceApi = new q.BalanceApi(h), this._usersApi = new q.UsersApi(h), this._posApi = new q.PointofsaleApi(h), this._categoryApi = new q.ProductCategoriesApi(h), this._transactionApi = new q.TransactionsApi(h), this._bannerApi = new q.BannersApi(h), this._openBannerApi = new q.BannersApi(e), this._rootApi = new Root(), this._borrelkaartApi = new q.BorrelkaartgroupsApi(h), this._containerApi = new q.ContainersApi(h), this._filesApi = new q.FilesApi(h), this._invoicesApi = new q.InvoicesApi(h), this._payoutsApi = new q.PayoutRequestsApi(h), this._productsApi = new q.ProductsApi(h), this._transfersApi = new q.TransfersApi(h), this._vatGroupsApi = new q.VatGroupsApi(h), this._stripeApi = new q.StripeApi(h), this._rbacApi = new q.RbacApi(h);
+    this._authenticateApi = new L.AuthenticateApi(e), this._balanceApi = new L.BalanceApi(h), this._usersApi = new L.UsersApi(h), this._posApi = new L.PointofsaleApi(h), this._categoryApi = new L.ProductCategoriesApi(h), this._transactionApi = new L.TransactionsApi(h), this._bannerApi = new L.BannersApi(h), this._openBannerApi = new L.BannersApi(e), this._rootApi = new L.RootApi(), this._borrelkaartApi = new L.BorrelkaartgroupsApi(h), this._containerApi = new L.ContainersApi(h), this._filesApi = new L.FilesApi(h), this._invoicesApi = new L.InvoicesApi(h), this._payoutsApi = new L.PayoutRequestsApi(h), this._productsApi = new L.ProductsApi(h), this._transfersApi = new L.TransfersApi(h), this._vatGroupsApi = new L.VatGroupsApi(h), this._stripeApi = new L.StripeApi(h), this._rbacApi = new L.RbacApi(h);
   }
   get authenticate() {
     return this._authenticateApi;
@@ -9447,7 +9447,7 @@ class Ni {
   get banner() {
     return this._bannerApi;
   }
-  get root() {
+  get rootApi() {
     return this._rootApi;
   }
   get borrelkaart() {

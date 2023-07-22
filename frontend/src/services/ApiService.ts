@@ -9,7 +9,6 @@ import {
 } from '@sudosos/sudosos-client';
 import axios, {AxiosResponse} from 'axios';
 import jwtDecode, {JwtPayload} from 'jwt-decode';
-import {BaseAPI} from "@sudosos/sudosos-client/dist/base";
 
 // Create an axios instance
 const axiosInstance = axios.create();
@@ -88,7 +87,7 @@ export class ApiService {
         this._transactionApi = new TransactionsApi(withKeyConfiguration);
         this._bannerApi = new BannersApi(withKeyConfiguration);
         this._openBannerApi = new BannersApi(configuration);
-        this._rootApi = new Root();
+        this._rootApi = new RootApi();
         this._borrelkaartApi = new BorrelkaartgroupsApi(withKeyConfiguration);
         this._containerApi = new ContainersApi(withKeyConfiguration);
         this._filesApi = new FilesApi(withKeyConfiguration);
@@ -129,7 +128,7 @@ export class ApiService {
         return this._bannerApi;
     }
 
-    get root(): RootApi {
+    get rootApi(): RootApi {
         return this._rootApi;
     }
 

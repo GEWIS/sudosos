@@ -27,7 +27,7 @@ export declare class ApiService {
     get category(): ProductCategoriesApi;
     get transaction(): TransactionsApi;
     get banner(): BannersApi;
-    get root(): RootApi;
+    get rootApi(): RootApi;
     get borrelkaart(): BorrelkaartgroupsApi;
     get container(): ContainersApi;
     get files(): FilesApi;
