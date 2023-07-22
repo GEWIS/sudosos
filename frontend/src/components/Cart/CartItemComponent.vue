@@ -1,7 +1,7 @@
 <template>
   <div class="cart-item">
     <div class="product">
-      <img :src="getImageSrc(product)" :alt="product.name" class="product-image" />
+      <img :src="getProductImageSrc(product)" :alt="product.name" class="product-image" />
       <div class="product-details">
         <h4 class="product-name">{{ product.name }}</h4>
         <p class="product-category">{{ product.category.name }}</p>
@@ -19,11 +19,10 @@
 <script setup lang="ts">
 import {computed, ref} from 'vue';
 import { CartProduct, useCartStore } from "@/stores/cart.store";
-import { usePointOfSaleStore } from "@/stores/pos.store";
-import { ProductResponse} from "@sudosos/sudosos-client";
+import {getProductImageSrc} from "@/utils/imageUtils";
+import {formatPrice} from "@/utils/priceUtils";
 
 const cartStore = useCartStore();
-const posStore = usePointOfSaleStore();
 
 const props = defineProps({
   cartProduct: {
@@ -33,15 +32,6 @@ const props = defineProps({
 });
 
 const product = ref(props.cartProduct.product);
-
-const getImageSrc = (product: ProductResponse) => {
-  if (!product.image) {
-    return 'https://imgur.com/CS0aauU.png';
-  } else {
-    return `${import.meta.env.VITE_APP_IMAGE_BASE}products/${product.image}`;
-  }
-};
-
 const decreaseQuantity = () => {
   cartStore.removeFromCart(props.cartProduct);
 };
@@ -50,13 +40,9 @@ const increaseQuantity = () => {
   cartStore.addToCart({ ...props.cartProduct, count: 1 });
 };
 
-const getProductPrice = () => {
-  return (product.value.priceInclVat.amount / 100).toFixed(2);
-};
-
 const totalPrice = computed(() => {
-  const price = parseFloat(getProductPrice());
-  return (price * props.cartProduct.count).toFixed(2);
+  const price = product.value.priceInclVat.amount * props.cartProduct.count
+  return formatPrice(price);
 });
 </script>
 

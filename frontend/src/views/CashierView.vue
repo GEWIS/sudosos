@@ -21,7 +21,7 @@ import {usePointOfSaleStore} from "@/stores/pos.store";
 import {PointOfSaleWithContainersResponse} from "@sudosos/sudosos-client";
 import PointOfSaleDisplayComponent from "@/components/PointOfSaleDisplayComponent.vue";
 import SettingsIconComponent from "@/components/SettingsIconComponent.vue";
-import CartComponent from "@/components/CartComponent.vue";
+import CartComponent from "@/components/Cart/CartComponent.vue";
 
 interface Data {
   posNotLoaded: boolean;

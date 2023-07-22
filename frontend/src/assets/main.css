@@ -14,6 +14,7 @@
   font-family: Lato, Arial, sans-serif;
   height: calc(100vh - 120px);
   width: calc(100vw - 68px);
+  position: relative;;
 }
 
 @media (min-width: 1024px) {

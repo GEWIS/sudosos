@@ -11,7 +11,7 @@
     <div class="cart-info">
       <div class="total-info">
         <div class="total-label">Total</div>
-        <div class="total-price">€{{ getTotalPrice() }}</div>
+        <div class="total-price">€{{ formatPrice(totalPrice) }}</div>
       </div>
       <div class="warning-line" v-if="balance">
         <font-awesome-icon icon="fa-solid fa-exclamation-triangle"/> Your debit after purchase is €{{ formattedBalanceAfter }}
@@ -31,25 +31,22 @@
 
 <script setup lang="ts">
 import { useCartStore } from '@/stores/cart.store';
-import CartItemComponent from "@/components/CartItemComponent.vue";
+import CartItemComponent from "@/components/Cart/CartItemComponent.vue";
 import {computed, onMounted, ref, watch} from "vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {useUserStore} from "@sudosos/sudosos-frontend-common";
 import apiService from "@/services/ApiService";
+import {formatPrice} from "@/utils/priceUtils";
 
 const cartStore = useCartStore();
-const userStore = useUserStore();
 const cartItems = cartStore.getProducts;
-const cartTotalCount = computed( () => cartStore.cartTotalCount);
 const current = computed( () => cartStore.getBuyer);
 const totalPrice = computed(() => cartStore.getTotalPrice);
 
 const balance = ref<number | null>(null);
-;
 const getBalance = async () => {
   if (!cartStore.buyer) return 0;
   try {
-    const response = await apiService.balance.getBalanceId(cartStore.buyer.id);
+    const response = await apiService.balance.getBalanceId(cartStore.buyer.id)
     return response.data.amount.amount;
   } catch (error) {
     return null;
@@ -64,15 +61,11 @@ watch(() => cartStore.buyer, async () => {
   balance.value = (await getBalance());
 });
 
-
 const formattedBalanceAfter = computed(() => {
   if (!balance.value) return null;
-  return ((balance.value - totalPrice.value) / 100).toFixed(2);
+  const price = (balance.value - totalPrice.value);
+  return formatPrice(price);
 })
-const getTotalPrice = () => {
-  return (totalPrice.value / 100).toFixed(2);
-};
-
 const clearCart = () => {
   cartStore.clearCart();
 };

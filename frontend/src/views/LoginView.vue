@@ -12,6 +12,7 @@
       <KeypadComponent @input="handleInput" @backspace="handleBackspace" @continue="handleContinue" />
       <!-- Your login content here -->
     </div>
+    <BannerComponent v-if="shouldShowBanner"/>
   </div>
   <SettingsIconComponent />
 </template>
@@ -19,15 +20,19 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import SettingsIconComponent from "@/components/SettingsIconComponent.vue";
-import KeypadComponent from "@/components/KeypadComponent.vue";
-import KeypadDisplayComponent from "@/components/KeypadDisplayComponent.vue";
+import KeypadComponent from "@/components/Keypad/KeypadComponent.vue";
+import KeypadDisplayComponent from "@/components/Keypad/KeypadDisplayComponent.vue";
 import router from "@/router";
 import {useCartStore} from "@/stores/cart.store";
 import {useAuthStore, useUserStore} from "@sudosos/sudosos-frontend-common";
-import ApiService from "@/services/ApiService";
+import apiService from "@/services/ApiService";
+import {useBannerStore} from "@/stores/banner.store";
+import BannerComponent from "@/components/Banner/BannerComponent.vue";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
+const bannerStore = useBannerStore();
+bannerStore.fetchBanners();
 
 let userId = ref('');
 let pinCode = ref('');
@@ -83,13 +88,13 @@ const displayContainerClasses = computed(() => ({
 
 const login = async () => {
   loggingIn.value = true;
-  await authStore.gewisPinlogin(userId.value, pinCode.value, ApiService).then(async () => {
+  await authStore.gewisPinlogin(userId.value, pinCode.value, apiService).then(async () => {
     const user = authStore.getUser;
     if (user === null) return;
 
     if (userStore.getActiveUsers.length === 0) await userStore.fetchUsers;
     useCartStore().setBuyer(user);
-    userStore.fetchCurrentUserBalance(user.id, ApiService);
+    userStore.fetchCurrentUserBalance(user.id, apiService);
 
     await router.push({ path: '/cashier' });
     userId.value = '';
@@ -106,6 +111,16 @@ const login = async () => {
 const handleContinue = () => {
   switchInput();
 };
+
+const shouldShowBanner = computed(() => {
+  const minHeightThreshold = 950;
+  const screenHeight = window.innerHeight;
+
+  const screenWidth = window.innerWidth;
+  const minWidthThreshold = 1280;
+
+  return screenHeight >= minHeightThreshold && screenWidth >= minWidthThreshold;
+});
 
 </script>
 

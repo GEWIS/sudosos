@@ -11,6 +11,8 @@
 <script setup lang="ts">
 import {ContainerWithProductsResponse, ProductResponse} from "@sudosos/sudosos-client";
 import {useCartStore} from "@/stores/cart.store";
+import {getProductImageSrc} from "@/utils/imageUtils";
+import {formatPrice} from "@/utils/priceUtils";
 
 const props = defineProps({
   product: {
@@ -23,23 +25,10 @@ const props = defineProps({
   }
 });
 
-const getImageSrc = () => {
-  if (!props.product.image) {
-    return 'https://imgur.com/CS0aauU.png';
-  } else {
-    return `${import.meta.env.VITE_APP_IMAGE_BASE}products/${props.product.image}`;
-  }
-};
-
-const getProductPrice = () => {
-  return (props.product.priceInclVat.amount / 100).toFixed(2);
-};
-
-const image = getImageSrc();
-const productPrice = getProductPrice();
+const image = getProductImageSrc(props.product);
+const productPrice = formatPrice(props.product?.priceInclVat.amount);
 
 const cartStore = useCartStore();
-
 const addToCart = () => {
   cartStore.addToCart({
     product: props.product,
