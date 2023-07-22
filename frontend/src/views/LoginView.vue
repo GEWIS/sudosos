@@ -2,7 +2,7 @@
 <div>
   <main>
     <img id="login-image" src="../assets/img/bier.png" alt="logo">
-    <h1>SudoSOS Login</h1>
+    <h1>{{ $t('login.SudoSOS Login' )}}</h1>
     <Button id="login-gewis-button" @click="loginViaGEWIS" severity="success"><img id="gewis-branding" src="../assets/img/gewis-branding.svg" alt="GEWIS">Login via GEWIS</Button>
     <hr>
     <label for="username">Username</label>
