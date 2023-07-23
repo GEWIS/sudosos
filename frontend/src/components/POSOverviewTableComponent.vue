@@ -1,7 +1,7 @@
 <template>
   <CardComponent header="Points of Sale">
-    <DataTable :value="pos">
-      <Column field="title" header="Title"/>
+    <DataTable :value="listOfPOS">
+      <Column field="name" header="Title"/>
       <Column field="owner" header="Owner"/>
       <Column field="containerAmount" header="Containers"/>
       <Column headerStyle="width: 3rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
@@ -23,32 +23,14 @@ const userStore = useUserStore();
 const pointOfSaleStore = usePointOfSaleStore();
 
 
-onMounted(() => {
+onMounted(async () => {
   const userId = userStore.getCurrentUser.user.id;
   console.error(userId);
-  pointOfSaleStore.getUserPointsOfSale(userId).then((resp)=>console.log(resp));
-  pos.value = [
-    {
-      title: "Point of Sale 1",
-      owner: "BAC",
-      containerAmount: 87,
-      id: 0,
-    },
-    {
-      title: "Point of Sale 2",
-      owner: "GEWIS",
-      containerAmount: 3,
-      id: 1,
-    },
-    {
-      title: "Point of Sale 3",
-      owner: "I.V.V",
-      containerAmount: 2,
-      id: 2,
-    },
-  ];
+  listOfPOS.value = await pointOfSaleStore.getUserPointsOfSale(userId).then((resp)=> {return resp.data.records;});
+  console.log(listOfPOS.value);
+
 });
-const pos = ref();
+const listOfPOS = ref();
 </script>
 
 <style scoped lang="scss">

@@ -14,7 +14,7 @@ import CardComponent from "@/components/CardComponent.vue";
 import type {PaginatedFinancialMutationResponse} from "@sudosos/sudosos-client";
 import {onMounted, ref} from "vue";
 
-const props = defineProps({
+defineProps({
   action: {
     type: String,
     required: false,

@@ -1,7 +1,9 @@
+<!--TODO: Make typing correct for the POSResponse-->
+
 <template>
   <div class="page-container">
     <div class="page-title" id="pos-info-header">
-      <span>{{ id }}</span>
+      <span>{{ `POS: ${pos ? pos.name : ''}` }}</span>
       <div>
         <Button severity="secondary" label="Edit" icon="pi pi-pencil"/>
         <Button severity="danger" label="Close" icon="pi pi-times"/>
@@ -13,11 +15,15 @@
         <div class="pos-general-info">
           <h3>General</h3>
           <b>Title</b>
-          <p>Point of Sale 1</p>
+          <p>{{ pos ? pos.name: '' }}</p>
           <b>Owner</b>
-          <p>BAC</p>
+          <p>{{ pos ? pos.owner.firstName + pos.owner.lastName: '' }}</p>
         </div>
-        <ContainerCardComponent class="container-card"/>
+        <ContainerCardComponent
+            class="container-card"
+            v-if="pos && pos.containers"
+            :data="pos.containers"
+        />
       </div>
       <TransactionsTableComponent header="transactions" class="pos-transactions" />
     </div>
@@ -26,23 +32,21 @@
 
 
 <script setup lang="ts">
-import {onMounted, ref} from 'vue';
+import {onBeforeMount, Ref, ref} from 'vue';
 import {useRoute} from 'vue-router';
 import ContainerCardComponent from "@/views/PointOfSale/ContainerCardComponent.vue";
 import TransactionsTableComponent from "@/components/TransactionsTableComponent.vue";
-import {usePointOfSaleStore} from "@/stores/pos.store"; // Import the useRoute function from vue-router
+import {usePointOfSaleStore} from "@/stores/pos.store";
+import type {PointOfSaleWithContainersResponse} from "@sudosos/sudosos-client";
 
 const route = useRoute(); // Use the useRoute function to access the current route
 const id = ref();
-
 const pointOfSaleStore = usePointOfSaleStore();
-
-onMounted(async () => {
-  // Get the 'id' parameter from the route and store it in the 'id' variable
-  console.log(route.params);
+const pos: Ref<PointOfSaleWithContainersResponse | null | undefined> = ref();
+onBeforeMount(async () => {
   id.value = route.params.id; // TODO: Implement API Getter for the POS in question
-  const pos = await pointOfSaleStore.fetchPointOfSale(id.value);
-  console.log(pos);
+  await pointOfSaleStore.fetchPointOfSale(id.value);
+  pos.value = pointOfSaleStore.getPos;
 });
 </script>
 
