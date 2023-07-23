@@ -1,5 +1,5 @@
 <template>
-  <BannerDisplayComponent :banner="currentBanner"/>
+  <BannerDisplayComponent v-if="currentBanner" :banner="currentBanner"/>
 </template>
 
 <script setup lang="ts">

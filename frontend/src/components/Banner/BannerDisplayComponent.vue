@@ -1,6 +1,6 @@
 <template>
   <div class="banner-content">
-    <img class="banner-image" :src="getBannerImageSrc(banner)" v-if="banner" :alt="banner.name"/>
+    <img class="banner-image" :src="getBannerImageSrc(banner)" :alt="banner.name"/>
   </div>
 </template>
 
