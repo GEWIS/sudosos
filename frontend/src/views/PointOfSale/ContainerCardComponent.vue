@@ -41,6 +41,7 @@ console.log(props.data);
 }
 
 :deep(.p-datatable .p-datatable-tbody > tr > td) {
+  padding: 0.25rem 1rem;
   border: 1px solid #dee2e6;
   border-radius: 4px;
   font-size: 1rem;
