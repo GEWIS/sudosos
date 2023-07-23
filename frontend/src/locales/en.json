@@ -1,0 +1,24 @@
+{
+  "login": {
+    "SudoSOS Login": "SudoSOS Login",
+    "Login via GEWIS": "Login via GEWIS",
+    "Login": "Login",
+    "Username": "Username",
+    "Enter username": "Enter username",
+    "Password": "Password",
+    "Enter password": "Enter password",
+    "Password reset": "Reset password (External accounts only)",
+    "Back to login": "Go back to login",
+    "Email": "Email",
+    "Enter email": "Enter email",
+    "Reset": "Reset password",
+    "Email sent": "If there exists an account on this email address, an email has been sent to {email} with instructions on how to reset your password.",
+    "Set new password": "Set new password",
+    "New password": "New password",
+    "Confirm password": "Confirm new password",
+    "Enter password again": "Enter password again",
+    "Reset the password for": "Reset the password for {email}",
+    "Passwords not equal": "Passwords are not equal",
+    "Password not strong": "Password needs to be longer than 8 characters and needs a lower- and uppercase letter, number and a special character"
+  }
+}

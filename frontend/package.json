@@ -22,6 +22,7 @@
     "stripe": "^12.14.0",
     "uuid": "^9.0.0",
     "vue": "^3.3.4",
+    "vue-i18n": "^9.2.2",
     "vue-router": "^4.2.2"
   },
   "devDependencies": {

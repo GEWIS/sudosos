@@ -2,15 +2,17 @@
 <div>
   <main>
     <img id="login-image" src="../assets/img/bier.png" alt="logo">
-    <h1>SudoSOS Login</h1>
-    <Button id="login-gewis-button" @click="loginViaGEWIS" severity="success"><img id="gewis-branding" src="../assets/img/gewis-branding.svg" alt="GEWIS">Login via GEWIS</Button>
+    <h1>{{ $t('login.SudoSOS Login' )}}</h1>
+    <Button id="login-gewis-button" @click="loginViaGEWIS" severity="success"><img id="gewis-branding" src="../assets/img/gewis-branding.svg" alt="GEWIS">{{
+        $t('login.Login via GEWIS')
+      }}</Button>
     <hr>
-    <label for="username">Username</label>
-    <InputText id="username" type="text" v-model="username" placeholder="Enter username"/>
-    <label for="password">Password</label>
-    <InputText id="password" type="password" v-model="password" placeholder="Enter password" />
-    <Button @click="ldapLogin" id="login-button" severity="danger">Login</Button>
-    <a href="https://wieditleesttrekteenbak.nl/">Reset password (External accounts only)</a>
+    <label for="username">{{$t('login.Username')}}</label>
+    <InputText id="username" type="text" v-model="username" :placeholder="$t('login.Enter username')"/>
+    <label for="password">{{$t('login.Password')}}</label>
+    <InputText id="password" type="password" v-model="password" :placeholder="$t('login.Enter password')" />
+    <Button @click="ldapLogin" id="login-button" severity="danger">{{$t('login.Login')}}</Button>
+    <a href="https://wieditleesttrekteenbak.nl/">{{$t('login.Password reset')}}</a>
   </main>
   <CopyrightBanner />
 </div>
