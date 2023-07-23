@@ -8,6 +8,7 @@
       <div class="wrapper">
         <div class="pos-wrapper">
           <PointOfSaleDisplayComponent :point-of-sale="currentPos" />
+          <ActivityComponent/>
         </div>
         <div class="cart-wrapper">
           <CartComponent />
@@ -16,45 +17,35 @@
   </div>
   <SettingsIconComponent />
 </template>
-<script lang="ts">
+<script setup lang="ts">
 import {usePointOfSaleStore} from "@/stores/pos.store";
 import {PointOfSaleWithContainersResponse} from "@sudosos/sudosos-client";
 import PointOfSaleDisplayComponent from "@/components/PointOfSaleDisplayComponent.vue";
 import SettingsIconComponent from "@/components/SettingsIconComponent.vue";
 import CartComponent from "@/components/Cart/CartComponent.vue";
+import {onMounted, Ref, ref, watch} from "vue";
+import {useActivityStore} from "@/stores/activity.store";
+import ActivityComponent from "@/components/ActivityComponent.vue";
 
-interface Data {
-  posNotLoaded: boolean;
-  currentPos: PointOfSaleWithContainersResponse | undefined;
-}
-export default {
-  name: "CashierView",
-  components: {
-    CartComponent,
-    SettingsIconComponent,
-    PointOfSaleDisplayComponent,
-    // Home,
-  },
-  data(): Data {
-    return {
-      posNotLoaded: true,
-      currentPos: undefined,
-    };
-  },
-  async mounted() {
-    const pointOfSaleStore = usePointOfSaleStore();
+const posNotLoaded = ref(true);
+const currentPos: Ref<PointOfSaleWithContainersResponse | undefined> = ref(undefined);
+const pointOfSaleStore = usePointOfSaleStore();
+const activityStore = useActivityStore();
 
-    await pointOfSaleStore.fetchPointOfSale(1).then(() => {
-      if (pointOfSaleStore.pointOfSale) this.currentPos = pointOfSaleStore.pointOfSale;
-      this.posNotLoaded = false;
-    });
-  },
-  watch: {
-    '$store.pointOfSale.pointOfSale'(newValue) {
-      this.currentPos = newValue;
-    },
-  },
+const fetchPointOfSale = async () => {
+  await pointOfSaleStore.fetchPointOfSale(1);
+  if (pointOfSaleStore.pointOfSale) {
+    currentPos.value = pointOfSaleStore.pointOfSale;
+  }
+  posNotLoaded.value = false;
+  activityStore.startTimer();
 };
+
+onMounted(fetchPointOfSale);
+
+watch(() => pointOfSaleStore.pointOfSale, (newValue) => {
+  if (newValue) currentPos.value = newValue;
+});
 </script>
 <style scoped>
 .wrapper {

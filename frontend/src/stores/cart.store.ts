@@ -23,10 +23,14 @@ interface CartState {
   buyer: UserResponse | null,
 }
 
+const COUNTDOWN_TIMER = 3;
+
 export const useCartStore = defineStore('cart', {
   state: (): CartState => ({
     products: [] as CartProduct[],
     buyer: null,
+    countdown: null,
+    checkingOut: false,
   }),
   getters: {
     cartTotalCount(): number {
@@ -83,7 +87,8 @@ export const useCartStore = defineStore('cart', {
     },
     async checkout(): Promise<void> {
       const pos = usePointOfSaleStore().getPos;
-      if (!this.buyer || !pos) return;
+      if (!this.buyer || !pos || this.checkingOut) return;
+      this.checkingOut = true;
 
       const containerSubTransactionsRows: { [key: string]: { container: ContainerResponse, row: SubTransactionRowRequest[] } } = {};
       this.products.map((cartProduct) => {
@@ -126,9 +131,6 @@ export const useCartStore = defineStore('cart', {
         };
       });
 
-      console.error(containerSubTransactionsRows);
-      // this.products.map()
-      //
       const request: TransactionRequest = {
         createdBy: this.buyer.id,
         from: this.buyer.id,
@@ -144,12 +146,9 @@ export const useCartStore = defineStore('cart', {
         },
       }
 
-      console.error(apiService.transaction);
-      console.error(await (apiService.transaction.validateTransaction(request)));
-      // ApiService.transaction.transactionsValidatePost()
-      // Perform checkout logic here, e.g., send cart data to the server
-      // Reset the cart after successful checkout
-      this.clearCart();
+      await (apiService.transaction.validateTransaction(request)).then((res) => {
+        this.clearCart();
+      });
     },
   },
 });

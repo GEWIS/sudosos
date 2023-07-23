@@ -1,12 +1,12 @@
 <template>
-  <BannerDisplayComponent :banner="activeBanners[0]"/>
+  <BannerDisplayComponent :banner="currentBanner"/>
 </template>
 
 <script setup lang="ts">
 import {useBannerStore} from "@/stores/banner.store";
 import BannerDisplayComponent from "@/components/Banner/BannerDisplayComponent.vue";
 import {storeToRefs} from "pinia";
-import {onUnmounted, watch} from "vue";
+import {onUnmounted, ref, watch} from "vue";
 
 const bannerStore = useBannerStore();
 bannerStore.fetchBanners();
@@ -15,23 +15,22 @@ const { activeBanners } = storeToRefs(bannerStore);
 
 // Initialize the index and currentBanner with the first active banner
 let bannerIndex = 0;
-let currentBanner = activeBanners.value[bannerIndex];
+let currentBanner = ref(activeBanners.value[bannerIndex]);
 
-// Function to switch to the next banner
 const switchToNextBanner = () => {
   bannerIndex = (bannerIndex + 1) % activeBanners.value.length;
-  currentBanner = activeBanners.value[bannerIndex];
+  currentBanner.value = activeBanners.value[bannerIndex];
 };
 
 let intervalId: number;
-if (currentBanner) setInterval(switchToNextBanner, currentBanner.duration * 1000);
+if (currentBanner.value) setInterval(switchToNextBanner, currentBanner.value.duration * 1000);
 
 watch(activeBanners, (newBanners) => {
   if (newBanners.length > 0) {
-    currentBanner = newBanners[bannerIndex];
+    currentBanner.value = newBanners[bannerIndex];
     // Clear the existing interval and start a new one with the updated duration
     clearInterval(intervalId);
-    intervalId = setInterval(switchToNextBanner, currentBanner.duration * 1000);
+    intervalId = setInterval(switchToNextBanner, currentBanner.value.duration * 1000);
   }
 });
 

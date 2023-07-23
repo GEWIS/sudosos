@@ -10,7 +10,7 @@ import {getBannerImageSrc} from "@/utils/imageUtils";
 
 const props = defineProps({
   banner: {
-    type: Object as () => BannerResponse,
+    type: Object as () => BannerResponse | undefined,
     required: true,
   }
 })

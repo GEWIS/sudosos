@@ -5,14 +5,15 @@
         <ProgressSpinner aria-label="Loading" />
       </div>
     </div>
+    <div v-else>
     <div class="keypad-container">
       <div class="display-container" :class="displayContainerClasses">
         <KeypadDisplayComponent :userId="userId" :pinCode="pinCode" :wrong-pin="wrongPin" :isActive="enteringUserId" />
       </div>
       <KeypadComponent @input="handleInput" @backspace="handleBackspace" @continue="handleContinue" />
-      <!-- Your login content here -->
     </div>
     <BannerComponent v-if="shouldShowBanner"/>
+    </div>
   </div>
   <SettingsIconComponent />
 </template>
@@ -26,13 +27,10 @@ import router from "@/router";
 import {useCartStore} from "@/stores/cart.store";
 import {useAuthStore, useUserStore} from "@sudosos/sudosos-frontend-common";
 import apiService from "@/services/ApiService";
-import {useBannerStore} from "@/stores/banner.store";
 import BannerComponent from "@/components/Banner/BannerComponent.vue";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
-const bannerStore = useBannerStore();
-bannerStore.fetchBanners();
 
 let userId = ref('');
 let pinCode = ref('');

@@ -1,7 +1,11 @@
 <template>
   <div class="cart">
     <div class="user-info">
-      {{ current?.firstName }}
+      <p> Current order for </p>
+      <div class="user-button">
+        <font-awesome-icon icon="fa-solid fa-user" class="user-icon" />
+        {{ current?.firstName }}
+      </div>
     </div>
     <div class="cart-items">
       <div v-for="item in cartItems" :key="item.product.id">
@@ -19,8 +23,8 @@
     </div>
     <div class="cart-actions">
       <div class="buttons">
-        <button class="checkout-button" @click="checkout">CHECKOUT</button>
-        <button class="clear-button" @click="clearCart">
+        <button class="checkout-button" :class="{'countdown': checkingOut}" @click="checkout">{{checkingOut ? duration : "CHECKOUT"}}</button>
+        <button class="clear-button" @click="logout">
           <font-awesome-icon icon="fa-solid fa-xmark"/>
         </button>
       </div>
@@ -36,6 +40,7 @@ import {computed, onMounted, ref, watch} from "vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import apiService from "@/services/ApiService";
 import {formatPrice} from "@/utils/priceUtils";
+import {logoutService} from "@/services/logoutService";
 
 const cartStore = useCartStore();
 const cartItems = cartStore.getProducts;
@@ -66,12 +71,38 @@ const formattedBalanceAfter = computed(() => {
   const price = (balance.value - totalPrice.value);
   return formatPrice(price);
 })
-const clearCart = () => {
-  cartStore.clearCart();
+
+const duration = ref(3)
+const checkingOut = ref(false);
+let intervalId: number | undefined = undefined;
+const checkoutTimer = () => setInterval(() => {
+  duration.value -= 1;
+  if (duration.value <= 0 && checkingOut.value) {
+    stopCheckout(intervalId);
+    cartStore.checkout();
+    checkingOut.value = false;
+    duration.value = 3;
+  }
+}, 1000);
+
+const stopCheckout = () => {
+  duration.value = 3;
+  checkingOut.value = false;
+  clearInterval(intervalId);
+}
+const logout = async () => {
+  if (intervalId) stopCheckout();
+  await logoutService()
 };
 
+watch(cartItems, () => {
+  stopCheckout();
+})
+
 const checkout = () => {
-  cartStore.checkout();
+  if (checkingOut.value) return stopCheckout();
+  checkingOut.value = true;
+  intervalId = checkoutTimer()
 };
 </script>
 
@@ -85,10 +116,7 @@ const checkout = () => {
   border-radius: 15px;
   flex-direction: column;
   margin-right:10px;
-  padding-left: 15px;
-  padding-right: 20px;
-  padding-bottom: 10px;
-  padding-top: 10px;
+  padding: 10px 20px 10px 15px;
 }
 
 .total-info {
@@ -119,12 +147,32 @@ const checkout = () => {
 }
 
 .user-info {
-  /* Styles for user info */
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+  > p {
+    font-size: 20px;
+    font-weight: bolder;
+  }
+}
+
+.user-icon {
+  padding-right: 5px;
+}
+
+.user-button {
+  background-color: var(--accent-color);
+  color: white;
+  border-radius: 15px;
+  font-size: 25px;
+  padding: 5px 20px 5px 15px;
 }
 
 .cart-items {
   flex-grow: 1;
   overflow-y: auto;
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 .cart-actions {
@@ -154,15 +202,18 @@ const checkout = () => {
   background-color: #0055FD;
   font-weight: 500;
   color: white;
+  width: 262px;
   font-size: 27px;
   border: none;
   border-radius: 50px;
   margin-right: 10px;
-  padding-left: 55px;
-  padding-right: 55px;
-  padding-top: 15px;
-  padding-bottom: 15px;
+  padding: 15px 55px;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
+
+  &.countdown {
+    background-color: green;
+  }
+
 }
 </style>
