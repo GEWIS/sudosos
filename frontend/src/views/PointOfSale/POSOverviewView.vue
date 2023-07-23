@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import POSOverviewTableComponent from "@/views/PointOfSale/POSOverviewTableComponent.vue";
+import POSOverviewTableComponent from "@/components/POSOverviewTableComponent.vue";
 </script>
 
 <style scoped lang="scss">

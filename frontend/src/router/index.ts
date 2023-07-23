@@ -6,6 +6,7 @@ import LoginView from "@/views/LoginView.vue";
 import BalanceView from "@/views/BalanceView.vue";
 import {useAuthStore} from "@sudosos/sudosos-frontend-common";
 import POSOverviewView from "@/views/PointOfSale/POSOverviewView.vue";
+import POSInfoView from "@/views/PointOfSale/POSInfoView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -40,6 +41,12 @@ const router = createRouter({
           path: '/point-of-sale/overview',
           name: 'pointOfSale',
           component: POSOverviewView,
+        },
+        {
+          path: '/point-of-sale/info/:id',
+          name: 'pointOfSaleInfo',
+          component: POSInfoView,
+          props: true,
         },
         // Add other routes for authenticated users here
       ],

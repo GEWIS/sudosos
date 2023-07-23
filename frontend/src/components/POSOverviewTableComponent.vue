@@ -5,8 +5,8 @@
       <Column field="owner" header="Owner"/>
       <Column field="containerAmount" header="Containers"/>
       <Column headerStyle="width: 3rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
-        <template #body>
-          <Button type="button" severity='danger' icon="pi pi-info-circle" outlined />
+        <template #body="slotProps">
+          <Button @click="$router.push({name: 'pointOfSaleInfo', params: {id: slotProps.data.id}})" type="button" severity='danger' icon="pi pi-info-circle" outlined />
         </template>
       </Column>
     </DataTable>
@@ -26,16 +26,19 @@ onMounted(() => {
       title: "Point of Sale 1",
       owner: "BAC",
       containerAmount: 87,
+      id: 0,
     },
     {
       title: "Point of Sale 2",
       owner: "GEWIS",
       containerAmount: 3,
+      id: 1,
     },
     {
       title: "Point of Sale 3",
       owner: "I.V.V",
       containerAmount: 2,
+      id: 2,
     },
   ];
 });
