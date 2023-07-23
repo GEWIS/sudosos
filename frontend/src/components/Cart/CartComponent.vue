@@ -3,27 +3,32 @@
     <div class="user-info">
       <p> Current order for </p>
       <div class="user-button">
-        <font-awesome-icon icon="fa-solid fa-user" class="user-icon" />
+        <font-awesome-icon icon="fa-solid fa-user" class="user-icon"/>
         {{ current?.firstName }}
       </div>
     </div>
-    <div class="cart-items">
+    <div class="cart-items" v-if="!showHistory">
       <div v-for="item in cartItems" :key="item.product.id">
-        <CartItemComponent :cart-product="item" />
+        <CartItemComponent :cart-product="item"/>
       </div>
     </div>
+    <TransactionHistoryComponent v-else :transactions="transactions"/>
     <div class="cart-info">
       <div class="total-info">
         <div class="total-label">Total</div>
         <div class="total-price">€{{ formatPrice(totalPrice) }}</div>
       </div>
       <div class="warning-line" v-if="balance">
-        <font-awesome-icon icon="fa-solid fa-exclamation-triangle"/> Your debit after purchase is €{{ formattedBalanceAfter }}
+        <font-awesome-icon icon="fa-solid fa-exclamation-triangle"/>
+        Your debit after purchase is €{{ formattedBalanceAfter }}
       </div>
     </div>
     <div class="cart-actions">
       <div class="buttons">
-        <button class="checkout-button" :class="{'countdown': checkingOut}" @click="checkout">{{checkingOut ? duration : "CHECKOUT"}}</button>
+        <button class="checkout-button"
+                :class="{'countdown': checkingOut, 'empty': cartStore.cartTotalCount === 0}"
+                @click="checkout">{{ checkingOut ? duration : "CHECKOUT" }}
+        </button>
         <button class="clear-button" @click="logout">
           <font-awesome-icon icon="fa-solid fa-xmark"/>
         </button>
@@ -34,20 +39,28 @@
 
 
 <script setup lang="ts">
-import { useCartStore } from '@/stores/cart.store';
+import {useCartStore} from '@/stores/cart.store';
 import CartItemComponent from "@/components/Cart/CartItemComponent.vue";
 import {computed, onMounted, ref, watch} from "vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import apiService from "@/services/ApiService";
 import {formatPrice} from "@/utils/priceUtils";
 import {logoutService} from "@/services/logoutService";
+import TransactionHistoryComponent
+  from "@/components/Cart/TransactionHistory/TransactionHistoryComponent.vue";
 
 const cartStore = useCartStore();
 const cartItems = cartStore.getProducts;
-const current = computed( () => cartStore.getBuyer);
+const current = computed(() => cartStore.getBuyer);
 const totalPrice = computed(() => cartStore.getTotalPrice);
-
+const showHistory = ref(true);
 const balance = ref<number | null>(null);
+
+const transactions = ref([])
+apiService.user.getUsersTransactions(cartStore.getBuyer?.id, undefined, undefined, undefined,
+  undefined, undefined, undefined, undefined, 5).then((res) => {
+    transactions.value.push(...res.data.records);
+})
 const getBalance = async () => {
   if (!cartStore.buyer) return 0;
   try {
@@ -61,6 +74,10 @@ const getBalance = async () => {
 onMounted(async () => {
   balance.value = (await getBalance());
 });
+
+watch(cartItems, () => {
+  showHistory.value = false;
+})
 
 watch(() => cartStore.buyer, async () => {
   balance.value = (await getBalance());
@@ -100,6 +117,7 @@ watch(cartItems, () => {
 })
 
 const checkout = () => {
+  if (cartStore.cartTotalCount === 0) return;
   if (checkingOut.value) return stopCheckout();
   checkingOut.value = true;
   intervalId = checkoutTimer()
@@ -115,7 +133,7 @@ const checkout = () => {
   font-size: 20px;
   border-radius: 15px;
   flex-direction: column;
-  margin-right:10px;
+  margin-right: 10px;
   padding: 10px 20px 10px 15px;
 }
 
@@ -150,6 +168,7 @@ const checkout = () => {
   justify-content: space-between;
   align-items: center;
   display: flex;
+
   > p {
     font-size: 20px;
     font-weight: bolder;
@@ -214,6 +233,5 @@ const checkout = () => {
   &.countdown {
     background-color: green;
   }
-
 }
 </style>

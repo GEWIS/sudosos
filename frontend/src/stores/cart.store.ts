@@ -146,7 +146,7 @@ export const useCartStore = defineStore('cart', {
         },
       }
 
-      await (apiService.transaction.validateTransaction(request)).then((res) => {
+      await (apiService.transaction.createTransaction(request)).then((res) => {
         this.clearCart();
       });
     },

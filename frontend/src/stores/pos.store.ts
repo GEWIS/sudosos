@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import {defineStore} from 'pinia';
 import {PointOfSaleWithContainersResponse, ProductResponse} from "@sudosos/sudosos-client";
 import ApiService from "@/services/ApiService";
 
@@ -17,8 +17,7 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
           });
         });
       }
-      const res = Object.entries(categories).map(([key, value]) => ({'id': String(key), 'name': value}))
-      return res
+      return Object.entries(categories).map(([key, value]) => ({'id': String(key), 'name': value}))
     },
     getPos(): PointOfSaleWithContainersResponse | null {
       return this.pointOfSale;
