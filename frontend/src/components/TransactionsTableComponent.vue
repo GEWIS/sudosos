@@ -17,7 +17,7 @@ import {onMounted, ref} from "vue";
 const props = defineProps({
   action: {
     type: String,
-    required: true,
+    required: false,
   },
   header: {
     type: String,
