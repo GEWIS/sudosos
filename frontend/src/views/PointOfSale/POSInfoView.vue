@@ -29,15 +29,20 @@
 import {onMounted, ref} from 'vue';
 import {useRoute} from 'vue-router';
 import ContainerCardComponent from "@/views/PointOfSale/ContainerCardComponent.vue";
-import TransactionsTableComponent from "@/components/TransactionsTableComponent.vue"; // Import the useRoute function from vue-router
+import TransactionsTableComponent from "@/components/TransactionsTableComponent.vue";
+import {usePointOfSaleStore} from "@/stores/pos.store"; // Import the useRoute function from vue-router
 
 const route = useRoute(); // Use the useRoute function to access the current route
 const id = ref();
-onMounted(() => {
+
+const pointOfSaleStore = usePointOfSaleStore();
+
+onMounted(async () => {
   // Get the 'id' parameter from the route and store it in the 'id' variable
   console.log(route.params);
   id.value = route.params.id; // TODO: Implement API Getter for the POS in question
-
+  const pos = await pointOfSaleStore.fetchPointOfSale(id.value);
+  console.log(pos);
 });
 </script>
 

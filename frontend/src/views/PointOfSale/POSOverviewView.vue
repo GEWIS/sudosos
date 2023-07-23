@@ -11,6 +11,9 @@
 
 <script setup lang="ts">
 import POSOverviewTableComponent from "@/components/POSOverviewTableComponent.vue";
+import {useUserStore} from "@sudosos/sudosos-frontend-common";
+
+
 </script>
 
 <style scoped lang="scss">
