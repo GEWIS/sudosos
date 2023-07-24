@@ -20,20 +20,20 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import SettingsIconComponent from "@/components/SettingsIconComponent.vue";
 import KeypadComponent from "@/components/Keypad/KeypadComponent.vue";
 import KeypadDisplayComponent from "@/components/Keypad/KeypadDisplayComponent.vue";
 import router from "@/router";
-import {useCartStore} from "@/stores/cart.store";
-import {useAuthStore, useUserStore} from "@sudosos/sudosos-frontend-common";
+import { useCartStore } from "@/stores/cart.store";
 import apiService from "@/services/ApiService";
 import BannerComponent from "@/components/Banner/BannerComponent.vue";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
 
-let userId = ref('');
-let pinCode = ref('');
+const userId = ref('');
+const pinCode = ref('');
 const enteringUserId = ref(true);
 const animateSwitch = ref(false);
 const loggingIn = ref(false);

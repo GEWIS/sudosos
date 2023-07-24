@@ -1,10 +1,12 @@
-import {DineroObjectResponse} from "@sudosos/sudosos-client/dist/api";
+import { DineroObjectResponse } from "@sudosos/sudosos-client/dist/api";
 
-export function formatDateFromString(date: string) {
+export function formatDateFromString(date: string | undefined) {
+  if (!date) return '';
   return date.split('T')[0];
 }
 
-export function formatTimeFromString(date: string) {
+export function formatTimeFromString(date: string | undefined) {
+  if (!date) return '';
   return date.split('T')[1].slice(0, 5);
 }
 
@@ -13,7 +15,7 @@ export function formatPrice(number: number) {
 };
 
 export function formatDineroObjectToString(dinero: DineroObjectResponse, includeCurrency = true) {
-  const base = (dinero.amount / Math.pow(10, dinero.precision)).toFixed(2).replace('.',',');
-  if (includeCurrency) return '€'+base;
+  const base = (dinero.amount / 10**dinero.precision).toFixed(2).replace('.',',');
+  if (includeCurrency) return `€${base}`;
   return base;
 }

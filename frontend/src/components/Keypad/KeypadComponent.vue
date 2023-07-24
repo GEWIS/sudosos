@@ -15,32 +15,28 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'KeypadComponent',
-  data() {
-    return {
-      keypadBackspace: 'B',
-      keypadContinue: 'C',
-      keypadLayout: [
-        ['1', '2', '3'],
-        ['4', '5', '6'],
-        ['7', '8', '9'],
-        ['B', '0', 'C'],
-      ],
-    };
-  },
-  methods: {
-    handleKeyClick(key) {
-      if (key === this.keypadBackspace) {
-        this.$emit('backspace');
-      } else if (key === this.keypadContinue) {
-        this.$emit('continue');
-      } else {
-        this.$emit('input', key);
-      }
-    },
-  },
+<script setup lang="ts">
+import { defineEmits } from 'vue';
+
+const keypadBackspace = 'B';
+const keypadContinue = 'C';
+const keypadLayout = [
+  ['1', '2', '3'],
+  ['4', '5', '6'],
+  ['7', '8', '9'],
+  ['B', '0', 'C'],
+];
+
+const emits = defineEmits(['backspace', 'continue', 'input']);
+
+const handleKeyClick = (key) => {
+  if (key === keypadBackspace) {
+    emits('backspace');
+  } else if (key === keypadContinue) {
+    emits('continue');
+  } else {
+    emits('input', key);
+  }
 };
 </script>
 

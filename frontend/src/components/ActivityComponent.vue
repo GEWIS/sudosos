@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import {useActivityStore} from "@/stores/activity.store";
+import { useActivityStore } from "@/stores/activity.store";
 
 const activityStore = useActivityStore();
 const resetTimer = () => {

@@ -6,10 +6,10 @@ import {
   TransactionRequest,
   UserResponse
 } from "@sudosos/sudosos-client";
-import {usePointOfSaleStore} from "@/stores/pos.store";
 import {
   SubTransactionRowRequest
 } from "@sudosos/sudosos-client/src/api";
+import { usePointOfSaleStore } from "@/stores/pos.store";
 import apiService from "@/services/ApiService";
 
 export interface CartProduct {
@@ -22,15 +22,10 @@ interface CartState {
   products: CartProduct[],
   buyer: UserResponse | null,
 }
-
-const COUNTDOWN_TIMER = 3;
-
 export const useCartStore = defineStore('cart', {
   state: (): CartState => ({
     products: [] as CartProduct[],
     buyer: null,
-    countdown: null,
-    checkingOut: false,
   }),
   getters: {
     cartTotalCount(): number {
@@ -115,7 +110,7 @@ export const useCartStore = defineStore('cart', {
       })
 
       const subTransactions: SubTransactionRequest[] = Object.values(containerSubTransactionsRows).map((subTransactionRow) => {
-        const {container, row} = subTransactionRow;
+        const { container, row } = subTransactionRow;
         return {
           to: container.owner.id,
           container: {

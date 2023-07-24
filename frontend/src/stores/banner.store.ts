@@ -1,10 +1,10 @@
 // bannerStore.ts
 
 import { defineStore } from 'pinia';
-import {BannerResponse} from "@sudosos/sudosos-client";
-import {fetchAllPages} from "@sudosos/sudosos-frontend-common";
+import { BannerResponse } from "@sudosos/sudosos-client";
+import { fetchAllPages , ApiService } from "@sudosos/sudosos-frontend-common";
 
-import {ApiService, useAuthStore} from "@sudosos/sudosos-frontend-common";
+
 const apiService = new ApiService(import.meta.env.VITE_LIVE_APP_API_BASE,() => '');
 
 export const useBannerStore = defineStore('banner', {

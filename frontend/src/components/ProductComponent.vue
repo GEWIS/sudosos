@@ -9,10 +9,10 @@
 </template>
 
 <script setup lang="ts">
-import {ContainerWithProductsResponse, ProductResponse} from "@sudosos/sudosos-client";
-import {useCartStore} from "@/stores/cart.store";
-import {getProductImageSrc} from "@/utils/imageUtils";
-import {formatPrice} from "@/utils/FormatUtils";
+import { ContainerWithProductsResponse, ProductResponse } from "@sudosos/sudosos-client";
+import { useCartStore } from "@/stores/cart.store";
+import { getProductImageSrc } from "@/utils/imageUtils";
+import { formatPrice } from "@/utils/FormatUtils";
 
 const props = defineProps({
   product: {
@@ -44,13 +44,14 @@ const addToCart = () => {
   height: fit-content;
   border-radius: $border-radius;
   overflow: hidden;
-  width: 128px;
+  width: var(--product-card-width);
   text-align: center;
 
   .product {
     > img {
       width: 128px;
       height: 128px;
+      margin-bottom: -7px;
       background-color: $gewis-grey-light;
       border-top-left-radius: $border-radius;
       border-top-right-radius: $border-radius;
@@ -61,7 +62,8 @@ const addToCart = () => {
 
 .product-name {
   font-weight: bold;
-  font-size: 20px;
+  font-size: 16px;
+  margin-bottom: -5px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

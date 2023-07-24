@@ -18,13 +18,13 @@
   <SettingsIconComponent />
 </template>
 <script setup lang="ts">
-import {usePointOfSaleStore} from "@/stores/pos.store";
-import {PointOfSaleWithContainersResponse} from "@sudosos/sudosos-client";
+import { PointOfSaleWithContainersResponse } from "@sudosos/sudosos-client";
+import { onMounted, Ref, ref, watch } from "vue";
+import { usePointOfSaleStore } from "@/stores/pos.store";
 import PointOfSaleDisplayComponent from "@/components/PointOfSaleDisplayComponent.vue";
 import SettingsIconComponent from "@/components/SettingsIconComponent.vue";
 import CartComponent from "@/components/Cart/CartComponent.vue";
-import {onMounted, Ref, ref, watch} from "vue";
-import {useActivityStore} from "@/stores/activity.store";
+import { useActivityStore } from "@/stores/activity.store";
 import ActivityComponent from "@/components/ActivityComponent.vue";
 
 const posNotLoaded = ref(true);

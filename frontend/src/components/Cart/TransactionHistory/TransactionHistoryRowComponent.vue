@@ -5,18 +5,26 @@
       <div>{{ formattedTime }}</div>
       <div class="price">€<div class="value">{{ formattedValue }}</div></div>
     </div>
-    <transition name="expand">
-      <div v-if="products" class="bottom" :class="{ open }">
+    <!-- Here, we attach animation related functions to the corresponding Vue transition hooks-->
+    <transition name="expand"
+                @before-enter="beforeEnter"
+                @enter="enter"
+                @before-leave="beforeLeave"
+                @leave="leave"
+                :css="false"
+    >
+      <!-- The 'bottom' div will only be rendered when 'products' is truthy and 'open' is true -->
+      <div v-if="products && open" class="bottom" ref="bottomDiv">
         <hr>
-        <template v-for="subTransaction in products.subTransactions">
+        <div v-for="subTransaction in products.subTransactions" :key="subTransaction.id">
           <div class="row-details" v-for="row in subTransaction.subTransactionRows" :key="row.product.id">
             <div class="product-details">
               {{ row.amount }}x <div class="product-name">{{ row.product.name }}</div>
             </div>
             <span>{{ formatDineroObjectToString(row.totalPriceInclVat) }}</span>
           </div>
-        </template>
-        <div v-if="isCreatedByDifferent">
+        </div>
+        <div class="created-by" v-if="isCreatedByDifferent && transaction.createdBy">
           Created by {{ transaction.createdBy.firstName }} {{ transaction.createdBy.lastName }}
         </div>
       </div>
@@ -25,8 +33,8 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, onMounted, ref } from "vue"
-import { TransactionResponse } from "@sudosos/sudosos-client"
+import { nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from "vue"
+import { BaseTransactionResponse, TransactionResponse } from "@sudosos/sudosos-client"
 import { formatDateFromString, formatTimeFromString, formatDineroObjectToString } from "@/utils/FormatUtils"
 import apiService from "@/services/ApiService"
 
@@ -34,7 +42,7 @@ const emit = defineEmits(['update:open'])
 
 const props = defineProps({
   transaction: {
-    type: Object as () => TransactionResponse,
+    type: Object as () => BaseTransactionResponse,
     required: true
   },
   open: {
@@ -43,18 +51,58 @@ const props = defineProps({
   }
 })
 
+// To store the extra infromation in
 const products = ref<undefined | TransactionResponse>()
 
 onMounted(async () => {
-  const res = await apiService.transaction.getSingleTransaction(props.transaction.id)
-  products.value = res.data
+  if (props.open) {
+    const res = await apiService.transaction.getSingleTransaction(props.transaction.id)
+    products.value = res.data
+  }
 })
+
+watch(() => props.open, () => {
+  if (!products.value) {
+    apiService.transaction.getSingleTransaction(props.transaction.id).then((res) => {
+      products.value = res.data;
+    })
+  }
+})
+
+// Reset max height before the component is destroyed
+onBeforeUnmount(() => {
+  if (bottomDiv.value) {
+    bottomDiv.value.style.maxHeight = ''
+  }
+})
+
+const bottomDiv: Ref<HTMLElement | null> = ref(null)
+
+// We want to animate the folding and opening of the info boxes.
+// However, css does not like percentage based animation. So we use CSS + Vue animation hooks.
+function beforeEnter(el: Element) {
+  (el as HTMLElement).style.maxHeight = '0'; // set max-height to 0 before the element enters
+}
+
+async function enter(el: Element) {
+  await nextTick(); // wait for DOM update to complete
+  (el as HTMLElement).style.maxHeight = `${el.scrollHeight  }px`; // set max-height to its scrollHeight after it enters
+}
+
+function beforeLeave(el: Element) {
+  (el as HTMLElement).style.maxHeight = `${el.scrollHeight  }px`; // set max-height to its scrollHeight before it leaves
+}
+
+async function leave(el: Element) {
+  await nextTick(); // wait for DOM update to complete
+  (el as HTMLElement).style.maxHeight = '0'; // set max-height to 0 after it leaves
+}
 
 const toggleOpen = () => emit("update:open", props.transaction.id)
 const formattedDate = formatDateFromString(props.transaction.createdAt)
 const formattedTime = formatTimeFromString(props.transaction.createdAt)
 const formattedValue = formatDineroObjectToString(props.transaction.value, false)
-const isCreatedByDifferent = props.transaction.createdBy.id !== props.transaction.from.id
+const isCreatedByDifferent = props.transaction.createdBy?.id !== props.transaction.from.id
 </script>
 
 <style scoped>
@@ -91,17 +139,16 @@ const isCreatedByDifferent = props.transaction.createdBy.id !== props.transactio
 }
 
 .bottom {
-  max-height: 0;
   overflow: hidden;
-  transition: max-height 0.5s ease-in-out;
-
-  &.open {
-    max-height: 1000px;
-  }
+  transition: max-height 0.2s ease-in-out;
 
   > hr {
     margin: 5px 0;
     border-top: 1px solid var(--accent-color);
+  }
+
+  > .created-by {
+    margin-top: 5px;
   }
 }
 

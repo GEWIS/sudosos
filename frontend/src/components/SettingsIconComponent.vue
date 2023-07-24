@@ -4,16 +4,10 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'SettingsIconComponent',
-  methods: {
-    openSettings() {
-      // Handle logic to open settings or emit an event
-      // for the parent component to handle
-    },
-  },
-};
+<script setup lang="ts">
+const openSettings = () => {
+  // open settings modal
+}
 </script>
 
 <style scoped>

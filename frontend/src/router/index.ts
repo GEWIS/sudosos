@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import LoginView from "@/views/LoginView.vue";
 import CashierView from "../views/CashierView.vue";
-import {useAuthStore} from "@sudosos/sudosos-frontend-common";
+
 const authGuard = (to: any, from: any, next: any) => {
   const authStore = useAuthStore();
 

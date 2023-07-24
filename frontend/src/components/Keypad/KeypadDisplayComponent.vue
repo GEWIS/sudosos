@@ -13,28 +13,26 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'KeypadDisplayComponent',
-  props: {
-    userId: {
-      type: String,
-      required: true,
-    },
-    pinCode: {
-      type: String,
-      required: true,
-    },
-    isActive: {
-      type: Boolean,
-      required: true,
-    },
-    wrongPin: {
-      type: Boolean,
-      required: true,
-    }
+<script setup lang="ts">
+import { defineProps } from 'vue';
+defineProps({
+  userId: {
+    type: String,
+    required: true,
   },
-};
+  pinCode: {
+    type: String,
+    required: true,
+  },
+  isActive: {
+    type: Boolean,
+    required: true,
+  },
+  wrongPin: {
+    type: Boolean,
+    required: true,
+  },
+});
 </script>
 
 <style scoped>

@@ -39,13 +39,13 @@
 
 
 <script setup lang="ts">
-import {useCartStore} from '@/stores/cart.store';
+import { computed, onMounted, ref, watch } from "vue";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { useCartStore } from '@/stores/cart.store';
 import CartItemComponent from "@/components/Cart/CartItemComponent.vue";
-import {computed, onMounted, ref, watch} from "vue";
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import apiService from "@/services/ApiService";
-import {formatPrice} from "@/utils/FormatUtils";
-import {logoutService} from "@/services/logoutService";
+import { formatPrice } from "@/utils/FormatUtils";
+import { logoutService } from "@/services/logoutService";
 import TransactionHistoryComponent
   from "@/components/Cart/TransactionHistory/TransactionHistoryComponent.vue";
 
@@ -91,7 +91,7 @@ const formattedBalanceAfter = computed(() => {
 
 const duration = ref(3)
 const checkingOut = ref(false);
-let intervalId: number | undefined = undefined;
+let intervalId: number | undefined;
 const checkoutTimer = () => setInterval(() => {
   duration.value -= 1;
   if (duration.value <= 0 && checkingOut.value) {

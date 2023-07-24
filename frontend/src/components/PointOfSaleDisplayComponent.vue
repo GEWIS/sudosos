@@ -129,7 +129,7 @@ const products = computed(() => {
 
 .container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 10px; /* Reduce the gap value to 10px */
   padding-bottom: 20px; /* Add bottom padding to prevent the last row from being cut off */
   padding-right: 50px;
