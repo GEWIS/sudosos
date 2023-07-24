@@ -11,15 +11,15 @@
       </div>
       <div class="row">
         <h6>Added on</h6>
-        <p></p>
+        <p>{{formatDateTime(new Date(product.createdAt))}}</p>
       </div>
       <div class="row">
         <h6>Updated on</h6>
-        <p>{{ product.updatedAt }}</p>
+        <p>{{ formatDateTime(new Date(product.updatedAt)) }}</p>
       </div>
       <div class="row">
         <h6>Price</h6>
-        <p>{{ product.priceInclVat.amount }}</p>
+        <p>{{ formatPrice(product.priceInclVat.amount) }}</p>
       </div>
       <div class="row">
         <h6>Category</h6>
@@ -27,7 +27,7 @@
       </div>
       <div class="row">
         <h6>Alcohol percentage</h6>
-        <p>{{ product.alcoholPercentage }}</p>
+        <p>{{ product.alcoholPercentage + '%' }}</p>
       </div>
       <div class="row">
         <h6>Picture</h6>
@@ -42,6 +42,7 @@ import type {ProductResponse} from "@sudosos/sudosos-client";
 import Dialog from 'primevue/dialog';
 import {onMounted} from "vue";
 import {getProductImageSrc} from "@/utils/imageUtils";
+import {formatDateTime, formatPrice} from "../utils/formatterUtils";
 
 const props = defineProps({
   product: {
@@ -51,7 +52,6 @@ const props = defineProps({
 });
 
 onMounted(() => {
-  console.error(props.product);
 })
 </script>
 

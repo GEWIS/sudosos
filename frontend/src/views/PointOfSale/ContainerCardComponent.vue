@@ -30,7 +30,6 @@ onMounted(()=>{
 });
 const containers = ref();
 const expandedContainers = ref();
-console.log(props.data);
 </script>
 <style scoped lang="scss">
 :deep(.p-datatable-thead) {
