@@ -1,15 +1,20 @@
 <template>
-  <div class="text-center product-card">
+  <div class="text-center product-card" @click="visible = true">
     <div class="product">
       <img :src="getProductImageSrc(product)" :alt="product.name" />
       <p class="w-100 product-name mb-0">{{ product.name }}</p>
     </div>
   </div>
+  <ProductDialogComponent v-model:visible="visible" :product="product"/>
 </template>
 
 <script setup lang="ts">
-import type { ProductResponse } from "@sudosos/sudosos-client";
-import { getProductImageSrc } from "@/utils/imageUtils";
+import type {ProductResponse} from "@sudosos/sudosos-client";
+import {getProductImageSrc} from "@/utils/imageUtils";
+import {ref} from "vue";
+import ProductDialogComponent from "@/components/ProductDialogComponent.vue";
+
+const visible = ref(false);
 
 defineProps({
   product: {
