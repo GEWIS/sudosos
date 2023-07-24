@@ -4,12 +4,13 @@
     <nav>
       <Menubar :model="leftItems" >
         <template #start>
-          <router-link to="/" id="sudosos">SudoSOS<img id="logo" src="../assets/img/gewis-branding.svg" alt="SudoSOS"/></router-link>
+          <router-link to="/" id="sudosos">SudoSOS<img id="logo" src="../assets/img/gewis-branding.svg" /></router-link>
+
         </template>
       </Menubar>
       <Menubar :model="rightItems">
         <template #start>
-          <img id="bier" src="../assets/img/bier.png" alt="bier"/>
+          <img id="bier" src="../assets/img/bier.png"/>
         </template>
       </Menubar>
     </nav>
@@ -39,14 +40,14 @@ const leftItems = ref([ // TODO: Implement Submenus
   },
   {
     label: 'Balance',
-    to: '/balance',
+    to: 'balance',
   },
   {
     label: 'Points of Sale',
     items: [
       {
         label: 'POS Overview',
-        to: '/point-of-sale/overview',
+        to: 'point-of-sale/overview',
       },
       {
         label: 'Create',
