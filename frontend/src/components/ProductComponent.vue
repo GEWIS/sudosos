@@ -12,7 +12,7 @@
 import {ContainerWithProductsResponse, ProductResponse} from "@sudosos/sudosos-client";
 import {useCartStore} from "@/stores/cart.store";
 import {getProductImageSrc} from "@/utils/imageUtils";
-import {formatPrice} from "@/utils/priceUtils";
+import {formatPrice} from "@/utils/FormatUtils";
 
 const props = defineProps({
   product: {

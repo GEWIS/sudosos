@@ -20,7 +20,7 @@
 import {computed, ref} from 'vue';
 import { CartProduct, useCartStore } from "@/stores/cart.store";
 import {getProductImageSrc} from "@/utils/imageUtils";
-import {formatPrice} from "@/utils/priceUtils";
+import {formatPrice} from "@/utils/FormatUtils";
 
 const cartStore = useCartStore();
 

@@ -5,6 +5,8 @@
       v-for="transaction in transactions"
       :key="transaction.id"
       :transaction="transaction"
+      :open="transaction.id === openId"
+      @update:open="showMoreInfo($event)"
     />
   </div>
 </template>
@@ -13,6 +15,7 @@
 import {TransactionResponse} from "@sudosos/sudosos-client";
 import TransactionHistoryRowComponent
   from "@/components/Cart/TransactionHistory/TransactionHistoryRowComponent.vue";
+import {computed, Ref, ref, watch} from "vue";
 
 const props = defineProps({
   transactions: {
@@ -20,6 +23,22 @@ const props = defineProps({
     required: true,
   }
 })
+
+const firstId = computed(() => {
+  if (!props.transactions[0]) return undefined;
+  return props.transactions[0].id
+})
+
+watch(props.transactions, () => {
+  if (openId.value === null) openId.value = firstId.value;
+})
+
+const openId: Ref<number | undefined | null> = ref(null);
+
+const showMoreInfo = (event: number) => {
+  if (openId.value === event) openId.value = undefined;
+  else openId.value = event;
+}
 
 </script>
 

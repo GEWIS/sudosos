@@ -44,7 +44,7 @@ import CartItemComponent from "@/components/Cart/CartItemComponent.vue";
 import {computed, onMounted, ref, watch} from "vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import apiService from "@/services/ApiService";
-import {formatPrice} from "@/utils/priceUtils";
+import {formatPrice} from "@/utils/FormatUtils";
 import {logoutService} from "@/services/logoutService";
 import TransactionHistoryComponent
   from "@/components/Cart/TransactionHistory/TransactionHistoryComponent.vue";
