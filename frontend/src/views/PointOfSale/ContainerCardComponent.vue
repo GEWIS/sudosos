@@ -3,7 +3,11 @@
     <DataTable v-model:expandedRows="expandedContainers" :value="containers">
       <Column field="name" />
       <Column expander style="width: 2rem"/>
+      <template #expansion="slotProps">
+        <ProductGridComponent :products="slotProps.data.products" />
+      </template>
     </DataTable>
+
   </CardComponent>
 </template>
 <script setup lang="ts">
@@ -12,6 +16,8 @@ import Column from 'primevue/column';
 import CardComponent from "@/components/CardComponent.vue";
 import type {ContainerWithProductsResponse} from "@sudosos/sudosos-client";
 import {onMounted, ref} from "vue";
+import ProductGridComponent from "@/components/ProductGridComponent.vue";
+
 
 const props = defineProps({
   data: {

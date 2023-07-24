@@ -13,7 +13,7 @@
 
 <style scoped>
 footer {
-  position: absolute;
+  position: relative;
   bottom: 0;
   left: 0;
   width: 100%;
