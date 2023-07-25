@@ -95,6 +95,7 @@ const rightItems = ref([
     items: [
       {
         label: 'Profile',
+        to: 'profile',
       },
       {
         label: 'Sign Out'

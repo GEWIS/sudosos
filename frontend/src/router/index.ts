@@ -5,6 +5,7 @@ import HomeView from '../views/HomeView.vue';
 import LoginView from "@/views/LoginView.vue";
 import BalanceView from "@/views/BalanceView.vue";
 import {useAuthStore} from "@sudosos/sudosos-frontend-common";
+import ProfileView from "@/views/ProfileView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -34,6 +35,12 @@ const router = createRouter({
           path: '/balance',
           component: BalanceView,
           name: 'balance',
+        }
+        ,
+        {
+          path: '/profile',
+          component: ProfileView,
+          name: 'profile',
         }
         // Add other routes for authenticated users here
       ],

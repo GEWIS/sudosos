@@ -20,5 +20,9 @@
     "Reset the password for": "Reset the password for {email}",
     "Passwords not equal": "Passwords are not equal",
     "Password not strong": "Password needs to be longer than 8 characters and needs a lower- and uppercase letter, number and a special character"
+  },
+  "profile": {
+    "my profile": "My profile",
+    "change pin code": "Change pin code"
   }
 }
