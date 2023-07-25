@@ -1,11 +1,23 @@
 import {
     AuthenticateApi,
-    BalanceApi, BannersApi, BorrelkaartgroupsApi,
-    Configuration, ContainersApi, FilesApi, InvoicesApi, PayoutRequestsApi,
+    BalanceApi,
+    BannersApi,
+    BorrelkaartgroupsApi,
+    Configuration,
+    ContainersApi,
+    FilesApi,
+    InvoicesApi,
+    PayoutRequestsApi,
     PointofsaleApi,
-    ProductCategoriesApi, ProductsApi, RbacApi, RootApi, StripeApi,
-    TransactionsApi, TransfersApi,
-    UsersApi, VatGroupsApi,
+    ProductCategoriesApi,
+    ProductsApi,
+    RbacApi,
+    RootApi,
+    StripeApi,
+    TransactionsApi,
+    TransfersApi,
+    UsersApi,
+    VatGroupsApi,
 } from '@sudosos/sudosos-client';
 import axios, { AxiosResponse } from 'axios';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
@@ -24,7 +36,6 @@ axiosInstance.interceptors.response.use((response: AxiosResponse) => {
         const newToken = response.headers['Set-Authorization'];
         setTokenInStorage(newToken);
     }
-
     return response;
 });
 
@@ -44,7 +55,7 @@ export class ApiService {
 
     private readonly _bannerApi: BannersApi;
 
-    private readonly _rootApi: RootApi
+    private readonly _rootApi: RootApi;
 
     private readonly _borrelkaartApi: BorrelkaartgroupsApi;
 
@@ -170,14 +181,6 @@ export class ApiService {
 
     get user(): UsersApi {
         return this._usersApi;
-    }
-
-    get categories(): ProductCategoriesApi {
-        return this._categoryApi;
-    }
-
-    get borrelKaart(): BorrelkaartgroupsApi {
-        return this._borrelkaartApi;
     }
 
     get openBanner(): BannersApi {
