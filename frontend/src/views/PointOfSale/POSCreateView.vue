@@ -1,3 +1,4 @@
+<!--TODO: Input validation-->
 <template>
   <div class="page-container">
     <div class="page-title">Create Point of Sale</div>
