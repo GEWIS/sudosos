@@ -1,5 +1,4 @@
 <template>
-
   <div class="page-container">
     <div class="page-title">Overview</div>
     <div class="content-wrapper">

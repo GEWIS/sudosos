@@ -40,17 +40,18 @@ const leftItems = ref([ // TODO: Implement Submenus
   },
   {
     label: 'Balance',
-    to: 'balance',
+    to: '/balance',
   },
   {
     label: 'Points of Sale',
     items: [
       {
         label: 'POS Overview',
-        to: 'point-of-sale/overview',
+        to: '/point-of-sale/overview',
       },
       {
-        label: 'Create',
+        label: 'Create POS',
+        to: '/point-of-sale/request'
       }
     ]
   },

@@ -24,9 +24,15 @@ const props = defineProps({
     type: Array<ContainerWithProductsResponse>,
     required: true,
   },
+  editMode: {
+    type: Boolean,
+    required: false,
+  }
 });
 onMounted(()=>{
+  if (props.editMode){console.error("Edit mode is on");}
   containers.value = props.data;
+
 });
 const containers = ref();
 const expandedContainers = ref();
