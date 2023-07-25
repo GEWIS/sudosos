@@ -1,23 +1,21 @@
 <template>
   <div class="banner-content">
-    <img class="banner-image" :src="getBannerImageSrc(banner)" :alt="banner.name"/>
+    <img class="banner-image" :src="getBannerImageSrc(banner)" :alt="banner.name" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { BannerResponse } from "@sudosos/sudosos-client";
-import { getBannerImageSrc } from "@/utils/imageUtils";
+import { BannerResponse } from '@sudosos/sudosos-client';
+import { getBannerImageSrc } from '@/utils/imageUtils';
 defineProps({
   banner: {
     type: Object as () => BannerResponse,
-    required: true,
+    required: true
   }
 });
-
 </script>
 
 <style scoped>
-
 .banner-image {
   width: 100%;
   height: 100%;

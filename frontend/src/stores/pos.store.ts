@@ -1,14 +1,14 @@
 import { defineStore } from 'pinia';
-import { PointOfSaleWithContainersResponse, ProductResponse } from "@sudosos/sudosos-client";
-import ApiService from "@/services/ApiService";
+import { PointOfSaleWithContainersResponse, ProductResponse } from '@sudosos/sudosos-client';
+import ApiService from '@/services/ApiService';
 
 export const usePointOfSaleStore = defineStore('pointOfSale', {
   state: () => ({
-    pointOfSale: null as PointOfSaleWithContainersResponse | null,
+    pointOfSale: null as PointOfSaleWithContainersResponse | null
   }),
   getters: {
     allProductCategories() {
-      const categories: {[key: number]: string} = {};
+      const categories: { [key: number]: string } = {};
 
       if (this.pointOfSale) {
         this.pointOfSale.containers.forEach((container) => {
@@ -17,25 +17,29 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
           });
         });
       }
-      return Object.entries(categories).map(([key, value]) => ({ 'id': String(key), 'name': value }))
+      return Object.entries(categories).map(([key, value]) => ({ id: String(key), name: value }));
     },
     getPos(): PointOfSaleWithContainersResponse | null {
       return this.pointOfSale;
-    },
+    }
   },
   actions: {
     async fetchPointOfSale(id: number): Promise<void> {
       const response = await ApiService.pos.getSinglePointOfSale(id);
       this.pointOfSale = response.data;
     },
-    getProduct(productId: number, revision: number, containerId: number): ProductResponse | undefined {
+    getProduct(
+      productId: number,
+      revision: number,
+      containerId: number
+    ): ProductResponse | undefined {
       if (this.pointOfSale) {
-        const container = this.pointOfSale.containers.find(c => c.id === containerId);
+        const container = this.pointOfSale.containers.find((c) => c.id === containerId);
         if (container) {
-          return container.products.find(p => p.id === productId && p.revision === revision);
+          return container.products.find((p) => p.id === productId && p.revision === revision);
         }
       }
       return undefined;
-    },
-  },
+    }
+  }
 });

@@ -6,14 +6,14 @@
 * the component is unmounted.
 */
 <template>
-  <BannerDisplayComponent v-if="currentBanner" :banner="currentBanner"/>
+  <BannerDisplayComponent v-if="currentBanner" :banner="currentBanner" />
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
-import { onUnmounted, ref, watch } from "vue";
-import { useBannerStore } from "@/stores/banner.store";
-import BannerDisplayComponent from "@/components/Banner/BannerDisplayComponent.vue";
+import { storeToRefs } from 'pinia';
+import { onUnmounted, ref, watch } from 'vue';
+import { useBannerStore } from '@/stores/banner.store';
+import BannerDisplayComponent from '@/components/Banner/BannerDisplayComponent.vue';
 
 // Extract banners from the store
 const bannerStore = useBannerStore();
@@ -47,9 +47,6 @@ watch(activeBanners, (newBanners) => {
 onUnmounted(() => {
   clearInterval(intervalId);
 });
-
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

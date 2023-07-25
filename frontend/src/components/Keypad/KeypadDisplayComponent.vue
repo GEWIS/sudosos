@@ -1,13 +1,13 @@
 <template>
-  <div class="wrapper user" :class="{inactive: !isActive}">
+  <div class="wrapper user" :class="{ inactive: !isActive }">
     <font-awesome-icon icon="fa-solid fa-user" class="icon" />
     <div class="display-value">
       <span v-for="char in userId" :key="char">{{ char }}</span>
     </div>
   </div>
-  <div class="wrapper pincode" :class="{inactive: isActive}">
+  <div class="wrapper pincode" :class="{ inactive: isActive }">
     <font-awesome-icon icon="fa-solid fa-key" class="icon" />
-    <div class="display-value" :class="{wrong: wrongPin}">
+    <div class="display-value" :class="{ wrong: wrongPin }">
       <span v-for="char in pinCode" :key="char">•</span>
     </div>
   </div>
@@ -18,20 +18,20 @@ import { defineProps } from 'vue';
 defineProps({
   userId: {
     type: String,
-    required: true,
+    required: true
   },
   pinCode: {
     type: String,
-    required: true,
+    required: true
   },
   isActive: {
     type: Boolean,
-    required: true,
+    required: true
   },
   wrongPin: {
     type: Boolean,
-    required: true,
-  },
+    required: true
+  }
 });
 </script>
 

@@ -2,14 +2,14 @@
   <div class="keypad">
     <div class="key-row" v-for="row in keypadLayout" :key="row">
       <div
-        :class="['key', { 'backspace': key === keypadBackspace, 'continue': key === keypadContinue }]"
+        :class="['key', { backspace: key === keypadBackspace, continue: key === keypadContinue }]"
         v-for="key in row"
         :key="key"
         @click="handleKeyClick(key)"
       >
-        <font-awesome-icon icon="fa-solid fa-backspace" v-if="key === keypadBackspace"/>
-        <font-awesome-icon icon="fa-solid fa-arrow-right" v-if="key === keypadContinue"/>
-        {{ key !== keypadBackspace && key !== keypadContinue ? key: '' }}
+        <font-awesome-icon icon="fa-solid fa-backspace" v-if="key === keypadBackspace" />
+        <font-awesome-icon icon="fa-solid fa-arrow-right" v-if="key === keypadContinue" />
+        {{ key !== keypadBackspace && key !== keypadContinue ? key : '' }}
       </div>
     </div>
   </div>
@@ -24,7 +24,7 @@ const keypadLayout = [
   ['1', '2', '3'],
   ['4', '5', '6'],
   ['7', '8', '9'],
-  ['B', '0', 'C'],
+  ['B', '0', 'C']
 ];
 
 const emits = defineEmits(['backspace', 'continue', 'input']);
@@ -56,7 +56,7 @@ const handleKeyClick = (key) => {
 
 .key {
   background-color: var(--accent-color);
-  color: rgba(255,255,255, 0.8);
+  color: rgba(255, 255, 255, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -70,14 +70,13 @@ const handleKeyClick = (key) => {
 
 .backspace {
   background-color: red;
-  color: rgba(255,255,255, 1);
+  color: rgba(255, 255, 255, 1);
 }
 
 .continue {
-  background-color: #0055FD;
-  color: rgba(255,255,255, 1);
+  background-color: #0055fd;
+  color: rgba(255, 255, 255, 1);
 }
-
 
 /* Optional: Add styling for key text */
 .key {

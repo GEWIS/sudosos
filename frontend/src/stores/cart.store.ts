@@ -5,27 +5,25 @@ import {
   SubTransactionRequest,
   TransactionRequest,
   UserResponse
-} from "@sudosos/sudosos-client";
-import {
-  SubTransactionRowRequest
-} from "@sudosos/sudosos-client/src/api";
-import { usePointOfSaleStore } from "@/stores/pos.store";
-import apiService from "@/services/ApiService";
+} from '@sudosos/sudosos-client';
+import { SubTransactionRowRequest } from '@sudosos/sudosos-client/src/api';
+import { usePointOfSaleStore } from '@/stores/pos.store';
+import apiService from '@/services/ApiService';
 
 export interface CartProduct {
-  container: ContainerResponse,
-  product: ProductResponse,
-  count: number,
+  container: ContainerResponse
+  product: ProductResponse
+  count: number
 }
 
 interface CartState {
-  products: CartProduct[],
-  buyer: UserResponse | null,
+  products: CartProduct[]
+  buyer: UserResponse | null
 }
 export const useCartStore = defineStore('cart', {
   state: (): CartState => ({
     products: [] as CartProduct[],
-    buyer: null,
+    buyer: null
   }),
   getters: {
     cartTotalCount(): number {
@@ -82,34 +80,37 @@ export const useCartStore = defineStore('cart', {
     },
     async checkout(): Promise<void> {
       const pos = usePointOfSaleStore().getPos;
-      if (!this.buyer || !pos || this.checkingOut) return;
-      this.checkingOut = true;
+      if (!this.buyer || !pos ) return;
 
-      const containerSubTransactionsRows: { [key: string]: { container: ContainerResponse, row: SubTransactionRowRequest[] } } = {};
+      const containerSubTransactionsRows: {
+        [key: string]: { container: ContainerResponse; row: SubTransactionRowRequest[] }
+      } = {};
       this.products.map((cartProduct) => {
         const request: SubTransactionRowRequest = {
           amount: cartProduct.count,
           product: {
             id: cartProduct.product.id,
-            revision: cartProduct.product.revision,
+            revision: cartProduct.product.revision
           },
           totalPriceInclVat: {
             currency: 'EUR',
             precision: 2,
-            amount: cartProduct.count * cartProduct.product.priceInclVat.amount,
+            amount: cartProduct.count * cartProduct.product.priceInclVat.amount
           }
-        }
+        };
         if (containerSubTransactionsRows[cartProduct.container.id] === undefined) {
           containerSubTransactionsRows[cartProduct.container.id] = {
             container: cartProduct.container,
-            row: [request],
-          }
+            row: [request]
+          };
         } else {
           containerSubTransactionsRows[cartProduct.container.id].row.push(request);
         }
-      })
+      });
 
-      const subTransactions: SubTransactionRequest[] = Object.values(containerSubTransactionsRows).map((subTransactionRow) => {
+      const subTransactions: SubTransactionRequest[] = Object.values(
+        containerSubTransactionsRows
+      ).map((subTransactionRow) => {
         const { container, row } = subTransactionRow;
         return {
           to: container.owner.id,
@@ -131,19 +132,19 @@ export const useCartStore = defineStore('cart', {
         from: this.buyer.id,
         pointOfSale: {
           id: pos.id,
-          revision: pos.revision,
+          revision: pos.revision
         },
         subTransactions,
         totalPriceInclVat: {
           currency: 'EUR',
           precision: 2,
           amount: this.getTotalPrice
-        },
-      }
+        }
+      };
 
-      await (apiService.transaction.createTransaction(request)).then((res) => {
+      await apiService.transaction.createTransaction(request).then((res) => {
         this.clearCart();
       });
-    },
-  },
+    }
+  }
 });

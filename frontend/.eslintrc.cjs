@@ -1,5 +1,5 @@
 /* eslint-env node */
-require('@rushstack/eslint-patch/modern-module-resolution')
+require('@rushstack/eslint-patch/modern-module-resolution');
 
 module.exports = {
   root: true,
@@ -11,6 +11,8 @@ module.exports = {
     '@vue/eslint-config-prettier/skip-formatting'
   ],
   rules: {
+    'max-len': ['warn', { "code": 100 } ],
+    'semi': ['error', 'always'],
     'object-curly-spacing': ['error', 'always'],
     "vue/component-api-style": ["error",
       ["script-setup", "composition"]
@@ -26,4 +28,4 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
   }
-}
+};

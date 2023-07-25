@@ -1,6 +1,6 @@
 <template>
-  <RouterView/>
-<!--  <img class="image-overlay" src="@/assets/checkout.jpg" alt="Overlay Image" />-->
+  <RouterView />
+  <!--  <img class="image-overlay" src="@/assets/checkout.jpg" alt="Overlay Image" />-->
 </template>
 
 <style scoped>

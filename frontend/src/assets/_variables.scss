@@ -2,7 +2,7 @@
 $text-primary: hsl(0, 0%, 100%);
 :root {
   --gewis-red: rgba(212, 0, 0, 1);
-  --gewis-dark-red: #C40000;
+  --gewis-dark-red: #c40000;
   --product-card-width: 160px;
 }
 $gewis-red: var(--gewis-red);
@@ -23,6 +23,6 @@ $scroll-bar-width: 40px;
 
 // Padding and sizing
 $default-padding: 16px;
-$default-padding-half: calc($default-padding/2)+4px;
+$default-padding-half: calc($default-padding/2) + 4px;
 $top-bottom-height: 64px;
 $font-size: 20px;

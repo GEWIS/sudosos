@@ -12,9 +12,10 @@
   background-color: rgba(255, 255, 255, 0.4);
   border-radius: 25px;
   font-family: Lato, Arial, sans-serif;
-  height: calc(100vh - 120px);
+  height: calc(100vh - 100px);
+  margin-bottom: 40px;
   width: calc(100vw - 68px);
-  position: relative;;
+  position: relative;
 }
 
 @media (min-width: 1024px) {

@@ -1,7 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from "@sudosos/sudosos-frontend-common";
-import LoginView from "@/views/LoginView.vue";
-import CashierView from "../views/CashierView.vue";
+import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '@sudosos/sudosos-frontend-common';
+import LoginView from '@/views/LoginView.vue';
+import CashierView from '../views/CashierView.vue';
 
 const authGuard = (to: any, from: any, next: any) => {
   const authStore = useAuthStore();
@@ -22,14 +22,14 @@ const router = createRouter({
       path: '/cashier',
       name: 'cashier',
       component: CashierView,
-      beforeEnter: authGuard, // Apply the navigation guard
+      beforeEnter: authGuard // Apply the navigation guard
     },
     {
       path: '/',
       name: 'login',
-      component: LoginView,
-    },
+      component: LoginView
+    }
   ]
-})
+});
 
-export default router
+export default router;

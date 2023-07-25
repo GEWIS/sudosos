@@ -1,53 +1,55 @@
 <template>
   <div class="cart">
     <div class="user-info">
-      <p> Current order for </p>
+      <p>Current order for</p>
       <div class="user-button">
-        <font-awesome-icon icon="fa-solid fa-user" class="user-icon"/>
+        <font-awesome-icon icon="fa-solid fa-user" class="user-icon" />
         {{ current?.firstName }}
       </div>
     </div>
     <div class="cart-items" v-if="!showHistory">
       <div v-for="item in cartItems" :key="item.product.id">
-        <CartItemComponent :cart-product="item"/>
+        <CartItemComponent :cart-product="item" />
       </div>
     </div>
-    <TransactionHistoryComponent v-else :transactions="transactions"/>
+    <TransactionHistoryComponent v-else :transactions="transactions" />
     <div class="cart-info">
       <div class="total-info">
         <div class="total-label">Total</div>
         <div class="total-price">€{{ formatPrice(totalPrice) }}</div>
       </div>
       <div class="warning-line" v-if="balance">
-        <font-awesome-icon icon="fa-solid fa-exclamation-triangle"/>
+        <font-awesome-icon icon="fa-solid fa-exclamation-triangle" />
         Your debit after purchase is €{{ formattedBalanceAfter }}
       </div>
     </div>
     <div class="cart-actions">
       <div class="buttons">
-        <button class="checkout-button"
-                :class="{'countdown': checkingOut, 'empty': cartStore.cartTotalCount === 0}"
-                @click="checkout">{{ checkingOut ? duration : "CHECKOUT" }}
+        <button
+          class="checkout-button"
+          :class="{ countdown: checkingOut, empty: cartStore.cartTotalCount === 0 }"
+          @click="checkout"
+        >
+          {{ checkingOut ? duration : 'CHECKOUT' }}
         </button>
         <button class="clear-button" @click="logout">
-          <font-awesome-icon icon="fa-solid fa-xmark"/>
+          <font-awesome-icon icon="fa-solid fa-xmark" />
         </button>
       </div>
     </div>
   </div>
 </template>
 
-
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { computed, onMounted, ref, watch } from 'vue';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { useCartStore } from '@/stores/cart.store';
-import CartItemComponent from "@/components/Cart/CartItemComponent.vue";
-import apiService from "@/services/ApiService";
-import { formatPrice } from "@/utils/FormatUtils";
-import { logoutService } from "@/services/logoutService";
-import TransactionHistoryComponent
-  from "@/components/Cart/TransactionHistory/TransactionHistoryComponent.vue";
+import CartItemComponent from '@/components/Cart/CartItemComponent.vue';
+import apiService from '@/services/ApiService';
+import { formatPrice } from '@/utils/FormatUtils';
+import { logoutService } from '@/services/logoutService';
+import TransactionHistoryComponent from
+    '@/components/Cart/TransactionHistory/TransactionHistoryComponent.vue';
 
 const cartStore = useCartStore();
 const cartItems = cartStore.getProducts;
@@ -56,15 +58,26 @@ const totalPrice = computed(() => cartStore.getTotalPrice);
 const showHistory = ref(true);
 const balance = ref<number | null>(null);
 
-const transactions = ref([])
-apiService.user.getUsersTransactions(cartStore.getBuyer?.id, undefined, undefined, undefined,
-  undefined, undefined, undefined, undefined, 5).then((res) => {
+const transactions = ref([]);
+apiService.user
+  .getUsersTransactions(
+    cartStore.getBuyer?.id,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    5
+  )
+  .then((res) => {
     transactions.value.push(...res.data.records);
-})
+  });
 const getBalance = async () => {
   if (!cartStore.buyer) return 0;
   try {
-    const response = await apiService.balance.getBalanceId(cartStore.buyer.id)
+    const response = await apiService.balance.getBalanceId(cartStore.buyer.id);
     return response.data.amount.amount;
   } catch (error) {
     return null;
@@ -72,55 +85,59 @@ const getBalance = async () => {
 };
 
 onMounted(async () => {
-  balance.value = (await getBalance());
+  balance.value = await getBalance();
 });
 
 watch(cartItems, () => {
   showHistory.value = false;
-})
-
-watch(() => cartStore.buyer, async () => {
-  balance.value = (await getBalance());
 });
+
+watch(
+  () => cartStore.buyer,
+  async () => {
+    balance.value = await getBalance();
+  }
+);
 
 const formattedBalanceAfter = computed(() => {
   if (!balance.value) return null;
-  const price = (balance.value - totalPrice.value);
+  const price = balance.value - totalPrice.value;
   return formatPrice(price);
-})
+});
 
-const duration = ref(3)
+const duration = ref(3);
 const checkingOut = ref(false);
 let intervalId: number | undefined;
-const checkoutTimer = () => setInterval(() => {
-  duration.value -= 1;
-  if (duration.value <= 0 && checkingOut.value) {
-    stopCheckout(intervalId);
-    cartStore.checkout();
-    checkingOut.value = false;
-    duration.value = 3;
-  }
-}, 1000);
+const checkoutTimer = () =>
+  setInterval(() => {
+    duration.value -= 1;
+    if (duration.value <= 0 && checkingOut.value) {
+      stopCheckout();
+      cartStore.checkout();
+      checkingOut.value = false;
+      duration.value = 3;
+    }
+  }, 1000);
 
 const stopCheckout = () => {
   duration.value = 3;
   checkingOut.value = false;
   clearInterval(intervalId);
-}
+};
 const logout = async () => {
   if (intervalId) stopCheckout();
-  await logoutService()
+  await logoutService();
 };
 
 watch(cartItems, () => {
   stopCheckout();
-})
+});
 
 const checkout = () => {
   if (cartStore.cartTotalCount === 0) return;
   if (checkingOut.value) return stopCheckout();
   checkingOut.value = true;
-  intervalId = checkoutTimer()
+  intervalId = checkoutTimer();
 };
 </script>
 
@@ -218,7 +235,7 @@ const checkout = () => {
 }
 
 .checkout-button {
-  background-color: #0055FD;
+  background-color: #0055fd;
   font-weight: 500;
   color: white;
   width: 262px;

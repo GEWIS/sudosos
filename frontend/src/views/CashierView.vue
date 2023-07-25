@@ -1,31 +1,31 @@
 <template>
   <div v-if="posNotLoaded" class="home-loader">
-      <div>
-        <ProgressSpinner aria-label="Loading" />
+    <div>
+      <ProgressSpinner aria-label="Loading" />
+    </div>
+  </div>
+  <div v-else class="main-content">
+    <div class="wrapper">
+      <div class="pos-wrapper">
+        <PointOfSaleDisplayComponent :point-of-sale="currentPos" />
+        <ActivityComponent />
+      </div>
+      <div class="cart-wrapper">
+        <CartComponent />
       </div>
     </div>
-  <div v-else class="main-content">
-      <div class="wrapper">
-        <div class="pos-wrapper">
-          <PointOfSaleDisplayComponent :point-of-sale="currentPos" />
-          <ActivityComponent/>
-        </div>
-        <div class="cart-wrapper">
-          <CartComponent />
-        </div>
-      </div>
   </div>
   <SettingsIconComponent />
 </template>
 <script setup lang="ts">
-import { PointOfSaleWithContainersResponse } from "@sudosos/sudosos-client";
-import { onMounted, Ref, ref, watch } from "vue";
-import { usePointOfSaleStore } from "@/stores/pos.store";
-import PointOfSaleDisplayComponent from "@/components/PointOfSaleDisplayComponent.vue";
-import SettingsIconComponent from "@/components/SettingsIconComponent.vue";
-import CartComponent from "@/components/Cart/CartComponent.vue";
-import { useActivityStore } from "@/stores/activity.store";
-import ActivityComponent from "@/components/ActivityComponent.vue";
+import { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
+import { onMounted, Ref, ref, watch } from 'vue';
+import { usePointOfSaleStore } from '@/stores/pos.store';
+import PointOfSaleDisplayComponent from '@/components/PointOfSaleDisplayComponent.vue';
+import SettingsIconComponent from '@/components/SettingsIconComponent.vue';
+import CartComponent from '@/components/Cart/CartComponent.vue';
+import { useActivityStore } from '@/stores/activity.store';
+import ActivityComponent from '@/components/ActivityComponent.vue';
 
 const posNotLoaded = ref(true);
 const currentPos: Ref<PointOfSaleWithContainersResponse | undefined> = ref(undefined);
@@ -43,9 +43,12 @@ const fetchPointOfSale = async () => {
 
 onMounted(fetchPointOfSale);
 
-watch(() => pointOfSaleStore.pointOfSale, (newValue) => {
-  if (newValue) currentPos.value = newValue;
-});
+watch(
+  () => pointOfSaleStore.pointOfSale,
+  (newValue) => {
+    if (newValue) currentPos.value = newValue;
+  }
+);
 </script>
 <style scoped>
 .wrapper {

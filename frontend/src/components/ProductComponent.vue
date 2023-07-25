@@ -9,19 +9,19 @@
 </template>
 
 <script setup lang="ts">
-import { ContainerWithProductsResponse, ProductResponse } from "@sudosos/sudosos-client";
-import { useCartStore } from "@/stores/cart.store";
-import { getProductImageSrc } from "@/utils/imageUtils";
-import { formatPrice } from "@/utils/FormatUtils";
+import { ContainerWithProductsResponse, ProductResponse } from '@sudosos/sudosos-client';
+import { useCartStore } from '@/stores/cart.store';
+import { getProductImageSrc } from '@/utils/imageUtils';
+import { formatPrice } from '@/utils/FormatUtils';
 
 const props = defineProps({
   product: {
     type: Object as () => ProductResponse,
-    required: true,
+    required: true
   },
   container: {
     type: Object as () => ContainerWithProductsResponse,
-    required: true,
+    required: true
   }
 });
 
@@ -33,7 +33,7 @@ const addToCart = () => {
   cartStore.addToCart({
     product: props.product,
     container: props.container,
-    count: 1,
+    count: 1
   });
 };
 </script>

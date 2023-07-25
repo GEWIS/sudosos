@@ -2,9 +2,9 @@
 import { defineStore } from 'pinia';
 
 interface ActivityState {
-  timer: number | null,
-  duration: number,
-  isActive: boolean,
+  timer: number | null
+  duration: number
+  isActive: boolean
 }
 
 const TIME_OUT = 30;
@@ -12,7 +12,7 @@ export const useActivityStore = defineStore('activity', {
   state: (): ActivityState => ({
     timer: null,
     duration: TIME_OUT,
-    isActive: false,
+    isActive: false
   }),
   getters: {
     getDuration(): number {
@@ -73,6 +73,6 @@ export const useActivityStore = defineStore('activity', {
     onTimerEnd() {
       console.log('Timer went off. User is no longer present at the POS.');
       // Emit any function or perform any necessary action when the timer goes off.
-    },
-  },
+    }
+  }
 });

@@ -18,17 +18,17 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { CartProduct, useCartStore } from "@/stores/cart.store";
-import { getProductImageSrc } from "@/utils/imageUtils";
-import { formatPrice } from "@/utils/FormatUtils";
+import { CartProduct, useCartStore } from '@/stores/cart.store';
+import { getProductImageSrc } from '@/utils/imageUtils';
+import { formatPrice } from '@/utils/FormatUtils';
 
 const cartStore = useCartStore();
 
 const props = defineProps({
   cartProduct: {
     type: Object as () => CartProduct,
-    required: true,
-  },
+    required: true
+  }
 });
 
 const product = ref(props.cartProduct.product);
@@ -41,7 +41,7 @@ const increaseQuantity = () => {
 };
 
 const totalPrice = computed(() => {
-  const price = product.value.priceInclVat.amount * props.cartProduct.count
+  const price = product.value.priceInclVat.amount * props.cartProduct.count;
   return formatPrice(price);
 });
 </script>

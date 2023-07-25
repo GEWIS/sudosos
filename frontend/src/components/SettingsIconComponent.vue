@@ -7,12 +7,12 @@
 <script setup lang="ts">
 const openSettings = () => {
   // open settings modal
-}
+};
 </script>
 
 <style scoped>
 .settings-icon {
-  height:100px;
+  height: 100px;
   position: fixed;
   bottom: -35px;
   left: 60px;
