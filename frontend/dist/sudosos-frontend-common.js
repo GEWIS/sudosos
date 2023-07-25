@@ -44,8 +44,8 @@ const Xr = fs("user", {
     async fetchCurrentUserBalance(t, n) {
       this.current.balance = (await n.balance.getBalanceId(t)).data;
     },
-    async fetchUsersFinancialMutations(t, n) {
-      this.current.financialMutations = (await n.user.getUsersFinancialMutations(t)).data;
+    async fetchUsersFinancialMutations(t, n, l, e) {
+      this.current.financialMutations = (await n.user.getUsersFinancialMutations(t, l, e)).data;
     },
     setCurrentUser(t) {
       this.current.user = t;

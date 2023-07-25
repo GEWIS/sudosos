@@ -17,7 +17,7 @@ export declare const useUserStore: import("pinia").StoreDefinition<"user", UserM
 }, {
     fetchUsers(service: ApiService): Promise<void>;
     fetchCurrentUserBalance(id: number, service: ApiService): Promise<void>;
-    fetchUsersFinancialMutations(id: number, service: ApiService): Promise<void>;
+    fetchUsersFinancialMutations(id: number, service: ApiService, take?: number, skip?: number): Promise<void>;
     setCurrentUser(user: UserResponse): void;
     addUser(user: UserResponse): void;
     clearCurrent(): void;
