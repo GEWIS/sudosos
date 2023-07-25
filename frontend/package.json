@@ -23,7 +23,8 @@
   },
   "files": [
     "src/",
-    "dist/"
+    "dist/",
+    ".eslintrc.cjs"
   ],
   "author": "SudoSOS WG",
   "repository": {
