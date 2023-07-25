@@ -38,7 +38,5 @@ export declare class ApiService {
     get stripe(): StripeApi;
     get rbac(): RbacApi;
     get user(): UsersApi;
-    get categories(): ProductCategoriesApi;
-    get borrelKaart(): BorrelkaartgroupsApi;
     get openBanner(): BannersApi;
 }
