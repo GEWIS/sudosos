@@ -13,12 +13,14 @@
             :pinCode="pinCode"
             :wrong-pin="wrongPin"
             :isActive="enteringUserId"
+            :external="external"
           />
         </div>
         <KeypadComponent
           @input="handleInput"
           @backspace="handleBackspace"
           @continue="handleContinue"
+          @external="handleExternal"
         />
       </div>
       <BannerComponent v-if="shouldShowBanner" />
@@ -50,6 +52,7 @@ const wrongPin = ref(false);
 const maxUserIdLength = 5;
 const maxPasscodeLength = 4;
 const maxUserId = 40000;
+const external = ref<boolean>(false);
 
 const handleInput = (value: string) => {
   if (wrongPin.value) wrongPin.value = false;
@@ -57,7 +60,7 @@ const handleInput = (value: string) => {
   if (enteringUserId.value) {
     if (userId.value.length >= maxUserIdLength) return;
     userId.value += value;
-    if (userId.value.length === maxUserIdLength || Number(userId.value) * 10 > maxUserId) {
+    if (userId.value.length === maxUserIdLength || Number(userId.value) * 10 > maxUserId && !external.value) {
       switchInput();
     }
   } else {
@@ -86,6 +89,10 @@ const switchInput = () => {
   }, 500);
 };
 
+const handleExternal = () => {
+  external.value = !external.value;
+};
+
 const displayContainerClasses = computed(() => ({
   to: enteringUserId.value,
   from: !enteringUserId.value,
@@ -93,28 +100,49 @@ const displayContainerClasses = computed(() => ({
   switched: !enteringUserId.value && !animateSwitch.value
 }));
 
+const loginSucces = async () => {
+  const user = authStore.getUser;
+  if (user === null) return;
+
+  if (userStore.getActiveUsers.length === 0) await userStore.fetchUsers;
+  useCartStore().setBuyer(user);
+  userStore.fetchCurrentUserBalance(user.id, apiService);
+
+  await router.push({ path: '/cashier' });
+  userId.value = '';
+  pinCode.value = '';
+  enteringUserId.value = true;
+};
+
+const loginFail = (error: any) => {
+  console.error(error);
+  pinCode.value = '';
+  wrongPin.value = true;
+};
+
 const login = async () => {
   loggingIn.value = true;
-  await authStore
-    .gewisPinlogin(userId.value, pinCode.value, apiService)
-    .then(async () => {
-      const user = authStore.getUser;
-      if (user === null) return;
 
-      if (userStore.getActiveUsers.length === 0) await userStore.fetchUsers;
-      useCartStore().setBuyer(user);
-      userStore.fetchCurrentUserBalance(user.id, apiService);
+  if (external.value) {
+    await authStore
+      .externalPinLogin(Number(userId.value), pinCode.value, apiService)
+      .then(async () => {
+        await loginSucces();
+      })
+      .catch((error) => {
+        loginFail(error);
+      });
+  } else {
+    await authStore
+      .gewisPinlogin(userId.value, pinCode.value, apiService)
+      .then(async () => {
+        await loginSucces();
+      })
+      .catch((error) => {
+        loginFail(error);
+      });
+  }
 
-      await router.push({ path: '/cashier' });
-      userId.value = '';
-      pinCode.value = '';
-      enteringUserId.value = true;
-    })
-    .catch((error) => {
-      console.error(error);
-      pinCode.value = '';
-      wrongPin.value = true;
-    });
   loggingIn.value = false;
 };
 

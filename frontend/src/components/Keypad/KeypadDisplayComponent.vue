@@ -2,7 +2,10 @@
   <div class="wrapper user" :class="{ inactive: !isActive }">
     <font-awesome-icon icon="fa-solid fa-user" class="icon" />
     <div class="display-value">
-      <span v-for="char in userId" :key="char">{{ char }}</span>
+      {{ external ? 'E' : '' }}
+      <span v-for="char in userId" :key="char">
+        {{ char }}
+      </span>
     </div>
   </div>
   <div class="wrapper pincode" :class="{ inactive: isActive }">
@@ -31,6 +34,10 @@ defineProps({
   wrongPin: {
     type: Boolean,
     required: true
+  },
+  external: {
+    type: Boolean,
+    required: true,
   }
 });
 </script>
@@ -48,12 +55,13 @@ defineProps({
   min-height: 95px;
   align-items: center;
   margin-top: 10px;
-}
-
-.display-value span {
-  padding: 0 10px;
-  background-color: white;
   font-weight: bold;
+
+  > span {
+    padding: 0 10px;
+    font-weight: bold;
+    background-color: white;
+  }
 }
 
 .wrapper.user {

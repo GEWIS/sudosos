@@ -1,6 +1,6 @@
 <template>
   <div class="keypad">
-    <div class="key-row" v-for="row in keypadLayout" :key="row">
+    <div class="key-row" v-for="row in keypadLayout" :key="row[0]">
       <div
         :class="['key', { backspace: key === keypadBackspace, continue: key === keypadContinue }]"
         v-for="key in row"
@@ -12,12 +12,11 @@
         {{ key !== keypadBackspace && key !== keypadContinue ? key : '' }}
       </div>
     </div>
+    <div class="external key" @click="emitExternal">Change to External login</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineEmits } from 'vue';
-
 const keypadBackspace = 'B';
 const keypadContinue = 'C';
 const keypadLayout = [
@@ -27,9 +26,9 @@ const keypadLayout = [
   ['B', '0', 'C']
 ];
 
-const emits = defineEmits(['backspace', 'continue', 'input']);
+const emits = defineEmits(['backspace', 'continue', 'input', 'external']);
 
-const handleKeyClick = (key) => {
+const handleKeyClick = (key: string) => {
   if (key === keypadBackspace) {
     emits('backspace');
   } else if (key === keypadContinue) {
@@ -37,6 +36,10 @@ const handleKeyClick = (key) => {
   } else {
     emits('input', key);
   }
+};
+
+const emitExternal = () => {
+  emits('external');
 };
 </script>
 
@@ -66,7 +69,15 @@ const handleKeyClick = (key) => {
   border-radius: 15px;
   cursor: pointer;
   font-weight: bold;
+  font-size: 42px;
 }
+
+.key.external {
+  width: 100%;
+  font-size: 22px;
+  height: 50px;
+}
+
 
 .backspace {
   background-color: red;
@@ -76,10 +87,5 @@ const handleKeyClick = (key) => {
 .continue {
   background-color: #0055fd;
   color: rgba(255, 255, 255, 1);
-}
-
-/* Optional: Add styling for key text */
-.key {
-  font-size: 42px;
 }
 </style>
