@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 
-import ContainerCardComponent from "@/views/PointOfSale/ContainerCardComponent.vue";
+import ContainerCardComponent from "@/components/ContainerCardComponent.vue";
 import {onMounted} from "vue";
 
 </script>

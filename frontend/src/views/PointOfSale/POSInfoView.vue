@@ -34,7 +34,7 @@
 <script setup lang="ts">
 import {onBeforeMount, Ref, ref} from 'vue';
 import {useRoute} from 'vue-router';
-import ContainerCardComponent from "@/views/PointOfSale/ContainerCardComponent.vue";
+import ContainerCardComponent from "@/components/ContainerCardComponent.vue";
 import TransactionsTableComponent from "@/components/TransactionsTableComponent.vue";
 import {usePointOfSaleStore} from "@/stores/pos.store";
 import type {PointOfSaleWithContainersResponse} from "@sudosos/sudosos-client";
