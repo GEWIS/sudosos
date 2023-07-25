@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"No tests specified\" && exit 0",
     "build": "vite build",
-    "type-check": "vue-tsc --noEmit -p tsconfig.json --composite false"
+    "type-check": "vue-tsc --noEmit -p tsconfig.json --composite false",
+    "lint": "eslint ./src/**/* --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "main": "./dist/sudosos-frontend-common.umd.cjs",
   "module": "./dist/sudosos-frontend-common.js",
@@ -43,8 +44,14 @@
     "vue": "^3.2.25"
   },
   "devDependencies": {
+    "@rushstack/eslint-patch": "^1.2.0",
     "@vitejs/plugin-vue": "^4.2.3",
+    "@vue/eslint-config-prettier": "^7.1.0",
+    "@vue/eslint-config-typescript": "^11.0.3",
     "babel": "^6.23.0",
+    "eslint": "^8.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-vue": "^9.0.0",
     "typescript": "^5.1.6",
     "vite": "^4.4.4",
     "vite-plugin-dts": "^3.3.1",

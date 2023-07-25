@@ -7,8 +7,8 @@ import {
     TransactionsApi, TransfersApi,
     UsersApi, VatGroupsApi,
 } from '@sudosos/sudosos-client';
-import axios, {AxiosResponse} from 'axios';
-import jwtDecode, {JwtPayload} from 'jwt-decode';
+import axios, { AxiosResponse } from 'axios';
+import jwtDecode, { JwtPayload } from 'jwt-decode';
 
 // Create an axios instance
 const axiosInstance = axios.create();
@@ -70,7 +70,7 @@ export class ApiService {
 
 
     constructor(basePath: string, apiKey: () => string) {
-        const configuration = new Configuration({basePath});
+        const configuration = new Configuration({ basePath });
         const withKeyConfiguration = new Configuration({
             basePath,
             baseOptions: {

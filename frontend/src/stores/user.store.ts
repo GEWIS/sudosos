@@ -1,10 +1,10 @@
-import {createPinia, defineStore} from 'pinia';
+import { createPinia, defineStore } from 'pinia';
 import {
   BalanceResponse,
   UserResponse
 } from "@sudosos/sudosos-client";
-import {ApiService} from "../services/ApiService";
-import {fetchAllPages} from "../helpers/PaginationHelper";
+import { ApiService } from "../services/ApiService";
+import { fetchAllPages } from "../helpers/PaginationHelper";
 
 const pinia = createPinia();
 

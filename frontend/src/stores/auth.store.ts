@@ -6,8 +6,8 @@ import {
   GEWISAuthenticationPinRequest, GewiswebAuthenticationRequest,
   UserResponse
 } from "@sudosos/sudosos-client";
-import {useUserStore} from "./user.store";
-import {ApiService} from "../services/ApiService";
+import { useUserStore } from "./user.store";
+import { ApiService } from "../services/ApiService";
 
 interface AuthStoreState {
   user: UserResponse | null,
@@ -39,7 +39,7 @@ export const useAuthStore = defineStore({
   },
   actions: {
     handleResponse(res: AuthenticationResponse, service: ApiService) {
-      const { user, token, roles,organs, acceptedToS} = res;
+      const { user, token, roles,organs, acceptedToS } = res;
       if ( !user || !token || !roles || !organs || !acceptedToS) return
       this.user = user;
       this.token = token;
