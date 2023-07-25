@@ -14,12 +14,17 @@
   </Dialog>
 </template>
 <script setup lang="ts">
+import {ref} from "vue";
+
 defineProps({
   amount: {
     type: Number,
     required: true,
   }
 });
+
+const visible = ref(false);
+const loading = ref(false);
 </script>
 <style scoped>
 @import "../styles/BasePage.css";

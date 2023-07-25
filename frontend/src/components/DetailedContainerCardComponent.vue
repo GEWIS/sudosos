@@ -17,12 +17,12 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import CardComponent from "@/components/CardComponent.vue";
 import type {ContainerResponse} from "@sudosos/sudosos-client";
-import {Ref, ref, watch} from "vue";
+import {ref, watch} from "vue";
 
 const selectedOwnContainers = ref<Array<ContainerResponse>>([]);
 const selectedPublicContainers = ref<Array<ContainerResponse>>([]);
 
-const props = defineProps({
+defineProps({
   publicContainers: {
     type: Array<ContainerResponse>,
     required: true,
@@ -31,16 +31,12 @@ const props = defineProps({
     type: Array<ContainerResponse>,
     required: true,
   },
-  selectedContainers: {
-    type: Object as () => Ref<Array<ContainerResponse>>,
-    required: true,
-  }
 });
 
 const emit = defineEmits(["selectedChanged"]);
 const expandedContainers = ref();
 
-watch([selectedPublicContainers, selectedOwnContainers], (newValues, oldValues) => {
+watch([selectedPublicContainers, selectedOwnContainers], () => {
   const combinedSelectedContainers: Array<ContainerResponse> = selectedPublicContainers.value.concat(selectedOwnContainers.value);
   emit("selectedChanged", combinedSelectedContainers);
 });

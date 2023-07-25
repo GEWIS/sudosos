@@ -11,11 +11,11 @@
       </div>
       <div class="row">
         <h6>Added on</h6>
-        <p>{{formatDateTime(new Date(product.createdAt))}}</p>
+        <p>{{formatDateTime(new Date(product.createdAt ? product.createdAt.toString() : ''))}}</p>
       </div>
       <div class="row">
         <h6>Updated on</h6>
-        <p>{{ formatDateTime(new Date(product.updatedAt)) }}</p>
+        <p>{{ formatDateTime(new Date(product.updatedAt ? product.updatedAt.toString() : '')) }}</p>
       </div>
       <div class="row">
         <h6>Price</h6>
@@ -40,17 +40,17 @@
 <script setup lang="ts">
 import type {ProductResponse} from "@sudosos/sudosos-client";
 import Dialog from 'primevue/dialog';
-import {onMounted} from "vue";
+import {onMounted, ref} from "vue";
 import {getProductImageSrc} from "@/utils/imageUtils";
-import {formatDateTime, formatPrice} from "../utils/formatterUtils";
+import {formatDateTime, formatPrice} from "@/utils/formatterUtils";
 
-const props = defineProps({
+defineProps({
   product: {
     type: Object as () => ProductResponse,
     required: true,
   }
 });
-
+const visible = ref(false);
 onMounted(() => {
 })
 </script>

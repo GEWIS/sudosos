@@ -17,7 +17,7 @@
           <b>Title</b>
           <p>{{ pos ? pos.name: '' }}</p>
           <b>Owner</b>
-          <p>{{ pos ? pos.owner.firstName + pos.owner.lastName: '' }}</p>
+          <p>{{ (pos && pos.owner) ? pos.owner.firstName + pos.owner.lastName: '' }}</p>
         </div>
         <ContainerCardComponent
             class="container-card"
@@ -32,7 +32,8 @@
 
 
 <script setup lang="ts">
-import {onBeforeMount, Ref, ref} from 'vue';
+import {onBeforeMount, ref} from 'vue';
+import type {Ref} from 'vue';
 import {useRoute} from 'vue-router';
 import ContainerCardComponent from "@/components/ContainerCardComponent.vue";
 import TransactionsTableComponent from "@/components/TransactionsTableComponent.vue";

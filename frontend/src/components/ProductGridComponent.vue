@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import {ProductResponse} from "@sudosos/sudosos-client";
+import type {ProductResponse} from "@sudosos/sudosos-client";
 import {onMounted} from "vue";
 import ProductComponent from "@/components/ProductComponent.vue";
 

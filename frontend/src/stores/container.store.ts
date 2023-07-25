@@ -1,11 +1,10 @@
 import {defineStore} from "pinia";
 import type {ContainerWithProductsResponse} from "@sudosos/sudosos-client";
-import {ContainersApi} from "@sudosos/sudosos-client";
 import ApiService from "@/services/ApiService";
 
 export const useContainerStore = defineStore('container', {
     state: () => ({
-        container: null as ContainerWithProductsResponse,
+        container: null as ContainerWithProductsResponse | null,
     }),
     getters: {
         getContainer(): ContainerWithProductsResponse | null {

@@ -22,7 +22,13 @@
           </ul>
           <Button id="create-pos-button" label="Create" @click="createPointOfSale" severity="success"/>
         </div>
-        <DetailedContainerCardComponent @selectedChanged="handleSelectedChanged" class="container-card" data="" v-if="publicContainers && ownContainers" :own-containers="ownContainers" :public-containers="publicContainers"/>
+        <DetailedContainerCardComponent
+            @selectedChanged="handleSelectedChanged"
+            class="container-card"
+            v-if="publicContainers && ownContainers"
+            :own-containers="ownContainers"
+            :public-containers="publicContainers"
+        />
     </div>
     </div>
   </div>
@@ -30,7 +36,8 @@
 
 <script setup lang="ts">
 
-import {onMounted, Ref, ref} from "vue";
+import {onMounted, ref} from "vue";
+import type { Ref } from "vue";
 import {useContainerStore} from "@/stores/container.store";
 import DetailedContainerCardComponent from "@/components/DetailedContainerCardComponent.vue";
 import {useAuthStore, useUserStore} from "@sudosos/sudosos-frontend-common";
@@ -39,7 +46,7 @@ import {usePointOfSaleStore} from "@/stores/pos.store";
 import {useRouter} from "vue-router";
 
 const title = ref(null);
-const selectedOwner = ref(null);
+const selectedOwner: Ref<UserResponse | undefined> = ref();
 const containerStore = useContainerStore();
 const userStore = useUserStore();
 const publicContainers: Ref<Array<ContainerResponse> | null | undefined> = ref();
@@ -52,13 +59,16 @@ const pointOfSaleStore = usePointOfSaleStore();
 const router = useRouter();
 
 onMounted(async () => {
-  const publicContainersResponse = await containerStore.getPublicContainers();
-  console.warn(userStore.getCurrentUser);
-  const ownContainersResponse = await containerStore.getUsersContainers(userStore.getCurrentUser.user.id);
-  publicContainers.value = publicContainersResponse.records;
-  ownContainers.value = ownContainersResponse.records.filter((container) => container.public == false);
-  organsList.value = authStore.organs;
-  console.error(organsList);
+  if (userStore.getCurrentUser.user ) {
+    const publicContainersResponse = await containerStore.getPublicContainers();
+    const ownContainersResponse = await containerStore.getUsersContainers(userStore.getCurrentUser.user.id);
+    publicContainers.value = publicContainersResponse.records;
+    ownContainers.value = ownContainersResponse.records.filter((container) => container.public == false);
+    organsList.value = authStore.organs;
+  } else {
+    console.error("User not found"); // TODO: Error handling
+  }
+
 });
 
 const handleSelectedChanged = (selected: any) => {
@@ -70,8 +80,8 @@ const createPointOfSale = async () => {
   console.error(selectedOwner.value);
   console.warn(useAuthentication.value);
   console.error(selectedContainers.value);
-  if (title.value) {
-    const response = await pointOfSaleStore.createPointOfSale(title.value, useAuthentication.value, selectedContainers.value.map(container => container.id), selectedOwner.value.id);
+  if (title.value && selectedOwner.value) {
+    const response = await pointOfSaleStore.createPointOfSale(title.value, useAuthentication.value, selectedContainers.value.map((container: ContainerResponse) => container.id), selectedOwner.value.id);
     if (response.status == 200){
       router.push('/point-of-sale/overview');
     } else {
