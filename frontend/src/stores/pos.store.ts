@@ -40,6 +40,9 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
         },
         async getUserPointsOfSale(userId: number) {
             return await ApiService.user.getUsersPointsOfSale(userId);
+        },
+        async createPointOfSale(name: string, useAuthentication: boolean, containers: Array<number>, ownerId: number){
+            return await ApiService.pos.createPointOfSale({name, useAuthentication, containers, ownerId});
         }
     },
 });

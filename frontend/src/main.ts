@@ -17,6 +17,8 @@ import InputNumber from "primevue/inputnumber";
 import Dialog from "primevue/dialog";
 import 'primeicons/primeicons.css';
 import languages from "@/locales";
+import Dropdown from "primevue/dropdown";
+import Checkbox from "primevue/checkbox";
 
 const app = createApp(App)
 
@@ -32,11 +34,12 @@ app.use(PrimeVue)
 app.use(i18n);
 
 app.component('Button', Button);
-app.component('InputText', InputText);
+app.component('InputText', InputText);-
 app.component('Menubar', Menubar);
 app.component('Panel', Panel);
 app.component('DataTable', DataTable);
 app.component('InputNumber', InputNumber);
 app.component('Dialog', Dialog);
-
+app.component('Dropdown', Dropdown);
+app.component('Checkbox', Checkbox);
 app.mount('#app')

@@ -1,36 +1,50 @@
 <template>
   <CardComponent header="containers">
-    <DataTable v-model:expandedRows="expandedContainers" :value="containers">
+    <p class="container-type-title">Public Containers</p>
+    <DataTable v-model:selection="selectedPublicContainers" v-model:expandedRows="expandedContainers" :value="publicContainers">
+      <Column selectionMode="multiple" headerStyle="width: 1rem" />
       <Column field="name" />
-      <Column expander style="width: 2rem"/>
-      <template #expansion="slotProps">
-        <ProductGridComponent :products="slotProps.data.products" />
-      </template>
     </DataTable>
-
+    <p class="container-type-title">Own Containers</p>
+    <DataTable v-model:selection="selectedOwnContainers" v-model:expandedRows="expandedContainers" :value="ownContainers">
+      <Column selectionMode="multiple" headerStyle="width: 1rem" />
+      <Column field="name" />
+    </DataTable>
   </CardComponent>
 </template>
 <script setup lang="ts">
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import CardComponent from "@/components/CardComponent.vue";
-import type {ContainerWithProductsResponse} from "@sudosos/sudosos-client";
-import {onMounted, ref} from "vue";
-import ProductGridComponent from "@/components/ProductGridComponent.vue";
+import type {ContainerResponse} from "@sudosos/sudosos-client";
+import {Ref, ref, watch} from "vue";
 
+const selectedOwnContainers = ref<Array<ContainerResponse>>([]);
+const selectedPublicContainers = ref<Array<ContainerResponse>>([]);
 
 const props = defineProps({
-  data: {
-    type: Array<ContainerWithProductsResponse>,
+  publicContainers: {
+    type: Array<ContainerResponse>,
     required: true,
   },
+  ownContainers: {
+    type: Array<ContainerResponse>,
+    required: true,
+  },
+  selectedContainers: {
+    type: Object as () => Ref<Array<ContainerResponse>>,
+    required: true,
+  }
 });
-onMounted(()=>{
-  containers.value = props.data;
 
-});
-const containers = ref();
+const emit = defineEmits(["selectedChanged"]);
 const expandedContainers = ref();
+
+watch([selectedPublicContainers, selectedOwnContainers], (newValues, oldValues) => {
+  const combinedSelectedContainers: Array<ContainerResponse> = selectedPublicContainers.value.concat(selectedOwnContainers.value);
+  emit("selectedChanged", combinedSelectedContainers);
+});
+
 </script>
 <style scoped lang="scss">
 :deep(.p-datatable-thead) {
@@ -52,6 +66,12 @@ const expandedContainers = ref();
   border-radius: 4px;
   font-size: 1rem;
   font-family: Lato,Arial,sans-serif!important;
+
+
+}
+
+:deep(.p-selection-column) {
+    width: 2rem;
 }
 
 :deep(.p-datatable .p-datatable-tbody > tr > td:not(:first-child)) {

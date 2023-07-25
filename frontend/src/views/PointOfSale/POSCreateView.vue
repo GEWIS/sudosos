@@ -3,27 +3,82 @@
     <div class="page-title">Create Point of Sale</div>
     <hr>
     <div class="content-wrapper">
-      <div class="pos-general-info">
-        <h3>General</h3>
-        <b>Title</b>
-        <p>Test</p>
-        <b>Owner</b>
-        <p>Test</p>
-      </div>
-      <ContainerCardComponent
-          class="container-card"
-          v-if="pos && pos.containers"
-          :data="pos.containers"
-          editMode
-      />
+      <div class="pos-row">
+        <div class="pos-general-info">
+          <h3>General</h3>
+          <b>Title</b>
+          <InputText class="input" type="text" v-model="title"/>
+          <b>Owner</b>
+          <Dropdown class="input" :options="organsList" optionLabel="firstName" v-model="selectedOwner" placeholder="Select Owner"/>
+          <div>
+            <Checkbox v-model="useAuthentication" inputId="useAuthentication" name="useAuthentication" value="useAuthentication" :binary="true" />
+            <label for="useAuthentication">Use Authentication</label>
+          </div>
+          <b>Selected Containers</b>
+          <ul class="selected-containers">
+            <li v-for="container in selectedContainers" :key="container.id">
+              {{ container.name }}
+            </li>
+          </ul>
+          <Button id="create-pos-button" label="Create" @click="createPointOfSale" severity="success"/>
+        </div>
+        <DetailedContainerCardComponent @selectedChanged="handleSelectedChanged" class="container-card" data="" v-if="publicContainers && ownContainers" :own-containers="ownContainers" :public-containers="publicContainers"/>
+    </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import ContainerCardComponent from "@/components/ContainerCardComponent.vue";
-import {onMounted} from "vue";
+import {onMounted, Ref, ref} from "vue";
+import {useContainerStore} from "@/stores/container.store";
+import DetailedContainerCardComponent from "@/components/DetailedContainerCardComponent.vue";
+import {useAuthStore, useUserStore} from "@sudosos/sudosos-frontend-common";
+import type {ContainerResponse, UserResponse} from "@sudosos/sudosos-client";
+import {usePointOfSaleStore} from "@/stores/pos.store";
+import {useRouter} from "vue-router";
+
+const title = ref(null);
+const selectedOwner = ref(null);
+const containerStore = useContainerStore();
+const userStore = useUserStore();
+const publicContainers: Ref<Array<ContainerResponse> | null | undefined> = ref();
+const ownContainers: Ref<Array<ContainerResponse> | null | undefined> = ref();
+const selectedContainers = ref();
+const useAuthentication = ref(false);
+const organsList: Ref<Array<UserResponse>> = ref([]);
+const authStore = useAuthStore();
+const pointOfSaleStore = usePointOfSaleStore();
+const router = useRouter();
+
+onMounted(async () => {
+  const publicContainersResponse = await containerStore.getPublicContainers();
+  console.warn(userStore.getCurrentUser);
+  const ownContainersResponse = await containerStore.getUsersContainers(userStore.getCurrentUser.user.id);
+  publicContainers.value = publicContainersResponse.records;
+  ownContainers.value = ownContainersResponse.records.filter((container) => container.public == false);
+  organsList.value = authStore.organs;
+  console.error(organsList);
+});
+
+const handleSelectedChanged = (selected: any) => {
+  selectedContainers.value = selected;
+}
+
+const createPointOfSale = async () => {
+  console.warn(title.value);
+  console.error(selectedOwner.value);
+  console.warn(useAuthentication.value);
+  console.error(selectedContainers.value);
+  if (title.value) {
+    const response = await pointOfSaleStore.createPointOfSale(title.value, useAuthentication.value, selectedContainers.value.map(container => container.id), selectedOwner.value.id);
+    if (response.status == 200){
+      router.push('/point-of-sale/overview');
+    } else {
+      // TODO: Error Toasts
+    }
+  }
+}
 
 </script>
 
@@ -45,6 +100,7 @@ hr {
 
 .pos-row {
   display: flex;
+  flex-direction: row;
   width: 100%;
 }
 
@@ -52,7 +108,8 @@ hr {
   flex: 1;
   padding-left: 0.25rem!important;
   font-family: Lato,Arial,sans-serif!important;
-
+  display: flex;
+  flex-direction: column;
   color: black;
   font-size: 1rem;
   h3 {
@@ -67,6 +124,14 @@ hr {
 
   p {
     margin-bottom: 1rem;
+  }
+
+  .input {
+    width: 80%;
+  }
+
+  #create-pos-button {
+    width: 80%;
   }
 }
 
