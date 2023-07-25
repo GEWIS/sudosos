@@ -1,6 +1,6 @@
 import { createPinia, defineStore } from 'pinia';
 import {
-  BalanceResponse,
+  BalanceResponse, FinancialMutationResponse, PaginatedFinancialMutationResponse,
   UserResponse
 } from "@sudosos/sudosos-client";
 import { ApiService } from "../services/ApiService";
@@ -11,6 +11,7 @@ const pinia = createPinia();
 interface CurrentState {
   balance: BalanceResponse | null,
   user: UserResponse | null,
+  financialMutations: PaginatedFinancialMutationResponse
 }
 interface UserModuleState {
   users: UserResponse[];
@@ -23,6 +24,10 @@ export const useUserStore = defineStore('user', {
     current: {
       balance: null,
       user: null,
+      financialMutations: {
+        _pagination: {},
+        records: [],
+      }
     },
   }),
   getters: {
@@ -37,7 +42,7 @@ export const useUserStore = defineStore('user', {
     },
     getCurrentUser(): CurrentState {
       return this.current;
-    }
+    },
   },
   actions: {
     async fetchUsers(service: ApiService) {
@@ -46,6 +51,9 @@ export const useUserStore = defineStore('user', {
     },
     async fetchCurrentUserBalance(id: number, service: ApiService) {
       this.current.balance = (await service.balance.getBalanceId(id)).data
+    },
+    async fetchUsersFinancialMutations(id: number, service: ApiService) {
+      this.current.financialMutations = (await service.user.getUsersFinancialMutations(id)).data;
     },
     setCurrentUser(user: UserResponse) {
       this.current.user = user;
