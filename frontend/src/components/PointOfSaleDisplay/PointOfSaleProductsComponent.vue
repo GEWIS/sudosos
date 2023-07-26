@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ComputedRef } from "vue";
+import { computed, ComputedRef, onMounted } from "vue";
 import {
   ContainerWithProductsResponse,
   PointOfSaleWithContainersResponse,
@@ -32,7 +32,7 @@ const props = defineProps({
   },
   selectedCategoryId: {
     type: String,
-    required: false,
+    required: true,
   },
   searchQuery: {
     type: String,
@@ -40,9 +40,7 @@ const props = defineProps({
   },
 });
 
-const filteredProducts: ComputedRef<
-    { product: ProductResponse; container: ContainerWithProductsResponse }[]
-> = computed(() => {
+const getFilteredProducts = () => {
   if (!props.pointOfSale) return [];
 
   let filteredProducts = props.pointOfSale.containers.flatMap((container) => {
@@ -74,7 +72,12 @@ const filteredProducts: ComputedRef<
   }
 
   return filteredProducts;
+};
+
+const filteredProducts = computed(() => {
+  return getFilteredProducts();
 });
+
 
 const sortedProducts = computed(() => {
   const products = [...filteredProducts.value];

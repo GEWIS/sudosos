@@ -68,7 +68,7 @@ if (cartStore.getBuyer) {
   apiService.user
       .getUsersTransactions(
           cartStore.getBuyer?.id,
-          undefined,
+          cartStore.getBuyer?.id,
           undefined,
           undefined,
           undefined,
@@ -133,13 +133,10 @@ const duration = ref(3);
 const checkingOut = ref(false);
 let intervalId: number | undefined;
 const checkoutTimer = () =>
-  setInterval(() => {
+  setInterval(async () => {
     duration.value -= 1;
     if (duration.value <= 0 && checkingOut.value) {
-      stopCheckout();
-      cartStore.checkout();
-      checkingOut.value = false;
-      duration.value = 3;
+      await finalizeCheckout();
     }
   }, 1000);
 
@@ -157,7 +154,15 @@ watch(cartItems, () => {
   stopCheckout();
 });
 
-const checkout = () => {
+const finalizeCheckout = async () => {
+  stopCheckout();
+  await cartStore.checkout();
+  checkingOut.value = false;
+  duration.value = 3;
+  // TODO only logout if not authenticated pos.
+  await logoutService();
+};
+const checkout = async () => {
   if (cartStore.cartTotalCount === 0) return;
   if (checkingOut.value) return stopCheckout();
   checkingOut.value = true;

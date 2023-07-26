@@ -9,7 +9,17 @@
         </div>
       </div>
       <div v-show="!isSearchViewVisible" class="categories-header">
-          <PointOfSaleCategoriesComponent v-model:category="selectedCategoryId"/>
+        <div class="categories">
+          <div
+              class="category"
+              v-for="category in computedCategories"
+              :key="category.id"
+              :class="{ 'selected-category': category.id === selectedCategoryId }"
+              @click="selectCategory(category.id)"
+          >
+            {{ category.name }}
+          </div>
+        </div>
         <label htmlFor="searchInput" class="search-button" @click="openSearchView">
           <font-awesome-icon icon="fa-solid fa-search"/>
           Search
@@ -25,14 +35,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import {
   PointOfSaleWithContainersResponse
 } from '@sudosos/sudosos-client';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { useCartStore } from "@/stores/cart.store";
 import PointOfSaleProductsComponent from "@/components/PointOfSaleDisplay/PointOfSaleProductsComponent.vue";
-import PointOfSaleCategoriesComponent from "@/components/PointOfSaleDisplay/PointOfSaleCategoriesComponent.vue";
+import { usePointOfSaleStore } from "@/stores/pos.store";
 
 defineProps({
   pointOfSale: {
@@ -42,9 +52,25 @@ defineProps({
 });
 
 const cartStore = useCartStore();
-const selectedCategoryId = ref<string | undefined>(undefined);
+const selectedCategoryId = ref<string | undefined>(getDefaultCategoryId());
 const searchQuery = ref('');
 const isSearchViewVisible = ref(false);
+
+const computedCategories = computed(() => {
+  return usePointOfSaleStore().allProductCategories;
+});
+
+function getDefaultCategoryId() {
+  const nonAlcoholicCategory = usePointOfSaleStore().allProductCategories.find(
+      (category: {name: string, id: string}) => category.name.toLowerCase() === 'non-alcoholic'
+  );
+
+  return nonAlcoholicCategory ? nonAlcoholicCategory.id : null;
+}
+
+const selectCategory = (categoryId: string) => {
+  selectedCategoryId.value = categoryId;
+};
 
 const openSearchView = () => {
   isSearchViewVisible.value = true;
@@ -77,5 +103,25 @@ watch(
   height: 72px;
   justify-content: space-between;
   width: 100%;
+}
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  > .category {
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 22px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    padding: 13px 25px;
+
+    &.selected-category {
+      background-color: var(--accent-color);
+      color: white;
+    }
+  }
 }
 </style>
