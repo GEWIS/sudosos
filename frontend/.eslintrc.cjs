@@ -11,7 +11,7 @@ module.exports = {
     '@vue/eslint-config-prettier/skip-formatting'
   ],
   rules: {
-    'max-len': ['warn', { "code": 100 } ],
+    'max-len': ['warn', { "code": 120 } ],
     'semi': ['error', 'always'],
     'object-curly-spacing': ['error', 'always'],
     "vue/component-api-style": ["error",

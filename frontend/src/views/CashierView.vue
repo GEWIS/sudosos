@@ -7,11 +7,12 @@
   <div v-else class="main-content">
     <div class="wrapper">
       <div class="pos-wrapper">
-        <PointOfSaleDisplayComponent :point-of-sale="currentPos" />
+        <UserSearchComponent v-if="userSearch" @cancel-search="cancelSearch()"/>
+        <PointOfSaleDisplayComponent :point-of-sale="currentPos" v-if="!userSearch"/>
         <ActivityComponent />
       </div>
       <div class="cart-wrapper">
-        <CartComponent />
+        <CartComponent @select-user="selectUser()"/>
       </div>
     </div>
   </div>
@@ -21,16 +22,18 @@
 import { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
 import { onMounted, Ref, ref, watch } from 'vue';
 import { usePointOfSaleStore } from '@/stores/pos.store';
-import PointOfSaleDisplayComponent from '@/components/PointOfSaleDisplayComponent.vue';
+import PointOfSaleDisplayComponent from '@/components/PointOfSaleDisplay/PointOfSaleDisplayComponent.vue';
 import SettingsIconComponent from '@/components/SettingsIconComponent.vue';
 import CartComponent from '@/components/Cart/CartComponent.vue';
 import { useActivityStore } from '@/stores/activity.store';
 import ActivityComponent from '@/components/ActivityComponent.vue';
+import UserSearchComponent from "@/components/UserSearch/UserSearchComponent.vue";
 
 const posNotLoaded = ref(true);
 const currentPos: Ref<PointOfSaleWithContainersResponse | undefined> = ref(undefined);
 const pointOfSaleStore = usePointOfSaleStore();
 const activityStore = useActivityStore();
+const userSearch = ref(false);
 
 const fetchPointOfSale = async () => {
   await pointOfSaleStore.fetchPointOfSale(1);
@@ -42,6 +45,15 @@ const fetchPointOfSale = async () => {
 };
 
 onMounted(fetchPointOfSale);
+
+const selectUser = () => {
+  userSearch.value = true;
+};
+
+const cancelSearch = () => {
+  userSearch.value = false;
+};
+
 
 watch(
   () => pointOfSaleStore.pointOfSale,

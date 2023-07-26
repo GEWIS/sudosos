@@ -1,0 +1,50 @@
+.point-of-sale {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  > .header {
+    align-items: center;
+    display: flex;
+    height: 72px;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    margin-right: 35px;
+  }
+}
+
+.search-container {
+  > input,
+  input:focus {
+    border: none;
+    border-radius: 10px;
+    color: var(--accent-color);
+    font-size: 22px;
+    height: 55px;
+    outline-color: var(--accent-color);
+    padding: 10px;
+  }
+}
+
+.search-button {
+  align-items: center;
+  background-color: var(--accent-color);
+  border-radius: 50px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  font-size: 22px;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  min-width: 148px;
+  height: 55px;
+  padding: 13px 25px;
+
+  > .icon {
+    font-size: 35px;
+    line-height: 55px;
+    text-align: center;
+    vertical-align: bottom;
+  }
+}

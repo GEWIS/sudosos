@@ -9,6 +9,7 @@ import {
 import { SubTransactionRowRequest } from '@sudosos/sudosos-client/src/api';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import apiService from '@/services/ApiService';
+import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 
 export interface CartProduct {
   container: ContainerResponse
@@ -127,8 +128,9 @@ export const useCartStore = defineStore('cart', {
         };
       });
 
+      const createdBy = useAuthStore().getUser.id;
       const request: TransactionRequest = {
-        createdBy: this.buyer.id,
+        createdBy,
         from: this.buyer.id,
         pointOfSale: {
           id: pos.id,

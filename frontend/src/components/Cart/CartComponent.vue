@@ -1,11 +1,11 @@
 <template>
   <div class="cart">
     <div class="user-info">
-      <p>Current order for</p>
-      <div class="user-button">
+      <div class="user-button" @click="selectUser">
         <font-awesome-icon icon="fa-solid fa-user" class="user-icon" />
-        {{ current?.firstName }}
+        {{ displayName() }}
       </div>
+      <p v-if="isOwnBuyer">Current order for</p>
     </div>
     <div class="cart-items" v-if="!showHistory">
       <div v-for="item in cartItems" :key="item.product.id">
@@ -50,30 +50,37 @@ import { formatPrice } from '@/utils/FormatUtils';
 import { logoutService } from '@/services/logoutService';
 import TransactionHistoryComponent from
     '@/components/Cart/TransactionHistory/TransactionHistoryComponent.vue';
+import { useAuthStore } from "@sudosos/sudosos-frontend-common";
+import { BaseTransactionResponse } from "@sudosos/sudosos-client";
 
 const cartStore = useCartStore();
+const authStore = useAuthStore();
 const cartItems = cartStore.getProducts;
 const current = computed(() => cartStore.getBuyer);
 const totalPrice = computed(() => cartStore.getTotalPrice);
 const showHistory = ref(true);
 const balance = ref<number | null>(null);
 
-const transactions = ref([]);
-apiService.user
-  .getUsersTransactions(
-    cartStore.getBuyer?.id,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    5
-  )
-  .then((res) => {
-    transactions.value.push(...res.data.records);
-  });
+const transactions = ref<BaseTransactionResponse[]>([]);
+
+if (cartStore.getBuyer) {
+  // todo clean up
+  apiService.user
+      .getUsersTransactions(
+          cartStore.getBuyer?.id,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          5
+      )
+      .then((res) => {
+        transactions.value.push(...res.data.records);
+      });
+}
 const getBalance = async () => {
   if (!cartStore.buyer) return 0;
   try {
@@ -81,6 +88,18 @@ const getBalance = async () => {
     return response.data.amount.amount;
   } catch (error) {
     return null;
+  }
+};
+
+const isOwnBuyer = computed(() => {
+  if (!authStore.user) return false;
+  return current.value?.id === authStore.user.id;
+});
+const displayName = () => {
+  if (isOwnBuyer.value) {
+    return current.value?.firstName;
+  } else {
+    return `${current.value?.firstName} ${current.value?.lastName}`;
   }
 };
 
@@ -98,6 +117,11 @@ watch(
     balance.value = await getBalance();
   }
 );
+
+const emit = defineEmits(['selectUser']);
+const selectUser = () => {
+  emit('selectUser');
+};
 
 const formattedBalanceAfter = computed(() => {
   if (!balance.value) return null;
@@ -184,6 +208,7 @@ const checkout = () => {
 .user-info {
   justify-content: space-between;
   align-items: center;
+  flex-direction: row-reverse;
   display: flex;
 
   > p {
