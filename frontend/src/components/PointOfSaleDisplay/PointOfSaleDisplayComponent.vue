@@ -20,7 +20,7 @@
             {{ category.name }}
           </div>
         </div>
-        <label htmlFor="searchInput" class="search-button" @click="openSearchView">
+        <label for="searchInput" class="search-button" @click="openSearchView">
           <font-awesome-icon icon="fa-solid fa-search"/>
           Search
         </label>
