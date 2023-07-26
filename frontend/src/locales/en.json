@@ -23,6 +23,8 @@
   },
   "profile": {
     "my profile": "My profile",
-    "change pin code": "Change pin code"
+    "change pin code": "Change pin code",
+    "new pin code": "New pin code",
+    "confirm new pin code": "Confirm new pin code"
   }
 }
