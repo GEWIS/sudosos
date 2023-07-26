@@ -8,8 +8,8 @@
 
 <script setup lang="ts">
 import CardComponent from "@/components/CardComponent.vue";
-import {useUserStore} from "@sudosos/sudosos-frontend-common";
-import {computed} from "vue";
+import { useUserStore } from "@sudosos/sudosos-frontend-common";
+import { computed } from "vue";
 
 const userStore = useUserStore();
 const balance = computed((): string | undefined => {

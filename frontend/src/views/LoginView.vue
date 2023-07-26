@@ -20,11 +20,11 @@
 
 <script setup lang="ts">
 import CopyrightBanner from "@/components/CopyrightBanner.vue";
-import {onBeforeMount, ref} from "vue";
-import {useUserStore, useAuthStore} from "@sudosos/sudosos-frontend-common";
-import apiService from "@/services/ApiService"
-import {useRoute} from "vue-router";
-import { v4 as uuid } from 'uuid'
+import { onBeforeMount, ref } from "vue";
+import { useUserStore, useAuthStore } from "@sudosos/sudosos-frontend-common";
+import apiService from "@/services/ApiService";
+import { useRoute } from "vue-router";
+import { v4 as uuid } from 'uuid';
 import router from "@/router";
 
 const authStore = useAuthStore();
@@ -41,23 +41,23 @@ onBeforeMount(() => {
     authStore.gewisWebLogin(
       uuid(), token, apiService,
     ).catch((error) => {
-      console.error(error)
-    })
+      console.error(error);
+    });
   }
-})
+});
 
 const ldapLogin = async () => {
   await authStore.gewisLdapLogin(username.value, password.value, apiService).then(() => {
     if (authStore.getUser) userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
-    router.push({name: 'home'})
+    router.push({ name: 'home' });
   }).catch((error) => {
     console.error(error);
-  })
-}
+  });
+};
 
 const loginViaGEWIS = () => {
   window.location.href = `https://gewis.nl/token/${import.meta.env.VITE_APP_GEWIS_TOKEN}`;
-}
+};
 
 </script>
 

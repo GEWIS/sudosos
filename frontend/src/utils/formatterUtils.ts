@@ -8,7 +8,7 @@ export function formatDateTime(date: Date): string {
         "Thursday",
         "Friday",
         "Saturday"
-    ]
+    ];
 
     const day = parseTime(date.getDate());
     const monthIndex = parseTime(date.getMonth());

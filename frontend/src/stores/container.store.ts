@@ -1,5 +1,5 @@
-import {defineStore} from "pinia";
-import type {ContainerWithProductsResponse} from "@sudosos/sudosos-client";
+import { defineStore } from "pinia";
+import type { ContainerWithProductsResponse } from "@sudosos/sudosos-client";
 import ApiService from "@/services/ApiService";
 
 export const useContainerStore = defineStore('container', {

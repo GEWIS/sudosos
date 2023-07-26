@@ -15,9 +15,9 @@
 import CardComponent from "@/components/CardComponent.vue";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import {onMounted, ref} from "vue";
-import {useUserStore} from "@sudosos/sudosos-frontend-common";
-import {usePointOfSaleStore} from "@/stores/pos.store";
+import { onMounted, ref } from "vue";
+import { useUserStore } from "@sudosos/sudosos-frontend-common";
+import { usePointOfSaleStore } from "@/stores/pos.store";
 const userStore = useUserStore();
 const pointOfSaleStore = usePointOfSaleStore();
 

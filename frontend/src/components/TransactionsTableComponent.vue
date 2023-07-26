@@ -11,8 +11,8 @@
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import CardComponent from "@/components/CardComponent.vue";
-import type {PaginatedFinancialMutationResponse} from "@sudosos/sudosos-client";
-import {onMounted, ref} from "vue";
+import type { PaginatedFinancialMutationResponse } from "@sudosos/sudosos-client";
+import { onMounted, ref } from "vue";
 
 defineProps({
   action: {
@@ -35,13 +35,13 @@ defineProps({
     type: Boolean,
     required: false,
   }
-})
+});
 onMounted(()=> {
   products.value = [
-    {when: '19-07-2023 - 14:06', what: 'You spent a total of €87.50'},
-    {when: '03-06-2023 - 11:31', what: 'You spent a total of €3.50'},
-    {when: '02-06-2023 - 20:28', what: 'You spent a total of €2.20'},
-  ]
+    { when: '19-07-2023 - 14:06', what: 'You spent a total of €87.50' },
+    { when: '03-06-2023 - 11:31', what: 'You spent a total of €3.50' },
+    { when: '02-06-2023 - 20:28', what: 'You spent a total of €2.20' },
+  ];
 });
 const products = ref();
 

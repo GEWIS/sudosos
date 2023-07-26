@@ -19,8 +19,8 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import {useUserStore} from "@sudosos/sudosos-frontend-common";
-import {computed} from "vue";
+import { useUserStore } from "@sudosos/sudosos-frontend-common";
+import { computed } from "vue";
 
 const userStore = useUserStore();
 const balance = computed((): string | undefined => {
@@ -89,7 +89,7 @@ const leftItems = ref([ // TODO: Implement Submenus
       }
     ]
   },
-    ])
+    ]);
 
 const rightItems = ref([
   {
@@ -118,7 +118,7 @@ const rightItems = ref([
       },
     ]
   },
-])
+]);
 
 
 </script>

@@ -1,7 +1,7 @@
 <!--TODO: Input validation-->
 <template>
   <div class="page-container">
-    <div class="page-title">Create Point of Sale</div>
+    <div class="page-title">{{ `Edit Point of Sale: ${pos ? pos.name : ''}`}}</div>
     <hr>
     <div class="content-wrapper">
       <div class="pos-row">
@@ -10,9 +10,14 @@
           <b>Title</b>
           <InputText class="input" type="text" v-model="title"/>
           <b>Owner</b>
-          <Dropdown class="input" :options="organsList" optionLabel="firstName" v-model="selectedOwner" placeholder="Select Owner"/>
+          <p>{{pos.owner.firstName}}</p>
           <div>
-            <Checkbox v-model="useAuthentication" inputId="useAuthentication" name="useAuthentication" value="useAuthentication" :binary="true" />
+            <Checkbox v-model="useAuthentication"
+                      inputId="useAuthentication"
+                      name="useAuthentication"
+                      value="useAuthentication"
+                      :binary="true"
+            />
             <label for="useAuthentication">Use Authentication</label>
           </div>
           <b>Selected Containers</b>
@@ -21,7 +26,7 @@
               {{ container.name }}
             </li>
           </ul>
-          <Button id="create-pos-button" label="Create" @click="createPointOfSale" severity="success"/>
+          <Button id="create-pos-button" label="Edit" @click="updatePointOfSale" severity="success"/>
         </div>
         <DetailedContainerCardComponent
             @selectedChanged="handleSelectedChanged"
@@ -29,37 +34,50 @@
             v-if="publicContainers && ownContainers"
             :own-containers="ownContainers"
             :public-containers="publicContainers"
+            :selectedContainers="selectedContainers"
         />
-    </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { onMounted, ref } from "vue";
+import { onBeforeMount, onMounted, ref } from "vue";
 import type { Ref } from "vue";
 import { useContainerStore } from "@/stores/container.store";
 import DetailedContainerCardComponent from "@/components/DetailedContainerCardComponent.vue";
 import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
-import type { ContainerResponse, UserResponse } from "@sudosos/sudosos-client";
+import type { BaseUserResponse, ContainerResponse, UserResponse } from "@sudosos/sudosos-client";
 import { usePointOfSaleStore } from "@/stores/pos.store";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { PointOfSaleWithContainersResponse } from "@sudosos/sudosos-client";
 
 const title = ref(null);
-const selectedOwner: Ref<UserResponse | undefined> = ref();
+
 const containerStore = useContainerStore();
 const userStore = useUserStore();
 const publicContainers: Ref<Array<ContainerResponse> | null | undefined> = ref();
 const ownContainers: Ref<Array<ContainerResponse> | null | undefined> = ref();
-const selectedContainers = ref();
+const selectedContainers: Ref<Array<ContainerResponse> | undefined> = ref();
 const useAuthentication = ref(false);
 const organsList: Ref<Array<UserResponse>> = ref([]);
 const authStore = useAuthStore();
 const pointOfSaleStore = usePointOfSaleStore();
 const router = useRouter();
+const id = ref();
+const route = useRoute();
+const pos: Ref<PointOfSaleWithContainersResponse | null | undefined> = ref();
+const selectedOwner: Ref<BaseUserResponse | undefined> = ref();
 
-onMounted(async () => {
+onBeforeMount(async () => {
+  id.value = route.params.id;
+  pos.value = pointOfSaleStore.getPos;
+  useAuthentication.value = pos.value?.useAuthentication;
+  selectedContainers.value = pos.value.containers;
+  console.error("containers are: " + selectedContainers.value);
+  title.value = pos.value.name;
+  selectedOwner.value = pos.value.owner;
   if (userStore.getCurrentUser.user ) {
     const publicContainersResponse = await containerStore.getPublicContainers();
     const ownContainersResponse = await containerStore.getUsersContainers(userStore.getCurrentUser.user.id);
@@ -69,20 +87,20 @@ onMounted(async () => {
   } else {
     console.error("User not found"); // TODO: Error handling
   }
-
 });
 
 const handleSelectedChanged = (selected: any) => {
   selectedContainers.value = selected;
 };
 
-const createPointOfSale = async () => {
-  console.warn(title.value);
-  console.error(selectedOwner.value);
-  console.warn(useAuthentication.value);
-  console.error(selectedContainers.value);
-  if (title.value && selectedOwner.value) {
-    const response = await pointOfSaleStore.createPointOfSale(title.value, useAuthentication.value, selectedContainers.value.map((container: ContainerResponse) => container.id), selectedOwner.value.id);
+const updatePointOfSale = async () => {
+  if (title.value && selectedOwner.value && pos.value) {
+    const response = await pointOfSaleStore.updatePointOfSale(
+        title.value,
+        pos.value.id,
+        useAuthentication.value,
+        selectedContainers.value.map((container: ContainerResponse) => container.id),
+    );
     if (response.status == 200){
       router.push('/point-of-sale/overview');
     } else {

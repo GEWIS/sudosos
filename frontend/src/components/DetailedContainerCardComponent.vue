@@ -1,12 +1,18 @@
 <template>
   <CardComponent header="containers">
     <p class="container-type-title">Public Containers</p>
-    <DataTable v-model:selection="selectedPublicContainers" v-model:expandedRows="expandedContainers" :value="publicContainers">
+    <DataTable
+        v-model:selection="selectedPublicContainers"
+        v-model:expandedRows="expandedContainers"
+        :value="publicContainers">
       <Column selectionMode="multiple" headerStyle="width: 1rem" />
       <Column field="name" />
     </DataTable>
     <p class="container-type-title">Own Containers</p>
-    <DataTable v-model:selection="selectedOwnContainers" v-model:expandedRows="expandedContainers" :value="ownContainers">
+    <DataTable
+        v-model:selection="selectedOwnContainers"
+        v-model:expandedRows="expandedContainers"
+        :value="ownContainers">
       <Column selectionMode="multiple" headerStyle="width: 1rem" />
       <Column field="name" />
     </DataTable>
@@ -16,13 +22,13 @@
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import CardComponent from "@/components/CardComponent.vue";
-import type {ContainerResponse} from "@sudosos/sudosos-client";
-import {ref, watch} from "vue";
+import type { ContainerResponse } from "@sudosos/sudosos-client";
+import {onMounted, ref, watch} from "vue";
 
 const selectedOwnContainers = ref<Array<ContainerResponse>>([]);
 const selectedPublicContainers = ref<Array<ContainerResponse>>([]);
 
-defineProps({
+const props = defineProps({
   publicContainers: {
     type: Array<ContainerResponse>,
     required: true,
@@ -31,16 +37,32 @@ defineProps({
     type: Array<ContainerResponse>,
     required: true,
   },
+  selectedContainers: {
+    type: Array<ContainerResponse>,
+    required: false,
+  }
 });
 
 const emit = defineEmits(["selectedChanged"]);
 const expandedContainers = ref();
+function divideAndSetSelected() {
 
+  if(props.selectedContainers){
+    console.log(props.selectedContainers.filter((container: ContainerResponse) => props.ownContainers.some((ownContainer: ContainerResponse) => ownContainer.id === container.id)));
+
+    selectedOwnContainers.value = props.selectedContainers.filter((container: ContainerResponse) => props.ownContainers.some((ownContainer: ContainerResponse) => ownContainer.id === container.id));
+
+    selectedPublicContainers.value = props.selectedContainers.filter((container: ContainerResponse) => props.publicContainers.some((publicContainer: ContainerResponse) => publicContainer.id === container.id))
+  }
+}
 watch([selectedPublicContainers, selectedOwnContainers], () => {
   const combinedSelectedContainers: Array<ContainerResponse> = selectedPublicContainers.value.concat(selectedOwnContainers.value);
   emit("selectedChanged", combinedSelectedContainers);
 });
 
+onMounted(() => {
+  divideAndSetSelected();
+});
 </script>
 <style scoped lang="scss">
 :deep(.p-datatable-thead) {

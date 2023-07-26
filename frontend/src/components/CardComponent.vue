@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 // TODO: Clean up all the fucking important statements
-import {useRouter} from "vue-router";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
   header: {
@@ -28,7 +28,7 @@ const props = defineProps({
     type: Function,
     required: false,
   },
-})
+});
 
 const router = useRouter();
 const handleClick = () => {
@@ -39,7 +39,7 @@ const handleClick = () => {
     // If routerLink is not defined and func is provided, execute the func
     props.func();
   }
-}
+};
 </script>
 
 <style scoped>

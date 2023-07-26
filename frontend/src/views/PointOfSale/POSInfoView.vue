@@ -5,8 +5,8 @@
     <div class="page-title" id="pos-info-header">
       <span>{{ `POS: ${pos ? pos.name : ''}` }}</span>
       <div>
-        <Button severity="secondary" label="Edit" icon="pi pi-pencil"/>
-        <Button severity="danger" label="Close" icon="pi pi-times"/>
+        <Button severity="secondary" label="Edit" icon="pi pi-pencil" @click="handleEditClicked"/>
+        <Button severity="danger" label="Close" icon="pi pi-times" @click="handleClosedClicked"/>
       </div>
     </div>
     <hr>
@@ -32,13 +32,14 @@
 
 
 <script setup lang="ts">
-import {onBeforeMount, ref} from 'vue';
-import type {Ref} from 'vue';
-import {useRoute} from 'vue-router';
+import { onBeforeMount, ref } from 'vue';
+import type { Ref } from 'vue';
+import { useRoute } from 'vue-router';
 import ContainerCardComponent from "@/components/ContainerCardComponent.vue";
 import TransactionsTableComponent from "@/components/TransactionsTableComponent.vue";
-import {usePointOfSaleStore} from "@/stores/pos.store";
-import type {PointOfSaleWithContainersResponse} from "@sudosos/sudosos-client";
+import { usePointOfSaleStore } from "@/stores/pos.store";
+import type { PointOfSaleWithContainersResponse } from "@sudosos/sudosos-client";
+import router from "@/router";
 
 const route = useRoute(); // Use the useRoute function to access the current route
 const id = ref();
@@ -49,6 +50,14 @@ onBeforeMount(async () => {
   await pointOfSaleStore.fetchPointOfSale(id.value);
   pos.value = pointOfSaleStore.getPos;
 });
+
+const handleClosedClicked = () => {
+  router.push('/point-of-sale/overview');
+};
+
+const handleEditClicked = () => {
+  router.push(`/point-of-sale/edit/${pos.value.id}`);
+};
 </script>
 
 <style scoped lang="scss">

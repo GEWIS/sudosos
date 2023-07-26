@@ -8,8 +8,8 @@
 </template>
 
 <script setup lang="ts">
-import type {ProductResponse} from "@sudosos/sudosos-client";
-import {onMounted} from "vue";
+import type { ProductResponse } from "@sudosos/sudosos-client";
+import { onMounted } from "vue";
 import ProductComponent from "@/components/ProductComponent.vue";
 
 const props = defineProps({

@@ -1,10 +1,11 @@
 <template>
   <div class="container-overview">
-    <TabView>
+    <TabView :active-index=1>
       <TabPanel header="containers" :disabled="true" class="containers-tab"/>
       <TabPanel v-for="container in containers" :key="container.id" :header="container.name">
         <ScrollPanel style="height: 20rem;">
-          <ProductGridComponent :products="container.products"/>
+          <ProductGridComponent :products="container.products" v-if="container.products.length !== 0"/>
+          <p v-if="container.products.length === 0">This container contains no products</p>
         </ScrollPanel>
       </TabPanel>
     </TabView>
@@ -12,8 +13,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import type {ContainerWithProductsResponse} from "@sudosos/sudosos-client";
-import {onMounted, ref} from "vue";
+import type { ContainerWithProductsResponse } from "@sudosos/sudosos-client";
+import { onMounted, ref } from "vue";
 import ProductGridComponent from "@/components/ProductGridComponent.vue";
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';

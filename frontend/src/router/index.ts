@@ -4,10 +4,11 @@ import DashboardLayout from "@/layout/DashboardLayout.vue";
 import HomeView from '../views/HomeView.vue';
 import LoginView from "@/views/LoginView.vue";
 import BalanceView from "@/views/BalanceView.vue";
-import {useAuthStore} from "@sudosos/sudosos-frontend-common";
+import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import POSOverviewView from "@/views/PointOfSale/POSOverviewView.vue";
 import POSInfoView from "@/views/PointOfSale/POSInfoView.vue";
 import POSCreateView from "@/views/PointOfSale/POSCreateView.vue";
+import POSEditView from "@/views/PointOfSale/POSEditView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -53,6 +54,12 @@ const router = createRouter({
           path: '/point-of-sale/request',
           name: 'pointOfSaleCreate',
           component: POSCreateView,
+        },
+        {
+          path: '/point-of-sale/edit/:id',
+          name: 'pointOfSaleCreate',
+          component: POSEditView,
+          props: true,
         },
         // Add other routes for authenticated users here
       ],

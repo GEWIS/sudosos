@@ -1,4 +1,4 @@
-import type {BannerResponse, ProductResponse} from "@sudosos/sudosos-client";
+import type { BannerResponse, ProductResponse } from "@sudosos/sudosos-client";
 
 export function getProductImageSrc(product: ProductResponse): string {
     if (!product.image) {

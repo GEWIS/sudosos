@@ -1,5 +1,5 @@
-import {defineStore} from 'pinia';
-import type {PointOfSaleWithContainersResponse, ProductResponse} from "@sudosos/sudosos-client";
+import { defineStore } from 'pinia';
+import type { PointOfSaleWithContainersResponse, ProductResponse } from "@sudosos/sudosos-client";
 import ApiService from "@/services/ApiService";
 
 export const usePointOfSaleStore = defineStore('pointOfSale', {
@@ -17,7 +17,7 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
                     });
                 });
             }
-            return Object.entries(categories).map(([key, value]) => ({'id': String(key), 'name': value}))
+            return Object.entries(categories).map(([key, value]) => ({ 'id': String(key), 'name': value }));
         },
         getPos(): PointOfSaleWithContainersResponse | null {
             return this.pointOfSale;
@@ -41,7 +41,10 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
             return await ApiService.user.getUsersPointsOfSale(userId);
         },
         async createPointOfSale(name: string, useAuthentication: boolean, containers: Array<number>, ownerId: number){
-            return await ApiService.pos.createPointOfSale({name, useAuthentication, containers, ownerId});
+            return await ApiService.pos.createPointOfSale({ name, useAuthentication, containers, ownerId });
+        },
+        async updatePointOfSale(name: string, id: number, useAuthentication: boolean, containers: Array<number>) {
+            return await ApiService.pos.updatePointOfSale(id, { name, useAuthentication, containers, id });
         }
     },
 });
