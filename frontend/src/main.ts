@@ -19,6 +19,8 @@ import 'primeicons/primeicons.css';
 import languages from "@/locales";
 import Dropdown from "primevue/dropdown";
 import Checkbox from "primevue/checkbox";
+import TabView from "primevue/tabview";
+import ScrollPanel from "primevue/scrollpanel";
 
 const app = createApp(App)
 
@@ -42,4 +44,6 @@ app.component('InputNumber', InputNumber);
 app.component('Dialog', Dialog);
 app.component('Dropdown', Dropdown);
 app.component('Checkbox', Checkbox);
+app.component('TabView', TabView);
+app.component('ScrollPanel', ScrollPanel);
 app.mount('#app')

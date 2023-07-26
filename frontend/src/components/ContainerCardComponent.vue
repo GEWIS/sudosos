@@ -1,24 +1,23 @@
 <template>
-  <CardComponent header="containers">
-    <DataTable v-model:expandedRows="expandedContainers" :value="containers">
-      <Column field="name" />
-      <Column expander style="width: 2rem"/>
-      <template #expansion="slotProps">
-        <ProductGridComponent :products="slotProps.data.products" />
-      </template>
-    </DataTable>
+  <div class="container-overview">
+    <TabView>
+      <TabPanel header="containers" :disabled="true" class="containers-tab"/>
+      <TabPanel v-for="container in containers" :key="container.id" :header="container.name">
+        <ScrollPanel style="height: 20rem;">
+          <ProductGridComponent :products="container.products"/>
+        </ScrollPanel>
+      </TabPanel>
+    </TabView>
 
-  </CardComponent>
+  </div>
 </template>
 <script setup lang="ts">
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import CardComponent from "@/components/CardComponent.vue";
 import type {ContainerWithProductsResponse} from "@sudosos/sudosos-client";
 import {onMounted, ref} from "vue";
 import ProductGridComponent from "@/components/ProductGridComponent.vue";
-
-
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
+import ScrollPanel from "primevue/scrollpanel";
 const props = defineProps({
   data: {
     type: Array<ContainerWithProductsResponse>,
@@ -30,7 +29,6 @@ onMounted(()=>{
 
 });
 const containers = ref();
-const expandedContainers = ref();
 </script>
 <style scoped lang="scss">
 :deep(.p-datatable-thead) {
@@ -60,5 +58,13 @@ const expandedContainers = ref();
 
 :deep(.p-datatable .p-datatable-tbody > tr > td:not(:last-child)) {
   border-right: none; /* Remove the left border for all cells except the first child */
+}
+
+:deep(.p-disabled){
+  a {
+    color: white!important;
+    background-color: #d40000!important;
+    text-transform: uppercase;
+  }
 }
 </style>
