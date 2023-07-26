@@ -12,11 +12,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ComputedRef, onMounted } from "vue";
+import { computed } from "vue";
 import {
-  ContainerWithProductsResponse,
-  PointOfSaleWithContainersResponse,
-  ProductResponse
+  PointOfSaleWithContainersResponse
 } from "@sudosos/sudosos-client";
 import Fuse from "fuse.js";
 import ProductComponent from "@/components/ProductComponent.vue";
@@ -32,7 +30,7 @@ const props = defineProps({
   },
   selectedCategoryId: {
     type: String,
-    required: true,
+    required: false,
   },
   searchQuery: {
     type: String,

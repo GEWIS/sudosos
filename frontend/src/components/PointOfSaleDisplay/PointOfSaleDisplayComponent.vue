@@ -60,12 +60,12 @@ const computedCategories = computed(() => {
   return usePointOfSaleStore().allProductCategories;
 });
 
-function getDefaultCategoryId() {
+function getDefaultCategoryId(): string | undefined {
   const nonAlcoholicCategory = usePointOfSaleStore().allProductCategories.find(
       (category: {name: string, id: string}) => category.name.toLowerCase() === 'non-alcoholic'
   );
 
-  return nonAlcoholicCategory ? nonAlcoholicCategory.id : null;
+  return nonAlcoholicCategory ? nonAlcoholicCategory.id : undefined;
 }
 
 const selectCategory = (categoryId: string) => {
