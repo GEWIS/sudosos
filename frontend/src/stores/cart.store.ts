@@ -128,7 +128,10 @@ export const useCartStore = defineStore('cart', {
         };
       });
 
-      const createdBy = useAuthStore().getUser.id;
+      let createdBy = 0;
+      const authStore = useAuthStore();
+      if(authStore.getUser) createdBy = authStore.getUser.id;
+
       const request: TransactionRequest = {
         createdBy,
         from: this.buyer.id,

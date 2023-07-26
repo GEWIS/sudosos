@@ -13,6 +13,7 @@ export const useBannerStore = defineStore('banner', {
   actions: {
     async fetchBanners() {
       this.banners = await fetchAllPages<BannerResponse>(0, 100, (take, skip) =>
+        // @ts-ignore
         apiService.openBanner.getAllOpenBanners(take, skip)
       );
     }
