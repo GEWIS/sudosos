@@ -1,46 +1,40 @@
-# sudosos-pos-vue-3
+# SudoSOS POS Vue 3
 
-This template should help get you started developing with Vue 3 in Vite.
+Frontend application for the SudoSOS point of sale (POS) system
 
-## Recommended IDE Setup
+## Description
+This repository contains the frontend application for the SudoSOS POS system. It is built using Vue 3, TypeScript, and other modern JavaScript technologies, and utilizes various open-source libraries and packages to provide a rich feature set. The application requires at least Node.js version 18.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## Prerequisites
 
-## Type Support for `.vue` Imports in TS
+Before you begin, ensure you have met the following requirements:
+* You have installed the latest version of Node.js and npm. This project requires at least Node.js version 18. You can install it from [here](https://nodejs.org/).
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+## Installation
+To install and use this application, follow these steps:
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+1. Clone the repository: `git clone https://github.com/your_username_/sudosos-pos-vue-3.git`
+2. Navigate to the cloned repository: `cd sudosos-pos-vue-3`
+3. Install dependencies: `npm install`
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+## Usage
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
+To start the application in development mode, run:
+```bash
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
-
-```sh
+To build the application for production, use:
+```bash
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+The built files will be generated in the `dist/` directory.
 
-```sh
-npm run lint
+To preview the production build:
+```bash
+npm run preview
 ```
+
+## Contributing
+Contributions are welcome! If you encounter any issues or have suggestions for improvements, please open an issue on the [issue tracker](https://github.com/your_username_/sudosos-pos-vue-3/issues).
