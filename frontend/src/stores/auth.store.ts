@@ -3,7 +3,7 @@ import {
   AuthenticationEanRequest, AuthenticationKeyRequest,
   AuthenticationLDAPRequest, AuthenticationPinRequest,
   AuthenticationResponse,
-  GEWISAuthenticationPinRequest, GewiswebAuthenticationRequest,
+  GEWISAuthenticationPinRequest, GewiswebAuthenticationRequest, UpdatePinRequest,
   UserResponse
 } from "@sudosos/sudosos-client";
 import { useUserStore } from "./user.store";
@@ -99,7 +99,7 @@ export const useAuthStore = defineStore({
         key, userId
       }
 
-      await service.authenticate.authenticationKeyPost(req).then((res) => {
+      await service.authenticate.keyAuthentication(req).then((res) => {
         this.handleResponse(res.data, service)
       })
     },
@@ -111,6 +111,13 @@ export const useAuthStore = defineStore({
       await service.authenticate.gewisLDAPAuthentication(req).then((res) => {
         this.handleResponse(res.data, service)
       })
+    },
+    async updateUserPin(pin: string, service: ApiService) {
+      if (!this.user) return;
+      const req: UpdatePinRequest = {
+        pin
+      }
+      await service.user.updateUserPin(this.user.id, req)
     },
     logout() {
       this.user = null;

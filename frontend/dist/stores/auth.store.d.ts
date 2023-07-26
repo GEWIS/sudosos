@@ -20,6 +20,7 @@ export declare const useAuthStore: import("pinia").StoreDefinition<"auth", AuthS
     eanLogin(eanCode: string, service: ApiService): Promise<void>;
     apiKeyLogin(key: string, userId: number, service: ApiService): Promise<void>;
     gewisLdapLogin(accountName: string, password: string, service: ApiService): Promise<void>;
+    updateUserPin(pin: string, service: ApiService): Promise<void>;
     logout(): void;
 }>;
 export {};
