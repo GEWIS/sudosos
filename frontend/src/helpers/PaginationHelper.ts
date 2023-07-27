@@ -35,7 +35,7 @@ export async function fetchAllPages<T>(
     const response = await fetchPage(take, skip);
     const { records } = response.data;
 
-    if (response.data._pagination.count <= skip) {
+    if (response.data._pagination.count <= (skip + take)) {
       // Reached the last page, exit the loop
       break;
     }

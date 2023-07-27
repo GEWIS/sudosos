@@ -6,7 +6,7 @@ async function Jr(t, n, l) {
   let e = t, h = [];
   for (; ; ) {
     const f = await l(n, e), { records: O } = f.data;
-    if (f.data._pagination.count <= e)
+    if (f.data._pagination.count <= e + n)
       break;
     h = h.concat(O), e += n;
   }
@@ -18,7 +18,11 @@ const Xr = fs("user", {
     users: [],
     current: {
       balance: null,
-      user: null
+      user: null,
+      financialMutations: {
+        _pagination: {},
+        records: []
+      }
     }
   }),
   getters: {
@@ -39,6 +43,9 @@ const Xr = fs("user", {
     },
     async fetchCurrentUserBalance(t, n) {
       this.current.balance = (await n.balance.getBalanceId(t)).data;
+    },
+    async fetchUsersFinancialMutations(t, n, l, e) {
+      this.current.financialMutations = (await n.user.getUsersFinancialMutations(t, l, e)).data;
     },
     setCurrentUser(t) {
       this.current.user = t;
@@ -605,65 +612,65 @@ function $t() {
   Nt = 1;
   var t = N, n = Ra(), l = va(), e = ms, h = vs, f = Ba(), O = _a(), b = js, y = he, m = we(), S = Ca();
   return et = function(j) {
-    return new Promise(function(v, E) {
+    return new Promise(function(v, F) {
       var x = j.data, M = j.headers, k = j.responseType, K;
       function ie() {
         j.cancelToken && j.cancelToken.unsubscribe(K), j.signal && j.signal.removeEventListener("abort", K);
       }
       t.isFormData(x) && t.isStandardBrowserEnv() && delete M["Content-Type"];
-      var F = new XMLHttpRequest();
+      var B = new XMLHttpRequest();
       if (j.auth) {
         var ke = j.auth.username || "", ze = j.auth.password ? unescape(encodeURIComponent(j.auth.password)) : "";
         M.Authorization = "Basic " + btoa(ke + ":" + ze);
       }
       var Ae = h(j.baseURL, j.url);
-      F.open(j.method.toUpperCase(), e(Ae, j.params, j.paramsSerializer), !0), F.timeout = j.timeout;
+      B.open(j.method.toUpperCase(), e(Ae, j.params, j.paramsSerializer), !0), B.timeout = j.timeout;
       function Se() {
-        if (F) {
-          var G = "getAllResponseHeaders" in F ? f(F.getAllResponseHeaders()) : null, te = !k || k === "text" || k === "json" ? F.responseText : F.response, Z = {
+        if (B) {
+          var G = "getAllResponseHeaders" in B ? f(B.getAllResponseHeaders()) : null, te = !k || k === "text" || k === "json" ? B.responseText : B.response, Z = {
             data: te,
-            status: F.status,
-            statusText: F.statusText,
+            status: B.status,
+            statusText: B.statusText,
             headers: G,
             config: j,
-            request: F
+            request: B
           };
           n(function(Oe) {
             v(Oe), ie();
           }, function(Oe) {
-            E(Oe), ie();
-          }, Z), F = null;
+            F(Oe), ie();
+          }, Z), B = null;
         }
       }
-      if ("onloadend" in F ? F.onloadend = Se : F.onreadystatechange = function() {
-        !F || F.readyState !== 4 || F.status === 0 && !(F.responseURL && F.responseURL.indexOf("file:") === 0) || setTimeout(Se);
-      }, F.onabort = function() {
-        F && (E(new y("Request aborted", y.ECONNABORTED, j, F)), F = null);
-      }, F.onerror = function() {
-        E(new y("Network Error", y.ERR_NETWORK, j, F, F)), F = null;
-      }, F.ontimeout = function() {
+      if ("onloadend" in B ? B.onloadend = Se : B.onreadystatechange = function() {
+        !B || B.readyState !== 4 || B.status === 0 && !(B.responseURL && B.responseURL.indexOf("file:") === 0) || setTimeout(Se);
+      }, B.onabort = function() {
+        B && (F(new y("Request aborted", y.ECONNABORTED, j, B)), B = null);
+      }, B.onerror = function() {
+        F(new y("Network Error", y.ERR_NETWORK, j, B, B)), B = null;
+      }, B.ontimeout = function() {
         var te = j.timeout ? "timeout of " + j.timeout + "ms exceeded" : "timeout exceeded", Z = j.transitional || b;
-        j.timeoutErrorMessage && (te = j.timeoutErrorMessage), E(new y(
+        j.timeoutErrorMessage && (te = j.timeoutErrorMessage), F(new y(
           te,
           Z.clarifyTimeoutError ? y.ETIMEDOUT : y.ECONNABORTED,
           j,
-          F
-        )), F = null;
+          B
+        )), B = null;
       }, t.isStandardBrowserEnv()) {
         var Ue = (j.withCredentials || O(Ae)) && j.xsrfCookieName ? l.read(j.xsrfCookieName) : void 0;
         Ue && (M[j.xsrfHeaderName] = Ue);
       }
-      "setRequestHeader" in F && t.forEach(M, function(te, Z) {
-        typeof x > "u" && Z.toLowerCase() === "content-type" ? delete M[Z] : F.setRequestHeader(Z, te);
-      }), t.isUndefined(j.withCredentials) || (F.withCredentials = !!j.withCredentials), k && k !== "json" && (F.responseType = j.responseType), typeof j.onDownloadProgress == "function" && F.addEventListener("progress", j.onDownloadProgress), typeof j.onUploadProgress == "function" && F.upload && F.upload.addEventListener("progress", j.onUploadProgress), (j.cancelToken || j.signal) && (K = function(G) {
-        F && (E(!G || G && G.type ? new m() : G), F.abort(), F = null);
+      "setRequestHeader" in B && t.forEach(M, function(te, Z) {
+        typeof x > "u" && Z.toLowerCase() === "content-type" ? delete M[Z] : B.setRequestHeader(Z, te);
+      }), t.isUndefined(j.withCredentials) || (B.withCredentials = !!j.withCredentials), k && k !== "json" && (B.responseType = j.responseType), typeof j.onDownloadProgress == "function" && B.addEventListener("progress", j.onDownloadProgress), typeof j.onUploadProgress == "function" && B.upload && B.upload.addEventListener("progress", j.onUploadProgress), (j.cancelToken || j.signal) && (K = function(G) {
+        B && (F(!G || G && G.type ? new m() : G), B.abort(), B = null);
       }, j.cancelToken && j.cancelToken.subscribe(K), j.signal && (j.signal.aborted ? K() : j.signal.addEventListener("abort", K))), x || (x = null);
       var fe = S(Ae);
       if (fe && ["http", "https", "file"].indexOf(fe) === -1) {
-        E(new y("Unsupported protocol " + fe + ":", y.ERR_BAD_REQUEST, j));
+        F(new y("Unsupported protocol " + fe + ":", y.ERR_BAD_REQUEST, j));
         return;
       }
-      F.send(x);
+      B.send(x);
     });
   }, et;
 }
@@ -1907,12 +1914,12 @@ q.createRequestFunction = On;
         const A = "/balances/all", P = new URL(A, e.DUMMY_BASE_URL);
         let U;
         u && (U = u.baseOptions);
-        const B = Object.assign(Object.assign({ method: "GET" }, U), p), V = {}, T = {};
-        yield (0, e.setApiKeyToObject)(V, "Authorization", u), o !== void 0 && (T.date = o), s !== void 0 && (T.minBalance = s), i !== void 0 && (T.maxBalance = i), a !== void 0 && (T.orderBy = a), r !== void 0 && (T.orderDirection = r), c !== void 0 && (T.take = c), d !== void 0 && (T.skip = d), (0, e.setSearchParams)(P, T);
+        const E = Object.assign(Object.assign({ method: "GET" }, U), p), T = {}, V = {};
+        yield (0, e.setApiKeyToObject)(T, "Authorization", u), o !== void 0 && (V.date = o), s !== void 0 && (V.minBalance = s), i !== void 0 && (V.maxBalance = i), a !== void 0 && (V.orderBy = a), r !== void 0 && (V.orderDirection = r), c !== void 0 && (V.take = c), d !== void 0 && (V.skip = d), (0, e.setSearchParams)(P, V);
         let $ = U && U.headers ? U.headers : {};
-        return B.headers = Object.assign(Object.assign(Object.assign({}, V), $), p.headers), {
+        return E.headers = Object.assign(Object.assign(Object.assign({}, T), $), p.headers), {
           url: (0, e.toPathString)(P),
-          options: B
+          options: E
         };
       }),
       /**
@@ -2017,7 +2024,7 @@ q.createRequestFunction = On;
        * @throws {RequiredError}
        */
       getAllBalance(a, r, c, d, p, A, P, U) {
-        return i.getAllBalance(a, r, c, d, p, A, P, U).then((B) => B(s, o));
+        return i.getAllBalance(a, r, c, d, p, A, P, U).then((E) => E(s, o));
       },
       /**
        *  Retrieves the requested balance
@@ -2343,7 +2350,7 @@ q.createRequestFunction = On;
     };
   };
   t.BannersApiFp = v;
-  const E = function(u, o, s) {
+  const F = function(u, o, s) {
     const i = (0, t.BannersApiFp)(u);
     return {
       /**
@@ -2425,7 +2432,7 @@ q.createRequestFunction = On;
       }
     };
   };
-  t.BannersApiFactory = E;
+  t.BannersApiFactory = F;
   class x extends h.BaseAPI {
     /**
      *  Deletes the requested banner
@@ -2741,7 +2748,7 @@ q.createRequestFunction = On;
     }
   }
   t.BorrelkaartgroupsApi = ie;
-  const F = function(u) {
+  const B = function(u) {
     return {
       /**
        *  Approve a container update.
@@ -2919,7 +2926,7 @@ q.createRequestFunction = On;
       })
     };
   };
-  t.ContainersApiAxiosParamCreator = F;
+  t.ContainersApiAxiosParamCreator = B;
   const ke = function(u) {
     const o = (0, t.ContainersApiAxiosParamCreator)(u);
     return {
@@ -3460,10 +3467,10 @@ q.createRequestFunction = On;
         const p = "/invoices", A = new URL(p, e.DUMMY_BASE_URL);
         let P;
         u && (P = u.baseOptions);
-        const U = Object.assign(Object.assign({ method: "GET" }, P), d), B = {}, V = {};
-        yield (0, e.setApiKeyToObject)(B, "Authorization", u), o !== void 0 && (V.toId = o), s !== void 0 && (V.invoiceId = s), i !== void 0 && (V.state = i), a !== void 0 && (V.returnEntries = a), r !== void 0 && (V.fromDate = r), c !== void 0 && (V.tillDate = c), (0, e.setSearchParams)(A, V);
-        let T = P && P.headers ? P.headers : {};
-        return U.headers = Object.assign(Object.assign(Object.assign({}, B), T), d.headers), {
+        const U = Object.assign(Object.assign({ method: "GET" }, P), d), E = {}, T = {};
+        yield (0, e.setApiKeyToObject)(E, "Authorization", u), o !== void 0 && (T.toId = o), s !== void 0 && (T.invoiceId = s), i !== void 0 && (T.state = i), a !== void 0 && (T.returnEntries = a), r !== void 0 && (T.fromDate = r), c !== void 0 && (T.tillDate = c), (0, e.setSearchParams)(A, T);
+        let V = P && P.headers ? P.headers : {};
+        return U.headers = Object.assign(Object.assign(Object.assign({}, E), V), d.headers), {
           url: (0, e.toPathString)(A),
           options: U
         };
@@ -3739,12 +3746,12 @@ q.createRequestFunction = On;
         const A = "/payoutrequests", P = new URL(A, e.DUMMY_BASE_URL);
         let U;
         u && (U = u.baseOptions);
-        const B = Object.assign(Object.assign({ method: "GET" }, U), p), V = {}, T = {};
-        yield (0, e.setApiKeyToObject)(V, "Authorization", u), o !== void 0 && (T.requestedById = o), s !== void 0 && (T.approvedById = s), i !== void 0 && (T.fromDate = i), a !== void 0 && (T.tillDate = a), r !== void 0 && (T.status = r), c !== void 0 && (T.take = c), d !== void 0 && (T.skip = d), (0, e.setSearchParams)(P, T);
+        const E = Object.assign(Object.assign({ method: "GET" }, U), p), T = {}, V = {};
+        yield (0, e.setApiKeyToObject)(T, "Authorization", u), o !== void 0 && (V.requestedById = o), s !== void 0 && (V.approvedById = s), i !== void 0 && (V.fromDate = i), a !== void 0 && (V.tillDate = a), r !== void 0 && (V.status = r), c !== void 0 && (V.take = c), d !== void 0 && (V.skip = d), (0, e.setSearchParams)(P, V);
         let $ = U && U.headers ? U.headers : {};
-        return B.headers = Object.assign(Object.assign(Object.assign({}, V), $), p.headers), {
+        return E.headers = Object.assign(Object.assign(Object.assign({}, T), $), p.headers), {
           url: (0, e.toPathString)(P),
-          options: B
+          options: E
         };
       }),
       /**
@@ -3875,7 +3882,7 @@ q.createRequestFunction = On;
        * @throws {RequiredError}
        */
       getAllPayoutRequests(a, r, c, d, p, A, P, U) {
-        return i.getAllPayoutRequests(a, r, c, d, p, A, P, U).then((B) => B(s, o));
+        return i.getAllPayoutRequests(a, r, c, d, p, A, P, U).then((E) => E(s, o));
       },
       /**
        *  Get a single payout request
@@ -5530,14 +5537,14 @@ q.createRequestFunction = On;
        * @throws {RequiredError}
        */
       getAllTransactions: (o, s, i, a, r, c, d, p, A, P, U = {}) => n(this, void 0, void 0, function* () {
-        const B = "/transactions", V = new URL(B, e.DUMMY_BASE_URL);
-        let T;
-        u && (T = u.baseOptions);
-        const $ = Object.assign(Object.assign({ method: "GET" }, T), U), Pe = {}, w = {};
-        yield (0, e.setApiKeyToObject)(Pe, "Authorization", u), o !== void 0 && (w.fromId = o), s !== void 0 && (w.createdById = s), i !== void 0 && (w.toId = i), a !== void 0 && (w.pointOfSaleId = a), r !== void 0 && (w.productId = r), c !== void 0 && (w.productRevision = c), d !== void 0 && (w.fromDate = d), p !== void 0 && (w.tillDate = p), A !== void 0 && (w.take = A), P !== void 0 && (w.skip = P), (0, e.setSearchParams)(V, w);
-        let Ge = T && T.headers ? T.headers : {};
+        const E = "/transactions", T = new URL(E, e.DUMMY_BASE_URL);
+        let V;
+        u && (V = u.baseOptions);
+        const $ = Object.assign(Object.assign({ method: "GET" }, V), U), Pe = {}, w = {};
+        yield (0, e.setApiKeyToObject)(Pe, "Authorization", u), o !== void 0 && (w.fromId = o), s !== void 0 && (w.createdById = s), i !== void 0 && (w.toId = i), a !== void 0 && (w.pointOfSaleId = a), r !== void 0 && (w.productId = r), c !== void 0 && (w.productRevision = c), d !== void 0 && (w.fromDate = d), p !== void 0 && (w.tillDate = p), A !== void 0 && (w.take = A), P !== void 0 && (w.skip = P), (0, e.setSearchParams)(T, w);
+        let Ge = V && V.headers ? V.headers : {};
         return $.headers = Object.assign(Object.assign(Object.assign({}, Pe), Ge), U.headers), {
-          url: (0, e.toPathString)(V),
+          url: (0, e.toPathString)(T),
           options: $
         };
       }),
@@ -5644,10 +5651,10 @@ q.createRequestFunction = On;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllTransactions(s, i, a, r, c, d, p, A, P, U, B) {
+      getAllTransactions(s, i, a, r, c, d, p, A, P, U, E) {
         return n(this, void 0, void 0, function* () {
-          const V = yield o.getAllTransactions(s, i, a, r, c, d, p, A, P, U, B);
-          return (0, e.createRequestFunction)(V, l.default, h.BASE_PATH, u);
+          const T = yield o.getAllTransactions(s, i, a, r, c, d, p, A, P, U, E);
+          return (0, e.createRequestFunction)(T, l.default, h.BASE_PATH, u);
         });
       },
       /**
@@ -5726,8 +5733,8 @@ q.createRequestFunction = On;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllTransactions(a, r, c, d, p, A, P, U, B, V, T) {
-        return i.getAllTransactions(a, r, c, d, p, A, P, U, B, V, T).then(($) => $(s, o));
+      getAllTransactions(a, r, c, d, p, A, P, U, E, T, V) {
+        return i.getAllTransactions(a, r, c, d, p, A, P, U, E, T, V).then(($) => $(s, o));
       },
       /**
        *  Get a single transaction
@@ -5798,7 +5805,7 @@ q.createRequestFunction = On;
      * @memberof TransactionsApi
      */
     getAllTransactions(o, s, i, a, r, c, d, p, A, P, U) {
-      return (0, t.TransactionsApiFp)(this.configuration).getAllTransactions(o, s, i, a, r, c, d, p, A, P, U).then((B) => B(this.axios, this.basePath));
+      return (0, t.TransactionsApiFp)(this.configuration).getAllTransactions(o, s, i, a, r, c, d, p, A, P, U).then((E) => E(this.axios, this.basePath));
     }
     /**
      *  Get a single transaction
@@ -6138,12 +6145,12 @@ q.createRequestFunction = On;
         const A = "/users", P = new URL(A, e.DUMMY_BASE_URL);
         let U;
         u && (U = u.baseOptions);
-        const B = Object.assign(Object.assign({ method: "GET" }, U), p), V = {}, T = {};
-        yield (0, e.setApiKeyToObject)(V, "Authorization", u), o !== void 0 && (T.take = o), s !== void 0 && (T.skip = s), i !== void 0 && (T.search = i), a !== void 0 && (T.active = a), r !== void 0 && (T.ofAge = r), c !== void 0 && (T.id = c), d !== void 0 && (T.type = d), (0, e.setSearchParams)(P, T);
+        const E = Object.assign(Object.assign({ method: "GET" }, U), p), T = {}, V = {};
+        yield (0, e.setApiKeyToObject)(T, "Authorization", u), o !== void 0 && (V.take = o), s !== void 0 && (V.skip = s), i !== void 0 && (V.search = i), a !== void 0 && (V.active = a), r !== void 0 && (V.ofAge = r), c !== void 0 && (V.id = c), d !== void 0 && (V.type = d), (0, e.setSearchParams)(P, V);
         let $ = U && U.headers ? U.headers : {};
-        return B.headers = Object.assign(Object.assign(Object.assign({}, V), $), p.headers), {
+        return E.headers = Object.assign(Object.assign(Object.assign({}, T), $), p.headers), {
           url: (0, e.toPathString)(P),
-          options: B
+          options: E
         };
       }),
       /**
@@ -6363,14 +6370,14 @@ q.createRequestFunction = On;
        */
       getUsersTransactions: (o, s, i, a, r, c, d, p, A, P, U = {}) => n(this, void 0, void 0, function* () {
         (0, e.assertParamExists)("getUsersTransactions", "id", o);
-        const B = "/users/{id}/transactions".replace("{id}", encodeURIComponent(String(o))), V = new URL(B, e.DUMMY_BASE_URL);
-        let T;
-        u && (T = u.baseOptions);
-        const $ = Object.assign(Object.assign({ method: "GET" }, T), U), Pe = {}, w = {};
-        yield (0, e.setApiKeyToObject)(Pe, "Authorization", u), s !== void 0 && (w.fromId = s), i !== void 0 && (w.createdById = i), a !== void 0 && (w.toId = a), r !== void 0 && (w.productId = r), c !== void 0 && (w.productRevision = c), d !== void 0 && (w.fromDate = d), p !== void 0 && (w.tillDate = p), A !== void 0 && (w.take = A), P !== void 0 && (w.skip = P), (0, e.setSearchParams)(V, w);
-        let Ge = T && T.headers ? T.headers : {};
+        const E = "/users/{id}/transactions".replace("{id}", encodeURIComponent(String(o))), T = new URL(E, e.DUMMY_BASE_URL);
+        let V;
+        u && (V = u.baseOptions);
+        const $ = Object.assign(Object.assign({ method: "GET" }, V), U), Pe = {}, w = {};
+        yield (0, e.setApiKeyToObject)(Pe, "Authorization", u), s !== void 0 && (w.fromId = s), i !== void 0 && (w.createdById = i), a !== void 0 && (w.toId = a), r !== void 0 && (w.productId = r), c !== void 0 && (w.productRevision = c), d !== void 0 && (w.fromDate = d), p !== void 0 && (w.tillDate = p), A !== void 0 && (w.take = A), P !== void 0 && (w.skip = P), (0, e.setSearchParams)(T, w);
+        let Ge = V && V.headers ? V.headers : {};
         return $.headers = Object.assign(Object.assign(Object.assign({}, Pe), Ge), U.headers), {
-          url: (0, e.toPathString)(V),
+          url: (0, e.toPathString)(T),
           options: $
         };
       }),
@@ -6381,21 +6388,20 @@ q.createRequestFunction = On;
        * @param {string} [tillDate] End date for selected transactions (exclusive)
        * @param {number} [fromId] From-user for selected transactions
        * @param {number} [toId] To-user for selected transactions
-       * @param {boolean} [exclusiveToId] If all sub-transactions should be to the toId user, default true
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactionsReport: (o, s, i, a, r, c, d = {}) => n(this, void 0, void 0, function* () {
+      getUsersTransactionsReport: (o, s, i, a, r, c = {}) => n(this, void 0, void 0, function* () {
         (0, e.assertParamExists)("getUsersTransactionsReport", "id", o);
-        const p = "/users/{id}/transactions/report".replace("{id}", encodeURIComponent(String(o))), A = new URL(p, e.DUMMY_BASE_URL);
-        let P;
-        u && (P = u.baseOptions);
-        const U = Object.assign(Object.assign({ method: "GET" }, P), d), B = {}, V = {};
-        yield (0, e.setApiKeyToObject)(B, "Authorization", u), s !== void 0 && (V.fromDate = s), i !== void 0 && (V.tillDate = i), a !== void 0 && (V.fromId = a), r !== void 0 && (V.toId = r), c !== void 0 && (V.exclusiveToId = c), (0, e.setSearchParams)(A, V);
-        let T = P && P.headers ? P.headers : {};
-        return U.headers = Object.assign(Object.assign(Object.assign({}, B), T), d.headers), {
-          url: (0, e.toPathString)(A),
-          options: U
+        const d = "/users/{id}/transactions/report".replace("{id}", encodeURIComponent(String(o))), p = new URL(d, e.DUMMY_BASE_URL);
+        let A;
+        u && (A = u.baseOptions);
+        const P = Object.assign(Object.assign({ method: "GET" }, A), c), U = {}, E = {};
+        yield (0, e.setApiKeyToObject)(U, "Authorization", u), s !== void 0 && (E.fromDate = s), i !== void 0 && (E.tillDate = i), a !== void 0 && (E.fromId = a), r !== void 0 && (E.toId = r), (0, e.setSearchParams)(p, E);
+        let T = A && A.headers ? A.headers : {};
+        return P.headers = Object.assign(Object.assign(Object.assign({}, U), T), c.headers), {
+          url: (0, e.toPathString)(p),
+          options: P
         };
       }),
       /**
@@ -6414,10 +6420,10 @@ q.createRequestFunction = On;
         const p = "/users/{id}/transfers".replace("{id}", encodeURIComponent(String(o))), A = new URL(p, e.DUMMY_BASE_URL);
         let P;
         u && (P = u.baseOptions);
-        const U = Object.assign(Object.assign({ method: "GET" }, P), d), B = {}, V = {};
-        yield (0, e.setApiKeyToObject)(B, "Authorization", u), s !== void 0 && (V.take = s), i !== void 0 && (V.skip = i), a !== void 0 && (V.fromId = a), r !== void 0 && (V.toId = r), c !== void 0 && (V.id = c), (0, e.setSearchParams)(A, V);
-        let T = P && P.headers ? P.headers : {};
-        return U.headers = Object.assign(Object.assign(Object.assign({}, B), T), d.headers), {
+        const U = Object.assign(Object.assign({ method: "GET" }, P), d), E = {}, T = {};
+        yield (0, e.setApiKeyToObject)(E, "Authorization", u), s !== void 0 && (T.take = s), i !== void 0 && (T.skip = i), a !== void 0 && (T.fromId = a), r !== void 0 && (T.toId = r), c !== void 0 && (T.id = c), (0, e.setSearchParams)(A, T);
+        let V = P && P.headers ? P.headers : {};
+        return U.headers = Object.assign(Object.assign(Object.assign({}, E), V), d.headers), {
           url: (0, e.toPathString)(A),
           options: U
         };
@@ -6825,10 +6831,10 @@ q.createRequestFunction = On;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactions(s, i, a, r, c, d, p, A, P, U, B) {
+      getUsersTransactions(s, i, a, r, c, d, p, A, P, U, E) {
         return n(this, void 0, void 0, function* () {
-          const V = yield o.getUsersTransactions(s, i, a, r, c, d, p, A, P, U, B);
-          return (0, e.createRequestFunction)(V, l.default, h.BASE_PATH, u);
+          const T = yield o.getUsersTransactions(s, i, a, r, c, d, p, A, P, U, E);
+          return (0, e.createRequestFunction)(T, l.default, h.BASE_PATH, u);
         });
       },
       /**
@@ -6838,14 +6844,13 @@ q.createRequestFunction = On;
        * @param {string} [tillDate] End date for selected transactions (exclusive)
        * @param {number} [fromId] From-user for selected transactions
        * @param {number} [toId] To-user for selected transactions
-       * @param {boolean} [exclusiveToId] If all sub-transactions should be to the toId user, default true
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactionsReport(s, i, a, r, c, d, p) {
+      getUsersTransactionsReport(s, i, a, r, c, d) {
         return n(this, void 0, void 0, function* () {
-          const A = yield o.getUsersTransactionsReport(s, i, a, r, c, d, p);
-          return (0, e.createRequestFunction)(A, l.default, h.BASE_PATH, u);
+          const p = yield o.getUsersTransactionsReport(s, i, a, r, c, d);
+          return (0, e.createRequestFunction)(p, l.default, h.BASE_PATH, u);
         });
       },
       /**
@@ -7044,7 +7049,7 @@ q.createRequestFunction = On;
        * @throws {RequiredError}
        */
       getAllUsers(a, r, c, d, p, A, P, U) {
-        return i.getAllUsers(a, r, c, d, p, A, P, U).then((B) => B(s, o));
+        return i.getAllUsers(a, r, c, d, p, A, P, U).then((E) => E(s, o));
       },
       /**
        *  Get all users of user type
@@ -7161,8 +7166,8 @@ q.createRequestFunction = On;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactions(a, r, c, d, p, A, P, U, B, V, T) {
-        return i.getUsersTransactions(a, r, c, d, p, A, P, U, B, V, T).then(($) => $(s, o));
+      getUsersTransactions(a, r, c, d, p, A, P, U, E, T, V) {
+        return i.getUsersTransactions(a, r, c, d, p, A, P, U, E, T, V).then(($) => $(s, o));
       },
       /**
        *  Get transaction report for the given user
@@ -7171,12 +7176,11 @@ q.createRequestFunction = On;
        * @param {string} [tillDate] End date for selected transactions (exclusive)
        * @param {number} [fromId] From-user for selected transactions
        * @param {number} [toId] To-user for selected transactions
-       * @param {boolean} [exclusiveToId] If all sub-transactions should be to the toId user, default true
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactionsReport(a, r, c, d, p, A, P) {
-        return i.getUsersTransactionsReport(a, r, c, d, p, A, P).then((U) => U(s, o));
+      getUsersTransactionsReport(a, r, c, d, p, A) {
+        return i.getUsersTransactionsReport(a, r, c, d, p, A).then((P) => P(s, o));
       },
       /**
        *  Get an user\'s transfers
@@ -7481,7 +7485,7 @@ q.createRequestFunction = On;
      * @memberof UsersApi
      */
     getUsersTransactions(o, s, i, a, r, c, d, p, A, P, U) {
-      return (0, t.UsersApiFp)(this.configuration).getUsersTransactions(o, s, i, a, r, c, d, p, A, P, U).then((B) => B(this.axios, this.basePath));
+      return (0, t.UsersApiFp)(this.configuration).getUsersTransactions(o, s, i, a, r, c, d, p, A, P, U).then((E) => E(this.axios, this.basePath));
     }
     /**
      *  Get transaction report for the given user
@@ -7490,13 +7494,12 @@ q.createRequestFunction = On;
      * @param {string} [tillDate] End date for selected transactions (exclusive)
      * @param {number} [fromId] From-user for selected transactions
      * @param {number} [toId] To-user for selected transactions
-     * @param {boolean} [exclusiveToId] If all sub-transactions should be to the toId user, default true
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersTransactionsReport(o, s, i, a, r, c, d) {
-      return (0, t.UsersApiFp)(this.configuration).getUsersTransactionsReport(o, s, i, a, r, c, d).then((p) => p(this.axios, this.basePath));
+    getUsersTransactionsReport(o, s, i, a, r, c) {
+      return (0, t.UsersApiFp)(this.configuration).getUsersTransactionsReport(o, s, i, a, r, c).then((d) => d(this.axios, this.basePath));
     }
     /**
      *  Get an user\'s transfers
@@ -7641,10 +7644,10 @@ q.createRequestFunction = On;
         const p = "/vatgroups", A = new URL(p, e.DUMMY_BASE_URL);
         let P;
         u && (P = u.baseOptions);
-        const U = Object.assign(Object.assign({ method: "GET" }, P), d), B = {}, V = {};
-        yield (0, e.setApiKeyToObject)(B, "Authorization", u), o !== void 0 && (V.vatGroupId = o), s !== void 0 && (V.name = s), i !== void 0 && (V.percentage = i), a !== void 0 && (V.deleted = a), r !== void 0 && (V.take = r), c !== void 0 && (V.skip = c), (0, e.setSearchParams)(A, V);
-        let T = P && P.headers ? P.headers : {};
-        return U.headers = Object.assign(Object.assign(Object.assign({}, B), T), d.headers), {
+        const U = Object.assign(Object.assign({ method: "GET" }, P), d), E = {}, T = {};
+        yield (0, e.setApiKeyToObject)(E, "Authorization", u), o !== void 0 && (T.vatGroupId = o), s !== void 0 && (T.name = s), i !== void 0 && (T.percentage = i), a !== void 0 && (T.deleted = a), r !== void 0 && (T.take = r), c !== void 0 && (T.skip = c), (0, e.setSearchParams)(A, T);
+        let V = P && P.headers ? P.headers : {};
+        return U.headers = Object.assign(Object.assign(Object.assign({}, E), V), d.headers), {
           url: (0, e.toPathString)(A),
           options: U
         };
@@ -8240,8 +8243,8 @@ function xe(t, n, l) {
     metaTokens: !0,
     dots: !1,
     indexes: !1
-  }, !1, function(E, x) {
-    return !g.isUndefined(x[E]);
+  }, !1, function(F, x) {
+    return !g.isUndefined(x[F]);
   });
   const e = l.metaTokens, h = l.visitor || S, f = l.dots, O = l.indexes, y = (l.Blob || typeof Blob < "u" && Blob) && g.isSpecCompliantForm(n);
   if (!g.isFunction(h))
@@ -8255,39 +8258,39 @@ function xe(t, n, l) {
       throw new C("Blob is not supported. Use a Buffer instead.");
     return g.isArrayBuffer(v) || g.isTypedArray(v) ? y && typeof Blob == "function" ? new Blob([v]) : Buffer.from(v) : v;
   }
-  function S(v, E, x) {
+  function S(v, F, x) {
     let M = v;
     if (v && !x && typeof v == "object") {
-      if (g.endsWith(E, "{}"))
-        E = e ? E : E.slice(0, -2), v = JSON.stringify(v);
-      else if (g.isArray(v) && Zn(v) || (g.isFileList(v) || g.endsWith(E, "[]")) && (M = g.toArray(v)))
-        return E = ks(E), M.forEach(function(K, ie) {
+      if (g.endsWith(F, "{}"))
+        F = e ? F : F.slice(0, -2), v = JSON.stringify(v);
+      else if (g.isArray(v) && Zn(v) || (g.isFileList(v) || g.endsWith(F, "[]")) && (M = g.toArray(v)))
+        return F = ks(F), M.forEach(function(K, ie) {
           !(g.isUndefined(K) || K === null) && n.append(
             // eslint-disable-next-line no-nested-ternary
-            O === !0 ? is([E], ie, f) : O === null ? E : E + "[]",
+            O === !0 ? is([F], ie, f) : O === null ? F : F + "[]",
             m(K)
           );
         }), !1;
     }
-    return Ot(v) ? !0 : (n.append(is(x, E, f), m(v)), !1);
+    return Ot(v) ? !0 : (n.append(is(x, F, f), m(v)), !1);
   }
   const R = [], j = Object.assign(ei, {
     defaultVisitor: S,
     convertValue: m,
     isVisitable: Ot
   });
-  function _(v, E) {
+  function _(v, F) {
     if (!g.isUndefined(v)) {
       if (R.indexOf(v) !== -1)
-        throw Error("Circular reference detected in " + E.join("."));
+        throw Error("Circular reference detected in " + F.join("."));
       R.push(v), g.forEach(v, function(M, k) {
         (!(g.isUndefined(M) || M === null) && h.call(
           n,
           M,
           g.isString(k) ? k.trim() : k,
-          E,
+          F,
           j
-        )) === !0 && _(M, E ? E.concat(k) : [k]);
+        )) === !0 && _(M, F ? F.concat(k) : [k]);
       }), R.pop();
     }
   }
@@ -8860,7 +8863,7 @@ const vi = typeof XMLHttpRequest < "u", Vi = vi && function(t) {
         return;
       const _ = ee.from(
         "getAllResponseHeaders" in m && m.getAllResponseHeaders()
-      ), E = {
+      ), F = {
         data: !O || O === "text" || O === "json" ? m.responseText : m.response,
         status: m.status,
         statusText: m.statusText,
@@ -8872,7 +8875,7 @@ const vi = typeof XMLHttpRequest < "u", Vi = vi && function(t) {
         l(M), y();
       }, function(M) {
         e(M), y();
-      }, E), m = null;
+      }, F), m = null;
     }
     if ("onloadend" in m ? m.onloadend = R : m.onreadystatechange = function() {
       !m || m.readyState !== 4 || m.status === 0 && !(m.responseURL && m.responseURL.indexOf("file:") === 0) || setTimeout(R);
@@ -8882,10 +8885,10 @@ const vi = typeof XMLHttpRequest < "u", Vi = vi && function(t) {
       e(new C("Network Error", C.ERR_NETWORK, t, m)), m = null;
     }, m.ontimeout = function() {
       let v = t.timeout ? "timeout of " + t.timeout + "ms exceeded" : "timeout exceeded";
-      const E = t.transitional || Gs;
+      const F = t.transitional || Gs;
       t.timeoutErrorMessage && (v = t.timeoutErrorMessage), e(new C(
         v,
-        E.clarifyTimeoutError ? C.ETIMEDOUT : C.ECONNABORTED,
+        F.clarifyTimeoutError ? C.ETIMEDOUT : C.ECONNABORTED,
         t,
         m
       )), m = null;
@@ -8893,8 +8896,8 @@ const vi = typeof XMLHttpRequest < "u", Vi = vi && function(t) {
       const _ = (t.withCredentials || Ui(S)) && t.xsrfCookieName && mi.read(t.xsrfCookieName);
       _ && f.set(t.xsrfHeaderName, _);
     }
-    h === void 0 && f.setContentType(null), "setRequestHeader" in m && g.forEach(f.toJSON(), function(v, E) {
-      m.setRequestHeader(E, v);
+    h === void 0 && f.setContentType(null), "setRequestHeader" in m && g.forEach(f.toJSON(), function(v, F) {
+      m.setRequestHeader(F, v);
     }), g.isUndefined(t.withCredentials) || (m.withCredentials = !!t.withCredentials), O && O !== "json" && (m.responseType = t.responseType), typeof t.onDownloadProgress == "function" && m.addEventListener("progress", us(t.onDownloadProgress, !0)), typeof t.onUploadProgress == "function" && m.upload && m.upload.addEventListener("progress", us(t.onUploadProgress)), (t.cancelToken || t.signal) && (b = (_) => {
       m && (e(!_ || _.type ? new ye(null, t, m) : _), m.abort(), m = null);
     }, t.cancelToken && t.cancelToken.subscribe(b), t.signal && (t.signal.aborted ? b() : t.signal.addEventListener("abort", b)));
@@ -9112,12 +9115,12 @@ class Be {
     ), l.headers = ee.concat(O, f);
     const b = [];
     let y = !0;
-    this.interceptors.request.forEach(function(E) {
-      typeof E.runWhen == "function" && E.runWhen(l) === !1 || (y = y && E.synchronous, b.unshift(E.fulfilled, E.rejected));
+    this.interceptors.request.forEach(function(F) {
+      typeof F.runWhen == "function" && F.runWhen(l) === !1 || (y = y && F.synchronous, b.unshift(F.fulfilled, F.rejected));
     });
     const m = [];
-    this.interceptors.response.forEach(function(E) {
-      m.push(E.fulfilled, E.rejected);
+    this.interceptors.response.forEach(function(F) {
+      m.push(F.fulfilled, F.rejected);
     });
     let S, R = 0, j;
     if (!y) {
@@ -9129,11 +9132,11 @@ class Be {
     j = b.length;
     let _ = l;
     for (R = 0; R < j; ) {
-      const v = b[R++], E = b[R++];
+      const v = b[R++], F = b[R++];
       try {
         _ = v(_);
       } catch (x) {
-        E.call(this, x);
+        F.call(this, x);
         break;
       }
     }
