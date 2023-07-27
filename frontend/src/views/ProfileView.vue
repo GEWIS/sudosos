@@ -1,5 +1,7 @@
 <template>
   <div class="page-container">
+    <Toast />
+
     <div class="page-title">{{ $t('profile.my profile')}}</div>
 
     <card-component :header="$t('profile.change pin code')" :action="$t('profile.change pin code')" :func="changePinCode" class="change-pin-code" >
@@ -24,6 +26,10 @@
 import CardComponent from "@/components/CardComponent.vue";
 import {watch, ref} from "vue";
 import PinComponent from "@/components/PinComponent.vue";
+import {useAuthStore} from "@sudosos/sudosos-frontend-common";
+import apiService from "@/services/ApiService";
+import {useToast} from "primevue/usetoast";
+
 
 const inputPin = ref();
 const inputPinWarning = ref("");
@@ -54,8 +60,21 @@ watch(confirmPin, (pin) => {
 })
 
 
+const authStore = useAuthStore();
+const toast = useToast();
 const changePinCode = () => {
-  //TODO update the pin
+  if (RegExp('\\d{4}').test(inputPin.value) && inputPin.value == confirmPin.value) {
+    authStore.updateUserPin(inputPin.value, apiService).then(() => {
+      //   Succes!
+      inputPin.value="";
+      confirmPin.value="";
+      toast.add({severity: "success", summary: "success", detail: 'pin updated successful'  })
+      //TODO show succes message
+    }).catch((err) => {
+      // Error
+      console.error(err);
+    })
+  }
 }
 
 </script>

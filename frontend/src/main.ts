@@ -17,8 +17,11 @@ import InputNumber from "primevue/inputnumber";
 import Dialog from "primevue/dialog";
 import 'primeicons/primeicons.css';
 import languages from "@/locales";
+import Toast from "primevue/toast";
+import ToastService from 'primevue/toastservice'
 
 const app = createApp(App)
+app.use(ToastService)
 
 const messages = Object.assign(languages);
 const i18n = createI18n({
@@ -38,5 +41,6 @@ app.component('Panel', Panel);
 app.component('DataTable', DataTable);
 app.component('InputNumber', InputNumber);
 app.component('Dialog', Dialog);
+app.component('Toast', Toast);
 
 app.mount('#app')

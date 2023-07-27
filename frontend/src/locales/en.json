@@ -25,6 +25,8 @@
     "my profile": "My profile",
     "change pin code": "Change pin code",
     "new pin code": "New pin code",
-    "confirm new pin code": "Confirm new pin code"
+    "confirm new pin code": "Confirm new pin code",
+    "pin update successful": "pin updated successful",
+    "success": "success"
   }
 }
