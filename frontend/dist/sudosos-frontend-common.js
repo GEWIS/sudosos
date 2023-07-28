@@ -6,9 +6,8 @@ async function Jr(t, n, l) {
   let e = t, h = [];
   for (; ; ) {
     const f = await l(n, e), { records: O } = f.data;
-    if (f.data._pagination.count <= e + n)
+    if (h = h.concat(O), e += n, f.data._pagination.count <= e + n)
       break;
-    h = h.concat(O), e += n;
   }
   return h;
 }
