@@ -8,16 +8,17 @@
       <div id="update-pin-form">
         <div>
           <p>{{ $t('profile.new pin code')}}</p>
-          <PinComponent v-model="inputPin" />
-          <p class="warning">{{inputPinWarning}}</p>
+          <PinComponent v-model="inputPin"/>
+          <small class="warning">{{inputPinError || '&nbsp;'}}</small>
         </div>
         <div>
           <p>{{ $t('profile.confirm new pin code')}}</p>
           <PinComponent v-model="confirmPin" />
-          <p class="warning">{{confirmPinWarning}}</p>
+          <small class="warning">{{confirmPinError || '&nbsp;'}}</small>
         </div>
       </div>
     </card-component>
+
 
   </div>
 </template>
@@ -29,51 +30,44 @@ import PinComponent from "@/components/PinComponent.vue";
 import {useAuthStore} from "@sudosos/sudosos-frontend-common";
 import apiService from "@/services/ApiService";
 import {useToast} from "primevue/usetoast";
+import { useField } from 'vee-validate';
 
+const { value: inputPin, errorMessage: inputPinError } = useField('inputPin', validatePin);
+const { value: confirmPin, errorMessage: confirmPinError} = useField('confirmPin', validateConfirmPin);
 
-const inputPin = ref();
-const inputPinWarning = ref("");
-
-const confirmPin = ref();
-const confirmPinWarning = ref("");
 
 //show warning message if pin is filled in and not 4 digits
-watch(inputPin, (pin) => {
-  if (pin.length == 0) {
-    inputPinWarning.value = "";
-  } else if (! RegExp('\\d{4}').test(pin)) {
-    inputPinWarning.value = "your pin needs to have 4 digits";
-  } else {
-    inputPinWarning.value = "";
+function validatePin(checkInputPin: string){
+  if (checkInputPin.length != 4 && !RegExp('\\d{4}').test(checkInputPin)) {
+    return "your pin needs to have 4 digits";
   }
-})
+  return true;
+}
 
 //show warning message if conformation pin does not fit pin
-watch(confirmPin, (pin) => {
-  if (pin.length == 0){
-    confirmPinWarning.value = ""
-  } else if (pin != inputPin.value) {
-    confirmPinWarning.value = "both pins need to be the same";
-  } else {
-    confirmPinWarning.value = "";
+function validateConfirmPin(checkConfirmPin: string){
+  if (checkConfirmPin != inputPin.value) {
+    return "both pins need to be the same";
   }
-})
+  return true;
+}
 
 
 const authStore = useAuthStore();
 const toast = useToast();
 const changePinCode = () => {
-  if (RegExp('\\d{4}').test(inputPin.value) && inputPin.value == confirmPin.value) {
+  if (inputPin.value.length == 4 && RegExp('\\d{4}').test(inputPin.value) && inputPin.value == confirmPin.value) {
     authStore.updateUserPin(inputPin.value, apiService).then(() => {
       //   Succes!
       inputPin.value="";
       confirmPin.value="";
       toast.add({severity: "success", summary: "success", detail: 'pin updated successful'  })
-      //TODO show succes message
     }).catch((err) => {
       // Error
       console.error(err);
     })
+  } else {
+    toast.add({severity: "error", summary: "failed", detail: 'fill in correct pin codes', life: 3000})
   }
 }
 
