@@ -2,7 +2,7 @@
   <div class="point-of-sale">
     <div class="header">
       <div class="search-container" v-show="isSearchViewVisible">
-        <input type="text" id="searchInput" v-model="searchQuery" placeholder="Search..."/>
+        <input type="text" ref="searchInput" id="searchInput" v-model="searchQuery" placeholder="Search..."/>
         <div class="search-button" @click="closeSearchView">
           <font-awesome-icon class="icon" icon="fa-solid fa-xmark"/>
           Search
@@ -55,6 +55,7 @@ const cartStore = useCartStore();
 const selectedCategoryId = ref<string | undefined>(getDefaultCategoryId());
 const searchQuery = ref('');
 const isSearchViewVisible = ref(false);
+const searchInput = ref(null);
 
 const computedCategories = computed(() => {
   return usePointOfSaleStore().allProductCategories;
@@ -82,10 +83,14 @@ const closeSearchView = () => {
 };
 
 watch(
-  () => cartStore.cartTotalCount,
-  () => {
-    if (isSearchViewVisible.value) closeSearchView();
-  }
+    () => cartStore.cartTotalCount,
+    (newCount, oldCount) => {
+      if (newCount > oldCount) {
+        if (isSearchViewVisible.value) {
+          searchInput.value.select();
+        }
+      }
+    }
 );
 
 </script>

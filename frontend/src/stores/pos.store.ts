@@ -1,10 +1,17 @@
 import { defineStore } from 'pinia';
-import { PointOfSaleWithContainersResponse, ProductResponse } from '@sudosos/sudosos-client';
-import ApiService from '@/services/ApiService';
+import {
+  BannerResponse,
+  PointOfSaleResponse,
+  PointOfSaleWithContainersResponse,
+  ProductResponse
+} from '@sudosos/sudosos-client';
+import apiService from '@/services/ApiService';
+import { fetchAllPages, useAuthStore } from "@sudosos/sudosos-frontend-common";
 
 export const usePointOfSaleStore = defineStore('pointOfSale', {
   state: () => ({
-    pointOfSale: null as PointOfSaleWithContainersResponse | null
+    pointOfSale: null as PointOfSaleWithContainersResponse | null,
+    usersPointOfSales: null as PointOfSaleResponse[] | null,
   }),
   getters: {
     allProductCategories() {
@@ -25,8 +32,14 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
   },
   actions: {
     async fetchPointOfSale(id: number): Promise<void> {
-      const response = await ApiService.pos.getSinglePointOfSale(id);
+      const response = await apiService.pos.getSinglePointOfSale(id);
       this.pointOfSale = response.data;
+    },
+    async fetchUserPointOfSale(id: number): Promise<void> {
+      this.usersPointOfSales = await fetchAllPages<PointOfSaleResponse>(0, 100,  (take, skip) =>
+          // @ts-ignore
+          apiService.user.getUsersPointsOfSale(id, take, skip)
+      );
     },
     getProduct(
       productId: number,

@@ -5,26 +5,28 @@
         <div class="search-close" @click="cancelSearch()">
           <font-awesome-icon class="icon" icon="fa-solid fa-xmark"/>
         </div>
-        <input type="text" class="search-input" id="searchInput" v-model="searchQuery" placeholder="Search..."/>
+        <input type="text" class="search-input" ref="searchInput" v-model="searchQuery" placeholder="Search..."/>
         <div class="search-button" @click="selectSelf()">
           Charge yourself
         </div>
       </div>
     </div>
     <div class="user-row-wrapper">
-      <UserSearchRowComponent v-for="user in users" :user="user" v-bind="user.id" @click="selectUser(user)"/>
+      <UserSearchRowComponent v-for="user in sortedUsers" :user="user" v-bind="user.id" @click="selectUser(user)"/>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import apiService from "@/services/ApiService";
-import { UserResponse } from "@sudosos/sudosos-client";
+import { PaginatedUserResponse, UserResponse } from "@sudosos/sudosos-client";
 import UserSearchRowComponent from "@/components/UserSearch/UserSearchRowComponent.vue";
 import { useCartStore } from "@/stores/cart.store";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
+import { debounce } from 'lodash';
+import type { AxiosResponse } from 'axios';
 
 const searchQuery = ref<string>('');
 
@@ -46,11 +48,26 @@ const authStore = useAuthStore();
 //   });
 // });
 
-// TODO Optimize?
-watch(searchQuery, () => {
-  apiService.user.getAllUsers(10, 0,searchQuery.value, true).then((res) => {
+const delayedAPICall = debounce(() => {
+  apiService.user.getAllUsers(10, 0, searchQuery.value, true).then((res: AxiosResponse<PaginatedUserResponse, any>) => {
     users.value = res.data.records;
   });
+}, 500);
+
+watch(searchQuery, () => {
+  delayedAPICall();
+});
+
+const sortedUsers = computed(() => {
+  const validUsers = users.value.filter(user => user.active && user.acceptedToS !== "NOT_ACCEPTED");
+  const invalidUsers = users.value.filter(user => !user.active || user.acceptedToS === "NOT_ACCEPTED");
+  return [...validUsers, ...invalidUsers];
+});
+
+const searchInput = ref(null);
+
+onMounted(() => {
+  searchInput.value.focus();
 });
 
 const emit = defineEmits(['cancelSearch']);

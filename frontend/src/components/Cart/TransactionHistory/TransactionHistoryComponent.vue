@@ -8,7 +8,7 @@
 */
 <template>
   <div class="transaction-history-table-container">
-    <h3>Recent Transactions:</h3>
+    <h3>Recent Purchases:</h3>
     <TransactionHistoryRowComponent
       v-for="transaction in transactions"
       :key="transaction.id"
