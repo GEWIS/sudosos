@@ -34,14 +34,13 @@ export async function fetchAllPages<T>(
   while (true) {
     const response = await fetchPage(take, skip);
     const { records } = response.data;
+    allData = allData.concat(records);
+    skip += take;
 
     if (response.data._pagination.count <= (skip + take)) {
       // Reached the last page, exit the loop
       break;
     }
-
-    allData = allData.concat(records);
-    skip += take;
   }
 
   return allData;
