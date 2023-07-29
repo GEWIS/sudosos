@@ -4,7 +4,8 @@ import {
   AuthenticationLDAPRequest, AuthenticationPinRequest,
   AuthenticationResponse,
   GEWISAuthenticationPinRequest, GewiswebAuthenticationRequest, UpdatePinRequest,
-  UserResponse
+  UpdateLocalRequest,
+  UserResponse, UpdateNfcRequest
 } from "@sudosos/sudosos-client";
 import { useUserStore } from "./user.store";
 import { ApiService } from "../services/ApiService";
@@ -118,6 +119,24 @@ export const useAuthStore = defineStore({
         pin
       }
       await service.user.updateUserPin(this.user.id, req)
+    },
+    async updateUserLocalPassword(password: string, service: ApiService) {
+      if (!this.user) return;
+      const req: UpdateLocalRequest = {
+        password
+      }
+      await service.user.updateUserLocalPassword(this.user.id, req)
+    },
+    async updateUserNfc(nfcCode: string, service: ApiService) {
+      if (!this.user) return;
+      const req: UpdateNfcRequest = {
+        nfcCode
+      }
+      await service.user.updateUserNfc(this.user.id, req)
+    },
+    async updateUserKey(service: ApiService) {
+      if (!this.user) return;
+      return (await service.user.updateUserKey(this.user.id)).data
     },
     logout() {
       this.user = null;
