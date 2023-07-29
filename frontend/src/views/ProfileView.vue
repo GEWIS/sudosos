@@ -19,6 +19,21 @@
       </div>
     </card-component>
 
+    <card-component :header="'Change password'" :action="'Update password'" :func="changePassword">
+      <div>
+        <div>
+          <p>Password</p>
+          <Password v-model="inputPassword"/>
+          <small class="warning">{{inputPasswordError || '&nbsp;'}}</small>
+        </div>
+        <div>
+          <p>Confirm password</p>
+          <InputText type="password" v-model="confirmPassword"/>
+          <small class="warning">{{confirmPasswordError || '&nbsp;'}}</small>
+        </div>
+      </div>
+    </card-component>
+
 
   </div>
 </template>
@@ -32,9 +47,12 @@ import apiService from "@/services/ApiService";
 import {useToast} from "primevue/usetoast";
 import { useField } from 'vee-validate';
 
+const authStore = useAuthStore();
+const toast = useToast();
+
+
 const { value: inputPin, errorMessage: inputPinError } = useField('inputPin', validatePin);
 const { value: confirmPin, errorMessage: confirmPinError} = useField('confirmPin', validateConfirmPin);
-
 
 //show warning message if pin is filled in and not 4 digits
 function validatePin(checkInputPin: string){
@@ -53,10 +71,8 @@ function validateConfirmPin(checkConfirmPin: string){
 }
 
 
-const authStore = useAuthStore();
-const toast = useToast();
-const changePinCode = () => {
-  if (inputPin.value.length == 4 && RegExp('\\d{4}').test(inputPin.value) && inputPin.value == confirmPin.value) {
+function changePinCode() {
+  if (validatePin(inputPin.value) == true && validateConfirmPin(confirmPin.value) == true) {
     authStore.updateUserPin(inputPin.value, apiService).then(() => {
       //   Succes!
       inputPin.value="";
@@ -70,6 +86,34 @@ const changePinCode = () => {
     toast.add({severity: "error", summary: "failed", detail: 'fill in correct pin codes', life: 3000})
   }
 }
+
+const { value: inputPassword, errorMessage: inputPasswordError} = useField('inputPassword', validatePassword);
+const { value: confirmPassword, errorMessage: confirmPasswordError} = useField('confirmPassword', validateConfirmPassword);
+
+function validatePassword(checkPassword: string) {
+  if (checkPassword.length <12) {
+    //TODO set password requirements
+    return "length should be at least 12"
+  }
+  return true;
+}
+
+function validateConfirmPassword(checkConfirmPassword: string) {
+  if (checkConfirmPassword != inputPassword.value) {
+    return "Both passwords should match"
+  }
+  return true;
+}
+
+function changePassword() {
+  if (validatePassword(inputPassword.value) == true && validateConfirmPassword(confirmPassword.value) == true) {
+    //authStore.updateUserPassword()
+  } else {
+    toast.add({severity: "error", summary: "failed", detail: 'fill in correct passwords', life: 3000})
+  }
+}
+
+
 
 </script>
 

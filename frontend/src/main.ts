@@ -19,6 +19,7 @@ import 'primeicons/primeicons.css';
 import languages from "@/locales";
 import Toast from "primevue/toast";
 import ToastService from 'primevue/toastservice'
+import Password from "primevue/password";
 
 const app = createApp(App)
 app.use(ToastService)
@@ -42,5 +43,6 @@ app.component('DataTable', DataTable);
 app.component('InputNumber', InputNumber);
 app.component('Dialog', Dialog);
 app.component('Toast', Toast);
+app.component('Password', Password);
 
 app.mount('#app')
