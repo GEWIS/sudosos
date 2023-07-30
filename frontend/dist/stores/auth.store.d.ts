@@ -21,6 +21,9 @@ export declare const useAuthStore: import("pinia").StoreDefinition<"auth", AuthS
     apiKeyLogin(key: string, userId: number, service: ApiService): Promise<void>;
     gewisLdapLogin(accountName: string, password: string, service: ApiService): Promise<void>;
     updateUserPin(pin: string, service: ApiService): Promise<void>;
+    updateUserLocalPassword(password: string, service: ApiService): Promise<void>;
+    updateUserNfc(nfcCode: string, service: ApiService): Promise<void>;
+    updateUserKey(service: ApiService): Promise<import("@sudosos/sudosos-client").UpdateKeyResponse | undefined>;
     logout(): void;
 }>;
 export {};

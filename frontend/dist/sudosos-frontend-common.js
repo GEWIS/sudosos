@@ -157,6 +157,26 @@ const Xr = fs("user", {
       };
       await n.user.updateUserPin(this.user.id, l);
     },
+    async updateUserLocalPassword(t, n) {
+      if (!this.user)
+        return;
+      const l = {
+        password: t
+      };
+      await n.user.updateUserLocalPassword(this.user.id, l);
+    },
+    async updateUserNfc(t, n) {
+      if (!this.user)
+        return;
+      const l = {
+        nfcCode: t
+      };
+      await n.user.updateUserNfc(this.user.id, l);
+    },
+    async updateUserKey(t) {
+      if (this.user)
+        return (await t.user.updateUserKey(this.user.id)).data;
+    },
     logout() {
       this.user = null, this.roles = [], this.token = null, this.organs = [], this.acceptedToS = null, this.user = null;
     }
