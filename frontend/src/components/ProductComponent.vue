@@ -1,7 +1,7 @@
 <template>
-  <div class="text-center product-card" @click="addToCart">
+  <div class="text-center product-card" :class="{pulsing}">
     <div class="product">
-      <img :src="image" :alt="product.name" />
+      <img :src="image" :alt="product.name" @click="addToCart"/>
       <p class="w-100 product-name mb-0">{{ product.name }}</p>
       <p class="w-100 product-price mb-0">€{{ productPrice }}</p>
     </div>
@@ -13,6 +13,9 @@ import { ContainerWithProductsResponse, ProductResponse } from '@sudosos/sudosos
 import { useCartStore } from '@/stores/cart.store';
 import { getProductImageSrc } from '@/utils/imageUtils';
 import { formatPrice } from '@/utils/FormatUtils';
+import { ref } from "vue";
+
+const pulsing = ref(false);
 
 const props = defineProps({
   product: {
@@ -30,6 +33,12 @@ const productPrice = formatPrice(props.product?.priceInclVat.amount);
 
 const cartStore = useCartStore();
 const addToCart = () => {
+  pulsing.value = true;
+
+  setTimeout(() => {
+    pulsing.value = false;
+  }, 500);
+
   cartStore.addToCart({
     product: props.product,
     container: props.container,
@@ -58,6 +67,10 @@ const addToCart = () => {
       object-fit: contain;
     }
   }
+
+  &.pulsing {
+    animation: pulse 0.5s infinite;
+  }
 }
 
 .product-name {
@@ -72,5 +85,17 @@ const addToCart = () => {
 .product-price {
   font-size: 13px;
   height: 15px;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1; // Change this to the desired card background color
+  }
+  100% {
+    opacity: 0;
+  }
 }
 </style>

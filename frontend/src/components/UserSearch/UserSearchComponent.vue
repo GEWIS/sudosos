@@ -6,7 +6,7 @@
           <font-awesome-icon class="icon" icon="fa-solid fa-xmark"/>
         </div>
         <input type="text" class="search-input" ref="searchInput" v-model="searchQuery" placeholder="Search..."/>
-        <div class="search-button" @click="selectSelf()">
+        <div class="simple-button active" @click="selectSelf()">
           Charge yourself
         </div>
       </div>

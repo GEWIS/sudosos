@@ -2,14 +2,16 @@
   <div class="point-of-sale">
     <div class="header">
       <div class="search-container" v-show="isSearchViewVisible">
-        <input type="text" ref="searchInput" id="searchInput" v-model="searchQuery" placeholder="Search..."/>
-        <div class="search-button" @click="closeSearchView">
+        <div class="search-button active" @click="closeSearchView">
           <font-awesome-icon class="icon" icon="fa-solid fa-xmark"/>
-          Search
         </div>
+        <input type="text" ref="searchInput" id="searchInput" v-model="searchQuery" placeholder="Search..."/>
       </div>
       <div v-show="!isSearchViewVisible" class="categories-header">
         <div class="categories">
+          <label for="searchInput" class="search-button" @click="openSearchView">
+            <font-awesome-icon icon="fa-solid fa-search"/>
+          </label>
           <div
               class="category"
               v-for="category in computedCategories"
@@ -20,10 +22,6 @@
             {{ category.name }}
           </div>
         </div>
-        <label for="searchInput" class="search-button" @click="openSearchView">
-          <font-awesome-icon icon="fa-solid fa-search"/>
-          Search
-        </label>
       </div>
     </div>
     <PointOfSaleProductsComponent
@@ -106,7 +104,6 @@ watch(
   display: flex;
   gap: 10px;
   height: 72px;
-  justify-content: space-between;
   width: 100%;
 }
 

@@ -24,15 +24,18 @@
       </div>
     </div>
     <div class="cart-actions">
+      <div v-if="borrelMode && posOwner">
+        Borrelmode active for {{ posOwner.firstName }}
+      </div>
       <div class="buttons">
         <button
           class="checkout-button"
-          :class="{ countdown: checkingOut, empty: cartStore.cartTotalCount === 0 }"
+          :class="{ countdown: checkingOut, empty: cartStore.cartTotalCount === 0, borrelMode }"
           @click="checkout"
         >
           {{ checkingOut ? duration : 'CHECKOUT' }}
         </button>
-        <button class="clear-button" @click="logout">
+        <button class="clear-button" @click="logout" v-if="!borrelMode">
           <font-awesome-icon icon="fa-solid fa-xmark" />
         </button>
       </div>
@@ -51,15 +54,28 @@ import { logoutService } from '@/services/logoutService';
 import TransactionHistoryComponent from
     '@/components/Cart/TransactionHistory/TransactionHistoryComponent.vue';
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
-import { BaseTransactionResponse } from "@sudosos/sudosos-client";
+import { BaseTransactionResponse, BaseUserResponse } from "@sudosos/sudosos-client";
+import { usePointOfSaleStore } from "@/stores/pos.store";
 
 const cartStore = useCartStore();
 const authStore = useAuthStore();
+const posStore = usePointOfSaleStore();
+
 const cartItems = cartStore.getProducts;
 const current = computed(() => cartStore.getBuyer);
 const totalPrice = computed(() => cartStore.getTotalPrice);
 const showHistory = ref(true);
 const balance = ref<number | null>(null);
+
+const borrelMode = computed<boolean>(() => {
+  if (!posStore.getPos) return false;
+  return !posStore.getPos.useAuthentication;
+});
+
+const posOwner = computed<BaseUserResponse | undefined>(() => {
+  if (!posStore.getPos) return undefined;
+  return posStore.getPos.owner;
+});
 
 const transactions = ref<BaseTransactionResponse[]>([]);
 
@@ -250,6 +266,7 @@ const checkout = async () => {
 
 .buttons {
   display: flex;
+  width: 100%;
   gap: 10px;
 }
 
@@ -276,6 +293,10 @@ const checkout = async () => {
   padding: 15px 55px;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
+
+  &.borrelMode {
+    width: 100%;
+  }
 
   &.countdown {
     background-color: green;
