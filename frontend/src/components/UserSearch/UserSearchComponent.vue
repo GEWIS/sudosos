@@ -64,10 +64,10 @@ const sortedUsers = computed(() => {
   return [...validUsers, ...invalidUsers];
 });
 
-const searchInput = ref(null);
+const searchInput = ref<null | HTMLInputElement>(null);
 
 onMounted(() => {
-  searchInput.value.focus();
+  if (searchInput.value) searchInput.value.focus();
 });
 
 const emit = defineEmits(['cancelSearch']);

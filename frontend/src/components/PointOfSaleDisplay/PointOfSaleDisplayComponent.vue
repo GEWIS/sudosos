@@ -55,7 +55,7 @@ const cartStore = useCartStore();
 const selectedCategoryId = ref<string | undefined>(getDefaultCategoryId());
 const searchQuery = ref('');
 const isSearchViewVisible = ref(false);
-const searchInput = ref(null);
+const searchInput = ref<null | HTMLInputElement>(null);
 
 const computedCategories = computed(() => {
   return usePointOfSaleStore().allProductCategories;
@@ -86,7 +86,7 @@ watch(
     () => cartStore.cartTotalCount,
     (newCount, oldCount) => {
       if (newCount > oldCount) {
-        if (isSearchViewVisible.value) {
+        if (isSearchViewVisible.value && searchInput.value) {
           searchInput.value.select();
         }
       }
