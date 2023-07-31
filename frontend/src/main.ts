@@ -16,10 +16,11 @@ import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
 import Panel from "primevue/panel";
 import Dialog from "primevue/dialog";
+import OverlayPanel from "primevue/overlaypanel";
+import Dropdown from "primevue/dropdown";
 
 import router from './router';
 import App from './App.vue';
-import OverlayPanel from "primevue/overlaypanel";
 
 const app = createApp(App);
 
@@ -37,6 +38,8 @@ app.component('Dialog', Dialog);
 // eslint-disable-next-line vue/multi-word-component-names
 app.component('Panel', Panel);
 app.component('OverlayPanel', OverlayPanel);
+// eslint-disable-next-line vue/multi-word-component-names
+app.component('Dropdown', Dropdown);
 app.component('font-awesome-icon', FontAwesomeIcon);
 
 app.use(createPinia());

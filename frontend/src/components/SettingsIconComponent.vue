@@ -6,27 +6,59 @@
           :pt="{
         header: () => ({class: ['dialog-header']}),
         closeButton: () => ({class: ['dialog-close']})}" >
-    <p>
-    Switch POS to
-    </p>
+    <div>
+      <p v-if="pointOfSale">
+        Switch POS to
+        <Dropdown v-model="selectedPos" :options="options" :loading="loadingPos" optionLabel="Point of Sale" placeholder="Select a POS" class="w-full md:w-14rem">
+          <template #value="slotProps">
+            {{ slotProps.value.name}}
+          </template>
+          <template #option="slotProps">
+            {{slotProps.option.name}}
+          </template>
+        </Dropdown>
+      </p>
+    </div>
   </Dialog>
 </template>
 
 <script setup lang="ts">
-import { Ref, ref } from "vue";
+import { computed, Ref, ref, watch } from "vue";
 import { addListenerOnDialogueOverlay } from "@/utils/dialogUtil";
 import { usePointOfSaleStore } from "@/stores/pos.store";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
+import { storeToRefs } from "pinia";
+import { PointOfSaleResponse } from "@sudosos/sudosos-client";
 
 const visible = ref(false);
 const settings: Ref<null|any> = ref(null);
 const posStore = usePointOfSaleStore();
 const authStore = useAuthStore();
+const selectedPos = ref<PointOfSaleResponse | null>(null);
+const loadingPos = ref(false);
+
+const { usersPointOfSales, pointOfSale } = storeToRefs(posStore);
+const options = computed(() => {
+  return usersPointOfSales.value ? usersPointOfSales.value : [];
+});
+
+watch((selectedPos), () => {
+  if (selectedPos.value ) {
+    if (!posStore.getPos || posStore.getPos && selectedPos.value.id !== posStore.getPos.id)
+      posStore.fetchPointOfSale(selectedPos.value.id);
+  }
+});
+
 const openSettings = () => {
   visible.value = true;
+  selectedPos.value = pointOfSale.value as PointOfSaleResponse;
   const user = authStore.getUser;
-  console.error(user);
-  if (user) posStore.fetchUserPointOfSale(user.id);
+  if (user && !posStore.usersPointOfSales) {
+    loadingPos.value = true;
+    posStore.fetchUserPointOfSale(user.id).then(() => {
+      loadingPos.value = false;
+    });
+  }
 };
 
 
