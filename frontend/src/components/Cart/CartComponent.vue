@@ -280,5 +280,10 @@ const checkout = async () => {
   &.countdown {
     background-color: green;
   }
+
+  &.empty {
+    background-color: grey;
+    opacity: 0.5;
+  }
 }
 </style>

@@ -11,7 +11,10 @@
   <div class="wrapper pincode" :class="{ inactive: isActive }">
     <font-awesome-icon icon="fa-solid fa-key" class="icon" />
     <div class="display-value" :class="{ wrong: wrongPin }">
-      <span v-for="char in pinCode" :key="char">•</span>
+      <div v-if="wrongPin">
+        WRONG PIN
+      </div>
+      <span v-else v-for="char in pinCode" :key="char">•</span>
     </div>
   </div>
 </template>
@@ -78,7 +81,9 @@ defineProps({
 }
 
 .display-value.wrong {
-  border: 2px solid red;
+  background-color: #ff6e99;
+  color: white;
+  text-align: center;
 }
 
 .wrapper.inactive {

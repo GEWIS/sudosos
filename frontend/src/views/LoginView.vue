@@ -67,12 +67,14 @@ const handleInput = (value: string) => {
     if (pinCode.value.length >= maxPasscodeLength) return;
     pinCode.value += value;
     if (pinCode.value.length === maxPasscodeLength) {
-      login();
+      setTimeout(() => login(), 500);
     }
   }
 };
 
 const handleBackspace = () => {
+  if(userId.value.length == 0 && enteringUserId.value && external.value) external.value = false;
+
   if (pinCode.value.length === 0 && !enteringUserId.value) {
     switchInput();
   } else {
@@ -115,16 +117,15 @@ const loginSucces = async () => {
 };
 
 const loginFail = (error: any) => {
-  console.error(error);
   pinCode.value = '';
   wrongPin.value = true;
 };
 
-const login = async () => {
+const login = () => {
   loggingIn.value = true;
 
   if (external.value) {
-    await authStore
+    authStore
       .externalPinLogin(Number(userId.value), pinCode.value, apiService)
       .then(async () => {
         await loginSucces();
@@ -133,7 +134,7 @@ const login = async () => {
         loginFail(error);
       });
   } else {
-    await authStore
+    authStore
       .gewisPinlogin(userId.value, pinCode.value, apiService)
       .then(async () => {
         await loginSucces();

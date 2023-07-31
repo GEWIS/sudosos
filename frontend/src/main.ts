@@ -16,10 +16,10 @@ import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
 import Panel from "primevue/panel";
 import Dialog from "primevue/dialog";
-import OverlayPanel from "primevue/OverlayPanel";
 
 import router from './router';
 import App from './App.vue';
+import OverlayPanel from "primevue/overlaypanel";
 
 const app = createApp(App);
 

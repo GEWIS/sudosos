@@ -12,7 +12,7 @@
         {{ key !== keypadBackspace && key !== keypadContinue ? key : '' }}
       </div>
     </div>
-    <div class="external key" @click="emitExternal">Change to External login</div>
+    <div class="key external" @click="emitExternal">E</div>
   </div>
 </template>
 
@@ -73,9 +73,7 @@ const emitExternal = () => {
 }
 
 .key.external {
-  width: 100%;
-  font-size: 22px;
-  height: 50px;
+  align-self: center;
 }
 
 
