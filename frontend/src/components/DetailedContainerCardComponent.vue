@@ -4,12 +4,10 @@
       <!-- Header content goes here -->
       <Button severity="success"
               @click="visible = true"
-      >
-        Add Container
-      </Button>
+      >{{ $t("c_POSCreate.add container") }}</Button>
       <AddContainerDialogComponent v-model:visible="visible"/>
     </template>
-    <p class="container-type-title">Public Containers</p>
+    <p class="container-type-title">{{ $t("Public containers") }}</p>
     <DataTable
         v-model:selection="selectedPublicContainers"
         v-model:expandedRows="expandedContainers"
@@ -19,7 +17,7 @@
       <Column selectionMode="multiple" headerStyle="width: 1rem" />
       <Column field="name" />
     </DataTable>
-    <p class="container-type-title">Own Containers</p>
+    <p class="container-type-title">{{ $t("Own containers") }}</p>
     <DataTable
         v-model:selection="selectedOwnContainers"
         v-model:expandedRows="expandedContainers"
@@ -35,8 +33,8 @@
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import CardComponent from "@/components/CardComponent.vue";
-import type {ContainerResponse} from "@sudosos/sudosos-client";
-import {onMounted, ref, watch} from "vue";
+import type { ContainerResponse } from "@sudosos/sudosos-client";
+import { onMounted, ref, watch } from "vue";
 import AddContainerDialogComponent from "@/components/AddContainerDialogComponent.vue";
 
 const visible = ref(false);

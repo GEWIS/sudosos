@@ -1,14 +1,14 @@
 <template>
   <div class="page-container">
-    <div class="page-title">Balance</div>
+    <div class="page-title">{{ $t('c_currentSaldo.saldo') }}</div>
     <TopupModal v-model:visible="visible" :amount="amountValue"/>
     <div class="content-wrapper">
       <CardComponent action="start payment" header="increase saldo" class="increase-saldo-card" :func="showDialog">
-        <p id="cash-notice">It is no longer possible to increase your balance in cash during the 'borrel'</p>
+        <p id="cash-notice">{{ $t('c_currentSaldo.cashtopup') }}</p>
         <div id="balance-increase-form">
-          <p id="balance-increase-title">Balance increase amount:</p>
+          <p id="balance-increase-title">{{ $t('c_currentSaldo.increase') }}</p>
           <div class="p-inputgroup flex-1">
-            <span class="p-inputgroup-addon">€</span>
+            <span class="p-inputgroup-addon">{{ $t('c_currentSaldo.currency') }}</span>
             <InputNumber v-model="amountValue" placeholder="Price" inputId="amount"/>
           </div>
         </div>

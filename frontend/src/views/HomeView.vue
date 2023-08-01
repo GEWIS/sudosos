@@ -1,6 +1,6 @@
 <template>
   <div class="page-container">
-    <div class="page-title">Overview</div>
+    <div class="page-title">{{ $t('home.Overview') }}</div>
     <div class="content-wrapper">
       <BalanceComponent class="balance-component"/>
       <TransactionsTableComponent class="transactions-table" header="Recent Transactions" action="All Transactions"/>

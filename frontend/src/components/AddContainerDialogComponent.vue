@@ -1,37 +1,37 @@
 <template>
-  <Dialog v-model:visible="visible" header="Add Container">
+  <Dialog v-model:visible="visible" :header="$t('c_containerEditModal.add container')">
     <div class="dialog">
       <div class="row">
-        <h6>Name</h6>
+        <h6>{{ $t("c_containerEditModal.Name") }}</h6>
         <InputText class="flex-child" v-model="name" />
       </div>
       <div class="row">
-        <h6>Owner</h6>
+        <h6>{{ $t("c_containerEditModal.owner") }}</h6>
         <Dropdown
             class="flex-child"
             :options="organsList"
             optionLabel="firstName"
             v-model="selectedOwner"
-            placeholder="Select Owner"
+            :placeholder="$t('c_containerEditModal.select owner')"
         />
       </div>
       <div class="row">
-        <h6>Public</h6>
+        <h6>{{ $t("c_containerEditModal.Public") }}</h6>
         <Checkbox class="flex-child" :binary="true" v-model="isPublic"/>
       </div>
       <div class="row" id="actions">
-        <Button severity="danger" outlined @click="visible = false">Cancel</Button>
-        <Button severity="danger" @click="saveContainer">Save</Button>
+        <Button severity="danger" outlined @click="visible = false">{{ $t("c_containerEditModal.cancel") }}</Button>
+        <Button severity="danger" @click="saveContainer">{{ $t("c_containerEditModal.save") }}</Button>
       </div>
     </div>
   </Dialog>
 </template>
 
 <script setup lang="ts">
-import {onMounted, Ref, ref} from "vue";
+import { onMounted, Ref, ref } from "vue";
 import type { UserResponse } from "@sudosos/sudosos-client";
-import {useAuthStore} from "@sudosos/sudosos-frontend-common";
-import {useContainerStore} from "@/stores/container.store";
+import { useAuthStore } from "@sudosos/sudosos-frontend-common";
+import { useContainerStore } from "@/stores/container.store";
 
 const visible = ref(false);
 const selectedOwner: Ref<UserResponse | undefined > = ref();

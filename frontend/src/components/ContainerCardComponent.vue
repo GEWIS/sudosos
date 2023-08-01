@@ -5,7 +5,7 @@
       <TabPanel v-for="container in containers" :key="container.id" :header="container.name">
         <ScrollPanel style="height: 20rem;">
           <ProductGridComponent :products="container.products" v-if="container.products.length !== 0"/>
-          <p v-if="container.products.length === 0">This container contains no products</p>
+          <p v-if="container.products.length === 0">{{$t('c_containerComponent.no products')}}</p>
         </ScrollPanel>
       </TabPanel>
     </TabView>

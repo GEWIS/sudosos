@@ -1,10 +1,10 @@
 <template>
 <footer>
   <span class="copyright">
-    <b>© 2023 GEWIS</b>
+    <b>{{ $t('login.copyright') }}</b>
   </span>
-  <span class="separator"> | </span>
-  <a id="tos" href="https://wieditleesttrekteenbak.nl/">Terms of Service</a>
+  <span class="separator">{{$t("login.separator")}}</span>
+  <a id="tos" href="https://wieditleesttrekteenbak.nl/">{{$t('termsOfService.termsOfService')}}</a>
 </footer>
 </template>
 

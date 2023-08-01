@@ -3,20 +3,20 @@
 <template>
   <div class="page-container">
     <div class="page-title" id="pos-info-header">
-      <span>{{ `POS: ${pos ? pos.name : ''}` }}</span>
+      <span>{{ `${ $t("posInfo.POS") }: ${pos ? pos.name : ''}` }}</span>
       <div>
-        <Button severity="secondary" label="Edit" icon="pi pi-pencil" @click="handleEditClicked"/>
-        <Button severity="danger" label="Close" icon="pi pi-times" @click="handleClosedClicked"/>
+        <Button severity="secondary" :label="$t('posInfo.Edit')" icon="pi pi-pencil" @click="handleEditClicked"/>
+        <Button severity="danger" :label="$t('posInfo.Close')" icon="pi pi-times" @click="handleClosedClicked"/>
       </div>
     </div>
     <hr>
     <div class="content-wrapper">
       <div class="pos-row">
         <div class="pos-general-info">
-          <h3>General</h3>
-          <b>Title</b>
+          <h3>{{ $t('posInfo.General') }}</h3>
+          <b>{{ $t('posInfo.Title') }}</b>
           <p>{{ pos ? pos.name: '' }}</p>
-          <b>Owner</b>
+          <b>{{ $t('posInfo.Owner') }}</b>
           <p>{{ (pos && pos.owner) ? pos.owner.firstName + pos.owner.lastName: '' }}</p>
         </div>
         <ContainerCardComponent
@@ -25,7 +25,7 @@
             :data="pos.containers"
         />
       </div>
-      <TransactionsTableComponent header="transactions" class="pos-transactions" />
+      <TransactionsTableComponent :header="$t('app.Transactions')" class="pos-transactions" />
     </div>
   </div>
 </template>

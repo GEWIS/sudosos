@@ -1,24 +1,25 @@
 <!--TODO: Input validation-->
 <template>
   <div class="page-container">
-    <div class="page-title">Create Point of Sale</div>
+    <div class="page-title">{{ $t("c_POSCreate.Create Point of Sale") }}</div>
     <hr>
     <div class="content-wrapper">
       <div class="pos-row">
         <div class="pos-general-info">
-          <h3>General</h3>
+          <h3>{{ $t("posInfo.General") }}</h3>
           <span class="general-info-block">
-            <b>Title</b>
+            <b>{{ $t("posInfo.Title") }}</b>
             <InputText class="input" type="text" v-model="title"/>
 
           </span>
-          <span class="general-info-block"><b>Owner</b>
+          <span class="general-info-block">
+            <b>{{ $t("posInfo.Owner") }}</b>
             <Dropdown
                 class="input"
                 :options="organsList"
                 optionLabel="firstName"
                 v-model="selectedOwner"
-                placeholder="Select Owner"
+                :placeholder="$t('c_POSCreate.Select owner')"
             />
           </span>
           <span class="general-info-block" style="flex-direction: row;">
@@ -29,17 +30,22 @@
                 value="useAuthentication"
                 :binary="true"
             />
-            <label for="useAuthentication">Use Authentication</label>
+            <label for="useAuthentication">{{ $t("c_POSCreate.Use Authentication") }}</label>
           </span>
           <span class="general-info-block" >
-            <b>Selected Containers</b>
+            <b>{{ $t("c_POSCreate.Selected Containers") }}</b>
             <ul class="selected-containers">
               <li v-for="container in selectedContainers" :key="container.id">
                 {{ container.name }}
               </li>
             </ul>
           </span>
-          <Button id="create-pos-button" label="Create" @click="createPointOfSale" severity="success"/>
+          <Button
+              id="create-pos-button"
+              :label="$t('c_POSCreate.Create')"
+              @click="createPointOfSale"
+              severity="success"
+          />
         </div>
         <DetailedContainerCardComponent
             @selectedChanged="handleSelectedChanged"

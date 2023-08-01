@@ -5,7 +5,7 @@
       <Menubar :model="leftItems" >
         <template #start>
           <router-link to="/" id="sudosos">
-            SudoSOS
+            {{ $t("login.SudoSOS") }}
             <img id="logo" src="../assets/img/gewis-branding.svg" alt="SudoSOS" />
           </router-link>
 

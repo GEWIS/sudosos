@@ -1,18 +1,18 @@
 <!--TODO: Input validation-->
 <template>
   <div class="page-container">
-    <div class="page-title">{{ `Edit Point of Sale: ${pos ? pos.name : ''}`}}</div>
+    <div class="page-title">{{ `${$t('c_POSCreate.Edit Point of Sale')}: ${pos ? pos.name : ''}`}}</div>
     <hr>
     <div class="content-wrapper">
       <div class="pos-row">
         <div class="pos-general-info">
-          <h3>General</h3>
+          <h3>{{ $t("c_POSCreate.General") }}</h3>
           <span class="general-info-block">
-            <b>Title</b>
+            <b>{{ $t("c_POSCreate.Title") }}</b>
             <InputText class="input" type="text" v-model="title"/>
           </span>
           <span class="general-info-block">
-            <b>Owner</b>
+            <b>{{ $t("c_POSCreate.Owner") }}</b>
             <p>{{ pos.owner.firstName }}</p></span>
           <div>
             <span class="general-info-block" style="flex-direction: row;">
@@ -22,18 +22,18 @@
                         value="useAuthentication"
                         :binary="true"
               />
-              <label for="useAuthentication">Use Authentication</label>
+              <label for="useAuthentication">{{ $t("c_POSCreate.Use Authentication") }}</label>
             </span>
           </div>
           <span class="general-info-block">
-            <b>Selected Containers</b>
+            <b>{{ $t("c_POSCreate.Selected containers") }}</b>
             <ul class="selected-containers">
               <li v-for="container in selectedContainers" :key="container.id">
                 {{ container.name }}
               </li>
             </ul>
           </span>
-          <Button id="create-pos-button" label="Edit" @click="updatePointOfSale" severity="success"/>
+          <Button id="create-pos-button" :label="$t('c_POSCreate.Edit')" @click="updatePointOfSale" severity="success"/>
         </div>
         <DetailedContainerCardComponent
             @selectedChanged="handleSelectedChanged"

@@ -1,36 +1,36 @@
 <template>
-  <Dialog v-model:visible="visible" modal header="Product Information" class="custom-dialog">
+  <Dialog v-model:visible="visible" modal :header="$t('c_ProductInfoModal.title')" class="custom-dialog">
     <div class="product-dialog">
       <div class="row">
-        <h6>Name</h6>
+        <h6>{{ $t("c_ProductInfoModal.Name") }}</h6>
         <p>{{ product.name }}</p>
       </div>
       <div class="row">
-        <h6>Added by</h6>
+        <h6>{{ $t("c_ProductInfoModal.Added by") }}</h6>
         <p>{{ product.owner.firstName + product.owner.lastName }}</p>
       </div>
       <div class="row">
-        <h6>Added on</h6>
+        <h6>{{ $t("c_ProductInfoModal.Added on") }}</h6>
         <p>{{formatDateTime(new Date(product.createdAt ? product.createdAt.toString() : ''))}}</p>
       </div>
       <div class="row">
-        <h6>Updated on</h6>
+        <h6>{{ $t("c_ProductInfoModal.Updated on") }}</h6>
         <p>{{ formatDateTime(new Date(product.updatedAt ? product.updatedAt.toString() : '')) }}</p>
       </div>
       <div class="row">
-        <h6>Price</h6>
+        <h6>{{ $t("c_ProductInfoModal.Price") }}</h6>
         <p>{{ formatPrice(product.priceInclVat.amount) }}</p>
       </div>
       <div class="row">
-        <h6>Category</h6>
+        <h6>{{ $t("c_ProductInfoModal.Category") }}</h6>
         <p>{{ product.category.name }}</p>
       </div>
       <div class="row">
-        <h6>Alcohol percentage</h6>
+        <h6>{{ $t("c_ProductInfoModal.Alcohol percentage") }}</h6>
         <p>{{ product.alcoholPercentage + '%' }}</p>
       </div>
       <div class="row">
-        <h6>Picture</h6>
+        <h6>{{ $t("c_ProductInfoModal.Picture") }}</h6>
         <img :src="getProductImageSrc(product)" :alt="product.name">
       </div>
     </div>
