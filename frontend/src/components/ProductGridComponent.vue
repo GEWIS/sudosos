@@ -19,9 +19,6 @@ const props = defineProps({
   },
 });
 
-onMounted(() => {
-  console.log(props.products);
-});
 </script>
 
 <style scoped>

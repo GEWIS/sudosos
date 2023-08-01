@@ -78,6 +78,7 @@ onBeforeMount(async () => {
   console.error("containers are: " + selectedContainers.value);
   title.value = pos.value.name;
   selectedOwner.value = pos.value.owner;
+  console.log(selectedContainers.value);
   if (userStore.getCurrentUser.user ) {
     const publicContainersResponse = await containerStore.getPublicContainers();
     const ownContainersResponse = await containerStore.getUsersContainers(userStore.getCurrentUser.user.id);
