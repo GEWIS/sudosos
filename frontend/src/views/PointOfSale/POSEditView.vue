@@ -11,9 +11,10 @@
             <b>{{ $t("c_POSCreate.Title") }}</b>
             <InputText class="input" type="text" v-model="title"/>
           </span>
-          <span class="general-info-block">
+          <div class="general-info-block">
             <b>{{ $t("c_POSCreate.Owner") }}</b>
-            <p>{{ pos.owner.firstName }}</p></span>
+            <p>{{ pos ? (pos.owner ? pos.owner.firstName + pos.owner.lastName : "") : "" }}</p></div>
+<!--          TODO: Clean-up whatever the fuck is that above-->
           <div>
             <span class="general-info-block" style="flex-direction: row;">
               <Checkbox v-model="useAuthentication"
@@ -25,14 +26,14 @@
               <label for="useAuthentication">{{ $t("c_POSCreate.Use Authentication") }}</label>
             </span>
           </div>
-          <span class="general-info-block">
+          <div class="general-info-block">
             <b>{{ $t("c_POSCreate.Selected containers") }}</b>
             <ul class="selected-containers">
               <li v-for="container in selectedContainers" :key="container.id">
                 {{ container.name }}
               </li>
             </ul>
-          </span>
+          </div>
           <Button id="create-pos-button" :label="$t('c_POSCreate.Edit')" @click="updatePointOfSale" severity="success"/>
         </div>
         <DetailedContainerCardComponent
@@ -58,9 +59,9 @@ import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import type { BaseUserResponse, ContainerResponse, UserResponse } from "@sudosos/sudosos-client";
 import { usePointOfSaleStore } from "@/stores/pos.store";
 import { useRoute, useRouter } from "vue-router";
-import { PointOfSaleWithContainersResponse } from "@sudosos/sudosos-client";
+import type { PointOfSaleWithContainersResponse } from "@sudosos/sudosos-client";
 
-const title = ref(null);
+const title: Ref<string> = ref("");
 
 const containerStore = useContainerStore();
 const userStore = useUserStore();
@@ -78,14 +79,15 @@ const pos: Ref<PointOfSaleWithContainersResponse | null | undefined> = ref();
 const selectedOwner: Ref<BaseUserResponse | undefined> = ref();
 
 onBeforeMount(async () => {
+
   id.value = route.params.id;
   pos.value = pointOfSaleStore.getPos;
-  useAuthentication.value = pos.value?.useAuthentication;
-  selectedContainers.value = pos.value.containers;
-  console.error("containers are: " + selectedContainers.value);
-  title.value = pos.value.name;
-  selectedOwner.value = pos.value.owner;
-  console.log(selectedContainers.value);
+  if (pos.value) {
+    useAuthentication.value = pos.value.useAuthentication;
+    selectedContainers.value = pos.value.containers;
+    title.value = pos.value.name;
+    selectedOwner.value = pos.value.owner;
+  }
   if (userStore.getCurrentUser.user ) {
     const publicContainersResponse = await containerStore.getPublicContainers();
     const ownContainersResponse = await containerStore.getUsersContainers(userStore.getCurrentUser.user.id);
@@ -102,7 +104,7 @@ const handleSelectedChanged = (selected: any) => {
 };
 
 const updatePointOfSale = async () => {
-  if (title.value && selectedOwner.value && pos.value) {
+  if (title.value && selectedOwner.value && pos.value && selectedContainers.value) {
     const response = await pointOfSaleStore.updatePointOfSale(
         title.value,
         pos.value.id,

@@ -1,3 +1,5 @@
+/* eslint vue/multi-word-component-names: 0 */
+/* eslint vue/no-reserved-component-names: 0 */
 import './assets/main.css';
 
 import { createApp } from 'vue';

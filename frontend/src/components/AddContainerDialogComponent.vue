@@ -3,7 +3,7 @@
     <div class="dialog">
       <div class="row">
         <h6>{{ $t("c_containerEditModal.Name") }}</h6>
-        <InputText class="flex-child" v-model="name" />
+        <InputText class="flex-child" :v-model="name" />
       </div>
       <div class="row">
         <h6>{{ $t("c_containerEditModal.owner") }}</h6>
@@ -28,7 +28,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, Ref, ref } from "vue";
+import { onMounted, ref } from "vue";
+import type { Ref } from "vue";
 import type { UserResponse } from "@sudosos/sudosos-client";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import { useContainerStore } from "@/stores/container.store";
@@ -37,8 +38,8 @@ const visible = ref(false);
 const selectedOwner: Ref<UserResponse | undefined > = ref();
 const organsList: Ref<Array<UserResponse>> = ref([]);
 const authStore = useAuthStore();
-const name: Ref<String> = ref();
-const isPublic: Ref<Boolean> = ref(false);
+const name: Ref<string> = ref("");
+const isPublic: Ref<boolean> = ref(false);
 const containerStore = useContainerStore();
 
 onMounted(async () => {
@@ -46,8 +47,12 @@ onMounted(async () => {
 });
 
 const saveContainer = () => {
-  console.error(name.value, isPublic.value, selectedOwner.value);
-  containerStore.createEmptyContainer(name.value, isPublic.value, selectedOwner.value.id);
+  if (selectedOwner.value){
+    containerStore.createEmptyContainer(name.value, isPublic.value, selectedOwner.value.id);
+  } else {
+    console.error("Owner not defined"); // TODO: Correct error-handling
+  }
+
 };
 </script>
 

@@ -17,7 +17,8 @@
           <b>{{ $t('posInfo.Title') }}</b>
           <p>{{ pos ? pos.name: '' }}</p>
           <b>{{ $t('posInfo.Owner') }}</b>
-          <p>{{ (pos && pos.owner) ? pos.owner.firstName + pos.owner.lastName: '' }}</p>
+          <p>{{ pos ? (pos.owner ? pos.owner.firstName + pos.owner.lastName : "") : "" }}</p>
+          <!--          TODO: Clean-up whatever the fuck is that above-->
         </div>
         <ContainerCardComponent
             class="container-card"
@@ -56,7 +57,11 @@ const handleClosedClicked = () => {
 };
 
 const handleEditClicked = () => {
-  router.push(`/point-of-sale/edit/${pos.value.id}`);
+  if (pos.value) {
+    router.push(`/point-of-sale/edit/${pos.value.id}`);
+  } else {
+    console.error("POS not defined"); // TODO: Correct Error handling
+  }
 };
 </script>
 
