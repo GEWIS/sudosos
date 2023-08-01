@@ -10,9 +10,21 @@
           <b>Title</b>
           <InputText class="input" type="text" v-model="title"/>
           <b>Owner</b>
-          <Dropdown class="input" :options="organsList" optionLabel="firstName" v-model="selectedOwner" placeholder="Select Owner"/>
+          <Dropdown
+              class="input"
+              :options="organsList"
+              optionLabel="firstName"
+              v-model="selectedOwner"
+              placeholder="Select Owner"
+          />
           <div>
-            <Checkbox v-model="useAuthentication" inputId="useAuthentication" name="useAuthentication" value="useAuthentication" :binary="true" />
+            <Checkbox
+                v-model="useAuthentication"
+                inputId="useAuthentication"
+                name="useAuthentication"
+                value="useAuthentication"
+                :binary="true"
+            />
             <label for="useAuthentication">Use Authentication</label>
           </div>
           <b>Selected Containers</b>
@@ -82,7 +94,12 @@ const createPointOfSale = async () => {
   console.warn(useAuthentication.value);
   console.error(selectedContainers.value);
   if (title.value && selectedOwner.value) {
-    const response = await pointOfSaleStore.createPointOfSale(title.value, useAuthentication.value, selectedContainers.value.map((container: ContainerResponse) => container.id), selectedOwner.value.id);
+    const response = await pointOfSaleStore.createPointOfSale(
+        title.value,
+        useAuthentication.value,
+        selectedContainers.value.map((container: ContainerResponse) => container.id),
+        selectedOwner.value.id
+    );
     if (response.status == 200){
       router.push('/point-of-sale/overview');
     } else {

@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 
-import { onBeforeMount, onMounted, ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 import type { Ref } from "vue";
 import { useContainerStore } from "@/stores/container.store";
 import DetailedContainerCardComponent from "@/components/DetailedContainerCardComponent.vue";

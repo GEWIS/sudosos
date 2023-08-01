@@ -10,6 +10,7 @@ module.exports = {
     '@vue/eslint-config-typescript',
     '@vue/eslint-config-prettier/skip-formatting'
   ],
+  ignorePatterns: ["/src/components/icons/*.vue"],
   rules: {
     'max-len': ['warn', { "code": 120 } ],
     'semi': ['error', 'always'],

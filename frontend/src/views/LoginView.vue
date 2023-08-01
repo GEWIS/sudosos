@@ -3,9 +3,15 @@
   <main>
     <img id="login-image" src="../assets/img/bier.png" alt="logo">
     <h1>{{ $t('login.SudoSOS Login' )}}</h1>
-    <Button id="login-gewis-button" @click="loginViaGEWIS" severity="success"><img id="gewis-branding" src="../assets/img/gewis-branding.svg" alt="GEWIS">{{
+    <Button
+        id="login-gewis-button"
+        @click="loginViaGEWIS"
+        severity="success"
+    >
+      <img id="gewis-branding" src="../assets/img/gewis-branding.svg" alt="GEWIS">{{
         $t('login.Login via GEWIS')
-      }}</Button>
+      }}
+    </Button>
     <hr>
     <label for="username">{{$t('login.Username')}}</label>
     <InputText id="username" type="text" v-model="username" :placeholder="$t('login.Enter username')"/>

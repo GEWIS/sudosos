@@ -5,7 +5,13 @@
       <Column field="owner.firstName" header="Owner"/>
       <Column headerStyle="width: 3rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
         <template #body="slotProps">
-          <Button @click="$router.push({name: 'pointOfSaleInfo', params: {id: slotProps.data.id}})" type="button" severity='danger' icon="pi pi-info-circle" outlined />
+          <Button
+              @click="$router.push({name: 'pointOfSaleInfo', params: {id: slotProps.data.id}})"
+              type="button"
+              severity='danger'
+              icon="pi pi-info-circle"
+              outlined
+          />
         </template>
       </Column>
     </DataTable>

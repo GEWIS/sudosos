@@ -4,7 +4,10 @@
     <nav>
       <Menubar :model="leftItems" >
         <template #start>
-          <router-link to="/" id="sudosos">SudoSOS<img id="logo" src="../assets/img/gewis-branding.svg" /></router-link>
+          <router-link to="/" id="sudosos">
+            SudoSOS
+            <img id="logo" src="../assets/img/gewis-branding.svg" alt="SudoSOS" />
+          </router-link>
 
         </template>
       </Menubar>
@@ -191,20 +194,24 @@ nav {
   background-color: transparent;
 }
 
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover .p-menuitem-link .p-menuitem-text){
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) >
+ .p-menuitem-content:hover .p-menuitem-link .p-menuitem-text){
   color: hsla(0,0%,100%,.5)!important;
 }
 
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content .p-menuitem-link .p-menuitem-text) {
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) >
+ .p-menuitem-content .p-menuitem-link .p-menuitem-text) {
   transition: color .2s linear;
 }
 
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover .p-menuitem-link svg){
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) >
+ .p-menuitem-content:hover .p-menuitem-link svg){
   color: hsla(0,0%,100%,.5)!important;
 
 }
 
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content .p-menuitem-link svg){
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) >
+ .p-menuitem-content .p-menuitem-link svg){
   transition: color .2s linear;
 }
 
@@ -212,7 +219,8 @@ nav {
   background-color: transparent;
 }
 
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content .p-menuitem-link .p-menuitem-text){
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus >
+ .p-menuitem-content .p-menuitem-link .p-menuitem-text){
   color: hsla(0,0%,100%,.5)!important;
 }
 
@@ -233,7 +241,8 @@ nav {
   background-color: lightgray;
 }
 
-:deep(.p-menubar .p-menubar-root-list .p-menuitem-active .p-submenu-list > .p-menuitem > .p-menuitem-content:hover .p-menuitem-link .p-menuitem-text){
+:deep(.p-menubar .p-menubar-root-list .p-menuitem-active .p-submenu-list >
+ .p-menuitem > .p-menuitem-content:hover .p-menuitem-link .p-menuitem-text){
   color: black!important;
 }
 

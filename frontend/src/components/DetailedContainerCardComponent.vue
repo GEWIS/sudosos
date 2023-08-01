@@ -31,7 +31,6 @@ import { onMounted, ref, watch } from "vue";
 
 const selectedOwnContainers = ref<Array<ContainerResponse>>([]);
 const selectedPublicContainers = ref<Array<ContainerResponse>>([]);
-const selectedContainers = ref<Array<ContainerResponse>>([]);
 const props = defineProps({
   publicContainers: {
     type: Array<ContainerResponse>,
@@ -50,14 +49,19 @@ const props = defineProps({
 const emit = defineEmits(["selectedChanged"]);
 const expandedContainers = ref();
 function divideAndSetSelected() {
-  if(props.selectedContainers){
-    selectedContainers.value = props.selectedContainers;
-    selectedPublicContainers.value = selectedContainers.value.filter(selectedContainer => props.publicContainers.map(publicContainer => publicContainer.id).includes(selectedContainer.id));
-    selectedOwnContainers.value = selectedContainers.value.filter(selectedContainer => props.ownContainers.map(ownContainer => ownContainer.id).includes(selectedContainer.id));
+  if (props.selectedContainers) {
+    selectedPublicContainers.value = props.selectedContainers.filter((selectedContainer) =>
+        props.publicContainers.map((publicContainer) => publicContainer.id).includes(selectedContainer.id)
+    );
+
+    selectedOwnContainers.value = props.selectedContainers.filter((selectedContainer) =>
+        props.ownContainers.map((ownContainer) => ownContainer.id).includes(selectedContainer.id)
+    );
   }
 }
 watch([selectedPublicContainers, selectedOwnContainers], () => {
-  const combinedSelectedContainers: Array<ContainerResponse> = selectedPublicContainers.value.concat(selectedOwnContainers.value);
+  const combinedSelectedContainers: Array<ContainerResponse> =
+      selectedPublicContainers.value.concat(selectedOwnContainers.value);
   emit("selectedChanged", combinedSelectedContainers);
 });
 
