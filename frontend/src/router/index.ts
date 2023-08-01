@@ -57,7 +57,7 @@ const router = createRouter({
         },
         {
           path: '/point-of-sale/edit/:id',
-          name: 'pointOfSaleCreate',
+          name: 'pointOfSaleEdit',
           component: POSEditView,
           props: true,
         },

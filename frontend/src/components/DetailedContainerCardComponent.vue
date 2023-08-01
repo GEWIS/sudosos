@@ -1,5 +1,14 @@
 <template>
   <CardComponent header="containers">
+    <template #topAction>
+      <!-- Header content goes here -->
+      <Button severity="success"
+              @click="visible = true"
+      >
+        Add Container
+      </Button>
+      <AddContainerDialogComponent v-model:visible="visible"/>
+    </template>
     <p class="container-type-title">Public Containers</p>
     <DataTable
         v-model:selection="selectedPublicContainers"
@@ -26,9 +35,11 @@
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import CardComponent from "@/components/CardComponent.vue";
-import type { ContainerResponse } from "@sudosos/sudosos-client";
-import { onMounted, ref, watch } from "vue";
+import type {ContainerResponse} from "@sudosos/sudosos-client";
+import {onMounted, ref, watch} from "vue";
+import AddContainerDialogComponent from "@/components/AddContainerDialogComponent.vue";
 
+const visible = ref(false);
 const selectedOwnContainers = ref<Array<ContainerResponse>>([]);
 const selectedPublicContainers = ref<Array<ContainerResponse>>([]);
 const props = defineProps({

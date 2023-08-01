@@ -7,25 +7,32 @@
       <div class="pos-row">
         <div class="pos-general-info">
           <h3>General</h3>
-          <b>Title</b>
-          <InputText class="input" type="text" v-model="title"/>
-          <b>Owner</b>
-          <p>{{pos.owner.firstName}}</p>
+          <span class="general-info-block">
+            <b>Title</b>
+            <InputText class="input" type="text" v-model="title"/>
+          </span>
+          <span class="general-info-block">
+            <b>Owner</b>
+            <p>{{ pos.owner.firstName }}</p></span>
           <div>
-            <Checkbox v-model="useAuthentication"
-                      inputId="useAuthentication"
-                      name="useAuthentication"
-                      value="useAuthentication"
-                      :binary="true"
-            />
-            <label for="useAuthentication">Use Authentication</label>
+            <span class="general-info-block" style="flex-direction: row;">
+              <Checkbox v-model="useAuthentication"
+                        inputId="useAuthentication"
+                        name="useAuthentication"
+                        value="useAuthentication"
+                        :binary="true"
+              />
+              <label for="useAuthentication">Use Authentication</label>
+            </span>
           </div>
-          <b>Selected Containers</b>
-          <ul class="selected-containers">
-            <li v-for="container in selectedContainers" :key="container.id">
-              {{ container.name }}
-            </li>
-          </ul>
+          <span class="general-info-block">
+            <b>Selected Containers</b>
+            <ul class="selected-containers">
+              <li v-for="container in selectedContainers" :key="container.id">
+                {{ container.name }}
+              </li>
+            </ul>
+          </span>
           <Button id="create-pos-button" label="Edit" @click="updatePointOfSale" severity="success"/>
         </div>
         <DetailedContainerCardComponent
@@ -113,6 +120,7 @@ const updatePointOfSale = async () => {
 </script>
 
 <style scoped lang="scss">
+// TODO: Generalize this style and the one from create view
 @import "@/styles/BasePage.css";
 
 #pos-info-header {
@@ -152,16 +160,12 @@ hr {
     font-weight: bolder;
   }
 
-  p {
-    margin-bottom: 1rem;
-  }
-
   .input {
     width: 80%;
   }
 
   #create-pos-button {
-    width: 80%;
+    width: fit-content;
   }
 }
 
@@ -177,5 +181,11 @@ hr {
 .pos-transactions {
   width: 100%;
   margin-top: 3rem;
+}
+
+.general-info-block {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 </style>

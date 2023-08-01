@@ -7,17 +7,21 @@
       <div class="pos-row">
         <div class="pos-general-info">
           <h3>General</h3>
-          <b>Title</b>
-          <InputText class="input" type="text" v-model="title"/>
-          <b>Owner</b>
-          <Dropdown
-              class="input"
-              :options="organsList"
-              optionLabel="firstName"
-              v-model="selectedOwner"
-              placeholder="Select Owner"
-          />
-          <div>
+          <span class="general-info-block">
+            <b>Title</b>
+            <InputText class="input" type="text" v-model="title"/>
+
+          </span>
+          <span class="general-info-block"><b>Owner</b>
+            <Dropdown
+                class="input"
+                :options="organsList"
+                optionLabel="firstName"
+                v-model="selectedOwner"
+                placeholder="Select Owner"
+            />
+          </span>
+          <span class="general-info-block" style="flex-direction: row;">
             <Checkbox
                 v-model="useAuthentication"
                 inputId="useAuthentication"
@@ -26,13 +30,15 @@
                 :binary="true"
             />
             <label for="useAuthentication">Use Authentication</label>
-          </div>
-          <b>Selected Containers</b>
-          <ul class="selected-containers">
-            <li v-for="container in selectedContainers" :key="container.id">
-              {{ container.name }}
-            </li>
-          </ul>
+          </span>
+          <span class="general-info-block" >
+            <b>Selected Containers</b>
+            <ul class="selected-containers">
+              <li v-for="container in selectedContainers" :key="container.id">
+                {{ container.name }}
+              </li>
+            </ul>
+          </span>
           <Button id="create-pos-button" label="Create" @click="createPointOfSale" severity="success"/>
         </div>
         <DetailedContainerCardComponent
@@ -111,6 +117,7 @@ const createPointOfSale = async () => {
 </script>
 
 <style scoped lang="scss">
+// TODO: Generalize this style and the one from edit view
 @import "@/styles/BasePage.css";
 
 #pos-info-header {
@@ -159,7 +166,7 @@ hr {
   }
 
   #create-pos-button {
-    width: 80%;
+    width: fit-content;
   }
 }
 
@@ -175,5 +182,11 @@ hr {
 .pos-transactions {
   width: 100%;
   margin-top: 3rem;
+}
+
+.general-info-block {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 </style>
