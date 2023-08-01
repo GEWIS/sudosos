@@ -1,27 +1,31 @@
 <template>
   <div class="point-of-sale">
     <div class="header">
-      <div class="search-container" v-show="isSearchViewVisible">
-        <div class="search-button active" @click="closeSearchView">
-          <font-awesome-icon class="icon" icon="fa-solid fa-xmark"/>
-        </div>
-        <input type="text" ref="searchInput" id="searchInput" v-model="searchQuery" placeholder="Search..."/>
-      </div>
-      <div v-show="!isSearchViewVisible" class="categories-header">
-        <div class="categories">
-          <label for="searchInput" class="search-button" @click="openSearchView">
-            <font-awesome-icon icon="fa-solid fa-search"/>
-          </label>
-          <div
-              class="category"
-              v-for="category in computedCategories"
-              :key="category.id"
-              :class="{ 'selected-category': category.id === selectedCategoryId }"
-              @click="selectCategory(category.id)"
-          >
-            {{ category.name }}
+      <div v-show="isSearchViewVisible">
+        <div class="d-flex w-100 gap-2">
+          <div class="c-btn square active icon-large search-close" @click="closeSearchView">
+            <font-awesome-icon icon="fa-solid fa-xmark"/>
           </div>
+          <input type="text" ref="searchInput" id="searchInput" v-model="searchQuery" placeholder="Search..."/>
         </div>
+      </div>
+      <div v-show="!isSearchViewVisible">
+        <div class="d-flex w-100 justify-content-between">
+          <div class="d-flex flex-wrap gap-2">
+            <label for="searchInput" class="c-btn icon-md search-close" @click="openSearchView">
+              <font-awesome-icon icon="fa-solid fa-search"/>
+            </label>
+            <div
+                class="c-btn rounder font-size-lg"
+                v-for="category in computedCategories"
+                :key="category.id"
+                :class="{ 'active': category.id === selectedCategoryId }"
+                @click="selectCategory(category.id)"
+            >
+              {{ category.name }}
+            </div>
+          </div>
+      </div>
       </div>
     </div>
     <PointOfSaleProductsComponent
@@ -94,36 +98,4 @@ watch(
 </script>
 
 <style scoped lang="scss">
-.categories-header {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.search-container {
-  display: flex;
-  gap: 10px;
-  height: 72px;
-  width: 100%;
-}
-
-.categories {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-
-  > .category {
-    border-radius: 50px;
-    cursor: pointer;
-    font-size: 22px;
-    margin-bottom: 10px;
-    margin-right: 10px;
-    padding: 13px 25px;
-
-    &.selected-category {
-      background-color: var(--accent-color);
-      color: white;
-    }
-  }
-}
 </style>

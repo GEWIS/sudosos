@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper user" :class="{ inactive: !isActive }">
-    <font-awesome-icon icon="fa-solid fa-user" class="icon" />
+    <font-awesome-icon icon="fa-solid fa-user" class="fs-3 w-100" />
     <div class="display-value">
       {{ external ? 'E' : '' }}
       <span v-for="char in userId" :key="char">
@@ -9,7 +9,7 @@
     </div>
   </div>
   <div class="wrapper pincode" :class="{ inactive: isActive }">
-    <font-awesome-icon icon="fa-solid fa-key" class="icon" />
+    <font-awesome-icon icon="fa-solid fa-key" class="fs-3 w-100" />
     <div class="display-value" :class="{ wrong: wrongPin }">
       <div v-if="wrongPin">
         WRONG PIN
@@ -45,17 +45,17 @@ defineProps({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .display-value {
   display: flex;
-  background: white;
+  background: $body-overlay-color;
   padding-left: 20px;
   width: calc(3 * var(--key-size) + 2 * var(--key-gap-size));
 
-  border-radius: 15px;
-  font-size: 45px;
+  border-radius: $border-radius;
+  font-size: $font-size-larger;
   text-align: left;
-  min-height: 95px;
+  min-height: $keypad-display-height;
   align-items: center;
   margin-top: 10px;
   font-weight: bold;
@@ -63,7 +63,7 @@ defineProps({
   > span {
     padding: 0 10px;
     font-weight: bold;
-    background-color: white;
+    background-color: $body-overlay-color;
   }
 }
 
@@ -82,17 +82,11 @@ defineProps({
 
 .display-value.wrong {
   background-color: #ff6e99;
-  color: white;
+  color: $body-overlay-color;
   text-align: center;
 }
 
 .wrapper.inactive {
-  opacity: 0.7; /* Set opacity for the inactive wrapper */
-}
-
-.icon {
-  font-size: 26px;
-  width: 100%;
-  margin: auto;
+  opacity: 0.7;
 }
 </style>

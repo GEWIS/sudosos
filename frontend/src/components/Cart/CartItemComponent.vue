@@ -1,17 +1,17 @@
 <template>
-  <div class="cart-item">
-    <div class="product">
-      <img :src="getProductImageSrc(product)" :alt="product.name" class="product-image" />
-      <div class="product-details">
-        <h4 class="product-name">{{ product.name }}</h4>
-        <p class="product-category">{{ product.category.name }}</p>
+  <div class="mt-1">
+    <div class="flex-container mb-2">
+      <img :src="getProductImageSrc(product)" :alt="product.name" class="product-image image me-2" />
+      <div class>
+        <h4 class="fs-6 text-overflow fw-bolder" style="max-width: 100px;">{{ product.name }}</h4>
+        <p class="font-size-sm">{{ product.category.name }}</p>
       </div>
-      <div class="product-actions">
-        <button @click="decreaseQuantity">-</button>
-        <span class="quantity">{{ cartProduct.count }}</span>
-        <button @click="increaseQuantity">+</button>
+      <div class="ms-auto gap-2 flex-container">
+        <button class="c-btn active squarer min-w-34" @click="decreaseQuantity">-</button>
+        <span class="min-w-24 text-center fw-bolder">{{ cartProduct.count }}</span>
+        <button class="c-btn active squarer min-w-34" @click="increaseQuantity">+</button>
       </div>
-      <p class="total-price">€{{ totalPrice }}</p>
+      <p class="min-w-70 fw-bolder ps-3 text-end fs-6">€{{ totalPrice }}</p>
     </div>
   </div>
 </template>
@@ -46,79 +46,14 @@ const totalPrice = computed(() => {
 });
 </script>
 
-<style scoped>
-/* Your existing styles */
-
-.cart-item {
-  margin-top: 20px;
-}
-
-.product {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
+<style scoped lang="scss">
 .product-image {
-  width: 52px;
-  height: 52px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-right: 10px;
-  background-color: white;
-}
-
-.product-details {
-  display: flex;
-  flex-direction: column;
-  white-space: nowrap;
-  overflow: hidden;
-  padding-right: 10px;
-}
-
-.product-name {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 800;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-.product-category {
-  margin: 0;
-  font-size: 14px;
-  color: var(--accent-color);
-}
-
-.product-actions {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-  margin-left: auto;
+  width: $cart-product-image-size;
+  height: $cart-product-image-size;
+  border-radius: $border-radius-sm;
 }
 
 button {
-  margin: 0;
-  padding: 5px 10px;
-  font-size: 14px;
-  border: none;
-  color: white;
-  border-radius: 5px;
-  background-color: var(--accent-color);
-  cursor: pointer;
-}
-
-.quantity {
-  font-weight: bolder;
-  min-width: 24px;
-  text-align: center;
-}
-
-.total-price {
-  font-weight: 700;
-  min-width: 60px;
-  font-size: 16px;
-  text-align: right;
-  padding-left: 10px;
+  font-size: $font-size-lg;
 }
 </style>

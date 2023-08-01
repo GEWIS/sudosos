@@ -1,41 +1,41 @@
 <template>
-  <div class="cart">
-    <div class="user-info">
-      <div class="user-button" @click="selectUser">
-        <font-awesome-icon icon="fa-solid fa-user" class="user-icon" />
+  <div class="flex-column h-100">
+    <div class="flex-container flex-row-reverse justify-content-between">
+      <div class="c-btn active square fs-4 px-3 py-1" @click="selectUser">
+        <font-awesome-icon icon="fa-solid fa-user" class="pe-2" />
         {{ displayName() }}
       </div>
-      <p v-if="isOwnBuyer">Current order for</p>
+      <p class="fw-bolder font-size-lg" v-if="isOwnBuyer">Current order for</p>
     </div>
-    <div class="cart-items" v-if="!showHistory">
+    <div class="overflow-y-auto flex-grow-1 my-2" v-if="!showHistory">
       <div v-for="item in cartItems" :key="item.product.id">
         <CartItemComponent :cart-product="item" />
       </div>
     </div>
     <TransactionHistoryComponent v-else :transactions="transactions" />
-    <div class="cart-info">
-      <div class="total-info">
-        <div class="total-label">Total</div>
-        <div class="total-price">€{{ formatPrice(totalPrice) }}</div>
+    <div class="content-body px-3 py-2 font-size-lg mt-3">
+      <div class="flex-between w-100">
+        <div class="fw-bold">Total</div>
+        <div class="fw-bolder font-size-lg">€{{ formatPrice(totalPrice) }}</div>
       </div>
-      <div class="warning-line" v-if="balance">
+      <div class="font-size-sm pt-2 align-items-end" v-if="balance">
         <font-awesome-icon icon="fa-solid fa-exclamation-triangle" />
         Your debit after purchase is €{{ formattedBalanceAfter }}
       </div>
     </div>
-    <div class="cart-actions">
+    <div class="flex-column mt-3">
       <div v-if="borrelMode && posOwner">
         Borrelmode active for {{ posOwner.firstName }}
       </div>
-      <div class="buttons">
+      <div class="d-flex justify-content-between w-100">
         <button
-          class="checkout-button"
+          class="c-btn rounder fw-medium checkout fs-3"
           :class="{ countdown: checkingOut, empty: cartStore.cartTotalCount === 0, borrelMode }"
           @click="checkout"
         >
           {{ checkingOut ? duration : 'CHECKOUT' }}
         </button>
-        <button class="clear-button" @click="logout" v-if="!borrelMode">
+        <button class="c-btn clear icon-larger rounded-circle" @click="logout" v-if="!borrelMode">
           <font-awesome-icon icon="fa-solid fa-xmark" />
         </button>
       </div>
@@ -186,113 +186,18 @@ const checkout = async () => {
 };
 </script>
 
-<style scoped>
-.cart-info {
-  display: flex;
-  justify-content: space-between;
-  background-color: white;
-  margin-bottom: 10px;
-  font-size: 20px;
-  border-radius: 15px;
-  flex-direction: column;
-  margin-right: 10px;
-  padding: 10px 20px 10px 15px;
-}
-
-.total-info {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-}
-
-.total-label {
-  font-weight: bold;
-}
-
-.total-price {
-  font-weight: 900;
-  font-size: 21px;
-}
-
-.warning-line {
-  margin-top: 10px;
-  font-size: 14px;
-  color: var(--accent-color);
-}
-
-.cart {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.user-info {
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: row-reverse;
-  display: flex;
-
-  > p {
-    font-size: 20px;
-    font-weight: bolder;
-  }
-}
-
-.user-icon {
-  padding-right: 5px;
-}
-
-.user-button {
-  background-color: var(--accent-color);
+<style scoped lang="scss">
+.clear {
   color: white;
-  border-radius: 15px;
-  font-size: 25px;
-  padding: 5px 20px 5px 15px;
-}
-
-.cart-items {
-  flex-grow: 1;
-  overflow-y: auto;
-  margin-bottom: 20px;
-  margin-top: 20px;
-}
-
-.cart-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin-top: 25px;
-}
-
-.buttons {
-  display: flex;
-  width: 100%;
-  gap: 10px;
-}
-
-.clear-button {
   background-color: red;
-  color: white;
-  font-size: 50px;
-  height: 75px;
-  width: 75px;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
+  height: $cart-logout-size;
+  width: $cart-logout-size;
 }
 
-.checkout-button {
+.checkout {
   background-color: #0055fd;
-  font-weight: 500;
-  color: white;
   width: 262px;
-  font-size: 27px;
-  border: none;
-  border-radius: 50px;
-  margin-right: 10px;
-  padding: 15px 55px;
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
+  color: white;
 
   &.borrelMode {
     width: 100%;

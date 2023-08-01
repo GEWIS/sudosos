@@ -48,7 +48,6 @@ export const useCartStore = defineStore('cart', {
       this.buyer = buyer;
     },
     addToCart(cartProduct: CartProduct): void {
-      console.error(cartProduct);
       const existingProduct = this.products.find(
         (p) =>
           p.container.id === cartProduct.container.id &&
@@ -147,7 +146,7 @@ export const useCartStore = defineStore('cart', {
         }
       };
 
-      await apiService.transaction.createTransaction(request).then((res) => {
+      await apiService.transaction.createTransaction(request).then(() => {
         this.clearCart();
       });
     }

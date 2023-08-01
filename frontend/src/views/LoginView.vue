@@ -1,6 +1,6 @@
 <template>
   <div class="main-content">
-    <div v-if="loggingIn" class="home-loader">
+    <div v-if="loggingIn" class="flex-container justify-content-center h-100">
       <div>
         <ProgressSpinner aria-label="Loading" />
       </div>
@@ -116,7 +116,7 @@ const loginSucces = async () => {
   enteringUserId.value = true;
 };
 
-const loginFail = (error: any) => {
+const loginFail = () => {
   pinCode.value = '';
   wrongPin.value = true;
 };
@@ -131,7 +131,8 @@ const login = () => {
         await loginSucces();
       })
       .catch((error) => {
-        loginFail(error);
+        console.error(error);
+        loginFail();
       });
   } else {
     authStore
@@ -140,7 +141,8 @@ const login = () => {
         await loginSucces();
       })
       .catch((error) => {
-        loginFail(error);
+        console.error(error);
+        loginFail();
       });
   }
 
@@ -162,7 +164,7 @@ const shouldShowBanner = computed(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .keypad-container {
   width: calc(3 * var(--key-size) + 2 * var(--key-gap-size));
   padding-top: 45px;
@@ -193,12 +195,5 @@ const shouldShowBanner = computed(() => {
 .keypad-container,
 .display-container {
   align-items: flex-start;
-}
-
-.home-loader {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
 }
 </style>

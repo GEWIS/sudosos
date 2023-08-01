@@ -1,12 +1,11 @@
 import { defineStore } from 'pinia';
 import {
-  BannerResponse,
   PointOfSaleResponse,
   PointOfSaleWithContainersResponse,
   ProductResponse
 } from '@sudosos/sudosos-client';
 import apiService from '@/services/ApiService';
-import { fetchAllPages, useAuthStore } from "@sudosos/sudosos-frontend-common";
+import { fetchAllPages } from "@sudosos/sudosos-frontend-common";
 
 export const usePointOfSaleStore = defineStore('pointOfSale', {
   state: () => ({

@@ -2,14 +2,16 @@
   <div class="settings-icon" @click="openSettings">
     <font-awesome-icon icon="fa-solid fa-cog" />
   </div>
-  <Dialog v-model:visible="visible" ref="settings" modal header="Settings" :style="{ width: '50vw' }" @show="addListenerOnDialogueOverlay(settings)"
+  <Dialog v-model:visible="visible" ref="settings" modal header="Settings" :style="{ width: '50vw' }"
+          @show="addListenerOnDialogueOverlay(settings)"
           :pt="{
         header: () => ({class: ['dialog-header']}),
         closeButton: () => ({class: ['dialog-close']})}" >
     <div>
       <p v-if="pointOfSale">
         Switch POS to
-        <Dropdown v-model="selectedPos" :options="options" :loading="loadingPos" optionLabel="Point of Sale" placeholder="Select a POS" class="w-full md:w-14rem">
+        <Dropdown v-model="selectedPos" :options="options" :loading="loadingPos" optionLabel="Point of Sale"
+                  placeholder="Select a POS" class="w-full md:w-14rem">
           <template #value="slotProps">
             {{ slotProps.value.name}}
           </template>

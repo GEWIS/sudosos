@@ -1,11 +1,12 @@
 <template>
-  <div class="transaction-history-row" @click="toggleOpen" v-if="transaction">
-    <div class="top">
+  <div v-if="transaction">
+    <div class="flex-column content-body px-3 py-1" @click="toggleOpen" >
+    <div class="d-flex justify-content-between w-100 font-size-lg fw-medium">
       <div>{{ formattedDate }}</div>
       <div>{{ formattedTime }}</div>
-      <div class="price">
+      <div class="d-inline-flex justify-content-between">
         €
-        <div class="value">{{ formattedValue }}</div>
+        <div class="text-end min-w-65">{{ formattedValue }}</div>
       </div>
     </div>
     <!-- Here, we attach animation related functions to the corresponding Vue transition hooks-->
@@ -21,13 +22,13 @@
         <hr />
         <div v-for="subTransaction in products.subTransactions" :key="subTransaction.id">
           <div
-            class="row-details"
+            class="d-flex justify-content-between"
             v-for="row in subTransaction.subTransactionRows"
             :key="row.product.id"
           >
-            <div class="product-details">
+            <div class="d-flex gap-2">
               {{ row.amount }}x
-              <div class="product-name">{{ row.product.name }}</div>
+              <div class="product-name text-overflow" style="max-width: 150px;">{{ row.product.name }}</div>
             </div>
             <span>{{ formatDineroObjectToString(row.totalPriceInclVat) }}</span>
           </div>
@@ -37,6 +38,7 @@
         </div>
       </div>
     </transition>
+  </div>
   </div>
 </template>
 
@@ -122,38 +124,7 @@ const formattedValue = formatDineroObjectToString(props.transaction.value, false
 const isCreatedByDifferent = props.transaction.createdBy?.id !== props.transaction.from.id;
 </script>
 
-<style scoped>
-.transaction-history-row {
-  display: flex;
-  flex-direction: column;
-  background-color: white;
-  border-radius: 10px;
-  padding: 5px 10px;
-}
-
-.top {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-
-  > div {
-    font-weight: 500;
-    font-size: 20px;
-  }
-
-  > .value {
-    min-width: 52px;
-    text-align: right;
-  }
-
-  > .price {
-    display: inline-flex;
-    justify-content: space-between;
-    gap: 2px;
-    min-width: 65px;
-    text-align: left;
-  }
-}
+<style scoped lang="scss">
 
 .bottom {
   overflow: hidden;
@@ -161,28 +132,11 @@ const isCreatedByDifferent = props.transaction.createdBy?.id !== props.transacti
 
   > hr {
     margin: 5px 0;
-    border-top: 1px solid var(--accent-color);
+    border-top: 1px solid $accent-color;
   }
 
   > .created-by {
     margin-top: 5px;
-  }
-}
-
-.row-details {
-  display: flex;
-  justify-content: space-between;
-}
-
-.product-details {
-  display: flex;
-  gap: 10px;
-
-  > .product-name {
-    max-width: 150px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 }
 </style>

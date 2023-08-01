@@ -1,4 +1,4 @@
-import './assets/main.css';
+import "bootstrap/dist/css/bootstrap.css";
 
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
@@ -30,15 +30,15 @@ library.add(fas, far, fab);
 app.use(router);
 app.use(PrimeVue);
 
-// eslint-disable-next-line vue/multi-word-component-names
+// eslint-disable-next-line
 app.component('Button', Button);
 app.component('ProgressSpinner', ProgressSpinner);
-// eslint-disable-next-line vue/multi-word-component-names
+// eslint-disable-next-line
 app.component('Dialog', Dialog);
-// eslint-disable-next-line vue/multi-word-component-names
+// eslint-disable-next-line
 app.component('Panel', Panel);
 app.component('OverlayPanel', OverlayPanel);
-// eslint-disable-next-line vue/multi-word-component-names
+// eslint-disable-next-line
 app.component('Dropdown', Dropdown);
 app.component('font-awesome-icon', FontAwesomeIcon);
 

@@ -3,7 +3,7 @@
     Automatic checkout in <b>{{ activityStore.getDuration }}</b>
     seconds
     <div
-      class="activity-overlay"
+      class="fullscreen-positioning pe-none opacity-0"
       @touchstart="resetTimer"
       @click="resetTimer"
       @dragstart="disableTimer"
@@ -29,14 +29,5 @@ const resumeTimer = () => {
 };
 </script>
 
-<style scoped>
-.activity-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: 0;
-}
+<style scoped lang="scss">
 </style>

@@ -1,6 +1,6 @@
 <template>
-  <div class="banner-content">
-    <img class="banner-image" :src="getBannerImageSrc(banner)" :alt="banner.name" />
+  <div class="banner-content rounded-bottom-5 position-absolute bottom-0 w-100">
+    <img class="w-100 h-100 rounded-bottom-5" :src="getBannerImageSrc(banner)" :alt="banner.name" />
   </div>
 </template>
 
@@ -15,21 +15,9 @@ defineProps({
 });
 </script>
 
-<style scoped>
-.banner-image {
-  width: 100%;
-  height: 100%;
-  border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 25px;
-}
-
+<style scoped lang="scss">
 .banner-content {
   height: 165px;
-  width: 100%;
-  position: absolute;
-  bottom: 0;
   background-color: rgba(141, 141, 141, 0.53);
-  border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 25px;
 }
 </style>

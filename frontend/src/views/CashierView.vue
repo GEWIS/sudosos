@@ -62,7 +62,7 @@ watch(
   }
 );
 </script>
-<style scoped>
+<style scoped lang="scss">
 .wrapper {
   display: flex;
   height: 100%;

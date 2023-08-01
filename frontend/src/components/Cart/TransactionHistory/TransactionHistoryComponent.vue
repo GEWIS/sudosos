@@ -7,8 +7,8 @@
 * option to show more information when clicked.
 */
 <template>
-  <div class="transaction-history-table-container">
-    <h3>Recent Purchases:</h3>
+  <div class="flex-column h-100 gap-2 mt-2 overflow-y-auto">
+    <h5 class="fw-medium">Recent Purchases:</h5>
     <TransactionHistoryRowComponent
       v-for="transaction in transactions"
       :key="transaction.id"
@@ -49,16 +49,5 @@ const showMoreInfo = (event: number) => {
 };
 </script>
 
-<style scoped>
-.transaction-history-table-container {
-  margin-top: 12px;
-  height: 100%;
-  display: flex;
-  gap: 10px;
-  flex-direction: column;
-  overflow-y: auto;
-  > h3 {
-    font-weight: 500;
-  }
-}
+<style scoped lang="scss">
 </style>

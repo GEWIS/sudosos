@@ -1,18 +1,18 @@
 <template>
   <div class="point-of-sale">
     <div class="header">
-      <div class="search-container">
-        <div class="search-close" @click="cancelSearch()">
-          <font-awesome-icon class="icon" icon="fa-solid fa-xmark"/>
+      <div class="d-flex w-100 gap-2">
+        <div class="c-btn active square search-close icon-large" @click="cancelSearch()">
+          <font-awesome-icon icon="fa-solid fa-xmark"/>
         </div>
-        <input type="text" class="search-input" ref="searchInput" v-model="searchQuery" placeholder="Search..."/>
-        <div class="simple-button active" @click="selectSelf()">
+        <input type="text" ref="searchInput" class="flex-sm-grow-1" v-model="searchQuery" placeholder="Search..."/>
+        <div class="c-btn active rounder fs-5" @click="selectSelf()">
           Charge yourself
         </div>
       </div>
     </div>
-    <div class="user-row-wrapper">
-      <UserSearchRowComponent v-for="user in sortedUsers" :user="user" v-bind="user.id" @click="selectUser(user)"/>
+    <div class="flex-column gap-sm-3">
+      <UserSearchRowComponent v-for="user in sortedUsers" :user="user" :key="user.id" @click="selectUser(user)"/>
     </div>
   </div>
 </template>
@@ -87,34 +87,4 @@ const cancelSearch = () => {
 </script>
 
 <style scoped lang="scss">
-.search-container {
-  display: flex;
-  width: 100%;
-  gap: 10px;
-}
-
-.search-input {
-  flex-grow: 2;
-}
-
-.search-close {
-  background-color: var(--accent-color);
-  font-size: 40px;
-  border-radius: 10px;
-  min-width: 55px;
-  height: 55px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  > .icon {
-    color: white;
-  }
-}
-
-.user-row-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
 </style>

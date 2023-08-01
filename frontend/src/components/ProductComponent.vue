@@ -2,8 +2,8 @@
   <div class="text-center product-card" :class="{pulsing}">
     <div class="product">
       <img :src="image" :alt="product.name" @click="addToCart"/>
-      <p class="w-100 product-name mb-0">{{ product.name }}</p>
-      <p class="w-100 product-price mb-0">€{{ productPrice }}</p>
+      <p class="product-name text-overflow font-size-md fw-bold">{{ product.name }}</p>
+      <p class="product-price font-size-sm">€{{ productPrice }}</p>
     </div>
   </div>
 </template>
@@ -58,9 +58,8 @@ const addToCart = () => {
 
   .product {
     > img {
-      width: 128px;
-      height: 128px;
-      margin-bottom: -7px;
+      width: $product-card-size;
+      height: $product-card-size;
       background-color: $gewis-grey-light;
       border-top-left-radius: $border-radius;
       border-top-right-radius: $border-radius;
@@ -74,17 +73,11 @@ const addToCart = () => {
 }
 
 .product-name {
-  font-weight: bold;
-  font-size: 16px;
   margin-bottom: -5px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .product-price {
-  font-size: 13px;
-  height: 15px;
+  height: $product-price-height;
 }
 
 @keyframes pulse {
@@ -92,7 +85,7 @@ const addToCart = () => {
     opacity: 0;
   }
   50% {
-    opacity: 1; // Change this to the desired card background color
+    opacity: 1;
   }
   100% {
     opacity: 0;

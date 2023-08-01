@@ -1,8 +1,8 @@
 <template>
-  <div class="keypad">
-    <div class="key-row" v-for="row in keypadLayout" :key="row[0]">
+  <div class="keypad flex-column">
+    <div class="key-row d-flex justify-content-center" v-for="row in keypadLayout" :key="row[0]">
       <div
-        :class="['key', { backspace: key === keypadBackspace, continue: key === keypadContinue }]"
+        :class="['key c-btn active square', { backspace: key === keypadBackspace, continue: key === keypadContinue }]"
         v-for="key in row"
         :key="key"
         @click="handleKeyClick(key)"
@@ -12,7 +12,7 @@
         {{ key !== keypadBackspace && key !== keypadContinue ? key : '' }}
       </div>
     </div>
-    <div class="key external" @click="emitExternal">E</div>
+    <div class="key c-btn active square align-self-center" @click="emitExternal">E</div>
   </div>
 </template>
 
@@ -43,47 +43,31 @@ const emitExternal = () => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .keypad {
-  display: flex;
-  flex-direction: column;
   gap: var(--key-gap-size);
-  border-radius: 10px;
-}
-
-.key-row {
-  display: flex;
-  justify-content: center;
-  gap: var(--key-gap-size);
+  border-radius: $border-radius;
 }
 
 .key {
-  background-color: var(--accent-color);
-  color: rgba(255, 255, 255, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  color: rgba(255, 255, 255, 0.8)!important;
   width: var(--key-size);
   height: var(--key-size);
-  border: 1px solid #ccc;
-  border-radius: 15px;
-  cursor: pointer;
   font-weight: bold;
-  font-size: 42px;
-}
+  font-size: $font-size-larger;
 
-.key.external {
-  align-self: center;
+  &-row {
+    gap: var(--key-gap-size);
+  }
 }
-
 
 .backspace {
-  background-color: red;
+  background-color: red!important;
   color: rgba(255, 255, 255, 1);
 }
 
 .continue {
-  background-color: #0055fd;
+  background-color: #0055fd!important;
   color: rgba(255, 255, 255, 1);
 }
 </style>

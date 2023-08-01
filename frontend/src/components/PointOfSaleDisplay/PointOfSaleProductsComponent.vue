@@ -1,6 +1,6 @@
 <template>
-  <div class="container-grid-wrapper">
-    <div class="container">
+  <div class="container-grid-wrapper flex-1 h-100 mb-3 me-3">
+    <div class="container d-grid gap-2 pe-5 pb-3">
       <ProductComponent
           v-for="product in sortedProducts"
           :key="product.product.id"
@@ -91,21 +91,13 @@ const sortedProducts = computed(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .container-grid-wrapper {
-  flex: 1;
-  height: 100%;
-  margin-bottom: 20px;
-  margin-right: 20px;
   overflow-y: auto;
   scrollbar-color: var(--accent-color) rgba(135, 135, 135, 0.3);
 
   > .container {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    padding-bottom: 20px;
-    padding-right: 50px;
+    grid-template-columns: repeat(auto-fill, minmax($product-column-width, 1fr));
   }
 }
 </style>
