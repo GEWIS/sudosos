@@ -1,16 +1,19 @@
 // activityStore.js
 import { defineStore } from 'pinia';
+import { useCartStore } from "@/stores/cart.store";
+import { logoutService } from "@/services/logoutService";
+import { useSettingStore } from "@/stores/settings.store";
 
 interface ActivityState {
-  timer: number | null
   duration: number
   isActive: boolean
 }
 
+let timerId: null | number = null;
 const TIME_OUT = 30;
+
 export const useActivityStore = defineStore('activity', {
   state: (): ActivityState => ({
-    timer: null,
     duration: TIME_OUT,
     isActive: false
   }),
@@ -25,7 +28,8 @@ export const useActivityStore = defineStore('activity', {
   actions: {
     startTimer() {
       this.isActive = true;
-      this.timer = setInterval(() => {
+      if (timerId) clearInterval(timerId); // Clear previous timer
+      timerId = setInterval(() => {
         this.duration -= 1;
 
         if (this.duration <= 0) {
@@ -37,13 +41,16 @@ export const useActivityStore = defineStore('activity', {
 
     stopTimer() {
       this.isActive = false;
-      if (this.timer) clearInterval(this.timer);
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
     },
 
     resumeTimer() {
       if (!this.isActive && this.duration > 0) {
         this.isActive = true;
-        this.timer = setInterval(() => {
+        timerId = setInterval(() => {
           this.duration -= 1;
 
           if (this.duration <= 0) {
@@ -70,9 +77,11 @@ export const useActivityStore = defineStore('activity', {
       this.isActive = false;
     },
 
-    onTimerEnd() {
-      console.log('Timer went off. User is no longer present at the POS.');
-      // Emit any function or perform any necessary action when the timer goes off.
+    async onTimerEnd() {
+      const cartStore = useCartStore();
+      if (useSettingStore().isBorrelmode) return;
+      if (cartStore.cartTotalCount > 0 ) await useCartStore().checkout();
+      await logoutService();
     }
   }
 });

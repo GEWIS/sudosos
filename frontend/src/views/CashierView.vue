@@ -11,7 +11,7 @@
         <PointOfSaleDisplayComponent :point-of-sale="currentPos" v-if="currentState === PointOfSaleState.DISPLAY_POS"/>
         <BuyerSelectionComponent v-if="currentState === PointOfSaleState.SELECT_CREATOR"
                                  @cancel-select-creator="cancelSelectCreator()"/>
-<!--        <ActivityComponent />-->
+        <ActivityComponent />
       </div>
       <div class="cart-wrapper">
         <CartComponent @select-user="selectUser()" @select-creator="selectCreator()"/>
@@ -28,7 +28,7 @@ import PointOfSaleDisplayComponent from '@/components/PointOfSaleDisplay/PointOf
 import SettingsIconComponent from '@/components/SettingsIconComponent.vue';
 import CartComponent from '@/components/Cart/CartComponent.vue';
 import { useActivityStore } from '@/stores/activity.store';
-// import ActivityComponent from '@/components/ActivityComponent.vue';
+import ActivityComponent from '@/components/ActivityComponent.vue';
 import UserSearchComponent from "@/components/UserSearch/UserSearchComponent.vue";
 import { useCartStore } from "@/stores/cart.store";
 import BuyerSelectionComponent from "@/components/BuyerSelect/BuyerSelectionComponent.vue";
@@ -80,6 +80,9 @@ watch(
       currentPos.value = newPos;
       if (!newPos.useAuthentication) {
         useCartStore().setBuyer(null);
+        activityStore.disableTimer();
+      } else {
+        activityStore.restartTimer();
       }
     }
   }
