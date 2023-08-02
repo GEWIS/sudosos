@@ -89,7 +89,8 @@ watch(
     (newCount, oldCount) => {
       if (newCount > oldCount) {
         if (isSearchViewVisible.value && searchInput.value) {
-          searchInput.value.select();
+          const len = searchInput.value.value.length;
+          searchInput.value.setSelectionRange(0, len);
         }
       }
     }
