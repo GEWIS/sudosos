@@ -6,17 +6,23 @@ export const useSettingStore = defineStore('setting', {
   state: () => ({
   }),
   getters: {
-    isAuthenticatedPos() {
+    isAuthenticatedPos(): boolean {
       const posStore = usePointOfSaleStore();
       if (!posStore.getPos) return true;
       return posStore.getPos.useAuthentication;
     },
-    checkoutCountdown() {
+    checkoutCountdown(): boolean {
       return this.isAuthenticatedPos;
     },
-    isBorrelmode() {
+    isBorrelmode(): boolean {
       return !this.isAuthenticatedPos;
-    }
+    },
+    showUsersRecentTransactions(): boolean {
+      return this.isAuthenticatedPos;
+    },
+    showAddToCartAnimation(): boolean {
+      return this.isAuthenticatedPos;
+   }
   },
   actions: {
   },

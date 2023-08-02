@@ -14,6 +14,7 @@ import { useCartStore } from '@/stores/cart.store';
 import { getProductImageSrc } from '@/utils/imageUtils';
 import { formatPrice } from '@/utils/FormatUtils';
 import { nextTick, ref } from "vue";
+import { useSettingStore } from "@/stores/settings.store";
 
 const pulsing = ref(false);
 
@@ -32,6 +33,8 @@ const image = getProductImageSrc(props.product);
 const productPrice = formatPrice(props.product?.priceInclVat.amount);
 const productImage = ref<HTMLElement | null>(null);
 
+
+const settings = useSettingStore();
 const cartStore = useCartStore();
 const addToCart = () => {
   pulsing.value = true;
@@ -47,7 +50,7 @@ const addToCart = () => {
   });
 
   // Start the flying animation
-  startFlyingAnimation();
+  if (settings.showAddToCartAnimation) startFlyingAnimation();
 };
 
 
@@ -62,8 +65,6 @@ const startFlyingAnimation = async () => {
   document.body.appendChild(flyElement);
 
   const rect = productImage.value.getBoundingClientRect();
-  console.error(productImage.value.offsetLeft);
-  console.error(rect);
   flyElement.classList.add('product-image');
 
   // $product-column-width - $product-card-size

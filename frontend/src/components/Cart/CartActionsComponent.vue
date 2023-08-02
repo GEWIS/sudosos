@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { logoutService } from "@/services/logoutService";
 import { useCartStore } from "@/stores/cart.store";
 import { useSettingStore } from "@/stores/settings.store";
@@ -24,8 +24,7 @@ const settings = useSettingStore();
 
 const cartStore = useCartStore();
 const cartItems = cartStore.getProducts;
-
-const borrelMode = settings.isBorrelmode;
+const borrelMode = computed(() => settings.isBorrelmode);
 
 const duration = ref(3);
 const checkingOut = ref(false);
