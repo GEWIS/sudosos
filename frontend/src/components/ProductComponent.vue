@@ -1,7 +1,7 @@
 <template>
   <div class="text-center product-card" :class="{pulsing}">
     <div class="product">
-      <img ref="productImage" :src="image" :alt="product.name" @click="addToCart"/>
+      <img ref="productImage" class="product-card-image" :src="image" :alt="product.name" @click="addToCart"/>
       <p class="product-name text-overflow font-size-md fw-bold">{{ product.name }}</p>
       <p class="product-price font-size-sm">€{{ productPrice }}</p>
     </div>
@@ -62,15 +62,22 @@ const startFlyingAnimation = async () => {
   document.body.appendChild(flyElement);
 
   const rect = productImage.value.getBoundingClientRect();
+  console.error(productImage.value.offsetLeft);
+  console.error(rect);
+  flyElement.classList.add('product-image');
+
+  // $product-column-width - $product-card-size
+  const offset = 36;
+
   flyElement.style.position = 'fixed';
   flyElement.style.top = `${rect.top}px`;
-  flyElement.style.left = `${rect.left}px`;
+  flyElement.style.left = `${rect.left + offset}px`;
   flyElement.style.width = `${rect.width}px`;
   flyElement.style.height = `${rect.height}px`;
   flyElement.style.transition = 'all 0.5s ease-in-out';
 
   const destinationRect = destinationElement.getBoundingClientRect();
-  const deltaX = destinationRect.left - rect.left;
+  const deltaX = destinationRect.left - (rect.left + offset);
   const deltaY = destinationRect.top - rect.top;
 
   // Move the flying element to the destination element's position using the delta values
@@ -92,6 +99,17 @@ const startFlyingAnimation = async () => {
 </script>
 
 <style scoped lang="scss">
+
+.product-card-image {
+  width: $product-card-size;
+  height: $product-card-size;
+  background-color: $gewis-grey-light;
+  border-top-left-radius: $border-radius;
+  border-top-right-radius: $border-radius;
+  object-fit: contain;
+  box-sizing: border-box;
+}
+
 .product-card {
   padding: 0 0 8px 0;
   height: fit-content;
@@ -99,17 +117,6 @@ const startFlyingAnimation = async () => {
   overflow: hidden;
   width: var(--product-card-width);
   text-align: center;
-
-  .product {
-    > img {
-      width: $product-card-size;
-      height: $product-card-size;
-      background-color: $gewis-grey-light;
-      border-top-left-radius: $border-radius;
-      border-top-right-radius: $border-radius;
-      object-fit: contain;
-    }
-  }
 
   &.pulsing {
     animation: pulse 0.5s infinite;

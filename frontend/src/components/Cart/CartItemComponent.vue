@@ -48,12 +48,6 @@ const totalPrice = computed(() => {
 </script>
 
 <style scoped lang="scss">
-.product-image {
-  width: $cart-product-image-size;
-  height: $cart-product-image-size;
-  border-radius: $border-radius-sm;
-}
-
 button {
   font-size: $font-size-lg;
 }

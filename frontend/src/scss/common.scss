@@ -99,6 +99,12 @@
   }
 }
 
+.product-image {
+  width: $cart-product-image-size;
+  height: $cart-product-image-size;
+  border-radius: $border-radius-sm;
+}
+
 /* Input styles */
 input,
 input:focus {
