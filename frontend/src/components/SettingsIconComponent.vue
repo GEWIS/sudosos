@@ -46,8 +46,16 @@ const options = computed(() => {
 
 watch((selectedPos), () => {
   if (selectedPos.value ) {
-    if (!posStore.getPos || posStore.getPos && selectedPos.value.id !== posStore.getPos.id)
+    if (!posStore.getPos || posStore.getPos && selectedPos.value.id !== posStore.getPos.id) {
       posStore.fetchPointOfSale(selectedPos.value.id);
+      console.error(selectedPos.value.owner?.id );
+      if (selectedPos.value.owner?.id === 18214 && !selectedPos.value.useAuthentication) {
+        document.documentElement.style.setProperty('--accent-color', '#0f492e');
+      } else {
+        document.documentElement.style.setProperty('--accent-color', '#9D293EFF');
+      }
+    // #0f492e
+    }
   }
 });
 
@@ -68,7 +76,7 @@ const openSettings = () => {
 
 <style lang="scss">
 .dialog-header {
-  background: $accent-color!important;
+  background: var(--accent-color)!important;
   color: white!important;
 }
 

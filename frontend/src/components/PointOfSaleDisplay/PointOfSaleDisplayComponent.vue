@@ -2,7 +2,7 @@
   <div class="point-of-sale">
     <div class="header">
       <div v-show="isSearchViewVisible">
-        <div class="d-flex w-100 gap-2">
+        <div class="header-row">
           <div class="c-btn square active icon-large search-close" @click="closeSearchView">
             <font-awesome-icon icon="fa-solid fa-xmark"/>
           </div>

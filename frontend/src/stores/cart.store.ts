@@ -20,11 +20,13 @@ export interface CartProduct {
 interface CartState {
   products: CartProduct[]
   buyer: UserResponse | null
+  createdBy: UserResponse | null
 }
 export const useCartStore = defineStore('cart', {
   state: (): CartState => ({
     products: [] as CartProduct[],
-    buyer: null
+    buyer: null,
+    createdBy: null,
   }),
   getters: {
     cartTotalCount(): number {
@@ -44,8 +46,11 @@ export const useCartStore = defineStore('cart', {
     }
   },
   actions: {
-    setBuyer(buyer: UserResponse) {
+    setBuyer(buyer: UserResponse | null) {
       this.buyer = buyer;
+    },
+    setCreatedBy(createdBy: UserResponse) {
+      this.createdBy = createdBy;
     },
     addToCart(cartProduct: CartProduct): void {
       const existingProduct = this.products.find(
@@ -127,12 +132,10 @@ export const useCartStore = defineStore('cart', {
         };
       });
 
-      let createdBy = 0;
       const authStore = useAuthStore();
-      if(authStore.getUser) createdBy = authStore.getUser.id;
 
       const request: TransactionRequest = {
-        createdBy,
+        createdBy: this.createdBy ? this.createdBy.id : authStore.getUser?.id,
         from: this.buyer.id,
         pointOfSale: {
           id: pos.id,
@@ -147,7 +150,9 @@ export const useCartStore = defineStore('cart', {
       };
 
       await apiService.transaction.createTransaction(request).then(() => {
-        this.clearCart();
+        this.products.length = 0;
+        this.buyer = null;
+        this.createdBy = null;
       });
     }
   }

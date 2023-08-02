@@ -2,10 +2,10 @@
   <div class="d-flex justify-content-between w-100">
     <button
         class="c-btn rounder fw-medium checkout fs-3"
-        :class="{ countdown: checkingOut, empty: cartStore.cartTotalCount === 0, borrelMode }"
+        :class="{ countdown: checkingOut, disabled: !enabled, borrelMode }"
         @click="checkout"
     >
-      {{ checkingOut ? duration : 'CHECKOUT' }}
+      {{ checkoutText }}
     </button>
     <button class="c-btn clear icon-larger rounded-circle" @click="logout" v-if="!borrelMode">
       <font-awesome-icon icon="fa-solid fa-xmark" />
@@ -20,11 +20,26 @@ import { logoutService } from "@/services/logoutService";
 import { useCartStore } from "@/stores/cart.store";
 import { useSettingStore } from "@/stores/settings.store";
 
+const emit = defineEmits(['selectCreator']);
+
 const settings = useSettingStore();
 
 const cartStore = useCartStore();
 const cartItems = cartStore.getProducts;
 const borrelMode = computed(() => settings.isBorrelmode);
+
+const buyer = computed(() => cartStore.getBuyer);
+
+const checkoutText = computed(() => {
+  if (checkingOut.value) return duration.value;
+
+  if (!buyer.value) return 'Charge someone';
+  return 'Checkout';
+});
+
+const enabled = computed(() => {
+  return cartItems.length > 0 && buyer.value;
+});
 
 const duration = ref(3);
 const checkingOut = ref(false);
@@ -56,10 +71,14 @@ const finalizeCheckout = async () => {
   await cartStore.checkout();
   checkingOut.value = false;
   duration.value = 3;
-  // TODO only logout if not authenticated pos.
   await logoutService();
 };
 const checkout = async () => {
+  if (borrelMode.value) {
+    emit('selectCreator');
+    return;
+  }
+
   if (cartStore.cartTotalCount === 0) return;
   if (checkingOut.value) return stopCheckout();
   checkingOut.value = true;
@@ -89,7 +108,7 @@ const checkout = async () => {
     background-color: green;
   }
 
-  &.empty {
+  &.disabled {
     background-color: grey;
     opacity: 0.5;
   }

@@ -1,7 +1,7 @@
 <template>
   <div class="point-of-sale">
     <div class="header">
-      <div class="d-flex w-100 gap-2">
+      <div class="header-row">
         <div class="c-btn active square search-close icon-large" @click="cancelSearch()">
           <font-awesome-icon icon="fa-solid fa-xmark"/>
         </div>

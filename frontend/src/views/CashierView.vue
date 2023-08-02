@@ -7,12 +7,14 @@
   <div v-else class="main-content">
     <div class="wrapper">
       <div class="pos-wrapper">
-        <UserSearchComponent v-if="userSearch" @cancel-search="cancelSearch()"/>
-        <PointOfSaleDisplayComponent :point-of-sale="currentPos" v-if="!userSearch"/>
-        <ActivityComponent />
+        <UserSearchComponent v-if="currentState === PointOfSaleState.SEARCH_USER" @cancel-search="cancelSearch()"/>
+        <PointOfSaleDisplayComponent :point-of-sale="currentPos" v-if="currentState === PointOfSaleState.DISPLAY_POS"/>
+        <BuyerSelectionComponent v-if="currentState === PointOfSaleState.SELECT_CREATOR"
+                                 @cancel-select-creator="cancelSelectCreator()"/>
+<!--        <ActivityComponent />-->
       </div>
       <div class="cart-wrapper">
-        <CartComponent @select-user="selectUser()"/>
+        <CartComponent @select-user="selectUser()" @select-creator="selectCreator()"/>
       </div>
     </div>
   </div>
@@ -26,14 +28,23 @@ import PointOfSaleDisplayComponent from '@/components/PointOfSaleDisplay/PointOf
 import SettingsIconComponent from '@/components/SettingsIconComponent.vue';
 import CartComponent from '@/components/Cart/CartComponent.vue';
 import { useActivityStore } from '@/stores/activity.store';
-import ActivityComponent from '@/components/ActivityComponent.vue';
+// import ActivityComponent from '@/components/ActivityComponent.vue';
 import UserSearchComponent from "@/components/UserSearch/UserSearchComponent.vue";
+import { useCartStore } from "@/stores/cart.store";
+import BuyerSelectionComponent from "@/components/BuyerSelect/BuyerSelectionComponent.vue";
 
 const posNotLoaded = ref(true);
 const currentPos: Ref<PointOfSaleWithContainersResponse | undefined> = ref(undefined);
 const pointOfSaleStore = usePointOfSaleStore();
 const activityStore = useActivityStore();
-const userSearch = ref(false);
+
+enum PointOfSaleState {
+  SEARCH_USER,
+  DISPLAY_POS,
+  SELECT_CREATOR,
+}
+
+const currentState = ref(PointOfSaleState.DISPLAY_POS);
 
 const fetchPointOfSale = async () => {
   await pointOfSaleStore.fetchPointOfSale(1);
@@ -47,18 +58,30 @@ const fetchPointOfSale = async () => {
 onMounted(fetchPointOfSale);
 
 const selectUser = () => {
-  userSearch.value = true;
+  currentState.value = PointOfSaleState.SEARCH_USER;
 };
 
 const cancelSearch = () => {
-  userSearch.value = false;
+  currentState.value = PointOfSaleState.DISPLAY_POS;
 };
 
+const selectCreator = () => {
+  currentState.value = PointOfSaleState.SELECT_CREATOR;
+};
+
+const cancelSelectCreator = () => {
+  currentState.value = PointOfSaleState.DISPLAY_POS;
+};
 
 watch(
   () => pointOfSaleStore.pointOfSale,
-  (newValue) => {
-    if (newValue) currentPos.value = newValue;
+  (newPos) => {
+    if (newPos) {
+      currentPos.value = newPos;
+      if (!newPos.useAuthentication) {
+        useCartStore().setBuyer(null);
+      }
+    }
   }
 );
 </script>
@@ -66,10 +89,7 @@ watch(
 .wrapper {
   display: flex;
   height: 100%;
-  padding-top: 35px;
-  padding-left: 60px;
-  padding-right: 15px;
-  padding-bottom: 25px;
+  padding: 35px 15px 25px 35px;
 }
 
 .pos-wrapper {

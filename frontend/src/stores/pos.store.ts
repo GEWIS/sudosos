@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import {
   PointOfSaleResponse,
   PointOfSaleWithContainersResponse,
-  ProductResponse
+  ProductResponse, UserResponse
 } from '@sudosos/sudosos-client';
 import apiService from '@/services/ApiService';
 import { fetchAllPages } from "@sudosos/sudosos-frontend-common";
@@ -10,6 +10,7 @@ import { fetchAllPages } from "@sudosos/sudosos-frontend-common";
 export const usePointOfSaleStore = defineStore('pointOfSale', {
   state: () => ({
     pointOfSale: null as PointOfSaleWithContainersResponse | null,
+    pointOfSaleMembers: null as UserResponse[] | null,
     usersPointOfSales: null as PointOfSaleResponse[] | null,
   }),
   getters: {
@@ -27,12 +28,20 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
     },
     getPos(): PointOfSaleWithContainersResponse | null {
       return this.pointOfSale;
+    },
+    getPointOfSaleMembers(): UserResponse[] | null {
+      return this.pointOfSaleMembers;
     }
   },
   actions: {
     async fetchPointOfSale(id: number): Promise<void> {
       const response = await apiService.pos.getSinglePointOfSale(id);
+      this.pointOfSaleMembers = null;
       this.pointOfSale = response.data;
+    },
+    async fetchPointOfSaleMembers(organId: number): Promise<void> {
+      const response = await apiService.user.getOrganMembers(organId);
+      this.pointOfSaleMembers = response.data.records;
     },
     async fetchUserPointOfSale(id: number): Promise<void> {
       this.usersPointOfSales = await fetchAllPages<PointOfSaleResponse>(0, 100,  (take, skip) =>

@@ -1,11 +1,11 @@
 <template>
   <div class="flex-column h-100">
-    <div class="flex-container flex-row-reverse justify-content-between">
+    <div class="flex-container flex-row flex-wrap justify-content-between">
+      <p class="fw-bolder font-size-lg mb-0">Current order for</p>
       <div class="c-btn active square fs-4 px-3 py-1" @click="selectUser">
-        <font-awesome-icon icon="fa-solid fa-user" class="pe-2" />
+        <font-awesome-icon v-if="current" icon="fa-solid fa-user" class="pe-2" />
         {{ displayName() }}
       </div>
-      <p class="fw-bolder font-size-lg" v-if="isOwnBuyer">Current order for</p>
     </div>
     <div class="overflow-y-auto flex-grow-1 my-2" v-if="!shouldShowTransactions || !showHistory">
       <div v-for="item in cartItems" :key="item.product.id">
@@ -20,14 +20,11 @@
       </div>
       <div class="font-size-sm pt-2 align-items-end" v-if="balance">
         <font-awesome-icon icon="fa-solid fa-exclamation-triangle" />
-        Your debit after purchase is €{{ formattedBalanceAfter }}
+        Debit after purchase is €{{ formattedBalanceAfter }}
       </div>
     </div>
     <div class="flex-column mt-3">
-      <div v-if="borrelMode && posOwner">
-        Borrelmode active for {{ posOwner.firstName }}
-      </div>
-      <CartActionsComponent/>
+      <CartActionsComponent @select-creator="emit('selectCreator')"/>
     </div>
   </div>
 </template>
@@ -41,29 +38,21 @@ import { formatPrice } from '@/utils/FormatUtils';
 import TransactionHistoryComponent from
     '@/components/Cart/TransactionHistory/TransactionHistoryComponent.vue';
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
-import { BaseTransactionResponse, BaseUserResponse } from "@sudosos/sudosos-client";
-import { usePointOfSaleStore } from "@/stores/pos.store";
+import { BaseTransactionResponse } from "@sudosos/sudosos-client";
 import { useSettingStore } from "@/stores/settings.store";
 import CartActionsComponent from "@/components/Cart/CartActionsComponent.vue";
 import { computed, onMounted, ref, watch } from "vue";
 
 const cartStore = useCartStore();
 const authStore = useAuthStore();
-const posStore = usePointOfSaleStore();
 const settings = useSettingStore();
 
 const cartItems = cartStore.getProducts;
-const current = cartStore.getBuyer;
+const current = computed(() => cartStore.getBuyer);
 const totalPrice = computed(() => cartStore.getTotalPrice);
 const shouldShowTransactions = computed(() => settings.showUsersRecentTransactions);
 const showHistory = ref(true);
 const balance = ref<number | null>(null);
-
-const borrelMode = settings.isBorrelmode;
-const posOwner = computed<BaseUserResponse | undefined>(() => {
-  if (!posStore.getPos) return undefined;
-  return posStore.getPos.owner;
-});
 
 const transactions = ref<BaseTransactionResponse[]>([]);
 
@@ -100,13 +89,15 @@ const getBalance = async () => {
 
 const isOwnBuyer = computed(() => {
   if (!authStore.user) return false;
-  return current?.id === authStore.user.id;
+  return current.value?.id === authStore.user.id;
 });
 const displayName = () => {
-  if (isOwnBuyer.value) {
-    return current?.firstName;
+  if (!current.value) return 'no one';
+
+  if (isOwnBuyer.value && !settings.isBorrelmode) {
+    return current.value?.firstName;
   } else {
-    return `${current?.firstName} ${current?.lastName}`;
+    return `${current.value?.firstName} ${current.value?.lastName}`;
   }
 };
 
@@ -130,7 +121,7 @@ watch(
   }
 );
 
-const emit = defineEmits(['selectUser']);
+const emit = defineEmits(['selectUser', 'selectCreator']);
 const selectUser = () => {
   emit('selectUser');
 };
