@@ -5,8 +5,8 @@
         <div class="c-btn active square search-close icon-large" @click="cancelSearch()">
           <font-awesome-icon icon="fa-solid fa-xmark"/>
         </div>
-        <input type="text" ref="searchInput" class="flex-sm-grow-1" v-model="searchQuery" placeholder="Search..."/>
-        <div class="c-btn active rounder fs-5" @click="selectSelf()">
+        <input type="text" ref="searchInput" class="flex-sm-grow-1" v-model="searchQuery" placeholder="Search user to charge..."/>
+        <div class="c-btn active rounder fs-5" @click="selectSelf()" v-if="!settings.isBorrelmode">
           Charge yourself
         </div>
       </div>
@@ -27,12 +27,14 @@ import { useCartStore } from "@/stores/cart.store";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import { debounce } from 'lodash';
 import type { AxiosResponse } from 'axios';
+import { useSettingStore } from "@/stores/settings.store";
 
 const searchQuery = ref<string>('');
 
 const users = ref<UserResponse[]>([]);
 const cartStore = useCartStore();
 const authStore = useAuthStore();
+const settings = useSettingStore();
 // const posStore = usePointOfSaleStore();
 
 
@@ -72,10 +74,13 @@ onMounted(() => {
 
 const emit = defineEmits(['cancelSearch']);
 const selectSelf = () => {
-  if (authStore.user) selectUser(authStore.user);
+  if (authStore.user) {
+    selectUser(authStore.user);
+    return;
+  }
 };
 
-const selectUser = (user: UserResponse) => {
+const selectUser = (user: UserResponse | null) => {
   cartStore.setBuyer(user);
   cancelSearch();
 };

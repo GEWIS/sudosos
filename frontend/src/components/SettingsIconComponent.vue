@@ -31,6 +31,7 @@ import { usePointOfSaleStore } from "@/stores/pos.store";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import { storeToRefs } from "pinia";
 import { PointOfSaleResponse } from "@sudosos/sudosos-client";
+import { useCartStore } from "@/stores/cart.store";
 
 const visible = ref(false);
 const settings: Ref<null|any> = ref(null);
@@ -48,7 +49,9 @@ watch((selectedPos), () => {
   if (selectedPos.value ) {
     if (!posStore.getPos || posStore.getPos && selectedPos.value.id !== posStore.getPos.id) {
       posStore.fetchPointOfSale(selectedPos.value.id);
-      console.error(selectedPos.value.owner?.id );
+
+      if (selectedPos.value.useAuthentication) useCartStore().setBuyer(authStore.getUser);
+
       if (selectedPos.value.owner?.id === 18214 && !selectedPos.value.useAuthentication) {
         document.documentElement.style.setProperty('--accent-color', '#0f492e');
       } else {

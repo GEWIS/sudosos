@@ -10,6 +10,7 @@
     <button class="c-btn clear icon-larger rounded-circle" @click="logout" v-if="!borrelMode">
       <font-awesome-icon icon="fa-solid fa-xmark" />
     </button>
+    <audio ref="sound"/>
   </div>
 </template>
 
@@ -27,6 +28,7 @@ const settings = useSettingStore();
 const cartStore = useCartStore();
 const cartItems = cartStore.getProducts;
 const borrelMode = computed(() => settings.isBorrelmode);
+const sound = ref<HTMLAudioElement | null>(null);
 
 const buyer = computed(() => cartStore.getBuyer);
 
@@ -68,12 +70,19 @@ watch(cartItems, () => {
 
 const finalizeCheckout = async () => {
   stopCheckout();
+  if (sound.value) {
+    sound.value = new Audio('sounds/rct-cash.wav');
+    sound.value.play();
+  }
   await cartStore.checkout();
   checkingOut.value = false;
   duration.value = 3;
   await logoutService();
 };
 const checkout = async () => {
+  if (!enabled.value) return;
+
+
   if (borrelMode.value) {
     emit('selectCreator');
     return;

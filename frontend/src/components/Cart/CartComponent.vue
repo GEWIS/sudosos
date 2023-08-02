@@ -57,6 +57,7 @@ const balance = ref<number | null>(null);
 const transactions = ref<BaseTransactionResponse[]>([]);
 
 const getUserRecentTransactions = () => {
+  transactions.value = [];
   if (cartStore.getBuyer) {
     // todo clean up
     apiService.user

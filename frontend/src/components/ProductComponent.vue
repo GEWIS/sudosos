@@ -75,6 +75,7 @@ const startFlyingAnimation = async () => {
   flyElement.style.left = `${rect.left + offset}px`;
   flyElement.style.width = `${rect.width}px`;
   flyElement.style.height = `${rect.height}px`;
+  flyElement.style.pointerEvents = 'none';
   flyElement.style.transition = 'all 0.5s ease-in-out';
 
   const destinationRect = destinationElement.getBoundingClientRect();
