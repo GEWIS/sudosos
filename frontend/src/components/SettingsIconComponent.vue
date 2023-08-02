@@ -66,9 +66,9 @@ const openSettings = () => {
 
 </script>
 
-<style>
+<style lang="scss">
 .dialog-header {
-  background: var(--accent-color)!important;
+  background: $accent-color!important;
   color: white!important;
 }
 
@@ -78,7 +78,7 @@ const openSettings = () => {
 .settings-icon {
   height: 100px;
   position: fixed;
-  bottom: -35px;
+  bottom: -40px;
   left: 60px;
   font-size: 70px;
   cursor: pointer;

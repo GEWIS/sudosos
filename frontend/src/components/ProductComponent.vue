@@ -1,7 +1,7 @@
 <template>
   <div class="text-center product-card" :class="{pulsing}">
     <div class="product">
-      <img :src="image" :alt="product.name" @click="addToCart"/>
+      <img ref="productImage" :src="image" :alt="product.name" @click="addToCart"/>
       <p class="product-name text-overflow font-size-md fw-bold">{{ product.name }}</p>
       <p class="product-price font-size-sm">€{{ productPrice }}</p>
     </div>
@@ -13,7 +13,7 @@ import { ContainerWithProductsResponse, ProductResponse } from '@sudosos/sudosos
 import { useCartStore } from '@/stores/cart.store';
 import { getProductImageSrc } from '@/utils/imageUtils';
 import { formatPrice } from '@/utils/FormatUtils';
-import { ref } from "vue";
+import { nextTick, ref } from "vue";
 
 const pulsing = ref(false);
 
@@ -30,6 +30,7 @@ const props = defineProps({
 
 const image = getProductImageSrc(props.product);
 const productPrice = formatPrice(props.product?.priceInclVat.amount);
+const productImage = ref<HTMLElement | null>(null);
 
 const cartStore = useCartStore();
 const addToCart = () => {
@@ -44,7 +45,50 @@ const addToCart = () => {
     container: props.container,
     count: 1
   });
+
+  // Start the flying animation
+  startFlyingAnimation();
 };
+
+
+const startFlyingAnimation = async () => {
+  await nextTick();
+  const destinationElement = document.getElementById(`${props.product.name}`);
+  if (!destinationElement || !productImage.value) {
+    return;
+  }
+
+  const flyElement = productImage.value.cloneNode() as HTMLElement;
+  document.body.appendChild(flyElement);
+
+  const rect = productImage.value.getBoundingClientRect();
+  flyElement.style.position = 'fixed';
+  flyElement.style.top = `${rect.top}px`;
+  flyElement.style.left = `${rect.left}px`;
+  flyElement.style.width = `${rect.width}px`;
+  flyElement.style.height = `${rect.height}px`;
+  flyElement.style.transition = 'all 0.5s ease-in-out';
+
+  const destinationRect = destinationElement.getBoundingClientRect();
+  const deltaX = destinationRect.left - rect.left;
+  const deltaY = destinationRect.top - rect.top;
+
+  // Move the flying element to the destination element's position using the delta values
+  flyElement.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+  flyElement.style.width = '52px';
+  flyElement.style.height = '52px';
+
+  // Cleanup the temporary element after the animation is complete
+  const removeFlyElement = () => {
+    if (flyElement.parentNode) {
+      flyElement.parentNode.removeChild(flyElement);
+    }
+    flyElement.removeEventListener('transitionend', removeFlyElement);
+  };
+
+  flyElement.addEventListener('transitionend', removeFlyElement);
+};
+
 </script>
 
 <style scoped lang="scss">

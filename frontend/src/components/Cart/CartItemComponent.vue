@@ -1,7 +1,7 @@
 <template>
   <div class="mt-1">
     <div class="flex-container mb-2">
-      <img :src="getProductImageSrc(product)" :alt="product.name" class="product-image image me-2" />
+      <img :id="product.name" :src="getProductImageSrc(product)" :alt="product.name" class="product-image image me-2" />
       <div class>
         <h4 class="fs-6 text-overflow fw-bolder" style="max-width: 100px;">{{ product.name }}</h4>
         <p class="font-size-sm">{{ product.category.name }}</p>
@@ -21,6 +21,7 @@ import { computed, ref } from 'vue';
 import { CartProduct, useCartStore } from '@/stores/cart.store';
 import { getProductImageSrc } from '@/utils/imageUtils';
 import { formatPrice } from '@/utils/FormatUtils';
+import { ProductResponse } from "@sudosos/sudosos-client";
 
 const cartStore = useCartStore();
 
@@ -31,7 +32,7 @@ const props = defineProps({
   }
 });
 
-const product = ref(props.cartProduct.product);
+const product = ref<ProductResponse>(props.cartProduct.product);
 const decreaseQuantity = () => {
   cartStore.removeFromCart(props.cartProduct);
 };

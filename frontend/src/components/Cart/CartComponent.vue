@@ -27,18 +27,7 @@
       <div v-if="borrelMode && posOwner">
         Borrelmode active for {{ posOwner.firstName }}
       </div>
-      <div class="d-flex justify-content-between w-100">
-        <button
-          class="c-btn rounder fw-medium checkout fs-3"
-          :class="{ countdown: checkingOut, empty: cartStore.cartTotalCount === 0, borrelMode }"
-          @click="checkout"
-        >
-          {{ checkingOut ? duration : 'CHECKOUT' }}
-        </button>
-        <button class="c-btn clear icon-larger rounded-circle" @click="logout" v-if="!borrelMode">
-          <font-awesome-icon icon="fa-solid fa-xmark" />
-        </button>
-      </div>
+      <CartActionsComponent/>
     </div>
   </div>
 </template>
@@ -50,28 +39,26 @@ import { useCartStore } from '@/stores/cart.store';
 import CartItemComponent from '@/components/Cart/CartItemComponent.vue';
 import apiService from '@/services/ApiService';
 import { formatPrice } from '@/utils/FormatUtils';
-import { logoutService } from '@/services/logoutService';
 import TransactionHistoryComponent from
     '@/components/Cart/TransactionHistory/TransactionHistoryComponent.vue';
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import { BaseTransactionResponse, BaseUserResponse } from "@sudosos/sudosos-client";
 import { usePointOfSaleStore } from "@/stores/pos.store";
+import { useSettingStore } from "@/stores/settings.store";
+import CartActionsComponent from "@/components/Cart/CartActionsComponent.vue";
 
 const cartStore = useCartStore();
 const authStore = useAuthStore();
 const posStore = usePointOfSaleStore();
+const settings = useSettingStore();
 
 const cartItems = cartStore.getProducts;
-const current = computed(() => cartStore.getBuyer);
+const current = cartStore.getBuyer;
 const totalPrice = computed(() => cartStore.getTotalPrice);
 const showHistory = ref(true);
 const balance = ref<number | null>(null);
 
-const borrelMode = computed<boolean>(() => {
-  if (!posStore.getPos) return false;
-  return !posStore.getPos.useAuthentication;
-});
-
+const borrelMode = settings.isBorrelmode;
 const posOwner = computed<BaseUserResponse | undefined>(() => {
   if (!posStore.getPos) return undefined;
   return posStore.getPos.owner;
@@ -109,13 +96,13 @@ const getBalance = async () => {
 
 const isOwnBuyer = computed(() => {
   if (!authStore.user) return false;
-  return current.value?.id === authStore.user.id;
+  return current?.id === authStore.user.id;
 });
 const displayName = () => {
   if (isOwnBuyer.value) {
-    return current.value?.firstName;
+    return current?.firstName;
   } else {
-    return `${current.value?.firstName} ${current.value?.lastName}`;
+    return `${current?.firstName} ${current?.lastName}`;
   }
 };
 
@@ -145,71 +132,8 @@ const formattedBalanceAfter = computed(() => {
   return formatPrice(price);
 });
 
-const duration = ref(3);
-const checkingOut = ref(false);
-let intervalId: number | undefined;
-const checkoutTimer = () =>
-  setInterval(async () => {
-    duration.value -= 1;
-    if (duration.value <= 0 && checkingOut.value) {
-      await finalizeCheckout();
-    }
-  }, 1000);
 
-const stopCheckout = () => {
-  duration.value = 3;
-  checkingOut.value = false;
-  clearInterval(intervalId);
-};
-const logout = async () => {
-  if (intervalId) stopCheckout();
-  await logoutService();
-};
-
-watch(cartItems, () => {
-  stopCheckout();
-});
-
-const finalizeCheckout = async () => {
-  stopCheckout();
-  await cartStore.checkout();
-  checkingOut.value = false;
-  duration.value = 3;
-  // TODO only logout if not authenticated pos.
-  await logoutService();
-};
-const checkout = async () => {
-  if (cartStore.cartTotalCount === 0) return;
-  if (checkingOut.value) return stopCheckout();
-  checkingOut.value = true;
-  intervalId = checkoutTimer();
-};
 </script>
 
 <style scoped lang="scss">
-.clear {
-  color: white;
-  background-color: red;
-  height: $cart-logout-size;
-  width: $cart-logout-size;
-}
-
-.checkout {
-  background-color: #0055fd;
-  width: 262px;
-  color: white;
-
-  &.borrelMode {
-    width: 100%;
-  }
-
-  &.countdown {
-    background-color: green;
-  }
-
-  &.empty {
-    background-color: grey;
-    opacity: 0.5;
-  }
-}
 </style>
