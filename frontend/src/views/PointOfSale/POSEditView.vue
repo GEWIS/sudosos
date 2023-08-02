@@ -23,7 +23,7 @@
                         value="useAuthentication"
                         :binary="true"
               />
-              <label for="useAuthentication">{{ $t("c_POSCreate.Use Authentication") }}</label>
+              <label for="useAuthentication">{{ $t("c_POSCreate.Use authentication") }}</label>
             </span>
           </div>
           <div class="general-info-block">

@@ -7,7 +7,7 @@
       >{{ $t("c_POSCreate.add container") }}</Button>
       <AddContainerDialogComponent v-model:visible="visible"/>
     </template>
-    <p class="container-type-title">{{ $t("Public containers") }}</p>
+    <p class="container-type-title">{{ $t("c_POSCreate.Public containers") }}</p>
     <DataTable
         v-model:selection="selectedPublicContainers"
         v-model:expandedRows="expandedContainers"
@@ -17,7 +17,7 @@
       <Column selectionMode="multiple" headerStyle="width: 1rem" />
       <Column field="name" />
     </DataTable>
-    <p class="container-type-title">{{ $t("Own containers") }}</p>
+    <p class="container-type-title">{{ $t("c_POSCreate.Own containers") }}</p>
     <DataTable
         v-model:selection="selectedOwnContainers"
         v-model:expandedRows="expandedContainers"

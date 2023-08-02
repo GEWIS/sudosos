@@ -3,7 +3,7 @@
     <div class="dialog">
       <div class="row">
         <h6>{{ $t("c_containerEditModal.Name") }}</h6>
-        <InputText class="flex-child" :v-model="name" />
+        <InputText class="flex-child" v-model="name" />
       </div>
       <div class="row">
         <h6>{{ $t("c_containerEditModal.owner") }}</h6>
@@ -49,6 +49,7 @@ onMounted(async () => {
 const saveContainer = () => {
   if (selectedOwner.value){
     containerStore.createEmptyContainer(name.value, isPublic.value, selectedOwner.value.id);
+    visible.value = false;
   } else {
     console.error("Owner not defined"); // TODO: Correct error-handling
   }
