@@ -62,7 +62,7 @@ const emitExternal = () => {
 }
 
 .backspace {
-  background-color: red!important;
+  background-color: $accent-color!important;
   color: rgba(255, 255, 255, 1);
 }
 

@@ -30,7 +30,6 @@ import CartComponent from '@/components/Cart/CartComponent.vue';
 import { useActivityStore } from '@/stores/activity.store';
 import ActivityComponent from '@/components/ActivityComponent.vue';
 import UserSearchComponent from "@/components/UserSearch/UserSearchComponent.vue";
-import { useCartStore } from "@/stores/cart.store";
 import BuyerSelectionComponent from "@/components/BuyerSelect/BuyerSelectionComponent.vue";
 
 const posNotLoaded = ref(true);
@@ -76,15 +75,7 @@ const cancelSelectCreator = () => {
 watch(
   () => pointOfSaleStore.pointOfSale,
   (newPos) => {
-    if (newPos) {
-      currentPos.value = newPos;
-      if (!newPos.useAuthentication) {
-        useCartStore().setBuyer(null);
-        activityStore.disableTimer();
-      } else {
-        activityStore.restartTimer();
-      }
-    }
+    if (newPos) currentPos.value = newPos;
   }
 );
 </script>

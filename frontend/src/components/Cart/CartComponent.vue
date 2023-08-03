@@ -41,19 +41,23 @@ import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import { BaseTransactionResponse } from "@sudosos/sudosos-client";
 import { useSettingStore } from "@/stores/settings.store";
 import CartActionsComponent from "@/components/Cart/CartActionsComponent.vue";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { usePointOfSaleStore } from "@/stores/pos.store";
+import { storeToRefs } from "pinia";
 
 const cartStore = useCartStore();
 const authStore = useAuthStore();
+const posStore = usePointOfSaleStore();
 const settings = useSettingStore();
 
 const cartItems = cartStore.getProducts;
 const current = computed(() => cartStore.getBuyer);
 const totalPrice = computed(() => cartStore.getTotalPrice);
-const shouldShowTransactions = computed(() => settings.showUsersRecentTransactions);
+const shouldShowTransactions = computed(() => cartStore.cartTotalCount === 0);
 const showHistory = ref(true);
 const balance = ref<number | null>(null);
 
+const { pointOfSale } = storeToRefs(posStore);
 const transactions = ref<BaseTransactionResponse[]>([]);
 
 const getUserRecentTransactions = () => {
@@ -76,6 +80,13 @@ const getUserRecentTransactions = () => {
           transactions.value.push(...res.data.records);
         });
   }
+};
+
+const getPointOfSaleRecentTransactions = () => {
+  transactions.value = [];
+  posStore.fetchRecentPosTransactions().then((res) => {
+    if (res) transactions.value.push(...res.records);
+  });
 };
 
 const getBalance = async () => {
@@ -108,7 +119,7 @@ onMounted(async () => {
 });
 
 watch(cartItems, () => {
-  showHistory.value = false;
+  // if (!settings.isBorrelmode) showHistory.value = false;
 });
 
 watch(shouldShowTransactions, () => {
@@ -121,6 +132,33 @@ watch(
     balance.value = await getBalance();
   }
 );
+
+let refreshRecentPosTransactions: number | null;
+
+const refreshInterval = 1000 * 60 * 5;
+
+const getRefreshInterval = () => setInterval(getPointOfSaleRecentTransactions, refreshInterval);
+
+const clearIfExists = () => {
+  if (refreshRecentPosTransactions) clearInterval(refreshRecentPosTransactions);
+};
+
+// TODO Use a websocket instead of this 'hacky' refresh.
+watch(pointOfSale, async (target) => {
+  if (!target) return;
+  if (target.useAuthentication) {
+    clearIfExists();
+    await getUserRecentTransactions();
+  }
+  else  {
+    await getPointOfSaleRecentTransactions();
+    refreshRecentPosTransactions = getRefreshInterval();
+  }
+});
+
+onUnmounted(() => {
+  clearIfExists();
+});
 
 const emit = defineEmits(['selectUser', 'selectCreator']);
 const selectUser = () => {

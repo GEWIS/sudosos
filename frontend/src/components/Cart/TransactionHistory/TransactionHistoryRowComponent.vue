@@ -9,6 +9,11 @@
         <div class="text-end min-w-65">{{ formattedValue }}</div>
       </div>
     </div>
+      <div v-if="settings.isBorrelmode">
+        <div class="mt-1 fs-6">
+          Transaction for {{ transaction.from.firstName}} by {{transaction.createdBy.firstName}}
+        </div>
+      </div>
     <!-- Here, we attach animation related functions to the corresponding Vue transition hooks-->
     <transition
       name="expand"
@@ -33,7 +38,7 @@
             <span>{{ formatDineroObjectToString(row.totalPriceInclVat) }}</span>
           </div>
         </div>
-        <div class="created-by" v-if="isCreatedByDifferent && transaction.createdBy">
+        <div class="created-by" v-if="isCreatedByDifferent && transaction.createdBy && !settings.isBorrelmode">
           Created by {{ transaction.createdBy.firstName }} {{ transaction.createdBy.lastName }}
         </div>
       </div>
@@ -51,8 +56,10 @@ import {
   formatDineroObjectToString
 } from '@/utils/FormatUtils';
 import apiService from '@/services/ApiService';
+import { useSettingStore } from "@/stores/settings.store";
 
 const emit = defineEmits(['update:open']);
+const settings = useSettingStore();
 
 const props = defineProps({
   transaction: {
@@ -121,7 +128,7 @@ const toggleOpen = () => emit('update:open', props.transaction.id);
 const formattedDate = formatDateFromString(props.transaction.createdAt);
 const formattedTime = formatTimeFromString(props.transaction.createdAt);
 const formattedValue = formatDineroObjectToString(props.transaction.value, false);
-const isCreatedByDifferent = props.transaction.createdBy?.id !== props.transaction.from.id;
+const isCreatedByDifferent = props.transaction.createdBy?.id !== props.transaction.from.id || settings.isBorrelmode;
 </script>
 
 <style scoped lang="scss">
