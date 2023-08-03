@@ -5,11 +5,14 @@
     <h1>SudoSOS Login</h1>
     <Button id="login-gewis-button" @click="loginViaGEWIS" severity="success"><img id="gewis-branding" src="../assets/img/gewis-branding.svg" alt="GEWIS">Login via GEWIS</Button>
     <hr>
-    <label for="username">Username</label>
-    <InputText id="username" type="text" v-model="username" placeholder="Enter username"/>
-    <label for="password">Password</label>
-    <InputText id="password" type="password" v-model="password" placeholder="Enter password" />
-    <Button @click="ldapLogin" id="login-button" severity="danger">Login</Button>
+    <form id="login-form" @submit="ldapLogin">
+<!--      TODO: Form validation with vee-validate -->
+      <label for="username">Username</label>
+      <InputText id="username" type="text" v-model="username" placeholder="Enter username"/>
+      <label for="password">Password</label>
+      <InputText id="password" type="password" v-model="password" placeholder="Enter password" />
+      <Button type="submit" id="login-button" severity="danger">Login</Button>
+    </form>
     <a href="https://wieditleesttrekteenbak.nl/">Reset password (External accounts only)</a>
   </main>
   <CopyrightBanner />
@@ -28,10 +31,11 @@ import router from "@/router";
 const authStore = useAuthStore();
 const userStore = useUserStore();
 
+const username = ref("");
+const password = ref("");
 
-const username = ref('');
-const password = ref('');
 const route = useRoute();
+
 
 onBeforeMount(() => {
   if (route.query.token !== undefined) {
@@ -44,7 +48,8 @@ onBeforeMount(() => {
   }
 })
 
-const ldapLogin = async () => {
+const ldapLogin = async (event: Event) => {
+  event.preventDefault();
   await authStore.gewisLdapLogin(username.value, password.value, apiService).then(() => {
     if (authStore.getUser) userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
     router.push({name: 'home'})
@@ -60,6 +65,10 @@ const loginViaGEWIS = () => {
 </script>
 
 <style scoped lang="scss">
+form {
+  display: flex;
+  flex-direction: column;
+}
 h1 {
   color: black;
   max-width: 350px;
