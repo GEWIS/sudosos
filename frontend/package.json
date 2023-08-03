@@ -14,6 +14,7 @@
   "dependencies": {
     "@sudosos/sudosos-client": "github:GEWIS/sudosos-client",
     "@sudosos/sudosos-frontend-common": "github:GEWIS/sudosos-frontend-common#5ac5e0d",
+    "@vee-validate/yup": "^4.11.1",
     "jwt-decode": "^3.1.2",
     "pinia": "^2.1.3",
     "primeicons": "^6.0.1",
@@ -21,8 +22,10 @@
     "sass": "^1.63.6",
     "stripe": "^12.14.0",
     "uuid": "^9.0.0",
+    "vee-validate": "^4.11.1",
     "vue": "^3.3.4",
-    "vue-router": "^4.2.2"
+    "vue-router": "^4.2.2",
+    "yup": "^1.2.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
