@@ -2,18 +2,20 @@
 <div>
   <main>
     <img id="login-image" src="../assets/img/bier.png" alt="logo">
-    <h1>SudoSOS Login</h1>
-    <Button id="login-gewis-button" @click="loginViaGEWIS" severity="success"><img id="gewis-branding" src="../assets/img/gewis-branding.svg" alt="GEWIS">Login via GEWIS</Button>
+    <h1>{{ $t('login.SudoSOS Login' )}}</h1>
+    <Button id="login-gewis-button" @click="loginViaGEWIS" severity="success"><img id="gewis-branding" src="../assets/img/gewis-branding.svg" alt="GEWIS">{{
+        $t('login.Login via GEWIS')
+      }}</Button>
     <hr>
     <form id="login-form" @submit="ldapLogin">
-<!--      TODO: Form validation with vee-validate -->
-      <label for="username">Username</label>
-      <InputText id="username" type="text" v-bind="username" placeholder="Enter username"/>
-      <label for="password">Password</label>
-      <InputText id="password" type="password" v-bind="password" placeholder="Enter password" />
-      <Button type="submit" id="login-button" severity="danger">Login</Button>
+      <!--      TODO: Form validation with vee-validate -->
+      <label for="username">{{$t('login.Username')}}</label>
+      <InputText id="username" type="text" v-bind="username" :placeholder="$t('login.Enter username')"/>
+      <label for="password">{{$t('login.Password')}}</label>
+      <InputText id="password" type="password" v-bind="password" :placeholder="$t('login.Enter password')" />
+      <Button type="submit" id="login-button" severity="danger">{{$t('login.Login')}}</Button>
+      <a href="https://wieditleesttrekteenbak.nl/">{{$t('login.Password reset')}}</a>
     </form>
-    <a href="https://wieditleesttrekteenbak.nl/">Reset password (External accounts only)</a>
   </main>
   <CopyrightBanner />
 </div>

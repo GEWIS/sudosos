@@ -2,6 +2,7 @@ import './assets/main.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { createI18n } from 'vue-i18n';
 
 import App from './App.vue'
 import router from './router'
@@ -15,12 +16,20 @@ import DataTable from "primevue/datatable";
 import InputNumber from "primevue/inputnumber";
 import Dialog from "primevue/dialog";
 import 'primeicons/primeicons.css';
+import languages from "@/locales";
 
 const app = createApp(App)
 
+const messages = Object.assign(languages);
+const i18n = createI18n({
+    locale: 'en',
+    fallbackLocale: 'en',
+    messages,
+});
 app.use(createPinia())
 app.use(router)
 app.use(PrimeVue)
+app.use(i18n);
 
 app.component('Button', Button);
 app.component('InputText', InputText);
@@ -29,4 +38,5 @@ app.component('Panel', Panel);
 app.component('DataTable', DataTable);
 app.component('InputNumber', InputNumber);
 app.component('Dialog', Dialog);
+
 app.mount('#app')
