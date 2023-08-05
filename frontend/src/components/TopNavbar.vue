@@ -18,11 +18,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import {useUserStore} from "@sudosos/sudosos-frontend-common";
-import {computed} from "vue";
+import {computed, ref} from "vue";
+import {useAuthStore, useUserStore} from "@sudosos/sudosos-frontend-common";
+import {useRouter} from "vue-router";
 
 const userStore = useUserStore();
+const authStore = useAuthStore();
+const router = useRouter();
 const balance = computed((): string | undefined => {
   const balanceInCents = userStore.getCurrentUser.balance;
   if (!balanceInCents) return undefined;
@@ -33,6 +35,12 @@ const balance = computed((): string | undefined => {
 const firstName = computed((): string | undefined => {
   return userStore.getCurrentUser.user ? userStore.getCurrentUser.user.firstName : undefined;
 });
+
+const handleLogout = () => {
+  console.error(true)
+  authStore.logout();
+  router.push('/');
+}
 // TODO: Style the hovering of buttons
 const leftItems = ref([ // TODO: Implement Submenus
   {
@@ -97,7 +105,8 @@ const rightItems = ref([
         label: 'Profile',
       },
       {
-        label: 'Sign Out'
+        label: 'Sign Out',
+        command: handleLogout,
       },
     ]
   },
@@ -117,7 +126,6 @@ const rightItems = ref([
     ]
   },
 ])
-
 
 </script>
 
