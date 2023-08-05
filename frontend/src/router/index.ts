@@ -9,6 +9,7 @@ import POSOverviewView from "@/views/PointOfSale/POSOverviewView.vue";
 import POSInfoView from "@/views/PointOfSale/POSInfoView.vue";
 import POSCreateView from "@/views/PointOfSale/POSCreateView.vue";
 import POSEditView from "@/views/PointOfSale/POSEditView.vue";
+import jwtDecode from "jwt-decode";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -68,8 +69,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = useAuthStore().getToken; // Replace with your actual authentication logic
-
+  const isAuthenticated = useAuthStore().getToken;
   if (to.meta?.requiresAuth && !isAuthenticated) {
     // If the route requires authentication and the user is not authenticated, redirect to login
     next({ name: 'login' });
