@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import CopyrightBanner from "@/components/CopyrightBanner.vue";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount } from "vue";
 import { useUserStore, useAuthStore } from "@sudosos/sudosos-frontend-common";
 import apiService from "@/services/ApiService";
 import { useRoute } from "vue-router";

@@ -21,9 +21,9 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref} from "vue";
-import {useAuthStore, useUserStore} from "@sudosos/sudosos-frontend-common";
-import {useRouter} from "vue-router";
+import { computed, ref } from "vue";
+import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
+import { useRouter } from "vue-router";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
@@ -40,10 +40,10 @@ const firstName = computed((): string | undefined => {
 });
 
 const handleLogout = () => {
-  console.error(true)
+  console.error(true);
   authStore.logout();
   router.push('/');
-}
+};
 // TODO: Style the hovering of buttons
 const leftItems = ref([ // TODO: Implement Submenus
   {
