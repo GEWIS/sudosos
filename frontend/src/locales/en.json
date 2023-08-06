@@ -306,8 +306,8 @@
     "Containers": "Containers"
   },
   "c_containerEditModal": {
-    "save": "save",
-    "cancel": "cancel",
+    "save": "Save",
+    "cancel": "Cancel",
     "edit container": "edit container",
     "add container": "add container",
     "Name": "Name",

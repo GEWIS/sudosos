@@ -7,10 +7,12 @@
       <div class="pos-row">
         <div class="pos-general-info">
           <h3>{{ $t("posInfo.General") }}</h3>
+          <form @submit="handleCreatePOS">
           <span class="general-info-block">
             <b>{{ $t("posInfo.Title") }}</b>
-            <InputText class="input" type="text" v-model="title"/>
 
+              <InputText class="input" type="text" v-bind="title"/>
+              <span class="error-message">{{ errors.title || '&nbsp;' }}</span>
           </span>
           <span class="general-info-block">
             <b>{{ $t("posInfo.Owner") }}</b>
@@ -18,34 +20,36 @@
                 class="input"
                 :options="organsList"
                 optionLabel="firstName"
-                v-model="selectedOwner"
+                v-bind="owner"
                 :placeholder="$t('c_POSCreate.Select owner')"
             />
+                          <span class="error-message">{{ errors.owner || '&nbsp;' }}</span>
+
           </span>
           <span class="general-info-block" style="flex-direction: row;">
             <Checkbox
-                v-model="useAuthentication"
+                v-bind="useAuthentication"
                 inputId="useAuthentication"
                 name="useAuthentication"
-                value="useAuthentication"
                 :binary="true"
             />
-            <label for="useAuthentication">{{ $t("c_POSCreate.Use Authentication") }}</label>
+            <label for="useAuthentication">{{ $t("c_POSCreate.Use authentication") }}</label>
           </span>
-          <span class="general-info-block" >
-            <b>{{ $t("c_POSCreate.Selected Containers") }}</b>
+          <span class="general-info-block">
+            <b>{{ $t("c_POSCreate.Selected containers") }}</b>
             <ul class="selected-containers">
-              <li v-for="container in selectedContainers" :key="container.id">
-                {{ container.name }}
-              </li>
+<!--              <li v-for="container in selectedContainers" :key="container.id">-->
+<!--                {{ container.name }}-->
+<!--              </li>-->
             </ul>
           </span>
           <Button
               id="create-pos-button"
               :label="$t('c_POSCreate.Create')"
-              @click="createPointOfSale"
+              type="submit"
               severity="success"
           />
+          </form>
         </div>
         <DetailedContainerCardComponent
             @selectedChanged="handleSelectedChanged"
@@ -69,20 +73,39 @@ import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import type { ContainerResponse, UserResponse } from "@sudosos/sudosos-client";
 import { usePointOfSaleStore } from "@/stores/pos.store";
 import { useRouter } from "vue-router";
+import {toTypedSchema} from "@vee-validate/yup";
+import * as yup from 'yup';
+import {useField, useForm, useSetFormValues, validate} from "vee-validate";
 
-const title = ref(null);
-const selectedOwner: Ref<UserResponse | undefined> = ref();
+
+// const title = ref(null);
+// const selectedOwner: Ref<UserResponse | undefined> = ref();
 const containerStore = useContainerStore();
 const userStore = useUserStore();
 const publicContainers: Ref<Array<ContainerResponse> | null | undefined> = ref();
 const ownContainers: Ref<Array<ContainerResponse> | null | undefined> = ref();
-const selectedContainers = ref();
-const useAuthentication = ref(false);
+//const selectedContainers: Ref<Array<ContainerResponse>> = ref([]);
+// const useAuthentication = ref(false);
 const organsList: Ref<Array<UserResponse>> = ref([]);
 const authStore = useAuthStore();
 const pointOfSaleStore = usePointOfSaleStore();
 const router = useRouter();
 
+// Vee-validate and yup validation definitions
+const pointOfSaleSchema = toTypedSchema(yup.object({
+  title: yup.string().required(),
+  owner: yup.mixed<UserResponse>().required(),
+  useAuthentication: yup.boolean().default(false).required(),
+  selectedContainers: yup.mixed<Array<ContainerResponse>>()
+}));
+const { values, defineComponentBinds, handleSubmit, errors } = useForm({
+  validationSchema: pointOfSaleSchema,
+});
+const title = defineComponentBinds('title');
+const owner = defineComponentBinds('owner');
+const useAuthentication = defineComponentBinds('useAuthentication', {
+});
+const { value } = useField('selectedContainers');
 onMounted(async () => {
   if (userStore.getCurrentUser.user ) {
     const publicContainersResponse = await containerStore.getPublicContainers();
@@ -93,14 +116,27 @@ onMounted(async () => {
   } else {
     console.error("User not found"); // TODO: Error handling
   }
+});
 
+const handleCreatePOS = handleSubmit(async (values) => {
+  const response = await pointOfSaleStore.createPointOfSale(
+      values.title,
+      values.useAuthentication,
+      values.selectedContainers.map((container: ContainerResponse) => container.id),
+      values.owner.id,
+  );
+  if (response.status === 200){
+    router.push('/point-of-sale/overview');
+  } else {
+    // TODO: Error toasts
+  }
 });
 
 const handleSelectedChanged = (selected: any) => {
-  selectedContainers.value = selected;
+  value.value = selected;
 };
 
-const createPointOfSale = async () => {
+/* const createPointOfSale = async () => {
   console.warn(title.value);
   console.error(selectedOwner.value);
   console.warn(useAuthentication.value);
@@ -118,7 +154,7 @@ const createPointOfSale = async () => {
       // TODO: Error Toasts
     }
   }
-};
+}; */
 
 </script>
 
@@ -191,8 +227,12 @@ hr {
 }
 
 .general-info-block {
-  margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
+}
+
+.error-message {
+  color: #d40000;
+  text-transform: capitalize;
 }
 </style>

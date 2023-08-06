@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:visible="visible" :header="$t('c_containerEditModal.add container')">
+  <Dialog v-model:visible="visible" :header="$t('c_POSCreate.add container')">
     <div class="dialog">
       <div class="row">
         <h6>{{ $t("c_containerEditModal.Name") }}</h6>

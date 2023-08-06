@@ -35,18 +35,18 @@ import apiService from "@/services/ApiService";
 import { useRoute } from "vue-router";
 import { v4 as uuid } from 'uuid';
 import router from "@/router";
-import {useForm} from "vee-validate";
+import { useForm } from "vee-validate";
 import * as yup from 'yup';
-import {toTypedSchema} from "@vee-validate/yup";
+import { toTypedSchema } from "@vee-validate/yup";
 
 const authStore = useAuthStore();
 const userStore = useUserStore();
-const schema = toTypedSchema(yup.object({
+const loginSchema = toTypedSchema(yup.object({
   username: yup.string().required(),
   password: yup.string().required(),
 }));
-const { values, defineComponentBinds} = useForm({
-  validationSchema: schema,
+const { values, defineComponentBinds } = useForm({
+  validationSchema: loginSchema,
 });
 const username = defineComponentBinds('username');
 const password = defineComponentBinds('password');
