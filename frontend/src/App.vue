@@ -4,7 +4,6 @@
 </template>
 
 <style lang="scss">
-@import "@/scss/styles";
 .image-overlay {
   display: flex;
   justify-content: center;

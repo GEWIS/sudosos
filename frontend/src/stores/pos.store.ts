@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import {
+  PaginatedBaseTransactionResponse,
   PointOfSaleResponse,
   PointOfSaleWithContainersResponse,
   ProductResponse, UserResponse
@@ -34,6 +35,11 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
     }
   },
   actions: {
+    async fetchRecentPosTransactions(): Promise<PaginatedBaseTransactionResponse | null> {
+      if (!this.pointOfSale) return null;
+      const response = await apiService.pos.getTransactions(this.pointOfSale.id);
+      return response.data;
+    },
     async fetchPointOfSale(id: number): Promise<void> {
       const response = await apiService.pos.getSinglePointOfSale(id);
       this.pointOfSaleMembers = null;

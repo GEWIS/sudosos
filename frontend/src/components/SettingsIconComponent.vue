@@ -31,7 +31,7 @@ import { usePointOfSaleStore } from "@/stores/pos.store";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import { storeToRefs } from "pinia";
 import { PointOfSaleResponse } from "@sudosos/sudosos-client";
-import { useCartStore } from "@/stores/cart.store";
+import { PointOfSaleSwitchService } from "@/services/PointOfSaleSwitchService";
 
 const visible = ref(false);
 const settings: Ref<null|any> = ref(null);
@@ -45,21 +45,10 @@ const options = computed(() => {
   return usersPointOfSales.value ? usersPointOfSales.value : [];
 });
 
-watch((selectedPos), () => {
-  if (selectedPos.value ) {
-    if (!posStore.getPos || posStore.getPos && selectedPos.value.id !== posStore.getPos.id) {
-      posStore.fetchPointOfSale(selectedPos.value.id);
-
-      if (selectedPos.value.useAuthentication) useCartStore().setBuyer(authStore.getUser);
-
-      if (selectedPos.value.owner?.id === 18214 && !selectedPos.value.useAuthentication) {
-        document.documentElement.style.setProperty('--accent-color', '#0f492e');
-      } else {
-        document.documentElement.style.setProperty('--accent-color', '#9D293EFF');
-      }
-    // #0f492e
-    }
-  }
+watch(selectedPos, () => {
+  const target = selectedPos.value;
+  if (!target) return;
+  PointOfSaleSwitchService.switchTo(target);
 });
 
 const openSettings = () => {
