@@ -52,8 +52,9 @@ const settings = useSettingStore();
 // });
 
 const delayedAPICall = debounce(() => {
-  apiService.user.getAllUsers(undefined, 0, searchQuery.value, true).then((res: AxiosResponse<PaginatedUserResponse, any>) => {
-    users.value = res.data.records;
+  apiService.user.getAllUsers(Number.MAX_SAFE_INTEGER, 0, searchQuery.value, true)
+    .then((res: AxiosResponse<PaginatedUserResponse, any>) => {
+      users.value = res.data.records;
   });
 }, 500);
 
