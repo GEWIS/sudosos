@@ -52,7 +52,7 @@ const settings = useSettingStore();
 // });
 
 const delayedAPICall = debounce(() => {
-  apiService.user.getAllUsers(10, 0, searchQuery.value, true).then((res: AxiosResponse<PaginatedUserResponse, any>) => {
+  apiService.user.getAllUsers(undefined, 0, searchQuery.value, true).then((res: AxiosResponse<PaginatedUserResponse, any>) => {
     users.value = res.data.records;
   });
 }, 500);
@@ -62,9 +62,10 @@ watch(searchQuery, () => {
 });
 
 const sortedUsers = computed(() => {
+
   const validUsers = users.value.filter(user => user.active && user.acceptedToS !== "NOT_ACCEPTED");
   const invalidUsers = users.value.filter(user => !user.active || user.acceptedToS === "NOT_ACCEPTED");
-  return [...validUsers, ...invalidUsers];
+  return [...validUsers, ...invalidUsers].slice(0, 10);
 });
 
 const searchInput = ref<null | HTMLInputElement>(null);
