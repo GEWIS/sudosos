@@ -51,7 +51,7 @@ const fetchPointOfSale = async () => {
     currentPos.value = pointOfSaleStore.pointOfSale;
   }
   posNotLoaded.value = false;
-  activityStore.startTimer();
+  activityStore.restartTimer();
 };
 
 onMounted(fetchPointOfSale);
