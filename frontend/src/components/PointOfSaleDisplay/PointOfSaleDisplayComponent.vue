@@ -45,6 +45,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { useCartStore } from "@/stores/cart.store";
 import PointOfSaleProductsComponent from "@/components/PointOfSaleDisplay/PointOfSaleProductsComponent.vue";
 import { usePointOfSaleStore } from "@/stores/pos.store";
+import { useSettingStore } from "@/stores/settings.store";
 
 defineProps({
   pointOfSale: {
@@ -64,8 +65,10 @@ const computedCategories = computed(() => {
 });
 
 function getDefaultCategoryId(): string | undefined {
+  // Different target category based on borrelmode or not.
+  const target = useSettingStore().getTargetCategory;
   const nonAlcoholicCategory = usePointOfSaleStore().allProductCategories.find(
-      (category: {name: string, id: string}) => category.name.toLowerCase() === 'non-alcoholic'
+      (category: {name: string, id: string}) => category.name.toLowerCase() === target
   );
 
   return nonAlcoholicCategory ? nonAlcoholicCategory.id : undefined;

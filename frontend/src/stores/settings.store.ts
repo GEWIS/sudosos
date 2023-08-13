@@ -22,7 +22,15 @@ export const useSettingStore = defineStore('setting', {
     },
     showAddToCartAnimation(): boolean {
       return this.isAuthenticatedPos;
-   }
+    },
+    getTargetCategory(): string {
+      if (this.isBorrelmode) {
+        return 'alcoholic';
+      } else {
+        const now = new Date();
+        return now.getHours() >= 16 ? 'alcoholic' : 'non-alcoholic';
+      }
+    }
   },
   actions: {
   },
