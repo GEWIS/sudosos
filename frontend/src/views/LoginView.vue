@@ -73,6 +73,7 @@ const handleInput = (value: string) => {
 };
 
 const handleBackspace = () => {
+  wrongPin.value = false;
   if(userId.value.length == 0 && enteringUserId.value && external.value) external.value = false;
 
   if (pinCode.value.length === 0 && !enteringUserId.value) {

@@ -4,8 +4,10 @@ import { useCartStore } from "@/stores/cart.store";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import { useActivityStore } from "@/stores/activity.store";
 
+let originalColor: string = '';
+
 /**
- * Class to keep all logic regarding switchig of the Point of Sale in one place.
+ * Class to keep all logic regarding switching of the Point of Sale in one place.
  *
  * Watchers that watch PointOfSaleSore.getPos should predominantly consist
  * of function from this class.
@@ -33,9 +35,10 @@ export class PointOfSaleSwitchService {
   private static switchColor(target: PointOfSaleResponse) {
     // In the future, this should be stored and retrieved from the backend.
     if (target.owner?.id === 18214 && !target.useAuthentication) {
+      originalColor = document.documentElement.style.getPropertyValue('--accent-color');
       document.documentElement.style.setProperty('--accent-color', '#0f492e');
     } else {
-      document.documentElement.style.setProperty('--accent-color', '#9D293EFF');
+      document.documentElement.style.setProperty('--accent-color', originalColor);
     }
   }
 }

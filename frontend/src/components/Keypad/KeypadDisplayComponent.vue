@@ -11,7 +11,7 @@
   <div class="wrapper pincode" :class="{ inactive: isActive }">
     <font-awesome-icon icon="fa-solid fa-key" class="fs-3 w-100" />
     <div class="passcode-wrapper" :class="{ wrong: wrongPin }">
-      <div v-if="wrongPin">
+      <div class="fs-1" v-if="wrongPin">
         WRONG PIN
       </div>
       <div class="d-flex w-100 h-100 justify-content-between align-items-center" v-else>
@@ -112,10 +112,16 @@ const displayCode = computed<string[]>(() => {
   background-color: transparent;
 }
 
-.display-value.wrong {
+.wrong {
   background-color: #ff6e99;
   color: $body-overlay-color;
   text-align: center;
+  border-radius: $border-radius;
+
+  > div {
+    width: 100%;
+    margin: auto;
+  }
 }
 
 .wrapper.inactive {
