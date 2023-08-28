@@ -4,11 +4,13 @@ import DashboardLayout from "@/layout/DashboardLayout.vue";
 import HomeView from '../views/HomeView.vue';
 import LoginView from "@/views/LoginView.vue";
 import BalanceView from "@/views/BalanceView.vue";
-import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import POSOverviewView from "@/views/PointOfSale/POSOverviewView.vue";
 import POSInfoView from "@/views/PointOfSale/POSInfoView.vue";
 import POSCreateView from "@/views/PointOfSale/POSCreateView.vue";
 import POSEditView from "@/views/PointOfSale/POSEditView.vue";
+import {useAuthStore} from "@sudosos/sudosos-frontend-common";
+import jwtDecode from "jwt-decode";
+import UserOverView from '../views/UserOverView.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -40,6 +42,7 @@ const router = createRouter({
           name: 'balance',
         },
         {
+<<<<<<< feature/POS-page
           path: '/point-of-sale/overview',
           name: 'pointOfSale',
           component: POSOverviewView,
@@ -60,6 +63,11 @@ const router = createRouter({
           name: 'pointOfSaleEdit',
           component: POSEditView,
           props: true,
+=======
+          path: '/user-overview',
+          component: UserOverView,
+          name: 'userOverview',
+>>>>>>> Created User Overview Table - Implemented search for full name - Implemented filter on type - Shown internal ID for now, to be changed to GEWIS ID in production - Added pagination - Fixed bottom copyright banner overlapping content
         },
         // Add other routes for authenticated users here
       ],

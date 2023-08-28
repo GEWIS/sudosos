@@ -1,5 +1,5 @@
 <template>
-<footer>
+  <footer>
   <span class="copyright">
     <b>{{ $t('login.copyright') }}</b>
   </span>
