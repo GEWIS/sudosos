@@ -84,9 +84,6 @@ const leftItems = ref([ // TODO: Implement Submenus
     label: 'BAC', // TODO: Implement RBAC Determination for permissions
     items: [
       {
-        label: 'Manage POS',
-      },
-      {
         label: 'User Overview',
       },
       {
