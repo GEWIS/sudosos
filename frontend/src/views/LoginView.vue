@@ -1,84 +1,95 @@
 <template>
-<div>
-  <main>
-    <img id="login-image" src="../assets/img/bier.png" alt="logo">
-    <h1>{{ $t('login.SudoSOS Login' )}}</h1>
-    <Button
-        id="login-gewis-button"
-        @click="loginViaGEWIS"
-        severity="success"
-    >
-      <img id="gewis-branding" src="../assets/img/gewis-branding.svg" alt="GEWIS">{{
-        $t('login.Login via GEWIS')
-      }}
-    </Button>
-    <hr>
-    <form id="login-form" @submit="ldapLogin">
-      <!--      TODO: Form validation with vee-validate -->
-      <label for="username">{{$t('login.Username')}}</label>
-      <InputText id="username" type="text" v-bind="username" :placeholder="$t('login.Enter username')"/>
-      <label for="password">{{$t('login.Password')}}</label>
-      <InputText id="password" type="password" v-bind="password" :placeholder="$t('login.Enter password')" />
-      <Button type="submit" id="login-button" severity="danger">{{$t('login.Login')}}</Button>
-      <a href="https://wieditleesttrekteenbak.nl/">{{$t('login.Password reset')}}</a>
-    </form>
-  </main>
-  <CopyrightBanner />
-</div>
+  <div>
+    <main>
+      <img id="login-image" src="../assets/img/bier.png" alt="logo" />
+      <h1>{{ $t('login.SudoSOS Login') }}</h1>
+      <Button id="login-gewis-button" @click="loginViaGEWIS" severity="success"
+        ><img id="gewis-branding" src="../assets/img/gewis-branding.svg" alt="GEWIS" />{{
+          $t('login.Login via GEWIS')
+        }}</Button
+      >
+      <hr />
+      <form id="login-form" @submit="ldapLogin">
+        <!--      TODO: Form validation with vee-validate -->
+        <label for="username">{{ $t('login.Username') }}</label>
+        <InputText
+          id="username"
+          type="text"
+          v-bind="username"
+          :placeholder="$t('login.Enter username')"
+        />
+        <label for="password">{{ $t('login.Password') }}</label>
+        <InputText
+          id="password"
+          type="password"
+          v-bind="password"
+          :placeholder="$t('login.Enter password')"
+        />
+        <Button type="submit" id="login-button" severity="danger">{{ $t('login.Login') }}</Button>
+        <a href="https://wieditleesttrekteenbak.nl/">{{ $t('login.Password reset') }}</a>
+      </form>
+    </main>
+    <CopyrightBanner />
+  </div>
 </template>
 
 <script setup lang="ts">
-import CopyrightBanner from "@/components/CopyrightBanner.vue";
-import { onBeforeMount } from "vue";
-import { useUserStore, useAuthStore } from "@sudosos/sudosos-frontend-common";
-import apiService from "@/services/ApiService";
-import { useRoute } from "vue-router";
-import { v4 as uuid } from 'uuid';
-import router from "@/router";
-import { useForm } from "vee-validate";
-import * as yup from 'yup';
-import { toTypedSchema } from "@vee-validate/yup";
+import CopyrightBanner from '@/components/CopyrightBanner.vue'
+import { onBeforeMount, ref } from 'vue'
+import { useUserStore, useAuthStore } from '@sudosos/sudosos-frontend-common'
+import apiService from '@/services/ApiService'
+import { useRoute } from 'vue-router'
+import { v4 as uuid } from 'uuid'
+import router from '@/router'
+import { useForm } from 'vee-validate'
+import * as yup from 'yup'
+import { toTypedSchema } from '@vee-validate/yup'
 
-const authStore = useAuthStore();
-const userStore = useUserStore();
-const loginSchema = toTypedSchema(yup.object({
-  username: yup.string().required(),
-  password: yup.string().required(),
-}));
+const authStore = useAuthStore()
+const userStore = useUserStore()
+const schema = toTypedSchema(
+  yup.object({
+    username: yup.string().required(),
+    password: yup.string().required()
+  })
+)
 const { values, defineComponentBinds } = useForm({
-  validationSchema: loginSchema,
-});
-const username = defineComponentBinds('username');
-const password = defineComponentBinds('password');
+  validationSchema: schema
+})
+const username = defineComponentBinds('username')
+const password = defineComponentBinds('password')
 
-const route = useRoute();
-
+const route = useRoute()
 
 onBeforeMount(() => {
   if (route.query.token !== undefined) {
-    const token  = route.query.token as string;
-    authStore.gewisWebLogin(
-      uuid(), token, apiService,
-    ).catch((error) => {
-      console.error(error);
-    });
+    const token = route.query.token as string
+    authStore.gewisWebLogin(uuid(), token, apiService).catch((error) => {
+      console.error(error)
+    })
   }
 });
 
 const ldapLogin = async (event: Event) => {
-  event.preventDefault();
-  await authStore.gewisLdapLogin(values.username, values.password, apiService).then(() => {
-    if (authStore.getUser) userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
-    router.push({ name: 'home' });
-  }).catch((error) => {
-    console.error(error);
-  });
-};
+  event.preventDefault()
+  await authStore
+    .gewisLdapLogin(values.username, values.password, apiService)
+    .then(() => {
+      if (authStore.getUser) {
+        userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
+        userStore.setCurrentUser(authStore.getUser);
+
+      }
+
+    }).then(() => router.push({ name: 'home' }))
+    .catch((error) => {
+      console.error(error)
+    })
+}
 
 const loginViaGEWIS = () => {
-  window.location.href = `https://gewis.nl/token/${import.meta.env.VITE_APP_GEWIS_TOKEN}`;
-};
-
+  window.location.href = `https://gewis.nl/token/${import.meta.env.VITE_APP_GEWIS_TOKEN}`
+}
 </script>
 
 <style scoped lang="scss">
@@ -93,7 +104,6 @@ h1 {
   margin: 0 auto;
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
-
 }
 
 #login-image {

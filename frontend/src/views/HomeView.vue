@@ -2,7 +2,7 @@
   <div class="page-container">
     <div class="page-title">{{ $t('home.Overview') }}</div>
     <div class="content-wrapper">
-      <BalanceComponent class="balance-component"/>
+      <BalanceComponent class="balance-component" :showOption="true"/>
       <TransactionsTableComponent class="transactions-table" header="Recent Transactions" action="All Transactions"/>
     </div>
   </div>
@@ -11,6 +11,10 @@
 <script setup lang="ts">
 import BalanceComponent from "@/components/BalanceComponent.vue";
 import TransactionsTableComponent from "@/components/TransactionsTableComponent.vue";
+import {useUserStore} from "@sudosos/sudosos-frontend-common";
+import {onBeforeMount, onMounted, Ref, ref} from "vue";
+import type {UserResponse} from "@sudosos/sudosos-client";
+
 </script>
 
 <style scoped lang="scss">

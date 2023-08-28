@@ -1,16 +1,17 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import PublicLayout from "@/layout/PublicLayout.vue";
-import DashboardLayout from "@/layout/DashboardLayout.vue";
-import HomeView from '../views/HomeView.vue';
-import LoginView from "@/views/LoginView.vue";
-import BalanceView from "@/views/BalanceView.vue";
-import POSOverviewView from "@/views/PointOfSale/POSOverviewView.vue";
-import POSInfoView from "@/views/PointOfSale/POSInfoView.vue";
-import POSCreateView from "@/views/PointOfSale/POSCreateView.vue";
-import POSEditView from "@/views/PointOfSale/POSEditView.vue";
-import {useAuthStore} from "@sudosos/sudosos-frontend-common";
-import jwtDecode from "jwt-decode";
-import UserOverView from '../views/UserOverView.vue';
+import { createRouter, createWebHistory } from 'vue-router'
+import PublicLayout from '@/layout/PublicLayout.vue'
+import DashboardLayout from '@/layout/DashboardLayout.vue'
+import HomeView from '../views/HomeView.vue'
+import LoginView from '@/views/LoginView.vue'
+import BalanceView from '@/views/BalanceView.vue'
+import POSOverviewView from '@/views/PointOfSale/POSOverviewView.vue'
+import POSInfoView from '@/views/PointOfSale/POSInfoView.vue'
+import POSCreateView from '@/views/PointOfSale/POSCreateView.vue'
+import POSEditView from '@/views/PointOfSale/POSEditView.vue'
+import { useAuthStore } from '@sudosos/sudosos-frontend-common'
+import jwtDecode from 'jwt-decode'
+import UserOverView from '../views/UserOverView.vue'
+import SingleUserView from '@/views/SingleUserView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -22,9 +23,9 @@ const router = createRouter({
         {
           path: '',
           component: LoginView,
-          name: 'login',
-        },
-      ],
+          name: 'login'
+        }
+      ]
     },
     {
       path: '',
@@ -34,59 +35,64 @@ const router = createRouter({
         {
           path: '/',
           component: HomeView,
-          name: 'home',
+          name: 'home'
         },
         {
           path: '/balance',
           component: BalanceView,
-          name: 'balance',
+          name: 'balance'
         },
         {
-<<<<<<< feature/POS-page
           path: '/point-of-sale/overview',
           name: 'pointOfSale',
-          component: POSOverviewView,
+          component: POSOverviewView
         },
         {
           path: '/point-of-sale/info/:id',
           name: 'pointOfSaleInfo',
           component: POSInfoView,
-          props: true,
+          props: true
         },
         {
           path: '/point-of-sale/request',
           name: 'pointOfSaleCreate',
-          component: POSCreateView,
+          component: POSCreateView
         },
         {
           path: '/point-of-sale/edit/:id',
           name: 'pointOfSaleEdit',
           component: POSEditView,
-          props: true,
-=======
+          props: true
+        },
+        {
           path: '/user-overview',
           component: UserOverView,
-          name: 'userOverview',
->>>>>>> Created User Overview Table - Implemented search for full name - Implemented filter on type - Shown internal ID for now, to be changed to GEWIS ID in production - Added pagination - Fixed bottom copyright banner overlapping content
+          name: 'userOverview'
         },
+        {
+          path: '/user/:userId',
+          component: SingleUserView,
+          name: 'user',
+          props: true
+        }
         // Add other routes for authenticated users here
-      ],
-    },
-  ],
-});
+      ]
+    }
+  ]
+})
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = useAuthStore().getToken;
+  const isAuthenticated = useAuthStore().getToken
   if (to.meta?.requiresAuth && !isAuthenticated) {
     // If the route requires authentication and the user is not authenticated, redirect to login
-    next({ name: 'login' });
+    next({ name: 'login' })
   } else if (!to.meta?.requiresAuth && isAuthenticated) {
     // If the route doesn't require authentication and the user is authenticated, redirect to home
-    next({ name: 'home' });
+    next({ name: 'home' })
   } else {
     // Allow navigation to proceed
-    next();
+    next()
   }
-});
+})
 
-export default router;
+export default router
