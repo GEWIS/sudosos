@@ -6,7 +6,7 @@
           <font-awesome-icon icon="fa-solid fa-xmark"/>
         </div>
         <input type="text" ref="searchInput" class="flex-sm-grow-1" v-model="searchQuery"
-               placeholder="Search user to charge..."/>
+               placeholder="Search user to charge..." @keypress="manualUpdate"/>
         <div class="c-btn active rounder fs-5" @click="selectSelf()" v-if="!settings.isBorrelmode">
           Charge yourself
         </div>
@@ -50,6 +50,13 @@ const settings = useSettingStore();
 //     };
 //   });
 // });
+
+const manualUpdate = (e: Event) => {
+    if (e.target) {
+        searchQuery.value = e.target.value;
+        console.log(e.target.value);
+    }
+};
 
 const delayedAPICall = debounce(() => {
   apiService.user.getAllUsers(Number.MAX_SAFE_INTEGER, 0, searchQuery.value, true)
