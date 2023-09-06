@@ -3,22 +3,28 @@
     <div class="page-title">{{ `${currentUser ? currentUser.firstName : ''}'s profile` }}</div>
     <div class="content-wrapper">
 <!--      TODO: Refactor to extract this component-->
-      <CardComponent header="Personal Info" class="personal-info-card">
-        <form @submit="console.error('clicked submit!')">
-          <label for="firstName">First Name</label>
-          <InputText id="firstName" v-model="firstName"/>
-          <label for="lastName">Last Name</label>
-          <InputText id="lastName" v-model="lastName"/>
-          <label for="email">Email</label>
-          <InputText id="email" v-model="email"/>
-          <label for="type">Usertype</label>
-          <InputText id="type" disabled :placeholder="currentUser ? currentUser.type : undefined"/>
-          <label for="active">Active</label>
-          <Checkbox id="active" v-model="isActive"/>
-          <Button type="submit" severity="danger">Update information</Button>
-        </form>
-      </CardComponent>
-      <BalanceComponent :user="currentUser" :showOption="false" id="userBalance"/>
+      <div class="row">
+        <CardComponent header="Personal Info" class="personal-info-card">
+          <form @submit="console.error('clicked submit!')">
+            <label for="firstName">First Name</label>
+            <InputText id="firstName" v-model="firstName"/>
+            <label for="lastName">Last Name</label>
+            <InputText id="lastName" v-model="lastName"/>
+            <label for="email">Email</label>
+            <InputText id="email" v-model="email"/>
+            <label for="type">Usertype</label>
+            <InputText id="type" disabled :placeholder="currentUser ? currentUser.type : undefined"/>
+            <label for="active">Active</label>
+            <Checkbox id="active" v-model="isActive"/>
+<!--            TODO: Fix this actually working-->
+            <Button type="submit" severity="danger">Update information</Button>
+          </form>
+        </CardComponent>
+        <BalanceComponent :user="currentUser" :showOption="false" id="userBalance"/>
+      </div>
+      <div class="row">
+        <TransactionsTableComponent header="User Transactions" action="none" style="width: 100%;"/>
+      </div>
     </div>
   </div>
 </template>
@@ -31,6 +37,7 @@ import type { UserResponse } from '@sudosos/sudosos-client'
 import CardComponent from "@/components/CardComponent.vue";
 import Checkbox from "primevue/checkbox";
 import BalanceComponent from "@/components/BalanceComponent.vue";
+import TransactionsTableComponent from "@/components/TransactionsTableComponent.vue";
 
 const userId = ref()
 const route = useRoute()
@@ -44,6 +51,7 @@ onBeforeMount(async () => {
   userId.value = route.params.userId
   console.error(userId.value)
   currentUser.value = userStore.users.find((user) => user.id == userId.value)
+  console.log(userStore.getUserById(userId.value));
   if (currentUser.value) {
     firstName.value = currentUser.value?.firstName
     lastName.value = currentUser.value?.lastName
@@ -74,5 +82,19 @@ form {
 #userBalance {
   width: 20rem;
   height: 20rem;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
 }
 </style>

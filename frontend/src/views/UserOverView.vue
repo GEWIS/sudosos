@@ -9,6 +9,12 @@
       :rowsPerPageOptions="[5, 10, 25, 50, 100]"
       filterDisplay="menu"
       :globalFilterFields="['type', 'firstName', 'lastName', 'fullName']"
+      lazy
+      :totalRecords="totalRecords"
+      :loading="loading"
+      @page="onPage($event)"
+      @sort="onSort($event)"
+      @filter="onFilter($event)"
     >
       <template #header>
         <div class="usertable-header">
@@ -84,12 +90,13 @@
 
 <script setup lang="ts">
 import { useUserStore } from '@sudosos/sudosos-frontend-common'
-import { onMounted, ref, Ref } from 'vue'
+import {onMounted, ref, Ref, watch} from 'vue'
 import apiService from '@/services/ApiService'
 import type { UserResponse } from '@sudosos/sudosos-client'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { FilterMatchMode } from 'primevue/api'
+import { debounce } from 'lodash'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import router from '@/router'
@@ -107,6 +114,8 @@ const lastName = ref('')
 const userType = ref('')
 const email = ref('')
 const visible: Ref<boolean> = ref(false)
+const loading = ref(false)
+const totalRecords = ref(0)
 const allUsers: Ref<UserResponse[]> = ref([])
 const userTypes = [
   'MEMBER',
@@ -117,20 +126,44 @@ const userTypes = [
   'INVOICE',
   'AUTOMATIC_INVOICE'
 ]
+
+const delayedAPICall = async (skip: number) => {
+  let res = await apiService.user.getAllUsers(Number.MAX_SAFE_INTEGER, skip, filters.value.global.value, true)
+  totalRecords.value = res.data._pagination.count;
+  allUsers.value = res.data.records
+}
+
+const onPage = (event: any) => {
+  console.log(event.originalEvent.first);
+  delayedAPICall(event.originalEvent.first);
+}
+// TODO: Fix sorting
+const onSort = (event) => {
+  console.log(event);
+  delayedAPICall(0)
+}
+//TODO: Fix user type filtering
+const onFilter = (event) => {
+  console.log(event);
+  delayedAPICall(0)
+}
+
+watch(filters.value.global, () => {
+  delayedAPICall(0);
+});
+
 onMounted(async () => {
-  console.log('mounted');
-  await userStore.fetchUsers(apiService);
-  allUsers.value = userStore.users;
-  allUsers.value = allUsers.value.map((user: UserResponse) => ({
-    ...user,
-    fullName: `${user.firstName} ${user.lastName}`
-  }));
+  console.log('mounted')
+  await delayedAPICall();
 })
 
 const handleCreateUser = () => {}
 
 async function handleInfoPush(userId: number) {
-    router.push({ name: 'user', params: { userId } })
+  console.log(allUsers.value.find(record => record.id == userId));
+  const clickedUser: UserResponse | undefined = allUsers.value.find(record => record.id == userId);
+  if (clickedUser) userStore.addUser(clickedUser);
+  router.push({ name: 'user', params: { userId } })
 }
 </script>
 
