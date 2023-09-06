@@ -12,6 +12,17 @@ import { useAuthStore } from '@sudosos/sudosos-frontend-common'
 import jwtDecode from 'jwt-decode'
 import UserOverView from '../views/UserOverView.vue'
 import SingleUserView from '@/views/SingleUserView.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import PublicLayout from "@/layout/PublicLayout.vue";
+import DashboardLayout from "@/layout/DashboardLayout.vue";
+import HomeView from '../views/HomeView.vue';
+import LoginView from "@/views/LoginView.vue";
+import BalanceView from "@/views/BalanceView.vue";
+import {useAuthStore} from "@sudosos/sudosos-frontend-common";
+import jwtDecode from "jwt-decode";
+import UserOverView from '../views/UserOverView.vue';
+import SingleUserView from "@/views/SingleUserView.vue";
+import ProductsContainersView from "@/views/ProductsContainersView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -73,7 +84,12 @@ const router = createRouter({
           path: '/user/:userId',
           component: SingleUserView,
           name: 'user',
-          props: true
+          props: true,
+        },
+        {
+          path: '/manage-products',
+          component: ProductsContainersView,
+          name: 'products-containers-overview',
         }
         // Add other routes for authenticated users here
       ]

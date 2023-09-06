@@ -92,6 +92,7 @@ const leftItems = ref([ // TODO: Implement Submenus
       },
       {
         label: 'Manage Products',
+        to: 'manage-products',
       },
       {
         label: 'Social Drink Cards',
