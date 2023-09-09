@@ -11,9 +11,9 @@
 <script setup lang="ts">
 import BalanceComponent from "@/components/BalanceComponent.vue";
 import TransactionsTableComponent from "@/components/TransactionsTableComponent.vue";
-import {useUserStore} from "@sudosos/sudosos-frontend-common";
-import {onBeforeMount, onMounted, Ref, ref} from "vue";
-import type {UserResponse} from "@sudosos/sudosos-client";
+import { useUserStore } from "@sudosos/sudosos-frontend-common";
+import { onBeforeMount, onMounted, Ref, ref } from "vue";
+import type { UserResponse } from "@sudosos/sudosos-client";
 
 </script>
 

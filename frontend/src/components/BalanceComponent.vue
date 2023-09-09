@@ -7,11 +7,11 @@
 </template>
 
 <script setup lang="ts">
-import CardComponent from '@/components/CardComponent.vue'
-import { useUserStore } from '@sudosos/sudosos-frontend-common'
-import { computed, ref, onMounted } from 'vue'
-import type { UserResponse } from '@sudosos/sudosos-client'
-import apiService from '@/services/ApiService'
+import CardComponent from '@/components/CardComponent.vue';
+import { useUserStore } from '@sudosos/sudosos-frontend-common';
+import { computed, ref, onMounted } from 'vue';
+import type { UserResponse } from '@sudosos/sudosos-client';
+import apiService from '@/services/ApiService';
 
 const props = defineProps({
   user: {
@@ -22,9 +22,9 @@ const props = defineProps({
     type: Boolean,
     required: true,
   }
-})
+});
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 
 const balanceFromApi = ref<string | undefined>(undefined);
 
@@ -33,7 +33,7 @@ onMounted(async () => {
     const response = await apiService.balance.getBalanceId(props.user.id);
     balanceFromApi.value = `€${(response.data.amount.amount / 100).toFixed(2)}`;
   }
-})
+});
 
 const displayBalance = computed(() => {
   if (props.user) {

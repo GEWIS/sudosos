@@ -85,14 +85,14 @@ const leftItems = ref([ // TODO: Implement Submenus
     items: [
       {
         label: 'User Overview',
-        to: 'user-overview',
+        to: '/user-overview',
       },
       {
         label: 'Flagged Transactions',
       },
       {
         label: 'Manage Products',
-        to: 'manage-products',
+        to: '/manage-products',
       },
       {
         label: 'Social Drink Cards',

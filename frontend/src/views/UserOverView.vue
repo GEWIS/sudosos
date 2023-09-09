@@ -89,34 +89,34 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from '@sudosos/sudosos-frontend-common'
-import {onMounted, ref, Ref, watch} from 'vue'
-import apiService from '@/services/ApiService'
-import type { UserResponse } from '@sudosos/sudosos-client'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import { FilterMatchMode } from 'primevue/api'
-import { debounce } from 'lodash'
-import Dropdown from 'primevue/dropdown'
-import InputText from 'primevue/inputtext'
-import router from '@/router'
+import { useUserStore } from '@sudosos/sudosos-frontend-common';
+import { onMounted, ref, Ref, watch } from 'vue';
+import apiService from '@/services/ApiService';
+import type { UserResponse } from '@sudosos/sudosos-client';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import { FilterMatchMode } from 'primevue/api';
+import { debounce } from 'lodash';
+import Dropdown from 'primevue/dropdown';
+import InputText from 'primevue/inputtext';
+import router from '@/router';
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   type: { value: null, matchMode: FilterMatchMode.EQUALS },
   firstName: { value: null, matchMode: FilterMatchMode.CONTAINS },
   lastName: { value: null, matchMode: FilterMatchMode.CONTAINS }
-})
+});
 
-const firstName = ref('')
-const lastName = ref('')
-const userType = ref('')
-const email = ref('')
-const visible: Ref<boolean> = ref(false)
-const loading = ref(false)
-const totalRecords = ref(0)
-const allUsers: Ref<UserResponse[]> = ref([])
+const firstName = ref('');
+const lastName = ref('');
+const userType = ref('');
+const email = ref('');
+const visible: Ref<boolean> = ref(false);
+const loading = ref(false);
+const totalRecords = ref(0);
+const allUsers: Ref<UserResponse[]> = ref([]);
 const userTypes = [
   'MEMBER',
   'ORGAN',
@@ -125,45 +125,45 @@ const userTypes = [
   'LOCAL_ADMIN',
   'INVOICE',
   'AUTOMATIC_INVOICE'
-]
+];
 
 const delayedAPICall = async (skip: number) => {
-  let res = await apiService.user.getAllUsers(Number.MAX_SAFE_INTEGER, skip, filters.value.global.value, true)
+  let res = await apiService.user.getAllUsers(Number.MAX_SAFE_INTEGER, skip, filters.value.global.value, true);
   totalRecords.value = res.data._pagination.count;
-  allUsers.value = res.data.records
-}
+  allUsers.value = res.data.records;
+};
 
 const onPage = (event: any) => {
   console.log(event.originalEvent.first);
   delayedAPICall(event.originalEvent.first);
-}
+};
 // TODO: Fix sorting
 const onSort = (event) => {
   console.log(event);
-  delayedAPICall(0)
-}
+  delayedAPICall(0);
+};
 //TODO: Fix user type filtering
 const onFilter = (event) => {
   console.log(event);
-  delayedAPICall(0)
-}
+  delayedAPICall(0);
+};
 
 watch(filters.value.global, () => {
   delayedAPICall(0);
 });
 
 onMounted(async () => {
-  console.log('mounted')
+  console.log('mounted');
   await delayedAPICall();
-})
+});
 
-const handleCreateUser = () => {}
+const handleCreateUser = () => {};
 
 async function handleInfoPush(userId: number) {
   console.log(allUsers.value.find(record => record.id == userId));
   const clickedUser: UserResponse | undefined = allUsers.value.find(record => record.id == userId);
   if (clickedUser) userStore.addUser(clickedUser);
-  router.push({ name: 'user', params: { userId } })
+  router.push({ name: 'user', params: { userId } });
 }
 </script>
 

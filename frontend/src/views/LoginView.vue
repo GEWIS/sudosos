@@ -34,44 +34,44 @@
 </template>
 
 <script setup lang="ts">
-import CopyrightBanner from '@/components/CopyrightBanner.vue'
-import { onBeforeMount, ref } from 'vue'
-import { useUserStore, useAuthStore } from '@sudosos/sudosos-frontend-common'
-import apiService from '@/services/ApiService'
-import { useRoute } from 'vue-router'
-import { v4 as uuid } from 'uuid'
-import router from '@/router'
-import { useForm } from 'vee-validate'
-import * as yup from 'yup'
-import { toTypedSchema } from '@vee-validate/yup'
+import CopyrightBanner from '@/components/CopyrightBanner.vue';
+import { onBeforeMount, ref } from 'vue';
+import { useUserStore, useAuthStore } from '@sudosos/sudosos-frontend-common';
+import apiService from '@/services/ApiService';
+import { useRoute } from 'vue-router';
+import { v4 as uuid } from 'uuid';
+import router from '@/router';
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
+import { toTypedSchema } from '@vee-validate/yup';
 
-const authStore = useAuthStore()
-const userStore = useUserStore()
+const authStore = useAuthStore();
+const userStore = useUserStore();
 const schema = toTypedSchema(
   yup.object({
     username: yup.string().required(),
     password: yup.string().required()
   })
-)
+);
 const { values, defineComponentBinds } = useForm({
   validationSchema: schema
-})
-const username = defineComponentBinds('username')
-const password = defineComponentBinds('password')
+});
+const username = defineComponentBinds('username');
+const password = defineComponentBinds('password');
 
-const route = useRoute()
+const route = useRoute();
 
 onBeforeMount(() => {
   if (route.query.token !== undefined) {
-    const token = route.query.token as string
+    const token = route.query.token as string;
     authStore.gewisWebLogin(uuid(), token, apiService).catch((error) => {
-      console.error(error)
-    })
+      console.error(error);
+    });
   }
 });
 
 const ldapLogin = async (event: Event) => {
-  event.preventDefault()
+  event.preventDefault();
   await authStore
     .gewisLdapLogin(values.username, values.password, apiService)
     .then(() => {
@@ -83,13 +83,13 @@ const ldapLogin = async (event: Event) => {
 
     }).then(() => router.push({ name: 'home' }))
     .catch((error) => {
-      console.error(error)
-    })
-}
+      console.error(error);
+    });
+};
 
 const loginViaGEWIS = () => {
-  window.location.href = `https://gewis.nl/token/${import.meta.env.VITE_APP_GEWIS_TOKEN}`
-}
+  window.location.href = `https://gewis.nl/token/${import.meta.env.VITE_APP_GEWIS_TOKEN}`;
+};
 </script>
 
 <style scoped lang="scss">

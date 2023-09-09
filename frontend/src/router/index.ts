@@ -1,25 +1,14 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import PublicLayout from '@/layout/PublicLayout.vue'
-import DashboardLayout from '@/layout/DashboardLayout.vue'
-import HomeView from '../views/HomeView.vue'
-import LoginView from '@/views/LoginView.vue'
-import BalanceView from '@/views/BalanceView.vue'
-import POSOverviewView from '@/views/PointOfSale/POSOverviewView.vue'
-import POSInfoView from '@/views/PointOfSale/POSInfoView.vue'
-import POSCreateView from '@/views/PointOfSale/POSCreateView.vue'
-import POSEditView from '@/views/PointOfSale/POSEditView.vue'
-import { useAuthStore } from '@sudosos/sudosos-frontend-common'
-import jwtDecode from 'jwt-decode'
-import UserOverView from '../views/UserOverView.vue'
-import SingleUserView from '@/views/SingleUserView.vue'
 import { createRouter, createWebHistory } from 'vue-router';
+import POSOverviewView from '@/views/PointOfSale/POSOverviewView.vue';
+import POSInfoView from '@/views/PointOfSale/POSInfoView.vue';
+import POSCreateView from '@/views/PointOfSale/POSCreateView.vue';
+import POSEditView from '@/views/PointOfSale/POSEditView.vue';
+import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import PublicLayout from "@/layout/PublicLayout.vue";
 import DashboardLayout from "@/layout/DashboardLayout.vue";
 import HomeView from '../views/HomeView.vue';
 import LoginView from "@/views/LoginView.vue";
 import BalanceView from "@/views/BalanceView.vue";
-import {useAuthStore} from "@sudosos/sudosos-frontend-common";
-import jwtDecode from "jwt-decode";
 import UserOverView from '../views/UserOverView.vue';
 import SingleUserView from "@/views/SingleUserView.vue";
 import ProductsContainersView from "@/views/ProductsContainersView.vue";
@@ -95,20 +84,20 @@ const router = createRouter({
       ]
     }
   ]
-})
+});
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = useAuthStore().getToken
+  const isAuthenticated = useAuthStore().getToken;
   if (to.meta?.requiresAuth && !isAuthenticated) {
     // If the route requires authentication and the user is not authenticated, redirect to login
-    next({ name: 'login' })
+    next({ name: 'login' });
   } else if (!to.meta?.requiresAuth && isAuthenticated) {
     // If the route doesn't require authentication and the user is authenticated, redirect to home
-    next({ name: 'home' })
+    next({ name: 'home' });
   } else {
     // Allow navigation to proceed
-    next()
+    next();
   }
-})
+});
 
-export default router
+export default router;
