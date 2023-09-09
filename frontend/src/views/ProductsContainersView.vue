@@ -19,7 +19,7 @@
                 <InputText v-model="filters['global'].value" placeholder="Search" />
               </span>
               <span>
-                <Button severity="danger" @click="console.warn('to be implemented')">Create</Button>
+                <Button severity="danger" @click="openCreateModal">Create</Button>
               </span>
             </div>
           </template>
@@ -52,6 +52,7 @@
             </template>
           </Column>
         </DataTable>
+        <ProductModalComponent :product="selectedProduct" v-model:visible="visible" />
       </CardComponent>
     </div>
   </div>
@@ -69,12 +70,20 @@ import { getProductImageSrc } from '@/utils/imageUtils';
 import {formatPrice} from "../utils/formatterUtils";
 import {FilterMatchMode} from "primevue/api";
 import InputText from "primevue/inputtext";
+import ProductModalComponent from "@/components/ProductCreateComponent.vue";
 
 const products: Ref<ProductResponse[]> = ref([]);
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   category: { value: null, matchMode: FilterMatchMode.EQUALS },
   name: { value: null, matchMode: FilterMatchMode.CONTAINS },
+});
+const selectedProduct: Ref<ProductResponse | undefined | null> = ref();
+const visible: Ref<Boolean> = ref(false);
+
+const openCreateModal = (() => {
+  selectedProduct.value = null;
+  visible.value = true;
 });
 
 onMounted(async () => {

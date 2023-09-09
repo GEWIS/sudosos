@@ -23,6 +23,7 @@ import Dropdown from "primevue/dropdown";
 import Checkbox from "primevue/checkbox";
 import TabView from "primevue/tabview";
 import ScrollPanel from "primevue/scrollpanel";
+import FileUpload from "primevue/fileupload";
 
 const app = createApp(App);
 
@@ -48,4 +49,5 @@ app.component('Dropdown', Dropdown);
 app.component('Checkbox', Checkbox);
 app.component('TabView', TabView);
 app.component('ScrollPanel', ScrollPanel);
+app.component('FileUpload', FileUpload);
 app.mount('#app');

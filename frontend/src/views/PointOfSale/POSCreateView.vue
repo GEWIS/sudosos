@@ -118,6 +118,7 @@ onMounted(async () => {
       (container) => container.public == false
     );
     organsList.value = authStore.organs;
+    console.log(organsList.value);
   } else {
     console.error('User not found'); // TODO: Error handling
   }
