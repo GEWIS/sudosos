@@ -69,7 +69,8 @@ watch(searchQuery, () => {
 });
 
 const sortedUsers = computed(() => {
-  const sortedOnId = [...users.value].sort((a, b) => b.id - a.id);
+  const filteredUsers = [...users.value].filter((user) => ["MEMBER", "LOCAL_USER", "LOCAL_ADMIN", "INVOICE", "AUTOMATIC_INVOICE"].includes(user.type));
+  const sortedOnId = filteredUsers.sort((a, b) => b.id - a.id);
   const validUsers = sortedOnId.filter(user => user.active && user.acceptedToS !== "NOT_ACCEPTED");
   const invalidUsers = sortedOnId.filter(user => !user.active || user.acceptedToS === "NOT_ACCEPTED");
   return [...validUsers, ...invalidUsers].slice(0, 10);

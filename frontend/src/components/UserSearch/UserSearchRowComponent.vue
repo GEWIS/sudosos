@@ -2,7 +2,7 @@
   <div class="user-row flex-container font-size-lg fw-bold text-center gap-2"
        :class="{inactive: !active}" @click="selectUser">
     {{ displayName() }}
-    <font-awesome-icon v-if="!user.ofAge" icon="fa-solid fa-baby"/>
+    <font-awesome-icon v-if="shouldShowAge()" icon="fa-solid fa-baby"/>
   </div>
 </template>
 
@@ -23,10 +23,16 @@ const selectUser = () => {
   cartStore.setBuyer(props.user);
 };
 
+const aged = ["MEMBER", "LOCAL_USER", "LOCAL_ADMIN"];
+
+const shouldShowAge = () => {
+  return !props.user.ofAge && active && aged.includes(props.user.type);
+};
+
 const displayName = () => {
   let name = `${props.user.firstName} ${props.user.lastName}`;
   if ("gewisId" in props.user && props.user.gewisId) {
-    name += ` - M${props.user?.gewisId}`;
+    name += ` - ${props.user?.gewisId}`;
   } else {
     switch (props.user?.type) {
       case 'LOCAL_USER':
