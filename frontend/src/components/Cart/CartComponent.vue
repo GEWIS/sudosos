@@ -1,7 +1,7 @@
 <template>
   <div class="flex-column h-100">
     <div class="flex-container flex-row flex-wrap justify-content-between">
-      <p class="fw-bolder font-size-lg mb-0">Current order for</p>
+      <p class="fw-bolder font-size-lg accent-text mb-0">Current order for</p>
       <div class="c-btn active square fs-4 px-3 py-1" @click="selectUser">
         <font-awesome-icon v-if="current" icon="fa-solid fa-user" class="pe-2" />
         {{ displayName() }}
@@ -18,9 +18,9 @@
         <div class="fw-bold">Total</div>
         <div class="fw-bolder font-size-lg">€{{ formatPrice(totalPrice) }}</div>
       </div>
-      <div class="font-size-sm pt-2 align-items-end" v-if="balance">
-        <font-awesome-icon icon="fa-solid fa-exclamation-triangle" />
-        Debit after purchase is €{{ formattedBalanceAfter }}
+      <div class="font-size-md pt-2 align-items-end flex-container justify-content-between" v-if="balance">
+        <span><font-awesome-icon icon="fa-solid fa-exclamation-triangle" /> Debit after purchase: </span>
+        €{{ formattedBalanceAfter }}
       </div>
     </div>
     <div class="flex-column mt-3">

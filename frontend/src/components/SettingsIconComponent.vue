@@ -82,5 +82,6 @@ const openSettings = () => {
   left: 60px;
   font-size: 70px;
   cursor: pointer;
+  color: var(--accent-color);
 }
 </style>

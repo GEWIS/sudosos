@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper user" :class="{ inactive: !isActive }">
+  <div class="wrapper user accent-text" :class="{ inactive: !isActive }">
     <font-awesome-icon icon="fa-solid fa-user" class="fs-3 w-100" />
     <div class="display-value user-id">
       {{ external ? 'E' : '' }}
@@ -8,7 +8,7 @@
       </span>
     </div>
   </div>
-  <div class="wrapper pincode" :class="{ inactive: isActive }">
+  <div class="wrapper pincode accent-text" :class="{ inactive: isActive }">
     <font-awesome-icon icon="fa-solid fa-key" class="fs-3 w-100" />
     <div class="passcode-wrapper" :class="{ wrong: wrongPin }">
       <div class="fs-1" v-if="wrongPin">
