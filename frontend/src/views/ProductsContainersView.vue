@@ -4,13 +4,17 @@
     <div class="content-wrapper">
       <CardComponent header="all products">
         <DataTable
-            v-model:filters="filters"
-            :value="products"
-            paginator
-            :rows="5"
-            :rowsPerPageOptions="[5, 10, 25, 50, 100]"
-            filterDisplay="menu"
-            :globalFilterFields="['category', 'name']"
+          v-model:filters="filters"
+          :value="products"
+          paginator
+          :rows="5"
+          :rowsPerPageOptions="[5, 10, 25, 50, 100]"
+          filterDisplay="menu"
+          :globalFilterFields="['category', 'name']"
+          v-model:editingRows="editingRows"
+          editMode="row"
+          @row-edit-save="updateRow"
+          @row-edit-init="rowEditInit"
         >
           <template #header>
             <div class="product-table-header">
@@ -23,34 +27,78 @@
               </span>
             </div>
           </template>
-          <Column field="image" header="Image">
+          <Column field="image" header="Image" style="width: fit-content">
             <template #body="rowData">
-              <img class="product-image" :src="getProductImageSrc( rowData.data)" alt="img"/>
+              <img class="product-image" :src="getProductImageSrc(rowData.data)" alt="img" />
             </template>
           </Column>
-          <Column field="name" header="Name" />
-          <Column field="category.name" header="Category" />
-          <Column field="priceInclVat.amount" header="Price">
+          <Column field="name" header="Name">
+            <template #editor="{ data, field }">
+              <InputText v-model="data[field]" style="width: 100%" />
+            </template>
+          </Column>
+          <Column field="category" header="Category" style="width: 20%">
+            <template #editor="{ data, field }">
+              <Dropdown
+                style="width: 100%"
+                placeholder="Please select a product category"
+                optionLabel="name"
+                :options="categories"
+                v-model="data[field]"
+              >
+                <template #value="slotProps">
+                  {{ slotProps.value.name }}
+                </template>
+              </Dropdown>
+            </template>
             <template #body="rowData">
-              {{formatPrice(rowData.data.priceInclVat.amount)}}
+              {{ rowData.data.category.name }}
+            </template>
+          </Column>
+          <Column field="priceInclVat" header="Price">
+            <template #editor="{ data, field }">
+              <InputNumber
+                v-model="data['editPrice']"
+                mode="currency"
+                currency="EUR"
+                :minFractionDigits="2"
+                :maxFractionDigits="2"
+                style="width: 100%"
+              />
+            </template>
+            <template #body="rowData">
+              {{ formatPrice(rowData.data.priceInclVat.amount) }}
             </template>
           </Column>
           <Column field="alcoholPercentage" header="Alcohol %">
+            <template #editor="{ data, field }">
+              <InputNumber v-model="data[field]" suffix="%" style="width: 100%" />
+            </template>
             <template #body="rowData">
               {{ `${rowData.data.alcoholPercentage} %` }}
             </template>
           </Column>
-          <Column headerStyle="width: 3rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
-            <template #body="slotProps">
-              <Button
-                  @click="console.log('needs to be implemented')"
-                  type="button"
-                  severity='danger'
-                  icon="pi pi-info-circle"
-                  outlined
-              />
+          <Column field="vat" header="VAT">
+            <template #editor="{ data, field }">
+              <Dropdown
+                placeholder="Please select a VAT group"
+                :options="vatGroups"
+                optionLabel="percentage"
+                v-model="data[field]"
+                style="width: 100%"
+              >
+                <template #value="slotProps"> {{ slotProps.value.percentage }}% </template>
+              </Dropdown>
+            </template>
+            <template #body="rowData">
+              {{ `${rowData.data.vat.percentage} %` }}
             </template>
           </Column>
+          <Column
+            :rowEditor="true"
+            style="width: 10%; min-width: 8rem"
+            bodyStyle="text-align:center"
+          />
         </DataTable>
         <ProductModalComponent :product="selectedProduct" v-model:visible="visible" />
       </CardComponent>
@@ -64,13 +112,15 @@ import { onMounted, Ref, ref } from 'vue';
 import apiService from '@/services/ApiService';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
 import type { ProductResponse } from '@sudosos/sudosos-client';
-import DataTable from 'primevue/datatable';
+import DataTable, {DataTableRowEditInitEvent, DataTableRowEditSaveEvent} from 'primevue/datatable';
 import Column from 'primevue/column';
 import { getProductImageSrc } from '@/utils/imageUtils';
 import {formatPrice} from "../utils/formatterUtils";
 import {FilterMatchMode} from "primevue/api";
 import InputText from "primevue/inputtext";
 import ProductModalComponent from "@/components/ProductCreateComponent.vue";
+import Dropdown from "primevue/dropdown";
+import {BaseVatGroupResponse, ProductCategoryResponse} from "@sudosos/sudosos-client";
 
 const products: Ref<ProductResponse[]> = ref([]);
 const filters = ref({
@@ -80,11 +130,18 @@ const filters = ref({
 });
 const selectedProduct: Ref<ProductResponse | undefined | null> = ref();
 const visible: Ref<Boolean> = ref(false);
-
+const editingRows = ref([]);
 const openCreateModal = (() => {
   selectedProduct.value = null;
   visible.value = true;
 });
+const vatGroups: Ref<BaseVatGroupResponse[]> = ref([]);
+const categories: Ref<ProductCategoryResponse[]> = ref([]);
+
+const rowEditInit = (event: DataTableRowEditInitEvent) => {
+  event.data['editPrice'] = (event.data as ProductResponse).priceInclVat.amount / 100;
+  console.error(event);
+};
 
 onMounted(async () => {
   const data = await fetchAllPages<ProductResponse>(
@@ -94,8 +151,29 @@ onMounted(async () => {
     (take, skip) => apiService.products.getAllProducts(take, skip)
   );
   products.value = data;
-  console.warn(data);
+  const categoriesResp = await apiService.category.getAllProductCategories();
+  categories.value = categoriesResp.data.records;
+  const vatGroupsResp = await apiService.vatGroups.getAllVatGroups();
+  vatGroups.value = vatGroupsResp.data.records;
 });
+
+const updateRow = async (event: DataTableRowEditSaveEvent) => {
+
+  console.error(event.newData);
+  const productUpdateResponse = await apiService.products.updateProduct(event.newData.id, {
+    name: event.newData.name,
+    priceInclVat: {
+      amount: event.newData.editPrice * 100,
+      currency: 'EUR',
+      precision: 2,
+    },
+    vat: event.newData.vat.id,
+    category: event.newData.category.id,
+    alcoholPercentage: event.newData.alcoholPercentage,
+  });
+  products.value[event.index] = event.newData;
+  console.log(productUpdateResponse);
+};
 </script>
 
 <style scoped>
@@ -137,12 +215,16 @@ onMounted(async () => {
   justify-content: space-between;
 }
 
-:deep(.p-datatable-header ){
-  background-color: #f8f8f8!important;
-  border: none!important;
+:deep(.p-datatable-header) {
+  background-color: #f8f8f8 !important;
+  border: none !important;
 }
 
-:deep(.p-paginator){
+:deep(.p-paginator) {
   background-color: #f8f8f8;
+}
+
+:deep(.p-inputtext) {
+  width: 100%;
 }
 </style>
