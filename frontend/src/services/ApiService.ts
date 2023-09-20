@@ -20,23 +20,38 @@ import {
     VatGroupsApi,
 } from '@sudosos/sudosos-client';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
-import axios, {AxiosInstance} from "axios";
+import axios, {AxiosHeaders, AxiosInstance} from "axios";
 import {AxiosResponse} from "axios";
 
 // Create an axios instance
 const axiosInstance: AxiosInstance = axios.create();
 
-function setTokenInStorage(jwtToken: string) {
+function updateTokenIfNecessary(response: AxiosResponse) {
+    if ((response.headers as AxiosHeaders).has('Set-Authorization')) {
+        const newToken = (response.headers as AxiosHeaders).get('Set-Authorization') as string;
+        if (newToken) setTokenInStorage(newToken);
+    }
+}
+
+export function clearTokenInStorage() {
+    localStorage.removeItem('jwt_expires');
+    localStorage.removeItem('jwt_token');
+}
+export function setTokenInStorage(jwtToken: string) {
     localStorage.setItem('jwt_expires', String(Number(jwtDecode<JwtPayload>(jwtToken).exp) * 1000));
     localStorage.setItem('jwt_token', jwtToken);
 }
 
+function getTokenFromStorage(): { jwtToken: string, jwtExpires: string} {
+    return {
+        jwtToken: localStorage.getItem('jwt_token')!!,
+        jwtExpires: localStorage.getItem('jwt_expires')!!,
+    };
+}
+
 // Add a response interceptor to the axios instance
 axiosInstance.interceptors.response.use((response: AxiosResponse) => {
-    if (response.headers['Set-Authorization']) {
-        const newToken = response.headers['Set-Authorization'];
-        setTokenInStorage(newToken);
-    }
+    updateTokenIfNecessary(response);
     return response;
 });
 
@@ -81,9 +96,9 @@ export class ApiService {
     private readonly _openBannerApi: BannersApi;
 
 
-    constructor(basePath: string, apiKey: () => string) {
+    constructor(basePath: string) {
         const withKeyConfiguration = new Configuration({
-            apiKey,
+            apiKey: () => `Bearer ${getTokenFromStorage().jwtToken}`,
         });
 
         this._authenticateApi = new AuthenticateApi(undefined, basePath, axiosInstance);

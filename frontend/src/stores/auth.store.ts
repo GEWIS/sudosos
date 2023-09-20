@@ -8,7 +8,7 @@ import {
   UserResponse, UpdateNfcRequest
 } from "@sudosos/sudosos-client";
 import { useUserStore } from "./user.store";
-import { ApiService } from "../services/ApiService";
+import {ApiService, clearTokenInStorage, setTokenInStorage} from "../services/ApiService";
 
 interface AuthStoreState {
   user: UserResponse | null,
@@ -44,6 +44,7 @@ export const useAuthStore = defineStore({
       if ( !user || !token || !roles || !organs || !acceptedToS) return
       this.user = user;
       this.token = token;
+      setTokenInStorage(this.token);
       this.roles = roles;
       this.organs = organs;
       this.acceptedToS = acceptedToS;
@@ -145,6 +146,8 @@ export const useAuthStore = defineStore({
       this.organs = [];
       this.acceptedToS = null;
       this.user = null;
+
+      clearTokenInStorage();
     }
   }
 });

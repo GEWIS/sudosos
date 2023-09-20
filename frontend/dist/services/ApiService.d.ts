@@ -1,4 +1,6 @@
 import { AuthenticateApi, BalanceApi, BannersApi, BorrelkaartgroupsApi, ContainersApi, FilesApi, InvoicesApi, PayoutRequestsApi, PointofsaleApi, ProductCategoriesApi, ProductsApi, RbacApi, RootApi, StripeApi, TransactionsApi, TransfersApi, UsersApi, VatGroupsApi } from '@sudosos/sudosos-client';
+export declare function clearTokenInStorage(): void;
+export declare function setTokenInStorage(jwtToken: string): void;
 export declare class ApiService {
     private readonly _authenticateApi;
     private readonly _balanceApi;
@@ -19,7 +21,7 @@ export declare class ApiService {
     private readonly _stripeApi;
     private readonly _rbacApi;
     private readonly _openBannerApi;
-    constructor(basePath: string, apiKey: () => string);
+    constructor(basePath: string);
     get authenticate(): AuthenticateApi;
     get balance(): BalanceApi;
     get pos(): PointofsaleApi;
