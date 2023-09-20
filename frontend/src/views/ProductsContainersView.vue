@@ -102,16 +102,17 @@
         </DataTable>
         <ProductModalComponent :product="selectedProduct" v-model:visible="visible" />
       </CardComponent>
+      <ContainerCardComponent v-if="containers" :data="containers" class="container-card"/>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import CardComponent from '@/components/CardComponent.vue';
-import { onMounted, Ref, ref } from 'vue';
+import {onBeforeMount, onMounted, Ref, ref} from 'vue';
 import apiService from '@/services/ApiService';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
-import type { ProductResponse } from '@sudosos/sudosos-client';
+import type {ContainerResponse, ContainerWithProductsResponse, ProductResponse} from '@sudosos/sudosos-client';
 import DataTable, {DataTableRowEditInitEvent, DataTableRowEditSaveEvent} from 'primevue/datatable';
 import Column from 'primevue/column';
 import { getProductImageSrc } from '@/utils/imageUtils';
@@ -121,6 +122,14 @@ import InputText from "primevue/inputtext";
 import ProductModalComponent from "@/components/ProductCreateComponent.vue";
 import Dropdown from "primevue/dropdown";
 import {BaseVatGroupResponse, ProductCategoryResponse} from "@sudosos/sudosos-client";
+
+import ContainerCardComponent from "@/components/ContainerCardComponent.vue";
+
+const containers: Ref<ContainerWithProductsResponse[]> = ref([]);
+
+onBeforeMount(async ()=> {
+
+});
 
 const products: Ref<ProductResponse[]> = ref([]);
 const filters = ref({
@@ -155,6 +164,15 @@ onMounted(async () => {
   categories.value = categoriesResp.data.records;
   const vatGroupsResp = await apiService.vatGroups.getAllVatGroups();
   vatGroups.value = vatGroupsResp.data.records;
+
+  //TODO: Put getAllContainers into container store and take care of pagination
+  await apiService.container.getAllContainers(500, 0).then((resp: any) => {
+    (resp.data.records as ContainerResponse[]).forEach((container) => apiService.container.getSingleContainer(container.id).then((res) => {
+      console.log(res);
+      containers.value.push(res.data as ContainerWithProductsResponse);
+    }));
+    console.error(containers.value)
+  });
 });
 
 const updateRow = async (event: DataTableRowEditSaveEvent) => {
@@ -226,5 +244,33 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
 
 :deep(.p-inputtext) {
   width: 100%;
+}
+
+.content-wrapper {
+  flex-direction: column;
+}
+
+.container-card {
+  margin-top: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 1rem;
+  background-color: #f8f8f8!important;
+  min-width: 100%;
+}
+
+:deep(.p-tabview){
+  background-color: #f8f8f8;
+}
+
+:deep(.p-tabview-nav-link ){
+  background-color: #f8f8f8!important;
+}
+
+:deep(.p-tabview-panel){
+  background-color: #f8f8f8;
+}
+:deep(.p-tabview-panels){
+  background-color: #f8f8f8!important;
 }
 </style>
