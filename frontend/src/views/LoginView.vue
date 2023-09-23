@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import CopyrightBanner from '@/components/CopyrightBanner.vue';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount } from 'vue';
 import { useUserStore, useAuthStore } from '@sudosos/sudosos-frontend-common';
 import apiService from '@/services/ApiService';
 import { useRoute } from 'vue-router';
@@ -72,6 +72,7 @@ onBeforeMount(() => {
 
 const ldapLogin = async (event: Event) => {
   event.preventDefault();
+  if (!(values.username && values.password)) return;
   await authStore
     .gewisLdapLogin(values.username, values.password, apiService)
     .then(() => {

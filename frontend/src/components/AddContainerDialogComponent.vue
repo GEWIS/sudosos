@@ -51,7 +51,7 @@ const saveContainer = () => {
     containerStore.createEmptyContainer(name.value, isPublic.value, selectedOwner.value.id);
     visible.value = false;
   } else {
-    console.error("Owner not defined"); // TODO: Correct error-handling
+    // TODO: Correct error-handling
   }
 
 };

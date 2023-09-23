@@ -1,6 +1,6 @@
 <template>
   <div class="page-container">
-    <div class="page-title">Manage Products and Containers</div>
+    <div class="page-title">{{ $t('manageProducts.Manage all products and containers') }}</div>
     <div class="content-wrapper">
       <CardComponent header="all products">
         <DataTable
@@ -23,7 +23,7 @@
                 <InputText v-model="filters['global'].value" placeholder="Search" />
               </span>
               <span>
-                <Button severity="danger" @click="openCreateModal">Create</Button>
+                <Button severity="danger" @click="openCreateModal">{{ $t('app.Create') }}</Button>
               </span>
             </div>
           </template>
@@ -56,7 +56,7 @@
             </template>
           </Column>
           <Column field="priceInclVat" header="Price">
-            <template #editor="{ data, field }">
+            <template #editor="{ data }">
               <InputNumber
                 v-model="data['editPrice']"
                 mode="currency"
@@ -87,7 +87,7 @@
                 v-model="data[field]"
                 style="width: 100%"
               >
-                <template #value="slotProps"> {{ slotProps.value.percentage }}% </template>
+                <template #value="slotProps"> {{ `${slotProps.value.percentage} %` }} </template>
               </Dropdown>
             </template>
             <template #body="rowData">
@@ -102,49 +102,54 @@
         </DataTable>
         <ProductModalComponent :product="selectedProduct" v-model:visible="visible" />
       </CardComponent>
-      <ContainerCardComponent v-if="containers" :data="containers" class="container-card"/>
+      <ContainerCardComponent v-if="containers" :data="containers" class="container-card" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import CardComponent from '@/components/CardComponent.vue';
-import { onBeforeMount, onMounted, Ref, ref } from 'vue';
+import type { Ref } from 'vue';
+import { onBeforeMount, onMounted, ref } from 'vue';
 import apiService from '@/services/ApiService';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
-import type { ContainerResponse, ContainerWithProductsResponse, ProductResponse } from '@sudosos/sudosos-client';
-import DataTable, { DataTableRowEditInitEvent, DataTableRowEditSaveEvent } from 'primevue/datatable';
+import type {
+  ContainerResponse,
+  ContainerWithProductsResponse,
+  ProductCategoryResponse,
+  ProductResponse,
+  VatGroup
+} from '@sudosos/sudosos-client';
+import type { DataTableRowEditInitEvent, DataTableRowEditSaveEvent } from 'primevue/datatable';
+import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { getProductImageSrc } from '@/utils/imageUtils';
-import { formatPrice } from "../utils/formatterUtils";
-import { FilterMatchMode } from "primevue/api";
-import InputText from "primevue/inputtext";
-import ProductModalComponent from "@/components/ProductCreateComponent.vue";
-import Dropdown from "primevue/dropdown";
-import { BaseVatGroupResponse, ProductCategoryResponse } from "@sudosos/sudosos-client";
+import { formatPrice } from '@/utils/formatterUtils';
+import { FilterMatchMode } from 'primevue/api';
+import InputText from 'primevue/inputtext';
+import ProductModalComponent from '@/components/ProductCreateComponent.vue';
+import Dropdown from 'primevue/dropdown';
 
-import ContainerCardComponent from "@/components/ContainerCardComponent.vue";
+import ContainerCardComponent from '@/components/ContainerCardComponent.vue';
 
 const containers: Ref<ContainerWithProductsResponse[]> = ref([]);
 
-onBeforeMount(async ()=> {
-
-});
+onBeforeMount(async () => {});
 
 const products: Ref<ProductResponse[]> = ref([]);
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   category: { value: null, matchMode: FilterMatchMode.EQUALS },
-  name: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  name: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
-const selectedProduct: Ref<ProductResponse | undefined | null> = ref();
+const selectedProduct: Ref<ProductResponse | undefined> = ref();
 const visible: Ref<Boolean> = ref(false);
 const editingRows = ref([]);
-const openCreateModal = (() => {
-  selectedProduct.value = null;
+const openCreateModal = () => {
+  selectedProduct.value = undefined;
   visible.value = true;
-});
-const vatGroups: Ref<BaseVatGroupResponse[]> = ref([]);
+};
+const vatGroups: Ref<VatGroup[]> = ref([]);
 const categories: Ref<ProductCategoryResponse[]> = ref([]);
 
 const rowEditInit = (event: DataTableRowEditInitEvent) => {
@@ -153,13 +158,12 @@ const rowEditInit = (event: DataTableRowEditInitEvent) => {
 };
 
 onMounted(async () => {
-  const data = await fetchAllPages<ProductResponse>(
+  products.value = await fetchAllPages<ProductResponse>(
     0,
     Number.MAX_SAFE_INTEGER,
     // @ts-ignore
     (take, skip) => apiService.products.getAllProducts(take, skip)
   );
-  products.value = data;
   const categoriesResp = await apiService.category.getAllProductCategories();
   categories.value = categoriesResp.data.records;
   const vatGroupsResp = await apiService.vatGroups.getAllVatGroups();
@@ -167,27 +171,28 @@ onMounted(async () => {
 
   //TODO: Put getAllContainers into container store and take care of pagination
   await apiService.container.getAllContainers(500, 0).then((resp: any) => {
-    (resp.data.records as ContainerResponse[]).forEach((container) => apiService.container.getSingleContainer(container.id).then((res) => {
-      console.log(res);
-      containers.value.push(res.data as ContainerWithProductsResponse);
-    }));
+    (resp.data.records as ContainerResponse[]).forEach((container) =>
+      apiService.container.getSingleContainer(container.id).then((res) => {
+        console.log(res);
+        containers.value.push(res.data as ContainerWithProductsResponse);
+      })
+    );
     console.error(containers.value);
   });
 });
 
 const updateRow = async (event: DataTableRowEditSaveEvent) => {
-
   console.error(event.newData);
   const productUpdateResponse = await apiService.products.updateProduct(event.newData.id, {
     name: event.newData.name,
     priceInclVat: {
       amount: event.newData.editPrice * 100,
       currency: 'EUR',
-      precision: 2,
+      precision: 2
     },
     vat: event.newData.vat.id,
     category: event.newData.category.id,
-    alcoholPercentage: event.newData.alcoholPercentage,
+    alcoholPercentage: event.newData.alcoholPercentage
   });
   products.value[event.index] = event.newData;
   console.log(productUpdateResponse);
@@ -255,22 +260,22 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
   border: 1px solid #dee2e6;
   border-radius: 4px;
   padding: 1rem;
-  background-color: #f8f8f8!important;
+  background-color: #f8f8f8 !important;
   min-width: 100%;
 }
 
-:deep(.p-tabview){
+:deep(.p-tabview) {
   background-color: #f8f8f8;
 }
 
-:deep(.p-tabview-nav-link ){
-  background-color: #f8f8f8!important;
+:deep(.p-tabview-nav-link) {
+  background-color: #f8f8f8 !important;
 }
 
-:deep(.p-tabview-panel){
+:deep(.p-tabview-panel) {
   background-color: #f8f8f8;
 }
-:deep(.p-tabview-panels){
-  background-color: #f8f8f8!important;
+:deep(.p-tabview-panels) {
+  background-color: #f8f8f8 !important;
 }
 </style>

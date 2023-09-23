@@ -1,6 +1,6 @@
 <template>
   <div class="page-container">
-    <div class="page-title">User Overview</div>
+    <div class="page-title">{{ $t('app.User overview') }}</div>
     <DataTable
       v-model:filters="filters"
       :value="allUsers"
@@ -20,24 +20,24 @@
         <div class="usertable-header">
           <span class="p-input-icon-left">
             <i class="pi pi-search" />
-            <InputText v-model="filters['global'].value" placeholder="Search" />
+            <InputText v-model="filters['global'].value" :placeholder="$t('app.Search')" />
           </span>
           <span>
-            <Button severity="danger" @click="visible = true">Create</Button>
+            <Button severity="danger" @click="visible = true">{{ $t('app.Create') }}</Button>
           </span>
         </div>
       </template>
       <!--      TODO: Change this to gewisId, is id for testing purposes-->
       <Column field="id" header="GEWIS ID" />
-      <Column field="firstName" header="First Name" />
-      <Column field="lastName" header="Last Name" />
-      <Column field="type" header="Type" :showFilterMatchModes="false">
+      <Column field="firstName" :header="$t('c_userTable.firstName')" />
+      <Column field="lastName" :header="$t('c_userTable.lastName')" />
+      <Column field="type" :header="$t('c_userTable.Type')" :showFilterMatchModes="false">
         <template #filter="{ filterModel, filterCallback }">
           <Dropdown
             v-model="filterModel.value"
             @change="filterCallback()"
             :options="userTypes"
-            placeholder="Select Type"
+            :placeholder="$t('Select Type')"
           />
         </template>
       </Column>
@@ -56,32 +56,32 @@
         </template>
       </Column>
     </DataTable>
-    <Dialog v-model:visible="visible" modal header="Create User" :style="{ width: '50vw' }">
+    <Dialog v-model:visible="visible" modal :header="$t('c_userTable.Create User')" :style="{ width: '50vw' }">
       <form @submit="handleCreateUser">
         <div class="form-row">
-          <label for="first-name">First Name</label>
+          <label for="first-name">{{ $t('c_userTable.firstName') }}</label>
           <InputText v-model="firstName" id="first-name" />
         </div>
         <div class="form-row">
-          <label for="last-name">Last Name</label>
+          <label for="last-name">{{ $t('c_userTable.lastName') }}</label>
           <InputText v-model="lastName" id="last-name" />
         </div>
         <div class="form-row">
-          <label for="user-type">User Type</label>
+          <label for="user-type">{{ $t('c_userTable.User Type') }}</label>
           <Dropdown
             v-model="userType"
             :options="userTypes"
-            placeholder="Select User Type"
+            :placeholder="$t('c_userTable.Select User Type')"
             id="user-type"
           />
         </div>
         <div class="form-row">
-          <label for="email">Email</label>
+          <label for="email">{{ $t('profile.Email address') }}</label>
           <InputText v-model="email" id="email" />
         </div>
         <div class="form-row" id="actions">
-          <Button severity="danger" outlined @click="visible = false">Cancel</Button>
-          <Button severity="danger" type="submit">Save</Button>
+          <Button severity="danger" outlined @click="visible = false">{{ $t('c_confirmationModal.Cancel' )}}</Button>
+          <Button severity="danger" type="submit">{{ $t('c_confirmationModal.Save' )}}</Button>
         </div>
       </form>
     </Dialog>
@@ -90,13 +90,14 @@
 
 <script setup lang="ts">
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
-import { onMounted, ref, Ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+import type { Ref } from 'vue';
 import apiService from '@/services/ApiService';
 import type { UserResponse } from '@sudosos/sudosos-client';
 import DataTable from 'primevue/datatable';
+import type { DataTableFilterEvent, DataTableSortEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import { FilterMatchMode } from 'primevue/api';
-import { debounce } from 'lodash';
 import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
 import router from '@/router';
@@ -128,8 +129,13 @@ const userTypes = [
 ];
 
 const delayedAPICall = async (skip: number) => {
-  let res = await apiService.user.getAllUsers(Number.MAX_SAFE_INTEGER, skip, filters.value.global.value, true);
-  totalRecords.value = res.data._pagination.count;
+  let res = await apiService.user.getAllUsers(
+    Number.MAX_SAFE_INTEGER,
+    skip,
+    filters.value.global.value || '',
+    true
+  );
+  totalRecords.value = res.data._pagination.count || 0;
   allUsers.value = res.data.records;
 };
 
@@ -138,12 +144,12 @@ const onPage = (event: any) => {
   delayedAPICall(event.originalEvent.first);
 };
 // TODO: Fix sorting
-const onSort = (event) => {
+const onSort = (event: DataTableSortEvent) => {
   console.log(event);
   delayedAPICall(0);
 };
 //TODO: Fix user type filtering
-const onFilter = (event) => {
+const onFilter = (event: DataTableFilterEvent) => {
   console.log(event);
   delayedAPICall(0);
 };
@@ -154,14 +160,16 @@ watch(filters.value.global, () => {
 
 onMounted(async () => {
   console.log('mounted');
-  await delayedAPICall();
+  await delayedAPICall(0);
 });
 
 const handleCreateUser = () => {};
 
 async function handleInfoPush(userId: number) {
-  console.log(allUsers.value.find(record => record.id == userId));
-  const clickedUser: UserResponse | undefined = allUsers.value.find(record => record.id == userId);
+  console.log(allUsers.value.find((record) => record.id == userId));
+  const clickedUser: UserResponse | undefined = allUsers.value.find(
+    (record) => record.id == userId
+  );
   if (clickedUser) userStore.addUser(clickedUser);
   router.push({ name: 'user', params: { userId } });
 }

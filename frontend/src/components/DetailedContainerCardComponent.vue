@@ -71,7 +71,7 @@ function divideAndSetSelected() {
 watch([selectedPublicContainers, selectedOwnContainers], () => {
   const combinedSelectedContainers: Array<ContainerResponse> =
       selectedPublicContainers.value.concat(selectedOwnContainers.value);
-  emit("selectedChanged", combinedSelectedContainers);
+  emit('selectedChanged', combinedSelectedContainers);
 });
 
 onMounted(() => {

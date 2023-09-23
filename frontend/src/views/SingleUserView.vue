@@ -7,21 +7,26 @@
       <div class="row">
         <CardComponent header="Personal Info" class="personal-info-card">
           <form @submit="handleEditUser">
-            <label for="firstName">First Name</label>
+            <label for="firstName">{{ $t('userDetails.First name') }}</label>
             <InputText id="firstName" v-bind="firstName" />
             <span class="error-text">{{ errors.firstName }}</span>
-            <label for="lastName">Last Name</label>
+            <label for="lastName">{{ $t('userDetails.Last name') }}</label>
             <InputText id="lastName" v-bind="lastName" />
             <span class="error-text">{{ errors.lastName }}</span>
-            <label for="email">Email</label>
+            <label for="email">{{ $t('userDetails.Email address') }}</label>
             <InputText id="email" v-bind="email"/>
-            <label for="type">Usertype</label>
-            <InputText id="userType" disabled :placeholder="currentUser ? currentUser.type : undefined" v-bind="userType"/>
+            <label for="type">{{ $t('userDetails.Usertype') }}</label>
+            <InputText
+                id="userType"
+                disabled
+                :placeholder="currentUser ? currentUser.type : undefined"
+                v-bind="userType"
+            />
             <span class="error-text">{{ errors.userType }}</span>
-            <label for="active">Active</label>
+            <label for="active">{{ $t('userDetails.Active') }}</label>
             <Checkbox :binary="true" id="active" v-bind="isActive" />
 <!--            TODO: Fix this actually working-->
-            <Button type="submit" severity="danger">Update information</Button>
+            <Button type="submit" severity="danger">{{ $t('userDetails.Update information') }}</Button>
           </form>
         </CardComponent>
         <BalanceComponent :user="currentUser" :showOption="false" id="userBalance"/>
@@ -34,7 +39,8 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, Ref, ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
+import type { Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import type { UpdateUserRequest, UserResponse } from '@sudosos/sudosos-client';

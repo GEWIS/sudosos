@@ -42,7 +42,8 @@
     "Profile": "Profile",
     "Sign out": "Sign out",
     "Netherlands": "Nederlands",
-    "English": "English"
+    "English": "English",
+    "Search": "Search"
   },
   "formatters": {
     "Monday": "Monday",
@@ -165,7 +166,7 @@
     "Total": "Total"
   },
   "manageProducts": {
-    "Manage all products and default containers": "Manage all products and default containers",
+    "Manage all products and containers": "Manage all products and containers",
     "All products": "All products",
     "Add product": "Add product",
     "Default containers": "Default containers",
@@ -300,7 +301,8 @@
   },
   "c_confirmationModal": {
     "Cancel": "Cancel",
-    "Confirm": "Confirm"
+    "Confirm": "Confirm",
+    "Save": "Save"
   },
   "containersOverview": {
     "Containers": "Containers"
@@ -335,6 +337,7 @@
     "Price": "Price (in €)",
     "Category": "Category",
     "Please select": "Please select a product category",
+    "Please select VAT": "Please select a VAT group",
     "Alcohol Percentage": "Alcohol percentage",
     "Image": "Image",
     "Delete product": "Delete product",
@@ -487,15 +490,23 @@
     "Pin code must be 4 digits": "Pin code must be 4 digits",
     "New pin code length must be 4 digits": "New pin code length must be 4 digits",
     "New pin code must be unique from old pin code": "New pin code must be unique from old pin code",
-    "Confirmation does not match pin code": "Confirmation does not match pin code"
+    "Confirmation does not match pin code": "Confirmation does not match pin code",
+    "Usertype": "Usertype",
+    "Update information": "Update information"
   },
   "c_userTable": {
-    "Name": "Name",
+    "firstName": "firstName",
+    "lastName": "lastName",
     "gewisID": "GEWIS ID",
     "Active": "Active",
     "Filter by name": "Filter by name or ID",
     "Fill in a name": "Fill in a name or ID",
-    "Page": "Page"
+    "Page": "Page",
+    "Type": "Type",
+    "Select Type": "Select Type",
+    "Create User": "Create User",
+    "User Type": "User Type",
+    "Select User Type": "Select User Type"
   },
   "signOut": {
     "message": "Signing you out! Hope you had a nice time :) Be sure to come back soon!"

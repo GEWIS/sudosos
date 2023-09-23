@@ -8,8 +8,10 @@ module.exports = {
     'plugin:vue/vue3-essential',
     'eslint:recommended',
     '@vue/eslint-config-typescript',
-    '@vue/eslint-config-prettier/skip-formatting'
+    '@vue/eslint-config-prettier/skip-formatting',
+    'plugin:@intlify/vue-i18n/recommended'
   ],
+
   ignorePatterns: ["/src/components/icons/*.vue"],
   rules: {
     'max-len': ['warn', { "code": 120 } ],
@@ -24,7 +26,7 @@ module.exports = {
           "lang": "ts"
         }
       }
-    ]
+    ],
   },
   parserOptions: {
     ecmaVersion: 'latest',
