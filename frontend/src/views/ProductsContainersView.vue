@@ -154,7 +154,6 @@ const categories: Ref<ProductCategoryResponse[]> = ref([]);
 
 const rowEditInit = (event: DataTableRowEditInitEvent) => {
   event.data['editPrice'] = (event.data as ProductResponse).priceInclVat.amount / 100;
-  console.error(event);
 };
 
 onMounted(async () => {
@@ -173,17 +172,14 @@ onMounted(async () => {
   await apiService.container.getAllContainers(500, 0).then((resp: any) => {
     (resp.data.records as ContainerResponse[]).forEach((container) =>
       apiService.container.getSingleContainer(container.id).then((res) => {
-        console.log(res);
         containers.value.push(res.data as ContainerWithProductsResponse);
       })
     );
-    console.error(containers.value);
   });
 });
 
 const updateRow = async (event: DataTableRowEditSaveEvent) => {
-  console.error(event.newData);
-  const productUpdateResponse = await apiService.products.updateProduct(event.newData.id, {
+  await apiService.products.updateProduct(event.newData.id, {
     name: event.newData.name,
     priceInclVat: {
       amount: event.newData.editPrice * 100,
@@ -195,7 +191,6 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
     alcoholPercentage: event.newData.alcoholPercentage
   });
   products.value[event.index] = event.newData;
-  console.log(productUpdateResponse);
 };
 </script>
 

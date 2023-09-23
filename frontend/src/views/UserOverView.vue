@@ -13,8 +13,8 @@
       :totalRecords="totalRecords"
       :loading="loading"
       @page="onPage($event)"
-      @sort="onSort($event)"
-      @filter="onFilter($event)"
+      @sort="onSort()"
+      @filter="onFilter()"
     >
       <template #header>
         <div class="usertable-header">
@@ -60,24 +60,28 @@
       <form @submit="handleCreateUser">
         <div class="form-row">
           <label for="first-name">{{ $t('c_userTable.firstName') }}</label>
-          <InputText v-model="firstName" id="first-name" />
+          <InputText v-bind="firstName" id="first-name" />
+          <span class="error-text">{{ errors.firstName }}</span>
         </div>
         <div class="form-row">
           <label for="last-name">{{ $t('c_userTable.lastName') }}</label>
-          <InputText v-model="lastName" id="last-name" />
+          <InputText v-bind="lastName" id="last-name" />
+          <span class="error-text">{{ errors.lastName }}</span>
         </div>
         <div class="form-row">
           <label for="user-type">{{ $t('c_userTable.User Type') }}</label>
           <Dropdown
-            v-model="userType"
+            v-bind="userType"
             :options="userTypes"
             :placeholder="$t('c_userTable.Select User Type')"
             id="user-type"
           />
+          <span class="error-text">{{ errors.userType }}</span>
         </div>
         <div class="form-row">
           <label for="email">{{ $t('profile.Email address') }}</label>
-          <InputText v-model="email" id="email" />
+          <InputText v-bind="email" id="email" />
+          <span class="error-text">{{ errors.email }}</span>
         </div>
         <div class="form-row" id="actions">
           <Button severity="danger" outlined @click="visible = false">{{ $t('c_confirmationModal.Cancel' )}}</Button>
@@ -93,20 +97,19 @@ import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import { onMounted, ref, watch } from 'vue';
 import type { Ref } from 'vue';
 import apiService from '@/services/ApiService';
-import type { UserResponse } from '@sudosos/sudosos-client';
+import type { CreateUserRequest, UserResponse } from '@sudosos/sudosos-client';
 import DataTable from 'primevue/datatable';
-import type { DataTableFilterEvent, DataTableSortEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import { FilterMatchMode } from 'primevue/api';
 import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
 import router from '@/router';
-import {userDetailsSchema} from "@/utils/validation-schema";
-import {useForm} from "vee-validate";
+import { userDetailsSchema } from "@/utils/validation-schema";
+import { useForm } from "vee-validate";
 
 const userStore = useUserStore();
 
-const { defineComponentBinds, handleSubmit, errors, setValues } = useForm({
+const { defineComponentBinds, handleSubmit, errors } = useForm({
   validationSchema: userDetailsSchema,
 });
 
@@ -117,10 +120,10 @@ const filters = ref({
   lastName: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
 
-const firstName = ref('');
-const lastName = ref('');
-const userType = ref('');
-const email = ref('');
+const firstName = defineComponentBinds('firstName');
+const lastName = defineComponentBinds('lastName');
+const userType = defineComponentBinds('userType');
+const email = defineComponentBinds('email');
 const visible: Ref<boolean> = ref(false);
 const loading = ref(false);
 const totalRecords = ref(0);
@@ -147,17 +150,15 @@ const delayedAPICall = async (skip: number) => {
 };
 
 const onPage = (event: any) => {
-  console.log(event.originalEvent.first);
   delayedAPICall(event.originalEvent.first);
 };
 // TODO: Fix sorting
-const onSort = (event: DataTableSortEvent) => {
-  console.log(event);
+
+const onSort = () => {
   delayedAPICall(0);
 };
 //TODO: Fix user type filtering
-const onFilter = (event: DataTableFilterEvent) => {
-  console.log(event);
+const onFilter = () => {
   delayedAPICall(0);
 };
 
@@ -166,14 +167,26 @@ watch(filters.value.global, () => {
 });
 
 onMounted(async () => {
-  console.log('mounted');
   await delayedAPICall(0);
 });
 
-const handleCreateUser = () => {};
+const handleCreateUser = handleSubmit(async (values) => {
+  const createUserRequest: CreateUserRequest = {
+    firstName: values.firstName,
+    lastName: values.lastName,
+    active: true,
+    type: userTypes.indexOf(values.userType),
+    email: values.email || '',
+  };
+  const response = await apiService.user.createUser(createUserRequest);
+  if (response.status === 200) {
+    await router.push({ name: 'user-overview' });
+  } else {
+    console.error(response.status + ": " + response.statusText);
+  }
+});
 
 async function handleInfoPush(userId: number) {
-  console.log(allUsers.value.find((record) => record.id == userId));
   const clickedUser: UserResponse | undefined = allUsers.value.find(
     (record) => record.id == userId
   );

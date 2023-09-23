@@ -33,7 +33,6 @@ const amountValue = ref();
 const showDialog = () => {
   visible.value = true;
 
-  console.error(amountValue.value);
 };
 </script>
 

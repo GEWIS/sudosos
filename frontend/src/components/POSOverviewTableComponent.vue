@@ -33,8 +33,6 @@ onMounted(async () => {
   const userId = userStore.getCurrentUser.user !== null ? userStore.getCurrentUser.user.id : undefined;
   if (userId){
     listOfPOS.value = await pointOfSaleStore.getUserPointsOfSale(userId).then((resp)=> {return resp.data.records;});
-  } else {
-    console.error("userID is not defined");
   }
 
 });

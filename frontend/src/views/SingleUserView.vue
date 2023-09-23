@@ -68,9 +68,7 @@ const isActive = defineComponentBinds('isActive', {});
 const userType = defineComponentBinds('userType', {});
 onBeforeMount(async () => {
   userId.value = route.params.userId;
-  console.error(userId.value);
   currentUser.value = userStore.users.find((user) => user.id == userId.value);
-  console.log(userStore.getUserById(userId.value));
   if (currentUser.value) {
     setValues({
       firstName: currentUser.value?.firstName,
@@ -80,7 +78,6 @@ onBeforeMount(async () => {
       isActive: currentUser.value.active,
     });
   }
-  console.log(currentUser.value);
 });
 
 const handleEditUser = handleSubmit(async (values) => {

@@ -139,7 +139,6 @@ const handleProductCreate = handleSubmit(async (values) => {
     ownerId: values.owner.id
   };
   await apiService.products.createProduct(createProductRequest).then((resp) => {
-    console.log(resp);
     if (productImage.value)
       apiService.products.updateProductImage(resp.data.id, productImage.value);
   });

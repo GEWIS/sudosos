@@ -95,7 +95,7 @@ onBeforeMount(async () => {
     ownContainers.value = ownContainersResponse.records.filter((container) => container.public == false);
     organsList.value = authStore.organs;
   } else {
-    console.error("User not found"); // TODO: Error handling
+    // TODO: Error handling
   }
 });
 

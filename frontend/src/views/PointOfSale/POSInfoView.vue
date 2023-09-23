@@ -60,7 +60,7 @@ const handleEditClicked = () => {
   if (pos.value) {
     router.push(`/point-of-sale/edit/${pos.value.id}`);
   } else {
-    console.error("POS not defined"); // TODO: Correct Error handling
+    // TODO: Correct Error handling
   }
 };
 </script>

@@ -1,4 +1,4 @@
-import {toTypedSchema} from "@vee-validate/yup";
+import { toTypedSchema } from "@vee-validate/yup";
 import * as yup from "yup";
 
 export const userDetailsSchema = toTypedSchema(

@@ -40,7 +40,6 @@ const firstName = computed((): string | undefined => {
 });
 
 const handleLogout = () => {
-  console.error(true);
   authStore.logout();
   router.push('/');
 };
