@@ -20,6 +20,9 @@ defineProps({
     required: true,
   }
 });
+
+const visible = true;
+const loading = false;
 </script>
 <style scoped>
 @import "../styles/BasePage.css";
