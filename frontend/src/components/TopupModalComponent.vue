@@ -23,8 +23,8 @@ defineProps({
   }
 });
 
-const visible = ref(false);
-const loading = ref(false);
+const visible = true;
+const loading = false;
 </script>
 <style scoped>
 @import "../styles/BasePage.css";

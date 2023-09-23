@@ -34,14 +34,14 @@
 </template>
 
 <script setup lang="ts">
-import CopyrightBanner from '@/components/CopyrightBanner.vue';
-import { onBeforeMount } from 'vue';
-import { useUserStore, useAuthStore } from '@sudosos/sudosos-frontend-common';
-import apiService from '@/services/ApiService';
-import { useRoute } from 'vue-router';
-import { v4 as uuid } from 'uuid';
-import router from '@/router';
-import { useForm } from 'vee-validate';
+import CopyrightBanner from "@/components/CopyrightBanner.vue";
+import {onBeforeMount} from "vue";
+import {useUserStore, useAuthStore} from "@sudosos/sudosos-frontend-common";
+import apiService from "@/services/ApiService"
+import {useRoute} from "vue-router";
+import { v4 as uuid } from 'uuid'
+import router from "@/router";
+import {useForm} from "vee-validate";
 import * as yup from 'yup';
 import { toTypedSchema } from '@vee-validate/yup';
 
@@ -72,13 +72,14 @@ onBeforeMount(() => {
 
 const ldapLogin = async (event: Event) => {
   event.preventDefault();
-  if (!(values.username && values.password)) return;
-  await authStore
-    .gewisLdapLogin(values.username, values.password, apiService)
-    .then(() => {
-      if (authStore.getUser) {
-        userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
-        userStore.setCurrentUser(authStore.getUser);
+  if (!values.username || !values.password) return;
+  await authStore.gewisLdapLogin(values.username, values.password, apiService).then(() => {
+    if (authStore.getUser) userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
+    router.push({name: 'home'})
+  }).catch((error) => {
+    console.error(error);
+  })
+}
 
       }
 
