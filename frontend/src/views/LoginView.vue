@@ -75,20 +75,11 @@ const ldapLogin = async (event: Event) => {
   if (!values.username || !values.password) return;
   await authStore.gewisLdapLogin(values.username, values.password, apiService).then(() => {
     if (authStore.getUser) userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
-    router.push({name: 'home'})
+    router.push({ name: 'home' });
   }).catch((error) => {
     console.error(error);
-  })
-}
-
-      }
-
-    }).then(() => router.push({ name: 'home' }))
-    .catch((error) => {
-      console.error(error);
-    });
+  });
 };
-
 const loginViaGEWIS = () => {
   window.location.href = `https://gewis.nl/token/${import.meta.env.VITE_APP_GEWIS_TOKEN}`;
 };
