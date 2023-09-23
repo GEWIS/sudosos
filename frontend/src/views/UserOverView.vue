@@ -101,8 +101,15 @@ import { FilterMatchMode } from 'primevue/api';
 import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
 import router from '@/router';
+import {userDetailsSchema} from "@/utils/validation-schema";
+import {useForm} from "vee-validate";
 
 const userStore = useUserStore();
+
+const { defineComponentBinds, handleSubmit, errors, setValues } = useForm({
+  validationSchema: userDetailsSchema,
+});
+
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   type: { value: null, matchMode: FilterMatchMode.EQUALS },

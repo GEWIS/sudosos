@@ -48,21 +48,10 @@ import CardComponent from "@/components/CardComponent.vue";
 import Checkbox from "primevue/checkbox";
 import BalanceComponent from "@/components/BalanceComponent.vue";
 import TransactionsTableComponent from "@/components/TransactionsTableComponent.vue";
-import { toTypedSchema } from "@vee-validate/yup";
-import * as yup from 'yup';
 import { useForm } from "vee-validate";
 import apiService from "@/services/ApiService";
 import router from "@/router";
-
-const userDetailsSchema = toTypedSchema(
-    yup.object({
-      firstName: yup.string().required(),
-      lastName: yup.string().required(),
-      email: yup.string().email(),
-      userType: yup.string().required(),
-      isActive: yup.boolean().required(),
-    })
-);
+import { userDetailsSchema } from "@/utils/validation-schema";
 
 const { defineComponentBinds, handleSubmit, errors, setValues } = useForm({
   validationSchema: userDetailsSchema,
