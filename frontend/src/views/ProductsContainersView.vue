@@ -109,19 +109,19 @@
 
 <script setup lang="ts">
 import CardComponent from '@/components/CardComponent.vue';
-import {onBeforeMount, onMounted, Ref, ref} from 'vue';
+import { onBeforeMount, onMounted, Ref, ref } from 'vue';
 import apiService from '@/services/ApiService';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
-import type {ContainerResponse, ContainerWithProductsResponse, ProductResponse} from '@sudosos/sudosos-client';
-import DataTable, {DataTableRowEditInitEvent, DataTableRowEditSaveEvent} from 'primevue/datatable';
+import type { ContainerResponse, ContainerWithProductsResponse, ProductResponse } from '@sudosos/sudosos-client';
+import DataTable, { DataTableRowEditInitEvent, DataTableRowEditSaveEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import { getProductImageSrc } from '@/utils/imageUtils';
-import {formatPrice} from "../utils/formatterUtils";
-import {FilterMatchMode} from "primevue/api";
+import { formatPrice } from "../utils/formatterUtils";
+import { FilterMatchMode } from "primevue/api";
 import InputText from "primevue/inputtext";
 import ProductModalComponent from "@/components/ProductCreateComponent.vue";
 import Dropdown from "primevue/dropdown";
-import {BaseVatGroupResponse, ProductCategoryResponse} from "@sudosos/sudosos-client";
+import { BaseVatGroupResponse, ProductCategoryResponse } from "@sudosos/sudosos-client";
 
 import ContainerCardComponent from "@/components/ContainerCardComponent.vue";
 
@@ -171,7 +171,7 @@ onMounted(async () => {
       console.log(res);
       containers.value.push(res.data as ContainerWithProductsResponse);
     }));
-    console.error(containers.value)
+    console.error(containers.value);
   });
 });
 
