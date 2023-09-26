@@ -8,7 +8,8 @@ import {
   UserResponse, UpdateNfcRequest
 } from "@sudosos/sudosos-client";
 import { useUserStore } from "./user.store";
-import {ApiService, clearTokenInStorage, setTokenInStorage} from "../services/ApiService";
+import jwtDecode, {JwtPayload} from "jwt-decode";
+import { ApiService, clearTokenInStorage, getTokenFromStorage, setTokenInStorage } from "../services/ApiService";
 
 interface AuthStoreState {
   user: UserResponse | null,
@@ -139,13 +140,22 @@ export const useAuthStore = defineStore({
       if (!this.user) return;
       return (await service.user.updateUserKey(this.user.id)).data
     },
+    extractStateFromToken() {
+      const token = getTokenFromStorage();
+      if (!token.token) return;
+      const decoded = jwtDecode<JwtPayload>(token.token) as AuthStoreState;
+      this.user = decoded.user;
+      this.roles = decoded.roles;
+      this.token = token.token;
+      this.organs = decoded.organs;
+      this.acceptedToS = decoded.acceptedToS;
+    },
     logout() {
       this.user = null;
       this.roles = [];
       this.token = null;
       this.organs = [];
       this.acceptedToS = null;
-      this.user = null;
 
       clearTokenInStorage();
     }

@@ -24,6 +24,7 @@ export declare const useAuthStore: import("pinia").StoreDefinition<"auth", AuthS
     updateUserLocalPassword(password: string, service: ApiService): Promise<void>;
     updateUserNfc(nfcCode: string, service: ApiService): Promise<void>;
     updateUserKey(service: ApiService): Promise<import("@sudosos/sudosos-client").UpdateKeyResponse | undefined>;
+    extractStateFromToken(): void;
     logout(): void;
 }>;
 export {};

@@ -1,6 +1,12 @@
 import { AuthenticateApi, BalanceApi, BannersApi, BorrelkaartgroupsApi, ContainersApi, FilesApi, InvoicesApi, PayoutRequestsApi, PointofsaleApi, ProductCategoriesApi, ProductsApi, RbacApi, RootApi, StripeApi, TransactionsApi, TransfersApi, UsersApi, VatGroupsApi } from '@sudosos/sudosos-client';
+type Token = {
+    token: string;
+    expires: string;
+};
 export declare function clearTokenInStorage(): void;
+export declare function parseToken(rawToken: string): Token;
 export declare function setTokenInStorage(jwtToken: string): void;
+export declare function getTokenFromStorage(): Token;
 export declare class ApiService {
     private readonly _authenticateApi;
     private readonly _balanceApi;
@@ -21,6 +27,10 @@ export declare class ApiService {
     private readonly _stripeApi;
     private readonly _rbacApi;
     private readonly _openBannerApi;
+    /**
+     * Returns True if there is a token in the LocalStorage and if it hasn't expired yet.
+     */
+    isAuthenticated(): boolean;
     constructor(basePath: string);
     get authenticate(): AuthenticateApi;
     get balance(): BalanceApi;
@@ -42,3 +52,4 @@ export declare class ApiService {
     get user(): UsersApi;
     get openBanner(): BannersApi;
 }
+export {};

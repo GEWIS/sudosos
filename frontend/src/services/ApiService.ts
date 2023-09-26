@@ -23,6 +23,8 @@ import jwtDecode, { JwtPayload } from 'jwt-decode';
 import axios, {AxiosHeaders, AxiosInstance} from "axios";
 import {AxiosResponse} from "axios";
 
+type Token = {token: string, expires: string};
+
 // Create an axios instance
 const axiosInstance: AxiosInstance = axios.create();
 
@@ -32,21 +34,31 @@ function updateTokenIfNecessary(response: AxiosResponse) {
         if (newToken) setTokenInStorage(newToken);
     }
 }
-
 export function clearTokenInStorage() {
-    localStorage.removeItem('jwt_expires');
-    localStorage.removeItem('jwt_token');
+    localStorage.clear();
+}
+export function parseToken(rawToken: string): Token {
+    const expires = String(jwtDecode<JwtPayload>(rawToken).exp);
+    return { token: rawToken, expires };
 }
 export function setTokenInStorage(jwtToken: string) {
-    localStorage.setItem('jwt_expires', String(Number(jwtDecode<JwtPayload>(jwtToken).exp) * 1000));
-    localStorage.setItem('jwt_token', jwtToken);
+    localStorage.setItem('jwt_token', JSON.stringify(parseToken(jwtToken)));
 }
 
-function getTokenFromStorage(): { jwtToken: string, jwtExpires: string} {
+export function getTokenFromStorage(): Token {
+    const rawToken = localStorage.getItem('jwt_token') as string;
+    let token = {} as Token;
+    if (rawToken !== null) token = JSON.parse(rawToken);
+
     return {
-        jwtToken: localStorage.getItem('jwt_token')!!,
-        jwtExpires: localStorage.getItem('jwt_expires')!!,
+        ...token,
     };
+}
+
+function isTokenExpired(tokenEpochTimestamp: number): boolean {
+    const tokenExpirationTime = tokenEpochTimestamp * 1000;
+    const currentTimestamp = new Date().getTime();
+    return currentTimestamp > tokenExpirationTime;
 }
 
 // Add a response interceptor to the axios instance
@@ -95,10 +107,18 @@ export class ApiService {
 
     private readonly _openBannerApi: BannersApi;
 
+    /**
+     * Returns True if there is a token in the LocalStorage and if it hasn't expired yet.
+     */
+    public isAuthenticated(): boolean {
+        const token = getTokenFromStorage();
+        if (!token.token || !token.expires) return false;
+        return !isTokenExpired(Number(token.expires));
+    }
 
     constructor(basePath: string) {
         const withKeyConfiguration = new Configuration({
-            apiKey: () => `Bearer ${getTokenFromStorage().jwtToken}`,
+            apiKey: () => `Bearer ${getTokenFromStorage().token}`,
         });
 
         this._authenticateApi = new AuthenticateApi(undefined, basePath, axiosInstance);
