@@ -9,7 +9,7 @@
         }}</Button
       >
       <hr />
-      <form id="login-form" @submit="ldapLogin">
+      <form id="login-form" @currentsubmit="ldapLogin">
         <!--      TODO: Form validation with vee-validate -->
         <label for="username">{{ $t('login.Username') }}</label>
         <InputText
@@ -35,13 +35,13 @@
 
 <script setup lang="ts">
 import CopyrightBanner from "@/components/CopyrightBanner.vue";
-import {onBeforeMount} from "vue";
-import {useUserStore, useAuthStore} from "@sudosos/sudosos-frontend-common";
-import apiService from "@/services/ApiService"
-import {useRoute} from "vue-router";
-import { v4 as uuid } from 'uuid'
+import { onBeforeMount } from "vue";
+import { useUserStore, useAuthStore } from "@sudosos/sudosos-frontend-common";
+import apiService from "@/services/ApiService";
+import { useRoute } from "vue-router";
+import { v4 as uuid } from 'uuid';
 import router from "@/router";
-import {useForm} from "vee-validate";
+import { useForm } from "vee-validate";
 import * as yup from 'yup';
 import { toTypedSchema } from '@vee-validate/yup';
 
