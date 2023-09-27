@@ -1,5 +1,8 @@
 <template>
   <Panel :header="header.toUpperCase()" class="card">
+    <template #icons>
+      <slot name="topAction" />
+    </template>
     <slot />
     <template v-if="action" #footer>
       <Button severity="secondary" id="bottom-left-button" @click="handleClick">{{ action.toUpperCase() }}</Button>
@@ -9,7 +12,7 @@
 
 <script setup lang="ts">
 // TODO: Clean up all the fucking important statements
-import {useRouter} from "vue-router";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
   header: {
@@ -28,7 +31,7 @@ const props = defineProps({
     type: Function,
     required: false,
   },
-})
+});
 
 const router = useRouter();
 const handleClick = () => {
@@ -39,7 +42,7 @@ const handleClick = () => {
     // If routerLink is not defined and func is provided, execute the func
     props.func();
   }
-}
+};
 </script>
 
 <style scoped>
@@ -60,8 +63,8 @@ const handleClick = () => {
   color: #d40000!important;
   font-family: Lato,Arial,sans-serif!important;
   font-weight: 400;
-  padding-top: 1rem;
-  padding-bottom: 2rem;
+  padding-top: 0!important;
+  padding-bottom: 0!important;
   background-color: #f8f8f8!important;
 }
 
@@ -76,5 +79,9 @@ const handleClick = () => {
 
 .card {
   color: #d40000!important;
+}
+
+:deep(.p-panel-header .p-panel-title){
+  padding: 1.25rem 0;
 }
 </style>

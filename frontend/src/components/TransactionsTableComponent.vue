@@ -1,8 +1,8 @@
 <template>
 <CardComponent :action="action" :header="header" :router-link="routerLink">
   <DataTable :value="products" tableStyle="min-width: 50rem">
-    <Column field="when" header="When"></Column>
-    <Column field="what" header="What"></Column>
+    <Column field="when" :header="$t('c_recentTransactionsTable.when')" />
+    <Column field="what" :header="$t('c_recentTransactionsTable.what')" />
   </DataTable>
 </CardComponent>
 </template>
@@ -11,13 +11,13 @@
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import CardComponent from "@/components/CardComponent.vue";
-import type {PaginatedFinancialMutationResponse} from "@sudosos/sudosos-client";
-import {onMounted, ref} from "vue";
+import type { PaginatedFinancialMutationResponse } from "@sudosos/sudosos-client";
+import { onMounted, ref } from "vue";
 
-const props = defineProps({
+defineProps({
   action: {
     type: String,
-    required: true,
+    required: false,
   },
   header: {
     type: String,
@@ -35,13 +35,13 @@ const props = defineProps({
     type: Boolean,
     required: false,
   }
-})
+});
 onMounted(()=> {
   products.value = [
-    {when: '19-07-2023 - 14:06', what: 'You spent a total of €87.50'},
-    {when: '03-06-2023 - 11:31', what: 'You spent a total of €3.50'},
-    {when: '02-06-2023 - 20:28', what: 'You spent a total of €2.20'},
-  ]
+    { when: '19-07-2023 - 14:06', what: 'You spent a total of €87.50' },
+    { when: '03-06-2023 - 11:31', what: 'You spent a total of €3.50' },
+    { when: '02-06-2023 - 20:28', what: 'You spent a total of €2.20' },
+  ];
 });
 const products = ref();
 

@@ -4,7 +4,10 @@
     <nav>
       <Menubar :model="leftItems" >
         <template #start>
-          <router-link to="/" id="sudosos">SudoSOS<img id="logo" src="../assets/img/gewis-branding.svg" /></router-link>
+          <router-link to="/" id="sudosos">
+            {{ $t("login.SudoSOS") }}
+            <img id="logo" src="../assets/img/gewis-branding.svg" alt="SudoSOS" />
+          </router-link>
 
         </template>
       </Menubar>
@@ -18,9 +21,9 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref} from "vue";
-import {useAuthStore, useUserStore} from "@sudosos/sudosos-frontend-common";
-import {useRouter} from "vue-router";
+import { computed, ref } from "vue";
+import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
+import { useRouter } from "vue-router";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
@@ -37,10 +40,9 @@ const firstName = computed((): string | undefined => {
 });
 
 const handleLogout = () => {
-  console.error(true)
   authStore.logout();
   router.push('/');
-}
+};
 // TODO: Style the hovering of buttons
 const leftItems = ref([ // TODO: Implement Submenus
   {
@@ -48,16 +50,18 @@ const leftItems = ref([ // TODO: Implement Submenus
   },
   {
     label: 'Balance',
-    to: 'balance',
+    to: '/balance',
   },
   {
     label: 'Points of Sale',
     items: [
       {
         label: 'POS Overview',
+        to: '/point-of-sale/overview',
       },
       {
-        label: 'Create',
+        label: 'Create POS',
+        to: '/point-of-sale/request'
       }
     ]
   },
@@ -79,23 +83,22 @@ const leftItems = ref([ // TODO: Implement Submenus
     label: 'BAC', // TODO: Implement RBAC Determination for permissions
     items: [
       {
-        label: 'Manage POS',
-      },
-      {
         label: 'User Overview',
+        to: '/user-overview',
       },
       {
         label: 'Flagged Transactions',
       },
       {
         label: 'Manage Products',
+        to: '/manage-products',
       },
       {
         label: 'Social Drink Cards',
       }
     ]
   },
-    ])
+    ]);
 
 const rightItems = ref([
   {
@@ -125,7 +128,7 @@ const rightItems = ref([
       },
     ]
   },
-])
+]);
 
 </script>
 
@@ -197,20 +200,24 @@ nav {
   background-color: transparent;
 }
 
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover .p-menuitem-link .p-menuitem-text){
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) >
+ .p-menuitem-content:hover .p-menuitem-link .p-menuitem-text){
   color: hsla(0,0%,100%,.5)!important;
 }
 
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content .p-menuitem-link .p-menuitem-text) {
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) >
+ .p-menuitem-content .p-menuitem-link .p-menuitem-text) {
   transition: color .2s linear;
 }
 
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover .p-menuitem-link svg){
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) >
+ .p-menuitem-content:hover .p-menuitem-link svg){
   color: hsla(0,0%,100%,.5)!important;
 
 }
 
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content .p-menuitem-link svg){
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) >
+ .p-menuitem-content .p-menuitem-link svg){
   transition: color .2s linear;
 }
 
@@ -218,7 +225,8 @@ nav {
   background-color: transparent;
 }
 
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content .p-menuitem-link .p-menuitem-text){
+:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus >
+ .p-menuitem-content .p-menuitem-link .p-menuitem-text){
   color: hsla(0,0%,100%,.5)!important;
 }
 
@@ -239,7 +247,8 @@ nav {
   background-color: lightgray;
 }
 
-:deep(.p-menubar .p-menubar-root-list .p-menuitem-active .p-submenu-list > .p-menuitem > .p-menuitem-content:hover .p-menuitem-link .p-menuitem-text){
+:deep(.p-menubar .p-menubar-root-list .p-menuitem-active .p-submenu-list >
+ .p-menuitem > .p-menuitem-content:hover .p-menuitem-link .p-menuitem-text){
   color: black!important;
 }
 
