@@ -8,8 +8,9 @@ import {
   UserResponse, UpdateNfcRequest
 } from "@sudosos/sudosos-client";
 import { useUserStore } from "./user.store";
-import jwtDecode, {JwtPayload} from "jwt-decode";
-import { ApiService, clearTokenInStorage, getTokenFromStorage, setTokenInStorage } from "../services/ApiService";
+import jwtDecode, { JwtPayload } from "jwt-decode";
+import { ApiService } from "../services/ApiService";
+import { clearTokenInStorage, getTokenFromStorage, setTokenInStorage } from "../helpers/TokenHelper";
 
 interface AuthStoreState {
   user: UserResponse | null,

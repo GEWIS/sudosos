@@ -1,6 +1,6 @@
 import { createPinia, defineStore } from 'pinia';
 import {
-  BalanceResponse, FinancialMutationResponse, PaginatedFinancialMutationResponse,
+  BalanceResponse, PaginatedFinancialMutationResponse,
   UserResponse
 } from "@sudosos/sudosos-client";
 import { ApiService } from "../services/ApiService";

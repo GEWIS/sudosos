@@ -19,47 +19,12 @@ import {
     UsersApi,
     VatGroupsApi,
 } from '@sudosos/sudosos-client';
-import jwtDecode, { JwtPayload } from 'jwt-decode';
-import axios, {AxiosHeaders, AxiosInstance} from "axios";
-import {AxiosResponse} from "axios";
-
-type Token = {token: string, expires: string};
+import axios, { AxiosInstance } from "axios";
+import { AxiosResponse } from "axios";
+import { getTokenFromStorage, updateTokenIfNecessary } from "../helpers/TokenHelper";
 
 // Create an axios instance
 const axiosInstance: AxiosInstance = axios.create();
-
-function updateTokenIfNecessary(response: AxiosResponse) {
-    if ((response.headers as AxiosHeaders).has('Set-Authorization')) {
-        const newToken = (response.headers as AxiosHeaders).get('Set-Authorization') as string;
-        if (newToken) setTokenInStorage(newToken);
-    }
-}
-export function clearTokenInStorage() {
-    localStorage.clear();
-}
-export function parseToken(rawToken: string): Token {
-    const expires = String(jwtDecode<JwtPayload>(rawToken).exp);
-    return { token: rawToken, expires };
-}
-export function setTokenInStorage(jwtToken: string) {
-    localStorage.setItem('jwt_token', JSON.stringify(parseToken(jwtToken)));
-}
-
-export function getTokenFromStorage(): Token {
-    const rawToken = localStorage.getItem('jwt_token') as string;
-    let token = {} as Token;
-    if (rawToken !== null) token = JSON.parse(rawToken);
-
-    return {
-        ...token,
-    };
-}
-
-function isTokenExpired(tokenEpochTimestamp: number): boolean {
-    const tokenExpirationTime = tokenEpochTimestamp * 1000;
-    const currentTimestamp = new Date().getTime();
-    return currentTimestamp > tokenExpirationTime;
-}
 
 // Add a response interceptor to the axios instance
 axiosInstance.interceptors.response.use((response: AxiosResponse) => {
@@ -106,15 +71,6 @@ export class ApiService {
     private readonly _rbacApi: RbacApi;
 
     private readonly _openBannerApi: BannersApi;
-
-    /**
-     * Returns True if there is a token in the LocalStorage and if it hasn't expired yet.
-     */
-    public isAuthenticated(): boolean {
-        const token = getTokenFromStorage();
-        if (!token.token || !token.expires) return false;
-        return !isTokenExpired(Number(token.expires));
-    }
 
     constructor(basePath: string) {
         const withKeyConfiguration = new Configuration({
