@@ -3,7 +3,11 @@
     <div class="page-title">{{ $t('home.Overview') }}</div>
     <div class="content-wrapper">
       <BalanceComponent class="balance-component" :showOption="true"/>
-      <TransactionsTableComponent class="transactions-table" :header="$t('c_recentTransactionsTable.recent transactions')" :action="$t('c_recentTransactionsTable.all transactions')"/>
+      <TransactionsTableComponent
+          class="transactions-table"
+          :header="$t('c_recentTransactionsTable.recent transactions')"
+          :action="$t('c_recentTransactionsTable.all transactions')"
+      />
     </div>
   </div>
 </template>

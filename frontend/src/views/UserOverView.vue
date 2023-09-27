@@ -56,7 +56,13 @@
         </template>
       </Column>
     </DataTable>
-    <Dialog v-model:visible="visible" modal :header="$t('c_userTable.Create User')" :style="{ width: '50vw' }" @after-hide="resetForm">
+    <Dialog
+        v-model:visible="visible"
+        modal
+        :header="$t('c_userTable.Create User')"
+        :style="{ width: '50vw' }"
+        @after-hide="resetForm"
+    >
       <form @submit="handleCreateUser">
         <div class="form-row">
           <label for="first-name">{{ $t('c_userTable.firstName') }}</label>
@@ -114,7 +120,7 @@ import { useForm } from "vee-validate";
 
 const userStore = useUserStore();
 
-const { defineComponentBinds, handleSubmit, errors, setValues, resetForm } = useForm({
+const { defineComponentBinds, handleSubmit, errors, resetForm } = useForm({
   validationSchema: userDetailsSchema,
 });
 

@@ -3,7 +3,12 @@
     <div class="page-title">{{ $t('c_currentSaldo.saldo') }}</div>
     <TopupModal v-model:visible="visible" :amount="amountValue"/>
     <div class="content-wrapper">
-      <CardComponent :action="$t('c_currentSaldo.startPayment')" :header="$t('c_currentSaldo.Increase Saldo')" class="increase-saldo-card" :func="showDialog">
+      <CardComponent
+          :action="$t('c_currentSaldo.startPayment')"
+          :header="$t('c_currentSaldo.Increase Saldo')"
+          class="increase-saldo-card"
+          :func="showDialog"
+      >
         <p id="cash-notice">{{ $t('c_currentSaldo.cashtopup') }}</p>
         <div id="balance-increase-form">
           <p id="balance-increase-title">{{ $t('c_currentSaldo.increase') }}</p>
