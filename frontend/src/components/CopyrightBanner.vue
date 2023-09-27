@@ -3,8 +3,8 @@
   <span class="copyright">
     <b>{{ $t('login.copyright') }}</b>
   </span>
-  <span class="separator">{{$t("login.separator")}}</span>
-  <a id="tos" href="https://wieditleesttrekteenbak.nl/">{{$t('termsOfService.termsOfService')}}</a>
+  <span class="separator"> | </span>
+  <a id="tos" href="https://wieditleesttrekteenbak.com/">{{$t('termsOfService.termsOfService')}}</a>
 </footer>
 </template>
 

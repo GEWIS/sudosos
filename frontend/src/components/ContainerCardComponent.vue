@@ -1,7 +1,7 @@
 <template>
   <div class="container-overview">
     <TabView :active-index=1>
-      <TabPanel header="containers" :disabled="true" />
+      <TabPanel :header="$t('containersOverview.Containers')" :disabled="true" />
       <TabPanel v-for="container in containers" :key="container.id" :header="container.name">
         <ScrollPanel style="height: 20rem;">
           <ProductGridComponent :products="container.products" v-if="container.products.length !== 0"/>

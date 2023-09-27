@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:visible="visible" header="Add Product">
+  <Dialog v-model:visible="visible" :header="$t('manageProducts.Add product')">
     <div class="dialog">
       <form @submit="handleProductCreate">
         <div class="row">

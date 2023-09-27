@@ -1,6 +1,6 @@
 <template>
   <Dialog v-model:visible="visible" modal header="Increase Saldo" :style="{ width: '50vw' }">
-    <p>{{$t('c_currentSaldo.topup') + amount }}</p>
+    <p>{{$t('c_currentSaldo.topup', [amount.toString()]) }}</p>
     <form ref="payment" id="payment-form" v-show="!loading">
       <div id="payment-element">
         <!--Stripe.js injects the Payment Element-->
@@ -14,7 +14,6 @@
   </Dialog>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
 
 defineProps({
   amount: {

@@ -53,8 +53,4 @@ defineProps({
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-.card {
-
-}
 </style>

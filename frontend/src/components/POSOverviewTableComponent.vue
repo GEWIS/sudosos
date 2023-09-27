@@ -1,5 +1,5 @@
 <template>
-  <CardComponent header="Points of Sale">
+  <CardComponent :header="$t('app.Points of Sale')">
     <DataTable :value="listOfPOS">
       <Column field="name" header="Title"/>
       <Column field="owner.firstName" header="Owner"/>
