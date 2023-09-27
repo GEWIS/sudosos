@@ -5,7 +5,7 @@
     <div class="content-wrapper">
 <!--      TODO: Refactor to extract this component-->
       <div class="row">
-        <CardComponent header="Personal Info" class="personal-info-card">
+        <CardComponent :header="$t('userDetails.Personal Info')" class="personal-info-card">
           <form @submit="handleEditUser">
             <label for="firstName">{{ $t('userDetails.First name') }}</label>
             <InputText id="firstName" v-bind="firstName" />
@@ -25,14 +25,13 @@
             <span class="error-text">{{ errors.userType }}</span>
             <label for="active">{{ $t('userDetails.Active') }}</label>
             <Checkbox :binary="true" id="active" v-bind="isActive" />
-<!--            TODO: Fix this actually working-->
             <Button type="submit" severity="danger">{{ $t('userDetails.Update information') }}</Button>
           </form>
         </CardComponent>
         <BalanceComponent :user="currentUser" :showOption="false" id="userBalance"/>
       </div>
       <div class="row">
-        <TransactionsTableComponent header="User Transactions" action="none" style="width: 100%;"/>
+        <TransactionsTableComponent :header="$t('userDetails.User Transactions')" action="none" style="width: 100%;"/>
       </div>
     </div>
   </div>

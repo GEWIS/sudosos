@@ -13,8 +13,7 @@
           </span>
           <div class="general-info-block">
             <b>{{ $t("c_POSCreate.Owner") }}</b>
-            <p>{{ pos ? (pos.owner ? pos.owner.firstName + pos.owner.lastName : "") : "" }}</p></div>
-<!--          TODO: Clean-up whatever the fuck is that above-->
+            <p>{{ posDisplayName }}</p></div>
           <div>
             <span class="general-info-block" style="flex-direction: row;">
               <Checkbox v-model="useAuthentication"
@@ -51,7 +50,7 @@
 
 <script setup lang="ts">
 
-import { onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 import type { Ref } from "vue";
 import { useContainerStore } from "@/stores/container.store";
 import DetailedContainerCardComponent from "@/components/DetailedContainerCardComponent.vue";
@@ -77,6 +76,11 @@ const id = ref();
 const route = useRoute();
 const pos: Ref<PointOfSaleWithContainersResponse | null | undefined> = ref();
 const selectedOwner: Ref<BaseUserResponse | undefined> = ref();
+
+const posDisplayName = computed(() => {
+  if (!pos.value || !pos.value.owner) return "";
+  return pos.value.owner.firstName + pos.value.owner.lastName;
+});
 
 onBeforeMount(async () => {
 

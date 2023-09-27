@@ -261,7 +261,9 @@
     "topup": "You will be topping up with €{amount}",
     "cashtopup": "It is no longer possible to increase your balance in cash during the 'borrel'",
     "increase": "Balance increase amount:",
-    "currency": "€"
+    "currency": "€",
+    "startPayment": "Start Payment",
+    "Increase Saldo": "Increase Saldo"
   },
   "c_recentTransactionsTable": {
     "recent transactions": "recent transactions",
@@ -492,11 +494,13 @@
     "New pin code must be unique from old pin code": "New pin code must be unique from old pin code",
     "Confirmation does not match pin code": "Confirmation does not match pin code",
     "Usertype": "Usertype",
-    "Update information": "Update information"
+    "Update information": "Update information",
+    "Personal Info": "Personal Info",
+    "User Transactions": "User Transactions"
   },
   "c_userTable": {
-    "firstName": "firstName",
-    "lastName": "lastName",
+    "firstName": "First Name",
+    "lastName": "Last Name",
     "gewisID": "GEWIS ID",
     "Active": "Active",
     "Filter by name": "Filter by name or ID",

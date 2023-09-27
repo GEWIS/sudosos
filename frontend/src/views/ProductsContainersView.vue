@@ -27,21 +27,21 @@
               </span>
             </div>
           </template>
-          <Column field="image" header="Image" style="width: fit-content">
+          <Column field="image" :header="$t('c_productEditModal.Image')" style="width: fit-content">
             <template #body="rowData">
               <img class="product-image" :src="getProductImageSrc(rowData.data)" alt="img" />
             </template>
           </Column>
-          <Column field="name" header="Name">
+          <Column field="name" :header="$t('c_productEditModal.Name')">
             <template #editor="{ data, field }">
               <InputText v-model="data[field]" style="width: 100%" />
             </template>
           </Column>
-          <Column field="category" header="Category" style="width: 20%">
+          <Column field="category" :header="$t('c_productEditModal.Category')" style="width: 20%">
             <template #editor="{ data, field }">
               <Dropdown
                 style="width: 100%"
-                placeholder="Please select a product category"
+                :placeholder="$t('c_productEditModal.Please select')"
                 optionLabel="name"
                 :options="categories"
                 v-model="data[field]"
@@ -55,7 +55,7 @@
               {{ rowData.data.category.name }}
             </template>
           </Column>
-          <Column field="priceInclVat" header="Price">
+          <Column field="priceInclVat" :header="$t('c_productEditModal.Price')">
             <template #editor="{ data }">
               <InputNumber
                 v-model="data['editPrice']"
@@ -70,7 +70,7 @@
               {{ formatPrice(rowData.data.priceInclVat.amount) }}
             </template>
           </Column>
-          <Column field="alcoholPercentage" header="Alcohol %">
+          <Column field="alcoholPercentage" :header="$t('c_productEditModal.Alcohol Percentage')">
             <template #editor="{ data, field }">
               <InputNumber v-model="data[field]" suffix="%" style="width: 100%" />
             </template>
@@ -78,14 +78,14 @@
               {{ `${rowData.data.alcoholPercentage} %` }}
             </template>
           </Column>
-          <Column field="vat" header="VAT">
+          <Column field="vat" :header="$t('c_productEditModal.VAT')">
             <template #editor="{ data, field }">
               <Dropdown
-                placeholder="Please select a VAT group"
-                :options="vatGroups"
-                optionLabel="percentage"
-                v-model="data[field]"
-                style="width: 100%"
+                  :placeholder="$t('c_productEditModal.Please select VAT')"
+                  :options="vatGroups"
+                  optionLabel="percentage"
+                  v-model="data[field]"
+                  style="width: 100%"
               >
                 <template #value="slotProps"> {{ `${slotProps.value.percentage} %` }} </template>
               </Dropdown>

@@ -18,7 +18,7 @@
     >
       <template #header>
         <div class="usertable-header">
-          <span class="p-input-icon-left">
+          <span class="p-input-icon-left search-box">
             <i class="pi pi-search" />
             <InputText v-model="filters['global'].value" :placeholder="$t('app.Search')" />
           </span>
@@ -37,7 +37,7 @@
             v-model="filterModel.value"
             @change="filterCallback()"
             :options="userTypes"
-            :placeholder="$t('Select Type')"
+            :placeholder="$t('c_userTable.Select Type')"
           />
         </template>
       </Column>
@@ -56,36 +56,41 @@
         </template>
       </Column>
     </DataTable>
-    <Dialog v-model:visible="visible" modal :header="$t('c_userTable.Create User')" :style="{ width: '50vw' }">
+    <Dialog v-model:visible="visible" modal :header="$t('c_userTable.Create User')" :style="{ width: '50vw' }" @after-hide="resetForm">
       <form @submit="handleCreateUser">
         <div class="form-row">
           <label for="first-name">{{ $t('c_userTable.firstName') }}</label>
-          <InputText v-bind="firstName" id="first-name" />
-          <span class="error-text">{{ errors.firstName }}</span>
+          <div class="input-container">
+            <InputText v-bind="firstName" id="first-name" />
+            <span class="error-text">{{ errors.firstName }}</span>
+          </div>
         </div>
         <div class="form-row">
           <label for="last-name">{{ $t('c_userTable.lastName') }}</label>
-          <InputText v-bind="lastName" id="last-name" />
-          <span class="error-text">{{ errors.lastName }}</span>
+          <div class="input-container">
+            <InputText v-bind="lastName" id="last-name"/>
+            <span class="error-text">{{ errors.lastName }}</span></div>
         </div>
         <div class="form-row">
           <label for="user-type">{{ $t('c_userTable.User Type') }}</label>
-          <Dropdown
-            v-bind="userType"
-            :options="userTypes"
-            :placeholder="$t('c_userTable.Select User Type')"
-            id="user-type"
-          />
-          <span class="error-text">{{ errors.userType }}</span>
+          <div class="input-container">
+            <Dropdown
+                v-bind="userType"
+                :options="userTypes"
+                :placeholder="$t('c_userTable.Select User Type')"
+                id="user-type"
+            />
+            <span class="error-text">{{ errors.userType }}</span></div>
         </div>
         <div class="form-row">
           <label for="email">{{ $t('profile.Email address') }}</label>
-          <InputText v-bind="email" id="email" />
-          <span class="error-text">{{ errors.email }}</span>
+          <div class="input-container">
+            <InputText v-bind="email" id="email"/>
+            <span class="error-text">{{ errors.email }}</span></div>
         </div>
         <div class="form-row" id="actions">
           <Button severity="danger" outlined @click="visible = false">{{ $t('c_confirmationModal.Cancel' )}}</Button>
-          <Button severity="danger" type="submit">{{ $t('c_confirmationModal.Save' )}}</Button>
+          <Button type="submit" severity="danger" >{{ $t('c_confirmationModal.Save' )}}</Button>
         </div>
       </form>
     </Dialog>
@@ -109,7 +114,7 @@ import { useForm } from "vee-validate";
 
 const userStore = useUserStore();
 
-const { defineComponentBinds, handleSubmit, errors } = useForm({
+const { defineComponentBinds, handleSubmit, errors, setValues, resetForm } = useForm({
   validationSchema: userDetailsSchema,
 });
 
@@ -124,10 +129,12 @@ const firstName = defineComponentBinds('firstName');
 const lastName = defineComponentBinds('lastName');
 const userType = defineComponentBinds('userType');
 const email = defineComponentBinds('email');
+
 const visible: Ref<boolean> = ref(false);
 const loading = ref(false);
 const totalRecords = ref(0);
 const allUsers: Ref<UserResponse[]> = ref([]);
+
 const userTypes = [
   'MEMBER',
   'ORGAN',
@@ -138,12 +145,19 @@ const userTypes = [
   'AUTOMATIC_INVOICE'
 ];
 
+onMounted(async () => {
+  await delayedAPICall(0);
+});
+
 const delayedAPICall = async (skip: number) => {
   let res = await apiService.user.getAllUsers(
     Number.MAX_SAFE_INTEGER,
     skip,
     filters.value.global.value || '',
-    true
+    true,
+      undefined,
+      undefined,
+      filters.value.type.value,
   );
   totalRecords.value = res.data._pagination.count || 0;
   allUsers.value = res.data.records;
@@ -166,11 +180,8 @@ watch(filters.value.global, () => {
   delayedAPICall(0);
 });
 
-onMounted(async () => {
-  await delayedAPICall(0);
-});
-
 const handleCreateUser = handleSubmit(async (values) => {
+  console.log(true);
   const createUserRequest: CreateUserRequest = {
     firstName: values.firstName,
     lastName: values.lastName,
@@ -184,6 +195,7 @@ const handleCreateUser = handleSubmit(async (values) => {
   } else {
     console.error(response.status + ": " + response.statusText);
   }
+  visible.value = false;
 });
 
 async function handleInfoPush(userId: number) {
@@ -264,6 +276,16 @@ form {
   min-width: 150px; /* Adjust the width of the label column */
 }
 
+.input-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.error-text {
+  color: red; /* Set the error text color to red */
+  margin-top: 4px; /* Add some space between the input and the error text */
+}
+
 #actions {
   justify-content: flex-end;
 
@@ -271,4 +293,9 @@ form {
     margin: 0 0.2rem;
   }
 }
+
+i {
+  margin-top: -0.5rem!important;
+}
+
 </style>

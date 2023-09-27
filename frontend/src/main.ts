@@ -40,7 +40,7 @@ app.use(PrimeVue);
 app.use(i18n);
 
 app.component('Button', Button);
-app.component('InputText', InputText);-
+app.component('InputText', InputText);
 app.component('Menubar', Menubar);
 app.component('Panel', Panel);
 app.component('DataTable', DataTable);

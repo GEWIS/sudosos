@@ -3,13 +3,13 @@
     <div class="page-title">{{ $t('c_currentSaldo.saldo') }}</div>
     <TopupModal v-model:visible="visible" :amount="amountValue"/>
     <div class="content-wrapper">
-      <CardComponent action="start payment" header="increase saldo" class="increase-saldo-card" :func="showDialog">
+      <CardComponent :action="$t('c_currentSaldo.startPayment')" :header="$t('c_currentSaldo.Increase Saldo')" class="increase-saldo-card" :func="showDialog">
         <p id="cash-notice">{{ $t('c_currentSaldo.cashtopup') }}</p>
         <div id="balance-increase-form">
           <p id="balance-increase-title">{{ $t('c_currentSaldo.increase') }}</p>
           <div class="p-inputgroup flex-1">
             <span class="p-inputgroup-addon">{{ $t('c_currentSaldo.currency') }}</span>
-            <InputNumber v-model="amountValue" placeholder="Price" inputId="amount"/>
+            <InputNumber v-model="amountValue" :placeholder="$t('c_productInfoModal.Price')" inputId="amount"/>
           </div>
         </div>
       </CardComponent>

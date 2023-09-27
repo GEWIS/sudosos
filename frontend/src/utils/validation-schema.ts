@@ -7,6 +7,6 @@ export const userDetailsSchema = toTypedSchema(
         lastName: yup.string().required(),
         email: yup.string().email(),
         userType: yup.string().required(),
-        isActive: yup.boolean().required(),
+        isActive: yup.boolean().required().default(true),
     })
 );

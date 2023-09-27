@@ -9,7 +9,7 @@
         }}</Button
       >
       <hr />
-      <form id="login-form" @currentsubmit="ldapLogin">
+      <form id="login-form" @submit.prevent="ldapLogin">
         <!--      TODO: Form validation with vee-validate -->
         <label for="username">{{ $t('login.Username') }}</label>
         <InputText
@@ -74,6 +74,7 @@ const ldapLogin = async (event: Event) => {
   event.preventDefault();
   if (!values.username || !values.password) return;
   await authStore.gewisLdapLogin(values.username, values.password, apiService).then(() => {
+    console.error("loggedin");
     if (authStore.getUser) userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
     router.push({ name: 'home' });
   }).catch((error) => {

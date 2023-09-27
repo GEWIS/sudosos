@@ -1,8 +1,8 @@
 <template>
 <CardComponent :action="action" :header="header" :router-link="routerLink">
   <DataTable :value="products" tableStyle="min-width: 50rem">
-    <Column field="when" header="When" />
-    <Column field="what" header="What" />
+    <Column field="when" :header="$t('c_recentTransactionsTable.when')" />
+    <Column field="what" :header="$t('c_recentTransactionsTable.what')" />
   </DataTable>
 </CardComponent>
 </template>
