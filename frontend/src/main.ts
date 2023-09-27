@@ -24,6 +24,7 @@ import Checkbox from "primevue/checkbox";
 import TabView from "primevue/tabview";
 import ScrollPanel from "primevue/scrollpanel";
 import FileUpload from "primevue/fileupload";
+import { populateStoresFromToken } from "@/helper/ApiHelper";
 
 const app = createApp(App);
 
@@ -51,4 +52,5 @@ app.component('TabView', TabView);
 app.component('ScrollPanel', ScrollPanel);
 app.component('FileUpload', FileUpload);
 app.component('InputNumber', InputNumber);
+populateStoresFromToken();
 app.mount('#app');
