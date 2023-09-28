@@ -1,4 +1,4 @@
-import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
+import { clearTokenInStorage, useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
 import { useCartStore } from '@/stores/cart.store';
 import router from '@/router';
 
@@ -10,5 +10,6 @@ export async function logoutService() {
   authStore.$reset();
   cartStore.$reset();
   userStore.clearCurrent();
+  clearTokenInStorage();
   await router.push({ name: 'login' });
 }

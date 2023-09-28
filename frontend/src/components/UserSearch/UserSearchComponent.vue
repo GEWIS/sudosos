@@ -12,8 +12,11 @@
         </div>
       </div>
     </div>
-    <div class="flex-column gap-sm-3">
-      <UserSearchRowComponent v-for="user in sortedUsers" :user="user" :key="user.id" @click="selectUser(user)"/>
+    <div class="flex-column gap-sm-3 pe-3">
+      <ScrollPanel class="custombar" style="width: 100%; height: 20rem;">
+        <UserSearchRowComponent v-for="user in sortedUsers" :user="user" :key="user.id"
+                                @click="selectUser(user)"/>
+      </ScrollPanel>
     </div>
   </div>
 </template>
@@ -29,6 +32,7 @@ import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import { debounce } from 'lodash';
 import type { AxiosResponse } from 'axios';
 import { useSettingStore } from "@/stores/settings.store";
+import ScrollPanel from "primevue/scrollpanel";
 
 const searchQuery = ref<string>('');
 
@@ -69,11 +73,12 @@ watch(searchQuery, () => {
 });
 
 const sortedUsers = computed(() => {
-  const filteredUsers = [...users.value].filter((user) => ["MEMBER", "LOCAL_USER", "LOCAL_ADMIN", "INVOICE", "AUTOMATIC_INVOICE"].includes(user.type));
+  const filteredUsers = [...users.value].filter((user) => ["MEMBER", "LOCAL_USER", "LOCAL_ADMIN",
+    "INVOICE", "AUTOMATIC_INVOICE"].includes(user.type));
   const sortedOnId = filteredUsers.sort((a, b) => b.id - a.id);
   const validUsers = sortedOnId.filter(user => user.active && user.acceptedToS !== "NOT_ACCEPTED");
   const invalidUsers = sortedOnId.filter(user => !user.active || user.acceptedToS === "NOT_ACCEPTED");
-  return [...validUsers, ...invalidUsers].slice(0, 10);
+  return [...validUsers, ...invalidUsers];
 });
 
 const searchInput = ref<null | HTMLInputElement>(null);
@@ -102,4 +107,17 @@ const cancelSearch = () => {
 </script>
 
 <style scoped lang="scss">
+::v-deep(.p-scrollpanel.custombar .p-scrollpanel-wrapper) {
+  border-right: 10px solid var(--surface-ground);
+}
+
+::v-deep(.p-scrollpanel.custombar .p-scrollpanel-bar) {
+  background-color: var(--primary-300);
+  opacity: 1;
+  transition: background-color 0.3s;
+}
+
+::v-deep(.p-scrollpanel.custombar .p-scrollpanel-bar:hover) {
+  background-color: var(--primary-400);
+}
 </style>
