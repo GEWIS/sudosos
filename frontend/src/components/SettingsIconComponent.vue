@@ -19,6 +19,14 @@
             {{slotProps.option.name}}
           </template>
         </Dropdown>
+        <div class="mt-2">
+          <button
+            class="c-btn rounded active p-2 fw-medium fs-6"
+            @click="forceExit"
+          >
+            Force logout and exit POS
+          </button>
+        </div>
       </p>
     </div>
   </Dialog>
@@ -32,6 +40,8 @@ import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import { storeToRefs } from "pinia";
 import { PointOfSaleResponse } from "@sudosos/sudosos-client";
 import { PointOfSaleSwitchService } from "@/services/PointOfSaleSwitchService";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { logoutService } from "@/services/logoutService";
 
 const visible = ref(false);
 const settings: Ref<null|any> = ref(null);
@@ -50,6 +60,11 @@ watch(selectedPos, () => {
   if (!target) return;
   PointOfSaleSwitchService.switchTo(target);
 });
+
+const forceExit = async () => {
+  usePointOfSaleStore().$reset();
+  await logoutService();
+};
 
 const openSettings = () => {
   visible.value = true;

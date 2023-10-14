@@ -46,12 +46,18 @@ enum PointOfSaleState {
 const currentState = ref(PointOfSaleState.DISPLAY_POS);
 
 const fetchPointOfSale = async () => {
-  await pointOfSaleStore.fetchPointOfSale(1);
-  if (pointOfSaleStore.pointOfSale) {
-    currentPos.value = pointOfSaleStore.pointOfSale;
-  }
-  posNotLoaded.value = false;
-  activityStore.restartTimer();
+  const storedPos = pointOfSaleStore.getPos;
+  const target = storedPos ? storedPos.id : 1;
+
+  await pointOfSaleStore.fetchPointOfSale(target).catch(async () => {
+    await pointOfSaleStore.fetchPointOfSale(1);
+  }).finally(() => {
+    if (pointOfSaleStore.pointOfSale) {
+      currentPos.value = pointOfSaleStore.pointOfSale;
+    }
+    posNotLoaded.value = false;
+    activityStore.restartTimer();
+  });
 };
 
 onMounted(fetchPointOfSale);
