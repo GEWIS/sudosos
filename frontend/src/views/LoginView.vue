@@ -26,7 +26,7 @@
           :placeholder="$t('login.Enter password')"
         />
         <Button type="submit" id="login-button" severity="danger">{{ $t('login.Login') }}</Button>
-        <a href="https://wieditleesttrekteenbak.nl/">{{ $t('login.Password reset') }}</a>
+        <div class="password-reset" @click="resetPassword">{{ $t('login.Password reset') }}</div>
       </form>
     </main>
     <CopyrightBanner />
@@ -84,6 +84,11 @@ const ldapLogin = async (event: Event) => {
 const loginViaGEWIS = () => {
   window.location.href = `https://gewis.nl/token/${import.meta.env.VITE_APP_GEWIS_TOKEN}`;
 };
+
+const resetPassword = () => {
+  router.push({ name: 'passwordreset' });
+};
+
 </script>
 
 <style scoped lang="scss">
@@ -144,5 +149,9 @@ hr {
 
 .p-inputtext {
   margin-bottom: 0.5rem;
+}
+.password-reset {
+  color: black;
+  text-decoration-line: underline;
 }
 </style>

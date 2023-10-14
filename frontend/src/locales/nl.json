@@ -12,7 +12,7 @@
     "Email": "Email",
     "Enter email": "Enter email",
     "Reset": "Reset password",
-    "Email sent": "If there exists an account on this email address, an email has been sent to {email} with instructions on how to reset your password.",
+    "Email sent": "If there exists an external account on this email address, an email has been sent to {email} with instructions on how to reset your password.",
     "Set new password": "Set new password",
     "New password": "New password",
     "Confirm password": "Confirm new password",
