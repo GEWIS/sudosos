@@ -23,10 +23,10 @@
         </span>
         <small v-if="passwordForm.errors.value.password" class="p-error"><i class="pi pi-exclamation-circle"/>{{ passwordForm.errors.value.password }}</small>
         <span class="p-float-label with-error">
-          <InputText v-bind="password2" id="password2" size="large" name="password" type="password" :class="{'p-invalid': passwordForm.errors.value.password2}"/>
-          <label :class="{'contains-text': password2.modelValue }" for="password2">{{ $t('login.Confirm password') }}</label>
+          <InputText v-bind="passwordConfirm" id="passwordConfirm" size="large" name="passwordConfirm" type="password" :class="{'p-invalid': passwordForm.errors.value.passwordConfirm}"/>
+          <label :class="{'contains-text': passwordConfirm.modelValue }" for="passwordConfirm">{{ $t('login.Confirm password') }}</label>
         </span>
-        <small v-if="passwordForm.errors.value.password2" class="p-error"><i class="pi pi-exclamation-circle"/>{{ passwordForm.errors.value.password2 }}</small>
+        <small v-if="passwordForm.errors.value.passwordConfirm" class="p-error"><i class="pi pi-exclamation-circle"/>{{ $t('login.Confirm password') }}</small>
         <Button type="submit" id="reset-button" severity="danger">{{ $t('login.Reset') }}</Button>
         <div class="backtologin" @click="backToLogin">{{ $t('login.Back to login') }}</div>
       </Form>
@@ -55,8 +55,8 @@ const emailSchema = toTypedSchema(
 
 const passwordSchema = toTypedSchema(
     yup.object({
-      password: yup.string().required(),
-      password2: yup.string().required(),
+      password: yup.string(),
+      passwordConfirm: yup.string().required(),
     })
 );
 
@@ -71,7 +71,7 @@ const passwordForm = useForm({
 const passwordResetMode = ref(0);
 const email = emailForm.defineComponentBinds('email');
 const password = passwordForm.defineComponentBinds('password');
-const password2 = passwordForm.defineComponentBinds('password2');
+const passwordConfirm = passwordForm.defineComponentBinds('passwordConfirm');
 
 const route = useRoute();
 
@@ -80,8 +80,6 @@ onBeforeMount(async () => {
     const token = route.query.token as string;
     const email = route.query.email as string;
     passwordResetMode.value = 2;
-    console.log(token);
-    console.log(email);
   }
 });
 
@@ -93,10 +91,6 @@ const resetPasswordRequest = emailForm.handleSubmit(async () => {
 });
 
 const setNewPassword = passwordForm.handleSubmit(async () => {
-  console.log(route.query.email);
-  console.log(route.query.token);
-  console.log(password.value.modelValue);
-
   await apiService.authenticate.resetLocalWithToken({
     accountMail: route.query.email as string,
     token: route.query.token as string,
@@ -114,7 +108,7 @@ const backToLogin = () => {
 </script>
 
 <style scoped lang="scss">
-//TODO Cleanup and fix
+//TODO Cleanup and fix, related to issue #14 and #25
 form {
   display: flex;
   flex-direction: column;
@@ -188,7 +182,7 @@ main {
   height: 60px;
 }
 
-#password2 {
+#passwordConfirm {
   width: 100%;
   padding-top: 18px;
   padding-left: 12px;
