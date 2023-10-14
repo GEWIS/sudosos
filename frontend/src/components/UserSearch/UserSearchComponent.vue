@@ -33,6 +33,7 @@ import { debounce } from 'lodash';
 import type { AxiosResponse } from 'axios';
 import { useSettingStore } from "@/stores/settings.store";
 import ScrollPanel from "primevue/scrollpanel";
+import Fuse from "fuse.js";
 
 const searchQuery = ref<string>('');
 
@@ -73,7 +74,21 @@ watch(searchQuery, () => {
 });
 
 const sortedUsers = computed(() => {
-  const filteredUsers = [...users.value].filter((user) => ["MEMBER", "LOCAL_USER", "LOCAL_ADMIN",
+  // TODO: fix backend searching
+  // This fuzzy search allows us to effectively search in the front-end, but this should be done in the backend.
+  const full = [...users.value].map((u: UserResponse) =>
+  { return { ...u, fullName: `${u.firstName} ${u.lastName}`  }; });
+  const fuzzed: UserResponse[] = new Fuse(
+    full,
+    {
+      keys: ['fullName', 'gewisID'],
+      isCaseSensitive: false,
+      shouldSort: true,
+      threshold: 0.2,
+    },
+  ).search(searchQuery.value).map((r) => r.item);
+
+  const filteredUsers = [...fuzzed].filter((user) => ["MEMBER", "LOCAL_USER", "LOCAL_ADMIN",
     "INVOICE", "AUTOMATIC_INVOICE"].includes(user.type));
   const sortedOnId = filteredUsers.sort((a, b) => b.id - a.id);
   const validUsers = sortedOnId.filter(user => user.active && user.acceptedToS !== "NOT_ACCEPTED");
