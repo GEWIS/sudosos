@@ -74,7 +74,6 @@ const ldapLogin = async (event: Event) => {
   event.preventDefault();
   if (!values.username || !values.password) return;
   await authStore.gewisLdapLogin(values.username, values.password, apiService).then(() => {
-    console.error("loggedin");
     if (authStore.getUser) userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
     router.push({ name: 'home' });
   }).catch((error) => {

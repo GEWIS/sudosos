@@ -187,7 +187,6 @@ watch(filters.value.global, () => {
 });
 
 const handleCreateUser = handleSubmit(async (values) => {
-  console.log(true);
   const createUserRequest: CreateUserRequest = {
     firstName: values.firstName,
     lastName: values.lastName,

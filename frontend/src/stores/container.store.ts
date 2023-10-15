@@ -26,8 +26,9 @@ export const useContainerStore = defineStore('container', {
             return response.data;
         },
         async createEmptyContainer(name: string, isPublic: boolean, ownerId: number){
-            await ApiService.container.createContainer(
+            return await ApiService.container.createContainer(
                 { name: name, products: [], public: isPublic, ownerId: ownerId });
+
         }
     }
 });
