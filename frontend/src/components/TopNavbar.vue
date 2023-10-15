@@ -24,6 +24,7 @@
 import { computed, ref } from "vue";
 import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import { useRouter } from "vue-router";
+import {UserRole} from "@/utils/rbacUtils";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
@@ -45,21 +46,18 @@ const handleLogout = () => {
 };
 
 const isAdmin = () => {
-  return authStore.roles.indexOf('SudoSOS - Board') !== -1;
-}
+  return authStore.roles.includes(UserRole.BOARD);
+};
 
 const isBAC = () => {
-  return authStore.roles.indexOf('SudoSOS - BAC') !== -1;
-}
+  return authStore.roles.includes(UserRole.BAC);
+};
 
 const isSeller = () => {
-  return authStore.roles.indexOf('Seller') !== -1;
-}
+  return authStore.roles.includes(UserRole.SELLER);
+};
 
-console.log(authStore.roles);
-
-// TODO: Style the hovering of buttons
-const leftItems = ref([ // TODO: Implement Submenus
+const leftItems = ref([
   {
     label: 'Transactions'
   },
@@ -97,7 +95,7 @@ const leftItems = ref([ // TODO: Implement Submenus
     ],
   },
   {
-    label: 'BAC', // TODO: Implement RBAC Determination for permissions
+    label: 'BAC',
     visible: isBAC(),
     items: [
       {
