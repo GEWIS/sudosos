@@ -43,6 +43,21 @@ const handleLogout = () => {
   authStore.logout();
   router.push('/');
 };
+
+const isAdmin = () => {
+  return authStore.roles.indexOf('SudoSOS - Board') !== -1;
+}
+
+const isBAC = () => {
+  return authStore.roles.indexOf('SudoSOS - BAC') !== -1;
+}
+
+const isSeller = () => {
+  return authStore.roles.indexOf('Seller') !== -1;
+}
+
+console.log(authStore.roles);
+
 // TODO: Style the hovering of buttons
 const leftItems = ref([ // TODO: Implement Submenus
   {
@@ -54,6 +69,7 @@ const leftItems = ref([ // TODO: Implement Submenus
   },
   {
     label: 'Points of Sale',
+    visible: isSeller(),
     items: [
       {
         label: 'POS Overview',
@@ -67,6 +83,7 @@ const leftItems = ref([ // TODO: Implement Submenus
   },
   {
     label: 'Admin',
+    visible: isAdmin(),
     items: [
       {
         label: 'Manage POS',
@@ -81,6 +98,7 @@ const leftItems = ref([ // TODO: Implement Submenus
   },
   {
     label: 'BAC', // TODO: Implement RBAC Determination for permissions
+    visible: isBAC(),
     items: [
       {
         label: 'User Overview',
@@ -102,7 +120,7 @@ const leftItems = ref([ // TODO: Implement Submenus
 
 const rightItems = ref([
   {
-    label: firstName, // TODO: Implement User Getter
+    label: firstName,
     items: [
       {
         label: 'Profile',
@@ -114,7 +132,8 @@ const rightItems = ref([
     ]
   },
   {
-    label: balance, // TODO: Implement Balance Getter
+    label: balance, // TODO: Fix balance view
+    // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/28
   },
   {
     label: '',
