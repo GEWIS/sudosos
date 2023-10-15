@@ -258,7 +258,7 @@
   "c_currentSaldo": {
     "saldo": "balance",
     "upgrade online": "increase online",
-    "topup": "You will be topping up with €{amount}",
+    "topup": "You will be topping up with € ",
     "cashtopup": "It is no longer possible to increase your balance in cash during the 'borrel'",
     "increase": "Balance increase amount:",
     "currency": "€",

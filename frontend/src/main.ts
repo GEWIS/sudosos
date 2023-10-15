@@ -24,7 +24,7 @@ import Checkbox from "primevue/checkbox";
 import TabView from "primevue/tabview";
 import ScrollPanel from "primevue/scrollpanel";
 import FileUpload from "primevue/fileupload";
-import { populateStoresFromToken } from "@/helper/ApiHelper";
+import { populateStoresFromToken } from "@sudosos/sudosos-frontend-common";
 
 const app = createApp(App);
 

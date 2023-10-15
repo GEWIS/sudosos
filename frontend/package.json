@@ -13,6 +13,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@stripe/stripe-js": "^2.1.7",
     "@sudosos/sudosos-client": "github:GEWIS/sudosos-client",
     "@sudosos/sudosos-frontend-common": "github:GEWIS/sudosos-frontend-common",
     "@vee-validate/yup": "^4.11.1",
@@ -21,7 +22,6 @@
     "primeicons": "^6.0.1",
     "primevue": "^3.30.1",
     "sass": "^1.63.6",
-    "stripe": "^12.14.0",
     "uuid": "^9.0.0",
     "vee-validate": "^4.11.1",
     "vue": "^3.3.4",

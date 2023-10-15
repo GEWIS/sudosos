@@ -11,7 +11,7 @@ import BalanceView from "@/views/BalanceView.vue";
 import UserOverView from '../views/UserOverView.vue';
 import SingleUserView from "@/views/SingleUserView.vue";
 import ProductsContainersView from "@/views/ProductsContainersView.vue";
-import apiService from "@/services/ApiService";
+import { isAuthenticated } from "@sudosos/sudosos-frontend-common";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -87,12 +87,12 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = apiService.isAuthenticated();
+  const isAuth = isAuthenticated();
 
-  if (to.meta?.requiresAuth && !isAuthenticated) {
+  if (to.meta?.requiresAuth && !isAuth) {
     // If the route requires authentication and the user is not authenticated, redirect to login
     next({ name: 'login' });
-  } else if (!to.meta?.requiresAuth && isAuthenticated) {
+  } else if (!to.meta?.requiresAuth && isAuth) {
     // If the route doesn't require authentication and the user is authenticated, redirect to home
     next({ name: 'home' });
   } else {
