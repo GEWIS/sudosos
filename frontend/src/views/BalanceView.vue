@@ -44,7 +44,6 @@ const amountValue = ref();
 // Function to set 'visible' to true, showing the dialog
 const showDialog = () => {
   visible.value = true;
-
 };
 </script>
 
