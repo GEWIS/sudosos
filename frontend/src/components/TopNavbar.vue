@@ -153,7 +153,6 @@ const rightItems = ref([
 
 <style scoped lang="scss">
 
-// TODO: fix wonky fucking background colors man
 .container {
   background-color: #d40000;
   display: flex;
@@ -172,23 +171,54 @@ nav {
 
   .p-menubar {
     background-color: #d40000;
+    padding: 0 1rem;
   }
 }
 
-:deep(.p-menuitem-icon) {
-  color: white!important;
-}
-
-:deep(.p-menubar){
-  padding: 0 1rem;
-}
-
-:deep(.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-text) {
+:deep(.p-menuitem-text){
   color: white;
   font-family: Raleway, sans-serif;
   font-weight: 500;
   font-size: 1rem;
   padding-right: 5px;
+}
+
+// Define normal top-level menu-items
+:deep(.p-menuitem) {
+  &.p-focus, &.p-focus, &.p-highlight > .p-menuitem-content {
+    background-color: transparent;
+    > a > * {
+      color: hsla(0, 0%, 100%, .75);
+    }
+  }
+
+  .p-menuitem-content {
+    > a {
+      padding: 0 0.5rem;
+      > * {
+        color: white;
+        transition: color .2s linear;
+      }
+    }
+    &:hover {
+      > a {
+        &:hover {
+          background-color: transparent;
+        }
+
+        > * {
+          color: hsla(0, 0%, 100%, .75);
+        }
+      }
+    }
+  }
+}
+
+// Define an exception for submenu-items
+:deep(.p-submenu-list .p-menuitem){
+  .p-menuitem-content > a > * {
+    color: black;
+  }
 }
 
 #logo {
@@ -209,70 +239,6 @@ nav {
 
 :deep(svg){
   margin: 0!important;
-}
-
-:deep(.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-submenu-icon){
-  color: white;
-}
-
-:deep(a:hover){
-  background-color: transparent;
-}
-
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) >
- .p-menuitem-content:hover .p-menuitem-link .p-menuitem-text){
-  color: hsla(0,0%,100%,.5)!important;
-}
-
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) >
- .p-menuitem-content .p-menuitem-link .p-menuitem-text) {
-  transition: color .2s linear;
-}
-
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) >
- .p-menuitem-content:hover .p-menuitem-link svg){
-  color: hsla(0,0%,100%,.5)!important;
-
-}
-
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) >
- .p-menuitem-content .p-menuitem-link svg){
-  transition: color .2s linear;
-}
-
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content){
-  background-color: transparent;
-}
-
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus >
- .p-menuitem-content .p-menuitem-link .p-menuitem-text){
-  color: hsla(0,0%,100%,.5)!important;
-}
-
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content .p-menuitem-link svg){
-  color: hsla(0,0%,100%,.5)!important;
-}
-
-:deep(.p-menubar .p-menuitem.p-highlight > .p-menuitem-content){
-  background-color: transparent!important;
-
-}
-
-:deep(.p-menubar .p-menuitem.p-highlight > .p-menuitem-content .p-menuitem-link .p-menuitem-text){
-  color: hsla(0, 0%, 100%, .5)!important;
-}
-
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover) {
-  background-color: lightgray;
-}
-
-:deep(.p-menubar .p-menubar-root-list .p-menuitem-active .p-submenu-list >
- .p-menuitem > .p-menuitem-content:hover .p-menuitem-link .p-menuitem-text){
-  color: black!important;
-}
-
-:deep(.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link) {
-  padding: 0 0.5rem;
 }
 
 #bier {
