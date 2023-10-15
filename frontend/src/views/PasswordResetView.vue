@@ -26,7 +26,7 @@
           <InputText v-bind="passwordConfirm" id="passwordConfirm" size="large" name="passwordConfirm" type="password" :class="{'p-invalid': passwordForm.errors.value.passwordConfirm}"/>
           <label :class="{'contains-text': passwordConfirm.modelValue }" for="passwordConfirm">{{ $t('login.Confirm password') }}</label>
         </span>
-        <small v-if="passwordForm.errors.value.passwordConfirm" class="p-error"><i class="pi pi-exclamation-circle"/>{{ $t('login.Confirm password') }}</small>
+        <small v-if="passwordForm.errors.value.passwordConfirm" class="p-error"><i class="pi pi-exclamation-circle"/>{{ passwordForm.errors.value.passwordConfirm }}</small>
         <Button type="submit" id="reset-button" severity="danger">{{ $t('login.Reset') }}</Button>
         <div class="backtologin" @click="backToLogin">{{ $t('login.Back to login') }}</div>
       </Form>
@@ -49,14 +49,33 @@ import { toTypedSchema } from "@vee-validate/yup";
 
 const emailSchema = toTypedSchema(
     yup.object({
-      email: yup.string().email().required(),
+      email: yup
+          .string()
+          .email()
+          .required(),
     })
 );
 
+const atLeastOneUppercase = /^(?=.*[A-Z])/;
+const atLeastOneLowercase = /^(?=.*[a-z])/;
+const atLeastOneDigit = /^(?=.*\d)/;
+const atLeastOneSpecialChar = /^(?=.*[@$!%*?&])/;
+const allowedCharacters = /^[A-Za-z\d@$!%*?& ]{8,}$/;
+
 const passwordSchema = toTypedSchema(
     yup.object({
-      password: yup.string(),
-      passwordConfirm: yup.string().required(),
+      password: yup
+          .string()
+          .required("This is a required field")
+          .matches(atLeastOneUppercase, 'At least one uppercase letter is required')
+          .matches(atLeastOneLowercase, 'At least one lowercase letter is required')
+          .matches(atLeastOneDigit, 'At least one digit is required')
+          .matches(atLeastOneSpecialChar, 'At least one special character is required')
+          .matches(allowedCharacters, 'Password must be at least 8 characters long and only contain allowed characters'),
+      passwordConfirm: yup
+          .string()
+          .required("This is a required field")
+          .oneOf([yup.ref("password")], "Passwords do not match"),
     })
 );
 
@@ -77,8 +96,6 @@ const route = useRoute();
 
 onBeforeMount(async () => {
   if (route.query.token !== undefined && route.query.email !== undefined) {
-    const token = route.query.token as string;
-    const email = route.query.email as string;
     passwordResetMode.value = 2;
   }
 });
@@ -97,9 +114,6 @@ const setNewPassword = passwordForm.handleSubmit(async () => {
     password: password.value.modelValue as string,
   }).then();
 });
-
-
-
 
 const backToLogin = () => {
   router.push({ name: 'login' });
