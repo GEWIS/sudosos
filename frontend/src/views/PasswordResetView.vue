@@ -5,10 +5,22 @@
       <h1>{{ $t('login.Reset') }}</h1>
       <Form v-if="passwordResetMode === 0" class="login-form" @submit="resetPasswordRequest">
         <span class="p-float-label with-error">
-          <InputText v-bind="email" id="email" size="large" name="email" :class="{'p-invalid': emailForm.errors.value.email}"/>
+          <InputText
+              v-bind="email"
+              id="email"
+              size="large"
+              name="email"
+              :class="{'p-invalid': emailForm.errors.value.email}"
+          />
           <label :class="{'contains-text': email.modelValue }" for="email">{{ $t('login.Enter email') }}</label>
         </span>
-        <small v-if="emailForm.errors.value.email" class="p-error"><i class="pi pi-exclamation-circle"/>{{ emailForm.errors.value.email }}</small>
+        <small
+            v-if="emailForm.errors.value.email"
+            class="p-error"
+        >
+          <i class="pi pi-exclamation-circle"/>
+          {{ emailForm.errors.value.email }}
+        </small>
         <Button type="submit" id="reset-button" severity="danger">{{ $t('login.Reset') }}</Button>
         <div class="backtologin" @click="backToLogin">{{ $t('login.Back to login') }}</div>
       </Form>
@@ -18,15 +30,43 @@
       </div>
       <Form v-else class="login-form" @submit="setNewPassword">
         <span class="p-float-label with-error">
-          <InputText v-bind="password" id="password" size="large" name="password" type="password" :class="{'p-invalid': passwordForm.errors.value.password}"/>
+          <InputText
+              v-bind="password"
+              id="password"
+              size="large"
+              name="password"
+              type="password"
+              :class="{'p-invalid': passwordForm.errors.value.password}"
+          />
           <label :class="{'contains-text': password.modelValue }" for="password">{{ $t('login.New password') }}</label>
         </span>
-        <small v-if="passwordForm.errors.value.password" class="p-error"><i class="pi pi-exclamation-circle"/>{{ passwordForm.errors.value.password }}</small>
+        <small
+            v-if="passwordForm.errors.value.password"
+            class="p-error"
+        >
+          <i class="pi pi-exclamation-circle"/>
+          {{ passwordForm.errors.value.password }}
+        </small>
         <span class="p-float-label with-error">
-          <InputText v-bind="passwordConfirm" id="passwordConfirm" size="large" name="passwordConfirm" type="password" :class="{'p-invalid': passwordForm.errors.value.passwordConfirm}"/>
-          <label :class="{'contains-text': passwordConfirm.modelValue }" for="passwordConfirm">{{ $t('login.Confirm password') }}</label>
+          <InputText
+              v-bind="passwordConfirm"
+              id="passwordConfirm"
+              size="large"
+              name="passwordConfirm"
+              type="password"
+              :class="{'p-invalid': passwordForm.errors.value.passwordConfirm}"
+          />
+          <label :class="{'contains-text': passwordConfirm.modelValue }" for="passwordConfirm">
+            {{ $t('login.Confirm password') }}
+          </label>
         </span>
-        <small v-if="passwordForm.errors.value.passwordConfirm" class="p-error"><i class="pi pi-exclamation-circle"/>{{ passwordForm.errors.value.passwordConfirm }}</small>
+        <small
+            v-if="passwordForm.errors.value.passwordConfirm"
+            class="p-error"
+        >
+          <i class="pi pi-exclamation-circle"/>
+          {{ passwordForm.errors.value.passwordConfirm }}
+        </small>
         <Button type="submit" id="reset-button" severity="danger">{{ $t('login.Reset') }}</Button>
         <div class="backtologin" @click="backToLogin">{{ $t('login.Back to login') }}</div>
       </Form>
@@ -71,7 +111,8 @@ const passwordSchema = toTypedSchema(
           .matches(atLeastOneLowercase, 'At least one lowercase letter is required')
           .matches(atLeastOneDigit, 'At least one digit is required')
           .matches(atLeastOneSpecialChar, 'At least one special character is required')
-          .matches(allowedCharacters, 'Password must be at least 8 characters long and only contain allowed characters'),
+          .matches(allowedCharacters,
+              'Password must be at least 8 characters long and only contain allowed characters'),
       passwordConfirm: yup
           .string()
           .required("This is a required field")
@@ -132,9 +173,8 @@ h1 {
   color: black;
   max-width: 350px;
   width: 100%;
-  margin: 0 auto;
   font-size: 2.5rem;
-  margin-bottom: 1.5rem;
+  margin: 0 auto 1.5rem;
 }
 
 #reset-image {
@@ -184,7 +224,7 @@ main {
   width: 100%;
   padding-top: 18px;
   padding-left: 12px;
-  padding-bottom: 0px;
+  padding-bottom: 0;
   height: 60px;
 }
 
@@ -192,7 +232,7 @@ main {
   width: 100%;
   padding-top: 18px;
   padding-left: 12px;
-  padding-bottom: 0px;
+  padding-bottom: 0;
   height: 60px;
 }
 
@@ -200,7 +240,7 @@ main {
   width: 100%;
   padding-top: 18px;
   padding-left: 12px;
-  padding-bottom: 0px;
+  padding-bottom: 0;
   height: 60px;
 }
 

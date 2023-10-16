@@ -65,7 +65,7 @@ import { useContainerStore } from "@/stores/container.store";
 import * as yup from 'yup';
 import { useForm } from "vee-validate";
 import { useRouter } from "vue-router";
-import {addListenerOnDialogueOverlay} from "@/utils/dialogUtil";
+import { addListenerOnDialogueOverlay } from "@/utils/dialogUtil";
 
 const emit = defineEmits(['update:visible']);
 
