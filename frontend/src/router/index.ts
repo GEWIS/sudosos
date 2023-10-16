@@ -12,6 +12,7 @@ import UserOverView from '../views/UserOverView.vue';
 import SingleUserView from "@/views/SingleUserView.vue";
 import ProductsContainersView from "@/views/ProductsContainersView.vue";
 import { isAuthenticated } from "@sudosos/sudosos-frontend-common";
+import PasswordResetView from "@/views/PasswordResetView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -24,6 +25,11 @@ const router = createRouter({
           path: '',
           component: LoginView,
           name: 'login'
+        },
+        {
+          path: '/passwordreset',
+          component: PasswordResetView,
+          name: 'passwordreset'
         },
       ]
     },
