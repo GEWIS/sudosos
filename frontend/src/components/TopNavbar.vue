@@ -220,10 +220,21 @@ nav {
   }
 }
 
+:deep(.p-submenu-list){
+  padding: 0.5rem 0;
+  width: fit-content;
+  height: fit-content;
+}
+
 // Define an exception for submenu-items
 :deep(.p-submenu-list .p-menuitem){
+
+  font-size: 1rem;
+  white-space: nowrap;
   .p-menuitem-content > a > * {
+    padding: 0.5rem 1.5rem;
     color: black;
+    font-weight: 400;
   }
 }
 
