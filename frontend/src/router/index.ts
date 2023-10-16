@@ -30,7 +30,7 @@ const router = createRouter({
           path: '/passwordreset',
           component: PasswordResetView,
           name: 'passwordreset'
-        }
+        },
       ]
     },
     {

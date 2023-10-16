@@ -29,12 +29,12 @@
         </label>
         <span class="p-float-label with-error">
           <InputText
-            id="username"
-            type="text"
-            v-bind="username"
-            size="large"
-            name="username"
-            :class="{'p-invalid': loginForm.errors.value.username}"
+              id="username"
+              type="text"
+              v-bind="username"
+              size="large"
+              name="username"
+              :class="{'p-invalid': loginForm.errors.value.username}"
           />
           <label
               :class="{'contains-text': username.modelValue }"
@@ -105,14 +105,14 @@ const authStore = useAuthStore();
 const userStore = useUserStore();
 
 const schema = toTypedSchema(
-  yup.object({
-    username: yup
-        .string()
-        .required("This is a required field."),
-    password: yup
-        .string()
-        .required("This is a required field.")
-  })
+    yup.object({
+      username: yup
+          .string()
+          .required("This is a required field."),
+      password: yup
+          .string()
+          .required("This is a required field.")
+    })
 );
 const loginForm = useForm({
   validationSchema: schema
@@ -139,10 +139,10 @@ const loginHandler = loginForm.handleSubmit(async () => {
     await apiService.authenticate.localAuthentication({
       accountMail: username.value.modelValue,
       password: password.value.modelValue }).then((res) => {
-        authStore.handleResponse(res.data, apiService);
+      authStore.handleResponse(res.data, apiService);
       if (authStore)
         userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
-        toHomeView();
+      toHomeView();
     }).catch((err) => {
       console.error(err);
     });
