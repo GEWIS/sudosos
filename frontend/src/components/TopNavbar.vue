@@ -24,10 +24,12 @@
 import { computed, ref } from "vue";
 import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import { useRouter } from "vue-router";
+import {useI18n} from "vue-i18n";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const router = useRouter();
+const {t, locale} = useI18n();
 const balance = computed((): string | undefined => {
   const balanceInCents = userStore.getCurrentUser.balance;
   if (!balanceInCents) return undefined;
@@ -122,9 +124,15 @@ const rightItems = ref([
     items: [
       {
         label: 'Nederlands',
+        command: () => {
+          locale.value = 'nl';
+        },
       },
       {
         label: 'English',
+        command: () => {
+          locale.value = 'en';
+        },
       },
     ]
   },
