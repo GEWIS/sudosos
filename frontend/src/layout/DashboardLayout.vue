@@ -1,7 +1,7 @@
 <template>
-  <TopNavbar />
+  <TopNavbar v-if="['home'].indexOf($route.name) > -1"/>
   <RouterView />
-  <CopyrightBanner />
+  <CopyrightBanner v-if="['home'].indexOf($route.name) > -1"/>
 </template>
 
 <script setup lang="ts">

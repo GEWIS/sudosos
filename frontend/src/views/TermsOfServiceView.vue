@@ -46,23 +46,35 @@
 import apiService from '@/services/ApiService';
 import router from '@/router';
 import { marked } from 'marked';
-import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
+import { isAuthenticated, useAuthStore } from "@sudosos/sudosos-frontend-common";
 import termsOfService from '@/locales/TermsOfService.md?raw';
+import { onMounted } from "vue";
 
 const authStore = useAuthStore();
-const userStore = useUserStore();
 
 const tos = marked(termsOfService);
 
-// const acceptTermsOfService = async(event: Event) => {
-//
-//
-// }
-console.log(authStore.getToS);
+onMounted(async () => {
+  if(isAuthenticated && authStore.getUser.acceptedToS == 'ACCEPTED') {
+    toHomeView();
+  }
+});
+
+const acceptTermsOfService = (async () => {
+  await apiService.user.acceptTos({
+    extensiveDataProcessing: true
+  }).then(() => {
+    toHomeView();
+  });
+});
 
 const handleLogout = () => {
   authStore.logout();
   router.push('/');
+};
+
+const toHomeView = () => {
+  router.push({ name: 'home' });
 };
 </script>
 

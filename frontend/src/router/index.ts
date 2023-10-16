@@ -31,11 +31,6 @@ const router = createRouter({
           path: '/passwordreset',
           component: PasswordResetView,
           name: 'passwordreset'
-        },
-        {
-          path: '/tos',
-          component: TermsOfServiceView,
-          name: 'tos'
         }
       ]
     },
@@ -91,8 +86,12 @@ const router = createRouter({
           path: '/manage-products',
           component: ProductsContainersView,
           name: 'products-containers-overview',
+        },
+        {
+          path: '/tos',
+          component: TermsOfServiceView,
+          name: 'tos'
         }
-        // Add other routes for authenticated users here
       ]
     }
   ]
