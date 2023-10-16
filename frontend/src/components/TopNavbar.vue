@@ -61,58 +61,58 @@ const isSeller = () => {
 
 const leftItems = ref([
   {
-    label: 'Transactions'
+    label: t('app.Transactions'),
   },
   {
-    label: 'Balance',
+    label: t('app.Saldo'),
     to: '/balance',
   },
   {
-    label: 'Points of Sale',
+    label: t('app.Points of Sale'),
     visible: isSeller(),
     items: [
       {
-        label: 'POS Overview',
+        label: t('app.Overview'),
         to: '/point-of-sale/overview',
       },
       {
-        label: 'Create POS',
+        label: t('app.Create POS'),
         to: '/point-of-sale/request'
       }
     ]
   },
   {
-    label: 'Admin',
+    label: t('app.Admin'),
     visible: isAdmin(),
     items: [
       {
-        label: 'Manage POS',
+        label: t('app.Manage POS'),
       },
       {
-        label: 'TV Screens',
+        label: t('app.Screens'),
       },
       {
-        label: 'Banners',
+        label: t('app.Banners'),
       },
     ],
   },
   {
-    label: 'BAC',
+    label: t('app.BAC'),
     visible: isBAC(),
     items: [
       {
-        label: 'User Overview',
+        label: t('app.User overview'),
         to: '/user-overview',
       },
       {
-        label: 'Flagged Transactions',
+        label: t('Flagged transactions'),
       },
       {
-        label: 'Manage Products',
+        label: t('app.Manage products'),
         to: '/manage-products',
       },
       {
-        label: 'Social Drink Cards',
+        label: t('app.Social drink cards'),
       }
     ]
   },
@@ -123,10 +123,10 @@ const rightItems = ref([
     label: firstName,
     items: [
       {
-        label: 'Profile',
+        label: t('app.Profile'),
       },
       {
-        label: 'Sign Out',
+        label: t('app.Sign out'),
         command: handleLogout,
       },
     ]
@@ -140,13 +140,13 @@ const rightItems = ref([
     icon: 'pi pi-globe',
     items: [
       {
-        label: 'Nederlands',
+        label: t('app.Netherlands'),
         command: () => {
           locale.value = 'nl';
         },
       },
       {
-        label: 'English',
+        label: t('app.English'),
         command: () => {
           locale.value = 'en';
         },
