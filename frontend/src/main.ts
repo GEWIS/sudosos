@@ -29,8 +29,9 @@ import nl from "./locales/nl.json";
 
 const app = createApp(App);
 
+
 const i18n = createI18n({
-    locale: 'en',
+    locale: localStorage.getItem('locale') || 'en',
     fallbackLocale: 'en',
     legacy: false,
     globalInjection: true,

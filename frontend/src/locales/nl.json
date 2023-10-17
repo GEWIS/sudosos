@@ -23,7 +23,7 @@
   },
   "app": {
     "Transactions": "Transacties",
-    "Saldo": "Saldo",
+    "Balance": "Saldo",
     "Points of Sale": "Verkooppunten",
     "Overview": "Overzicht POS",
     "Create": "Aanmaken",
@@ -66,8 +66,12 @@
   "transactions": {
     "Transactions": "Transacties"
   },
-  "saldo": {
-    "Saldo": "Saldo"
+  "balance": {
+    "Balance": "Saldo",
+    "Balance increase amount": "Saldo verhogen met:",
+    "Start payment": "Betaal",
+    "Increase balance": "Verhoog saldo",
+    "Price": "Prijs"
   },
   "pointOfSaleOverview": {
     "Point of sale overview": "Verkooppunt overzicht"
@@ -250,11 +254,12 @@
   "banners": {
     "Banners": "Banners"
   },
-  "c_currentSaldo": {
-    "saldo": "saldo",
-    "upgrade online": "online opwaarderen",
+  "c_currentBalance": {
+    "balance": "Saldo",
+    "upgrade online": "Online opwaarderen",
     "of which": "Waarvan",
-    "fine": "boete"
+    "fine": "boete",
+    "Increase balance": "Saldo opwaarderen"
   },
   "c_recentTransactionsTable": {
     "recent transactions": "recente transacties",

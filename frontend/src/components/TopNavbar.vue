@@ -64,7 +64,7 @@ const leftItems = ref([
     label: () => t('app.Transactions'),
   },
   {
-    label: () => t('app.Saldo'),
+    label: () => t('app.Balance'),
     to: '/balance',
   },
   {
@@ -140,15 +140,19 @@ const rightItems = ref([
     icon: 'pi pi-globe',
     items: [
       {
-        label: t('app.Netherlands'),
+        label: () => t('app.Netherlands'),
+        disabled: () => locale.value == 'nl',
         command: () => {
           locale.value = 'nl';
+          localStorage.setItem('locale', 'nl')
         },
       },
       {
-        label: t('app.English'),
+        label: () => t('app.English'),
+        disabled: () => locale.value == 'en',
         command: () => {
           locale.value = 'en';
+          localStorage.setItem('locale', 'en')
         },
       },
     ]

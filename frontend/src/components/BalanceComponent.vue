@@ -1,7 +1,7 @@
 <template>
   <CardComponent
-      :header="$t('c_currentSaldo.saldo')"
-      :action="showOption ? 'Increase Online' : ''"
+      :header="$t('c_currentBalance.balance')"
+      :action="showOption ? t('c_currentBalance.Increase balance') : ''"
       routerLink="balance"
   >
     <div class="body">
@@ -16,6 +16,7 @@ import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import { computed, ref, onMounted } from 'vue';
 import type { UserResponse } from '@sudosos/sudosos-client';
 import apiService from '@/services/ApiService';
+import { useI18n } from "vue-i18n";
 
 const props = defineProps({
   user: {
@@ -28,6 +29,7 @@ const props = defineProps({
   }
 });
 
+const { t } = useI18n();
 const userStore = useUserStore();
 
 const balanceFromApi = ref<string | undefined>(undefined);
