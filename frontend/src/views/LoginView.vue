@@ -123,7 +123,8 @@ const password = loginForm.defineComponentBinds('password');
 
 const route = useRoute();
 
-//TODO error handling and error toasts #18
+// TODO: error handling and error toasts
+// See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
 onBeforeMount(() => {
   if (route.query.token !== undefined) {
     const token = route.query.token as string;
@@ -133,7 +134,8 @@ onBeforeMount(() => {
   }
 });
 
-//TODO error handling and error toasts #18
+// TODO: error handling and error toasts
+// See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/46
 const loginHandler = loginForm.handleSubmit(async () => {
   if (username.value.modelValue.includes('@')) {
     await apiService.authenticate.localAuthentication({
@@ -156,7 +158,8 @@ const loginHandler = loginForm.handleSubmit(async () => {
   }
 });
 
-//TODO fix the GEWIS login #32
+// TODO: fix the GEWIS login
+// See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/32
 const loginViaGEWIS = () => {
   window.location.href = `https://gewis.nl/token/${import.meta.env.VITE_APP_GEWIS_TOKEN}`;
 };

@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 // TODO: Create Modal for Topping up Balance
+// See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/46
 import CardComponent from "@/components/CardComponent.vue";
 import { ref } from "vue";
 import TopupModal from "@/components/TopupModalComponent.vue";

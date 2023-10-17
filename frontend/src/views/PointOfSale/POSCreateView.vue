@@ -1,4 +1,3 @@
-<!--TODO: Input validation-->
 <template>
   <div class="page-container">
     <div class="page-title">{{ $t('c_POSCreate.Create Point of Sale') }}</div>
@@ -133,6 +132,7 @@ onMounted(async () => {
     organsList.value = authStore.organs;
   } else {
     // TODO: Error handling
+    // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
   }
 });
 
@@ -148,6 +148,7 @@ const handleCreatePOS = handleSubmit(async (values) => {
     router.push('/point-of-sale/overview');
   } else {
     // TODO: Error toasts
+    // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
   }
 });
 

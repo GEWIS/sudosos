@@ -110,6 +110,7 @@ const handleCreateContainer = handleSubmit(async (values) => {
     // See issue #18: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
   } else {
     // TODO: Correct error-handling
+    // See issue #18: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
   }
 });
 

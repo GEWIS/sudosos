@@ -133,7 +133,7 @@ const rightItems = ref([
   },
   {
     label: balance, // TODO: Fix balance view
-    // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/28
+                    // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/28
   },
   {
     label: '',

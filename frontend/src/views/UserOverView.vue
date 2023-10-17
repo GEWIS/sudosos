@@ -27,7 +27,6 @@
           </span>
         </div>
       </template>
-      <!--      TODO: Change this to gewisId, is id for testing purposes-->
       <Column field="id" header="GEWIS ID" />
       <Column field="firstName" :header="$t('c_userTable.firstName')" />
       <Column field="lastName" :header="$t('c_userTable.lastName')" />
@@ -173,11 +172,13 @@ const onPage = (event: any) => {
   delayedAPICall(event.originalEvent.first);
 };
 // TODO: Fix sorting
+// See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/19
 
 const onSort = () => {
   delayedAPICall(0);
 };
-//TODO: Fix user type filtering
+// TODO: Fix user type filtering
+// See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/19
 const onFilter = () => {
   delayedAPICall(0);
 };

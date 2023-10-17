@@ -1,9 +1,11 @@
 <!--TODO: Extract input validation styling-->
+<!--See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/52-->
 <template>
   <div class="page-container">
     <div class="page-title">{{ `${currentUser ? currentUser.firstName : ''}'s profile` }}</div>
     <div class="content-wrapper">
 <!--      TODO: Refactor to extract this component-->
+<!--      See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/21-->
       <div class="row">
         <CardComponent :header="$t('userDetails.Personal Info')" class="personal-info-card">
           <form @submit="handleEditUser">

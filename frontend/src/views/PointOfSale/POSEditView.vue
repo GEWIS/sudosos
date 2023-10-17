@@ -1,4 +1,3 @@
-<!--TODO: Input validation-->
 <template>
   <div class="page-container">
     <div class="page-title">{{ `${$t('c_POSCreate.Edit Point of Sale')}: ${pos ? pos.name : ''}`}}</div>
@@ -114,8 +113,8 @@ onBeforeMount(async () => {
     ownContainers.value = ownContainersResponse.records.filter((container) => container.public == false);
     organsList.value = authStore.organs;
   } else {
-    // TODO: Error handling, issue #18
-    // See https://github.com/gewis/sudosos-frontend-vue3/issues/18
+    // TODO: Error handling
+    // See: https://github.com/gewis/sudosos-frontend-vue3/issues/18
   }
   if (pos.value) {
     setValues({
@@ -140,7 +139,7 @@ const handleEditPOS = handleSubmit(async (values) => {
         values.selectedContainers.map((cont: ContainerResponse) => cont.id),
     );
     console.warn(handleEditPOSResponse.status);
-    // TODO: Correct error handling, issue #18
+    // TODO: Correct error handling
     // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
 });
 </script>
