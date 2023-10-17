@@ -61,22 +61,22 @@ const isSeller = () => {
 
 const leftItems = ref([
   {
-    label: t('app.Transactions'),
+    label: () => t('app.Transactions'),
   },
   {
-    label: t('app.Saldo'),
+    label: () => t('app.Saldo'),
     to: '/balance',
   },
   {
-    label: t('app.Points of Sale'),
+    label: () => t('app.Points of Sale'),
     visible: isSeller(),
     items: [
       {
-        label: t('app.Overview'),
+        label: () => t('app.Overview'),
         to: '/point-of-sale/overview',
       },
       {
-        label: t('app.Create POS'),
+        label: () => t('app.Create POS'),
         to: '/point-of-sale/request'
       }
     ]
