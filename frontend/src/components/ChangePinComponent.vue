@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import CardComponent from "@/components/CardComponent.vue";
 import PinComponent from "@/components/PinComponent.vue";
-import {useField} from "vee-validate";
+import { useField } from "vee-validate";
 import apiService from "@/services/ApiService";
-import {useAuthStore} from "@sudosos/sudosos-frontend-common";
-import {useToast} from "primevue/usetoast";
+import { useAuthStore } from "@sudosos/sudosos-frontend-common";
+import { useToast } from "primevue/usetoast";
 
 const authStore = useAuthStore();
 const toast = useToast();
 
 const { value: inputPin, errorMessage: inputPinError } = useField('inputPin', validatePin);
-const { value: confirmPin, errorMessage: confirmPinError} = useField('confirmPin', validateConfirmPin);
+const { value: confirmPin, errorMessage: confirmPinError } = useField('confirmPin', validateConfirmPin);
 
 //show warning message if pin is filled in and not 4 digits
 function validatePin(checkInputPin: string){
@@ -35,13 +35,13 @@ function changePinCode() {
       //   Succes!
       inputPin.value="";
       confirmPin.value="";
-      toast.add({severity: "success", summary: "success", detail: 'pin updated successful'  })
+      toast.add({ severity: "success", summary: "success", detail: 'pin updated successful'  });
     }).catch((err) => {
       // Error
       console.error(err);
-    })
+    });
   } else {
-    toast.add({severity: "error", summary: "failed", detail: 'fill in correct pin codes', life: 3000})
+    toast.add({ severity: "error", summary: "failed", detail: 'fill in correct pin codes', life: 3000 });
   }
 }
 
@@ -49,6 +49,8 @@ function changePinCode() {
 
 <template>
   <card-component :header="$t('profile.change pin code')" :action="$t('profile.change pin code')" :func="changePinCode" class="change-pin-code" >
+    <Toast />
+
     <div id="update-pin-form">
       <div>
         <p>{{ $t('profile.new pin code')}}</p>
@@ -62,7 +64,6 @@ function changePinCode() {
       </div>
     </div>
   </card-component>
-  <Toast />
 </template>
 
 <style scoped>

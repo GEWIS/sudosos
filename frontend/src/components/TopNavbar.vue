@@ -124,6 +124,7 @@ const rightItems = ref([
     items: [
       {
         label: t('app.Profile'),
+        to: 'profile',
       },
       {
         label: t('app.Sign out'),
