@@ -15,6 +15,7 @@
   width: 100%;
   padding-left: 15px;
   padding-right: 15px;
+  margin-bottom: 80px;
 }
 
 @media (min-width: 992px) {
@@ -36,3 +37,4 @@
 }
 
 /*TODO: Fix more for different media sizes*/
+/*See: https://github.com/sudosos-frontend-vue3/issues/29 */

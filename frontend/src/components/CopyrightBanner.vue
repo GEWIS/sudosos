@@ -1,10 +1,10 @@
 <template>
-<footer>
+  <footer>
   <span class="copyright">
-    <b>© 2023 GEWIS</b>
+    <b>{{ $t('login.copyright') }}</b>
   </span>
   <span class="separator"> | </span>
-  <a id="tos" href="https://wieditleesttrekteenbak.nl/">Terms of Service</a>
+  <a id="tos" href="https://wieditleesttrekteenbak.com/">{{$t('termsOfService.termsOfService')}}</a>
 </footer>
 </template>
 
@@ -13,7 +13,7 @@
 
 <style scoped>
 footer {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;

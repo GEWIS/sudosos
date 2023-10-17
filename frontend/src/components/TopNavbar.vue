@@ -4,7 +4,10 @@
     <nav>
       <Menubar :model="leftItems" >
         <template #start>
-          <router-link to="/" id="sudosos">SudoSOS<img id="logo" src="../assets/img/gewis-branding.svg" /></router-link>
+          <router-link to="/" id="sudosos">
+            {{ $t("login.SudoSOS") }}
+            <img id="logo" src="../assets/img/gewis-branding.svg" alt="SudoSOS" />
+          </router-link>
 
         </template>
       </Menubar>
@@ -18,13 +21,16 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref} from "vue";
-import {useAuthStore, useUserStore} from "@sudosos/sudosos-frontend-common";
-import {useRouter} from "vue-router";
+import { computed, ref } from "vue";
+import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
+import { useRouter } from "vue-router";
+import { UserRole } from "@/utils/rbacUtils";
+import { useI18n } from "vue-i18n";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const router = useRouter();
+const { t, locale } = useI18n();
 const balance = computed((): string | undefined => {
   const balanceInCents = userStore.getCurrentUser.balance;
   if (!balanceInCents) return undefined;
@@ -37,102 +43,122 @@ const firstName = computed((): string | undefined => {
 });
 
 const handleLogout = () => {
-  console.error(true)
   authStore.logout();
   router.push('/');
-}
-// TODO: Style the hovering of buttons
-const leftItems = ref([ // TODO: Implement Submenus
+};
+
+const isAdmin = () => {
+  return authStore.roles.includes(UserRole.BOARD);
+};
+
+const isBAC = () => {
+  return authStore.roles.includes(UserRole.BAC);
+};
+
+const isSeller = () => {
+  return authStore.roles.includes(UserRole.SELLER);
+};
+
+const leftItems = ref([
   {
-    label: 'Transactions'
+    label: t('app.Transactions'),
   },
   {
-    label: 'Balance',
-    to: 'balance',
+    label: t('app.Saldo'),
+    to: '/balance',
   },
   {
-    label: 'Points of Sale',
+    label: t('app.Points of Sale'),
+    visible: isSeller(),
     items: [
       {
-        label: 'POS Overview',
+        label: t('app.Overview'),
+        to: '/point-of-sale/overview',
       },
       {
-        label: 'Create',
+        label: t('app.Create POS'),
+        to: '/point-of-sale/request'
       }
     ]
   },
   {
-    label: 'Admin',
+    label: t('app.Admin'),
+    visible: isAdmin(),
     items: [
       {
-        label: 'Manage POS',
+        label: t('app.Manage POS'),
       },
       {
-        label: 'TV Screens',
+        label: t('app.Screens'),
       },
       {
-        label: 'Banners',
+        label: t('app.Banners'),
       },
     ],
   },
   {
-    label: 'BAC', // TODO: Implement RBAC Determination for permissions
+    label: t('app.BAC'),
+    visible: isBAC(),
     items: [
       {
-        label: 'Manage POS',
+        label: t('app.User overview'),
+        to: '/user-overview',
       },
       {
-        label: 'User Overview',
+        label: t('Flagged transactions'),
       },
       {
-        label: 'Flagged Transactions',
+        label: t('app.Manage products'),
+        to: '/manage-products',
       },
       {
-        label: 'Manage Products',
-      },
-      {
-        label: 'Social Drink Cards',
+        label: t('app.Social drink cards'),
       }
     ]
   },
-    ])
+    ]);
 
 const rightItems = ref([
   {
-    label: firstName, // TODO: Implement User Getter
+    label: firstName,
     items: [
       {
-        label: 'Profile',
-        to: 'profile',
+        label: t('app.Profile'),
       },
       {
-        label: 'Sign Out',
+        label: t('app.Sign out'),
         command: handleLogout,
       },
     ]
   },
   {
-    label: balance, // TODO: Implement Balance Getter
+    label: balance, // TODO: Fix balance view
+                    // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/28
   },
   {
     label: '',
     icon: 'pi pi-globe',
     items: [
       {
-        label: 'Nederlands',
+        label: t('app.Netherlands'),
+        command: () => {
+          locale.value = 'nl';
+        },
       },
       {
-        label: 'English',
+        label: t('app.English'),
+        command: () => {
+          locale.value = 'en';
+        },
       },
     ]
   },
-])
+]);
 
 </script>
 
 <style scoped lang="scss">
 
-// TODO: fix wonky fucking background colors man
 .container {
   background-color: #d40000;
   display: flex;
@@ -151,23 +177,65 @@ nav {
 
   .p-menubar {
     background-color: #d40000;
+    padding: 0 1rem;
   }
 }
 
-:deep(.p-menuitem-icon) {
-  color: white!important;
-}
-
-:deep(.p-menubar){
-  padding: 0 1rem;
-}
-
-:deep(.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-text) {
+:deep(.p-menuitem-text){
   color: white;
   font-family: Raleway, sans-serif;
   font-weight: 500;
   font-size: 1rem;
   padding-right: 5px;
+}
+
+// Define normal top-level menu-items
+:deep(.p-menuitem) {
+  &.p-focus, &.p-focus, &.p-highlight > .p-menuitem-content {
+    background-color: transparent;
+    > a > * {
+      color: hsla(0, 0%, 100%, .75);
+    }
+  }
+
+  .p-menuitem-content {
+    > a {
+      padding: 0 0.5rem;
+      > * {
+        color: white;
+        transition: color .2s linear;
+      }
+    }
+    &:hover {
+      > a {
+        &:hover {
+          background-color: transparent;
+        }
+
+        > * {
+          color: hsla(0, 0%, 100%, .75);
+        }
+      }
+    }
+  }
+}
+
+:deep(.p-submenu-list){
+  padding: 0.5rem 0;
+  width: fit-content;
+  height: fit-content;
+}
+
+// Define an exception for submenu-items
+:deep(.p-submenu-list .p-menuitem){
+
+  font-size: 1rem;
+  white-space: nowrap;
+  .p-menuitem-content > a > * {
+    padding: 0.5rem 1.5rem;
+    color: black;
+    font-weight: 400;
+  }
 }
 
 #logo {
@@ -188,64 +256,6 @@ nav {
 
 :deep(svg){
   margin: 0!important;
-}
-
-:deep(.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-submenu-icon){
-  color: white;
-}
-
-:deep(a:hover){
-  background-color: transparent;
-}
-
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover .p-menuitem-link .p-menuitem-text){
-  color: hsla(0,0%,100%,.5)!important;
-}
-
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content .p-menuitem-link .p-menuitem-text) {
-  transition: color .2s linear;
-}
-
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover .p-menuitem-link svg){
-  color: hsla(0,0%,100%,.5)!important;
-
-}
-
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content .p-menuitem-link svg){
-  transition: color .2s linear;
-}
-
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content){
-  background-color: transparent;
-}
-
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content .p-menuitem-link .p-menuitem-text){
-  color: hsla(0,0%,100%,.5)!important;
-}
-
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content .p-menuitem-link svg){
-  color: hsla(0,0%,100%,.5)!important;
-}
-
-:deep(.p-menubar .p-menuitem.p-highlight > .p-menuitem-content){
-  background-color: transparent!important;
-
-}
-
-:deep(.p-menubar .p-menuitem.p-highlight > .p-menuitem-content .p-menuitem-link .p-menuitem-text){
-  color: hsla(0, 0%, 100%, .5)!important;
-}
-
-:deep(.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover) {
-  background-color: lightgray;
-}
-
-:deep(.p-menubar .p-menubar-root-list .p-menuitem-active .p-submenu-list > .p-menuitem > .p-menuitem-content:hover .p-menuitem-link .p-menuitem-text){
-  color: black!important;
-}
-
-:deep(.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link) {
-  padding: 0 0.5rem;
 }
 
 #bier {
