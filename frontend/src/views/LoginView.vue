@@ -92,7 +92,7 @@
 import CopyrightBanner from "@/components/CopyrightBanner.vue";
 import { useRoute } from "vue-router";
 import { onBeforeMount } from "vue";
-import { useUserStore, useAuthStore } from "@sudosos/sudosos-frontend-common";
+import { useUserStore, useAuthStore, isAuthenticated } from "@sudosos/sudosos-frontend-common";
 import apiService from "@/services/ApiService";
 import router from "@/router";
 import { v4 as uuid } from 'uuid';
@@ -140,9 +140,13 @@ const loginHandler = loginForm.handleSubmit(async () => {
       accountMail: username.value.modelValue,
       password: password.value.modelValue }).then((res) => {
       authStore.handleResponse(res.data, apiService);
-      if (authStore)
+      if (isAuthenticated && authStore.getUser.acceptedToS == 'NOT_ACCEPTED') {
+        toToSView();
+      }
+      if (isAuthenticated && authStore.getUser.acceptedToS == 'ACCEPTED') {
         userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
-      toHomeView();
+        toHomeView();
+      }
     }).catch((err) => {
       console.error(err);
     });
@@ -167,6 +171,10 @@ const resetPassword = () => {
 
 const toHomeView = () => {
   router.push({ name: 'home' });
+};
+
+const toToSView = () => {
+  router.push({ name: 'tos' });
 };
 
 </script>
