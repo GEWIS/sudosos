@@ -11,10 +11,10 @@ import BalanceView from "@/views/BalanceView.vue";
 import UserOverView from '../views/UserOverView.vue';
 import SingleUserView from "@/views/SingleUserView.vue";
 import ProductsContainersView from "@/views/ProductsContainersView.vue";
-import { isAuthenticated, useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
+import { isAuthenticated, useAuthStore } from "@sudosos/sudosos-frontend-common";
 import PasswordResetView from "@/views/PasswordResetView.vue";
 import { UserRole } from '@/utils/rbacUtils';
-import 'vue-router'
+import 'vue-router';
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -142,12 +142,12 @@ router.beforeEach((to, from, next) => {
     // If the route doesn't require authentication and the user is authenticated, redirect to home
     next({ name: 'home' });
   } else {
-    if(to.meta?.isAdmin && !isAdmin()) next({ name: 'home' }); 
-    
+    if(to.meta?.isAdmin && !isAdmin()) next({ name: 'home' });
+
     if(to.meta?.isSeller && !isSeller()) next({ name: 'home' });
 
     if(to.meta?.isBAC && !isBAC()) next({ name: 'home' });
-  
+
     next();
   }
 });

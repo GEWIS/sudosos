@@ -20,7 +20,7 @@
         {{ $t('login.Login via GEWIS') }}
       </Button>
       <hr />
-      <Form id="login-form" @submit="loginHandler">
+      <form id="login-form" @submit="loginHandler">
         <label
             id="input-description"
             for="username"
@@ -82,7 +82,7 @@
         >
           {{ $t('login.Password reset') }}
         </div>
-      </Form>
+      </form>
     </main>
     <CopyrightBanner/>
   </div>
@@ -96,7 +96,7 @@ import { useUserStore, useAuthStore } from "@sudosos/sudosos-frontend-common";
 import apiService from "@/services/ApiService";
 import router from "@/router";
 import { v4 as uuid } from 'uuid';
-import { useForm, Form } from "vee-validate";
+import { useForm } from "vee-validate";
 import { toTypedSchema } from '@vee-validate/yup';
 import * as yup from 'yup';
 import InputText from "primevue/inputtext";
@@ -136,25 +136,27 @@ onBeforeMount(() => {
 
 // TODO: error handling and error toasts
 // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/46
-const loginHandler = loginForm.handleSubmit(async () => {
-  if (username.value.modelValue.includes('@')) {
-    await apiService.authenticate.localAuthentication({
-      accountMail: username.value.modelValue,
-      password: password.value.modelValue }).then((res) => {
+const loginHandler = loginForm.handleSubmit(async (values) => {
+  try {
+    if (values.username.includes('@')) {
+      const res = await apiService.authenticate.localAuthentication({
+        accountMail: values.username,
+        password: values.password
+      });
       authStore.handleResponse(res.data, apiService);
-      if (authStore)
-        userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
+      if (authStore.getUser) {
+        await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
+      }
       toHomeView();
-    }).catch((err) => {
-      console.error(err);
-    });
-  } else {
-    await authStore.gewisLdapLogin(username.value.modelValue, password.value.modelValue, apiService).then(() => {
-      if (authStore.getUser) userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
+    } else {
+      await authStore.gewisLdapLogin(values.username, values.password, apiService);
+      if (authStore.getUser) {
+        await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
+      }
       toHomeView();
-    }).catch((err) => {
-      console.error(err);
-    });
+    }
+  } catch (err) {
+    console.error(err);
   }
 });
 

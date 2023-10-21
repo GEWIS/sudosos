@@ -61,14 +61,14 @@ const isSeller = () => {
 
 const leftItems = ref([
   {
-    label: () => t('app.Transactions'),
+    label: (): string => t('app.Transactions'),
   },
   {
     label: () => t('app.Balance'),
     to: '/balance',
   },
   {
-    label: () => t('app.Points of Sale'),
+    label: (): string => t('app.Points of Sale'),
     visible: isSeller(),
     items: [
       {
@@ -144,7 +144,7 @@ const rightItems = ref([
         disabled: () => locale.value == 'nl',
         command: () => {
           locale.value = 'nl';
-          localStorage.setItem('locale', 'nl')
+          localStorage.setItem('locale', 'nl');
         },
       },
       {
@@ -152,7 +152,7 @@ const rightItems = ref([
         disabled: () => locale.value == 'en',
         command: () => {
           locale.value = 'en';
-          localStorage.setItem('locale', 'en')
+          localStorage.setItem('locale', 'en');
         },
       },
     ]
