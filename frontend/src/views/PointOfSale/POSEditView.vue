@@ -1,4 +1,3 @@
-<!--TODO: Input validation-->
 <template>
   <div class="page-container">
     <div class="page-title">{{ `${$t('c_POSCreate.Edit Point of Sale')}: ${pos ? pos.name : ''}`}}</div>
@@ -6,17 +5,26 @@
     <div class="content-wrapper">
       <div class="pos-row">
         <div class="pos-general-info">
-          <h3>{{ $t("c_POSCreate.General") }}</h3>
-          <span class="general-info-block">
-            <b>{{ $t("c_POSCreate.Title") }}</b>
-            <InputText class="input" type="text" v-model="title"/>
-          </span>
-          <div class="general-info-block">
-            <b>{{ $t("c_POSCreate.Owner") }}</b>
-            <p>{{ posDisplayName }}</p></div>
-          <div>
-            <span class="general-info-block" style="flex-direction: row;">
-              <Checkbox v-model="useAuthentication"
+          <form @submit="handleEditPOS">
+            <h3>{{ $t("c_POSCreate.General") }}</h3>
+            <span class="general-info-block">
+              <b>{{ $t("c_POSCreate.Title") }}</b>
+              <InputText class="input" type="text" v-bind="title" :class="{'p-invalid': errors.title}"/>
+              <small
+                  v-if="errors.title"
+                  class="p-error"
+              >
+              <i class="pi pi-exclamation-circle" />{{ " " + errors.title }}
+            </small>
+            <br v-else>
+            </span>
+            <div class="general-info-block">
+              <b>{{ $t("c_POSCreate.Owner") }}</b>
+              <p>{{ posDisplayName }}</p>
+            </div>
+            <div>
+            <span class="general-info-block" style="flex-direction: row; align-items: center;">
+              <Checkbox v-bind="useAuthentication"
                         inputId="useAuthentication"
                         name="useAuthentication"
                         value="useAuthentication"
@@ -24,16 +32,17 @@
               />
               <label for="useAuthentication">{{ $t("c_POSCreate.Use authentication") }}</label>
             </span>
-          </div>
-          <div class="general-info-block">
-            <b>{{ $t("c_POSCreate.Selected containers") }}</b>
-            <ul class="selected-containers">
-              <li v-for="container in selectedContainers" :key="container.id">
-                {{ container.name }}
-              </li>
-            </ul>
-          </div>
-          <Button id="create-pos-button" :label="$t('c_POSCreate.Edit')" @click="updatePointOfSale" severity="success"/>
+            </div>
+            <div class="general-info-block">
+              <b>{{ $t("c_POSCreate.Selected containers") }}</b>
+              <ul class="selected-containers">
+                <li v-for="container in selectedContainers" :key="container.id">
+                  {{ container.name }}
+                </li>
+              </ul>
+            </div>
+            <Button id="create-pos-button" :label="$t('c_containerEditModal.save')" type="submit" severity="success"/>
+          </form>
         </div>
         <DetailedContainerCardComponent
             @selectedChanged="handleSelectedChanged"
@@ -57,21 +66,31 @@ import DetailedContainerCardComponent from "@/components/DetailedContainerCardCo
 import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import type { BaseUserResponse, ContainerResponse, UserResponse } from "@sudosos/sudosos-client";
 import { usePointOfSaleStore } from "@/stores/pos.store";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import type { PointOfSaleWithContainersResponse } from "@sudosos/sudosos-client";
+import * as yup from 'yup';
+import { useForm } from "vee-validate";
+import apiService from "@/services/ApiService";
 
-const title: Ref<string> = ref("");
+const { defineComponentBinds, handleSubmit, errors, setValues } = useForm({
+  validationSchema: {
+    title: yup.string().required(),
+    useAuthentication: yup.boolean().required(),
+    selectedContainers: yup.mixed<Array<ContainerResponse>>(),
+  }
+});
+
+const title = defineComponentBinds('title');
 
 const containerStore = useContainerStore();
 const userStore = useUserStore();
 const publicContainers: Ref<Array<ContainerResponse> | null | undefined> = ref();
 const ownContainers: Ref<Array<ContainerResponse> | null | undefined> = ref();
 const selectedContainers: Ref<Array<ContainerResponse> | undefined> = ref();
-const useAuthentication = ref(false);
+const useAuthentication = defineComponentBinds('useAuthentication');
 const organsList: Ref<Array<UserResponse>> = ref([]);
 const authStore = useAuthStore();
 const pointOfSaleStore = usePointOfSaleStore();
-const router = useRouter();
 const id = ref();
 const route = useRoute();
 const pos: Ref<PointOfSaleWithContainersResponse | null | undefined> = ref();
@@ -83,15 +102,10 @@ const posDisplayName = computed(() => {
 });
 
 onBeforeMount(async () => {
-
   id.value = route.params.id;
-  pos.value = pointOfSaleStore.getPos;
-  if (pos.value) {
-    useAuthentication.value = pos.value.useAuthentication;
-    selectedContainers.value = pos.value.containers;
-    title.value = pos.value.name;
-    selectedOwner.value = pos.value.owner;
-  }
+  const posRes = await apiService.pos.getSinglePointOfSale(id.value);
+  pos.value = posRes.data;
+
   if (userStore.getCurrentUser.user ) {
     const publicContainersResponse = await containerStore.getPublicContainers();
     const ownContainersResponse = await containerStore.getUsersContainers(userStore.getCurrentUser.user.id);
@@ -100,6 +114,15 @@ onBeforeMount(async () => {
     organsList.value = authStore.organs;
   } else {
     // TODO: Error handling
+    // See: https://github.com/gewis/sudosos-frontend-vue3/issues/18
+  }
+  if (pos.value) {
+    setValues({
+      useAuthentication : pos.value.useAuthentication,
+      title: pos.value.name,
+    });
+    selectedContainers.value = pos.value.containers;
+    selectedOwner.value = pos.value.owner;
   }
 });
 
@@ -107,22 +130,18 @@ const handleSelectedChanged = (selected: any) => {
   selectedContainers.value = selected;
 };
 
-const updatePointOfSale = async () => {
-  if (title.value && selectedOwner.value && pos.value && selectedContainers.value) {
-    const response = await pointOfSaleStore.updatePointOfSale(
-        title.value,
+const handleEditPOS = handleSubmit(async (values) => {
+    if (!pos.value) return;
+    const handleEditPOSResponse = await pointOfSaleStore.updatePointOfSale(
+        values.title,
         pos.value.id,
-        useAuthentication.value,
-        selectedContainers.value.map((container: ContainerResponse) => container.id),
+        values.useAuthentication,
+        values.selectedContainers.map((cont: ContainerResponse) => cont.id),
     );
-    if (response.status == 200){
-      router.push('/point-of-sale/overview');
-    } else {
-      // TODO: Error Toasts
-    }
-  }
-};
-
+    console.warn(handleEditPOSResponse.status);
+    // TODO: Correct error handling
+    // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
+});
 </script>
 
 <style scoped lang="scss">
@@ -193,5 +212,30 @@ hr {
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
+
+  label {
+    margin-left: 10px;
+  }
+}
+
+:deep(tr.p-highlight) {
+  color: black;
+}
+
+.p-invalid {
+  background-color: #fef0f0;
+}
+
+.p-error {
+  display: block;
+  font-size: 12px;
+  text-align: left;
+  line-height:18px;
+}
+
+.p-error > i {
+  font-size:12px;
+  margin-right: 3.6px;
+  line-height:12px;
 }
 </style>

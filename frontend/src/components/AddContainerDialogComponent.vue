@@ -1,28 +1,57 @@
 <template>
-  <Dialog v-model:visible="visible" :header="$t('c_POSCreate.add container')">
+  <Dialog v-model:visible="visible"
+          :header="$t('c_POSCreate.add container')"
+          :draggable="false"
+          modal
+          @update:visible="closeDialog"
+          ref="addContainer"
+          @show="addListenerOnDialogueOverlay(addContainer)"
+  >
     <div class="dialog">
-      <div class="row">
-        <h6>{{ $t("c_containerEditModal.Name") }}</h6>
-        <InputText class="flex-child" v-model="name" />
-      </div>
-      <div class="row">
-        <h6>{{ $t("c_containerEditModal.owner") }}</h6>
-        <Dropdown
-            class="flex-child"
-            :options="organsList"
-            optionLabel="firstName"
-            v-model="selectedOwner"
-            :placeholder="$t('c_containerEditModal.select owner')"
-        />
-      </div>
-      <div class="row">
-        <h6>{{ $t("c_containerEditModal.Public") }}</h6>
-        <Checkbox class="flex-child" :binary="true" v-model="isPublic"/>
-      </div>
-      <div class="row" id="actions">
-        <Button severity="danger" outlined @click="visible = false">{{ $t("c_containerEditModal.cancel") }}</Button>
-        <Button severity="danger" @click="saveContainer">{{ $t("c_containerEditModal.save") }}</Button>
-      </div>
+      <form @submit="handleCreateContainer">
+        <div class="row">
+          <h6>{{ $t("c_containerEditModal.Name") }}</h6>
+          <div class="input-container">
+            <InputText class="flex-child" :class="{'p-invalid': errors.name}" v-bind="name"/>
+            <small
+                v-if="errors.name"
+                class="p-error"
+            >
+              <i class="pi pi-exclamation-circle" />{{ " " + errors.name }}
+            </small>
+            <br v-else>
+          </div>
+        </div>
+        <div class="row">
+          <h6>{{ $t("c_containerEditModal.owner") }}</h6>
+          <div class="input-container">
+            <Dropdown
+                class="flex-child"
+                :options="organsList"
+                optionLabel="firstName"
+                v-bind="selectedOwner"
+                :placeholder="$t('c_containerEditModal.select owner')"
+                :class="{'p-invalid': errors.selectedOwner}"
+            />
+            <small
+                v-if="errors.selectedOwner"
+                class="p-error"
+            >
+              <i class="pi pi-exclamation-circle" />{{ " " + errors.selectedOwner }}
+            </small>
+            <br v-else>
+            </div>
+        </div>
+        <div class="row">
+          <h6>{{ $t("c_containerEditModal.Public") }}</h6>
+          <Checkbox class="flex-child" :binary="true" v-bind="isPublic"/>
+          <span class="error-text">{{ errors.isPublic }}</span>
+        </div>
+        <div class="row" id="actions">
+          <Button severity="danger" outlined @click="closeDialog">{{ $t("c_containerEditModal.cancel") }}</Button>
+          <Button severity="danger" type="submit">{{ $t("c_containerEditModal.save") }}</Button>
+        </div>
+      </form>
     </div>
   </Dialog>
 </template>
@@ -33,28 +62,58 @@ import type { Ref } from "vue";
 import type { UserResponse } from "@sudosos/sudosos-client";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import { useContainerStore } from "@/stores/container.store";
+import * as yup from 'yup';
+import { useForm } from "vee-validate";
+import { useRouter } from "vue-router";
+import { addListenerOnDialogueOverlay } from "@/utils/dialogUtil";
 
-const visible = ref(false);
-const selectedOwner: Ref<UserResponse | undefined > = ref();
+const emit = defineEmits(['update:visible']);
+
+const visible: Ref<boolean | undefined> = ref(false);
 const organsList: Ref<Array<UserResponse>> = ref([]);
-const authStore = useAuthStore();
-const name: Ref<string> = ref("");
-const isPublic: Ref<boolean> = ref(false);
+const addContainer: Ref<null | any> = ref(null);
+
+// Form setup and component binds
+const { defineComponentBinds, handleSubmit, errors } = useForm({
+  validationSchema: {
+    name: yup.string().required(),
+    selectedOwner: yup.mixed<UserResponse>().required(),
+    isPublic: yup.boolean().required().default(false),
+  }
+});
+const name = defineComponentBinds('name');
+const isPublic = defineComponentBinds('isPublic');
 const containerStore = useContainerStore();
+const selectedOwner = defineComponentBinds('selectedOwner');
+
+const router = useRouter();
+const authStore = useAuthStore();
 
 onMounted(async () => {
   organsList.value = authStore.organs;
 });
+const closeDialog = () => {
+  emit('update:visible', false);
+};
 
-const saveContainer = () => {
-  if (selectedOwner.value){
-    containerStore.createEmptyContainer(name.value, isPublic.value, selectedOwner.value.id);
-    visible.value = false;
+const handleCreateContainer = handleSubmit(async (values) => {
+  const createContainerResponse = await containerStore.createEmptyContainer(
+      values.name,
+      values.isPublic || false,
+      values.selectedOwner.id
+  );
+
+  if (createContainerResponse.status === 200){
+    closeDialog();
+    router.go(0);
+    // TODO: Correct toasts
+    // See issue #18: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
   } else {
     // TODO: Correct error-handling
+    // See issue #18: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
   }
+});
 
-};
 </script>
 
 <style scoped lang="scss">
@@ -75,14 +134,13 @@ const saveContainer = () => {
       font-family: Lato,Arial,sans-serif!important;
       font-size: 1rem!important;
       flex: 0 0 33.33333%;
-      max-width: 33.33333%;
+      max-width: 20%;
     }
 
     .flex-child {
       font-family: Lato,Arial,sans-serif!important;
       font-size: 1rem!important;
-      flex: 1; /* Make the child fill the available space within the .row */
-      max-width: 66.66666%;
+
       margin-bottom: 0.25rem;
     }
 
@@ -105,4 +163,26 @@ const saveContainer = () => {
   }
 }
 
+.input-container {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
+
+.p-invalid {
+  background-color: #fef0f0;
+}
+
+.p-error {
+  display: block;
+  font-size: 12px;
+  text-align: left;
+  line-height:18px;
+}
+
+.p-error > i {
+  font-size:12px;
+  margin-right: 3.6px;
+  line-height:12px;
+}
 </style>

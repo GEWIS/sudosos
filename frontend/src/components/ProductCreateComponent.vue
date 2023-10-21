@@ -39,7 +39,7 @@
         </div>
         <div class="row">
           <p class="prop">{{ $t('c_productEditModal.Image') }}</p>
-          <FileUpload mode="basic" name="productImg" accept="image/*" @select="onImgUpload" />
+          <FileUpload mode="basic" name="productImg" accept="image/*" @select="onImgUpload($event)" />
         </div>
         <div class="row">
           <p class="prop">{{ $t('c_POSCreate.Owner') }}</p>
@@ -73,7 +73,6 @@ import type {
 import apiService from '@/services/ApiService';
 import Dropdown from 'primevue/dropdown';
 import FileUpload from 'primevue/fileupload';
-import type FileUploadSelectEvent from 'primevue/fileupload';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import InputNumber from 'primevue/inputnumber';
 import { toTypedSchema } from '@vee-validate/yup';
@@ -144,7 +143,7 @@ const handleProductCreate = handleSubmit(async (values) => {
   });
 });
 
-const onImgUpload = (event: FileUploadSelectEvent) => {
+const onImgUpload = (event: any) => {
   //@ts-ignore
   productImage.value = event.files[0];
 };

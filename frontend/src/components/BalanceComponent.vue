@@ -1,7 +1,7 @@
 <template>
   <CardComponent
-      :header="$t('c_currentSaldo.saldo')"
-      :action="showOption ? 'Increase Online' : ''"
+      :header="$t('c_currentBalance.balance')"
+      :action="showOption ? $t('c_currentBalance.Increase balance') : ''"
       routerLink="balance"
   >
     <div class="body">

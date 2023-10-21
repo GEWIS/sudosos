@@ -18,21 +18,27 @@ import DataTable from "primevue/datatable";
 import InputNumber from "primevue/inputnumber";
 import Dialog from "primevue/dialog";
 import 'primeicons/primeicons.css';
-import languages from "@/locales";
 import Dropdown from "primevue/dropdown";
 import Checkbox from "primevue/checkbox";
 import TabView from "primevue/tabview";
 import ScrollPanel from "primevue/scrollpanel";
 import FileUpload from "primevue/fileupload";
 import { populateStoresFromToken } from "@sudosos/sudosos-frontend-common";
+import en from "./locales/en.json";
+import nl from "./locales/nl.json";
 
 const app = createApp(App);
 
-const messages = Object.assign(languages);
+
 const i18n = createI18n({
-    locale: 'en',
+    locale: localStorage.getItem('locale') || 'en',
     fallbackLocale: 'en',
-    messages,
+    legacy: false,
+    globalInjection: true,
+    messages: {
+        en,
+        nl
+    },
 });
 app.use(createPinia());
 app.use(router);
