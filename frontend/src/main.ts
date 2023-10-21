@@ -26,7 +26,7 @@ import FileUpload from "primevue/fileupload";
 import { populateStoresFromToken } from "@sudosos/sudosos-frontend-common";
 import en from "./locales/en.json";
 import nl from "./locales/nl.json";
-
+import ToastService from "primevue/toastservice";
 const app = createApp(App);
 
 
@@ -44,6 +44,7 @@ app.use(createPinia());
 app.use(router);
 app.use(PrimeVue);
 app.use(i18n);
+app.use(ToastService);
 
 app.component('Button', Button);
 app.component('InputText', InputText);
@@ -58,5 +59,6 @@ app.component('TabView', TabView);
 app.component('ScrollPanel', ScrollPanel);
 app.component('FileUpload', FileUpload);
 app.component('InputNumber', InputNumber);
+
 populateStoresFromToken();
 app.mount('#app');
