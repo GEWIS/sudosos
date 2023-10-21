@@ -20,6 +20,7 @@
 import {onBeforeMount, ref} from "vue";
 import {loadStripe} from "@stripe/stripe-js";
 import apiService from "@/services/ApiService";
+import * as process from "process";
 
 const loading = ref(false);
 const visible = ref(true);
@@ -36,6 +37,7 @@ const paymentElement = ref();
 const elements = ref();
 onBeforeMount( async () => {
   stripe.value = await loadStripe(`${import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY}`);
+  console.warn(`${import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY}`);
 });
 
 const pay = async () => {
