@@ -37,7 +37,7 @@ import { onBeforeMount, ref } from 'vue';
 import type { Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import ContainerCardComponent from "@/components/ContainerCardComponent.vue";
-import TransactionsTableComponent from "@/components/TransactionsTableComponent.vue";
+import TransactionsTableComponent from "@/components/Mutations/MutationsTableComponent.vue";
 import { usePointOfSaleStore } from "@/stores/pos.store";
 import type { PointOfSaleWithContainersResponse } from "@sudosos/sudosos-client";
 import router from "@/router";

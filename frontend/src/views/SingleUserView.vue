@@ -31,7 +31,7 @@
         <BalanceComponent :user="currentUser" :showOption="false" id="userBalance"/>
       </div>
       <div class="row">
-        <TransactionsTableComponent :header="$t('userDetails.User Transactions')" action="none" style="width: 100%;"/>
+        <MutationsTableComponent :header="$t('userDetails.User Transactions')" action="none" style="width: 100%;"/>
       </div>
     </div>
   </div>
@@ -46,11 +46,11 @@ import type { UpdateUserRequest, UserResponse } from '@sudosos/sudosos-client';
 import CardComponent from "@/components/CardComponent.vue";
 import Checkbox from "primevue/checkbox";
 import BalanceComponent from "@/components/BalanceComponent.vue";
-import TransactionsTableComponent from "@/components/TransactionsTableComponent.vue";
 import { useForm } from "vee-validate";
 import apiService from "@/services/ApiService";
 import router from "@/router";
 import { userDetailsSchema } from "@/utils/validation-schema";
+import MutationsTableComponent from "@/components/Mutations/MutationsTableComponent.vue";
 
 const { defineComponentBinds, handleSubmit, errors, setValues } = useForm({
   validationSchema: userDetailsSchema,

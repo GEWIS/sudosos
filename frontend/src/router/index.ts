@@ -13,6 +13,7 @@ import SingleUserView from "@/views/SingleUserView.vue";
 import ProductsContainersView from "@/views/ProductsContainersView.vue";
 import { isAuthenticated } from "@sudosos/sudosos-frontend-common";
 import PasswordResetView from "@/views/PasswordResetView.vue";
+import TransactionsView from "@/views/TransactionsView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -85,6 +86,11 @@ const router = createRouter({
           path: '/manage-products',
           component: ProductsContainersView,
           name: 'products-containers-overview',
+        },
+        {
+          path: '/transactions',
+          component: TransactionsView,
+          name: 'transaction-view'
         }
         // Add other routes for authenticated users here
       ]

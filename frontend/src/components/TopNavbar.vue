@@ -62,6 +62,7 @@ const isSeller = () => {
 const leftItems = ref([
   {
     label: t('app.Transactions'),
+    to: '/transactions'
   },
   {
     label: t('app.Saldo'),
