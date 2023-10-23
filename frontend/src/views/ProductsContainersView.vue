@@ -67,7 +67,7 @@
               />
             </template>
             <template #body="rowData">
-              {{ formatPrice(rowData.data.priceInclVat.amount) }}
+              {{ formatPrice(rowData.data.priceInclVat) }}
             </template>
           </Column>
           <Column field="alcoholPercentage" :header="$t('c_productEditModal.Alcohol Percentage')">
