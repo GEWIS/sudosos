@@ -26,16 +26,17 @@ import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import { useRouter } from "vue-router";
 import { UserRole } from "@/utils/rbacUtils";
 import { useI18n } from "vue-i18n";
+import { formatPrice } from "@/utils/formatterUtils";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const router = useRouter();
 const { t, locale } = useI18n();
+
 const balance = computed((): string | undefined => {
   const balanceInCents = userStore.getCurrentUser.balance;
   if (!balanceInCents) return undefined;
-  const balanceInEuros = (balanceInCents.amount.amount / 100).toFixed(2);
-  return `€${balanceInEuros}`;
+  return formatPrice(balanceInCents.amount);
 });
 
 const firstName = computed((): string | undefined => {
