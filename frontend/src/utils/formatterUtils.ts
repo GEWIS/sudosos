@@ -23,6 +23,6 @@ function parseTime(value: number): string {
     return value.toString().padStart(2, '0');
 }
 
-export function formatPrice(value: Dinero | DineroObjectResponse | DineroObjectRequest): string {
+export function formatPrice(value: Dinero): string {
     return (value.amount / 100).toLocaleString('en', { style: 'currency', currency: value.currency });
 }
