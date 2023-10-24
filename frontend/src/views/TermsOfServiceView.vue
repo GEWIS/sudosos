@@ -46,13 +46,9 @@ const tos = marked(termsOfService);
 const acceptsExtensiveDataProcessing = ref(false);
 
 const acceptTermsOfService = (async () => {
-  await apiService.user.acceptTos({
-    extensiveDataProcessing: acceptsExtensiveDataProcessing.value
-  })
-  authStore.extractStateFromToken();
-  if (authStore.getUser) {
-    router.push({ name: 'home'});
-  }
+  await authStore.updateUserToSAccepted(acceptsExtensiveDataProcessing.value, apiService);
+
+  router.push({ name: 'home'});
 });
 
 const handleLogout = () => {
