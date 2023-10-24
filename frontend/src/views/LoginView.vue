@@ -75,7 +75,7 @@ import * as yup from 'yup';
 import InputText from 'primevue/inputtext';
 import { useToast } from 'primevue/usetoast';
 import axios, { AxiosError } from 'axios';
-import { isErrorResponse } from "@/utils/errorUtils";
+import { handleError, isErrorResponse } from "@/utils/errorUtils";
 
 const authStore = useAuthStore();
 const userStore = useUserStore();
@@ -129,21 +129,7 @@ const loginHandler = loginForm.handleSubmit(async (values) => {
       toHomeView();
     }
   } catch (err) {
-    const axiosError = err as AxiosError;
-    if (axiosError.response) {
-      const { data, status } = axiosError.response;
-      const code = axiosError.code;
-      let message = 'An error has occurred';
-      if (isErrorResponse(data)) {
-        message = data.message;
-      }
-      toast.add({
-        severity: 'error',
-        summary: `${status} - ${code}`,
-        detail: message,
-        life: 3000,
-      });
-    }
+    handleError(err as AxiosError);
   }
 });
 

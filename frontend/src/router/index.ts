@@ -15,6 +15,7 @@ import { isAuthenticated, useAuthStore } from "@sudosos/sudosos-frontend-common"
 import PasswordResetView from "@/views/PasswordResetView.vue";
 import { UserRole } from '@/utils/rbacUtils';
 import 'vue-router';
+import ErrorView from "@/views/ErrorView.vue";
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -51,6 +52,11 @@ const router = createRouter({
           component: PasswordResetView,
           name: 'passwordreset'
         },
+        {
+          path: '/error',
+          component: ErrorView,
+          name: 'error',
+        }
       ]
     },
     {
@@ -111,6 +117,11 @@ const router = createRouter({
           component: ProductsContainersView,
           name: 'products-containers-overview',
           meta: { requiresAuth: true, isBAC: true }
+        },
+        {
+          path: '/error',
+          component: ErrorView,
+          name: 'error',
         }
         // Add other routes for authenticated users here
       ]
