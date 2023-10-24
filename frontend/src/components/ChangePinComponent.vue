@@ -10,7 +10,6 @@ import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import type { UserResponse } from "@sudosos/sudosos-client";
 
 const authStore = useAuthStore();
-const userStore = useUserStore();
 const toast = useToast();
 
 const { value: inputPin, errorMessage: inputPinError } = useField('inputPin', validatePin);
