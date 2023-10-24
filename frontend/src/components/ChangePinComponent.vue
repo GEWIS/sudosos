@@ -5,12 +5,18 @@ import { useField } from "vee-validate";
 import apiService from "@/services/ApiService";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import { useToast } from "primevue/usetoast";
+import { useUserStore } from '@sudosos/sudosos-frontend-common';
+
+import type { UserResponse } from "@sudosos/sudosos-client";
 
 const authStore = useAuthStore();
+const userStore = useUserStore();
 const toast = useToast();
 
 const { value: inputPin, errorMessage: inputPinError } = useField('inputPin', validatePin);
 const { value: confirmPin, errorMessage: confirmPinError } = useField('confirmPin', validateConfirmPin);
+
+
 
 //show warning message if pin is filled in and not 4 digits
 function validatePin(checkInputPin: string){
@@ -18,7 +24,7 @@ function validatePin(checkInputPin: string){
     return "your pin needs to have 4 digits";
   }
   return true;
-}
+};
 
 //show warning message if conformation pin does not fit pin
 function validateConfirmPin(checkConfirmPin: string){
@@ -48,19 +54,22 @@ function changePinCode() {
 </script>
 
 <template>
-  <card-component :header="$t('profile.change pin code')" :action="$t('profile.change pin code')" :func="changePinCode" class="change-pin-code" >
+  <card-component :header="$t('profile.change pin code')">
     <Toast />
 
     <div id="update-pin-form">
       <div>
         <p>{{ $t('profile.new pin code')}}</p>
-        <PinComponent v-model="inputPin"/>
+        <PinComponent v-model="inputPin" />
         <small class="warning">{{inputPinError || '&nbsp;'}}</small>
       </div>
       <div>
         <p>{{ $t('profile.confirm new pin code')}}</p>
         <PinComponent v-model="confirmPin" />
         <small class="warning">{{confirmPinError || '&nbsp;'}}</small>
+      </div>
+      <div>
+        <Button severity="danger" @click="changePinCode" label="$t('profile.change pin code')"/>
       </div>
     </div>
   </card-component>
