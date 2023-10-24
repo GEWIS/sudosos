@@ -56,6 +56,15 @@ const router = createRouter({
     },
     {
       path: '',
+      meta: { requiresAuth: true },
+      children: [{
+        path: '/',
+        component: TermsOfServiceView,
+        name: 'tos'
+      }]
+    },
+    {
+      path: '',
       component: DashboardLayout,
       meta: { requiresAuth: true },
       children: [
@@ -113,11 +122,6 @@ const router = createRouter({
           name: 'products-containers-overview',
           meta: { requiresAuth: true, isBAC: true }
         },
-        {
-          path: '/',
-          component: TermsOfServiceView,
-          name: 'tos'
-        }
       ]
     }
   ]
@@ -139,19 +143,21 @@ router.beforeEach((to, from, next) => {
   };
 
   const hasTOSAccepted = () => {
-    return authStore.getUser?.acceptedToS ?? false;
+    return authStore.getUser?.acceptedToS;
   };
 
   const isAuth = isAuthenticated();
 
+  console.log(isAuth, hasTOSAccepted(), to.name)
+
   if (to.meta?.requiresAuth && !isAuth) {
     // If the route requires authentication and the user is not authenticated, redirect to login
     next({ name: 'login' });
-  } else if (isAuth && !hasTOSAccepted() && to.name !== 'tos') {
-    console.log('Sending to TOS');
+  } else if (isAuth && hasTOSAccepted() == 'NOT_ACCEPTED' && to.name !== 'tos') {
     // If the user is authenticated but user hasn't accepted the TOS, always redirect to TOS
     next({ name: 'tos' });
-  } else if (!to.meta?.requiresAuth && isAuth && hasTOSAccepted()) {
+  } else if (!to.meta?.requiresAuth && isAuth && hasTOSAccepted() == 'ACCEPTED') {
+    console.log('sup')
     // If the route doesn't require authentication and the user is authenticated, redirect to home
     next({ name: 'home' });
   } else {
