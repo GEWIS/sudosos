@@ -4,10 +4,12 @@ import { useField } from "vee-validate";
 import apiService from "@/services/ApiService";
 import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import { useToast } from "primevue/usetoast";
+import { useI18n } from "vue-i18n";
 
 const authStore = useAuthStore();
 const toast = useToast();
 const userStore = useUserStore();
+const { t } = useI18n();
 
 let isLocal = false;
 if(userStore.getCurrentUser.user) {
@@ -44,7 +46,7 @@ function validateEmail(checkEmail: string) {
 function changeUserInfo() {
   if(validateEmail(inputEmail.value) && validateLastName(inputLastName.value) && validateFirstName(inputFirstName.value)) {
     //TODO update info
-    
+
   } else {
     toast.add({ severity: "error", summary: "failed", detail: 'fill in correct info', life: 3000 });
 

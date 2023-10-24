@@ -4,10 +4,12 @@ import { useField } from "vee-validate";
 import apiService from "@/services/ApiService";
 import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import { useToast } from "primevue/usetoast";
+import { useI18n } from "vue-i18n";
 
 const authStore = useAuthStore();
 const toast = useToast();
 const userStore = useUserStore();
+const { t } = useI18n();
 
 let isLocal = false;
 if(userStore.getCurrentUser.user) {
@@ -21,16 +23,16 @@ const { value: confirmPassword, errorMessage: confirmPasswordError } = useField(
 
 
 function validatePassword(checkPassword: string) {
-  if (checkPassword.length <12) {
+  if (checkPassword.length <8) {
     //TODO set password requirements
-    return "length should be at least 12";
+    return t('profile.Password should');
   }
   return true;
 }
 
 function validateConfirmPassword(checkConfirmPassword: string) {
   if (checkConfirmPassword != inputPassword.value) {
-    return "Both passwords should match";
+    return t('profile.The passwords to not match up');
   }
   return true;
 }
@@ -40,20 +42,20 @@ function changePassword() {
     authStore.updateUserLocalPassword(inputPassword.value, apiService).then(() => {
       inputPassword.value = "";
       confirmPassword.value = "";
-      toast.add({ severity: "success", summary: "succes", detail: "" });
+      toast.add({ severity: "success", summary: "success", detail: "" });
+    }).catch((err) => {
+      console.error(err);
     });
-    //TODO call the password update
   } else {
-    toast.add({ severity: "error", summary: "failed", detail: 'fill in correct passwords', life: 3000 });
+    toast.add({ severity: "error", summary: "failed", detail: t('profile.Incorrect passwords submitted'), life: 3000 });
   }
 }
 
 </script>
 
 <template>
-  <card-component :header="'Change password'">
+  <card-component :header="t('profile.Change password')">
     <div>
-      <small v-if="!isLocal">!Only local users can change their password!</small>
       <div>
         <p>Password</p>
         <Password :disabled="!isLocal"  v-model="inputPassword"/>
@@ -65,7 +67,7 @@ function changePassword() {
         <small class="warning">{{confirmPasswordError || '&nbsp;'}}</small>
       </div>
       <div>
-        <Button severity="danger" :disabled="!isLocal" label="Update Password" @click="changePassword"/>
+        <Button severity="danger" :disabled="!isLocal" :label="t('profile.Update password')" @click="changePassword"/>
       </div>
     </div>
   </card-component>

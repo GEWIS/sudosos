@@ -448,6 +448,7 @@
     "Password should": "Password should contain at least 8 characters",
     "Confirm password": "Confirm password",
     "The passwords to not match up": "The passwords to not match up",
+    "Incorrect passwords submitted": "Incorrect passwords submitted",
     "Update password": "Update password",
     "Change pin code": "Change pin code",
     "Old pin code": "Old pin code",
@@ -460,7 +461,13 @@
     "New pin code length must be 4 digits": "New pin code length must be 4 digits",
     "New pin code must be unique from old pin code": "New pin code must be unique from old pin code",
     "Confirmation does not match pin code": "Confirmation does not match pin code",
-    "Pin code updated": "Pin code was successfully updated."
+    "Pin code updated": "Pin code was successfully updated.",
+    "Incorrect pin code submitted": "Incorrect pin code submitted",
+    "Your new key is": "Your new API key is: ",
+    "Key is not saved": "NOTE: your API key is not saved so copy it now",
+    "Get api key": "Get API key",
+    "Note old api key will get removed": "NOTE: any old API key will be replaced",
+    "Get new API key": "Get new API key"
   },
   "userDetails": {
     "profile": "{name}'s profile",

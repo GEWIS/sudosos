@@ -6,7 +6,7 @@
     <div class="container">
       <ChangePinComponent />
 
-      <ChangeInfoComponent />
+      <!-- <ChangeInfoComponent /> -->
 
       <ChangePasswordComponent/>
 

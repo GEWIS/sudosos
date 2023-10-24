@@ -4,16 +4,19 @@ import { ref } from "vue";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import apiService from "@/services/ApiService";
 import { useToast } from "primevue/usetoast";
+import { useI18n } from "vue-i18n";
 
 const authStore = useAuthStore();
 const apiKeyMessage = ref();
 const toast = useToast();
+const { t } = useI18n();
+
 
 function updateApiKey() {
   authStore.updateUserKey(apiService).then((res) => {
     //Succes
     if(res) {
-      toast.add({ severity: "success", summary: "New api key", detail: `your new key is :\n ${res.key} \n Copy now as we do not save this raw data` });
+      toast.add({ severity: "success", summary: "Success", detail: `t('profile.Your new key is')\n ${res.key} \n t('profile.Kay is not saved')` });
     }
   }).catch((err) => {
     //error
@@ -25,14 +28,14 @@ function updateApiKey() {
 </script>
 
 <template>
-  <card-component header="'get api key'">
+  <card-component :header="t('profile.Get api key')">
     <Toast/>
     <div>
-      <p>NOTE: If you request a new API key any old ones will be replaced</p>
+      <p>{{ $t('profile.Note old api key will get removed') }}</p>
       <p>{{apiKeyMessage || '&nbsp;'}}</p>
     </div>
     <div>
-      <Button severity="danger" label="Get new API key" @click="updateApiKey" />
+      <Button severity="danger" :label="t('profile.Get new API key')" @click="updateApiKey" />
     </div>
   </card-component>
 </template>
