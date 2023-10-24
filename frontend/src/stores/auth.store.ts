@@ -5,7 +5,7 @@ import {
   AuthenticationResponse,
   GEWISAuthenticationPinRequest, GewiswebAuthenticationRequest, UpdatePinRequest,
   UpdateLocalRequest,
-  UserResponse, UpdateNfcRequest
+  UserResponse, UpdateNfcRequest, AcceptTosRequest
 } from "@sudosos/sudosos-client";
 import { useUserStore } from "./user.store";
 import jwtDecode, { JwtPayload } from "jwt-decode";
@@ -50,10 +50,12 @@ export const useAuthStore = defineStore({
       this.roles = roles;
       this.organs = organs;
       this.acceptedToS = acceptedToS;
-      service.user.getIndividualUser(this.user.id).then((res) => {
-        const userStore = useUserStore();
-        userStore.setCurrentUser(res.data)
-      })
+      if (this.acceptedToS === "ACCEPTED") {
+        service.user.getIndividualUser(this.user.id).then((res) => {
+          const userStore = useUserStore();
+          userStore.setCurrentUser(res.data)
+        });
+      }
     },
     async gewisPinlogin(userId: string, pinCode: string, service: ApiService) {
       const userDetails: GEWISAuthenticationPinRequest = {
@@ -140,6 +142,19 @@ export const useAuthStore = defineStore({
     async updateUserKey(service: ApiService) {
       if (!this.user) return;
       return (await service.user.updateUserKey(this.user.id)).data
+    },
+    async updateUserToSAccepted(extensiveDataProcessing: boolean, service: ApiService) {
+      if (!this.user) return;
+      const req: AcceptTosRequest = {
+        extensiveDataProcessing: extensiveDataProcessing
+      }
+      await service.user.acceptTos(req);
+      this.user.acceptedToS = "ACCEPTED";
+
+      const res = await service.user.getIndividualUser(this.user.id)
+      const userStore = useUserStore();
+      userStore.setCurrentUser(res.data);
+      return;
     },
     extractStateFromToken() {
       const token = getTokenFromStorage();
