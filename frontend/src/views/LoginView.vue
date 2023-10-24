@@ -137,6 +137,8 @@ onBeforeMount(() => {
 // TODO: error handling and error toasts
 // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/46
 const loginHandler = loginForm.handleSubmit(async (values) => {
+
+  // Send toHomeView either with or without ToS, router will handle correct routing based on that, but fetching user will result in error.
   try {
     if (values.username.includes('@')) {
       const res = await apiService.authenticate.localAuthentication({
@@ -144,19 +146,15 @@ const loginHandler = loginForm.handleSubmit(async (values) => {
         password: values.password
       });
       authStore.handleResponse(res.data, apiService);
-      if (isAuthenticated && authStore.getUser.acceptedToS == 'NOT_ACCEPTED') {
-        toToSView();
+      if (authStore.getToS == 'ACCEPTED' && authStore.getUser ) {
+        await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
       }
-      if (isAuthenticated && authStore.getUser.acceptedToS == 'ACCEPTED') {
-        userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
-        toHomeView();
+      toHomeView();
+    } else {
+      await authStore.gewisLdapLogin(values.username, values.password, apiService);
+      if (authStore.getToS == 'ACCEPTED' && authStore.getUser) {
+        await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
       }
-    }).catch((err) => {
-      console.error(err);
-    });
-  } else {
-    await authStore.gewisLdapLogin(username.value.modelValue, password.value.modelValue, apiService).then(() => {
-      if (authStore.getUser) userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
       toHomeView();
     }
   } catch (err) {
@@ -176,10 +174,6 @@ const resetPassword = () => {
 
 const toHomeView = () => {
   router.push({ name: 'home' });
-};
-
-const toToSView = () => {
-  router.push({ name: 'tos' });
 };
 
 </script>

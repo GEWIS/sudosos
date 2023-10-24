@@ -114,7 +114,7 @@ const router = createRouter({
           meta: { requiresAuth: true, isBAC: true }
         },
         {
-          path: '/tos',
+          path: '/',
           component: TermsOfServiceView,
           name: 'tos'
         }
@@ -136,14 +136,22 @@ router.beforeEach((to, from, next) => {
 
   const isSeller = () => {
     return authStore.roles.includes(UserRole.SELLER);
-};
+  };
+
+  const hasTOSAccepted = () => {
+    return authStore.getUser?.acceptedToS ?? false;
+  };
 
   const isAuth = isAuthenticated();
 
   if (to.meta?.requiresAuth && !isAuth) {
     // If the route requires authentication and the user is not authenticated, redirect to login
     next({ name: 'login' });
-  } else if (!to.meta?.requiresAuth && isAuth) {
+  } else if (isAuth && !hasTOSAccepted() && to.name !== 'tos') {
+    console.log('Sending to TOS');
+    // If the user is authenticated but user hasn't accepted the TOS, always redirect to TOS
+    next({ name: 'tos' });
+  } else if (!to.meta?.requiresAuth && isAuth && hasTOSAccepted()) {
     // If the route doesn't require authentication and the user is authenticated, redirect to home
     next({ name: 'home' });
   } else {

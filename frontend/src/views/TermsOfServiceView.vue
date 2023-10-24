@@ -5,38 +5,27 @@
     <hr />
     <p>SudoSOS Terms of Service - version 1.0 (14/08/2022)</p>
 
-    <div v-html="tos" class="geef-zwarte-text"/>
+    <div v-html="tos"/>
 
-    <p class="geef-zwarte-text">{{ $t('termsOfService.extensiveDataProcessing') }}</p>
-
-    <div class="checkbox-data">
-      <input
-          class="checkbox-check-input"
-          type="checkbox"
-          value=""
-          id="flexCheckDefault"
-      >
-
-      <label class="form-check-label geef-zwarte-text" for="flexCheckDefault">
-        {{ $t('termsOfService.agreeData') }}
-      </label>
-
-    </div>
+    
+    <Checkbox v-model="acceptsExtensiveDataProcessing" :binary="true" class="checkbox"/>
+    <label for="accept">{{ $t('termsOfService.agreeData') }}</label>
+    
     <div class="tos-button-box">
-      <button
+      <Button
           type="button"
-          class="btn btn-secondary btn-lg"
           @click="handleLogout"
+          severity="secondary"
       >
         {{ $t('app.Sign out') }}
-      </button>
-      <button
+      </Button>
+      <Button
           type="button"
-          class="btn btn-danger btn-lg"
           @click="acceptTermsOfService"
+          severity="danger"
       >
         {{ $t('termsOfService.agreeToS') }}
-      </button>
+      </Button>
 
     </div>
   </div>
@@ -46,52 +35,52 @@
 import apiService from '@/services/ApiService';
 import router from '@/router';
 import { marked } from 'marked';
-import { isAuthenticated, useAuthStore } from "@sudosos/sudosos-frontend-common";
+import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import termsOfService from '@/locales/TermsOfService.md?raw';
-import { onMounted } from "vue";
+import { ref } from 'vue';
 
 const authStore = useAuthStore();
 
 const tos = marked(termsOfService);
 
-onMounted(async () => {
-  if(isAuthenticated && authStore.getUser.acceptedToS == 'ACCEPTED') {
-    toHomeView();
-  }
-});
+const acceptsExtensiveDataProcessing = ref(false);
 
 const acceptTermsOfService = (async () => {
   await apiService.user.acceptTos({
-    extensiveDataProcessing: true
-  }).then(() => {
-    toHomeView();
-  });
+    extensiveDataProcessing: acceptsExtensiveDataProcessing.value
+  })
+  authStore.extractStateFromToken();
+  if (authStore.getUser) {
+    router.push({ name: 'home'});
+  }
 });
 
 const handleLogout = () => {
   authStore.logout();
-  router.push('/');
-};
-
-const toHomeView = () => {
-  router.push({ name: 'home' });
+  router.push({ name: 'login' });
 };
 </script>
 
 <style scoped lang="scss">
 @import '../styles/BasePage.css';
 
-.checkbox-data {
-  font-weight: 600;
+.checkbox {
+  margin-right: 1rem;
 }
 
 p {
   color: black;
 }
+
 .page-container {
   margin: 1.5rem!important;
 }
-.geef-zwarte-text {
-  color: black;
+
+.tos-button-box {
+  margin-top: 1rem;
+}
+
+.tos-button-box > * {
+  margin-right: 1rem;
 }
 </style>
