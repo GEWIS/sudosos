@@ -16,7 +16,7 @@ function updateApiKey() {
   authStore.updateUserKey(apiService).then((res) => {
     //Succes
     if(res) {
-      toast.add({ severity: "success", summary: "Success", detail: `t('profile.Your new key is')\n ${res.key} \n t('profile.Kay is not saved')` });
+      toast.add({ severity: "success", summary: "Success", detail: `${t('profile.Your new key is')} \n ${res.key} \n ${t('profile.Kay is not saved')}` });
     }
   }).catch((err) => {
     //error

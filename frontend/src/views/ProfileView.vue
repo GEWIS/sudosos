@@ -4,13 +4,22 @@
     <div class="page-title">{{ $t('profile.My profile')}}</div>
 
     <div class="container">
-      <ChangePinComponent />
 
-      <!-- <ChangeInfoComponent /> -->
+      <div class = "container">
 
-      <ChangePasswordComponent/>
+          <ChangePinComponent />
 
-      <ChangeApiKeyComponent />
+          <ChangePasswordComponent />
+      </div>
+
+      <div class="container">
+          <ChangeApiKeyComponent />
+
+          <ChangeInfoComponent />
+      </div>
+
+
+
 
     </div>
 
@@ -25,8 +34,11 @@ import ChangePinComponent from "@/components/ChangePinComponent.vue";
 import ChangeApiKeyComponent from "@/components/ChangeApiKeyComponent.vue";
 import CardComponent from "@/components/CardComponent.vue";
 import ChangeInfoComponent from "@/components/ChangeInfoComponent.vue";
+import apiService from "@/services/ApiService";
 
-
+apiService.user.updateUser(0, {
+  email: 'kamker',
+});
 </script>
 
 <style scoped>

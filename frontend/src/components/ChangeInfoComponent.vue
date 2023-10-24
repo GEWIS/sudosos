@@ -57,7 +57,7 @@ function changeUserInfo() {
 </script>
 
 <template>
-  <card-component :header="'Change password'">
+  <card-component :header="'Change user info'">
     <div>
       <small v-if="!isLocal">!This account is not managed trhoug SudoSOS!</small>
       <div>
@@ -76,7 +76,7 @@ function changeUserInfo() {
         <small class="warning">{{inputEmailError || '&nbsp;'}}</small>
       </div>
       <div>
-        <Button severity="danger" :disabled="!isLocal" label="Update Password" @click="changeUserInfo"/>
+        <Button severity="danger" :disabled="true" label="Update user info" @click="changeUserInfo"/>
       </div>
     </div>
   </card-component>
