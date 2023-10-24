@@ -26,7 +26,7 @@
   },
   "app": {
     "Transactions": "Transactions",
-    "Saldo": "Balance",
+    "Balance": "Balance",
     "Points of Sale": "Points of Sale",
     "Overview": "POS Overview",
     "Create": "Create",
@@ -71,8 +71,12 @@
   "transactions": {
     "Transactions": "Transactions"
   },
-  "saldo": {
-    "Saldo": "Balance"
+  "balance": {
+    "Balance": "Balance",
+    "Balance increase amount": "Balance increase amount",
+    "Start payment": "Start payment",
+    "Increase balance": "Increase balance",
+    "Price": "Price"
   },
   "pointOfSaleOverview": {
     "Point of sale overview": "Point of sale overview"
@@ -256,15 +260,15 @@
   "banners": {
     "Banners": "Banners"
   },
-  "c_currentSaldo": {
-    "saldo": "balance",
+  "c_currentBalance": {
+    "balance": "Balance",
     "upgrade online": "increase online",
     "topup": "You will be topping up with €{amount}",
     "cashtopup": "It is no longer possible to increase your balance in cash during the 'borrel'",
     "increase": "Balance increase amount:",
     "currency": "€",
     "startPayment": "Start Payment",
-    "Increase Saldo": "Increase Saldo"
+    "Increase balance": "Increase balance"
   },
   "c_recentTransactionsTable": {
     "recent transactions": "recent transactions",

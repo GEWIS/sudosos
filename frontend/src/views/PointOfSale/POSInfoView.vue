@@ -1,5 +1,3 @@
-<!--TODO: Make typing correct for the POSResponse-->
-
 <template>
   <div class="page-container">
     <div class="page-title" id="pos-info-header">
@@ -47,7 +45,7 @@ const id = ref();
 const pointOfSaleStore = usePointOfSaleStore();
 const pos: Ref<PointOfSaleWithContainersResponse | null | undefined> = ref();
 onBeforeMount(async () => {
-  id.value = route.params.id; // TODO: Implement API Getter for the POS in question
+  id.value = route.params.id;
   await pointOfSaleStore.fetchPointOfSale(id.value);
   pos.value = pointOfSaleStore.getPos;
 });
@@ -61,6 +59,7 @@ const handleEditClicked = () => {
     router.push(`/point-of-sale/edit/${pos.value.id}`);
   } else {
     // TODO: Correct Error handling
+    // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
   }
 };
 </script>

@@ -1,20 +1,19 @@
 <template>
   <div class="page-container">
-    <div class="page-title">{{ $t('c_currentSaldo.saldo') }}</div>
+    <div class="page-title">{{ $t('c_currentBalance.balance') }}</div>
     <TopupModal v-model:visible="visible" :amount="amountValue"/>
     <div class="content-wrapper">
       <CardComponent
-          :action="$t('c_currentSaldo.startPayment')"
-          :header="$t('c_currentSaldo.Increase Saldo')"
-          class="increase-saldo-card"
+          :action="$t('balance.Start payment')"
+          :header="$t('balance.Increase balance')"
+          class="increase-balance-card"
           :func="showDialog"
       >
-        <p id="cash-notice">{{ $t('c_currentSaldo.cashtopup') }}</p>
         <div id="balance-increase-form">
-          <p id="balance-increase-title">{{ $t('c_currentSaldo.increase') }}</p>
+          <p id="balance-increase-title">{{ $t('balance.Balance increase amount') }}</p>
           <div class="p-inputgroup flex-1">
-            <span class="p-inputgroup-addon">{{ $t('c_currentSaldo.currency') }}</span>
-            <InputNumber v-model="amountValue" :placeholder="$t('c_productInfoModal.Price')" inputId="amount"/>
+            <span class="p-inputgroup-addon">{{ '€' }}</span>
+            <InputNumber class="cashInput" v-model="amountValue" :placeholder="$t('balance.Price')" inputId="amount"/>
           </div>
         </div>
       </CardComponent>
@@ -24,6 +23,7 @@
 
 <script setup lang="ts">
 // TODO: Create Modal for Topping up Balance
+// See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/46
 import CardComponent from "@/components/CardComponent.vue";
 import { ref } from "vue";
 import TopupModal from "@/components/TopupModalComponent.vue";
@@ -54,5 +54,6 @@ const showDialog = () => {
 
 .p-inputgroup {
   width: 25%;
+  min-width: 120px;
 }
 </style>

@@ -24,13 +24,14 @@ import TabView from "primevue/tabview";
 import ScrollPanel from "primevue/scrollpanel";
 import FileUpload from "primevue/fileupload";
 import { populateStoresFromToken } from "@sudosos/sudosos-frontend-common";
-import en from "../src/locales/en.json";
-import nl from "../src/locales/nl.json";
+import en from "./locales/en.json";
+import nl from "./locales/nl.json";
 
 const app = createApp(App);
 
+
 const i18n = createI18n({
-    locale: 'en',
+    locale: localStorage.getItem('locale') || 'en',
     fallbackLocale: 'en',
     legacy: false,
     globalInjection: true,

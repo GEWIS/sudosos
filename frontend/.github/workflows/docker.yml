@@ -1,0 +1,74 @@
+name: Docker
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dockerize:
+    runs-on: [self-hosted, linux, docker]
+    container:
+      image: docker:dind
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          path: .
+
+      - name: Set up environment - main
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE_DEVELOPMENT }}
+      #    ENV_FILE: ${{ secrets.ENV_FILE_PRODUCTION }}
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "${ENV_FILE}" > .env
+
+      #- name: Set up environment - develop
+      #  env:
+      #    ENV_FILE: ${{ secrets.ENV_FILE_DEVELOPMENT }}
+      #  if: github.ref != 'refs/heads/main'
+      #  run: |
+      #    echo "${ENV_FILE}" > .env
+
+      - name: Get Docker meta (for tags)
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_TAG }}
+          # generate Docker tags based on the following events/attributes
+          tags: |
+            type=raw,value=vue3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to SudoSOS Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ vars.DOCKER_REGISTRY }}
+          username: ${{ secrets.SVC_GH_SUDOSOS_USERNAME }}
+          password: ${{ secrets.SVC_GH_SUDOSOS_PWD }}
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          platforms: linux/amd64 #SudoSOS does not run on linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

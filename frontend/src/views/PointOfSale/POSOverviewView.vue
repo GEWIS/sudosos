@@ -1,5 +1,3 @@
-<!--TODO: Add Localization-->
-
 <template>
   <div class="page-container">
     <div class="page-title">{{ $t('pointOfSaleOverview.Point of sale overview') }}</div>

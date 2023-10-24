@@ -1,4 +1,3 @@
-<!--TODO: Input validation-->
 <template>
   <div class="page-container">
     <div class="page-title">{{ $t('c_POSCreate.Create Point of Sale') }}</div>
@@ -11,7 +10,7 @@
             <span class="general-info-block">
               <b>{{ $t('posInfo.Title') }}</b>
 
-              <InputText class="input" type="text" v-bind="title" :class="{'p-invalid': errors.name}" />
+              <InputText class="input" type="text" v-bind="title" :class="{'p-invalid': errors.title}" />
               <small
                   v-if="errors.title"
                   class="p-error"
@@ -31,10 +30,10 @@
                 :class="{'p-invalid': errors.owner}"
               />
               <small
-                  v-if="errors.name"
+                  v-if="errors.title"
                   class="p-error"
               >
-              <i class="pi pi-exclamation-circle" />{{ " " + errors.name }}
+              <i class="pi pi-exclamation-circle" />{{ " " + errors.title }}
             </small>
             <br v-else>
             </span>
@@ -133,6 +132,7 @@ onMounted(async () => {
     organsList.value = authStore.organs;
   } else {
     // TODO: Error handling
+    // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
   }
 });
 
@@ -148,6 +148,7 @@ const handleCreatePOS = handleSubmit(async (values) => {
     router.push('/point-of-sale/overview');
   } else {
     // TODO: Error toasts
+    // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
   }
 });
 
