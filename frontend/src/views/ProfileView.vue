@@ -6,6 +6,8 @@
     <div class="container">
       <ChangePinComponent />
 
+      <ChangeInfoComponent />
+
       <ChangePasswordComponent/>
 
       <ChangeApiKeyComponent />
@@ -22,6 +24,7 @@ import ChangePasswordComponent from "@/components/ChangePasswordComponent.vue";
 import ChangePinComponent from "@/components/ChangePinComponent.vue";
 import ChangeApiKeyComponent from "@/components/ChangeApiKeyComponent.vue";
 import CardComponent from "@/components/CardComponent.vue";
+import ChangeInfoComponent from "@/components/ChangeInfoComponent.vue";
 
 
 </script>
