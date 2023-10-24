@@ -51,6 +51,7 @@ const containers = ref();
   border-radius: 4px;
   font-size: 1rem;
   font-family: Lato,Arial,sans-serif!important;
+  color: black;
 }
 
 :deep(.p-datatable .p-datatable-tbody > tr > td:not(:first-child)) {
