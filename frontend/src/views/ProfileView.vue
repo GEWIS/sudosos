@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
 
-    <div class="page-title">{{ $t('profile.my profile')}}</div>
+    <div class="page-title">{{ $t('profile.My profile')}}</div>
 
     <div class="container">
       <ChangePinComponent />
