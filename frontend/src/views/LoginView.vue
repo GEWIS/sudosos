@@ -74,8 +74,8 @@ import { toTypedSchema } from '@vee-validate/yup';
 import * as yup from 'yup';
 import InputText from 'primevue/inputtext';
 import { useToast } from 'primevue/usetoast';
-import axios, { AxiosError } from 'axios';
-import { handleError, isErrorResponse } from "@/utils/errorUtils";
+import { AxiosError } from 'axios';
+import { handleError } from "@/utils/errorUtils";
 
 const authStore = useAuthStore();
 const userStore = useUserStore();

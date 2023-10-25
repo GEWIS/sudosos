@@ -12,8 +12,15 @@
         <div id="balance-increase-form">
           <p id="balance-increase-title">{{ $t('balance.Balance increase amount') }}</p>
           <div class="p-inputgroup flex-1">
-            <span class="p-inputgroup-addon">{{ '€' }}</span>
-            <InputNumber class="cashInput" v-model="amountValue" :placeholder="$t('balance.Price')" inputId="amount"/>
+            <InputNumber
+              class="cashInput"
+              v-model="amountValue"
+              :placeholder="$t('balance.Price')"
+              inputId="amount"
+              mode="currency"
+              currency="EUR"
+              locale="nl-NL"
+            />
           </div>
         </div>
       </CardComponent>

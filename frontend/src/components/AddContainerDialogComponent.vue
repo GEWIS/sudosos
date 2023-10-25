@@ -68,7 +68,7 @@ import { useRouter } from "vue-router";
 import { addListenerOnDialogueOverlay } from "@/utils/dialogUtil";
 import { useToast } from "primevue/usetoast";
 import { handleError } from "@/utils/errorUtils";
-import { createI18n, useI18n } from "vue-i18n";
+import { useI18n } from "vue-i18n";
 
 const emit = defineEmits(['update:visible']);
 const toast = useToast();
@@ -100,7 +100,7 @@ const closeDialog = () => {
 };
 
 const handleCreateContainer = handleSubmit(async (values) => {
-  const createContainerResponse = await containerStore.createEmptyContainer(
+  await containerStore.createEmptyContainer(
       values.name,
       values.isPublic || false,
       values.selectedOwner.id

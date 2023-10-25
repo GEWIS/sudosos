@@ -129,13 +129,13 @@ onBeforeMount(async () => {
       .then((response) => {
         publicContainers.value = response.records;
       })
-      .catch((error) => handleError(error));
+      .catch((error) => handleError(error, toast));
     await containerStore
       .getUsersContainers(userStore.getCurrentUser.user.id)
       .then((response) => {
         ownContainers.value = response.records.filter((container) => container.public == false);
       })
-      .catch((error) => handleError(error));
+      .catch((error) => handleError(error, toast));
     organsList.value = authStore.organs;
   } else {
     toast.add({
@@ -175,7 +175,7 @@ const handleEditPOS = handleSubmit(async (values) => {
         detail: t('successMessages.editPOS'),
         life: 3000
       });
-    }).catch((error) => handleError(error));
+    }).catch((error) => handleError(error, toast));
 });
 </script>
 
