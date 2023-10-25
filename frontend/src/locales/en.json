@@ -332,7 +332,7 @@
     "Add new": "Add new product",
     "Product details": "Product details",
     "Existing products": "Existing products",
-    "save": "save",
+    "save": "Save",
     "cancel": "cancel",
     "Delete from container": "Delete from container",
     "edit product": "edit product",
@@ -537,6 +537,7 @@
   "successMessages": {
     "succes": "Success",
     "editPOS": "Succesfully edited POS.",
-    "createContainer": "Successfully created container."
+    "createContainer": "Successfully created container.",
+    "productCreated": "Successfully created product."
   }
 }
