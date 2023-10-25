@@ -279,14 +279,14 @@ const qs = Qe({
       };
       await c.user.acceptTos(u);
       const e = await c.authenticate.refreshToken();
-      console.log(e.data), this.handleResponse(e.data, c);
+      this.handleResponse(e.data, c);
     },
     extractStateFromToken() {
       const i = Te();
       if (!i.token)
         return;
       const c = $e(i.token);
-      console.log(c), this.user = c.user, this.roles = c.roles, this.token = i.token, this.organs = c.organs, this.acceptedToS = c.acceptedToS;
+      this.user = c.user, this.roles = c.roles, this.token = i.token, this.organs = c.organs, this.acceptedToS = c.acceptedToS;
     },
     logout() {
       this.user = null, this.roles = [], this.token = null, this.organs = [], this.acceptedToS = null, _s();
