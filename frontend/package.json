@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@sudosos/sudosos-client": "github:GEWIS/sudosos-client",
-    "@sudosos/sudosos-frontend-common": "github:GEWIS/sudosos-frontend-common",
+    "@sudosos/sudosos-frontend-common": "file:../sudosos-frontend-common",
     "@vee-validate/yup": "^4.11.1",
     "jwt-decode": "^3.1.2",
     "marked": "^9.1.2",

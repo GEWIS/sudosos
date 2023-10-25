@@ -26,6 +26,7 @@ import FileUpload from "primevue/fileupload";
 import { populateStoresFromToken } from "@sudosos/sudosos-frontend-common";
 import en from "./locales/en.json";
 import nl from "./locales/nl.json";
+import apiService from './services/ApiService';
 
 const app = createApp(App);
 
@@ -58,5 +59,5 @@ app.component('TabView', TabView);
 app.component('ScrollPanel', ScrollPanel);
 app.component('FileUpload', FileUpload);
 app.component('InputNumber', InputNumber);
-populateStoresFromToken();
+populateStoresFromToken(apiService);
 app.mount('#app');

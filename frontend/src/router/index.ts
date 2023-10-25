@@ -56,6 +56,7 @@ const router = createRouter({
     },
     {
       path: '',
+      component: PublicLayout,
       meta: { requiresAuth: true },
       children: [{
         path: '/',
@@ -143,12 +144,10 @@ router.beforeEach((to, from, next) => {
   };
 
   const hasTOSAccepted = () => {
-    return authStore.getUser?.acceptedToS;
+    return authStore.acceptedToS || authStore.user?.acceptedToS;
   };
 
   const isAuth = isAuthenticated();
-
-  console.log(isAuth, hasTOSAccepted(), to.name)
 
   if (to.meta?.requiresAuth && !isAuth) {
     // If the route requires authentication and the user is not authenticated, redirect to login
@@ -157,7 +156,6 @@ router.beforeEach((to, from, next) => {
     // If the user is authenticated but user hasn't accepted the TOS, always redirect to TOS
     next({ name: 'tos' });
   } else if (!to.meta?.requiresAuth && isAuth && hasTOSAccepted() == 'ACCEPTED') {
-    console.log('sup')
     // If the route doesn't require authentication and the user is authenticated, redirect to home
     next({ name: 'home' });
   } else {

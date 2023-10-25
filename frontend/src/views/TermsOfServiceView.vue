@@ -35,11 +35,12 @@
 import apiService from '@/services/ApiService';
 import router from '@/router';
 import { marked } from 'marked';
-import { useAuthStore } from "@sudosos/sudosos-frontend-common";
+import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import termsOfService from '@/locales/TermsOfService.md?raw';
 import { ref } from 'vue';
 
 const authStore = useAuthStore();
+const userStore = useUserStore();
 
 const tos = marked(termsOfService);
 
@@ -47,8 +48,17 @@ const acceptsExtensiveDataProcessing = ref(false);
 
 const acceptTermsOfService = (async () => {
   await authStore.updateUserToSAccepted(acceptsExtensiveDataProcessing.value, apiService);
-
+ 
+  if (authStore.getUser) {
+    apiService.user.getIndividualUser(authStore.getUser.id).then((res) => {
+      const userStore = useUserStore();
+      userStore.setCurrentUser(res.data)
+    });
+    await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
+  }
   router.push({ name: 'home'});
+  
+  
 });
 
 const handleLogout = () => {
