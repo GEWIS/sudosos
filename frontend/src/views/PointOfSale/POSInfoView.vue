@@ -61,7 +61,7 @@ const pos: Ref<PointOfSaleWithContainersResponse | null | undefined> = ref();
 onBeforeMount(async () => {
   id.value = route.params.id;
   await pointOfSaleStore.fetchPointOfSale(id.value).catch((error) => {
-    handleError(error);
+    handleError(error, toast);
   });
   pos.value = pointOfSaleStore.getPos;
 });
@@ -72,9 +72,9 @@ const handleClosedClicked = () => {
 
 const handleEditClicked = () => {
   if (pos.value) {
-    router.push(`/point-of-sale/edit/${1000}`);
+    router.push(`/point-of-sale/edit/${pos.value.id}`);
   } else {
-    router.replace({path: "/error"});
+    router.replace({ path: "/error" });
     toast.add({
       severity: 'error',
       summary: t('apiError.error'),

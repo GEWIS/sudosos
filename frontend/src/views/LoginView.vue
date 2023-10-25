@@ -96,40 +96,39 @@ const password = loginForm.defineComponentBinds('password');
 
 const route = useRoute();
 
-// TODO: error handling and error toasts
-// See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
 onBeforeMount(() => {
   if (route.query.token !== undefined) {
     const token = route.query.token as string;
-    authStore.gewisWebLogin(uuid(), token, apiService).catch((error) => {
-      console.error(error);
+    authStore.gewisWebLogin(uuid(), token, apiService).catch(() => {
+      router.replace({ path: "/error" });
     });
   }
 });
 
-// TODO: error handling and error toasts
-// See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
 const loginHandler = loginForm.handleSubmit(async (values) => {
   try {
     if (values.username.includes('@')) {
-      const res = await apiService.authenticate.localAuthentication({
+      await apiService.authenticate.localAuthentication({
         accountMail: values.username,
         password: values.password
-      });
-      authStore.handleResponse(res.data, apiService);
+      }).then((res) => authStore.handleResponse(res.data, apiService));
       if (authStore.getUser) {
         await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
+      } else {
+        await router.replace({ path: '/error' });
       }
       toHomeView();
     } else {
       await authStore.gewisLdapLogin(values.username, values.password, apiService);
       if (authStore.getUser) {
         await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
+      } else {
+        await router.replace({ path: '/error' });
       }
       toHomeView();
     }
   } catch (err) {
-    handleError(err as AxiosError);
+    handleError(err as AxiosError, toast);
   }
 });
 

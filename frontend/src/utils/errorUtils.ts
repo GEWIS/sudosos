@@ -1,5 +1,5 @@
 import type { AxiosError } from "axios";
-import { useToast } from "primevue/usetoast";
+import type { ToastServiceMethods } from "primevue/toastservice";
 
 interface ErrorResponse {
   message: string;
@@ -11,8 +11,7 @@ export function isErrorResponse(data: any): data is ErrorResponse {
 
 
 // Method to add a toast involving an AxiosError
-export function handleError(response: AxiosError){
-  const toast = useToast();
+export function handleError(response: AxiosError, toast: ToastServiceMethods){
   if (response.response) {
     const { data, status } = response.response;
     const code = response.code;
