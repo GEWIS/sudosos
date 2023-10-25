@@ -1,7 +1,7 @@
 var Rs = Object.defineProperty;
 var Ts = (i, c, u) => c in i ? Rs(i, c, { enumerable: !0, configurable: !0, writable: !0, value: u }) : i[c] = u;
 var q = (i, c, u) => (Ts(i, typeof c != "symbol" ? c + "" : c, u), u);
-import { createPinia as Fs, defineStore as Ye } from "pinia";
+import { createPinia as Fs, defineStore as Qe } from "pinia";
 async function vs(i, c, u) {
   let e = i, p = [];
   for (; ; ) {
@@ -12,7 +12,7 @@ async function vs(i, c, u) {
   return p;
 }
 Fs();
-const Se = Ye("user", {
+const Ye = Qe("user", {
   state: () => ({
     users: [],
     current: {
@@ -61,14 +61,14 @@ const Se = Ye("user", {
     }
   }
 });
-function Ue(i) {
+function Se(i) {
   this.message = i;
 }
-Ue.prototype = new Error(), Ue.prototype.name = "InvalidCharacterError";
-var Me = typeof window < "u" && window.atob && window.atob.bind(window) || function(i) {
+Se.prototype = new Error(), Se.prototype.name = "InvalidCharacterError";
+var qe = typeof window < "u" && window.atob && window.atob.bind(window) || function(i) {
   var c = String(i).replace(/=+$/, "");
   if (c.length % 4 == 1)
-    throw new Ue("'atob' failed: The string to be decoded is not correctly encoded.");
+    throw new Se("'atob' failed: The string to be decoded is not correctly encoded.");
   for (var u, e, p = 0, P = 0, g = ""; e = c.charAt(P++); ~e && (u = p % 4 ? 64 * u + e : e, p++ % 4) ? g += String.fromCharCode(255 & u >> (-2 * p & 6)) : 0)
     e = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".indexOf(e);
   return g;
@@ -89,13 +89,13 @@ function Es(i) {
   }
   try {
     return function(u) {
-      return decodeURIComponent(Me(u).replace(/(.)/g, function(e, p) {
+      return decodeURIComponent(qe(u).replace(/(.)/g, function(e, p) {
         var P = p.charCodeAt(0).toString(16).toUpperCase();
         return P.length < 2 && (P = "0" + P), "%" + P;
       }));
     }(c);
   } catch {
-    return Me(c);
+    return qe(c);
   }
 }
 function oe(i) {
@@ -128,7 +128,7 @@ function Cs(i) {
 function We(i) {
   localStorage.setItem("jwt_token", JSON.stringify(Cs(i)));
 }
-function Fe() {
+function Te() {
   const i = localStorage.getItem("jwt_token");
   let c = {};
   return i !== null && (c = JSON.parse(i)), {
@@ -140,7 +140,7 @@ function ws(i) {
   return (/* @__PURE__ */ new Date()).getTime() > c;
 }
 function Ls() {
-  const i = Fe();
+  const i = Te();
   return !i.token || !i.expires ? !1 : !ws(Number(i.expires));
 }
 function vr(i) {
@@ -149,12 +149,12 @@ function vr(i) {
     u.extractStateFromToken();
     const e = u.getUser;
     if (e) {
-      const p = Se();
+      const p = Ye();
       p.setCurrentUser(e), p.fetchCurrentUserBalance(e.id, i);
     }
   }
 }
-const qs = Ye({
+const qs = Qe({
   id: "auth",
   state: () => ({
     user: null,
@@ -178,7 +178,7 @@ const qs = Ye({
     handleResponse(i, c) {
       const { user: u, token: e, roles: p, organs: P, acceptedToS: g } = i;
       !u || !e || !p || !P || !g || (this.user = u, this.token = e, We(this.token), this.roles = p, this.organs = P, this.acceptedToS = g, this.acceptedToS === "ACCEPTED" && c.user.getIndividualUser(this.user.id).then((m) => {
-        Se().setCurrentUser(m.data);
+        Ye().setCurrentUser(m.data);
       }));
     },
     async gewisPinlogin(i, c, u) {
@@ -276,17 +276,17 @@ const qs = Ye({
         return;
       const u = {
         extensiveDataProcessing: i
-      }, e = await c.user.acceptTos(u);
-      this.user.acceptedToS = "ACCEPTED", console.log(e);
-      const p = await c.user.getIndividualUser(this.user.id);
-      Se().setCurrentUser(p.data);
+      };
+      await c.user.acceptTos(u);
+      const e = await c.authenticate.refreshToken();
+      console.log(e.data), this.handleResponse(e.data, c);
     },
     extractStateFromToken() {
-      const i = Fe();
+      const i = Te();
       if (!i.token)
         return;
       const c = $e(i.token);
-      this.user = c.user, this.roles = c.roles, this.token = i.token, this.organs = c.organs, this.acceptedToS = c.acceptedToS;
+      console.log(c), this.user = c.user, this.roles = c.roles, this.token = i.token, this.organs = c.organs, this.acceptedToS = c.acceptedToS;
     },
     logout() {
       this.user = null, this.roles = [], this.token = null, this.organs = [], this.acceptedToS = null, _s();
@@ -321,11 +321,11 @@ function Xe(i, c) {
     return i.apply(c, arguments);
   };
 }
-const { toString: Is } = Object.prototype, { getPrototypeOf: ve } = Object, le = ((i) => (c) => {
-  const u = Is.call(c);
+const { toString: Hs } = Object.prototype, { getPrototypeOf: Fe } = Object, le = ((i) => (c) => {
+  const u = Hs.call(c);
   return i[u] || (i[u] = u.slice(8, -1).toLowerCase());
 })(/* @__PURE__ */ Object.create(null)), N = (i) => (i = i.toLowerCase(), (c) => le(c) === i), de = (i) => (c) => typeof c === i, { isArray: J } = Array, ee = de("undefined");
-function Hs(i) {
+function Is(i) {
   return i !== null && !ee(i) && i.constructor !== null && !ee(i.constructor) && k(i.constructor.isBuffer) && i.constructor.isBuffer(i);
 }
 const Ze = N("ArrayBuffer");
@@ -336,7 +336,7 @@ function Ds(i) {
 const ks = de("string"), k = de("function"), et = de("number"), ue = (i) => i !== null && typeof i == "object", zs = (i) => i === !0 || i === !1, ae = (i) => {
   if (le(i) !== "object")
     return !1;
-  const c = ve(i);
+  const c = Fe(i);
   return (c === null || c === Object.prototype || Object.getPrototypeOf(c) === null) && !(Symbol.toStringTag in i) && !(Symbol.iterator in i);
 }, xs = N("Date"), Ns = N("File"), Ks = N("Blob"), Gs = N("FileList"), Qs = (i) => ue(i) && k(i.pipe), Ys = (i) => {
   let c;
@@ -367,10 +367,10 @@ function tt(i, c) {
   return null;
 }
 const st = (() => typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : typeof window < "u" ? window : global)(), at = (i) => !ee(i) && i !== st;
-function ye() {
+function Ue() {
   const { caseless: i } = at(this) && this || {}, c = {}, u = (e, p) => {
     const P = i && tt(c, p) || p;
-    ae(c[P]) && ae(e) ? c[P] = ye(c[P], e) : ae(e) ? c[P] = ye({}, e) : J(e) ? c[P] = e.slice() : c[P] = e;
+    ae(c[P]) && ae(e) ? c[P] = Ue(c[P], e) : ae(e) ? c[P] = Ue({}, e) : J(e) ? c[P] = e.slice() : c[P] = e;
   };
   for (let e = 0, p = arguments.length; e < p; e++)
     arguments[e] && te(arguments[e], u);
@@ -390,7 +390,7 @@ const Js = (i, c, u, { allOwnKeys: e } = {}) => (te(c, (p, P) => {
   do {
     for (p = Object.getOwnPropertyNames(i), P = p.length; P-- > 0; )
       g = p[P], (!e || e(g, i, c)) && !m[g] && (c[g] = i[g], m[g] = !0);
-    i = u !== !1 && ve(i);
+    i = u !== !1 && Fe(i);
   } while (i && (!u || u(i, c)) && i !== Object.prototype);
   return c;
 }, ta = (i, c, u) => {
@@ -409,7 +409,7 @@ const Js = (i, c, u, { allOwnKeys: e } = {}) => (te(c, (p, P) => {
   for (; c-- > 0; )
     u[c] = i[c];
   return u;
-}, aa = ((i) => (c) => i && c instanceof i)(typeof Uint8Array < "u" && ve(Uint8Array)), ra = (i, c) => {
+}, aa = ((i) => (c) => i && c instanceof i)(typeof Uint8Array < "u" && Fe(Uint8Array)), ra = (i, c) => {
   const e = (i && i[Symbol.iterator]).call(i);
   let p;
   for (; (p = e.next()) && !p.done; ) {
@@ -427,7 +427,7 @@ const Js = (i, c, u, { allOwnKeys: e } = {}) => (te(c, (p, P) => {
   function(u, e, p) {
     return e.toUpperCase() + p;
   }
-), Ie = (({ hasOwnProperty: i }) => (c, u) => i.call(c, u))(Object.prototype), ca = N("RegExp"), rt = (i, c) => {
+), Me = (({ hasOwnProperty: i }) => (c, u) => i.call(c, u))(Object.prototype), ca = N("RegExp"), rt = (i, c) => {
   const u = Object.getOwnPropertyDescriptors(i), e = {};
   te(u, (p, P) => {
     let g;
@@ -490,7 +490,7 @@ const Oa = (i) => {
 }, Pa = N("AsyncFunction"), ga = (i) => i && (ue(i) || k(i)) && k(i.then) && k(i.catch), f = {
   isArray: J,
   isArrayBuffer: Ze,
-  isBuffer: Hs,
+  isBuffer: Is,
   isFormData: Ys,
   isArrayBufferView: Ds,
   isString: ks,
@@ -509,7 +509,7 @@ const Oa = (i) => {
   isTypedArray: aa,
   isFileList: Gs,
   forEach: te,
-  merge: ye,
+  merge: Ue,
   extend: Js,
   trim: Ws,
   stripBOM: Xs,
@@ -522,8 +522,8 @@ const Oa = (i) => {
   forEachEntry: ra,
   matchAll: na,
   isHTMLForm: ia,
-  hasOwnProperty: Ie,
-  hasOwnProp: Ie,
+  hasOwnProperty: Me,
+  hasOwnProp: Me,
   // an alias to avoid ESLint no-prototype-builtins detection
   reduceDescriptors: rt,
   freezeMethods: la,
@@ -592,19 +592,19 @@ E.from = (i, c, u, e, p, P) => {
   }, (m) => m !== "isAxiosError"), E.call(g, i.message, c, u, e, p), g.cause = i, g.name = i.name, P && Object.assign(g, P), g;
 };
 const fa = null;
-function je(i) {
+function ye(i) {
   return f.isPlainObject(i) || f.isArray(i);
 }
 function ct(i) {
   return f.endsWith(i, "[]") ? i.slice(0, -2) : i;
 }
-function De(i, c, u) {
+function Ie(i, c, u) {
   return i ? i.concat(c).map(function(p, P) {
     return p = ct(p), !u && P ? "[" + p + "]" : p;
   }).join(u ? "." : "") : c;
 }
 function ba(i) {
-  return f.isArray(i) && !i.some(je);
+  return f.isArray(i) && !i.some(ye);
 }
 const ma = f.toFlatObject(f, {}, null, function(c) {
   return /^is[A-Z]/.test(c);
@@ -640,17 +640,17 @@ function he(i, c, u) {
         return v = ct(v), D.forEach(function($, Oe) {
           !(f.isUndefined($) || $ === null) && c.append(
             // eslint-disable-next-line no-nested-ternary
-            g === !0 ? De([v], Oe, P) : g === null ? v : v + "[]",
+            g === !0 ? Ie([v], Oe, P) : g === null ? v : v + "[]",
             S($)
           );
         }), !1;
     }
-    return je(y) ? !0 : (c.append(De(z, v, P), S(y)), !1);
+    return ye(y) ? !0 : (c.append(Ie(z, v, P), S(y)), !1);
   }
   const T = [], L = Object.assign(ma, {
     defaultVisitor: U,
     convertValue: S,
-    isVisitable: je
+    isVisitable: ye
   });
   function B(y, v) {
     if (!f.isUndefined(y)) {
@@ -671,7 +671,7 @@ function he(i, c, u) {
     throw new TypeError("data must be an object");
   return B(i), c;
 }
-function ke(i) {
+function De(i) {
   const c = {
     "!": "%21",
     "'": "%27",
@@ -685,17 +685,17 @@ function ke(i) {
     return c[e];
   });
 }
-function Ee(i, c) {
+function ve(i, c) {
   this._pairs = [], i && he(i, this, c);
 }
-const lt = Ee.prototype;
+const lt = ve.prototype;
 lt.append = function(c, u) {
   this._pairs.push([c, u]);
 };
 lt.toString = function(c) {
   const u = c ? function(e) {
-    return c.call(this, e, ke);
-  } : ke;
+    return c.call(this, e, De);
+  } : De;
   return this._pairs.map(function(p) {
     return u(p[0]) + "=" + u(p[1]);
   }, "").join("&");
@@ -708,7 +708,7 @@ function dt(i, c, u) {
     return i;
   const e = u && u.encode || Sa, p = u && u.serialize;
   let P;
-  if (p ? P = p(c, u) : P = f.isURLSearchParams(c) ? c.toString() : new Ee(c, u).toString(e), P) {
+  if (p ? P = p(c, u) : P = f.isURLSearchParams(c) ? c.toString() : new ve(c, u).toString(e), P) {
     const g = i.indexOf("#");
     g !== -1 && (i = i.slice(0, g)), i += (i.indexOf("?") === -1 ? "?" : "&") + P;
   }
@@ -768,11 +768,11 @@ class Ua {
     });
   }
 }
-const ze = Ua, ut = {
+const ke = Ua, ut = {
   silentJSONParsing: !0,
   forcedJSONParsing: !0,
   clarifyTimeoutError: !1
-}, ya = typeof URLSearchParams < "u" ? URLSearchParams : Ee, ja = typeof FormData < "u" ? FormData : null, Va = typeof Blob < "u" ? Blob : null, Ra = (() => {
+}, ya = typeof URLSearchParams < "u" ? URLSearchParams : ve, ja = typeof FormData < "u" ? FormData : null, Va = typeof Blob < "u" ? Blob : null, Ra = (() => {
   let i;
   return typeof navigator < "u" && ((i = navigator.product) === "ReactNative" || i === "NativeScript" || i === "NS") ? !1 : typeof window < "u" && typeof document < "u";
 })(), Ta = (() => typeof WorkerGlobalScope < "u" && // eslint-disable-next-line no-undef
@@ -830,7 +830,7 @@ function Ba(i, c, u) {
     }
   return (u || JSON.stringify)(i);
 }
-const Be = {
+const Ee = {
   transitional: ut,
   adapter: x.isNode ? "http" : "xhr",
   transformRequest: [function(c, u) {
@@ -859,7 +859,7 @@ const Be = {
     return P || p ? (u.setContentType("application/json", !1), Ba(c)) : c;
   }],
   transformResponse: [function(c) {
-    const u = this.transitional || Be.transitional, e = u && u.forcedJSONParsing, p = this.responseType === "json";
+    const u = this.transitional || Ee.transitional, e = u && u.forcedJSONParsing, p = this.responseType === "json";
     if (c && f.isString(c) && (e && !this.responseType || p)) {
       const g = !(u && u.silentJSONParsing) && p;
       try {
@@ -895,9 +895,9 @@ const Be = {
   }
 };
 f.forEach(["delete", "get", "head", "post", "put", "patch"], (i) => {
-  Be.headers[i] = {};
+  Ee.headers[i] = {};
 });
-const _e = Be, _a = f.toObjectSet([
+const Be = Ee, _a = f.toObjectSet([
   "age",
   "authorization",
   "content-length",
@@ -922,7 +922,7 @@ const _e = Be, _a = f.toObjectSet([
 `).forEach(function(g) {
     p = g.indexOf(":"), u = g.substring(0, p).trim().toLowerCase(), e = g.substring(p + 1).trim(), !(!u || c[u] && _a[u]) && (u === "set-cookie" ? c[u] ? c[u].push(e) : c[u] = [e] : c[u] = c[u] ? c[u] + ", " + e : e);
   }), c;
-}, xe = Symbol("internals");
+}, ze = Symbol("internals");
 function Z(i) {
   return i && String(i).trim().toLowerCase();
 }
@@ -1060,7 +1060,7 @@ let pe = class {
     return u.forEach((p) => e.set(p)), e;
   }
   static accessor(c) {
-    const e = (this[xe] = this[xe] = {
+    const e = (this[ze] = this[ze] = {
       accessors: {}
     }).accessors, p = this.prototype;
     function P(g) {
@@ -1083,7 +1083,7 @@ f.reduceDescriptors(pe.prototype, ({ value: i }, c) => {
 f.freezeMethods(pe);
 const K = pe;
 function be(i, c) {
-  const u = this || _e, e = c || u, p = K.from(e.headers);
+  const u = this || Be, e = c || u, p = K.from(e.headers);
   let P = e.data;
   return f.forEach(i, function(m) {
     P = m.call(u, P, p.normalize(), c ? c.status : void 0);
@@ -1098,7 +1098,7 @@ function se(i, c, u) {
 f.inherits(se, E, {
   __CANCEL__: !0
 });
-function Ia(i, c, u) {
+function Ha(i, c, u) {
   const e = u.config.validateStatus;
   !u.status || !e || e(u.status) ? i(u) : c(new E(
     "Request failed with status code " + u.status,
@@ -1108,7 +1108,7 @@ function Ia(i, c, u) {
     u
   ));
 }
-const Ha = x.isStandardBrowserEnv ? (
+const Ia = x.isStandardBrowserEnv ? (
   // Standard browser envs support document.cookie
   function() {
     return {
@@ -1200,7 +1200,7 @@ function Na(i, c) {
     return B ? Math.round(L * 1e3 / B) : void 0;
   };
 }
-function Ne(i, c) {
+function xe(i, c) {
   let u = 0;
   const e = Na(50, 250);
   return (p) => {
@@ -1247,7 +1247,7 @@ const Ka = typeof XMLHttpRequest < "u", Ga = Ka && function(i) {
         config: i,
         request: S
       };
-      Ia(function(D) {
+      Ha(function(D) {
         u(D), R();
       }, function(D) {
         e(D), R();
@@ -1269,12 +1269,12 @@ const Ka = typeof XMLHttpRequest < "u", Ga = Ka && function(i) {
         S
       )), S = null;
     }, x.isStandardBrowserEnv) {
-      const B = (i.withCredentials || za(U)) && i.xsrfCookieName && Ha.read(i.xsrfCookieName);
+      const B = (i.withCredentials || za(U)) && i.xsrfCookieName && Ia.read(i.xsrfCookieName);
       B && P.set(i.xsrfHeaderName, B);
     }
     p === void 0 && P.setContentType(null), "setRequestHeader" in S && f.forEach(P.toJSON(), function(y, v) {
       S.setRequestHeader(v, y);
-    }), f.isUndefined(i.withCredentials) || (S.withCredentials = !!i.withCredentials), g && g !== "json" && (S.responseType = i.responseType), typeof i.onDownloadProgress == "function" && S.addEventListener("progress", Ne(i.onDownloadProgress, !0)), typeof i.onUploadProgress == "function" && S.upload && S.upload.addEventListener("progress", Ne(i.onUploadProgress)), (i.cancelToken || i.signal) && (m = (B) => {
+    }), f.isUndefined(i.withCredentials) || (S.withCredentials = !!i.withCredentials), g && g !== "json" && (S.responseType = i.responseType), typeof i.onDownloadProgress == "function" && S.addEventListener("progress", xe(i.onDownloadProgress, !0)), typeof i.onUploadProgress == "function" && S.upload && S.upload.addEventListener("progress", xe(i.onUploadProgress)), (i.cancelToken || i.signal) && (m = (B) => {
       S && (e(!B || B.type ? new se(null, i, S) : B), S.abort(), S = null);
     }, i.cancelToken && i.cancelToken.subscribe(m), i.signal && (i.signal.aborted ? m() : i.signal.addEventListener("abort", m)));
     const L = xa(U);
@@ -1321,11 +1321,11 @@ function me(i) {
   if (i.cancelToken && i.cancelToken.throwIfRequested(), i.signal && i.signal.aborted)
     throw new se(null, i);
 }
-function Ke(i) {
+function Ne(i) {
   return me(i), i.headers = K.from(i.headers), i.data = be.call(
     i,
     i.transformRequest
-  ), ["post", "put", "patch"].indexOf(i.method) !== -1 && i.headers.setContentType("application/x-www-form-urlencoded", !1), Ot.getAdapter(i.adapter || _e.adapter)(i).then(function(e) {
+  ), ["post", "put", "patch"].indexOf(i.method) !== -1 && i.headers.setContentType("application/x-www-form-urlencoded", !1), Ot.getAdapter(i.adapter || Be.adapter)(i).then(function(e) {
     return me(i), e.data = be.call(
       i,
       i.transformResponse,
@@ -1339,7 +1339,7 @@ function Ke(i) {
     ), e.response.headers = K.from(e.response.headers))), Promise.reject(e);
   });
 }
-const Ge = (i) => i instanceof K ? i.toJSON() : i;
+const Ke = (i) => i instanceof K ? i.toJSON() : i;
 function W(i, c) {
   c = c || {};
   const u = {};
@@ -1398,21 +1398,21 @@ function W(i, c) {
     socketPath: g,
     responseEncoding: g,
     validateStatus: m,
-    headers: (S, U) => p(Ge(S), Ge(U), !0)
+    headers: (S, U) => p(Ke(S), Ke(U), !0)
   };
   return f.forEach(Object.keys(Object.assign({}, i, c)), function(U) {
     const T = R[U] || p, L = T(i[U], c[U], U);
     f.isUndefined(L) && T !== m || (u[U] = L);
   }), u;
 }
-const Pt = "1.5.0", Ce = {};
+const Pt = "1.5.0", _e = {};
 ["object", "boolean", "number", "function", "string", "symbol"].forEach((i, c) => {
-  Ce[i] = function(e) {
+  _e[i] = function(e) {
     return typeof e === i || "a" + (c < 1 ? "n " : " ") + i;
   };
 });
-const Qe = {};
-Ce.transitional = function(c, u, e) {
+const Ge = {};
+_e.transitional = function(c, u, e) {
   function p(P, g) {
     return "[Axios v" + Pt + "] Transitional option '" + P + "'" + g + (e ? ". " + e : "");
   }
@@ -1422,7 +1422,7 @@ Ce.transitional = function(c, u, e) {
         p(g, " has been removed" + (u ? " in " + u : "")),
         E.ERR_DEPRECATED
       );
-    return u && !Qe[g] && (Qe[g] = !0, console.warn(
+    return u && !Ge[g] && (Ge[g] = !0, console.warn(
       p(
         g,
         " has been deprecated since v" + u + " and will be removed in the near future"
@@ -1447,15 +1447,15 @@ function Qa(i, c, u) {
       throw new E("Unknown option " + P, E.ERR_BAD_OPTION);
   }
 }
-const Ve = {
+const je = {
   assertOptions: Qa,
-  validators: Ce
-}, Q = Ve.validators;
+  validators: _e
+}, Q = je.validators;
 let ce = class {
   constructor(c) {
     this.defaults = c, this.interceptors = {
-      request: new ze(),
-      response: new ze()
+      request: new ke(),
+      response: new ke()
     };
   }
   /**
@@ -1469,13 +1469,13 @@ let ce = class {
   request(c, u) {
     typeof c == "string" ? (u = u || {}, u.url = c) : u = c || {}, u = W(this.defaults, u);
     const { transitional: e, paramsSerializer: p, headers: P } = u;
-    e !== void 0 && Ve.assertOptions(e, {
+    e !== void 0 && je.assertOptions(e, {
       silentJSONParsing: Q.transitional(Q.boolean),
       forcedJSONParsing: Q.transitional(Q.boolean),
       clarifyTimeoutError: Q.transitional(Q.boolean)
     }, !1), p != null && (f.isFunction(p) ? u.paramsSerializer = {
       serialize: p
-    } : Ve.assertOptions(p, {
+    } : je.assertOptions(p, {
       encode: Q.function,
       serialize: Q.function
     }, !0)), u.method = (u.method || this.defaults.method || "get").toLowerCase();
@@ -1500,7 +1500,7 @@ let ce = class {
     });
     let U, T = 0, L;
     if (!R) {
-      const y = [Ke.bind(this), void 0];
+      const y = [Ne.bind(this), void 0];
       for (y.unshift.apply(y, m), y.push.apply(y, S), L = y.length, U = Promise.resolve(u); T < L; )
         U = U.then(y[T++], y[T++]);
       return U;
@@ -1517,7 +1517,7 @@ let ce = class {
       }
     }
     try {
-      U = Ke.call(this, B);
+      U = Ne.call(this, B);
     } catch (y) {
       return Promise.reject(y);
     }
@@ -1633,7 +1633,7 @@ function Wa(i) {
 function Ja(i) {
   return f.isObject(i) && i.isAxiosError === !0;
 }
-const Re = {
+const Ve = {
   Continue: 100,
   SwitchingProtocols: 101,
   Processing: 102,
@@ -1698,17 +1698,17 @@ const Re = {
   NotExtended: 510,
   NetworkAuthenticationRequired: 511
 };
-Object.entries(Re).forEach(([i, c]) => {
-  Re[c] = i;
+Object.entries(Ve).forEach(([i, c]) => {
+  Ve[c] = i;
 });
-const Xa = Re;
+const Xa = Ve;
 function ft(i) {
   const c = new ie(i), u = Xe(ie.prototype.request, c);
   return f.extend(u, ie.prototype, c, { allOwnKeys: !0 }), f.extend(u, c, null, { allOwnKeys: !0 }), u.create = function(p) {
     return ft(W(i, p));
   }, u;
 }
-const M = ft(_e);
+const M = ft(Be);
 M.Axios = ie;
 M.CanceledError = se;
 M.CancelToken = $a;
@@ -1728,7 +1728,7 @@ M.formToJSON = (i) => ht(f.isHTMLForm(i) ? new FormData(i) : i);
 M.getAdapter = Ot.getAdapter;
 M.HttpStatusCode = Xa;
 M.default = M;
-const we = M, {
+const Ce = M, {
   Axios: Za,
   AxiosError: er,
   CanceledError: tr,
@@ -1745,7 +1745,7 @@ const we = M, {
   formToJSON: hr,
   getAdapter: pr,
   mergeConfig: Ar
-} = we, Or = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+} = Ce, Or = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   Axios: Za,
   AxiosError: er,
@@ -1756,7 +1756,7 @@ const we = M, {
   HttpStatusCode: ur,
   VERSION: rr,
   all: nr,
-  default: we,
+  default: Ce,
   formToJSON: hr,
   getAdapter: pr,
   isAxiosError: or,
@@ -1765,7 +1765,7 @@ const we = M, {
   spread: cr,
   toFormData: lr
 }, Symbol.toStringTag, { value: "Module" })), bt = /* @__PURE__ */ Ms(Or);
-var C = {}, Le = {};
+var C = {}, we = {};
 (function(i) {
   Object.defineProperty(i, "__esModule", { value: !0 }), i.RequiredError = i.BaseAPI = i.COLLECTION_FORMATS = i.BASE_PATH = void 0;
   const c = bt;
@@ -1787,8 +1787,8 @@ var C = {}, Le = {};
     }
   }
   i.RequiredError = e;
-})(Le);
-var qe = Y && Y.__awaiter || function(i, c, u, e) {
+})(we);
+var Le = Y && Y.__awaiter || function(i, c, u, e) {
   function p(P) {
     return P instanceof u ? P : new u(function(g) {
       g(P);
@@ -1817,7 +1817,7 @@ var qe = Y && Y.__awaiter || function(i, c, u, e) {
 };
 Object.defineProperty(C, "__esModule", { value: !0 });
 C.createRequestFunction = C.toPathString = C.serializeDataIfNeeded = C.setSearchParams = C.setOAuthToObject = C.setBearerAuthToObject = C.setBasicAuthToObject = C.setApiKeyToObject = C.assertParamExists = C.DUMMY_BASE_URL = void 0;
-const Pr = Le;
+const Pr = we;
 C.DUMMY_BASE_URL = "https://example.com";
 const gr = function(i, c, u) {
   if (u == null)
@@ -1825,7 +1825,7 @@ const gr = function(i, c, u) {
 };
 C.assertParamExists = gr;
 const fr = function(i, c, u) {
-  return qe(this, void 0, void 0, function* () {
+  return Le(this, void 0, void 0, function* () {
     if (u && u.apiKey) {
       const e = typeof u.apiKey == "function" ? yield u.apiKey(c) : yield u.apiKey;
       i[c] = e;
@@ -1838,7 +1838,7 @@ const br = function(i, c) {
 };
 C.setBasicAuthToObject = br;
 const mr = function(i, c) {
-  return qe(this, void 0, void 0, function* () {
+  return Le(this, void 0, void 0, function* () {
     if (c && c.accessToken) {
       const u = typeof c.accessToken == "function" ? yield c.accessToken() : yield c.accessToken;
       i.Authorization = "Bearer " + u;
@@ -1847,7 +1847,7 @@ const mr = function(i, c) {
 };
 C.setBearerAuthToObject = mr;
 const Sr = function(i, c, u, e) {
-  return qe(this, void 0, void 0, function* () {
+  return Le(this, void 0, void 0, function* () {
     if (e && e.accessToken) {
       const p = typeof e.accessToken == "function" ? yield e.accessToken(c, u) : yield e.accessToken;
       i.Authorization = "Bearer " + p;
@@ -1855,12 +1855,12 @@ const Sr = function(i, c, u, e) {
   });
 };
 C.setOAuthToObject = Sr;
-function Te(i, c, u = "") {
-  c != null && (typeof c == "object" ? Array.isArray(c) ? c.forEach((e) => Te(i, e, u)) : Object.keys(c).forEach((e) => Te(i, c[e], `${u}${u !== "" ? "." : ""}${e}`)) : i.has(u) ? i.append(u, c) : i.set(u, c));
+function Re(i, c, u = "") {
+  c != null && (typeof c == "object" ? Array.isArray(c) ? c.forEach((e) => Re(i, e, u)) : Object.keys(c).forEach((e) => Re(i, c[e], `${u}${u !== "" ? "." : ""}${e}`)) : i.has(u) ? i.append(u, c) : i.set(u, c));
 }
 const Ur = function(i, ...c) {
   const u = new URLSearchParams(i.search);
-  Te(u, c), i.search = u.toString();
+  Re(u, c), i.search = u.toString();
 };
 C.setSearchParams = Ur;
 const yr = function(i, c, u) {
@@ -1908,7 +1908,7 @@ C.createRequestFunction = Vr;
     });
   };
   Object.defineProperty(i, "__esModule", { value: !0 }), i.RootApiFp = i.RootApiAxiosParamCreator = i.RbacApi = i.RbacApiFactory = i.RbacApiFp = i.RbacApiAxiosParamCreator = i.ProductsApi = i.ProductsApiFactory = i.ProductsApiFp = i.ProductsApiAxiosParamCreator = i.ProductCategoriesApi = i.ProductCategoriesApiFactory = i.ProductCategoriesApiFp = i.ProductCategoriesApiAxiosParamCreator = i.PointofsaleApi = i.PointofsaleApiFactory = i.PointofsaleApiFp = i.PointofsaleApiAxiosParamCreator = i.PayoutRequestsApi = i.PayoutRequestsApiFactory = i.PayoutRequestsApiFp = i.PayoutRequestsApiAxiosParamCreator = i.InvoicesApi = i.InvoicesApiFactory = i.InvoicesApiFp = i.InvoicesApiAxiosParamCreator = i.FilesApi = i.FilesApiFactory = i.FilesApiFp = i.FilesApiAxiosParamCreator = i.ContainersApi = i.ContainersApiFactory = i.ContainersApiFp = i.ContainersApiAxiosParamCreator = i.BorrelkaartgroupsApi = i.BorrelkaartgroupsApiFactory = i.BorrelkaartgroupsApiFp = i.BorrelkaartgroupsApiAxiosParamCreator = i.BannersApi = i.BannersApiFactory = i.BannersApiFp = i.BannersApiAxiosParamCreator = i.BalanceApi = i.BalanceApiFactory = i.BalanceApiFp = i.BalanceApiAxiosParamCreator = i.AuthenticateApi = i.AuthenticateApiFactory = i.AuthenticateApiFp = i.AuthenticateApiAxiosParamCreator = void 0, i.VatGroupsApi = i.VatGroupsApiFactory = i.VatGroupsApiFp = i.VatGroupsApiAxiosParamCreator = i.UsersApi = i.UsersApiFactory = i.UsersApiFp = i.UsersApiAxiosParamCreator = i.TransfersApi = i.TransfersApiFactory = i.TransfersApiFp = i.TransfersApiAxiosParamCreator = i.TransactionsApi = i.TransactionsApiFactory = i.TransactionsApiFp = i.TransactionsApiAxiosParamCreator = i.TestApi = i.TestApiFactory = i.TestApiFp = i.TestApiAxiosParamCreator = i.StripeApi = i.StripeApiFactory = i.StripeApiFp = i.StripeApiAxiosParamCreator = i.RootApi = i.RootApiFactory = void 0;
-  const u = bt, e = C, p = Le, P = function(l) {
+  const u = bt, e = C, p = we, P = function(l) {
     return {
       /**
        *  EAN login and hand out token
@@ -2593,8 +2593,8 @@ C.createRequestFunction = Vr;
         l && (b = l.baseOptions);
         const F = Object.assign(Object.assign({ method: "GET" }, b), h), j = {}, V = {};
         yield (0, e.setApiKeyToObject)(j, "Authorization", l), n !== void 0 && (V.date = n), t !== void 0 && (V.minBalance = t), r !== void 0 && (V.maxBalance = r), a !== void 0 && (V.orderBy = a), s !== void 0 && (V.orderDirection = s), o !== void 0 && (V.take = o), d !== void 0 && (V.skip = d), (0, e.setSearchParams)(O, V);
-        let H = b && b.headers ? b.headers : {};
-        return F.headers = Object.assign(Object.assign(Object.assign({}, j), H), h.headers), {
+        let I = b && b.headers ? b.headers : {};
+        return F.headers = Object.assign(Object.assign(Object.assign({}, j), I), h.headers), {
           url: (0, e.toPathString)(O),
           options: F
         };
@@ -4425,8 +4425,8 @@ C.createRequestFunction = Vr;
         l && (b = l.baseOptions);
         const F = Object.assign(Object.assign({ method: "GET" }, b), h), j = {}, V = {};
         yield (0, e.setApiKeyToObject)(j, "Authorization", l), n !== void 0 && (V.requestedById = n), t !== void 0 && (V.approvedById = t), r !== void 0 && (V.fromDate = r), a !== void 0 && (V.tillDate = a), s !== void 0 && (V.status = s), o !== void 0 && (V.take = o), d !== void 0 && (V.skip = d), (0, e.setSearchParams)(O, V);
-        let H = b && b.headers ? b.headers : {};
-        return F.headers = Object.assign(Object.assign(Object.assign({}, j), H), h.headers), {
+        let I = b && b.headers ? b.headers : {};
+        return F.headers = Object.assign(Object.assign(Object.assign({}, j), I), h.headers), {
           url: (0, e.toPathString)(O),
           options: F
         };
@@ -4970,7 +4970,7 @@ C.createRequestFunction = Vr;
     };
   };
   i.PointofsaleApiFp = Mt;
-  const It = function(l, n, t) {
+  const Ht = function(l, n, t) {
     const r = (0, i.PointofsaleApiFp)(l);
     return {
       /**
@@ -5074,8 +5074,8 @@ C.createRequestFunction = Vr;
       }
     };
   };
-  i.PointofsaleApiFactory = It;
-  class Ht extends p.BaseAPI {
+  i.PointofsaleApiFactory = Ht;
+  class It extends p.BaseAPI {
     /**
      *  Approve a Point of Sale update.
      * @param {number} id The id of the Point of Sale update to approve
@@ -5186,7 +5186,7 @@ C.createRequestFunction = Vr;
       return (0, i.PointofsaleApiFp)(this.configuration).updatePointOfSale(n, t, r).then((a) => a(this.axios, this.basePath));
     }
   }
-  i.PointofsaleApi = Ht;
+  i.PointofsaleApi = It;
   const Dt = function(l) {
     return {
       /**
@@ -6217,12 +6217,12 @@ C.createRequestFunction = Vr;
         const F = "/transactions", j = new URL(F, e.DUMMY_BASE_URL);
         let V;
         l && (V = l.baseOptions);
-        const H = Object.assign(Object.assign({ method: "GET" }, V), b), X = {}, _ = {};
+        const I = Object.assign(Object.assign({ method: "GET" }, V), b), X = {}, _ = {};
         yield (0, e.setApiKeyToObject)(X, "Authorization", l), n !== void 0 && (_.fromId = n), t !== void 0 && (_.createdById = t), r !== void 0 && (_.toId = r), a !== void 0 && (_.pointOfSaleId = a), s !== void 0 && (_.productId = s), o !== void 0 && (_.productRevision = o), d !== void 0 && (_.fromDate = d), h !== void 0 && (_.tillDate = h), A !== void 0 && (_.take = A), O !== void 0 && (_.skip = O), (0, e.setSearchParams)(j, _);
         let Pe = V && V.headers ? V.headers : {};
-        return H.headers = Object.assign(Object.assign(Object.assign({}, X), Pe), b.headers), {
+        return I.headers = Object.assign(Object.assign(Object.assign({}, X), Pe), b.headers), {
           url: (0, e.toPathString)(j),
-          options: H
+          options: I
         };
       }),
       /**
@@ -6411,7 +6411,7 @@ C.createRequestFunction = Vr;
        * @throws {RequiredError}
        */
       getAllTransactions(a, s, o, d, h, A, O, b, F, j, V) {
-        return r.getAllTransactions(a, s, o, d, h, A, O, b, F, j, V).then((H) => H(t, n));
+        return r.getAllTransactions(a, s, o, d, h, A, O, b, F, j, V).then((I) => I(t, n));
       },
       /**
        *  Get a single transaction
@@ -6824,8 +6824,8 @@ C.createRequestFunction = Vr;
         l && (b = l.baseOptions);
         const F = Object.assign(Object.assign({ method: "GET" }, b), h), j = {}, V = {};
         yield (0, e.setApiKeyToObject)(j, "Authorization", l), n !== void 0 && (V.take = n), t !== void 0 && (V.skip = t), r !== void 0 && (V.search = r), a !== void 0 && (V.active = a), s !== void 0 && (V.ofAge = s), o !== void 0 && (V.id = o), d !== void 0 && (V.type = d), (0, e.setSearchParams)(O, V);
-        let H = b && b.headers ? b.headers : {};
-        return F.headers = Object.assign(Object.assign(Object.assign({}, j), H), h.headers), {
+        let I = b && b.headers ? b.headers : {};
+        return F.headers = Object.assign(Object.assign(Object.assign({}, j), I), h.headers), {
           url: (0, e.toPathString)(O),
           options: F
         };
@@ -7050,12 +7050,12 @@ C.createRequestFunction = Vr;
         const F = "/users/{id}/transactions".replace("{id}", encodeURIComponent(String(n))), j = new URL(F, e.DUMMY_BASE_URL);
         let V;
         l && (V = l.baseOptions);
-        const H = Object.assign(Object.assign({ method: "GET" }, V), b), X = {}, _ = {};
+        const I = Object.assign(Object.assign({ method: "GET" }, V), b), X = {}, _ = {};
         yield (0, e.setApiKeyToObject)(X, "Authorization", l), t !== void 0 && (_.fromId = t), r !== void 0 && (_.createdById = r), a !== void 0 && (_.toId = a), s !== void 0 && (_.productId = s), o !== void 0 && (_.productRevision = o), d !== void 0 && (_.fromDate = d), h !== void 0 && (_.tillDate = h), A !== void 0 && (_.take = A), O !== void 0 && (_.skip = O), (0, e.setSearchParams)(j, _);
         let Pe = V && V.headers ? V.headers : {};
-        return H.headers = Object.assign(Object.assign(Object.assign({}, X), Pe), b.headers), {
+        return I.headers = Object.assign(Object.assign(Object.assign({}, X), Pe), b.headers), {
           url: (0, e.toPathString)(j),
-          options: H
+          options: I
         };
       }),
       /**
@@ -7846,7 +7846,7 @@ C.createRequestFunction = Vr;
        * @throws {RequiredError}
        */
       getUsersTransactions(a, s, o, d, h, A, O, b, F, j, V) {
-        return r.getUsersTransactions(a, s, o, d, h, A, O, b, F, j, V).then((H) => H(t, n));
+        return r.getUsersTransactions(a, s, o, d, h, A, O, b, F, j, V).then((I) => I(t, n));
       },
       /**
        *  Get transaction report for the given user
@@ -8625,8 +8625,8 @@ Ae.Configuration = Rr;
   };
   Object.defineProperty(i, "__esModule", { value: !0 }), u(Je, i), u(Ae, i);
 })(w);
-const I = we.create();
-I.interceptors.response.use((i) => (Bs(i), i));
+const H = Ce.create();
+H.interceptors.response.use((i) => (Bs(i), i));
 class _r {
   constructor(c) {
     q(this, "_authenticateApi");
@@ -8649,9 +8649,9 @@ class _r {
     q(this, "_rbacApi");
     q(this, "_openBannerApi");
     const u = new w.Configuration({
-      apiKey: () => `Bearer ${Fe().token}`
+      apiKey: () => `Bearer ${Te().token}`
     });
-    this._authenticateApi = new w.AuthenticateApi(void 0, c, I), this._balanceApi = new w.BalanceApi(u, c, I), this._usersApi = new w.UsersApi(u, c, I), this._posApi = new w.PointofsaleApi(u, c, I), this._categoryApi = new w.ProductCategoriesApi(u, c, I), this._transactionApi = new w.TransactionsApi(u, c, I), this._bannerApi = new w.BannersApi(u, c, I), this._openBannerApi = new w.BannersApi(void 0, c, I), this._rootApi = new w.RootApi(), this._borrelkaartApi = new w.BorrelkaartgroupsApi(u, c, I), this._containerApi = new w.ContainersApi(u, c, I), this._filesApi = new w.FilesApi(u, c, I), this._invoicesApi = new w.InvoicesApi(u, c, I), this._payoutsApi = new w.PayoutRequestsApi(u, c, I), this._productsApi = new w.ProductsApi(u, c, I), this._transfersApi = new w.TransfersApi(u, c, I), this._vatGroupsApi = new w.VatGroupsApi(u, c, I), this._stripeApi = new w.StripeApi(u, c, I), this._rbacApi = new w.RbacApi(u, c, I);
+    this._authenticateApi = new w.AuthenticateApi(u, c, H), this._balanceApi = new w.BalanceApi(u, c, H), this._usersApi = new w.UsersApi(u, c, H), this._posApi = new w.PointofsaleApi(u, c, H), this._categoryApi = new w.ProductCategoriesApi(u, c, H), this._transactionApi = new w.TransactionsApi(u, c, H), this._bannerApi = new w.BannersApi(u, c, H), this._openBannerApi = new w.BannersApi(void 0, c, H), this._rootApi = new w.RootApi(), this._borrelkaartApi = new w.BorrelkaartgroupsApi(u, c, H), this._containerApi = new w.ContainersApi(u, c, H), this._filesApi = new w.FilesApi(u, c, H), this._invoicesApi = new w.InvoicesApi(u, c, H), this._payoutsApi = new w.PayoutRequestsApi(u, c, H), this._productsApi = new w.ProductsApi(u, c, H), this._transfersApi = new w.TransfersApi(u, c, H), this._vatGroupsApi = new w.VatGroupsApi(u, c, H), this._stripeApi = new w.StripeApi(u, c, H), this._rbacApi = new w.RbacApi(u, c, H);
   }
   get authenticate() {
     return this._authenticateApi;
@@ -8715,7 +8715,7 @@ export {
   _r as ApiService,
   _s as clearTokenInStorage,
   vs as fetchAllPages,
-  Fe as getTokenFromStorage,
+  Te as getTokenFromStorage,
   Ls as isAuthenticated,
   ws as isTokenExpired,
   Cs as parseToken,
@@ -8723,5 +8723,5 @@ export {
   We as setTokenInStorage,
   Bs as updateTokenIfNecessary,
   qs as useAuthStore,
-  Se as useUserStore
+  Ye as useUserStore
 };

@@ -10,7 +10,7 @@ import {
 import { useUserStore } from "./user.store";
 import jwtDecode, { JwtPayload } from "jwt-decode";
 import { ApiService } from "../services/ApiService";
-import { clearTokenInStorage, getTokenFromStorage, setTokenInStorage } from "../helpers/TokenHelper";
+import { clearTokenInStorage, getTokenFromStorage, setTokenInStorage, updateTokenIfNecessary } from "../helpers/TokenHelper";
 
 interface AuthStoreState {
   user: UserResponse | null,
@@ -149,11 +149,8 @@ export const useAuthStore = defineStore({
         extensiveDataProcessing: extensiveDataProcessing
       }
       await service.user.acceptTos(req);
-      this.user.acceptedToS = "ACCEPTED";
-
-      const res = await service.user.getIndividualUser(this.user.id)
-      const userStore = useUserStore();
-      userStore.setCurrentUser(res.data);
+      const res = await service.authenticate.refreshToken();
+      this.handleResponse(res.data, service);
       return;
     },
     extractStateFromToken() {

@@ -77,7 +77,7 @@ export class ApiService {
             apiKey: () => `Bearer ${getTokenFromStorage().token}`,
         });
 
-        this._authenticateApi = new AuthenticateApi(undefined, basePath, axiosInstance);
+        this._authenticateApi = new AuthenticateApi(withKeyConfiguration, basePath, axiosInstance);
         this._balanceApi = new BalanceApi(withKeyConfiguration, basePath, axiosInstance);
         this._usersApi = new UsersApi(withKeyConfiguration, basePath, axiosInstance);
         this._posApi = new PointofsaleApi(withKeyConfiguration, basePath, axiosInstance);
