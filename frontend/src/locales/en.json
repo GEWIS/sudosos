@@ -536,6 +536,7 @@
   },
   "successMessages": {
     "succes": "Success",
-    "editPOS": "Succesfully edited POS."
+    "editPOS": "Succesfully edited POS.",
+    "createContainer": "Successfully created container."
   }
 }
