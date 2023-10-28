@@ -97,6 +97,7 @@ const password = loginForm.defineComponentBinds('password');
 const route = useRoute();
 
 onBeforeMount(() => {
+  console.log(route.query.token);
   if (route.query.token !== undefined) {
     const token = route.query.token as string;
     authStore.gewisWebLogin(uuid(), token, apiService).catch(() => {

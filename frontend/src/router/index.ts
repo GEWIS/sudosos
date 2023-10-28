@@ -48,6 +48,11 @@ const router = createRouter({
           name: 'login'
         },
         {
+          path: '/login',
+          component: LoginView,
+          name: 'gewis-login',
+        },
+        {
           path: '/passwordreset',
           component: PasswordResetView,
           name: 'passwordreset'
