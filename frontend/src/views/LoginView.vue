@@ -178,11 +178,11 @@ main {
   flex-direction: column;
   text-align: center;
   max-width: 350px;
-  margin: 4rem auto;
+  margin: 12rem auto;
 }
 
 .p-button {
-  margin: 1rem auto;
+  margin: 0.5rem auto;
   max-width: 350px;
   width: 100%;
   max-height: 38px;

@@ -27,7 +27,7 @@
             <span class="error-text">{{ errors.userType }}</span>
             <label for="active">{{ $t('userDetails.Active') }}</label>
             <Checkbox :binary="true" id="active" v-bind="isActive" />
-            <Button type="submit" class="update-button">{{ $t('userDetails.Update information') }}</Button>
+            <Button type="submit">{{ $t('userDetails.Update information') }}</Button>
           </form>
         </CardComponent>
         <BalanceComponent :user="currentUser" :showOption="false" id="userBalance"/>

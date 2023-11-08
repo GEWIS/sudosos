@@ -1,7 +1,6 @@
 .p-menubar {
     padding: $horizontalMenuPadding;
     background: $primaryColor;
-    //color: $primaryTextColor;
     border: $horizontalMenuBorder;
     border-radius: $borderRadius;
 
@@ -32,7 +31,6 @@
         .p-submenu-icon {
             font-size: $menuitemSubmenuIconFontSize;
         }
-
         .p-menuitem {
             @include submenuitem();
         }
@@ -84,12 +82,10 @@
             overflow: hidden;
             max-height: 0;
             transition: max-height 0.5s ease-in-out;
-
             .p-menuitem-separator {
                 border-top: $divider;
                 margin: $menuSeparatorMargin;
             }
-
             .p-submenu-icon {
                 font-size: $menuitemSubmenuIconFontSize;
             }
@@ -140,7 +136,6 @@
                     }
                 }
             }
-
             .p-menuitem {
                 width: 100%;
                 position: static;

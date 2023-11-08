@@ -24,6 +24,7 @@
         </small>
         <Button type="submit" id="reset-button">{{ $t('login.Reset') }}</Button>
         <div class="text-900 underline" @click="backToLogin">{{ $t('login.Back to login') }}</div>
+
       </form>
       <div v-else-if="passwordResetMode === 1" class="login-form">
         <div class="text-900">{{ $t('login.Email sent') }}</div>

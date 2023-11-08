@@ -28,6 +28,7 @@ import en from "./locales/en.json";
 import nl from "./locales/nl.json";
 import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
+
 import 'primeflex/primeflex.css';
 import apiService from './services/ApiService';
 const app = createApp(App);
@@ -62,5 +63,6 @@ app.component('TabView', TabView);
 app.component('ScrollPanel', ScrollPanel);
 app.component('FileUpload', FileUpload);
 app.component('Toast', Toast);
+
 populateStoresFromToken(apiService);
 app.mount('#app');

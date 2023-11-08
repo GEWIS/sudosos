@@ -18,11 +18,7 @@
 
     <template #footer>
       <Button label="cancel" severity="secondary" outlined />
-<<<<<<< HEAD
       <Button label="pay" />
-=======
-      <Button label="pay"/>
->>>>>>> 8de846b (added central theming and central basepage)
     </template>
   </Dialog>
 </template>
@@ -93,7 +89,6 @@ const cancelPay = async () => {
 };
 
 </script>
-
 <style scoped>
 :deep(.p-panel-content) {
   padding-left: 1.25rem !important;

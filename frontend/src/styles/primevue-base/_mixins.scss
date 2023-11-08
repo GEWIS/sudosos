@@ -138,7 +138,6 @@
                 font-family: $fontFamily;
                 font-weight: 500;
             }
-
             .p-menuitem-icon {
                 color: $menuitemIconColor;
                 margin-right: $inlineSpacing;
@@ -187,7 +186,6 @@
                     }
 
                     .p-menuitem-icon, .p-submenu-icon, .pi {
-
                         color: $menuitemIconFocusColor;
                     }
                 }
@@ -312,7 +310,7 @@
 }
 
 @mixin mobilesubmenuitem {
-     .p-menuitem-content {
+    .p-menuitem-content {
         color: $submenuTextColor;
         transition: $listItemTransition;
         border-radius: $menuitemBorderRadius;
@@ -347,6 +345,7 @@
 
             .p-menuitem-link {
                 padding: $mobilemenuitemPadding;
+
                 .p-menuitem-text {
                     color: $submenuitemTextActiveColor;
                 }
@@ -372,6 +371,7 @@
                 .p-menuitem-link {
                     color: $submenuitemTextFocusColor;
                     padding: $mobilemenuitemPadding;
+
                     .p-menuitem-text {
                         color: $submenuitemTextFocusColor;
                     }
@@ -389,6 +389,7 @@
 
                 .p-menuitem-link {
                     padding: $mobilemenuitemPadding;
+
                     .p-menuitem-text {
                         color: $submenuitemTextHoverColor;
                         transition: $listItemTransition;
@@ -421,7 +422,6 @@
                 color: $horizontalMenuRootMenuitemIconColor;
                 margin-right: $inlineSpacing;
             }
-
             .p-submenu-icon {
                 color: $horizontalMenuRootMenuitemIconColor;
                 margin-left: $inlineSpacing;
