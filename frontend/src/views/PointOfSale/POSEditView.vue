@@ -181,8 +181,6 @@ const handleEditPOS = handleSubmit(async (values) => {
 
 <style scoped lang="scss">
 // TODO: Generalize this style and the one from create view
-@import '@/styles/BasePage.css';
-
 #pos-info-header {
   display: flex;
   justify-content: space-between;

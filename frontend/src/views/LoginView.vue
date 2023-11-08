@@ -152,8 +152,37 @@ const toHomeView = () => {
 
 <style scoped lang="scss">
 //TODO Fix the amount of css used related to #14 and #29
+//form {
+//  display: flex;
+//  flex-direction: column;
+//}
+//
+//h1 {
+//  color: black;
+//  max-width: 350px;
+//  width: 100%;
+//  margin: 0 auto;
+//  font-size: 2.5rem;
+//  margin-bottom: 1.5rem;
+//}
+//
+//#login-image {
+//  max-height: 150px;
+//
+//  display: block;
+//  margin: 0 auto;
+//}
+//
+//main {
+//  display: flex;
+//  flex-direction: column;
+//  text-align: center;
+//  max-width: 350px;
+//  margin: 12rem auto;
+//}
+
 .p-button {
-  margin: 1rem auto;
+  margin: 0.5rem auto;
   max-width: 350px;
   width: 100%;
   max-height: 38px;

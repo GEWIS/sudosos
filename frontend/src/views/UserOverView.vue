@@ -212,11 +212,9 @@ async function handleInfoPush(userId: number) {
 </script>
 
 <style scoped>
-@import '../styles/BasePage.css';
-
 /* Style for the DataTable header */
 :deep(.p-datatable .p-datatable-thead > tr > th) {
-  background-color: #f8f8f8;
+  /* background-color: #f8f8f8; */
   border-top: none;
   text-transform: uppercase;
   font-family: Lato, Arial, sans-serif !important;
@@ -229,7 +227,7 @@ async function handleInfoPush(userId: number) {
 
 /* Style for the DataTable body */
 :deep(.p-datatable .p-datatable-tbody > tr) {
-  background-color: #f8f8f8;
+  /* background-color: #f8f8f8; */
 }
 
 :deep(.p-datatable .p-datatable-tbody > tr > td) {
@@ -241,7 +239,7 @@ async function handleInfoPush(userId: number) {
 
 /* Style for the DataTable wrapper */
 :deep(.p-datatable > .p-datatable-wrapper > .p-datatable-table) {
-  background-color: #f8f8f8;
+  /* background-color: #f8f8f8; */
   border-top: none;
   border-left: 1px solid #d9d9d9;
   border-right: 1px solid #d9d9d9;

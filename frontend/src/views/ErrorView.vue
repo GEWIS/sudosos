@@ -14,5 +14,4 @@ const { t } = useI18n();
 </script>
 
 <style scoped lang="scss">
-@import '../styles/BasePage.css';
 </style>

@@ -196,20 +196,17 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
 </script>
 
 <style scoped>
-@import '../styles/BasePage.css';
-
-:deep(.p-datatable .p-datatable-thead > tr > th) {
-  background-color: #f8f8f8;
+/* :deep(.p-datatable .p-datatable-thead > tr > th) {
   border-top: none;
   text-transform: uppercase;
   font-family: Lato, Arial, sans-serif !important;
   font-size: 1rem;
   padding: 0.375rem 0;
   line-height: 1.5;
-}
+} */
 
 :deep(.p-datatable .p-datatable-tbody > tr) {
-  background-color: #f8f8f8;
+  /* background-color: #f8f8f8; */
 }
 
 :deep(.p-datatable .p-datatable-tbody > tr > td) {
@@ -228,20 +225,20 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
 }
 
 .product-table-header {
-  background-color: #f8f8f8;
+  /* background-color: #f8f8f8; */
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
 
 :deep(.p-datatable-header) {
-  background-color: #f8f8f8 !important;
+  /* background-color: #f8f8f8 !important; */
   border: none !important;
 }
 
-:deep(.p-paginator) {
+/* :deep(.p-paginator) {
   background-color: #f8f8f8;
-}
+} */
 
 :deep(.p-inputtext) {
   width: 100%;
@@ -256,12 +253,12 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
   border: 1px solid #dee2e6;
   border-radius: 4px;
   padding: 1rem;
-  background-color: #f8f8f8 !important;
+  /* background-color: #f8f8f8 !important; */
   min-width: 100%;
   width: 100%
 }
 
-:deep(.p-tabview) {
+/* :deep(.p-tabview) {
   background-color: #f8f8f8;
 }
 
@@ -274,5 +271,5 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
 }
 :deep(.p-tabview-panels) {
   background-color: #f8f8f8 !important;
-}
+} */
 </style>

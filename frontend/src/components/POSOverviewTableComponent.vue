@@ -8,7 +8,6 @@
           <Button
               @click="$router.push({name: 'pointOfSaleInfo', params: {id: slotProps.data.id}})"
               type="button"
-              severity='danger'
               icon="pi pi-info-circle"
               outlined
           />
@@ -41,7 +40,7 @@ const listOfPOS = ref();
 
 <style scoped lang="scss">
 :deep(.p-datatable .p-datatable-thead > tr > th) {
-  background-color: #f8f8f8;
+  // background-color: #f8f8f8;
   border-top: none;
   text-transform: uppercase;
   font-family: Lato,Arial,sans-serif!important;
@@ -51,7 +50,7 @@ const listOfPOS = ref();
 }
 
 :deep(.p-datatable .p-datatable-tbody > tr) {
-  background-color: #f8f8f8;
+  // background-color: #f8f8f8;
 }
 
 :deep(.p-datatable .p-datatable-tbody > tr > td) {

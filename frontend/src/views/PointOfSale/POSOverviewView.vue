@@ -14,8 +14,6 @@ import POSOverviewTableComponent from "@/components/POSOverviewTableComponent.vu
 </script>
 
 <style scoped lang="scss">
-@import "@/styles/BasePage.css";
-
 .pos-overview-table {
   width: 80%;
 }

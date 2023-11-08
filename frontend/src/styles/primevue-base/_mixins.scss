@@ -122,7 +122,6 @@
         }
     }
 }
-
 @mixin menuitem {
     > .p-menuitem-content {
         color: $menuitemTextColor;
@@ -149,7 +148,6 @@
                 color: $menuitemIconColor;
             }
         }
-
     }
 
     &.p-highlight {
@@ -189,6 +187,7 @@
                     }
 
                     .p-menuitem-icon, .p-submenu-icon, .pi {
+
                         color: $menuitemIconFocusColor;
                     }
                 }
@@ -440,7 +439,6 @@
                     .p-menuitem-text {
                         color: $horizontalMenuRootMenuitemTextHoverColor;
                     }
-
                     .p-menuitem-icon, .p-submenu-icon, .pi {
                         color: $horizontalMenuRootMenuitemIconHoverColor;
                     }
@@ -480,7 +478,6 @@
                 .p-menuitem-link {
                     padding-left: $val * ($index + 1);
                 }
-
             }
             @if $index < $length {
                 @include nested-submenu-indents($val, $index + 2, $length);

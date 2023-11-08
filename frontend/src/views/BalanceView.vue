@@ -46,7 +46,6 @@ const showDialog = () => {
 </script>
 
 <style scoped>
-@import "../styles/BasePage.css";
 :deep(.p-panel-content) {
   padding-left: 1.25rem!important;
 }

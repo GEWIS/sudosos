@@ -124,8 +124,6 @@ const getUserMutations = async (take: number, skip: number) :
 </script>
 
 <style scoped>
-@import '../styles/BasePage.css';
-
 form {
   display: flex;
   flex-direction: column;

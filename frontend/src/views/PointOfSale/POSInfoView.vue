@@ -115,8 +115,6 @@ const handleEditClicked = () => {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/BasePage.css';
-
 #pos-info-header {
   display: flex;
   justify-content: space-between;

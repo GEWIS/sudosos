@@ -157,8 +157,6 @@ const handleSelectedChanged = (selected: any) => {
 
 <style scoped lang="scss">
 // TODO: Generalize this style and the one from edit view
-@import '@/styles/BasePage.css';
-
 #pos-info-header {
   display: flex;
   justify-content: space-between;
