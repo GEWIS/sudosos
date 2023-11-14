@@ -225,37 +225,6 @@ async function handleInfoPush(userId: number) {
   border-top-right-radius: 4px;
 }
 
-/* Style for the DataTable body */
-:deep(.p-datatable .p-datatable-tbody > tr) {
-  /* background-color: #f8f8f8; */
-}
-
-:deep(.p-datatable .p-datatable-tbody > tr > td) {
-  border: none;
-  padding: 0.375rem 0;
-  font-size: 1rem;
-  font-family: Lato, Arial, sans-serif !important;
-}
-
-/* Style for the DataTable wrapper */
-:deep(.p-datatable > .p-datatable-wrapper > .p-datatable-table) {
-  /* background-color: #f8f8f8; */
-  border-top: none;
-  border-left: 1px solid #d9d9d9;
-  border-right: 1px solid #d9d9d9;
-  border-bottom: 1px solid #d9d9d9;
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-:deep(.p-datatable > .p-datatable-header) {
-  border-width: 1px 1px 0 1px;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-}
-
 .usertable-header {
   display: flex;
   justify-content: space-between;

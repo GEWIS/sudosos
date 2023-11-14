@@ -48,5 +48,4 @@ const showDialog = () => {
 <style scoped>
 :deep(.p-panel-content) {
   padding-left: 1.25rem!important;
-}
 </style>

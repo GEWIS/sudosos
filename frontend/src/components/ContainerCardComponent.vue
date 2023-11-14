@@ -24,6 +24,10 @@ const props = defineProps({
     type: Array<ContainerWithProductsResponse>,
     required: true,
   },
+  header: {
+    type: String,
+    required: true,
+  },
 });
 onMounted(()=>{
   containers.value = props.data;

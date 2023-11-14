@@ -2,7 +2,7 @@
   <div class="page-container">
     <div class="page-title">{{ $t('manageProducts.Manage all products and containers') }}</div>
     <div class="content-wrapper">
-      <CardComponent header="all products">
+      <CardComponent header="all products" class="products-container">
         <DataTable
           v-model:filters="filters"
           :value="products"
@@ -102,7 +102,7 @@
         </DataTable>
         <ProductModalComponent :product="selectedProduct" v-model:visible="visible" />
       </CardComponent>
-      <ContainerCardComponent v-if="containers" :data="containers" class="container-card" />
+      <ContainerCardComponent v-if="containers" :header="$t('manageProducts.Containers')" :data="containers" class="container-card" />
     </div>
   </div>
 </template>
@@ -195,33 +195,11 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
 };
 </script>
 
-<style scoped>
-/* :deep(.p-datatable .p-datatable-thead > tr > th) {
-  border-top: none;
-  text-transform: uppercase;
-  font-family: Lato, Arial, sans-serif !important;
-  font-size: 1rem;
-  padding: 0.375rem 0;
-  line-height: 1.5;
-} */
+<style scoped lang="scss">
 
-:deep(.p-datatable .p-datatable-tbody > tr) {
-  /* background-color: #f8f8f8; */
-}
-
-:deep(.p-datatable .p-datatable-tbody > tr > td) {
-  border: none;
-  padding: 0.375rem 0.2rem;
-  font-size: 1rem;
-  font-family: Lato, Arial, sans-serif !important;
-}
 
 .product-image {
   height: 4rem;
-}
-
-.p-panel {
-  width: 100%;
 }
 
 .product-table-header {
@@ -231,45 +209,17 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
   justify-content: space-between;
 }
 
-:deep(.p-datatable-header) {
-  /* background-color: #f8f8f8 !important; */
-  border: none !important;
-}
-
-/* :deep(.p-paginator) {
-  background-color: #f8f8f8;
-} */
-
-:deep(.p-inputtext) {
-  width: 100%;
-}
-
 .content-wrapper {
   flex-direction: column;
 }
 
 .container-card {
   margin-top: 1rem;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  padding: 1rem;
-  /* background-color: #f8f8f8 !important; */
   min-width: 100%;
   width: 100%
 }
 
-/* :deep(.p-tabview) {
-  background-color: #f8f8f8;
+.products-container {
+  width: 100%;
 }
-
-:deep(.p-tabview-nav-link) {
-  background-color: #f8f8f8 !important;
-}
-
-:deep(.p-tabview-panel) {
-  background-color: #f8f8f8;
-}
-:deep(.p-tabview-panels) {
-  background-color: #f8f8f8 !important;
-} */
 </style>

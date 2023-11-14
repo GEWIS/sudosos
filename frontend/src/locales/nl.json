@@ -171,7 +171,8 @@
     "Default containers": "Standaard containers",
     "Add container": "Container toevoegen",
     "Are you sure": "Weet je zeker dat je de container wil verwijderen?",
-    "Confirm": "Bevestig verwijderen"
+    "Confirm": "Bevestig verwijderen",
+    "Containers": "Containers"
   },
   "c_productTable": {
     "image": "Plaatje",

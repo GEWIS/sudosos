@@ -14,13 +14,17 @@ $colors: (
 );
 
 //reused color variables
+<<<<<<< HEAD
 
 // $shade000:#ffffff !default;              //surface
+=======
+$shade000:#ffffff !default;              //surface
+>>>>>>> 79caa39 (Replace most :deep calls/common CSS)
 // $shade100:#efefef !default;              //header background
-$shade000:#f8f8f8 !default;              //surface
+// $shade000:#f8f8f8 !default;              //surface
 $shade100:#f8f8f8 !default;              //header background
-$shade200:#e9ecef !default;              //hover background
-$shade300:#dee2e6 !default;              //border, divider
+$shade200:#efefef !default;              //hover background
+$shade300:#d9d9d9 !default;              //border, divider
 $shade400:#ced4da !default;              //input border
 $shade500:#adb5bd !default;              //unused
 $shade600:#6c757d !default;              //text secondary color
@@ -31,8 +35,12 @@ $shade900:#212529 !default;              //text color
 $hoverBg:rgba(255,255,255,.04) !default;
 
 //global
+<<<<<<< HEAD
 $fontFamily: Raleway, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif !default;
 
+=======
+$fontFamily: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif !default;
+>>>>>>> 79caa39 (Replace most :deep calls/common CSS)
 $fontSize:1rem !default;
 $fontWeight:normal !default;
 $textColor:$shade900 !default;
@@ -299,8 +307,12 @@ $sliderRangeBg:$primaryColor !default;
 //calendar
 $calendarTableMargin:.5rem 0 !default;
 $calendarPadding:0 !default;
+<<<<<<< HEAD
 
 $calendarBg:$shade000 !default;
+=======
+$calendarBg:$shade100 !default;
+>>>>>>> 79caa39 (Replace most :deep calls/common CSS)
 $calendarInlineBg:$calendarBg !default;
 $calendarTextColor:$shade900 !default;
 $calendarBorder:$inputListBorder !default;
@@ -371,7 +383,7 @@ $panelContentTextColor:$shade900 !default;
 $panelContentPadding:1rem 2rem !default;
 
 $panelFooterBorder:1px solid $shade300 !default;
-$panelFooterBg:$shade000 !default;
+$panelFooterBg:$shade100 !default;
 $panelFooterTextColor:$shade900 !default;
 $panelFooterPadding:0 !default;
 
@@ -409,20 +421,25 @@ $tabviewNavBg:transparent !default;
 $tabviewHeaderSpacing:0 !default;
 $tabviewHeaderBorder:solid !default;
 $tabviewHeaderBorderWidth:1px !default;
+<<<<<<< HEAD
 
 $tabviewHeaderBorderColor:$shade000 $shade000 #dee2e6 $shade000 !default;
 $tabviewHeaderBg:$shade000 !default;
+=======
+$tabviewHeaderBorderColor:$shade100 $shade100 #dee2e6 $shade100 !default;
+$tabviewHeaderBg:$shade100 !default;
+>>>>>>> 79caa39 (Replace most :deep calls/common CSS)
 $tabviewHeaderTextColor:$shade600 !default;
 $tabviewHeaderFontWeight:$panelHeaderFontWeight !default;
 $tabviewHeaderPadding:.75rem 1rem !default;
 $tabviewHeaderMargin:0 0 -1px 0 !default;
 
-$tabviewHeaderHoverBg:$shade000 !default;
+$tabviewHeaderHoverBg:$shade100 !default;
 $tabviewHeaderHoverBorderColor:#dee2e6 !default;
 $tabviewHeaderTextHoverColor:$shade600 !default;
 
-$tabviewHeaderActiveBg:$shade000 !default;
-$tabviewHeaderActiveBorderColor:#dee2e6 #dee2e6 $shade000 #dee2e6 !default;
+$tabviewHeaderActiveBg:$shade100 !default;
+$tabviewHeaderActiveBorderColor:#dee2e6 #dee2e6 $shade100 #dee2e6 !default;
 $tabviewHeaderTextActiveColor:$shade700 !default;
 
 $tabviewContentBorder:0 none !default;
@@ -482,14 +499,19 @@ $paginatorElementPadding:0 !default;
 //table
 $tableHeaderBorder:solid #dee2e6 !default;
 $tableHeaderBorderWidth:1px 0 0 0 !default;
-$tableHeaderBg:$shade100 !default;
+$tableHeaderBg:$shade200 !default;
 $tableHeaderTextColor:$shade900 !default;
 $tableHeaderFontWeight:600 !default;
 $tableHeaderPadding:1rem 1rem !default;
 
+<<<<<<< HEAD
 $tableHeaderCellPadding:0.375rem 0 !default;
 $tableHeaderCellBg:$shade000 !default;
 
+=======
+$tableHeaderCellPadding:1rem 1rem !default;
+$tableHeaderCellBg:$shade100 !default;
+>>>>>>> 79caa39 (Replace most :deep calls/common CSS)
 $tableHeaderCellTextColor:$shade900 !default;
 $tableHeaderCellFontWeight:600 !default;
 $tableHeaderCellBorder:1px solid #dee2e6 !default;
@@ -498,15 +520,23 @@ $tableHeaderCellHoverBg:$shade200 !default;
 $tableHeaderCellTextHoverColor:$shade900 !default;
 $tableHeaderCellIconColor:$shade600 !default;
 $tableHeaderCellIconHoverColor:$shade600 !default;
+<<<<<<< HEAD
 
 $tableHeaderCellHighlightBg:$shade000 !default;
+=======
+$tableHeaderCellHighlightBg:$shade100 !default;
+>>>>>>> 79caa39 (Replace most :deep calls/common CSS)
 $tableHeaderCellHighlightTextColor:$primaryColor !default;
 $tableHeaderCellHighlightHoverBg:$shade200 !default;
 $tableHeaderCellHighlightTextHoverColor:$primaryColor !default;
 $tableSortableColumnBadgeSize:1.143rem !default;
 
+<<<<<<< HEAD
 
 $tableBodyRowBg:$shade000 !default;
+=======
+$tableBodyRowBg:$shade100 !default;
+>>>>>>> 79caa39 (Replace most :deep calls/common CSS)
 $tableBodyRowTextColor:$shade900 !default;
 $tableBodyRowEvenBg:rgba(0,0,0,.05) !default;
 $tableBodyRowHoverBg:$shade200 !default;
@@ -515,8 +545,13 @@ $tableBodyCellBorder:1px solid #dee2e6 !default;
 $tableBodyCellBorderWidth:1px 0 0 0 !default;
 $tableBodyCellPadding:0.375rem 0!default;
 
+<<<<<<< HEAD
 $tableFooterCellPadding:0.375rem 0 !default;
 $tableFooterCellBg:$shade000 !default;
+=======
+$tableFooterCellPadding:1rem 1rem !default;
+$tableFooterCellBg:$shade100 !default;
+>>>>>>> 79caa39 (Replace most :deep calls/common CSS)
 $tableFooterCellTextColor:$shade900 !default;
 $tableFooterCellFontWeight:600 !default;
 $tableFooterCellBorder:none !default;
@@ -675,7 +710,7 @@ $submenuitemActiveBg:$shade900 !default;
 $submenuitemActiveFocusBg:$shade900 !default;
 
 $menuWidth:12.5rem !default;
-$menuBg:$shade000 !default;
+$menuBg:$shade100 !default;
 $menuBorder:1px solid $shade300 !default;
 $menuTextColor:$shade900 !default;
 $menuitemPadding:.75rem 1rem !default;
@@ -697,7 +732,7 @@ $menuitemActiveFocusBg:transparent !default;
 $menuitemSubmenuIconFontSize:.875rem !default;
 $submenuHeaderMargin:0 !default;
 $submenuHeaderPadding:.75rem 1rem !default;
-$submenuHeaderBg:$shade000 !default;
+$submenuHeaderBg:$shade100 !default;
 $submenuHeaderTextColor:$shade900 !default;
 $submenuHeaderBorderRadius:0 !default;
 $submenuHeaderFontWeight:600 !default;
@@ -872,7 +907,6 @@ $imagePreviewActionIconBorderRadius:50% !default;
 
 :root {
     --font-family:$fontFamily;
-
     --surface-a:#{$shade000};
     --surface-b:#{$shade100};
     --surface-c:#{$shade200};

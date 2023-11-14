@@ -19,6 +19,13 @@
   margin: 4rem auto 80px;
 }
 
+.content-wrapper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+
 @media (min-width: 992px) {
   .page-container {
     max-width: 960px;
@@ -31,11 +38,6 @@
   }
 }
 
-.content-wrapper {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-}
 
 /*TODO: Fix more for different media sizes*/
 /*See: https://github.com/sudosos-frontend-vue3/issues/29 */

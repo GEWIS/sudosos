@@ -189,7 +189,8 @@
     "Default containers": "Default containers",
     "Add container": "Add container",
     "Are you sure": "Are you sure you want to delete this container?",
-    "Confirm": "Confirm deletion"
+    "Confirm": "Confirm deletion",
+    "Containers": "Containers"
   },
   "c_productTable": {
     "image": "Image",
