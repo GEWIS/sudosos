@@ -29,6 +29,13 @@
   width: 100%;
 }
 
+.content-wrapper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+
 @media (min-width: 992px) {
   .page-container {
     max-width: 960px;

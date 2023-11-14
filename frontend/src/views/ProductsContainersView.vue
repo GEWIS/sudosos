@@ -213,10 +213,6 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
 
 .container-card {
   margin-top: 1rem;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  padding: 1rem;
-  /* background-color: #f8f8f8 !important; */
   min-width: 100%;
   width: 100%
 }
