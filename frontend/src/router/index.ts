@@ -16,6 +16,7 @@ import PasswordResetView from "@/views/PasswordResetView.vue";
 import TermsOfServiceView from "@/views/TermsOfServiceView.vue";
 import { UserRole } from '@/utils/rbacUtils';
 import 'vue-router';
+import ErrorView from "@/views/ErrorView.vue";
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -51,7 +52,12 @@ const router = createRouter({
           path: '/passwordreset',
           component: PasswordResetView,
           name: 'passwordreset'
-        }
+        },
+        {
+          path: '/error',
+          component: ErrorView,
+          name: 'error',
+        },
       ]
     },
     {
@@ -123,6 +129,12 @@ const router = createRouter({
           name: 'products-containers-overview',
           meta: { requiresAuth: true, isBAC: true }
         },
+        {
+          path: '/error',
+          component: ErrorView,
+          name: 'error',
+        }
+        // Add other routes for authenticated users here
       ]
     }
   ]
