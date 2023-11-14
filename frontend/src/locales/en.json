@@ -539,7 +539,8 @@
     "Select Type": "Select Type",
     "Create User": "Create User",
     "User Type": "User Type",
-    "Select User Type": "Select User Type"
+    "Select User Type": "Select User Type",
+    "Manage users": "Manager users"
   },
   "signOut": {
     "message": "Signing you out! Hope you had a nice time :) Be sure to come back soon!"

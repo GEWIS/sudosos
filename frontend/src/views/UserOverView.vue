@@ -1,103 +1,107 @@
 <template>
   <div class="page-container">
-    <div class="page-title">{{ $t('app.User overview') }}</div>
-    <DataTable
-      v-model:filters="filters"
-      :value="allUsers"
-      paginator
-      :rows="10"
-      :rowsPerPageOptions="[5, 10, 25, 50, 100]"
-      filterDisplay="menu"
-      :globalFilterFields="['type', 'firstName', 'lastName', 'fullName']"
-      lazy
-      :totalRecords="totalRecords"
-      :loading="loading"
-      @page="onPage($event)"
-      @sort="onSort()"
-      @filter="onFilter()"
-    >
-      <template #header>
-        <div class="usertable-header">
-          <span class="p-input-icon-left search-box">
-            <i class="pi pi-search" />
-            <InputText v-model="filters['global'].value" :placeholder="$t('app.Search')" />
-          </span>
-          <span>
-            <Button @click="visible = true">{{ $t('app.Create') }}</Button>
-          </span>
-        </div>
-      </template>
-      <Column field="id" header="GEWIS ID" />
-      <Column field="firstName" :header="$t('c_userTable.firstName')" />
-      <Column field="lastName" :header="$t('c_userTable.lastName')" />
-      <Column field="type" :header="$t('c_userTable.Type')" :showFilterMatchModes="false">
-        <template #filter="{ filterModel, filterCallback }">
-          <Dropdown
-            v-model="filterModel.value"
-            @change="filterCallback()"
-            :options="userTypes"
-            :placeholder="$t('c_userTable.Select Type')"
-          />
-        </template>
-      </Column>
-      <Column
-        headerStyle="width: 3rem; text-align: center"
-        bodyStyle="text-align: center; overflow: visible"
-      >
-        <template #body="slotProps">
-          <Button
-            @click="handleInfoPush(slotProps.data.id)"
-            type="button"
-            icon="pi pi-info-circle"
-            outlined
-          />
-        </template>
-      </Column>
-    </DataTable>
-    <Dialog
-        v-model:visible="visible"
-        modal
-        :header="$t('c_userTable.Create User')"
-        :style="{ width: '50vw' }"
-        @after-hide="resetForm"
-    >
-      <form @submit="handleCreateUser">
-        <div class="form-row">
-          <label for="first-name">{{ $t('c_userTable.firstName') }}</label>
-          <div class="input-container">
-            <InputText v-bind="firstName" id="first-name" />
-            <span class="error-text">{{ errors.firstName }}</span>
-          </div>
-        </div>
-        <div class="form-row">
-          <label for="last-name">{{ $t('c_userTable.lastName') }}</label>
-          <div class="input-container">
-            <InputText v-bind="lastName" id="last-name"/>
-            <span class="error-text">{{ errors.lastName }}</span></div>
-        </div>
-        <div class="form-row">
-          <label for="user-type">{{ $t('c_userTable.User Type') }}</label>
-          <div class="input-container">
-            <Dropdown
-                v-bind="userType"
+    <div class="page-title">{{ $t('c_userTable.Manage users') }}</div>
+    <div class="content-wrapper">
+      <CardComponent :header="$t('app.User overview')" class="full-width">
+        <DataTable
+          v-model:filters="filters"
+          :value="allUsers"
+          paginator
+          :rows="10"
+          :rowsPerPageOptions="[5, 10, 25, 50, 100]"
+          filterDisplay="menu"
+          :globalFilterFields="['type', 'firstName', 'lastName', 'fullName']"
+          lazy
+          :totalRecords="totalRecords"
+          :loading="loading"
+          @page="onPage($event)"
+          @sort="onSort()"
+          @filter="onFilter()"
+        >
+          <template #header>
+            <div class="usertable-header">
+              <span class="p-input-icon-left search-box">
+                <i class="pi pi-search" />
+                <InputText v-model="filters['global'].value" :placeholder="$t('app.Search')" />
+              </span>
+              <span>
+                <Button @click="visible = true">{{ $t('app.Create') }}</Button>
+              </span>
+            </div>
+          </template>
+          <Column field="id" header="GEWIS ID" />
+          <Column field="firstName" :header="$t('c_userTable.firstName')" />
+          <Column field="lastName" :header="$t('c_userTable.lastName')" />
+          <Column field="type" :header="$t('c_userTable.Type')" :showFilterMatchModes="false">
+            <template #filter="{ filterModel, filterCallback }">
+              <Dropdown
+                v-model="filterModel.value"
+                @change="filterCallback()"
                 :options="userTypes"
-                :placeholder="$t('c_userTable.Select User Type')"
-                id="user-type"
-            />
-            <span class="error-text">{{ errors.userType }}</span></div>
-        </div>
-        <div class="form-row">
-          <label for="email">{{ $t('profile.Email address') }}</label>
-          <div class="input-container">
-            <InputText v-bind="email" id="email"/>
-            <span class="error-text">{{ errors.email }}</span></div>
-        </div>
-        <div class="form-row" id="actions">
-          <Button outlined @click="visible = false">{{ $t('c_confirmationModal.Cancel' )}}</Button>
-          <Button type="submit">{{ $t('c_confirmationModal.Save' )}}</Button>
-        </div>
-      </form>
-    </Dialog>
+                :placeholder="$t('c_userTable.Select Type')"
+              />
+            </template>
+          </Column>
+          <Column
+            headerStyle="width: 3rem; text-align: center"
+            bodyStyle="text-align: center; overflow: visible"
+          >
+            <template #body="slotProps">
+              <Button
+                @click="handleInfoPush(slotProps.data.id)"
+                type="button"
+                icon="pi pi-info-circle"
+                outlined
+              />
+            </template>
+          </Column>
+        </DataTable>
+        <Dialog
+            v-model:visible="visible"
+            modal
+            :header="$t('c_userTable.Create User')"
+            :style="{ width: '50vw' }"
+            @after-hide="resetForm"
+        >
+          <form @submit="handleCreateUser">
+            <div class="form-row">
+              <label for="first-name">{{ $t('c_userTable.firstName') }}</label>
+              <div class="input-container">
+                <InputText v-bind="firstName" id="first-name" />
+                <span class="error-text">{{ errors.firstName }}</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="last-name">{{ $t('c_userTable.lastName') }}</label>
+              <div class="input-container">
+                <InputText v-bind="lastName" id="last-name"/>
+                <span class="error-text">{{ errors.lastName }}</span></div>
+            </div>
+            <div class="form-row">
+              <label for="user-type">{{ $t('c_userTable.User Type') }}</label>
+              <div class="input-container">
+                <Dropdown
+                    v-bind="userType"
+                    :options="userTypes"
+                    :placeholder="$t('c_userTable.Select User Type')"
+                    id="user-type"
+                />
+                <span class="error-text">{{ errors.userType }}</span></div>
+            </div>
+            <div class="form-row">
+              <label for="email">{{ $t('profile.Email address') }}</label>
+              <div class="input-container">
+                <InputText v-bind="email" id="email"/>
+                <span class="error-text">{{ errors.email }}</span></div>
+            </div>
+            <div class="form-row" id="actions">
+              <Button outlined @click="visible = false">{{ $t('c_confirmationModal.Cancel' )}}</Button>
+              <Button type="submit">{{ $t('c_confirmationModal.Save' )}}</Button>
+            </div>
+          </form>
+        </Dialog>
+      </CardComponent>
+    </div>
   </div>
 </template>
 
@@ -115,6 +119,7 @@ import InputText from 'primevue/inputtext';
 import router from '@/router';
 import { userDetailsSchema } from "@/utils/validation-schema";
 import { useForm } from "vee-validate";
+import CardComponent from '@/components/CardComponent.vue';
 
 const userStore = useUserStore();
 

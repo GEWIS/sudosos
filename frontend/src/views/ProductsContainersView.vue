@@ -2,7 +2,7 @@
   <div class="page-container">
     <div class="page-title">{{ $t('manageProducts.Manage all products and containers') }}</div>
     <div class="content-wrapper">
-      <CardComponent header="all products" class="products-container">
+      <CardComponent header="all products" class="full-width">
         <DataTable
           v-model:filters="filters"
           :value="products"
@@ -217,9 +217,5 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
   margin-top: 1rem;
   min-width: 100%;
   width: 100%
-}
-
-.products-container {
-  width: 100%;
 }
 </style>
