@@ -7,10 +7,10 @@
 
     <div v-html="tos"/>
 
-    
+
     <Checkbox v-model="acceptsExtensiveDataProcessing" :binary="true" class="checkbox"/>
     <label for="accept">{{ $t('termsOfService.agreeData') }}</label>
-    
+
     <div class="tos-button-box">
       <Button
           type="button"
@@ -48,17 +48,17 @@ const acceptsExtensiveDataProcessing = ref(false);
 
 const acceptTermsOfService = (async () => {
   await authStore.updateUserToSAccepted(acceptsExtensiveDataProcessing.value, apiService);
- 
+
   if (authStore.getUser) {
     apiService.user.getIndividualUser(authStore.getUser.id).then((res) => {
       const userStore = useUserStore();
-      userStore.setCurrentUser(res.data)
+      userStore.setCurrentUser(res.data);
     });
     await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
   }
   router.push({ name: 'home'});
-  
-  
+
+
 });
 
 const handleLogout = () => {
