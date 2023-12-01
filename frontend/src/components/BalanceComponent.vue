@@ -1,7 +1,7 @@
 <template>
   <CardComponent
-      :header="$t('c_currentSaldo.saldo')"
-      :action="showOption ? 'Increase Online' : ''"
+      :header="$t('c_currentBalance.balance')"
+      :action="showOption ? $t('c_currentBalance.Increase balance') : ''"
       routerLink="balance"
   >
     <div class="body">
@@ -16,6 +16,7 @@ import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import { computed, ref, onMounted } from 'vue';
 import type { UserResponse } from '@sudosos/sudosos-client';
 import apiService from '@/services/ApiService';
+import { formatPrice } from "@/utils/formatterUtils";
 
 const props = defineProps({
   user: {
@@ -35,7 +36,7 @@ const balanceFromApi = ref<string | undefined>(undefined);
 onMounted(async () => {
   if (props.user) {
     const response = await apiService.balance.getBalanceId(props.user.id);
-    balanceFromApi.value = `€${(response.data.amount.amount / 100).toFixed(2)}`;
+    balanceFromApi.value = formatPrice(response.data.amount);
   }
 });
 

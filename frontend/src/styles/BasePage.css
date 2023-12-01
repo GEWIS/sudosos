@@ -8,6 +8,14 @@
   margin-bottom: 1.5rem;
 }
 
+.page-subtitle {
+  font-weight: 300;
+  font-family: Raleway, sans-serif !important;
+  color: black;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
 .page-container {
   margin-top: 4rem;
   margin-left: auto;

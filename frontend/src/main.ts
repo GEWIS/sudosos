@@ -24,16 +24,15 @@ import TabView from "primevue/tabview";
 import ScrollPanel from "primevue/scrollpanel";
 import FileUpload from "primevue/fileupload";
 import { populateStoresFromToken } from "@sudosos/sudosos-frontend-common";
-import en from "../src/locales/en.json";
-import nl from "../src/locales/nl.json";
+import en from "./locales/en.json";
+import nl from "./locales/nl.json";
+import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
-import ToastService from 'primevue/toastservice';
-import Password from "primevue/password";
-
 const app = createApp(App);
 
+
 const i18n = createI18n({
-    locale: 'en',
+    locale: localStorage.getItem('locale') || 'en',
     fallbackLocale: 'en',
     legacy: false,
     globalInjection: true,
@@ -45,8 +44,8 @@ const i18n = createI18n({
 app.use(createPinia());
 app.use(router);
 app.use(PrimeVue);
-app.use(ToastService);
 app.use(i18n);
+app.use(ToastService);
 
 app.component('Button', Button);
 app.component('InputText', InputText);
@@ -55,7 +54,6 @@ app.component('Panel', Panel);
 app.component('DataTable', DataTable);
 app.component('InputNumber', InputNumber);
 app.component('Dialog', Dialog);
-app.component('InputNumber', InputNumber);
 app.component('Dropdown', Dropdown);
 app.component('Checkbox', Checkbox);
 app.component('TabView', TabView);
@@ -63,6 +61,6 @@ app.component('ScrollPanel', ScrollPanel);
 app.component('FileUpload', FileUpload);
 app.component('InputNumber', InputNumber);
 app.component('Toast', Toast);
-app.component('Password', Password);
+
 populateStoresFromToken();
 app.mount('#app');

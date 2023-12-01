@@ -1,56 +1,66 @@
 <template>
   <div class="page-container">
-    <div class="page-title">{{ `${$t('c_POSCreate.Edit Point of Sale')}: ${pos ? pos.name : ''}`}}</div>
-    <hr>
+    <div class="page-title">
+      {{ `${$t('c_POSCreate.Edit Point of Sale')}: ${pos ? pos.name : ''}` }}
+    </div>
+    <hr />
     <div class="content-wrapper">
       <div class="pos-row">
         <div class="pos-general-info">
           <form @submit="handleEditPOS">
-            <h3>{{ $t("c_POSCreate.General") }}</h3>
+            <h3>{{ $t('c_POSCreate.General') }}</h3>
             <span class="general-info-block">
-              <b>{{ $t("c_POSCreate.Title") }}</b>
-              <InputText class="input" type="text" v-bind="title" :class="{'p-invalid': errors.title}"/>
-              <small
-                  v-if="errors.title"
-                  class="p-error"
-              >
-              <i class="pi pi-exclamation-circle" />{{ " " + errors.title }}
-            </small>
-            <br v-else>
+              <b>{{ $t('c_POSCreate.Title') }}</b>
+              <InputText
+                class="input"
+                type="text"
+                v-bind="title"
+                :class="{ 'p-invalid': errors.title }"
+              />
+              <small v-if="errors.title" class="p-error">
+                <i class="pi pi-exclamation-circle" />{{ ' ' + errors.title }}
+              </small>
+              <br v-else />
             </span>
             <div class="general-info-block">
-              <b>{{ $t("c_POSCreate.Owner") }}</b>
+              <b>{{ $t('c_POSCreate.Owner') }}</b>
               <p>{{ posDisplayName }}</p>
             </div>
             <div>
-            <span class="general-info-block" style="flex-direction: row; align-items: center;">
-              <Checkbox v-bind="useAuthentication"
-                        inputId="useAuthentication"
-                        name="useAuthentication"
-                        value="useAuthentication"
-                        :binary="true"
-              />
-              <label for="useAuthentication">{{ $t("c_POSCreate.Use authentication") }}</label>
-            </span>
+              <span class="general-info-block" style="flex-direction: row; align-items: center">
+                <Checkbox
+                  v-bind="useAuthentication"
+                  inputId="useAuthentication"
+                  name="useAuthentication"
+                  value="useAuthentication"
+                  :binary="true"
+                />
+                <label for="useAuthentication">{{ $t('c_POSCreate.Use authentication') }}</label>
+              </span>
             </div>
             <div class="general-info-block">
-              <b>{{ $t("c_POSCreate.Selected containers") }}</b>
+              <b>{{ $t('c_POSCreate.Selected containers') }}</b>
               <ul class="selected-containers">
                 <li v-for="container in selectedContainers" :key="container.id">
                   {{ container.name }}
                 </li>
               </ul>
             </div>
-            <Button id="create-pos-button" :label="$t('c_containerEditModal.save')" type="submit" severity="success"/>
+            <Button
+              id="create-pos-button"
+              :label="$t('c_containerEditModal.save')"
+              type="submit"
+              severity="success"
+            />
           </form>
         </div>
         <DetailedContainerCardComponent
-            @selectedChanged="handleSelectedChanged"
-            class="container-card"
-            v-if="publicContainers && ownContainers"
-            :own-containers="ownContainers"
-            :public-containers="publicContainers"
-            :selectedContainers="selectedContainers"
+          @selectedChanged="handleSelectedChanged"
+          class="container-card"
+          v-if="publicContainers && ownContainers"
+          :own-containers="ownContainers"
+          :public-containers="publicContainers"
+          :selectedContainers="selectedContainers"
         />
       </div>
     </div>
@@ -58,25 +68,30 @@
 </template>
 
 <script setup lang="ts">
-
-import { computed, onBeforeMount, ref } from "vue";
-import type { Ref } from "vue";
-import { useContainerStore } from "@/stores/container.store";
-import DetailedContainerCardComponent from "@/components/DetailedContainerCardComponent.vue";
-import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
-import type { BaseUserResponse, ContainerResponse, UserResponse } from "@sudosos/sudosos-client";
-import { usePointOfSaleStore } from "@/stores/pos.store";
-import { useRoute } from "vue-router";
-import type { PointOfSaleWithContainersResponse } from "@sudosos/sudosos-client";
+import { computed, onBeforeMount, ref } from 'vue';
+import type { Ref } from 'vue';
+import { useContainerStore } from '@/stores/container.store';
+import DetailedContainerCardComponent from '@/components/DetailedContainerCardComponent.vue';
+import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
+import type { BaseUserResponse, ContainerResponse, UserResponse } from '@sudosos/sudosos-client';
+import { usePointOfSaleStore } from '@/stores/pos.store';
+import { useRoute } from 'vue-router';
+import type { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
 import * as yup from 'yup';
-import { useForm } from "vee-validate";
-import apiService from "@/services/ApiService";
+import { useForm } from 'vee-validate';
+import apiService from '@/services/ApiService';
+import { useToast } from 'primevue/usetoast';
+import { useI18n } from 'vue-i18n';
+import { handleError } from '@/utils/errorUtils';
+import router from "@/router";
 
+const toast = useToast();
+const { t } = useI18n();
 const { defineComponentBinds, handleSubmit, errors, setValues } = useForm({
   validationSchema: {
     title: yup.string().required(),
     useAuthentication: yup.boolean().required(),
-    selectedContainers: yup.mixed<Array<ContainerResponse>>(),
+    selectedContainers: yup.mixed<Array<ContainerResponse>>()
   }
 });
 
@@ -97,29 +112,43 @@ const pos: Ref<PointOfSaleWithContainersResponse | null | undefined> = ref();
 const selectedOwner: Ref<BaseUserResponse | undefined> = ref();
 
 const posDisplayName = computed(() => {
-  if (!pos.value || !pos.value.owner) return "";
+  if (!pos.value || !pos.value.owner) return '';
   return pos.value.owner.firstName + pos.value.owner.lastName;
 });
 
 onBeforeMount(async () => {
   id.value = route.params.id;
-  const posRes = await apiService.pos.getSinglePointOfSale(id.value);
-  pos.value = posRes.data;
-
-  if (userStore.getCurrentUser.user ) {
-    const publicContainersResponse = await containerStore.getPublicContainers();
-    const ownContainersResponse = await containerStore.getUsersContainers(userStore.getCurrentUser.user.id);
-    publicContainers.value = publicContainersResponse.records;
-    ownContainers.value = ownContainersResponse.records.filter((container) => container.public == false);
+  await apiService.pos.getSinglePointOfSale(id.value).then((response) => {
+    pos.value = response.data;
+  }).catch(() => {
+    router.replace({ path: '/error' });
+  });
+  if (userStore.getCurrentUser.user) {
+    await containerStore
+      .getPublicContainers()
+      .then((response) => {
+        publicContainers.value = response.records;
+      })
+      .catch((error) => handleError(error, toast));
+    await containerStore
+      .getUsersContainers(userStore.getCurrentUser.user.id)
+      .then((response) => {
+        ownContainers.value = response.records.filter((container) => container.public == false);
+      })
+      .catch((error) => handleError(error, toast));
     organsList.value = authStore.organs;
   } else {
-    // TODO: Error handling
-    // See: https://github.com/gewis/sudosos-frontend-vue3/issues/18
+    toast.add({
+      severity: 'error',
+      summary: t('apiError.error'),
+      detail: t('errorMessages.userNotFound'),
+      life: 3000
+    });
   }
   if (pos.value) {
     setValues({
-      useAuthentication : pos.value.useAuthentication,
-      title: pos.value.name,
+      useAuthentication: pos.value.useAuthentication,
+      title: pos.value.name
     });
     selectedContainers.value = pos.value.containers;
     selectedOwner.value = pos.value.owner;
@@ -131,22 +160,28 @@ const handleSelectedChanged = (selected: any) => {
 };
 
 const handleEditPOS = handleSubmit(async (values) => {
-    if (!pos.value) return;
-    const handleEditPOSResponse = await pointOfSaleStore.updatePointOfSale(
-        values.title,
-        pos.value.id,
-        values.useAuthentication,
-        values.selectedContainers.map((cont: ContainerResponse) => cont.id),
-    );
-    console.warn(handleEditPOSResponse.status);
-    // TODO: Correct error handling
-    // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
+  if (!pos.value) return;
+  await pointOfSaleStore
+    .updatePointOfSale(
+      values.title,
+      pos.value.id,
+      values.useAuthentication,
+      values.selectedContainers.map((cont: ContainerResponse) => cont.id)
+    )
+    .then(() => {
+      toast.add({
+        severity: 'success',
+        summary: t('successMessages.success'),
+        detail: t('successMessages.editPOS'),
+        life: 3000
+      });
+    }).catch((error) => handleError(error, toast));
 });
 </script>
 
 <style scoped lang="scss">
 // TODO: Generalize this style and the one from create view
-@import "@/styles/BasePage.css";
+@import '@/styles/BasePage.css';
 
 #pos-info-header {
   display: flex;
@@ -157,7 +192,7 @@ hr {
   margin: 1rem 0;
 }
 
-:deep(.p-button){
+:deep(.p-button) {
   margin: 0 5px !important;
 }
 
@@ -169,15 +204,15 @@ hr {
 
 .pos-general-info {
   flex: 1;
-  padding-left: 0.25rem!important;
-  font-family: Lato,Arial,sans-serif!important;
+  padding-left: 0.25rem !important;
+  font-family: Lato, Arial, sans-serif !important;
   display: flex;
   flex-direction: column;
   color: black;
   font-size: 1rem;
   h3 {
     font-size: 1.75rem;
-    font-family: Raleway, sans-serif!important;
+    font-family: Raleway, sans-serif !important;
     margin-bottom: 0.5rem;
   }
 
@@ -230,12 +265,12 @@ hr {
   display: block;
   font-size: 12px;
   text-align: left;
-  line-height:18px;
+  line-height: 18px;
 }
 
 .p-error > i {
-  font-size:12px;
+  font-size: 12px;
   margin-right: 3.6px;
-  line-height:12px;
+  line-height: 12px;
 }
 </style>

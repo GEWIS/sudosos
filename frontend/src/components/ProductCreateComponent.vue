@@ -39,7 +39,7 @@
         </div>
         <div class="row">
           <p class="prop">{{ $t('c_productEditModal.Image') }}</p>
-          <FileUpload mode="basic" name="productImg" accept="image/*" @select="onImgUpload" />
+          <FileUpload mode="basic" name="productImg" accept="image/*" @select="onImgUpload($event)" />
         </div>
         <div class="row">
           <p class="prop">{{ $t('c_POSCreate.Owner') }}</p>
@@ -52,7 +52,7 @@
           <span class="error-text">{{ errors.owner }}</span>
         </div>
         <div class="button-row">
-          <Button type="submit" severity="danger" class="save-button">{{ $t('c_productEditModal.Save') }}</Button>
+          <Button type="submit" severity="danger" class="save-button">{{ $t('c_productEditModal.save') }}</Button>
         </div>
       </form>
     </div>
@@ -73,12 +73,14 @@ import type {
 import apiService from '@/services/ApiService';
 import Dropdown from 'primevue/dropdown';
 import FileUpload from 'primevue/fileupload';
-import type FileUploadSelectEvent from 'primevue/fileupload';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import InputNumber from 'primevue/inputnumber';
 import { toTypedSchema } from '@vee-validate/yup';
 import * as yup from 'yup';
 import { useForm } from 'vee-validate';
+import { useToast } from "primevue/usetoast";
+import { useI18n } from "vue-i18n";
+import { handleError } from "@/utils/errorUtils";
 
 const productSchema = toTypedSchema(
   yup.object({
@@ -102,7 +104,8 @@ defineProps({
     required: false
   }
 });
-
+const toast = useToast();
+const { t } = useI18n();
 const visible = ref(false);
 const categories: Ref<ProductCategoryResponse[]> = ref([]);
 const vatGroups: Ref<VatGroup[]> = ref([]);
@@ -141,10 +144,16 @@ const handleProductCreate = handleSubmit(async (values) => {
   await apiService.products.createProduct(createProductRequest).then((resp) => {
     if (productImage.value)
       apiService.products.updateProductImage(resp.data.id, productImage.value);
-  });
+    toast.add({
+      severity: 'success',
+      summary: t('successMessages.success'),
+      detail: t('successMessages.productCreated'),
+      life: 3000,
+    });
+  }).catch((err) => handleError(err, toast));
 });
 
-const onImgUpload = (event: FileUploadSelectEvent) => {
+const onImgUpload = (event: any) => {
   //@ts-ignore
   productImage.value = event.files[0];
 };

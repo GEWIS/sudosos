@@ -10,7 +10,7 @@
             <span class="general-info-block">
               <b>{{ $t('posInfo.Title') }}</b>
 
-              <InputText class="input" type="text" v-bind="title" :class="{'p-invalid': errors.name}" />
+              <InputText class="input" type="text" v-bind="title" :class="{'p-invalid': errors.title}" />
               <small
                   v-if="errors.title"
                   class="p-error"
@@ -30,10 +30,10 @@
                 :class="{'p-invalid': errors.owner}"
               />
               <small
-                  v-if="errors.name"
+                  v-if="errors.title"
                   class="p-error"
               >
-              <i class="pi pi-exclamation-circle" />{{ " " + errors.name }}
+              <i class="pi pi-exclamation-circle" />{{ " " + errors.title }}
             </small>
             <br v-else>
             </span>
@@ -86,6 +86,8 @@ import { useRouter } from 'vue-router';
 import { toTypedSchema } from '@vee-validate/yup';
 import * as yup from 'yup';
 import { useField, useForm } from 'vee-validate';
+import { handleError } from "@/utils/errorUtils";
+import { useToast } from "primevue/usetoast";
 
 const containerStore = useContainerStore();
 const userStore = useUserStore();
@@ -118,38 +120,34 @@ const { value } = useField<ContainerResponse[]>(
     initialValue: []
   }
 );
+const toast = useToast();
 
 onMounted(async () => {
   if (userStore.getCurrentUser.user) {
-    const publicContainersResponse = await containerStore.getPublicContainers();
-    const ownContainersResponse = await containerStore.getUsersContainers(
+    await containerStore.getPublicContainers().then((response) => {
+      publicContainers.value = response.records;
+    });
+    await containerStore.getUsersContainers(
       userStore.getCurrentUser.user.id
-    );
-    publicContainers.value = publicContainersResponse.records;
-    ownContainers.value = ownContainersResponse.records.filter(
-      (container) => container.public == false
-    );
+    ).then((response) => {
+      ownContainers.value = response.records.filter(
+        (container) => container.public == false
+      );
+    });
     organsList.value = authStore.organs;
   } else {
-    // TODO: Error handling
-    // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
+    await router.replace({ path: '/error' });
   }
 });
 
 const handleCreatePOS = handleSubmit(async (values) => {
-  const response = await pointOfSaleStore.createPointOfSale(
+  await pointOfSaleStore.createPointOfSale(
     values.title,
     values.useAuthentication,
     values.selectedContainers ?
         values.selectedContainers.map((container: ContainerResponse) => container.id) : [],
     values.owner.id
-  );
-  if (response.status === 200) {
-    router.push('/point-of-sale/overview');
-  } else {
-    // TODO: Error toasts
-    // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
-  }
+  ).then(() => router.push('/point-of-sale/overview')).catch((err) => handleError(err, toast));
 });
 
 const handleSelectedChanged = (selected: any) => {

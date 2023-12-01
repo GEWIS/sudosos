@@ -1,118 +1,91 @@
 <template>
   <div>
     <main>
-      <img
-          id="login-image"
-          src="@/assets/img/bier.png"
-          alt="logo"
-      />
+      <img id="login-image" src="@/assets/img/bier.png" alt="logo" />
       <h1>{{ $t('login.SudoSOS Login') }}</h1>
-      <Button
-          id="login-gewis-button"
-          @click="loginViaGEWIS"
-          severity="success"
-      >
-        <img
-            id="gewis-branding"
-            src="@/assets/img/gewis-branding.svg"
-            alt="GEWIS"
-        />
+      <Button id="login-gewis-button" @click="loginViaGEWIS" severity="success">
+        <img id="gewis-branding" src="@/assets/img/gewis-branding.svg" alt="GEWIS" />
         {{ $t('login.Login via GEWIS') }}
       </Button>
       <hr />
-      <Form id="login-form" @submit="loginHandler">
-        <label
-            id="input-description"
-            for="username"
-        >
+      <form id="login-form" @submit="loginHandler">
+        <label id="input-description" for="username">
           {{ $t('login.Username') }}
         </label>
         <span class="p-float-label with-error">
           <InputText
-              id="username"
-              type="text"
-              v-bind="username"
-              size="large"
-              name="username"
-              :class="{'p-invalid': loginForm.errors.value.username}"
+            id="username"
+            type="text"
+            v-bind="username"
+            size="large"
+            name="username"
+            :class="{ 'p-invalid': loginForm.errors.value.username }"
           />
-          <label
-              :class="{'contains-text': username.modelValue }"
-              for="username">{{ $t('login.Username') }}
+          <label :class="{ 'contains-text': username.modelValue }" for="username"
+            >{{ $t('login.Username') }}
           </label>
           <small class="p-error">
-            <i v-if="loginForm.errors.value.username" class="pi pi-exclamation-circle"/>
+            <i v-if="loginForm.errors.value.username" class="pi pi-exclamation-circle" />
             {{ loginForm.errors.value.username }}
           </small>
         </span>
-        <label
-            id="input-description"
-            for="password"
-        >
+        <label id="input-description" for="password">
           {{ $t('login.Password') }}
         </label>
         <span class="p-float-label with-error">
           <InputText
-              id="password"
-              type="password"
-              v-bind="password"
-              size="large"
-              name="password"
-              :class="{'p-invalid': loginForm.errors.value.password}"
+            id="password"
+            type="password"
+            v-bind="password"
+            size="large"
+            name="password"
+            :class="{ 'p-invalid': loginForm.errors.value.password }"
           />
-          <label
-              :class="{'contains-text': password.modelValue }"
-              for="password">{{ $t('login.Password') }}
+          <label :class="{ 'contains-text': password.modelValue }" for="password"
+            >{{ $t('login.Password') }}
           </label>
           <smal class="p-error">
-            <i v-if="loginForm.errors.value.password" class="pi pi-exclamation-circle"/>
+            <i v-if="loginForm.errors.value.password" class="pi pi-exclamation-circle" />
             {{ loginForm.errors.value.password }}
           </smal>
         </span>
-        <Button
-            type="submit"
-            id="login-button"
-            severity="danger"
-        >
+        <Button type="submit" id="login-button" severity="danger">
           {{ $t('login.Login') }}
         </Button>
-        <div
-            class="password-reset"
-            @click="resetPassword"
-        >
+        <div class="password-reset" @click="resetPassword">
           {{ $t('login.Password reset') }}
         </div>
-      </Form>
+      </form>
     </main>
-    <CopyrightBanner/>
+    <CopyrightBanner />
   </div>
 </template>
 
 <script setup lang="ts">
-import CopyrightBanner from "@/components/CopyrightBanner.vue";
-import { useRoute } from "vue-router";
-import { onBeforeMount } from "vue";
-import { useUserStore, useAuthStore } from "@sudosos/sudosos-frontend-common";
-import apiService from "@/services/ApiService";
-import router from "@/router";
+import CopyrightBanner from '@/components/CopyrightBanner.vue';
+import { useRoute } from 'vue-router';
+import { onBeforeMount } from 'vue';
+import { useUserStore, useAuthStore } from '@sudosos/sudosos-frontend-common';
+import apiService from '@/services/ApiService';
+import router from '@/router';
 import { v4 as uuid } from 'uuid';
-import { useForm, Form } from "vee-validate";
+import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/yup';
 import * as yup from 'yup';
-import InputText from "primevue/inputtext";
+import InputText from 'primevue/inputtext';
+import { useToast } from 'primevue/usetoast';
+import { AxiosError } from 'axios';
+import { handleError } from "@/utils/errorUtils";
 
 const authStore = useAuthStore();
 const userStore = useUserStore();
+const toast = useToast();
 
 const schema = toTypedSchema(
-    yup.object({
-      username: yup
-          .string()
-          .required("This is a required field."),
-      password: yup
-          .string()
-          .required("This is a required field.")
-    })
+  yup.object({
+    username: yup.string().required('This is a required field.'),
+    password: yup.string().required('This is a required field.')
+  })
 );
 const loginForm = useForm({
   validationSchema: schema
@@ -123,38 +96,39 @@ const password = loginForm.defineComponentBinds('password');
 
 const route = useRoute();
 
-// TODO: error handling and error toasts
-// See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
 onBeforeMount(() => {
   if (route.query.token !== undefined) {
     const token = route.query.token as string;
-    authStore.gewisWebLogin(uuid(), token, apiService).catch((error) => {
-      console.error(error);
+    authStore.gewisWebLogin(uuid(), token, apiService).catch(() => {
+      router.replace({ path: "/error" });
     });
   }
 });
 
-// TODO: error handling and error toasts
-// See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/46
-const loginHandler = loginForm.handleSubmit(async () => {
-  if (username.value.modelValue.includes('@')) {
-    await apiService.authenticate.localAuthentication({
-      accountMail: username.value.modelValue,
-      password: password.value.modelValue }).then((res) => {
-      authStore.handleResponse(res.data, apiService);
-      if (authStore)
-        userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
+const loginHandler = loginForm.handleSubmit(async (values) => {
+  try {
+    if (values.username.includes('@')) {
+      await apiService.authenticate.localAuthentication({
+        accountMail: values.username,
+        password: values.password
+      }).then((res) => authStore.handleResponse(res.data, apiService));
+      if (authStore.getUser) {
+        await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
+      } else {
+        await router.replace({ path: '/error' });
+      }
       toHomeView();
-    }).catch((err) => {
-      console.error(err);
-    });
-  } else {
-    await authStore.gewisLdapLogin(username.value.modelValue, password.value.modelValue, apiService).then(() => {
-      if (authStore.getUser) userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
+    } else {
+      await authStore.gewisLdapLogin(values.username, values.password, apiService);
+      if (authStore.getUser) {
+        await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
+      } else {
+        await router.replace({ path: '/error' });
+      }
       toHomeView();
-    }).catch((err) => {
-      console.error(err);
-    });
+    }
+  } catch (err) {
+    handleError(err as AxiosError, toast);
   }
 });
 
@@ -171,7 +145,6 @@ const resetPassword = () => {
 const toHomeView = () => {
   router.push({ name: 'home' });
 };
-
 </script>
 
 <style scoped lang="scss">
@@ -224,14 +197,14 @@ main {
   display: block;
   font-size: 12px;
   text-align: left;
-  line-height:18px;
+  line-height: 18px;
   min-height: 25px;
 }
 
 .p-error > i {
-  font-size:12px;
+  font-size: 12px;
   margin-right: 3.6px;
-  line-height:12px;
+  line-height: 12px;
 }
 
 #username {
@@ -256,9 +229,11 @@ main {
   left: 12px;
 }
 
-.contains-text, .p-float-label input:focus ~ label,  .p-float-label label ~ input:focus {
+.contains-text,
+.p-float-label input:focus ~ label,
+.p-float-label label ~ input:focus {
   margin-top: 0;
-  top: 8px!important;
+  top: 8px !important;
 }
 
 #input-description {

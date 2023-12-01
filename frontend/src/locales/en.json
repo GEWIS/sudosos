@@ -26,7 +26,7 @@
   },
   "app": {
     "Transactions": "Transactions",
-    "Saldo": "Balance",
+    "Balance": "Balance",
     "Points of Sale": "Points of Sale",
     "Overview": "POS Overview",
     "Create": "Create",
@@ -71,8 +71,12 @@
   "transactions": {
     "Transactions": "Transactions"
   },
-  "saldo": {
-    "Saldo": "Balance"
+  "balance": {
+    "Balance": "Balance",
+    "Balance increase amount": "Balance increase amount",
+    "Start payment": "Start payment",
+    "Increase balance": "Increase balance",
+    "Price": "Price"
   },
   "pointOfSaleOverview": {
     "Point of sale overview": "Point of sale overview"
@@ -256,15 +260,15 @@
   "banners": {
     "Banners": "Banners"
   },
-  "c_currentSaldo": {
-    "saldo": "balance",
+  "c_currentBalance": {
+    "balance": "Balance",
     "upgrade online": "increase online",
     "topup": "You will be topping up with €{amount}",
     "cashtopup": "It is no longer possible to increase your balance in cash during the 'borrel'",
     "increase": "Balance increase amount:",
     "currency": "€",
     "startPayment": "Start Payment",
-    "Increase Saldo": "Increase Saldo"
+    "Increase balance": "Increase balance"
   },
   "c_recentTransactionsTable": {
     "recent transactions": "recent transactions",
@@ -328,7 +332,7 @@
     "Add new": "Add new product",
     "Product details": "Product details",
     "Existing products": "Existing products",
-    "save": "save",
+    "save": "Save",
     "cancel": "cancel",
     "Delete from container": "Delete from container",
     "edit product": "edit product",
@@ -524,6 +528,7 @@
     "message": "Signing you out! Hope you had a nice time :) Be sure to come back soon!"
   },
   "apiError": {
+    "error": "Error",
     "message": "Error message",
     "Something went wrong": "Something went wrong",
     "400": "There is something wrong with the request you are trying to make",
@@ -531,5 +536,15 @@
     "403": "You cannot access this data",
     "404": "This data does not seem to exist",
     "500": "Something is going wrong, please contact the SudoSOS team"
+  },
+  "errorMessages": {
+    "posNotFound": "The requested POS was not found.",
+    "userNotFound": "The requested user was not found."
+  },
+  "successMessages": {
+    "succes": "Success",
+    "editPOS": "Succesfully edited POS.",
+    "createContainer": "Successfully created container.",
+    "productCreated": "Successfully created product."
   }
 }

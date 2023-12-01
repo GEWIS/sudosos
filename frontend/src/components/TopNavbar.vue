@@ -26,16 +26,17 @@ import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import { useRouter } from "vue-router";
 import { UserRole } from "@/utils/rbacUtils";
 import { useI18n } from "vue-i18n";
+import { formatPrice } from "@/utils/formatterUtils";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const router = useRouter();
 const { t, locale } = useI18n();
+
 const balance = computed((): string | undefined => {
   const balanceInCents = userStore.getCurrentUser.balance;
   if (!balanceInCents) return undefined;
-  const balanceInEuros = (balanceInCents.amount.amount / 100).toFixed(2);
-  return `€${balanceInEuros}`;
+  return formatPrice(balanceInCents.amount);
 });
 
 const firstName = computed((): string | undefined => {
@@ -61,22 +62,22 @@ const isSeller = () => {
 
 const leftItems = ref([
   {
-    label: t('app.Transactions'),
+    label: (): string => t('app.Transactions'),
   },
   {
-    label: t('app.Saldo'),
+    label: () => t('app.Balance'),
     to: '/balance',
   },
   {
-    label: t('app.Points of Sale'),
+    label: (): string => t('app.Points of Sale'),
     visible: isSeller(),
     items: [
       {
-        label: t('app.Overview'),
+        label: () => t('app.Overview'),
         to: '/point-of-sale/overview',
       },
       {
-        label: t('app.Create POS'),
+        label: () => t('app.Create POS'),
         to: '/point-of-sale/request'
       }
     ]
@@ -141,15 +142,19 @@ const rightItems = ref([
     icon: 'pi pi-globe',
     items: [
       {
-        label: t('app.Netherlands'),
+        label: () => t('app.Netherlands'),
+        disabled: () => locale.value == 'nl',
         command: () => {
           locale.value = 'nl';
+          localStorage.setItem('locale', 'nl');
         },
       },
       {
-        label: t('app.English'),
+        label: () => t('app.English'),
+        disabled: () => locale.value == 'en',
         command: () => {
           locale.value = 'en';
+          localStorage.setItem('locale', 'en');
         },
       },
     ]

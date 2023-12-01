@@ -47,6 +47,7 @@ defineProps({
 }
 
 .product-name {
+  margin: 0;
   font-weight: bold;
   font-size: 1rem;
   overflow: hidden;

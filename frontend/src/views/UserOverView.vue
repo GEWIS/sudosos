@@ -162,7 +162,7 @@ const delayedAPICall = async (skip: number) => {
     true,
       undefined,
       undefined,
-      filters.value.type.value,
+      filters.value.type.value || undefined,
   );
   totalRecords.value = res.data._pagination.count || 0;
   allUsers.value = res.data.records;
@@ -191,7 +191,6 @@ const handleCreateUser = handleSubmit(async (values) => {
   const createUserRequest: CreateUserRequest = {
     firstName: values.firstName,
     lastName: values.lastName,
-    active: true,
     type: userTypes.indexOf(values.userType),
     email: values.email || '',
   };

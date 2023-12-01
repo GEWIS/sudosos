@@ -5,6 +5,7 @@ import apiService from "@/services/ApiService";
 import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import { useToast } from "primevue/usetoast";
 import { useI18n } from "vue-i18n";
+import Password from "primevue/password";
 
 const authStore = useAuthStore();
 const toast = useToast();
@@ -63,7 +64,7 @@ function changePassword() {
       </div>
       <div>
         <p>Confirm password</p>
-        <InputText :disabled="!isLocal" type="password" v-model="confirmPassword"/>
+        <Password :disabled="!isLocal" v-model="confirmPassword"/>
         <small class="warning">{{confirmPasswordError || '&nbsp;'}}</small>
       </div>
       <div>

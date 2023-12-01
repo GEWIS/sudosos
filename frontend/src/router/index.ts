@@ -11,11 +11,30 @@ import BalanceView from "@/views/BalanceView.vue";
 import UserOverView from '../views/UserOverView.vue';
 import SingleUserView from "@/views/SingleUserView.vue";
 import ProductsContainersView from "@/views/ProductsContainersView.vue";
-import { isAuthenticated } from "@sudosos/sudosos-frontend-common";
+import { isAuthenticated, useAuthStore } from "@sudosos/sudosos-frontend-common";
 import PasswordResetView from "@/views/PasswordResetView.vue";
-import {useAuthStore} from "@sudosos/sudosos-frontend-common";
+import { UserRole } from '@/utils/rbacUtils';
+import 'vue-router';
+import ErrorView from "@/views/ErrorView.vue";
 import ProfileView from "@/views/ProfileView.vue";
-import jwtDecode from "jwt-decode";
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    // must be declared by every route
+    requiresAuth: boolean
+
+    // Admin
+    isAdmin?: boolean,
+
+    // Seller
+    isSeller?: boolean,
+
+    // BAC
+    isBAC?: boolean,
+  }
+}
+
+
 
 const router = createRouter({
   history: createWebHistory(),
@@ -34,6 +53,11 @@ const router = createRouter({
           component: PasswordResetView,
           name: 'passwordreset'
         },
+        {
+          path: '/error',
+          component: ErrorView,
+          name: 'error',
+        }
       ]
     },
     {
@@ -54,29 +78,34 @@ const router = createRouter({
         {
           path: '/point-of-sale/overview',
           name: 'pointOfSale',
-          component: POSOverviewView
+          component: POSOverviewView,
+          meta: { requiresAuth: true, isSeller: true }
         },
         {
           path: '/point-of-sale/info/:id',
           name: 'pointOfSaleInfo',
           component: POSInfoView,
-          props: true
+          props: true,
+          meta: { requiresAuth: true, isSeller: true }
         },
         {
           path: '/point-of-sale/request',
           name: 'pointOfSaleCreate',
-          component: POSCreateView
+          component: POSCreateView,
+          meta: { requiresAuth: true, isSeller: true }
         },
         {
           path: '/point-of-sale/edit/:id',
           name: 'pointOfSaleEdit',
           component: POSEditView,
-          props: true
+          props: true,
+          meta: { requiresAuth: true, isSeller: true }
         },
         {
           path: '/user-overview',
           component: UserOverView,
-          name: 'userOverview'
+          name: 'userOverview',
+          meta: { requiresAuth: true, isBAC: true }
         },
         {
           path: '/user/:userId',
@@ -88,8 +117,13 @@ const router = createRouter({
           path: '/manage-products',
           component: ProductsContainersView,
           name: 'products-containers-overview',
-        }
-        ,
+          meta: { requiresAuth: true, isBAC: true }
+        },
+        {
+          path: '/error',
+          component: ErrorView,
+          name: 'error',
+        },
         {
           path: '/profile',
           component: ProfileView,
@@ -102,6 +136,20 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+
+  const isAdmin = () => {
+    return authStore.roles.includes(UserRole.BOARD);
+  };
+
+  const isBAC = () => {
+    return authStore.roles.includes(UserRole.BAC);
+  };
+
+  const isSeller = () => {
+    return authStore.roles.includes(UserRole.SELLER);
+};
+
   const isAuth = isAuthenticated();
 
   if (to.meta?.requiresAuth && !isAuth) {
@@ -111,7 +159,12 @@ router.beforeEach((to, from, next) => {
     // If the route doesn't require authentication and the user is authenticated, redirect to home
     next({ name: 'home' });
   } else {
-    // Allow navigation to proceed
+    if(to.meta?.isAdmin && !isAdmin()) next({ name: 'home' });
+
+    if(to.meta?.isSeller && !isSeller()) next({ name: 'home' });
+
+    if(to.meta?.isBAC && !isBAC()) next({ name: 'home' });
+
     next();
   }
 });

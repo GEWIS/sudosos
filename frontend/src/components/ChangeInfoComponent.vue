@@ -62,7 +62,7 @@ function changeUserInfo() {
       <small v-if="!isLocal">!This account is not managed trhoug SudoSOS!</small>
       <div>
         <p>FirstName</p>
-        <Password :disabled="!isLocal"  v-model="inputFirstName"/>
+        <InputText :disabled="!isLocal"  v-model="inputFirstName"/>
         <small class="warning">{{inputFirstNameError || '&nbsp;'}}</small>
       </div>
       <div>
