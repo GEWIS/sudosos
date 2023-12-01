@@ -5,9 +5,6 @@ import { useField } from "vee-validate";
 import apiService from "@/services/ApiService";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import { useToast } from "primevue/usetoast";
-import { useUserStore } from '@sudosos/sudosos-frontend-common';
-
-import type { UserResponse } from "@sudosos/sudosos-client";
 import { useI18n } from "vue-i18n";
 
 const authStore = useAuthStore();

@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import CardComponent from "@/components/CardComponent.vue";
 import { useField } from "vee-validate";
-import apiService from "@/services/ApiService";
-import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
+import { useUserStore } from "@sudosos/sudosos-frontend-common";
 import { useToast } from "primevue/usetoast";
 import { useI18n } from "vue-i18n";
 
-const authStore = useAuthStore();
 const toast = useToast();
 const userStore = useUserStore();
 const { t } = useI18n();
@@ -57,29 +55,34 @@ function changeUserInfo() {
 </script>
 
 <template>
-  <card-component :header="'Change user info'">
+  <CardComponent :header="$t('profile.changeUserInfo')">
     <div>
-      <small v-if="!isLocal">!This account is not managed trhoug SudoSOS!</small>
+      <small v-if="!isLocal">{{ $t('profile.notManagedThroughSudoSOS') }}</small>
       <div>
-        <p>FirstName</p>
+        <p>{{ $t('profile.firstName')}}</p>
         <InputText :disabled="!isLocal"  v-model="inputFirstName"/>
         <small class="warning">{{inputFirstNameError || '&nbsp;'}}</small>
       </div>
       <div>
-        <p>Last name</p>
+        <p>{{ $t('profile.lastName')}}</p>
         <InputText :disabled="!isLocal"  v-model="inputLastName"/>
         <small class="warning">{{inputLastNameError || '&nbsp;'}}</small>
       </div>
       <div>
-        <p>Email adress</p>
+        <p>{{ $t('profile.emailAddress')}}</p>
         <InputText :disabled="!isLocal" v-modal="inputEmail"/>
         <small class="warning">{{inputEmailError || '&nbsp;'}}</small>
       </div>
       <div>
-        <Button severity="danger" :disabled="true" label="Update user info" @click="changeUserInfo"/>
+        <Button
+          severity="danger"
+          :disabled="true"
+          :label="$t('profile.updateInfo')"
+          @click="changeUserInfo"
+        />
       </div>
     </div>
-  </card-component>
+  </CardComponent>
   <Toast />
 </template>
 

@@ -19,8 +19,10 @@ if(userStore.getCurrentUser.user) {
 
 
 //TODO make password greyed when using m account
-const { value: inputPassword, errorMessage: inputPasswordError } = useField('inputPassword', validatePassword);
-const { value: confirmPassword, errorMessage: confirmPasswordError } = useField('confirmPassword', validateConfirmPassword);
+const { value: inputPassword, errorMessage: inputPasswordError }
+  = useField('inputPassword', validatePassword);
+const { value: confirmPassword, errorMessage: confirmPasswordError }
+  = useField('confirmPassword', validateConfirmPassword);
 
 
 function validatePassword(checkPassword: string) {
@@ -55,23 +57,28 @@ function changePassword() {
 </script>
 
 <template>
-  <card-component :header="t('profile.Change password')">
+  <CardComponent :header="t('profile.changePassword')">
     <div>
       <div>
-        <p>Password</p>
+        <p>{{ $t('profile.password') }}</p>
         <Password :disabled="!isLocal"  v-model="inputPassword"/>
         <small class="warning">{{inputPasswordError || '&nbsp;'}}</small>
       </div>
       <div>
-        <p>Confirm password</p>
+        <p>{{ $t('profile.passwordConfirm') }}</p>
         <Password :disabled="!isLocal" v-model="confirmPassword"/>
         <small class="warning">{{confirmPasswordError || '&nbsp;'}}</small>
       </div>
       <div>
-        <Button severity="danger" :disabled="!isLocal" :label="t('profile.Update password')" @click="changePassword"/>
+        <Button
+          severity="danger"
+          :disabled="!isLocal"
+          :label="t('profile.passwordUpdate')"
+          @click="changePassword"
+        />
       </div>
     </div>
-  </card-component>
+  </CardComponent>
   <Toast />
 </template>
 
