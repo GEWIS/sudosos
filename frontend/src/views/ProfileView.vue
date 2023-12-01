@@ -1,18 +1,18 @@
 <template>
   <div class="page-container">
 
-    <div class="page-title">{{ $t('profile.My profile')}}</div>
+    <div class="page-title">{{ $t('profile.myProfile')}}</div>
 
     <div class="container">
 
-      <div class = "container">
+      <div class ="row">
 
           <ChangePinComponent />
 
           <ChangePasswordComponent />
       </div>
 
-      <div class="container">
+      <div class="row">
           <ChangeApiKeyComponent />
 
           <ChangeInfoComponent />
@@ -48,14 +48,17 @@ apiService.user.updateUser(0, {
   font-size: 75%;
 }
 
-
+.row {
+  display: flex;
+  flex-direction: row;
+  width: 75%;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
 
 .container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 10px; /* Reduce the gap value to 10px */
-  padding-bottom: 20px; /* Add bottom padding to prevent the last row from being cut off */
-  padding-right: 50px;
+  display: flex;
+  flex-direction: column;
 }
 
 </style>

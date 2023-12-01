@@ -20,7 +20,7 @@ const { value: confirmPin, errorMessage: confirmPinError } = useField('confirmPi
 //show warning message if pin is filled in and not 4 digits
 function validatePin(checkInputPin: string){
   if (checkInputPin.length != 4 && !RegExp('\\d{4}').test(checkInputPin)) {
-    return t('profile.Pin code must be 4 digits');
+    return t('profile.pinIncorrectLength');
   }
   return true;
 };
@@ -28,7 +28,7 @@ function validatePin(checkInputPin: string){
 //show warning message if conformation pin does not fit pin
 function validateConfirmPin(checkConfirmPin: string){
   if (checkConfirmPin != inputPin.value) {
-    return t('profile.Conformation does not match pin code');
+    return t('profile.pinNotMatch');
   }
   return true;
 }
@@ -40,38 +40,38 @@ function changePinCode() {
       //   Succes!
       inputPin.value="";
       confirmPin.value="";
-      toast.add({ severity: "success", summary: "success", detail: t('profile.Pin code updated')  });
+      toast.add({ severity: "success", summary: "success", detail: t('profile.pinUpdated')  });
     }).catch((err) => {
       // Error
       console.error(err);
     });
   } else {
-    toast.add({ severity: "error", summary: "failed", detail: t('profile.Incorrect pin code submitted'), life: 3000 });
+    toast.add({ severity: "error", summary: "failed", detail: t('profile.pinIncorrect'), life: 3000 });
   }
 }
 
 </script>
 
 <template>
-  <card-component :header="$t('profile.Change pin code')">
+  <CardComponent :header="$t('profile.pinChange')">
     <Toast />
 
     <div id="update-pin-form">
       <div>
-        <p>{{ $t('profile.New pin code')}}</p>
+        <p>{{ $t('profile.pinNew')}}</p>
         <PinComponent v-model="inputPin" />
         <small class="warning">{{inputPinError || '&nbsp;'}}</small>
       </div>
       <div>
-        <p>{{ $t('profile.Confirm new pin code')}}</p>
+        <p>{{ $t('profile.pinConfirm')}}</p>
         <PinComponent v-model="confirmPin" />
         <small class="warning">{{confirmPinError || '&nbsp;'}}</small>
       </div>
-      <div>
-        <Button severity="danger" @click="changePinCode" :label="t('profile.Change pin code')" />
+      <div style="margin-top: 1rem">
+        <Button severity="danger" @click="changePinCode" :label="t('profile.pinChange')" />
       </div>
     </div>
-  </card-component>
+  </CardComponent>
 </template>
 
 <style scoped>

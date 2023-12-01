@@ -19,7 +19,7 @@ function updateApiKey() {
       toast.add({
         severity: "success",
         summary: "Success",
-        detail: `${t('profile.Your new key is')} \n ${res.key} \n ${t('profile.Kay is not saved')}`
+        detail: `${t('profile.newKey')} \n ${res.key} \n ${t('profile.keyNotSaved')}`
       });
     }
   }).catch((err) => {
@@ -32,16 +32,16 @@ function updateApiKey() {
 </script>
 
 <template>
-  <card-component :header="t('profile.Get api key')">
+  <CardComponent :header="t('profile.keyGet')">
     <Toast/>
     <div>
-      <p>{{ $t('profile.Note old api key will get removed') }}</p>
+      <p>{{ $t('profile.keyOldRemoved') }}</p>
       <p>{{apiKeyMessage || '&nbsp;'}}</p>
     </div>
-    <div>
-      <Button severity="danger" :label="t('profile.Get new API key')" @click="updateApiKey" />
+    <div style="margin-top: 1rem">
+      <Button severity="danger" :label="t('profile.keyGetNew')" @click="updateApiKey" />
     </div>
-  </card-component>
+  </CardComponent>
 </template>
 
 <style scoped>

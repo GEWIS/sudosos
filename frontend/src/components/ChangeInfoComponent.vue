@@ -73,7 +73,7 @@ function changeUserInfo() {
         <InputText :disabled="!isLocal" v-modal="inputEmail"/>
         <small class="warning">{{inputEmailError || '&nbsp;'}}</small>
       </div>
-      <div>
+      <div style="margin-top: 1rem">
         <Button
           severity="danger"
           :disabled="true"

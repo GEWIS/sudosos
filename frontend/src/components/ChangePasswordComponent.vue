@@ -69,7 +69,7 @@ function changePassword() {
         <Password :disabled="!isLocal" v-model="confirmPassword"/>
         <small class="warning">{{confirmPasswordError || '&nbsp;'}}</small>
       </div>
-      <div>
+      <div style="margin-top: 1rem">
         <Button
           severity="danger"
           :disabled="!isLocal"
