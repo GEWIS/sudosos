@@ -10,3 +10,11 @@ export const userDetailsSchema = toTypedSchema(
         isActive: yup.boolean().required().default(true),
     })
 );
+
+export const simpleUserDetailsSchema = toTypedSchema(
+  yup.object({
+          firstName: yup.string().required(),
+          lastName: yup.string().required(),
+          email: yup.string().email(),
+  })
+);
