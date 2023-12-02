@@ -1,0 +1,35 @@
+p {
+    margin:0;
+}
+
+.transaction-row, .product-row {
+    margin:0;
+    display: flex;
+    width: 100%;
+}
+
+.transaction-left-column{
+    width: 40%;
+}
+
+.transaction-left-column > p, .product-row-left-column > p {
+    font-weight:bold!important;
+}
+
+.transaction-right-column{
+    width: 50%;
+}
+
+.product-row-left-column {
+    width: 60%;
+}
+
+.product-row-right-column{
+    width: 60%;
+    text-align: right;
+}
+.product-row-total {
+    width: 100%;
+    border-top: 1px solid;
+    text-align: right;
+}
