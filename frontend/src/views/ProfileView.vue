@@ -28,4 +28,6 @@ import ChangeInfoComponent from "@/components/ChangeInfoComponent.vue";
 
 <style scoped>
 @import "../styles/BasePage.css";
+
+
 </style>

@@ -1,12 +1,12 @@
 <template>
   <CardComponent :header="$t('profile.pinChange')">
     <form id="update-pin-form" @submit="changeUserPin">
-      <div>
+      <div class="field">
         <p>{{ $t('profile.pinNew')}}</p>
         <InputText v-bind="pin" />
         <small class="warning">{{errors.pin || '&nbsp;'}}</small>
       </div>
-      <div>
+      <div class="field">
         <p>{{ $t('profile.pinConfirm')}}</p>
         <InputText v-bind="pinConfirm" />
         <small class="warning">{{errors.pinConfirm || '&nbsp;'}}</small>
@@ -59,8 +59,9 @@ const changeUserPin = handleSubmit(async (values) => {
 
 </script>
 
-
-
 <style scoped>
-
+.warning {
+  color: red; /* Set the error text color to red */
+  margin-top: 4px; /* Add some space between the input and the error text */
+}
 </style>

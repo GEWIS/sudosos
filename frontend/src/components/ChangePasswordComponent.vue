@@ -1,12 +1,12 @@
 <template>
   <CardComponent :header="t('profile.changePassword')">
     <form @submit="changeUserPassword">
-      <div>
+      <div class="field">
         <p>{{ $t('profile.password') }}</p>
         <InputText type="password" id="password" :disabled="!isLocal"  v-bind="password"/>
         <small class="warning">{{errors.password || '&nbsp;'}}</small>
       </div>
-      <div>
+      <div class="field">
         <p>{{ $t('profile.passwordConfirm') }}</p>
         <InputText type="password" id="passwordConfirm" :disabled="!isLocal" v-bind="passwordConfirm"/>
         <small class="warning">{{errors.passwordConfirm || '&nbsp;'}}</small>
@@ -63,5 +63,8 @@ const changeUserPassword = handleSubmit(async (values) => {
 
 
 <style scoped>
-
+.warning {
+  color: red; /* Set the error text color to red */
+  margin-top: 4px; /* Add some space between the input and the error text */
+}
 </style>

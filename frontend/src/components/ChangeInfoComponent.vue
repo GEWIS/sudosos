@@ -2,17 +2,17 @@
   <CardComponent :header="$t('profile.changeUserInfo')">
     <form @submit="changeUserInfo">
       <small v-if="!isLocal">{{ $t('profile.notManagedThroughSudoSOS') }}</small>
-      <div>
+      <div class="field">
         <p>{{ $t('profile.firstName')}}</p>
         <InputText :disabled="!isLocal"  v-bind="firstName"/>
         <small class="warning">{{errors.firstName || '&nbsp;'}}</small>
       </div>
-      <div>
+      <div class="field">
         <p>{{ $t('profile.lastName')}}</p>
         <InputText :disabled="!isLocal"  v-bind="lastName"/>
         <small class="warning">{{errors.lastName || '&nbsp;'}}</small>
       </div>
-      <div>
+      <div class="field">
         <p>{{ $t('profile.emailAddress')}}</p>
         <InputText :disabled="!isLocal" v-bind="email"/>
         <small class="warning">{{errors.email || '&nbsp;'}}</small>
@@ -88,5 +88,8 @@ const changeUserInfo = handleSubmit(async (values) => {
 </script>
 
 <style scoped>
-
+.warning {
+  color: red; /* Set the error text color to red */
+  margin-top: 4px; /* Add some space between the input and the error text */
+}
 </style>
