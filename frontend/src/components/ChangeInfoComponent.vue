@@ -38,6 +38,7 @@ import { useI18n } from "vue-i18n";
 import { simpleUserDetailsSchema } from "@/utils/validation-schema";
 import { onBeforeMount } from "vue";
 import apiService from "@/services/ApiService";
+import { handleError } from "@/utils/errorUtils";
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -58,32 +59,29 @@ const email = defineComponentBinds('email', {});
 
 onBeforeMount(() => {
   setValues({
-      firstName: userStore.getCurrentUser.user.firstName,
-      lastName: userStore.getCurrentUser.user.lastName,
-      email: userStore.getCurrentUser.user.email,
+      firstName: userStore.getCurrentUser.user?.firstName,
+      lastName: userStore.getCurrentUser.user?.lastName,
+      email: userStore.getCurrentUser.user?.email,
     }
   );
 });
 const changeUserInfo = handleSubmit(async (values) => {
-  apiService.user.updateUser(userStore.getCurrentUser.user.id, {
-    firstName: values.firstName,
-    lastName: values.lastName,
-    email: values.email,
-  }).then(() => {
-    toast.add({
-      severity: "success",
-      summary: "Success",
-      detail: `${t('userInfoUpdated')}`,
-      life: 3000,
+  if (userStore.getCurrentUser.user) {
+    apiService.user.updateUser(userStore.getCurrentUser.user.id, {
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+    }).then(() => {
+      toast.add({
+        severity: "success",
+        summary: "Success",
+        detail: `${t('userInfoUpdated')}`,
+        life: 3000,
+      });
+    }).catch((err) => {
+      handleError(err, toast);
     });
-  }).catch((err) => {
-    toast.add({
-      severity: "error",
-      summary: "Error",
-      detail: `${err}`,
-      life: 3000,
-    });
-  });
+  }
 });
 
 

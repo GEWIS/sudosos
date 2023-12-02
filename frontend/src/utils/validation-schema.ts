@@ -18,3 +18,10 @@ export const simpleUserDetailsSchema = toTypedSchema(
           email: yup.string().email(),
   })
 );
+
+export const editPasswordSchema = toTypedSchema(
+  yup.object({
+    password: yup.string().required(),
+    passwordConfirm: yup.string().required().oneOf([yup.ref('password')], 'Passwords must match'),
+  })
+);

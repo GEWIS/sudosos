@@ -485,6 +485,7 @@
     "user is active": "user is active",
     "Update user information": "Update user information",
     "userInfoUpdated": "User information successfully updated",
+    "passwordUpdated": "Password successfully updated",
     "Reset password": "Reset password",
     "Password": "Password",
     "Password should": "Password should contain at least 8 characters",

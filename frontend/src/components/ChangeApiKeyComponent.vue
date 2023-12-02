@@ -1,3 +1,15 @@
+<template>
+  <CardComponent :header="t('profile.keyGet')">
+    <div>
+      <p>{{ $t('profile.keyOldRemoved') }}</p>
+      <p>{{apiKeyMessage || '&nbsp;'}}</p>
+    </div>
+    <div style="margin-top: 1rem">
+      <Button severity="danger" :label="t('profile.keyGetNew')" @click="updateApiKey" />
+    </div>
+  </CardComponent>
+</template>
+
 <script setup lang="ts">
 import CardComponent from "@/components/CardComponent.vue";
 import { ref } from "vue";
@@ -5,6 +17,7 @@ import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import apiService from "@/services/ApiService";
 import { useToast } from "primevue/usetoast";
 import { useI18n } from "vue-i18n";
+import { handleError } from "@/utils/errorUtils";
 
 const authStore = useAuthStore();
 const apiKeyMessage = ref();
@@ -23,25 +36,10 @@ function updateApiKey() {
       });
     }
   }).catch((err) => {
-    //error
-    console.log(err);
+    handleError(err, toast);
   });
 }
-
-
 </script>
-
-<template>
-  <CardComponent :header="t('profile.keyGet')">
-    <div>
-      <p>{{ $t('profile.keyOldRemoved') }}</p>
-      <p>{{apiKeyMessage || '&nbsp;'}}</p>
-    </div>
-    <div style="margin-top: 1rem">
-      <Button severity="danger" :label="t('profile.keyGetNew')" @click="updateApiKey" />
-    </div>
-  </CardComponent>
-</template>
 
 <style scoped>
 
