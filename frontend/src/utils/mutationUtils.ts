@@ -18,7 +18,7 @@ export interface MutationTableRow {
  * @param value
  */
 export function formatValueEuro(value: Dinero): string {
-    return formatPrice(value.amount);
+    return formatPrice(value);
 }
 
 export function parseTransaction(transaction: BaseTransactionResponse): MutationTableRow {
@@ -53,6 +53,7 @@ export function transferDescription(transfer: TransferResponse): string {
 
 export function transactionDescription(transaction: BaseTransactionResponse): string {
     const currentUserId: number = useUserStore().getCurrentUser.user.id;
+    console.log(transaction.value)
     const valueOfTransaction: string = formatValueEuro(transaction.value);
     if (transaction.from.id === currentUserId) {
         if (!transaction.createdBy) {

@@ -3,7 +3,7 @@
     <main>
       <img id="reset-image" src="../assets/img/bier.png" alt="logo"/>
       <h1>{{ $t('login.Reset') }}</h1>
-      <Form v-if="passwordResetMode === 0" class="login-form" @submit="resetPasswordRequest">
+      <form v-if="passwordResetMode === 0" class="login-form" @submit="resetPasswordRequest">
         <span class="p-float-label with-error">
           <InputText
               v-bind="email"
@@ -23,12 +23,12 @@
         </small>
         <Button type="submit" id="reset-button" severity="danger">{{ $t('login.Reset') }}</Button>
         <div class="backtologin" @click="backToLogin">{{ $t('login.Back to login') }}</div>
-      </Form>
+      </form>
       <div v-else-if="passwordResetMode === 1" class="login-form">
         <div class="sent-email">{{ $t('login.Email sent') }}</div>
         <div class="backtologin" @click="backToLogin">{{ $t('login.Back to login') }}</div>
       </div>
-      <Form v-else class="login-form" @submit="setNewPassword">
+      <form v-else class="login-form" @submit="setNewPassword">
         <span class="p-float-label with-error">
           <InputText
               v-bind="password"
@@ -69,14 +69,13 @@
         </small>
         <Button type="submit" id="reset-button" severity="danger">{{ $t('login.Reset') }}</Button>
         <div class="backtologin" @click="backToLogin">{{ $t('login.Back to login') }}</div>
-      </Form>
+      </form>
     </main>
     <CopyrightBanner/>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Form } from 'vee-validate';
 import CopyrightBanner from "@/components/CopyrightBanner.vue";
 import apiService from "@/services/ApiService";
 import router from "@/router";
@@ -141,18 +140,18 @@ onBeforeMount(async () => {
   }
 });
 
-const resetPasswordRequest = emailForm.handleSubmit(async () => {
-  await apiService.authenticate.resetLocal({ accountMail: email.value.modelValue })
+const resetPasswordRequest = emailForm.handleSubmit(async (values) => {
+  await apiService.authenticate.resetLocal({ accountMail: values.email })
       .then(() => {
         passwordResetMode.value = 1;
       });
 });
 
-const setNewPassword = passwordForm.handleSubmit(async () => {
+const setNewPassword = passwordForm.handleSubmit(async (values) => {
   await apiService.authenticate.resetLocalWithToken({
     accountMail: route.query.email as string,
     token: route.query.token as string,
-    password: password.value.modelValue as string,
+    password: values.password as string,
   }).then();
 });
 

@@ -67,7 +67,7 @@
               />
             </template>
             <template #body="rowData">
-              {{ formatPrice(rowData.data.priceInclVat.amount) }}
+              {{ formatPrice(rowData.data.priceInclVat) }}
             </template>
           </Column>
           <Column field="alcoholPercentage" :header="$t('c_productEditModal.Alcohol Percentage')">
@@ -168,7 +168,8 @@ onMounted(async () => {
   const vatGroupsResp = await apiService.vatGroups.getAllVatGroups();
   vatGroups.value = vatGroupsResp.data.records;
 
-  //TODO: Put getAllContainers into container store and take care of pagination
+  // TODO: Put getAllContainers into container store and take care of pagination
+  // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/51
   await apiService.container.getAllContainers(500, 0).then((resp: any) => {
     (resp.data.records as ContainerResponse[]).forEach((container) =>
       apiService.container.getSingleContainer(container.id).then((res) => {
@@ -257,6 +258,7 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
   padding: 1rem;
   background-color: #f8f8f8 !important;
   min-width: 100%;
+  width: 100%
 }
 
 :deep(.p-tabview) {

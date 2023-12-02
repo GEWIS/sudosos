@@ -4,11 +4,13 @@
     <b>{{ $t('login.copyright') }}</b>
   </span>
   <span class="separator"> | </span>
-  <a id="tos" href="https://wieditleesttrekteenbak.com/">{{$t('termsOfService.termsOfService')}}</a>
+  <TermsOfServiceModal />
 </footer>
 </template>
 
 <script setup lang="ts">
+import TermsOfServiceModal from './TermsOfServiceModal.vue';
+
 </script>
 
 <style scoped>
@@ -33,7 +35,4 @@ b {
   margin: 0 1rem;
 }
 
-#tos {
-  color: red;
-}
 </style>

@@ -2,19 +2,22 @@
 import { formatValueEuro } from "../../utils/mutationUtils";
 import { TransferResponse } from "@sudosos/sudosos-client";
 import CardComponent from "@/components/CardComponent.vue";
+import { formatPrice } from "../../utils/formatterUtils";
 const props = defineProps({
   depositInfo: {
     type: Object as () => TransferResponse,
     required: true,
   }
 });
+
+
 </script>
 
 <template>
   <div class="content-wrapper">
     <div class="transaction-row">
       <div class="transaction-left-column"><p>Total:</p></div>
-      <div class="transaction-right-column"><p>{{ formatValueEuro(depositInfo.amount) }}</p></div>
+      <div class="transaction-right-column"><p>{{ formatPrice(depositInfo.amount) }}</p></div>
     </div>
     <div class="transaction-row">
       <div class="transaction-left-column"><p>To:</p></div>
