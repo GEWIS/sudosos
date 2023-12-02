@@ -1,3 +1,34 @@
+<template>
+  <CardComponent :header="$t('profile.changeUserInfo')">
+    <div>
+      <small v-if="!isLocal">{{ $t('profile.notManagedThroughSudoSOS') }}</small>
+      <div>
+        <p>{{ $t('profile.firstName')}}</p>
+        <InputText :disabled="!isLocal"  v-model="inputFirstName"/>
+        <small class="warning">{{inputFirstNameError || '&nbsp;'}}</small>
+      </div>
+      <div>
+        <p>{{ $t('profile.lastName')}}</p>
+        <InputText :disabled="!isLocal"  v-model="inputLastName"/>
+        <small class="warning">{{inputLastNameError || '&nbsp;'}}</small>
+      </div>
+      <div>
+        <p>{{ $t('profile.emailAddress')}}</p>
+        <InputText :disabled="!isLocal" v-model="inputEmail"/>
+        <small class="warning">{{inputEmailError || '&nbsp;'}}</small>
+      </div>
+      <div style="margin-top: 1rem">
+        <Button
+          severity="danger"
+          :disabled="true"
+          :label="$t('profile.updateInfo')"
+          @click="changeUserInfo"
+        />
+      </div>
+    </div>
+  </CardComponent>
+</template>
+
 <script setup lang="ts">
 import CardComponent from "@/components/CardComponent.vue";
 import { useField } from "vee-validate";
@@ -53,38 +84,6 @@ function changeUserInfo() {
 
 
 </script>
-
-<template>
-  <CardComponent :header="$t('profile.changeUserInfo')">
-    <div>
-      <small v-if="!isLocal">{{ $t('profile.notManagedThroughSudoSOS') }}</small>
-      <div>
-        <p>{{ $t('profile.firstName')}}</p>
-        <InputText :disabled="!isLocal"  v-model="inputFirstName"/>
-        <small class="warning">{{inputFirstNameError || '&nbsp;'}}</small>
-      </div>
-      <div>
-        <p>{{ $t('profile.lastName')}}</p>
-        <InputText :disabled="!isLocal"  v-model="inputLastName"/>
-        <small class="warning">{{inputLastNameError || '&nbsp;'}}</small>
-      </div>
-      <div>
-        <p>{{ $t('profile.emailAddress')}}</p>
-        <InputText :disabled="!isLocal" v-modal="inputEmail"/>
-        <small class="warning">{{inputEmailError || '&nbsp;'}}</small>
-      </div>
-      <div style="margin-top: 1rem">
-        <Button
-          severity="danger"
-          :disabled="true"
-          :label="$t('profile.updateInfo')"
-          @click="changeUserInfo"
-        />
-      </div>
-    </div>
-  </CardComponent>
-  <Toast />
-</template>
 
 <style scoped>
 

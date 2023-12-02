@@ -54,8 +54,6 @@ function changePinCode() {
 
 <template>
   <CardComponent :header="$t('profile.pinChange')">
-    <Toast />
-
     <div id="update-pin-form">
       <div>
         <p>{{ $t('profile.pinNew')}}</p>

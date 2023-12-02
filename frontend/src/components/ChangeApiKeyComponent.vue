@@ -33,7 +33,6 @@ function updateApiKey() {
 
 <template>
   <CardComponent :header="t('profile.keyGet')">
-    <Toast/>
     <div>
       <p>{{ $t('profile.keyOldRemoved') }}</p>
       <p>{{apiKeyMessage || '&nbsp;'}}</p>

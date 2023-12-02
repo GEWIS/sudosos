@@ -79,7 +79,6 @@ function changePassword() {
       </div>
     </div>
   </CardComponent>
-  <Toast />
 </template>
 
 <style scoped>
