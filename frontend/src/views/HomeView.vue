@@ -7,8 +7,9 @@
           class="transactions-table"
           :header="$t('c_recentTransactionsTable.recent transactions')"
           :action="$t('c_recentTransactionsTable.all transactions')"
-          :Mutations="financialMutationsResponse"
-          :extended="false"
+          :paginatedMutationResponse="financialMutationsResponse"
+          :paginator="false"
+          :modals="false"
       />
     </div>
   </div>

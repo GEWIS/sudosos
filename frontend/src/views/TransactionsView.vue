@@ -14,10 +14,6 @@ const authStore = useAuthStore();
 const userStore = useUserStore();
 const doneLoading = ref<boolean>(false);
 
-async function retrieveAllUserTransactions() {
-
-}
-
 onMounted(async () => {
   await userStore.fetchUsersFinancialMutations(authStore.getUser.id, apiService);
   console.log(userStore.getCurrentUser.financialMutations);
@@ -35,9 +31,9 @@ onMounted(async () => {
     <MutationsTableComponent v-if="doneLoading"
                              class="transactions-table"
                              :header="$t('c_recentTransactionsTable.recent transactions')"
-                             :Mutations="financialMutationsResponse"
-                             :extended="true"
-    />
+                             :paginatedMutationResponse="financialMutationsResponse"
+                             :modal="true"
+                             :paginator="true"/>
   </div>
 </div>
 </template>

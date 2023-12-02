@@ -51,8 +51,7 @@ defineProps({
   }
 });
 const visible = ref(false);
-onMounted(() => {
-});
+
 </script>
 
 <style scoped lang="scss">

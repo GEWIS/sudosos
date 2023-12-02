@@ -1,6 +1,6 @@
-import {createPinia, defineStore} from "pinia";
-import type {TransferResponse} from "@sudosos/sudosos-client";
-import type {ApiService} from "@sudosos/sudosos-frontend-common";
+import { defineStore } from "pinia";
+import type { TransferResponse } from "@sudosos/sudosos-client";
+import type { ApiService } from "@sudosos/sudosos-frontend-common";
 
 interface TransferStoreModuleState {
     transfer: TransferResponse | null

@@ -3,12 +3,15 @@ import { useUserStore } from "@sudosos/sudosos-frontend-common";
 import type { Dinero } from "@sudosos/sudosos-client";
 import { formatDateTime, formatPrice } from "@/utils/formatterUtils";
 
+
+
 export interface MutationTableRow {
     mutationDescription: string,
     mutationMoment: string,
     mutationType: string,
     mutationID: number,
 }
+
 
 /**
  * This should be replaced...

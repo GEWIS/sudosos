@@ -1,27 +1,24 @@
 <template>
   <CardComponent :action="action" :header="header" :router-link="routerLink">
     <DataTable
-        v-if="extended"
         :rows=15
-        :value="mutations" paginator
+        :value="mutations"
+        :paginator="paginator"
         tableStyle="min-width: 60rem">
       <Column field="mutationMoment" header="When"/>
       <Column field="mutationDescription" header="What"/>
       <Column>
         <template #body="m">
-          <MutationModal :id=m.data.mutationID :type=m.data.mutationType />
-          {{m.data.mutationID}}
+            <i @click="openModal(m.data.mutationID, m.data.mutationType)" class="pi pi-info-circle"/>
         </template>
       </Column>
     </DataTable>
-    <DataTable
-        v-else
-        :value="mutations"
-        tableStyle="min-width: 60rem">
-      <Column field="mutationMoment" header="When"/>
-      <Column field="mutationDescription" header="What"/>
-    </DataTable>
   </CardComponent>
+  <MutationModal
+    :type="selectedMutationType"
+    :id="selectedMutationId"
+    v-model:visible="mutationShow"
+  />
 </template>
 
 
@@ -31,15 +28,14 @@ import Column from 'primevue/column';
 import CardComponent from "@/components/CardComponent.vue";
 import type {
   BaseTransactionResponse,
-  Dinero,
   FinancialMutationResponse,
   PaginatedFinancialMutationResponse,
   TransferResponse
 } from "@sudosos/sudosos-client";
 import { onMounted, ref } from "vue";
-import { useUserStore } from "@sudosos/sudosos-frontend-common";
-import { formatDateTime, formatPrice } from "@/utils/formatterUtils";
+import { formatDateTime } from "@/utils/formatterUtils";
 import MutationModal from "@/components/Mutations/MutationModal.vue";
+import { transactionDescription, transferDescription } from "@/utils/mutationUtils";
 
 interface MutationTableRow {
   mutationDescription: string,
@@ -61,20 +57,27 @@ const props = defineProps({
     type: String,
     required: false,
   },
-  Mutations: {
+  paginatedMutationResponse: {
     type: Object as () => PaginatedFinancialMutationResponse,
     required: true,
   },
-  extended: {
+  paginator: {
     type: Boolean,
-    required: false,
+    required: true,
+  },
+  modal: {
+    type: Boolean,
+    required: true,
   }
 });
 
 const mutations = ref<MutationTableRow[]>();
+const selectedMutationId = ref<Number>();
+const selectedMutationType = ref<string>();
+const mutationShow = ref<boolean>(false);
 
 onMounted(() => {
-  mutations.value = parseFinancialMutations(props.Mutations);
+  mutations.value = parseFinancialMutations(props.paginatedMutationResponse);
 });
 
 function parseFinancialMutations(mutations: PaginatedFinancialMutationResponse): MutationTableRow[] {
@@ -93,10 +96,10 @@ function parseFinancialMutations(mutations: PaginatedFinancialMutationResponse):
 
 function parseTransaction(transaction: BaseTransactionResponse): MutationTableRow {
   return {
-    'mutationDescription': transactionDescription(transaction),
-    'mutationMoment': formatDateTime(new Date(transaction.createdAt)),
-    'mutationType': 'transaction',
-    'mutationID': transaction.id,
+    mutationDescription: transactionDescription(transaction),
+    mutationID: transaction.id,
+    mutationMoment: formatDateTime(new Date(transaction.createdAt)),
+    mutationType: 'transaction',
   };
 }
 
@@ -109,40 +112,12 @@ function parseTransfer(transfer: TransferResponse): MutationTableRow {
   };
 }
 
-function formatValueEuro(value: Dinero): string {
-  return formatPrice(value.amount);
+function openModal(id: Number, type: string) {
+  selectedMutationId.value = id;
+  selectedMutationType.value = type;
+  mutationShow.value = true;
 }
 
-function transactionDescription(transaction: BaseTransactionResponse): string {
-  const currentUserId: number = useUserStore().getCurrentUser.user.id;
-  const valueOfTransaction: string = formatValueEuro(transaction.value);
-  if (transaction.from.id === currentUserId) {
-    if (!transaction.createdBy) {
-      return `Magically, a transaction of ${valueOfTransaction} was put in.`;
-    } else {
-      if (transaction.createdBy.id === currentUserId) {
-        return `You spent a total of ${valueOfTransaction}.`;
-      } else {
-        return `${transaction.createdBy.firstName} charged you ${valueOfTransaction}.`;
-      }
-    }
-  } else {
-    return `You charged ${transaction.from.firstName} a total of ${valueOfTransaction}.`;
-  }
-}
-
-function transferDescription(transfer: TransferResponse): string {
-  if (transfer.deposit) {
-    return `You increased your balance with ${formatValueEuro(transfer.amount)}.`;
-  } else if (transfer.invoice) {
-    return `An invoice valued ${formatValueEuro(transfer.amount)} was added.`;
-  } else if (transfer.payoutRequest) {
-    // Todo: Currently payoutRequests are not fetched. So this will actually not do anything.
-    return `You were refunded ${formatValueEuro(transfer.amount)}.`;
-  } else {
-    return `An unknown transaction was performed on your account.`; // This is probably not even possible.
-  }
-}
 </script>
 
 <style lang="scss" scoped>
