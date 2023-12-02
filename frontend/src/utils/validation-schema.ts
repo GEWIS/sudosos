@@ -25,3 +25,13 @@ export const editPasswordSchema = toTypedSchema(
     passwordConfirm: yup.string().required().oneOf([yup.ref('password')], 'Passwords must match'),
   })
 );
+
+export const editPinSchema = toTypedSchema(
+  yup.object({
+    pin: yup.string().required()
+      .matches(/^[0-9]+$/, "Must be only digits")
+      .min(4, 'Must be exactly 4 digits')
+      .max(4, 'Must be exactly 4 digits'),
+    pinConfirm: yup.string().required().oneOf([yup.ref('pin')], 'PINs must match'),
+  })
+);
