@@ -1,14 +1,18 @@
 <template>
   <div class="page-container">
     <div class="page-title">{{ $t('profile.myProfile')}}</div>
-    <div class="container">
-      <div class ="row">
+    <div class="grid">
+      <div class="col-6">
           <ChangePinComponent />
-          <ChangePasswordComponent />
       </div>
-      <div class="row">
-          <ChangeApiKeyComponent />
-          <ChangeInfoComponent />
+      <div class="col-6">
+        <ChangePasswordComponent />
+      </div>
+      <div class="col-6">
+        <ChangeApiKeyComponent />
+      </div>
+      <div class="col-6">
+        <ChangeInfoComponent />
       </div>
     </div>
   </div>
@@ -24,18 +28,4 @@ import ChangeInfoComponent from "@/components/ChangeInfoComponent.vue";
 
 <style scoped>
 @import "../styles/BasePage.css";
-
-.row {
-  display: flex;
-  flex-direction: row;
-  width: 75%;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-}
-
 </style>
