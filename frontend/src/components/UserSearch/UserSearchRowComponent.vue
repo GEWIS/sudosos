@@ -1,5 +1,5 @@
 <template>
-  <div class="user-row flex-container font-size-lg fw-bold text-center gap-2"
+  <div class="user-row flex-container font-size-lg fw-bold text-center my-1 py-3"
        :class="{inactive: !active}" @click="selectUser">
     {{ displayName() }}
     <font-awesome-icon v-if="shouldShowAge()" icon="fa-solid fa-baby"/>
@@ -30,7 +30,10 @@ const shouldShowAge = () => {
 };
 
 const displayName = () => {
-  let name = `${props.user.firstName} ${props.user.lastName}`;
+  let name = props.user.firstName;
+  if (props.user.nickname) name += ` "${props.user.nickname}"`;
+  name += ' ' + props.user.lastName;
+
   if ("gewisId" in props.user && props.user.gewisId) {
     name += ` - ${props.user?.gewisId}`;
   } else {

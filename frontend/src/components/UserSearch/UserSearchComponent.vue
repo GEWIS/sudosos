@@ -12,7 +12,7 @@
         </div>
       </div>
     </div>
-    <div class="flex-column gap-sm-3 pe-3">
+    <div>
       <ScrollPanel class="custombar" style="width: 100%; height: 20rem;">
         <UserSearchRowComponent v-for="user in sortedUsers" :user="user" :key="user.id"
                                 @click="selectUser(user)"/>
@@ -77,7 +77,7 @@ const sortedUsers = computed(() => {
   // TODO: fix backend searching
   // This fuzzy search allows us to effectively search in the front-end, but this should be done in the backend.
   const full = [...users.value].map((u: UserResponse) =>
-  { return { ...u, fullName: `${u.firstName} ${u.lastName}`  }; });
+  { return { ...u, fullName: `${u.firstName.normalize("NFD").replace(/[\u0300-\u036f]/g,"")} ${u.lastName.normalize("NFD").replace(/[\u0300-\u036f]/g, "")}` }; });
   const fuzzed: UserResponse[] = new Fuse(
     full,
     {
