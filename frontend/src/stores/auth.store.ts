@@ -5,12 +5,12 @@ import {
   AuthenticationResponse,
   GEWISAuthenticationPinRequest, GewiswebAuthenticationRequest, UpdatePinRequest,
   UpdateLocalRequest,
-  UserResponse, UpdateNfcRequest
+  UserResponse, UpdateNfcRequest, AcceptTosRequest
 } from "@sudosos/sudosos-client";
 import { useUserStore } from "./user.store";
 import jwtDecode, { JwtPayload } from "jwt-decode";
 import { ApiService } from "../services/ApiService";
-import { clearTokenInStorage, getTokenFromStorage, setTokenInStorage } from "../helpers/TokenHelper";
+import { clearTokenInStorage, getTokenFromStorage, setTokenInStorage, updateTokenIfNecessary } from "../helpers/TokenHelper";
 
 interface AuthStoreState {
   user: UserResponse | null,
@@ -50,10 +50,12 @@ export const useAuthStore = defineStore({
       this.roles = roles;
       this.organs = organs;
       this.acceptedToS = acceptedToS;
-      service.user.getIndividualUser(this.user.id).then((res) => {
-        const userStore = useUserStore();
-        userStore.setCurrentUser(res.data)
-      })
+      if (this.acceptedToS === "ACCEPTED") {
+        service.user.getIndividualUser(this.user.id).then((res) => {
+          const userStore = useUserStore();
+          userStore.setCurrentUser(res.data)
+        });
+      }
     },
     async gewisPinlogin(userId: string, pinCode: string, service: ApiService) {
       const userDetails: GEWISAuthenticationPinRequest = {
@@ -140,6 +142,16 @@ export const useAuthStore = defineStore({
     async updateUserKey(service: ApiService) {
       if (!this.user) return;
       return (await service.user.updateUserKey(this.user.id)).data
+    },
+    async updateUserToSAccepted(extensiveDataProcessing: boolean, service: ApiService) {
+      if (!this.user) return;
+      const req: AcceptTosRequest = {
+        extensiveDataProcessing: extensiveDataProcessing
+      }
+      await service.user.acceptTos(req);
+      const res = await service.authenticate.refreshToken();
+      this.handleResponse(res.data, service);
+      return;
     },
     extractStateFromToken() {
       const token = getTokenFromStorage();

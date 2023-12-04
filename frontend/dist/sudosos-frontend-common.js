@@ -177,7 +177,7 @@ const qs = Qe({
   actions: {
     handleResponse(i, c) {
       const { user: u, token: e, roles: p, organs: P, acceptedToS: g } = i;
-      !u || !e || !p || !P || !g || (this.user = u, this.token = e, We(this.token), this.roles = p, this.organs = P, this.acceptedToS = g, c.user.getIndividualUser(this.user.id).then((m) => {
+      !u || !e || !p || !P || !g || (this.user = u, this.token = e, We(this.token), this.roles = p, this.organs = P, this.acceptedToS = g, this.acceptedToS === "ACCEPTED" && c.user.getIndividualUser(this.user.id).then((m) => {
         Ye().setCurrentUser(m.data);
       }));
     },
@@ -270,6 +270,16 @@ const qs = Qe({
     async updateUserKey(i) {
       if (this.user)
         return (await i.user.updateUserKey(this.user.id)).data;
+    },
+    async updateUserToSAccepted(i, c) {
+      if (!this.user)
+        return;
+      const u = {
+        extensiveDataProcessing: i
+      };
+      await c.user.acceptTos(u);
+      const e = await c.authenticate.refreshToken();
+      this.handleResponse(e.data, c);
     },
     extractStateFromToken() {
       const i = Te();
@@ -8641,7 +8651,7 @@ class _r {
     const u = new w.Configuration({
       apiKey: () => `Bearer ${Te().token}`
     });
-    this._authenticateApi = new w.AuthenticateApi(void 0, c, H), this._balanceApi = new w.BalanceApi(u, c, H), this._usersApi = new w.UsersApi(u, c, H), this._posApi = new w.PointofsaleApi(u, c, H), this._categoryApi = new w.ProductCategoriesApi(u, c, H), this._transactionApi = new w.TransactionsApi(u, c, H), this._bannerApi = new w.BannersApi(u, c, H), this._openBannerApi = new w.BannersApi(void 0, c, H), this._rootApi = new w.RootApi(), this._borrelkaartApi = new w.BorrelkaartgroupsApi(u, c, H), this._containerApi = new w.ContainersApi(u, c, H), this._filesApi = new w.FilesApi(u, c, H), this._invoicesApi = new w.InvoicesApi(u, c, H), this._payoutsApi = new w.PayoutRequestsApi(u, c, H), this._productsApi = new w.ProductsApi(u, c, H), this._transfersApi = new w.TransfersApi(u, c, H), this._vatGroupsApi = new w.VatGroupsApi(u, c, H), this._stripeApi = new w.StripeApi(u, c, H), this._rbacApi = new w.RbacApi(u, c, H);
+    this._authenticateApi = new w.AuthenticateApi(u, c, H), this._balanceApi = new w.BalanceApi(u, c, H), this._usersApi = new w.UsersApi(u, c, H), this._posApi = new w.PointofsaleApi(u, c, H), this._categoryApi = new w.ProductCategoriesApi(u, c, H), this._transactionApi = new w.TransactionsApi(u, c, H), this._bannerApi = new w.BannersApi(u, c, H), this._openBannerApi = new w.BannersApi(void 0, c, H), this._rootApi = new w.RootApi(), this._borrelkaartApi = new w.BorrelkaartgroupsApi(u, c, H), this._containerApi = new w.ContainersApi(u, c, H), this._filesApi = new w.FilesApi(u, c, H), this._invoicesApi = new w.InvoicesApi(u, c, H), this._payoutsApi = new w.PayoutRequestsApi(u, c, H), this._productsApi = new w.ProductsApi(u, c, H), this._transfersApi = new w.TransfersApi(u, c, H), this._vatGroupsApi = new w.VatGroupsApi(u, c, H), this._stripeApi = new w.StripeApi(u, c, H), this._rbacApi = new w.RbacApi(u, c, H);
   }
   get authenticate() {
     return this._authenticateApi;
