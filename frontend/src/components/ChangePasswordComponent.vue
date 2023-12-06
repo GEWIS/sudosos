@@ -31,6 +31,7 @@ import { useUserStore } from "@sudosos/sudosos-frontend-common";
 import { useToast } from "primevue/usetoast";
 import { useI18n } from "vue-i18n";
 import { editPasswordSchema } from "@/utils/validation-schema";
+import { handleError } from "@/utils/errorUtils";
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -50,13 +51,13 @@ if(userStore.getCurrentUser.user) {
 const changeUserPassword = handleSubmit(async (values) => {
   if (userStore.getCurrentUser.user) {
     apiService.user.updateUserLocalPassword(
-      userStore.getCurrentUser.user?.id, {password: values.password}).then(() => {
+      userStore.getCurrentUser.user?.id, { password: values.password }).then(() => {
       toast.add({
         severity: "success",
         summary: "Success",
         detail: `${t('passwordUpdated')}`,
         life: 3000,
-      });});}});
+      });}).catch((err) => handleError(err, toast));}});
 
 </script>
 
