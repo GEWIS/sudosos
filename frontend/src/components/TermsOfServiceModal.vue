@@ -27,7 +27,7 @@ import termsOfService from '@/locales/termsOfService.md?raw';
 import { marked } from 'marked';
 
 
-const tos = marked(termsOfService)
+const tos = marked(termsOfService);
 const visible = ref(false);
 </script>
 <style>
