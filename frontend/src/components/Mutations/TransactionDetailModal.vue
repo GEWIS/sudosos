@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { formatValueEuro } from "../../utils/mutationUtils";
-import { SubTransactionRowResponse } from "@sudosos/sudosos-client/src/api";
+import type { SubTransactionRowResponse } from "@sudosos/sudosos-client/src/api";
 
 const props = defineProps({
   transactionInfo: {

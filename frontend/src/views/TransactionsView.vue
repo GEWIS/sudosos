@@ -3,7 +3,7 @@ import MutationsTableComponent from "@/components/Mutations/MutationsTableCompon
 import apiService from "@/services/ApiService";
 import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import { onMounted, ref } from "vue";
-import { PaginatedFinancialMutationResponse } from "@sudosos/sudosos-client";
+import type { PaginatedFinancialMutationResponse } from "@sudosos/sudosos-client";
 
 const financialMutationsResponse = ref<PaginatedFinancialMutationResponse>({
   '_pagination': {},

@@ -1,61 +1,58 @@
 <template>
   <Dialog :visible="visible" modal header="Details" :style="{ width: '50vw' }">
     <TransactionDetailModal
-        v-if="shouldShowTransaction"
-        :transactionInfo="transactionsDetails[props.id]"
-        :productsInfo="transactionProducts[props.id]" />
-    <InvoiceDetailModal
-        v-else-if="shouldShowInvoice"
-        :invoiceInfo="transferDetails[props.id]" />
-    <DepositDetailModal
-        v-else-if="shouldShowDeposit"
-        :depositInfo="transferDetails[props.id]" />
+      v-if="shouldShowTransaction"
+      :transactionInfo="transactionsDetails[props.id]"
+      :productsInfo="transactionProducts[props.id]"
+    />
+    <InvoiceDetailModal v-else-if="shouldShowInvoice" :invoiceInfo="transferDetails[props.id]" />
+    <DepositDetailModal v-else-if="shouldShowDeposit" :depositInfo="transferDetails[props.id]" />
   </Dialog>
 </template>
 
 <script setup lang="ts">
-import { computed, Ref, ref, watch } from "vue";
-import { useTransactionStore } from "@/stores/transaction.store";
-import { TransactionResponse, TransferResponse } from "@sudosos/sudosos-client";
-import { SubTransactionResponse, SubTransactionRowResponse } from "@sudosos/sudosos-client/src/api";
-import { useTransferStore } from "@/stores/transfer.store";
-import apiService from "@/services/ApiService";
-import TransactionDetailModal from "@/components/Mutations/TransactionDetailModal.vue";
-import DepositDetailModal from "@/components/Mutations/DepositDetailModal.vue";
-import InvoiceDetailModal from "@/components/Mutations/InvoiceDetailModal.vue";
+import { computed, ref, watch } from 'vue';
+import type { Ref } from 'vue';
+import { useTransactionStore } from '@/stores/transaction.store';
+import type { TransactionResponse, TransferResponse } from '@sudosos/sudosos-client';
+import type { SubTransactionResponse, SubTransactionRowResponse } from '@sudosos/sudosos-client/src/api';
+import { useTransferStore } from '@/stores/transfer.store';
+import apiService from '@/services/ApiService';
+import TransactionDetailModal from '@/components/Mutations/TransactionDetailModal.vue';
+import DepositDetailModal from '@/components/Mutations/DepositDetailModal.vue';
+import InvoiceDetailModal from '@/components/Mutations/InvoiceDetailModal.vue';
 
 const props = defineProps({
   type: {
     type: String as () => 'transfer' | 'transaction',
-    required: true,
+    required: true
   },
   id: {
     type: Number,
-    required: true,
-  },
+    required: true
+  }
 });
-
 
 const visible = ref<boolean>(false);
 const transactionStore = useTransactionStore();
-const transactionsDetails: Ref<{[id: number]: TransactionResponse}> = ref({});
-const transactionProducts: Ref<{[id: number]: Array<SubTransactionRowResponse>}> = ref({});
+const transactionsDetails: Ref<{ [id: number]: TransactionResponse }> = ref({});
+const transactionProducts: Ref<{ [id: number]: Array<SubTransactionRowResponse> }> = ref({});
 const transferStore = useTransferStore();
-const transferDetails: Ref<{[id: number]: TransferResponse}> = ref({});
+const transferDetails: Ref<{ [id: number]: TransferResponse }> = ref({});
 
 const shouldShowInvoice = computed(() => {
   if (!transferDetails.value[props.id]) return false;
-  return (props.type === 'transfer' && transferDetails.value[props.id].invoice);
+  return props.type === 'transfer' && transferDetails.value[props.id].invoice;
 });
 
-const shouldShowTransaction = computed (() => {
+const shouldShowTransaction = computed(() => {
   if (!transactionsDetails.value[props.id]) return false;
-  return (props.type === 'transaction');
+  return props.type === 'transaction';
 });
 
 const shouldShowDeposit = computed(() => {
   if (!transferDetails.value[props.id]) return false;
-  return (props.type === 'transfer' && transferDetails.value[props.id].deposit);
+  return props.type === 'transfer' && transferDetails.value[props.id].deposit;
 });
 
 async function fetchTransferInfo() {
@@ -66,7 +63,7 @@ async function fetchTransferInfo() {
   });
 }
 
-async function fetchTransactionInfo(){
+async function fetchTransactionInfo() {
   if (transactionsDetails.value[props.id]) return; // We already have content!
   transactionStore.fetchIndividualTransaction(props.id, apiService).then(() => {
     transactionsDetails.value[props.id] = transactionStore.transaction;
@@ -88,14 +85,15 @@ function getProductsOfTransaction(transactionResponse: TransactionResponse): voi
 async function fetchMutation(): Promise<void> {
   if (props.type == 'transfer') {
     await fetchTransferInfo();
-} else if (props.type == 'transaction')
-    await fetchTransactionInfo();
+  } else if (props.type == 'transaction') await fetchTransactionInfo();
 }
 
-watch(() => props.id || props.type, async () => {
-  await fetchMutation();
-});
+watch(
+  () => props.id || props.type,
+  async () => {
+    await fetchMutation();
+  }
+);
 </script>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

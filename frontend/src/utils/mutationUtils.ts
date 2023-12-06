@@ -52,7 +52,7 @@ export function transferDescription(transfer: TransferResponse): string {
 }
 
 export function transactionDescription(transaction: BaseTransactionResponse): string {
-    const currentUserId: number = useUserStore().getCurrentUser.user.id;
+    const currentUserId: number = useUserStore().getCurrentUser.user?.id;
     console.log(transaction.value);
     const valueOfTransaction: string = formatValueEuro(transaction.value);
     if (transaction.from.id === currentUserId) {
