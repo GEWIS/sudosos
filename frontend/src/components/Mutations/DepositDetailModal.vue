@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { formatValueEuro } from "../../utils/mutationUtils";
-import { TransferResponse } from "@sudosos/sudosos-client";
-import CardComponent from "@/components/CardComponent.vue";
+import type { TransferResponse } from "@sudosos/sudosos-client";
 import { formatPrice } from "../../utils/formatterUtils";
-const props = defineProps({
+defineProps({
   depositInfo: {
     type: Object as () => TransferResponse,
     required: true,
@@ -21,11 +19,11 @@ const props = defineProps({
     </div>
     <div class="transaction-row">
       <div class="transaction-left-column"><p>To:</p></div>
-      <div class="transaction-right-column"><p>{{ depositInfo.deposit.to.firstName + ' ' +depositInfo.deposit.to.lastName }}</p></div>
+      <div class="transaction-right-column"><p>{{ depositInfo.deposit?.to.firstName + ' ' +depositInfo.deposit?.to.lastName }}</p></div>
     </div>
     <div class="transaction-row">
       <div class="transaction-left-column"><p>Transfer Reference:</p></div>
-      <div class="transaction-right-column"><p>{{ depositInfo.deposit.stripeId }}</p></div>
+      <div class="transaction-right-column"><p>{{ depositInfo.deposit?.stripeId }}</p></div>
     </div>
     <div class="transaction-row">
       <div class="transaction-left-column"><p>Transfer Type:</p></div>

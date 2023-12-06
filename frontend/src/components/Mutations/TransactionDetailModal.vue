@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { formatValueEuro } from "../../utils/mutationUtils";
 import type { SubTransactionRowResponse } from "@sudosos/sudosos-client/src/api";
+import type { TransactionResponse } from "@sudosos/sudosos-client";
 
 const props = defineProps({
   transactionInfo: {
-    type: Object as () => SubTransactionRowResponse,
+    type: Object as () => TransactionResponse,
     required: true,
   },
   productsInfo: {
