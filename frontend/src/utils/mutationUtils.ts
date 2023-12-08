@@ -24,7 +24,7 @@ export function formatValueEuro(value: Dinero): string {
 export function parseTransaction(transaction: BaseTransactionResponse): MutationTableRow {
     return {
         mutationDescription: transactionDescription(transaction),
-        mutationMoment: formatDateTime(new Date(transaction.createdAt)),
+        mutationMoment: formatDateTime(new Date(transaction.createdAt || "")),
         mutationType: 'transaction',
         mutationID: transaction.id,
     };
@@ -33,7 +33,7 @@ export function parseTransaction(transaction: BaseTransactionResponse): Mutation
 export function parseTransfer(transfer: TransferResponse): MutationTableRow {
     return {
         mutationDescription: transferDescription(transfer),
-        mutationMoment: formatDateTime(new Date(transfer.createdAt)),
+        mutationMoment: formatDateTime(new Date(transfer.createdAt || "")),
         mutationType: "transfer",
         mutationID: transfer.id
     };
@@ -52,8 +52,9 @@ export function transferDescription(transfer: TransferResponse): string {
 }
 
 export function transactionDescription(transaction: BaseTransactionResponse): string {
-    const currentUserId: number = useUserStore().getCurrentUser.user?.id;
-    console.log(transaction.value);
+    const user = useUserStore().getCurrentUser.user;
+    if (user === null) return "error";
+    const currentUserId: number = user.id;
     const valueOfTransaction: string = formatValueEuro(transaction.value);
     if (transaction.from.id === currentUserId) {
         if (!transaction.createdBy) {

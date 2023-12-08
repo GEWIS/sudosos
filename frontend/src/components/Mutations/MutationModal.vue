@@ -21,10 +21,11 @@ import apiService from '@/services/ApiService';
 import TransactionDetailModal from '@/components/Mutations/TransactionDetailModal.vue';
 import DepositDetailModal from '@/components/Mutations/DepositDetailModal.vue';
 import InvoiceDetailModal from '@/components/Mutations/InvoiceDetailModal.vue';
+import router from "@/router";
 
 const props = defineProps({
   type: {
-    type: String as () => 'transfer' | 'transaction',
+    type: String,
     required: true
   },
   id: {
@@ -66,6 +67,10 @@ async function fetchTransferInfo() {
 async function fetchTransactionInfo() {
   if (transactionsDetails.value[props.id]) return; // We already have content!
   transactionStore.fetchIndividualTransaction(props.id, apiService).then(() => {
+    if (!transactionStore.transaction) {
+      router.replace({ path: '/error' });
+      return;
+    }
     transactionsDetails.value[props.id] = transactionStore.transaction;
     getProductsOfTransaction(transactionStore.transaction); // Process subtransactions
   });

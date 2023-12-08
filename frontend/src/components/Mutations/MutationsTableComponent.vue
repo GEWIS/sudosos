@@ -72,8 +72,8 @@ const props = defineProps({
 });
 
 const mutations = ref<MutationTableRow[]>();
-const selectedMutationId = ref<Number>();
-const selectedMutationType = ref<string>();
+const selectedMutationId = ref<number>(-1); // TODO: Handle the case when this is not changed
+const selectedMutationType = ref<string>(""); // TODO: Handle the case when this is not changed
 const mutationShow = ref<boolean>(false);
 
 onMounted(() => {
@@ -95,10 +95,11 @@ function parseFinancialMutations(mutations: PaginatedFinancialMutationResponse):
 }
 
 function parseTransaction(transaction: BaseTransactionResponse): MutationTableRow {
+
   return {
     mutationDescription: transactionDescription(transaction),
     mutationID: transaction.id,
-    mutationMoment: formatDateTime(new Date(transaction.createdAt)),
+    mutationMoment: formatDateTime(new Date(transaction.createdAt || "")),
     mutationType: 'transaction',
   };
 }
@@ -107,12 +108,12 @@ function parseTransfer(transfer: TransferResponse): MutationTableRow {
   return {
     mutationDescription: transferDescription(transfer),
     mutationID: transfer.id,
-    mutationMoment: formatDateTime(new Date(transfer.createdAt)),
+    mutationMoment: formatDateTime(new Date(transfer.createdAt || "")),
     mutationType: "transfer"
   };
 }
 
-function openModal(id: Number, type: string) {
+function openModal(id: number, type: string) {
   selectedMutationId.value = id;
   selectedMutationType.value = type;
   mutationShow.value = true;
