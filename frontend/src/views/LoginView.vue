@@ -62,12 +62,13 @@
 </template>
 
 <script setup lang="ts">
-import CopyrightBanner from '@/components/CopyrightBanner.vue';
-import { useRoute } from 'vue-router';
-import { onBeforeMount } from 'vue';
-import { useUserStore, useAuthStore } from '@sudosos/sudosos-frontend-common';
-import apiService from '@/services/ApiService';
-import router from '@/router';
+
+import CopyrightBanner from "@/components/CopyrightBanner.vue";
+import { useRoute } from "vue-router";
+import { onBeforeMount } from "vue";
+import { useUserStore, useAuthStore, isAuthenticated } from "@sudosos/sudosos-frontend-common";
+import apiService from "@/services/ApiService";
+import router from "@/router";
 import { v4 as uuid } from 'uuid';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/yup';
@@ -106,13 +107,15 @@ onBeforeMount(() => {
 });
 
 const loginHandler = loginForm.handleSubmit(async (values) => {
+
+  // Send toHomeView either with or without ToS, router will handle correct routing based on that, but fetching user will result in error.
   try {
     if (values.username.includes('@')) {
       await apiService.authenticate.localAuthentication({
         accountMail: values.username,
         password: values.password
       }).then((res) => authStore.handleResponse(res.data, apiService));
-      if (authStore.getUser) {
+      if (authStore.getToS == 'ACCEPTED' && authStore.getUser ) {
         await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
       } else {
         await router.replace({ path: '/error' });
@@ -120,7 +123,7 @@ const loginHandler = loginForm.handleSubmit(async (values) => {
       toHomeView();
     } else {
       await authStore.gewisLdapLogin(values.username, values.password, apiService);
-      if (authStore.getUser) {
+      if (authStore.getToS == 'ACCEPTED' && authStore.getUser) {
         await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
       } else {
         await router.replace({ path: '/error' });
