@@ -1,6 +1,6 @@
 <template>
-  <Dialog v-model:visible="visible" modal header="Increase Saldo" :style="{ width: '50vw' }">
-    <p>{{$t('c_currentSaldo.topup', [amount.toString()]) }}</p>
+  <Dialog v-model:visible="visible" modal header="Increase Saldo" :style="{ width: '50vw' }" @show="pay">
+    <p>{{ $t('c_currentSaldo.topup') + amount.toString() }}</p>
     <form ref="payment" id="payment-form" v-show="!loading">
       <div id="payment-element">
         <!--Stripe.js injects the Payment Element-->
@@ -49,9 +49,9 @@ const pay = async () => {
     },
   };
   await apiService.stripe.deposit(deposit).then((paymentIntent) => {
-     elements.value = stripe.value.elements({ clientSecret: paymentIntent.data.clientSecret });
-     paymentElement.value = elements.value.create('payment');
-     paymentElement.value.mount('#payment-element');
+    elements.value = stripe.value.elements({ clientSecret: paymentIntent.data.clientSecret });
+    paymentElement.value = elements.value.create('payment');
+    paymentElement.value.mount('#payment-element');
   });
 };
 
@@ -75,5 +75,4 @@ const cancelPay = async () => {
 :deep(.p-panel-content) {
   padding-left: 1.25rem !important;
 }
-
 </style>
