@@ -106,7 +106,7 @@ const leftItems = ref([
         to: '/user-overview',
       },
       {
-        label: t('Flagged transactions'),
+        label: t('flagged.Flagged transactions'),
       },
       {
         label: t('app.Manage products'),
