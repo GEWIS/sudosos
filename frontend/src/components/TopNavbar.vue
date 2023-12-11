@@ -73,7 +73,7 @@ const isSeller = () => {
 const leftItems = ref([
   {
     label: t('app.Transactions'),
-    to: '/transactions'
+    route: '/transactions'
   },
   {
     label: t('app.Balance'),
