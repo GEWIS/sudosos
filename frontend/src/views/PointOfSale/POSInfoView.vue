@@ -34,7 +34,12 @@
           :data="pos.containers"
         />
       </div>
-      <MutationsTableComponent :header="$t('app.Transactions')" class="pos-transactions" />
+      <MutationsTableComponent
+        :header="$t('app.Transactions')"
+        class="pos-transactions"
+        :paginatedMutationResponse="transactions"
+        :modal="true"
+      />
     </div>
   </div>
 </template>
@@ -44,13 +49,15 @@ import { onBeforeMount, ref } from 'vue';
 import type { Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { usePointOfSaleStore } from "@/stores/pos.store";
-import type { PointOfSaleWithContainersResponse } from "@sudosos/sudosos-client";
+import type { PaginatedBaseTransactionResponse, PointOfSaleWithContainersResponse } from "@sudosos/sudosos-client";
 import ContainerCardComponent from '@/components/ContainerCardComponent.vue';
 import MutationsTableComponent from '@/components/Mutations/MutationsTableComponent.vue';
 import router from '@/router';
 import { useToast } from 'primevue/usetoast';
 import { useI18n } from 'vue-i18n';
 import { handleError } from "@/utils/errorUtils";
+import { PaginatedFinancialMutationResponse } from "@sudosos/sudosos-client";
+import apiService from "@/services/ApiService";
 
 const route = useRoute(); // Use the useRoute function to access the current route
 const toast = useToast();
@@ -58,12 +65,18 @@ const { t } = useI18n();
 const id = ref();
 const pointOfSaleStore = usePointOfSaleStore();
 const pos: Ref<PointOfSaleWithContainersResponse | null | undefined> = ref();
+const transactions: Ref<PaginatedBaseTransactionResponse | null | undefined> = ref();
 onBeforeMount(async () => {
   id.value = route.params.id;
   await pointOfSaleStore.fetchPointOfSale(id.value).catch((error) => {
     handleError(error, toast);
   });
   pos.value = pointOfSaleStore.getPos;
+  if (!pos.value) {
+    await router.replace('/error');
+    return;
+  }
+  await apiService.pos.getTransactions(pos.value.id).then((res) => transactions.value = res.data);
 });
 
 const handleClosedClicked = () => {

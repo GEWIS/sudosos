@@ -10,7 +10,7 @@
         :action="$t('c_recentTransactionsTable.all transactions')"
         :paginatedMutationResponse="financialMutationsResponse"
         :paginator="false"
-        :modals="false"
+        :modal="false"
       />
     </div>
   </div>

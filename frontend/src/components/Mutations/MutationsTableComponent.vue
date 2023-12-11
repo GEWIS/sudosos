@@ -81,6 +81,7 @@ onMounted(() => {
 });
 
 function parseFinancialMutations(mutations: PaginatedFinancialMutationResponse): MutationTableRow[] {
+  console.warn(mutations);
   let result: MutationTableRow[] = [];
   mutations.records.forEach((mutation: FinancialMutationResponse) => {
     if (mutation.type === "transaction") {
