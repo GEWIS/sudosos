@@ -13,6 +13,7 @@ import SingleUserView from "@/views/SingleUserView.vue";
 import ProductsContainersView from "@/views/ProductsContainersView.vue";
 import { isAuthenticated, useAuthStore } from "@sudosos/sudosos-frontend-common";
 import PasswordResetView from "@/views/PasswordResetView.vue";
+import TermsOfServiceView from "@/views/TermsOfServiceView.vue";
 import { UserRole } from '@/utils/rbacUtils';
 import 'vue-router';
 import ErrorView from "@/views/ErrorView.vue";
@@ -57,8 +58,18 @@ const router = createRouter({
           path: '/error',
           component: ErrorView,
           name: 'error',
-        }
+        },
       ]
+    },
+    {
+      path: '',
+      component: PublicLayout,
+      meta: { requiresAuth: true },
+      children: [{
+        path: '/',
+        component: TermsOfServiceView,
+        name: 'tos'
+      }]
     },
     {
       path: '',
@@ -148,14 +159,21 @@ router.beforeEach((to, from, next) => {
 
   const isSeller = () => {
     return authStore.roles.includes(UserRole.SELLER);
-};
+  };
+
+  const hasTOSAccepted = () => {
+    return authStore.acceptedToS || authStore.user?.acceptedToS;
+  };
 
   const isAuth = isAuthenticated();
 
   if (to.meta?.requiresAuth && !isAuth) {
     // If the route requires authentication and the user is not authenticated, redirect to login
     next({ name: 'login' });
-  } else if (!to.meta?.requiresAuth && isAuth) {
+  } else if (isAuth && hasTOSAccepted() == 'NOT_ACCEPTED' && to.name !== 'tos') {
+    // If the user is authenticated but user hasn't accepted the TOS, always redirect to TOS
+    next({ name: 'tos' });
+  } else if (!to.meta?.requiresAuth && isAuth && hasTOSAccepted() == 'ACCEPTED') {
     // If the route doesn't require authentication and the user is authenticated, redirect to home
     next({ name: 'home' });
   } else {
