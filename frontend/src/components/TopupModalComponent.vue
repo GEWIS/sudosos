@@ -49,9 +49,9 @@ const pay = async () => {
     },
   };
   await apiService.stripe.deposit(deposit).then((paymentIntent) => {
-     elements.value = stripe.value.elements({ clientSecret: paymentIntent.data.clientSecret });
-     paymentElement.value = elements.value.create('payment');
-     paymentElement.value.mount('#payment-element');
+    elements.value = stripe.value.elements({ clientSecret: paymentIntent.data.clientSecret });
+    paymentElement.value = elements.value.create('payment');
+    paymentElement.value.mount('#payment-element');
   });
 };
 
