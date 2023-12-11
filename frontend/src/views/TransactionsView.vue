@@ -1,3 +1,19 @@
+<template>
+  <div class="page-container">
+    <div class="page-title">{{ $t('transactions.Transactions') }}</div>
+    <div class="content-wrapper">
+      <MutationsTableComponent
+        v-if="doneLoading"
+        class="transactions-table"
+        :header="$t('c_recentTransactionsTable.recent transactions')"
+        :paginatedMutationResponse="financialMutationsResponse"
+        :modal="true"
+        :paginator="true"
+      />
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import MutationsTableComponent from '@/components/Mutations/MutationsTableComponent.vue';
 import apiService from '@/services/ApiService';
@@ -7,6 +23,9 @@ import type { PaginatedFinancialMutationResponse } from '@sudosos/sudosos-client
 import { useToast } from 'primevue/usetoast';
 import { handleError } from '@/utils/errorUtils';
 import router from '@/router';
+import { useI18n } from "vue-i18n";
+
+const { t, locale } = useI18n();
 
 const financialMutationsResponse = ref<PaginatedFinancialMutationResponse>({
   _pagination: {},
@@ -30,22 +49,6 @@ onMounted(async () => {
   doneLoading.value = true;
 });
 </script>
-
-<template>
-  <div class="page-container">
-    <div class="page-title">{{ $t('transactions.Transactions') }}</div>
-    <div class="content-wrapper">
-      <MutationsTableComponent
-        v-if="doneLoading"
-        class="transactions-table"
-        :header="$t('c_recentTransactionsTable.recent transactions')"
-        :paginatedMutationResponse="financialMutationsResponse"
-        :modal="true"
-        :paginator="true"
-      />
-    </div>
-  </div>
-</template>
 
 <style scoped lang="scss">
 @import '../styles/BasePage.css';
