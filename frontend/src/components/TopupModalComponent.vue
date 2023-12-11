@@ -62,6 +62,9 @@ const submitPay = async () => {
       return_url: import.meta.env.VITE_APP_STRIPE_RETURN_URL,
     },
   });
+  if (error) {
+    console.log(error);
+  }
 };
 
 const cancelPay = async () => {

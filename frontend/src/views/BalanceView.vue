@@ -20,6 +20,7 @@
               mode="currency"
               currency="EUR"
               locale="nl-NL"
+              :min="5"
             />
           </div>
         </div>
@@ -34,8 +35,6 @@
 import CardComponent from "@/components/CardComponent.vue";
 import { ref } from "vue";
 import TopupModal from "@/components/TopupModalComponent.vue";
-
-
 
 // Define the 'visible' ref variable to control dialog visibility
 const visible = ref(false);
