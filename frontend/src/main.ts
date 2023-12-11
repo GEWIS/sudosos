@@ -29,6 +29,7 @@ import nl from "./locales/nl.json";
 import apiService from './services/ApiService';
 import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
+import 'primeflex/primeflex.css';
 
 const app = createApp(App);
 
@@ -61,7 +62,6 @@ app.component('Checkbox', Checkbox);
 app.component('TabView', TabView);
 app.component('ScrollPanel', ScrollPanel);
 app.component('FileUpload', FileUpload);
-app.component('InputNumber', InputNumber);
 app.component('Toast', Toast);
 populateStoresFromToken(apiService);
 

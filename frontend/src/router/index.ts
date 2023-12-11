@@ -17,6 +17,7 @@ import TermsOfServiceView from "@/views/TermsOfServiceView.vue";
 import { UserRole } from '@/utils/rbacUtils';
 import 'vue-router';
 import ErrorView from "@/views/ErrorView.vue";
+import ProfileView from "@/views/ProfileView.vue";
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -134,6 +135,11 @@ const router = createRouter({
           path: '/error',
           component: ErrorView,
           name: 'error',
+        },
+        {
+          path: '/profile',
+          component: ProfileView,
+          name: 'profile',
         }
         // Add other routes for authenticated users here
       ]
