@@ -1,6 +1,6 @@
 <template>
-  <Dialog v-model:visible="visible" modal header="Increase Saldo" :style="{ width: '50vw' }" @show="pay">
-    <p>{{ $t('c_currentSaldo.topup') + amount.toString() }}</p>
+  <Dialog v-model:visible="visible" modal header="Increase Saldo" :style="{ width: '50vw' }">
+    <p>{{$t('c_currentSaldo.topup', [amount.toString()]) }}</p>
     <form ref="payment" id="payment-form" v-show="!loading">
       <div id="payment-element">
         <!--Stripe.js injects the Payment Element-->
@@ -75,4 +75,5 @@ const cancelPay = async () => {
 :deep(.p-panel-content) {
   padding-left: 1.25rem !important;
 }
+
 </style>

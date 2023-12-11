@@ -67,7 +67,7 @@
               />
             </template>
             <template #body="rowData">
-              {{ formatPrice(rowData.data.priceInclVat.amount) }}
+              {{ formatPrice(rowData.data.priceInclVat) }}
             </template>
           </Column>
           <Column field="alcoholPercentage" :header="$t('c_productEditModal.Alcohol Percentage')">
@@ -258,6 +258,7 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
   padding: 1rem;
   background-color: #f8f8f8 !important;
   min-width: 100%;
+  width: 100%
 }
 
 :deep(.p-tabview) {

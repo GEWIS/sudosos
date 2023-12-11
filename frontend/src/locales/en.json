@@ -332,7 +332,7 @@
     "Add new": "Add new product",
     "Product details": "Product details",
     "Existing products": "Existing products",
-    "save": "save",
+    "save": "Save",
     "cancel": "cancel",
     "Delete from container": "Delete from container",
     "edit product": "edit product",
@@ -521,6 +521,7 @@
     "message": "Signing you out! Hope you had a nice time :) Be sure to come back soon!"
   },
   "apiError": {
+    "error": "Error",
     "message": "Error message",
     "Something went wrong": "Something went wrong",
     "400": "There is something wrong with the request you are trying to make",
@@ -528,5 +529,15 @@
     "403": "You cannot access this data",
     "404": "This data does not seem to exist",
     "500": "Something is going wrong, please contact the SudoSOS team"
+  },
+  "errorMessages": {
+    "posNotFound": "The requested POS was not found.",
+    "userNotFound": "The requested user was not found."
+  },
+  "successMessages": {
+    "succes": "Success",
+    "editPOS": "Succesfully edited POS.",
+    "createContainer": "Successfully created container.",
+    "productCreated": "Successfully created product."
   }
 }

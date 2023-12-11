@@ -66,13 +66,16 @@ import * as yup from 'yup';
 import { useForm } from "vee-validate";
 import { useRouter } from "vue-router";
 import { addListenerOnDialogueOverlay } from "@/utils/dialogUtil";
+import { useToast } from "primevue/usetoast";
+import { handleError } from "@/utils/errorUtils";
+import { useI18n } from "vue-i18n";
 
 const emit = defineEmits(['update:visible']);
-
+const toast = useToast();
 const visible: Ref<boolean | undefined> = ref(false);
 const organsList: Ref<Array<UserResponse>> = ref([]);
 const addContainer: Ref<null | any> = ref(null);
-
+const { t } = useI18n();
 // Form setup and component binds
 const { defineComponentBinds, handleSubmit, errors } = useForm({
   validationSchema: {
@@ -97,21 +100,20 @@ const closeDialog = () => {
 };
 
 const handleCreateContainer = handleSubmit(async (values) => {
-  const createContainerResponse = await containerStore.createEmptyContainer(
+  await containerStore.createEmptyContainer(
       values.name,
       values.isPublic || false,
       values.selectedOwner.id
-  );
-
-  if (createContainerResponse.status === 200){
+  ).then(() => {
     closeDialog();
     router.go(0);
-    // TODO: Correct toasts
-    // See issue #18: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
-  } else {
-    // TODO: Correct error-handling
-    // See issue #18: https://github.com/GEWIS/sudosos-frontend-vue3/issues/18
-  }
+    toast.add({
+      severity: 'success',
+      summary: t('successMessages.success'),
+      detail: t('successMessages.createContainer'),
+      life: 3000,
+    });
+  }).catch((err) => handleError(err, toast));
 });
 
 </script>

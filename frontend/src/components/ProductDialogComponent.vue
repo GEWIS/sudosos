@@ -19,7 +19,7 @@
       </div>
       <div class="row">
         <h6>{{ $t("c_productInfoModal.Price") }}</h6>
-        <p>{{ formatPrice(product.priceInclVat.amount) }}</p>
+        <p>{{ formatPrice(product.priceInclVat) }}</p>
       </div>
       <div class="row">
         <h6>{{ $t("c_productInfoModal.Category") }}</h6>
