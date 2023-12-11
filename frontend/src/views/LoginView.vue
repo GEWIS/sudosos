@@ -137,8 +137,6 @@ const loginHandler = loginForm.handleSubmit(async (values) => {
   }
 });
 
-// TODO: fix the GEWIS login
-// See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/32
 const loginViaGEWIS = () => {
   window.location.href = `https://gewis.nl/token/${import.meta.env.VITE_APP_GEWIS_TOKEN}`;
 };

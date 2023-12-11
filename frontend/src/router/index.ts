@@ -47,7 +47,8 @@ const router = createRouter({
         {
           path: '',
           component: LoginView,
-          name: 'login'
+          name: 'login',
+          alias: ['/login'],
         },
         {
           path: '/passwordreset',
