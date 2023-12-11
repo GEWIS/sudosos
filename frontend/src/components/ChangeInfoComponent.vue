@@ -1,5 +1,5 @@
 <template>
-  <CardComponent :header="$t('profile.changeUserInfo')">
+  <CardComponent :header="$t('profile.changeUserInfo')" :class="{ 'opacity-30': !isLocal}">
     <form @submit="changeUserInfo">
       <small v-if="!isLocal">{{ $t('profile.notManagedThroughSudoSOS') }}</small>
       <div class="field">
@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import CardComponent from "@/components/CardComponent.vue";
-import { useField, useForm } from "vee-validate";
+import { useForm } from "vee-validate";
 import { useUserStore } from "@sudosos/sudosos-frontend-common";
 import { useToast } from "primevue/usetoast";
 import { useI18n } from "vue-i18n";

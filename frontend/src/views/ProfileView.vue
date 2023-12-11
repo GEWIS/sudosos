@@ -23,11 +23,8 @@ import ChangePasswordComponent from "@/components/ChangePasswordComponent.vue";
 import ChangePinComponent from "@/components/ChangePinComponent.vue";
 import ChangeApiKeyComponent from "@/components/ChangeApiKeyComponent.vue";
 import ChangeInfoComponent from "@/components/ChangeInfoComponent.vue";
-
 </script>
 
 <style scoped>
 @import "../styles/BasePage.css";
-
-
 </style>

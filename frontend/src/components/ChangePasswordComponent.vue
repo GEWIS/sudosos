@@ -1,5 +1,5 @@
 <template>
-  <CardComponent :header="t('profile.changePassword')">
+  <CardComponent :header="t('profile.changePassword')" :class="{ 'opacity-30': !isLocal}">
     <form @submit="changeUserPassword">
       <div class="field">
         <p>{{ $t('profile.password') }}</p>
