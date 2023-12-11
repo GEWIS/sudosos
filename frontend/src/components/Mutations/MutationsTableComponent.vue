@@ -28,14 +28,20 @@ import Column from 'primevue/column';
 import CardComponent from "@/components/CardComponent.vue";
 import type {
   BaseTransactionResponse,
-  FinancialMutationResponse,
+  FinancialMutationResponse, PaginatedBaseTransactionResponse,
   PaginatedFinancialMutationResponse,
   TransferResponse
 } from "@sudosos/sudosos-client";
-import { onMounted, ref } from "vue";
+import { onBeforeMount, onMounted, ref, watch } from "vue";
 import { formatDateTime } from "@/utils/formatterUtils";
 import MutationModal from "@/components/Mutations/MutationModal.vue";
-import { transactionDescription, transferDescription } from "@/utils/mutationUtils";
+import {
+  parseFinancialTransactions,
+  parseTransaction,
+  parseTransfer,
+  transactionDescription,
+  transferDescription
+} from "@/utils/mutationUtils";
 
 interface MutationTableRow {
   mutationDescription: string,
@@ -58,7 +64,7 @@ const props = defineProps({
     required: false,
   },
   paginatedMutationResponse: {
-    type: Object as () => PaginatedFinancialMutationResponse,
+    type: Object as () => PaginatedFinancialMutationResponse | PaginatedBaseTransactionResponse,
     required: true,
   },
   paginator: {
@@ -68,7 +74,7 @@ const props = defineProps({
   modal: {
     type: Boolean,
     required: true,
-  }
+  },
 });
 
 const mutations = ref<MutationTableRow[]>();
@@ -76,12 +82,19 @@ const selectedMutationId = ref<number>(-1); // TODO: Handle the case when this i
 const selectedMutationType = ref<string>(""); // TODO: Handle the case when this is not changed
 const mutationShow = ref<boolean>(false);
 
-onMounted(() => {
-  mutations.value = parseFinancialMutations(props.paginatedMutationResponse);
+function isPaginatedBaseTransactionResponse(obj: any): obj is PaginatedBaseTransactionResponse {
+  return obj.records && obj.records.length > 0 && 'id' in obj.records[0];
+}
+
+onBeforeMount(() => {
+  if (isPaginatedBaseTransactionResponse(props.paginatedMutationResponse)){
+    mutations.value = parseFinancialTransactions(props.paginatedMutationResponse);
+  } else {
+    mutations.value = parseFinancialMutations(props.paginatedMutationResponse);
+  }
 });
 
 function parseFinancialMutations(mutations: PaginatedFinancialMutationResponse): MutationTableRow[] {
-  console.warn(mutations);
   let result: MutationTableRow[] = [];
   mutations.records.forEach((mutation: FinancialMutationResponse) => {
     if (mutation.type === "transaction") {
@@ -93,25 +106,6 @@ function parseFinancialMutations(mutations: PaginatedFinancialMutationResponse):
     }
   });
   return result;
-}
-
-function parseTransaction(transaction: BaseTransactionResponse): MutationTableRow {
-
-  return {
-    mutationDescription: transactionDescription(transaction),
-    mutationID: transaction.id,
-    mutationMoment: formatDateTime(new Date(transaction.createdAt || "")),
-    mutationType: 'transaction',
-  };
-}
-
-function parseTransfer(transfer: TransferResponse): MutationTableRow {
-  return {
-    mutationDescription: transferDescription(transfer),
-    mutationID: transfer.id,
-    mutationMoment: formatDateTime(new Date(transfer.createdAt || "")),
-    mutationType: "transfer"
-  };
 }
 
 function openModal(id: number, type: string) {

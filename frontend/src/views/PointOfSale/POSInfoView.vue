@@ -39,13 +39,13 @@
         class="pos-transactions"
         :paginatedMutationResponse="transactions"
         :modal="true"
-      />
+        paginator/>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, onMounted, ref } from "vue";
 import type { Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { usePointOfSaleStore } from "@/stores/pos.store";
@@ -66,6 +66,9 @@ const id = ref();
 const pointOfSaleStore = usePointOfSaleStore();
 const pos: Ref<PointOfSaleWithContainersResponse | null | undefined> = ref();
 const transactions: Ref<PaginatedBaseTransactionResponse | null | undefined> = ref();
+
+
+
 onBeforeMount(async () => {
   id.value = route.params.id;
   await pointOfSaleStore.fetchPointOfSale(id.value).catch((error) => {

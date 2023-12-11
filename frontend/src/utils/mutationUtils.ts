@@ -2,6 +2,7 @@ import type { BaseTransactionResponse, TransferResponse } from "@sudosos/sudosos
 import { useUserStore } from "@sudosos/sudosos-frontend-common";
 import type { Dinero } from "@sudosos/sudosos-client";
 import { formatDateTime, formatPrice } from "@/utils/formatterUtils";
+import type { PaginatedBaseTransactionResponse } from "@sudosos/sudosos-client";
 
 
 
@@ -38,6 +39,15 @@ export function parseTransfer(transfer: TransferResponse): MutationTableRow {
         mutationID: transfer.id
     };
 }
+
+export function parseFinancialTransactions(transactions: PaginatedBaseTransactionResponse) : MutationTableRow[] {
+    const result: MutationTableRow[] = [];
+    transactions.records.forEach((transaction: BaseTransactionResponse) => {
+        result.push(parseTransaction(transaction));
+    });
+    return result;
+}
+
 export function transferDescription(transfer: TransferResponse): string {
     if (transfer.deposit) {
         return `You increased your balance with ${formatValueEuro(transfer.amount)}.`;

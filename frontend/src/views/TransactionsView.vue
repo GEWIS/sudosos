@@ -26,7 +26,6 @@ onMounted(async () => {
   await userStore
     .fetchUsersFinancialMutations(authStore.getUser.id, apiService)
     .catch((err) => handleError(err, toast));
-  console.log(userStore.getCurrentUser.financialMutations);
   financialMutationsResponse.value = userStore.getCurrentUser.financialMutations;
   doneLoading.value = true;
 });
