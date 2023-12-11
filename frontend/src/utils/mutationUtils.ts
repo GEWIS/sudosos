@@ -56,6 +56,8 @@ export function transferDescription(transfer: TransferResponse): string {
     } else if (transfer.payoutRequest) {
         // Todo: Currently payoutRequests are not fetched. So this will actually not do anything.
         return `You were refunded ${formatValueEuro(transfer.amount)}.`;
+    } else if (transfer.fine) {
+        return `You were fined ${formatValueEuro(transfer.amount)}`;
     } else {
         return `An unknown transaction was performed on your account.`; // This is probably not even possible.
     }
