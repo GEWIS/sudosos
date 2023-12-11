@@ -34,18 +34,23 @@
           :data="pos.containers"
         />
       </div>
+      <div class="row" style="width: 100%;">
       <MutationsTableComponent
+        v-if="transactions"
         :header="$t('app.Transactions')"
         class="pos-transactions"
         :paginatedMutationResponse="transactions"
         :modal="true"
-        paginator/>
+        paginator
+        style="width: 100%!important;"
+      />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, onMounted, ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 import type { Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { usePointOfSaleStore } from "@/stores/pos.store";
@@ -56,7 +61,6 @@ import router from '@/router';
 import { useToast } from 'primevue/usetoast';
 import { useI18n } from 'vue-i18n';
 import { handleError } from "@/utils/errorUtils";
-import { PaginatedFinancialMutationResponse } from "@sudosos/sudosos-client";
 import apiService from "@/services/ApiService";
 
 const route = useRoute(); // Use the useRoute function to access the current route

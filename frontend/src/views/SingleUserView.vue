@@ -32,8 +32,16 @@
         </CardComponent>
         <BalanceComponent :user="currentUser" :showOption="false" id="userBalance"/>
       </div>
-      <div class="row">
-        <MutationsTableComponent :header="$t('userDetails.User Transactions')" action="none" style="width: 100%;"/>
+      <div class="row" style="width: 100%;">
+        <MutationsTableComponent
+          v-if="mutations"
+          :header="$t('userDetails.User Transactions')"
+          action="none"
+          style="width: 100%;"
+          paginator
+          modal
+          :paginatedMutationResponse="mutations"
+        />
       </div>
     </div>
   </div>
@@ -44,7 +52,7 @@ import { onBeforeMount, ref } from 'vue';
 import type { Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
-import type { UpdateUserRequest, UserResponse } from '@sudosos/sudosos-client';
+import type { PaginatedFinancialMutationResponse, UpdateUserRequest, UserResponse } from "@sudosos/sudosos-client";
 import CardComponent from "@/components/CardComponent.vue";
 import Checkbox from "primevue/checkbox";
 import BalanceComponent from "@/components/BalanceComponent.vue";
@@ -67,6 +75,8 @@ const lastName = defineComponentBinds('lastName', {});
 const email = defineComponentBinds('email', {});
 const isActive = defineComponentBinds('isActive', {});
 const userType = defineComponentBinds('userType', {});
+const mutations: Ref<PaginatedFinancialMutationResponse | null | undefined> = ref();
+
 onBeforeMount(async () => {
   userId.value = route.params.userId;
   currentUser.value = userStore.users.find((user) => user.id == userId.value);
@@ -79,6 +89,7 @@ onBeforeMount(async () => {
       isActive: currentUser.value.active,
     });
   }
+  await apiService.user.getUsersFinancialMutations(userId.value).then((res) => mutations.value = res.data);
 });
 
 const handleEditUser = handleSubmit(async (values) => {
@@ -104,10 +115,6 @@ const handleEditUser = handleSubmit(async (values) => {
 
 <style scoped>
 @import '../styles/BasePage.css';
-
-:deep(.card){
-  width: 35rem;
-}
 
 form {
   display: flex;
