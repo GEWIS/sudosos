@@ -1,6 +1,13 @@
 <template>
-  <Dialog v-model:visible="visible" modal header="Increase Saldo" :style="{ width: '50vw' }" @show="pay">
-    <p>{{ $t('c_currentSaldo.topup') + amount.toString() }}</p>
+  <Dialog
+    v-model:visible="visible"
+    modal
+    header="Increase Saldo"
+    :style="{ width: '50vw' }"
+    @show="pay"
+    @hide="cancelPay"
+  >
+    <p>{{ `${$t('c_currentBalance.topup')} ${amount.toString()}` }}</p>
     <form ref="payment" id="payment-form" v-show="!loading">
       <div id="payment-element">
         <!--Stripe.js injects the Payment Element-->
@@ -8,8 +15,8 @@
     </form>
 
     <template #footer>
-      <Button label="cancel" severity="secondary" outlined @click="cancelPay" />
-      <Button label="pay" severity="danger" @click="submitPay"/>
+<!--      <Button label="cancel" severity="secondary" outlined @click="cancelPay" />-->
+      <Button label="pay" severity="danger" @click="submitPay" />
     </template>
   </Dialog>
 </template>
@@ -17,36 +24,36 @@
 // TODO: Implement error handling when payments fail
 // TODO: Clean-up code
 
-import {onBeforeMount, ref} from "vue";
-import {loadStripe} from "@stripe/stripe-js";
-import apiService from "@/services/ApiService";
-import * as process from "process";
+import { onBeforeMount, ref } from 'vue';
+import { loadStripe } from '@stripe/stripe-js';
+import apiService from '@/services/ApiService';
 
 const loading = ref(false);
-const visible = ref(true);
+const visible = ref(false);
 
 const props = defineProps({
   amount: {
     type: Number,
-    required: true,
+    required: true
   }
 });
 
 const stripe = ref();
 const paymentElement = ref();
 const elements = ref();
-onBeforeMount( async () => {
+onBeforeMount(async () => {
   stripe.value = await loadStripe(`${import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY}`);
   console.warn(`${import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY}`);
 });
 
 const pay = async () => {
+  visible.value = true;
   const deposit = {
     amount: {
       amount: props.amount * 100,
       precision: 2,
-      currency: 'EUR',
-    },
+      currency: 'EUR'
+    }
   };
   await apiService.stripe.deposit(deposit).then((paymentIntent) => {
     elements.value = stripe.value.elements({ clientSecret: paymentIntent.data.clientSecret });
@@ -59,17 +66,17 @@ const submitPay = async () => {
   const { error } = await stripe.value.confirmPayment({
     elements: elements.value,
     confirmParams: {
-      return_url: import.meta.env.VITE_APP_STRIPE_RETURN_URL,
-    },
+      return_url: import.meta.env.VITE_APP_STRIPE_RETURN_URL
+    }
   });
-  if (error) {
-    console.log(error);
-  }
 };
 
 const cancelPay = async () => {
-  paymentElement.value.destroy();
   visible.value = false;
+  if (paymentElement.value) {
+    paymentElement.value.destroy();
+  }
+
 };
 </script>
 <style scoped>
