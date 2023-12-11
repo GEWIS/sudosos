@@ -25,6 +25,18 @@
         <template #start>
           <img id="bier" src="../assets/img/bier.png"/>
         </template>
+        <template #item="{ item, props, hasSubmenu }">
+          <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
+            <a :href="href" v-bind="props.action" @click="navigate">
+              <span class="p-menuitem-text">{{ item.label }}</span>
+            </a>
+          </router-link>
+          <a v-else :href="item.url" :target="item.target" v-bind="props.action">
+            <span class="p-menuitem-text">{{ item.label }}</span>
+            <span v-if="item.icon" :class="item.icon" />
+            <span v-if="hasSubmenu" class="pi pi-fw pi-angle-down ml-2" />
+          </a>
+        </template>
       </Menubar>
     </nav>
   </div>
@@ -137,7 +149,7 @@ const rightItems = ref([
     items: [
       {
         label: t('app.Profile'),
-        to: 'profile',
+        route: '/profile',
       },
       {
         label: t('app.Sign out'),
@@ -154,7 +166,7 @@ const rightItems = ref([
     icon: 'pi pi-globe',
     items: [
       {
-        label: () => t('app.Netherlands'),
+        label: t('app.Netherlands'),
         disabled: () => locale.value == 'nl',
         command: () => {
           locale.value = 'nl';
@@ -162,7 +174,7 @@ const rightItems = ref([
         },
       },
       {
-        label: () => t('app.English'),
+        label: t('app.English'),
         disabled: () => locale.value == 'en',
         command: () => {
           locale.value = 'en';
