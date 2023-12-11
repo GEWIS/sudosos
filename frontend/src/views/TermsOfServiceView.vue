@@ -56,7 +56,7 @@ const acceptTermsOfService = (async () => {
     });
     await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
   }
-  router.push({ name: 'home'});
+  router.push({ name: 'home' });
 
 
 });

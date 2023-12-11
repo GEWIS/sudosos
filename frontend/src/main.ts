@@ -62,7 +62,6 @@ app.component('Checkbox', Checkbox);
 app.component('TabView', TabView);
 app.component('ScrollPanel', ScrollPanel);
 app.component('FileUpload', FileUpload);
-app.component('InputNumber', InputNumber);
 app.component('Toast', Toast);
 populateStoresFromToken(apiService);
 

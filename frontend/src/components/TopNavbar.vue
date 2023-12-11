@@ -8,7 +8,17 @@
             {{ $t("login.SudoSOS") }}
             <img id="logo" src="../assets/img/gewis-branding.svg" alt="SudoSOS" />
           </router-link>
-
+        </template>
+        <template #item="{ item, props, hasSubmenu }">
+          <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
+            <a :href="href" v-bind="props.action" @click="navigate">
+              <span class="p-menuitem-text">{{ item.label }}</span>
+            </a>
+          </router-link>
+          <a v-else :href="item.url" :target="item.target" v-bind="props.action">
+            <span class="p-menuitem-text">{{ item.label }}</span>
+            <span v-if="hasSubmenu" class="pi pi-fw pi-angle-down ml-2" />
+          </a>
         </template>
       </Menubar>
       <Menubar :model="rightItems">
@@ -60,25 +70,27 @@ const isSeller = () => {
   return authStore.roles.includes(UserRole.SELLER);
 };
 
+console.log(isSeller(), isAdmin(), isBAC());
+
 const leftItems = ref([
   {
-    label: (): string => t('app.Transactions'),
+    label: t('app.Transactions'),
   },
   {
-    label: () => t('app.Balance'),
-    to: '/balance',
+    label: t('app.Balance'),
+    route: '/balance',
   },
   {
-    label: (): string => t('app.Points of Sale'),
+    label: t('app.Points of Sale'),
     visible: isSeller(),
     items: [
       {
-        label: () => t('app.Overview'),
-        to: '/point-of-sale/overview',
+        label: t('app.Overview'),
+        route: '/point-of-sale/overview',
       },
       {
-        label: () => t('app.Create POS'),
-        to: '/point-of-sale/request'
+        label: t('app.Create POS'),
+        route: '/point-of-sale/request'
       }
     ]
   },
@@ -103,14 +115,14 @@ const leftItems = ref([
     items: [
       {
         label: t('app.User overview'),
-        to: '/user-overview',
+        route: '/user-overview',
       },
       {
-        label: t('Flagged transactions'),
+        label: t('flagged.Flagged transactions'),
       },
       {
         label: t('app.Manage products'),
-        to: '/manage-products',
+        route: '/manage-products',
       },
       {
         label: t('app.Social drink cards'),
@@ -184,9 +196,14 @@ nav {
   .p-menubar {
     background-color: #d40000;
     padding: 0 1rem;
+
+
+
   }
 }
-
+:deep(.p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content) {
+      background-color: transparent;
+}
 :deep(.p-menuitem-text){
   color: white;
   font-family: Raleway, sans-serif;
@@ -198,7 +215,7 @@ nav {
 // Define normal top-level menu-items
 :deep(.p-menuitem) {
   &.p-focus, &.p-focus, &.p-highlight > .p-menuitem-content {
-    background-color: transparent;
+
     > a > * {
       color: hsla(0, 0%, 100%, .75);
     }
