@@ -13,24 +13,28 @@ defineProps({
 <template>
   <div class="content-wrapper">
     <div class="transaction-row">
-      <div class="transaction-left-column"><p>Total:</p></div>
+      <div class="transaction-left-column"><p>{{ $t("transactions.total") }}</p></div>
       <div class="transaction-right-column"><p>{{ formatValueEuro(invoiceInfo.amount) }}</p></div>
     </div>
     <div v-if="invoiceInfo.invoice?.to" class="transaction-row">
-      <div class="transaction-left-column"><p>To:</p></div>
-      <div class="transaction-right-column"><p>{{ invoiceInfo.invoice?.to.firstName + ' ' + invoiceInfo.invoice?.to.lastName }}</p></div>
+      <div class="transaction-left-column"><p>{{ $t("transactions.to") }}</p></div>
+      <div class="transaction-right-column">
+        <p>
+          {{ invoiceInfo.invoice?.to.firstName + ' ' + invoiceInfo.invoice?.to.lastName }}
+        </p>
+      </div>
     </div>
     <div class="transaction-row">
-      <div class="transaction-left-column"><p>Transfer Description:</p></div>
+      <div class="transaction-left-column"><p>{{ $t("transactions.transferDesc") }}</p></div>
       <div class="transaction-right-column"><p>{{ invoiceInfo.invoice?.description }}</p></div>
     </div>
     <div class="transaction-row">
-      <div class="transaction-left-column"><p>Transfer Status:</p></div>
+      <div class="transaction-left-column"><p>{{ $t("transactions.transferStatus") }}</p></div>
       <div class="transaction-right-column"><p>{{ invoiceInfo.invoice?.currentState.state }}</p></div>
     </div>
     <div class="transaction-row">
-      <div class="transaction-left-column"><p>Transfer Type:</p></div>
-      <div class="transaction-right-column"><p>Invoice</p></div>
+      <div class="transaction-left-column"><p>{{ $t("transactions.transferType") }}</p></div>
+      <div class="transaction-right-column"><p>{{ $t("transactions.invoice") }}</p></div>
     </div>
   </div>
 </template>

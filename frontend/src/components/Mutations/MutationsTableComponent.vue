@@ -32,15 +32,12 @@ import type {
   PaginatedFinancialMutationResponse,
   TransferResponse
 } from "@sudosos/sudosos-client";
-import { onBeforeMount, onMounted, ref, watch } from "vue";
-import { formatDateTime } from "@/utils/formatterUtils";
+import { onBeforeMount, ref } from "vue";
 import MutationModal from "@/components/Mutations/MutationModal.vue";
 import {
   parseFinancialTransactions,
   parseTransaction,
   parseTransfer,
-  transactionDescription,
-  transferDescription
 } from "@/utils/mutationUtils";
 
 interface MutationTableRow {
