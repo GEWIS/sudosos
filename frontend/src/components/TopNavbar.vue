@@ -202,8 +202,9 @@ nav {
   }
 }
 :deep(.p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content) {
-      background-color: transparent;
+      background-color: transparent!important;
 }
+
 :deep(.p-menuitem-text){
   color: white;
   font-family: Raleway, sans-serif;
@@ -214,8 +215,9 @@ nav {
 
 // Define normal top-level menu-items
 :deep(.p-menuitem) {
+  background-color: transparent;
   &.p-focus, &.p-focus, &.p-highlight > .p-menuitem-content {
-
+    background-color: transparent;
     > a > * {
       color: hsla(0, 0%, 100%, .75);
     }
