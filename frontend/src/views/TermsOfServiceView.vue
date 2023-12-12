@@ -22,7 +22,6 @@
       <Button
           type="button"
           @click="acceptTermsOfService"
-          severity="danger"
       >
         {{ $t('termsOfService.agreeToS') }}
       </Button>

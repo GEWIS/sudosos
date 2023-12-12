@@ -15,7 +15,7 @@
             <div v-html="tos"></div>
         </div>
         <template #footer>
-            <Button label="Ok" severity="danger" @click="visible = false" autofocus />
+            <Button label="Ok" @click="visible = false" autofocus />
         </template>
     </Dialog>
 </template>

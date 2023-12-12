@@ -19,7 +19,6 @@
       </div>
       <div style="margin-top: 1rem">
         <Button
-          severity="danger"
           :disabled="!isLocal"
           :label="$t('profile.updateInfo')"
           type="submit"

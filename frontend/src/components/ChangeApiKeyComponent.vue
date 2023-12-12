@@ -5,7 +5,7 @@
       <p>{{apiKeyMessage || '&nbsp;'}}</p>
     </div>
     <div style="margin-top: 1rem">
-      <Button severity="danger" :label="t('profile.keyGetNew')" @click="updateApiKey" />
+      <Button :label="t('profile.keyGetNew')" @click="updateApiKey" />
     </div>
   </CardComponent>
 </template>

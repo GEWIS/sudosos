@@ -12,7 +12,7 @@
         <small class="warning">{{errors.pinConfirm || '&nbsp;'}}</small>
       </div>
       <div style="margin-top: 1rem">
-        <Button severity="danger" type="submit" :label="t('profile.pinChange')" />
+        <Button type="submit" :label="t('profile.pinChange')" />
       </div>
     </form>
   </CardComponent>

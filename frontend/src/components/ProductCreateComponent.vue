@@ -52,7 +52,7 @@
           <span class="error-text">{{ errors.owner }}</span>
         </div>
         <div class="button-row">
-          <Button type="submit" severity="danger" class="save-button">{{ $t('c_productEditModal.save') }}</Button>
+          <Button type="submit" class="save-button">{{ $t('c_productEditModal.save') }}</Button>
         </div>
       </form>
     </div>

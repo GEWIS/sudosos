@@ -21,7 +21,7 @@
           <i class="pi pi-exclamation-circle"/>
           {{ emailForm.errors.value.email }}
         </small>
-        <Button type="submit" id="reset-button" severity="danger">{{ $t('login.Reset') }}</Button>
+        <Button type="submit" id="reset-button">{{ $t('login.Reset') }}</Button>
         <div class="backtologin" @click="backToLogin">{{ $t('login.Back to login') }}</div>
       </form>
       <div v-else-if="passwordResetMode === 1" class="login-form">
@@ -67,7 +67,7 @@
           <i class="pi pi-exclamation-circle"/>
           {{ passwordForm.errors.value.passwordConfirm }}
         </small>
-        <Button type="submit" id="reset-button" severity="danger">{{ $t('login.Reset') }}</Button>
+        <Button type="submit" id="reset-button">{{ $t('login.Reset') }}</Button>
         <div class="backtologin" @click="backToLogin">{{ $t('login.Back to login') }}</div>
       </form>
     </main>
