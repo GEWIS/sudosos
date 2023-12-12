@@ -7,13 +7,14 @@
         :paginator="paginator"
         lazy
         @page="onPage($event)"
+        @row-click="(e: any) => openModal(e.data.mutationID, e.data.mutationType)"
         :totalRecords="totalRecords"
         tableStyle="min-width: 60rem">
-      <Column field="mutationMoment" header="When"/>
-      <Column field="mutationDescription" header="What"/>
+      <Column field="mutationMoment" style="width: 35%" header="When"/>
+      <Column field="mutationDescription" style="width: 60%" header="What"/>
       <Column>
-        <template #body="m">
-            <i @click="openModal(m.data.mutationID, m.data.mutationType)" class="pi pi-info-circle"/>
+        <template #body>
+            <i class="pi pi-info-circle"/>
         </template>
       </Column>
     </DataTable>
@@ -22,6 +23,7 @@
     :type="selectedMutationType"
     :id="selectedMutationId"
     v-model:visible="mutationShow"
+    :draggable="false"
   />
 </template>
 
@@ -85,6 +87,7 @@ const selectedMutationId = ref<number>(-1); // TODO: Handle the case when this i
 const selectedMutationType = ref<string>(""); // TODO: Handle the case when this is not changed
 const mutationShow = ref<boolean>(false);
 const totalRecords = ref<number>(0);
+
 function isPaginatedBaseTransactionResponse(obj: any): obj is PaginatedBaseTransactionResponse {
   return obj.records && obj.records.length > 0 && 'id' in obj.records[0];
 }

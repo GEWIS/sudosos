@@ -1,12 +1,13 @@
 <template>
-  <Dialog :visible="visible" modal header="Details" :style="{ width: '50vw' }">
+  <Dialog @show="addListenerOnDialogueOverlay(dialog)" :visible="visible" modal header="Details"
+          :style="{ width: '50vw' }" ref="dialog">
     <TransactionDetailModal
-      v-if="shouldShowTransaction"
-      :transactionInfo="transactionsDetails[props.id]"
-      :productsInfo="transactionProducts[props.id]"
+        v-if="shouldShowTransaction"
+        :transactionInfo="transactionsDetails[props.id]"
+        :productsInfo="transactionProducts[props.id]"
     />
-    <InvoiceDetailModal v-else-if="shouldShowInvoice" :invoiceInfo="transferDetails[props.id]" />
-    <DepositDetailModal v-else-if="shouldShowDeposit" :depositInfo="transferDetails[props.id]" />
+    <InvoiceDetailModal v-else-if="shouldShowInvoice" :invoiceInfo="transferDetails[props.id]"/>
+    <DepositDetailModal v-else-if="shouldShowDeposit" :depositInfo="transferDetails[props.id]"/>
   </Dialog>
 </template>
 
@@ -22,6 +23,7 @@ import TransactionDetailModal from '@/components/Mutations/TransactionDetailModa
 import DepositDetailModal from '@/components/Mutations/DepositDetailModal.vue';
 import InvoiceDetailModal from '@/components/Mutations/InvoiceDetailModal.vue';
 import router from "@/router";
+import { addListenerOnDialogueOverlay } from "@/utils/dialogUtil";
 
 const props = defineProps({
   type: {
@@ -40,6 +42,7 @@ const transactionsDetails: Ref<{ [id: number]: TransactionResponse }> = ref({});
 const transactionProducts: Ref<{ [id: number]: Array<SubTransactionRowResponse> }> = ref({});
 const transferStore = useTransferStore();
 const transferDetails: Ref<{ [id: number]: TransferResponse }> = ref({});
+const dialog: Ref<null | any> = ref(null);
 
 const shouldShowInvoice = computed(() => {
   if (!transferDetails.value[props.id]) return false;
@@ -93,10 +96,10 @@ async function fetchMutation(): Promise<void> {
 }
 
 watch(
-  () => props.id || props.type,
-  async () => {
-    await fetchMutation();
-  }
+    () => props.id || props.type,
+    async () => {
+      await fetchMutation();
+    }
 );
 </script>
 

@@ -25,6 +25,7 @@ import { handleError } from '@/utils/errorUtils';
 import router from '@/router';
 import { useI18n } from "vue-i18n";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { t, locale } = useI18n();
 
 const financialMutationsResponse = ref<PaginatedFinancialMutationResponse>({
