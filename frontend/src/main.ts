@@ -10,7 +10,7 @@ import App from './App.vue';
 import router from './router';
 import PrimeVue from 'primevue/config';
 import Button from "primevue/button";
-import "primevue/resources/themes/bootstrap4-light-blue/theme.css";
+import "./styles/themes/sudosos-light/theme.scss";
 import InputText from "primevue/inputtext";
 import Menubar from "primevue/menubar";
 import Panel from "primevue/panel";

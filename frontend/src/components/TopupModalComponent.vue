@@ -9,7 +9,7 @@
 
     <template #footer>
       <Button label="cancel" severity="secondary" outlined />
-      <Button label="pay" severity="danger" />
+      <Button label="pay" />
     </template>
   </Dialog>
 </template>

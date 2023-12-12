@@ -49,7 +49,7 @@
             {{ loginForm.errors.value.password }}
           </smal>
         </span>
-        <Button type="submit" id="login-button" severity="danger">
+        <Button type="submit" id="login-button">
           {{ $t('login.Login') }}
         </Button>
         <div class="password-reset" @click="resetPassword">
