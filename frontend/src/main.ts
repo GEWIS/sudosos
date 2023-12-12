@@ -29,6 +29,7 @@ import nl from "./locales/nl.json";
 import apiService from './services/ApiService';
 import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
+import 'primeflex/primeflex.css';
 
 const app = createApp(App);
 
