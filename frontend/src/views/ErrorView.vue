@@ -15,8 +15,4 @@ const { t } = useI18n();
 
 <style scoped lang="scss">
 @import '../styles/BasePage.css';
-
-p {
-
-}
 </style>
