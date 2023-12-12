@@ -1,9 +1,9 @@
 <template>
   <div class="container-overview">
-    <TabView :active-index=1>
+    <TabView :active-index=1 :scrollable="true">
       <TabPanel :header="$t('containersOverview.Containers')" :disabled="true" />
       <TabPanel v-for="container in containers" :key="container.id" :header="container.name">
-        <ScrollPanel style="height: 20rem;">
+        <ScrollPanel style="min-height: 22rem;">
           <ProductGridComponent :products="container.products" v-if="container.products.length !== 0"/>
           <p v-if="container.products.length === 0">{{$t('c_containerComponent.no products')}}</p>
         </ScrollPanel>

@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center product-card" @click="visible = true">
+  <div class="text-center product-card m-2" @click="visible = true">
     <div class="product">
       <img :src="getProductImageSrc(product)" :alt="product.name" />
       <p class="w-100 product-name mb-0">{{ product.name }}</p>

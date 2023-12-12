@@ -30,6 +30,8 @@ import apiService from './services/ApiService';
 import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
 import 'primeflex/primeflex.css';
+import 'primeicons/primeicons.css'; // Import PrimeIcons
+
 
 const app = createApp(App);
 
