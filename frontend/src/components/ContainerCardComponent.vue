@@ -9,9 +9,7 @@
       </TabPanel>
       <TabPanel>
         <template #header>
-
             <span class="p-tabview-title createContainerButton">{{ $t('containersOverview.newContainer') }}</span>
-
         </template>
       </TabPanel>
     </TabView>
