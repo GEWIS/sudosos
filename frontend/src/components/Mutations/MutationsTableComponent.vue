@@ -27,7 +27,8 @@
 
 
 <script lang="ts" setup>
-import DataTable, { DataTablePageEvent } from "primevue/datatable";
+import DataTable from "primevue/datatable";
+import type { DataTablePageEvent } from "primevue/datatable";
 import Column from 'primevue/column';
 import CardComponent from "@/components/CardComponent.vue";
 import type {
@@ -36,7 +37,8 @@ import type {
   PaginatedFinancialMutationResponse,
   TransferResponse
 } from "@sudosos/sudosos-client";
-import { onMounted, Ref, ref } from "vue";
+import { onMounted, ref } from "vue";
+import type { Ref } from "vue";
 import MutationModal from "@/components/Mutations/MutationModal.vue";
 import {
   parseFinancialTransactions,
@@ -90,7 +92,7 @@ const rows: Ref<number> = ref(10);
 onMounted( async () => {
   const initialMutations = await getMutations(rows.value, 0);
   console.log(initialMutations);
-  totalRecords.value = initialMutations._pagination.count;
+  totalRecords.value = initialMutations._pagination.count || 0;
   if (isPaginatedBaseTransactionResponse(initialMutations)){
     mutations.value = parseFinancialTransactions(initialMutations);
   } else {

@@ -10,6 +10,7 @@
         :action="$t('c_recentTransactionsTable.all transactions')"
         :paginator="false"
         :modal="false"
+        routerLink="transaction-view"
       />
     </div>
   </div>

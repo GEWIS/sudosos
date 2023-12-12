@@ -18,7 +18,7 @@
 import MutationsTableComponent from '@/components/Mutations/MutationsTableComponent.vue';
 import apiService from '@/services/ApiService';
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import type { PaginatedFinancialMutationResponse } from '@sudosos/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import { handleError } from '@/utils/errorUtils';
@@ -36,7 +36,8 @@ const authStore = useAuthStore();
 const userStore = useUserStore();
 const toast = useToast();
 
-const getUserMutations = async (take: number, skip: number) : Promise<PaginatedFinancialMutationResponse> => {
+const getUserMutations = async (take: number, skip: number)
+  : Promise<PaginatedFinancialMutationResponse | undefined> => {
   if (!authStore.getUser) {
     await router.replace({ path: '/error' });
     return;
