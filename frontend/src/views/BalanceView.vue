@@ -4,10 +4,8 @@
     <TopupModal v-model:visible="visible" :amount="amountValue"/>
     <div class="content-wrapper">
       <CardComponent
-          :action="$t('balance.Start payment')"
           :header="$t('balance.Increase balance')"
           class="increase-balance-card"
-          :func="showDialog"
       >
         <div id="balance-increase-form">
           <p id="balance-increase-title">{{ $t('balance.Balance increase amount') }}</p>
@@ -24,6 +22,8 @@
             />
           </div>
         </div>
+        <br />
+        <Button severity="danger" @click="showDialog">{{ $t('balance.Start payment') }}</Button>
       </CardComponent>
     </div>
   </div>
