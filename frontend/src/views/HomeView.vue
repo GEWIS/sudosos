@@ -5,7 +5,6 @@
       <BalanceComponent class="balance-component" :showOption="true" />
       <MutationsTableComponent
         :callback-function="getUserMutations"
-        class="transactions-table"
         :header="$t('c_recentTransactionsTable.recent transactions')"
         :action="$t('c_recentTransactionsTable.all transactions')"
         :paginator="false"
@@ -47,9 +46,5 @@ const getUserMutations = async (take: number, skip: number) :
 
 .balance-component {
   margin-right: 15px;
-}
-
-.transactions-table {
-  margin-left: 15px;
 }
 </style>
