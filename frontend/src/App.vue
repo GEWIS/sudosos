@@ -8,9 +8,3 @@ import Toast from "primevue/toast";
   <Toast />
   <RouterView />
 </template>
-
-<style lang="scss">
-body {
-  margin: 0;
-}
-</style>
