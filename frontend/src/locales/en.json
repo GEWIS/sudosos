@@ -555,7 +555,7 @@
     "userNotFound": "The requested user was not found."
   },
   "successMessages": {
-    "succes": "Success",
+    "success": "Success",
     "editPOS": "Succesfully edited POS.",
     "createContainer": "Successfully created container.",
     "productCreated": "Successfully created product."

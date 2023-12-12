@@ -509,5 +509,9 @@
     "403": "Je hebt mag deze data niet opvragen",
     "404": "Deze data lijkt niet te bestaan",
     "500": "Er gaat iets mis, neem contact op met het SudoSOS team"
+  },
+  "successMessages": {
+    "success": "Gelukt!",
+    "productCreated": "Het product is aangemaakt!"
   }
 }
