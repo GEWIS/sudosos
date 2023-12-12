@@ -1,36 +1,44 @@
 <template>
   <div class="page-container">
-    <div class="page-title">{{ $t('home.Overview') }}</div>
+    <div class="page-title">{{ $t('transactions.Transactions') }}</div>
     <div class="content-wrapper">
-      <BalanceComponent class="balance-component" :showOption="true" />
       <MutationsTableComponent
-        :callback-function="getUserMutations"
+        class="transactions-table"
         :header="$t('c_recentTransactionsTable.recent transactions')"
-        :action="$t('c_recentTransactionsTable.all transactions')"
-        :paginator="false"
-        :modal="false"
-        routerLink="transaction-view"
+        :paginatedMutationResponse="financialMutationsResponse"
+        :modal="true"
+        :paginator="true"
+        :callbackFunction="getUserMutations"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import BalanceComponent from '@/components/BalanceComponent.vue';
 import MutationsTableComponent from '@/components/Mutations/MutationsTableComponent.vue';
-import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
 import apiService from '@/services/ApiService';
+import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
+import { ref } from 'vue';
 import type { PaginatedFinancialMutationResponse } from '@sudosos/sudosos-client';
-import router from "@/router";
-import { handleError } from "@/utils/errorUtils";
-import { useToast } from "primevue/usetoast";
+import { useToast } from 'primevue/usetoast';
+import { handleError } from '@/utils/errorUtils';
+import router from '@/router';
+import { useI18n } from "vue-i18n";
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const { t, locale } = useI18n();
+
+const financialMutationsResponse = ref<PaginatedFinancialMutationResponse>({
+  _pagination: {},
+  records: []
+});
 
 const authStore = useAuthStore();
 const userStore = useUserStore();
 const toast = useToast();
 
-const getUserMutations = async (take: number, skip: number) :
-  Promise<PaginatedFinancialMutationResponse | undefined> => {
+const getUserMutations = async (take: number, skip: number)
+  : Promise<PaginatedFinancialMutationResponse | undefined> => {
   if (!authStore.getUser) {
     await router.replace({ path: '/error' });
     return;
@@ -43,8 +51,4 @@ const getUserMutations = async (take: number, skip: number) :
 
 <style scoped lang="scss">
 @import '../styles/BasePage.css';
-
-.balance-component {
-  margin-right: 15px;
-}
 </style>

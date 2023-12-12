@@ -82,11 +82,10 @@ const isSeller = () => {
   return authStore.roles.includes(UserRole.SELLER);
 };
 
-console.log(isSeller(), isAdmin(), isBAC());
-
 const leftItems = ref([
   {
     label: t('app.Transactions'),
+    route: '/transactions'
   },
   {
     label: t('app.Balance'),
@@ -208,9 +207,6 @@ nav {
   .p-menubar {
     background-color: #d40000;
     padding: 0 1rem;
-
-
-
   }
 }
 :deep(.p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content) {

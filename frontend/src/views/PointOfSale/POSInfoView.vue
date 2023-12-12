@@ -34,23 +34,36 @@
           :data="pos.containers"
         />
       </div>
-      <TransactionsTableComponent :header="$t('app.Transactions')" class="pos-transactions" />
+      <div class="row" style="width: 100%">
+        <MutationsTableComponent
+          :header="$t('app.Transactions')"
+          class="pos-transactions"
+          :callback-function="getPOSTransactions"
+          :modal="true"
+          paginator
+          style="width: 100% !important"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue';
 import type { Ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import ContainerCardComponent from '@/components/ContainerCardComponent.vue';
-import TransactionsTableComponent from '@/components/TransactionsTableComponent.vue';
 import { usePointOfSaleStore } from '@/stores/pos.store';
-import type { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
+import type {
+  PaginatedBaseTransactionResponse,
+  PointOfSaleWithContainersResponse
+} from '@sudosos/sudosos-client';
+import ContainerCardComponent from '@/components/ContainerCardComponent.vue';
+import MutationsTableComponent from '@/components/Mutations/MutationsTableComponent.vue';
 import router from '@/router';
 import { useToast } from 'primevue/usetoast';
 import { useI18n } from 'vue-i18n';
-import { handleError } from "@/utils/errorUtils";
+import { handleError } from '@/utils/errorUtils';
+import apiService from '@/services/ApiService';
 
 const route = useRoute(); // Use the useRoute function to access the current route
 const toast = useToast();
@@ -58,13 +71,30 @@ const { t } = useI18n();
 const id = ref();
 const pointOfSaleStore = usePointOfSaleStore();
 const pos: Ref<PointOfSaleWithContainersResponse | null | undefined> = ref();
+
 onBeforeMount(async () => {
   id.value = route.params.id;
   await pointOfSaleStore.fetchPointOfSale(id.value).catch((error) => {
     handleError(error, toast);
   });
   pos.value = pointOfSaleStore.getPos;
+  if (!pos.value) {
+    await router.replace('/error');
+    return;
+  }
 });
+
+const getPOSTransactions = async (
+  take: number,
+  skip: number
+): Promise<PaginatedBaseTransactionResponse | undefined> => {
+  const pos = pointOfSaleStore.getPos;
+  if (!pos) {
+    await router.replace('/error');
+    return;
+  }
+  return await apiService.pos.getTransactions(pos.id, take, skip).then((res) => res.data);
+};
 
 const handleClosedClicked = () => {
   router.push('/point-of-sale/overview');
@@ -74,7 +104,7 @@ const handleEditClicked = () => {
   if (pos.value) {
     router.push(`/point-of-sale/edit/${pos.value.id}`);
   } else {
-    router.replace({ path: "/error" });
+    router.replace({ path: '/error' });
     toast.add({
       severity: 'error',
       summary: t('apiError.error'),

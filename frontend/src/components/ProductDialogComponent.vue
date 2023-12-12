@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import type { ProductResponse } from "@sudosos/sudosos-client";
 import Dialog from 'primevue/dialog';
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import { getProductImageSrc } from "@/utils/imageUtils";
 import { formatDateTime, formatPrice } from "@/utils/formatterUtils";
 
@@ -51,8 +51,7 @@ defineProps({
   }
 });
 const visible = ref(false);
-onMounted(() => {
-});
+
 </script>
 
 <style scoped lang="scss">

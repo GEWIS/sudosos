@@ -69,7 +69,19 @@
     "Overview": "Overview"
   },
   "transactions": {
-    "Transactions": "Transactions"
+    "Transactions": "Transactions",
+    "total": "Total:",
+    "to": "To:",
+    "transferRef": "Transfer Reference:",
+    "transferType": "Transfer Type:",
+    "transferDesc": "Transfer Description:",
+    "transferStatus": "Transfer Status:",
+    "deposit": "Deposit",
+    "invoice": "Invoice",
+    "pos": "Point of sale",
+    "boughtBy": "Bought by",
+    "putInBy": "Put in by",
+    "products": "Products"
   },
   "balance": {
     "Balance": "Balance",

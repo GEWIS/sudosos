@@ -2,9 +2,9 @@ name: Docker
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -23,18 +23,17 @@ jobs:
 
       - name: Set up environment - main
         env:
-          ENV_FILE: ${{ secrets.ENV_FILE_DEVELOPMENT }}
-      #    ENV_FILE: ${{ secrets.ENV_FILE_PRODUCTION }}
+          ENV_FILE: ${{ secrets.ENV_FILE_PRODUCTION }}
         if: github.ref == 'refs/heads/main'
         run: |
           echo "${ENV_FILE}" > .env
 
-      #- name: Set up environment - develop
-      #  env:
-      #    ENV_FILE: ${{ secrets.ENV_FILE_DEVELOPMENT }}
-      #  if: github.ref != 'refs/heads/main'
-      #  run: |
-      #    echo "${ENV_FILE}" > .env
+      - name: Set up environment - develop
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE_DEVELOPMENT }}
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "${ENV_FILE}" > .env
 
       - name: Get Docker meta (for tags)
         id: meta
@@ -45,7 +44,9 @@ jobs:
             ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_TAG }}
           # generate Docker tags based on the following events/attributes
           tags: |
-            type=raw,value=vue3
+            type=ref,prefix=vue3-,event=branch
+            type=ref,prefix=vue3-,event=pr
+            type=semver,prefix=vue3-,pattern={{version}}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2

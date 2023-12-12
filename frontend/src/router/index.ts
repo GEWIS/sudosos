@@ -13,6 +13,7 @@ import SingleUserView from "@/views/SingleUserView.vue";
 import ProductsContainersView from "@/views/ProductsContainersView.vue";
 import { isAuthenticated, useAuthStore } from "@sudosos/sudosos-frontend-common";
 import PasswordResetView from "@/views/PasswordResetView.vue";
+import TransactionsView from "@/views/TransactionsView.vue";
 import TermsOfServiceView from "@/views/TermsOfServiceView.vue";
 import { UserRole } from '@/utils/rbacUtils';
 import 'vue-router';
@@ -34,8 +35,6 @@ declare module 'vue-router' {
     isBAC?: boolean,
   }
 }
-
-
 
 const router = createRouter({
   history: createWebHistory(),
@@ -130,6 +129,11 @@ const router = createRouter({
           component: ProductsContainersView,
           name: 'products-containers-overview',
           meta: { requiresAuth: true, isBAC: true }
+        },
+        {
+          path: '/transactions',
+          component: TransactionsView,
+          name: 'transaction-view'
         },
         {
           path: '/error',
