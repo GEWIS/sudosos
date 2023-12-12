@@ -3,11 +3,13 @@
     v-model:visible="visible"
     modal
     header="Increase Saldo"
-    :style="{ width: '50vw' }"
+    :style="{ width: '500px' }"
+    position="top"
     @show="pay"
     @hide="cancelPay"
+    :draggable="false"
   >
-    <p>{{ `${$t('c_currentBalance.topup')} ${amount.toString()}` }}</p>
+    <p>{{ `${$t('c_currentBalance.topup')} ${formatPrice(dinero)}` }}</p>
     <form ref="payment" id="payment-form" v-show="!loading">
       <div id="payment-element">
         <!--Stripe.js injects the Payment Element-->
@@ -24,12 +26,22 @@
 // TODO: Implement error handling when payments fail
 // TODO: Clean-up code
 
-import { onBeforeMount, ref } from 'vue';
+import { computed, onBeforeMount, ref } from 'vue';
 import { loadStripe } from '@stripe/stripe-js';
 import apiService from '@/services/ApiService';
+import type { Dinero } from "@sudosos/sudosos-client";
+import { formatPrice } from "@/utils/formatterUtils";
 
 const loading = ref(false);
 const visible = ref(false);
+const dinero = computed((): Dinero => {
+  return {
+    amount: props.amount * 100,
+    precision: 2,
+    currency: 'EUR'
+  };
+});
+
 
 const props = defineProps({
   amount: {
@@ -50,9 +62,7 @@ const pay = async () => {
   visible.value = true;
   const deposit = {
     amount: {
-      amount: props.amount * 100,
-      precision: 2,
-      currency: 'EUR'
+      ...(dinero.value)
     }
   };
   await apiService.stripe.deposit(deposit).then((paymentIntent) => {
@@ -76,9 +86,10 @@ const cancelPay = async () => {
   if (paymentElement.value) {
     paymentElement.value.destroy();
   }
-
 };
+
 </script>
+
 <style scoped>
 @import '../styles/BasePage.css';
 
