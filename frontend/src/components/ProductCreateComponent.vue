@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:visible="visible" :header="$t('manageProducts.Add product')">
+  <Dialog modal v-model:visible="visible" :header="$t('manageProducts.Add product')">
     <div class="dialog">
       <form @submit="handleProductCreate">
         <div class="row">
@@ -107,6 +107,7 @@ defineProps({
 const toast = useToast();
 const { t } = useI18n();
 const visible = ref(false);
+const emit = defineEmits(['update:visible']);
 const categories: Ref<ProductCategoryResponse[]> = ref([]);
 const vatGroups: Ref<VatGroup[]> = ref([]);
 const organsList: Ref<BaseUserResponse[]> = ref([]);
@@ -150,6 +151,7 @@ const handleProductCreate = handleSubmit(async (values) => {
       detail: t('successMessages.productCreated'),
       life: 3000,
     });
+    emit('update:visible', false);
   }).catch((err) => handleError(err, toast));
 });
 
