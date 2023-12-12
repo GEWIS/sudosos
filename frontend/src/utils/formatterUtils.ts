@@ -24,5 +24,5 @@ function parseTime(value: number): string {
 }
 
 export function formatPrice(value: Dinero): string {
-    return (value.amount / 100).toLocaleString('en', { style: 'currency', currency: "EUR" });
+    return (value.amount / 100).toLocaleString('nl-NL', { style: 'currency', currency: "EUR" });
 }

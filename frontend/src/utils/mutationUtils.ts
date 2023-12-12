@@ -50,12 +50,12 @@ export function parseFinancialTransactions(transactions: PaginatedBaseTransactio
 
 export function transferDescription(transfer: TransferResponse): string {
     if (transfer.deposit) {
-        return `You increased your balance with ${formatValueEuro(transfer.amount)}.`;
+        return `You increased your balance with ${formatValueEuro(transfer.amount)}`;
     } else if (transfer.invoice) {
         return `An invoice valued ${formatValueEuro(transfer.amount)} was added.`;
     } else if (transfer.payoutRequest) {
         // Todo: Currently payoutRequests are not fetched. So this will actually not do anything.
-        return `You were refunded ${formatValueEuro(transfer.amount)}.`;
+        return `You were refunded ${formatValueEuro(transfer.amount)}`;
     } else if (transfer.fine) {
         return `You were fined ${formatValueEuro(transfer.amount)}`;
     } else {
@@ -73,12 +73,12 @@ export function transactionDescription(transaction: BaseTransactionResponse): st
             return `Magically, a transaction of ${valueOfTransaction} was put in.`;
         } else {
             if (transaction.createdBy.id === currentUserId) {
-                return `You spent a total of ${valueOfTransaction}.`;
+                return `You spent a total of ${valueOfTransaction}`;
             } else {
-                return `${transaction.createdBy.firstName} charged you ${valueOfTransaction}.`;
+                return `${transaction.createdBy.firstName} charged you ${valueOfTransaction}`;
             }
         }
     } else {
-        return `You charged ${transaction.from.firstName} a total of ${valueOfTransaction}.`;
+        return `You charged ${transaction.from.firstName} a total of ${valueOfTransaction}`;
     }
 }
