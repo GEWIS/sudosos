@@ -1,9 +1,13 @@
 <template>
   <CardComponent :action="action" :header="header" :router-link="routerLink">
     <DataTable
-        :rows=15
+        :rows=rows
         :value="mutations"
+        :rowsPerPageOptions="[5, 10, 25, 50, 100]"
         :paginator="paginator"
+        lazy
+        @page="onPage($event)"
+        :totalRecords="totalRecords"
         tableStyle="min-width: 60rem">
       <Column field="mutationMoment" header="When"/>
       <Column field="mutationDescription" header="What"/>
@@ -23,7 +27,7 @@
 
 
 <script lang="ts" setup>
-import DataTable from 'primevue/datatable';
+import DataTable, { DataTablePageEvent } from "primevue/datatable";
 import Column from 'primevue/column';
 import CardComponent from "@/components/CardComponent.vue";
 import type {
@@ -32,7 +36,7 @@ import type {
   PaginatedFinancialMutationResponse,
   TransferResponse
 } from "@sudosos/sudosos-client";
-import { onBeforeMount, ref } from "vue";
+import { onMounted, Ref, ref } from "vue";
 import MutationModal from "@/components/Mutations/MutationModal.vue";
 import {
   parseFinancialTransactions,
@@ -60,10 +64,6 @@ const props = defineProps({
     type: String,
     required: false,
   },
-  paginatedMutationResponse: {
-    type: Object as () => PaginatedFinancialMutationResponse | PaginatedBaseTransactionResponse,
-    required: true,
-  },
   paginator: {
     type: Boolean,
     required: true,
@@ -72,22 +72,29 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  callbackFunction: {
+    type: Function,
+    required: true,
+  }
 });
 
 const mutations = ref<MutationTableRow[]>();
 const selectedMutationId = ref<number>(-1); // TODO: Handle the case when this is not changed
 const selectedMutationType = ref<string>(""); // TODO: Handle the case when this is not changed
 const mutationShow = ref<boolean>(false);
-
+const totalRecords = ref<number>(0);
 function isPaginatedBaseTransactionResponse(obj: any): obj is PaginatedBaseTransactionResponse {
   return obj.records && obj.records.length > 0 && 'id' in obj.records[0];
 }
-
-onBeforeMount(() => {
-  if (isPaginatedBaseTransactionResponse(props.paginatedMutationResponse)){
-    mutations.value = parseFinancialTransactions(props.paginatedMutationResponse);
+const rows: Ref<number> = ref(10);
+onMounted( async () => {
+  const initialMutations = await getMutations(rows.value, 0);
+  console.log(initialMutations);
+  totalRecords.value = initialMutations._pagination.count;
+  if (isPaginatedBaseTransactionResponse(initialMutations)){
+    mutations.value = parseFinancialTransactions(initialMutations);
   } else {
-    mutations.value = parseFinancialMutations(props.paginatedMutationResponse);
+    mutations.value = parseFinancialMutations(initialMutations);
   }
 });
 
@@ -111,6 +118,16 @@ function openModal(id: number, type: string) {
   mutationShow.value = true;
 }
 
+async function onPage(event: DataTablePageEvent) {
+  const newTransactions = await getMutations(event.rows, event.first);
+  mutations.value = isPaginatedBaseTransactionResponse(newTransactions) ?
+    parseFinancialTransactions(newTransactions) : parseFinancialMutations(newTransactions);
+}
+
+async function getMutations(take: number, skip: number):
+  Promise<PaginatedBaseTransactionResponse | PaginatedFinancialMutationResponse> {
+  return await props.callbackFunction(take, skip);
+}
 </script>
 
 <style lang="scss" scoped>

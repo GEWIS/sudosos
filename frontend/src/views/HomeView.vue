@@ -4,11 +4,10 @@
     <div class="content-wrapper">
       <BalanceComponent class="balance-component" :showOption="true" />
       <MutationsTableComponent
-        v-if="doneLoading"
+        :callback-function="getUserMutations"
         class="transactions-table"
         :header="$t('c_recentTransactionsTable.recent transactions')"
         :action="$t('c_recentTransactionsTable.all transactions')"
-        :paginatedMutationResponse="financialMutationsResponse"
         :paginator="false"
         :modal="false"
       />
@@ -21,25 +20,25 @@ import BalanceComponent from '@/components/BalanceComponent.vue';
 import MutationsTableComponent from '@/components/Mutations/MutationsTableComponent.vue';
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
 import apiService from '@/services/ApiService';
-import { onMounted, ref } from 'vue';
 import type { PaginatedFinancialMutationResponse } from '@sudosos/sudosos-client';
-
-const financialMutationsResponse = ref<PaginatedFinancialMutationResponse>({
-  _pagination: {},
-  records: []
-});
+import router from "@/router";
+import { handleError } from "@/utils/errorUtils";
+import { useToast } from "primevue/usetoast";
 
 const authStore = useAuthStore();
 const userStore = useUserStore();
-const doneLoading = ref<boolean>(false);
+const toast = useToast();
 
-onMounted(async () => {
-  if (authStore.getUser) {
-    await userStore.fetchUsersFinancialMutations(authStore.getUser.id, apiService, 5);
-    financialMutationsResponse.value = userStore.getCurrentUser.financialMutations;
-    doneLoading.value = true;
+const getUserMutations = async (take: number, skip: number) :
+  Promise<PaginatedFinancialMutationResponse | undefined> => {
+  if (!authStore.getUser) {
+    await router.replace({ path: '/error' });
+    return;
   }
-});
+  await userStore.fetchUsersFinancialMutations(authStore.getUser.id, apiService, take, skip)
+    .catch((err) => handleError(err, toast));
+  return userStore.getCurrentUser.financialMutations;
+};
 </script>
 
 <style scoped lang="scss">

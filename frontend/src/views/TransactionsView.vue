@@ -3,12 +3,12 @@
     <div class="page-title">{{ $t('transactions.Transactions') }}</div>
     <div class="content-wrapper">
       <MutationsTableComponent
-        v-if="doneLoading"
         class="transactions-table"
         :header="$t('c_recentTransactionsTable.recent transactions')"
         :paginatedMutationResponse="financialMutationsResponse"
         :modal="true"
         :paginator="true"
+        :callbackFunction="getUserMutations"
       />
     </div>
   </div>
@@ -35,19 +35,16 @@ const financialMutationsResponse = ref<PaginatedFinancialMutationResponse>({
 const authStore = useAuthStore();
 const userStore = useUserStore();
 const toast = useToast();
-const doneLoading = ref<boolean>(false);
 
-onMounted(async () => {
+const getUserMutations = async (take: number, skip: number) : Promise<PaginatedFinancialMutationResponse> => {
   if (!authStore.getUser) {
-    router.replace({ path: '/error' });
+    await router.replace({ path: '/error' });
     return;
   }
-  await userStore
-    .fetchUsersFinancialMutations(authStore.getUser.id, apiService)
+  await userStore.fetchUsersFinancialMutations(authStore.getUser.id, apiService, take, skip)
     .catch((err) => handleError(err, toast));
-  financialMutationsResponse.value = userStore.getCurrentUser.financialMutations;
-  doneLoading.value = true;
-});
+  return userStore.getCurrentUser.financialMutations;
+};
 </script>
 
 <style scoped lang="scss">

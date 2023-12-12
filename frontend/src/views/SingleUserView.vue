@@ -34,13 +34,11 @@
       </div>
       <div class="row" style="width: 100%;">
         <MutationsTableComponent
-          v-if="mutations"
           :header="$t('userDetails.User Transactions')"
-          action="none"
           style="width: 100%;"
           paginator
           modal
-          :paginatedMutationResponse="mutations"
+          :callbackFunction="getUserMutations"
         />
       </div>
     </div>
@@ -51,7 +49,7 @@
 import { onBeforeMount, ref } from 'vue';
 import type { Ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { useUserStore } from '@sudosos/sudosos-frontend-common';
+import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import type { PaginatedFinancialMutationResponse, UpdateUserRequest, UserResponse } from "@sudosos/sudosos-client";
 import CardComponent from "@/components/CardComponent.vue";
 import Checkbox from "primevue/checkbox";
@@ -61,6 +59,8 @@ import apiService from "@/services/ApiService";
 import router from "@/router";
 import { userDetailsSchema } from "@/utils/validation-schema";
 import MutationsTableComponent from "@/components/Mutations/MutationsTableComponent.vue";
+import { handleError } from "@/utils/errorUtils";
+import { useToast } from "primevue/usetoast";
 
 const { defineComponentBinds, handleSubmit, errors, setValues } = useForm({
   validationSchema: userDetailsSchema,
@@ -69,13 +69,14 @@ const { defineComponentBinds, handleSubmit, errors, setValues } = useForm({
 const userId = ref();
 const route = useRoute();
 const userStore = useUserStore();
+const authStore = useAuthStore();
+const toast = useToast();
 const currentUser: Ref<UserResponse | undefined> = ref();
 const firstName = defineComponentBinds('firstName', {});
 const lastName = defineComponentBinds('lastName', {});
 const email = defineComponentBinds('email', {});
 const isActive = defineComponentBinds('isActive', {});
 const userType = defineComponentBinds('userType', {});
-const mutations: Ref<PaginatedFinancialMutationResponse | null | undefined> = ref();
 
 onBeforeMount(async () => {
   userId.value = route.params.userId;
@@ -89,7 +90,6 @@ onBeforeMount(async () => {
       isActive: currentUser.value.active,
     });
   }
-  await apiService.user.getUsersFinancialMutations(userId.value).then((res) => mutations.value = res.data);
 });
 
 const handleEditUser = handleSubmit(async (values) => {
@@ -110,6 +110,16 @@ const handleEditUser = handleSubmit(async (values) => {
   }
 });
 
+const getUserMutations = async (take: number, skip: number) :
+  Promise<PaginatedFinancialMutationResponse | undefined> => {
+  if (!authStore.getUser) {
+    await router.replace({ path: '/error' });
+    return;
+  }
+  await userStore.fetchUsersFinancialMutations(authStore.getUser.id, apiService, take, skip)
+    .catch((err) => handleError(err, toast));
+  return userStore.getCurrentUser.financialMutations;
+};
 
 </script>
 
