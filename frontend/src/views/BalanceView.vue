@@ -20,7 +20,7 @@
               mode="currency"
               currency="EUR"
               locale="nl-NL"
-              :min="5"
+              :min="10"
             />
           </div>
         </div>
