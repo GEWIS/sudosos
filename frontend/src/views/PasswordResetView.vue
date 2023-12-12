@@ -1,15 +1,16 @@
 <template>
   <div>
-    <main>
-      <img id="reset-image" src="../assets/img/bier.png" alt="logo"/>
-      <h1>{{ $t('login.Reset') }}</h1>
-      <form v-if="passwordResetMode === 0" class="login-form" @submit="resetPasswordRequest">
+    <main class="flex flex-column text-center mx-auto my-7 max-w-21rem">
+      <img class="max-h-9rem block mx-auto my-0" src="@/assets/img/bier.png" alt="logo"/>
+      <div class="text-900 text-5xl mt-0 mx-auto mb-2 w-full">{{ $t('login.Reset') }}</div>
+      <form v-if="passwordResetMode === 0" class="flex flex-column" @submit="resetPasswordRequest">
         <span class="p-float-label with-error">
           <InputText
               v-bind="email"
               id="email"
               size="large"
               name="email"
+              class="input-field"
               :class="{'p-invalid': emailForm.errors.value.email}"
           />
           <label :class="{'contains-text': email.modelValue }" for="email">{{ $t('login.Enter email') }}</label>
@@ -22,11 +23,11 @@
           {{ emailForm.errors.value.email }}
         </small>
         <Button type="submit" id="reset-button">{{ $t('login.Reset') }}</Button>
-        <div class="backtologin" @click="backToLogin">{{ $t('login.Back to login') }}</div>
+        <div class="text-900 underline" @click="backToLogin">{{ $t('login.Back to login') }}</div>
       </form>
       <div v-else-if="passwordResetMode === 1" class="login-form">
-        <div class="sent-email">{{ $t('login.Email sent') }}</div>
-        <div class="backtologin" @click="backToLogin">{{ $t('login.Back to login') }}</div>
+        <div class="text-900">{{ $t('login.Email sent') }}</div>
+        <div class="text-900 underline" @click="backToLogin">{{ $t('login.Back to login') }}</div>
       </div>
       <form v-else class="login-form" @submit="setNewPassword">
         <span class="p-float-label with-error">
@@ -36,6 +37,7 @@
               size="large"
               name="password"
               type="password"
+              class="input-field"
               :class="{'p-invalid': passwordForm.errors.value.password}"
           />
           <label :class="{'contains-text': password.modelValue }" for="password">{{ $t('login.New password') }}</label>
@@ -54,6 +56,7 @@
               size="large"
               name="passwordConfirm"
               type="password"
+              class="input-field"
               :class="{'p-invalid': passwordForm.errors.value.passwordConfirm}"
           />
           <label :class="{'contains-text': passwordConfirm.modelValue }" for="passwordConfirm">
@@ -163,34 +166,6 @@ const backToLogin = () => {
 
 <style scoped lang="scss">
 //TODO Cleanup and fix, related to issue #14 and #25
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-h1 {
-  color: black;
-  max-width: 350px;
-  width: 100%;
-  font-size: 2.5rem;
-  margin: 0 auto 1.5rem;
-}
-
-#reset-image {
-  max-height: 150px;
-
-  display: block;
-  margin: 0 auto;
-}
-
-main {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  max-width: 350px;
-  margin: 4rem auto;
-}
-
 .p-button {
   margin: 1rem auto;
   max-width: 350px;
@@ -199,11 +174,6 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-#gewis-branding {
-  max-height: 24px;
-  margin-right: 1rem;
 }
 
 .p-error {
@@ -219,23 +189,7 @@ main {
   line-height:12px;
 }
 
-#email {
-  width: 100%;
-  padding-top: 18px;
-  padding-left: 12px;
-  padding-bottom: 0;
-  height: 60px;
-}
-
-#password {
-  width: 100%;
-  padding-top: 18px;
-  padding-left: 12px;
-  padding-bottom: 0;
-  height: 60px;
-}
-
-#passwordConfirm {
+.input-field {
   width: 100%;
   padding-top: 18px;
   padding-left: 12px;
@@ -260,14 +214,5 @@ main {
 
 .p-inputtext {
   margin-bottom: 0.5rem;
-}
-
-.sent-email {
-  color: black;
-}
-
-.backtologin {
-  color: black;
-  text-decoration-line: underline;
 }
 </style>
