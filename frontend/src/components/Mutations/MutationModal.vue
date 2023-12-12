@@ -60,7 +60,6 @@ async function fetchTransferInfo() {
   if (transferDetails.value[props.id]) return; // We already have content!
   await transferStore.fetchIndividualTransfer(props.id, apiService).then(() => {
     transferDetails.value[props.id] = transferStore.transfer as TransferResponse;
-    console.error(transferDetails.value[props.id]);
   });
 }
 

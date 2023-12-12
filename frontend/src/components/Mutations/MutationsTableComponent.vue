@@ -91,7 +91,6 @@ function isPaginatedBaseTransactionResponse(obj: any): obj is PaginatedBaseTrans
 const rows: Ref<number> = ref(10);
 onMounted( async () => {
   const initialMutations = await getMutations(rows.value, 0);
-  console.log(initialMutations);
   totalRecords.value = initialMutations._pagination.count || 0;
   if (isPaginatedBaseTransactionResponse(initialMutations)){
     mutations.value = parseFinancialTransactions(initialMutations);

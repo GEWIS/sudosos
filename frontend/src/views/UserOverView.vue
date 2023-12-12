@@ -169,7 +169,6 @@ const delayedAPICall = async (skip: number) => {
 };
 
 const onPage = (event: any) => {
-  console.log(event);
   delayedAPICall(event.originalEvent.first);
 };
 // TODO: Fix sorting
