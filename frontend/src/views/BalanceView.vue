@@ -6,14 +6,12 @@
       <CardComponent
           :action="$t('balance.Start payment')"
           :header="$t('balance.Increase balance')"
-          class="increase-balance-card"
           :func="showDialog"
       >
-        <div id="balance-increase-form">
-          <p id="balance-increase-title">{{ $t('balance.Balance increase amount') }}</p>
-          <div class="p-inputgroup flex-1">
+        <div>
+          <p class="font-bold">{{ $t('balance.Balance increase amount') }}</p>
+          <div class="w-3 flex-1">
             <InputNumber
-              class="cashInput"
               v-model="amountValue"
               :placeholder="$t('balance.Price')"
               inputId="amount"
@@ -35,8 +33,6 @@ import CardComponent from "@/components/CardComponent.vue";
 import { ref } from "vue";
 import TopupModal from "@/components/TopupModalComponent.vue";
 
-
-
 // Define the 'visible' ref variable to control dialog visibility
 const visible = ref(false);
 const amountValue = ref();
@@ -50,17 +46,7 @@ const showDialog = () => {
 
 <style scoped>
 @import "../styles/BasePage.css";
-
 :deep(.p-panel-content) {
   padding-left: 1.25rem!important;
-}
-
-#balance-increase-title {
-  font-weight: 700;
-}
-
-.p-inputgroup {
-  width: 25%;
-  min-width: 120px;
 }
 </style>
