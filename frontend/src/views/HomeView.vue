@@ -1,8 +1,8 @@
 <template>
   <div class="page-container">
     <div class="page-title">{{ $t('home.Overview') }}</div>
-    <div class="content-wrapper">
-      <BalanceComponent class="balance-component" :showOption="true" />
+    <div class="content-wrapper gap-5">
+      <BalanceComponent :showOption="true"/>
       <MutationsTableComponent
         :callback-function="getUserMutations"
         :header="$t('c_recentTransactionsTable.recent transactions')"
@@ -42,9 +42,13 @@ const getUserMutations = async (take: number, skip: number) :
 </script>
 
 <style scoped lang="scss">
+<<<<<<< HEAD
 @import '../styles/BasePage.css';
 
 .balance-component {
   margin-right: 15px;
 }
+=======
+@import "../styles/BasePage.css";
+>>>>>>> 8ca1d52 (Fixed HomeView.vue en App.vue to use primeflex)
 </style>
