@@ -34,7 +34,7 @@
         </div>
         <div class="row">
           <p class="prop">{{ $t('c_productEditModal.Price') }}</p>
-          <InputNumber placeholder="" v-bind="price" />
+          <InputNumber placeholder="" v-bind="price" :max-fraction-digits="2" />
           <span class="error-text">{{ errors.price }}</span>
         </div>
         <div class="row">
