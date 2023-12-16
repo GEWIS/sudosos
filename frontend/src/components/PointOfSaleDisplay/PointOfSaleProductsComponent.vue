@@ -1,9 +1,10 @@
 <template>
   <div class="container-grid-wrapper flex-1 h-100 mb-3 me-3">
     <div class="container d-grid gap-2 pe-5 pb-3">
+      {{ sortedProducts }}
       <ProductComponent
           v-for="product in sortedProducts"
-          :key="product.product.id"
+          :key="`${product.product.id}-${product.container.id}`"
           :product="product.product"
           :container="product.container"
       />
@@ -12,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import {
   PointOfSaleWithContainersResponse
 } from "@sudosos/sudosos-client";
@@ -38,6 +39,12 @@ const props = defineProps({
   },
 });
 
+const searchQuery = ref(props.searchQuery);
+
+watch(() => props.searchQuery, (newValue) => {
+  searchQuery.value = newValue;
+}, { immediate: true });
+
 const getFilteredProducts = () => {
   if (!props.pointOfSale) return [];
 
@@ -55,7 +62,7 @@ const getFilteredProducts = () => {
   }
 
   if (props.isProductSearch) {
-    if (props.searchQuery === '') return filteredProducts;
+    if (searchQuery.value === '') return filteredProducts;
 
     if (props.searchQuery) {
       filteredProducts = new Fuse(filteredProducts, {
@@ -64,7 +71,7 @@ const getFilteredProducts = () => {
         shouldSort: true,
         threshold: 0.2
       })
-          .search(props.searchQuery)
+          .search(searchQuery.value)
           .map((r) => r.item);
     }
   }

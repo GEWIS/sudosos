@@ -1,6 +1,6 @@
 <template>
   <div class="select-user c-btn active square flex-grow-1 fs-6 py-4 px-4" @click="select()">
-    {{member.firstName}} {{member.lastName}}
+    {{ displayName() }}
   </div>
 </template>
 
@@ -18,6 +18,16 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['cancelSelectCreator']);
+
+const displayName = () => {
+  let name = props.member.firstName;
+  if (props.member) {
+    // @ts-ignore
+    if (props.user.nickname) name += ` "${props.user.nickname}"`;
+  }
+  name += ' ' + props.member.lastName;
+  return name;
+};
 
 const select = () => {
   cartStore.setCreatedBy(props.member);
