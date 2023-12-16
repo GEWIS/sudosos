@@ -14,7 +14,7 @@
       </div>
     </div>
     <div>
-      <ScrollPanel class="custombar" style="width: 100%; height: 20rem;">
+      <ScrollPanel class="custombar" style="width: 100%; height: 25rem;">
         <UserSearchRowComponent v-for="user in sortedUsers" :user="user" :key="user.id"
                                 @click="selectUser(user)"/>
       </ScrollPanel>

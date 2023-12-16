@@ -23,7 +23,7 @@ const displayName = () => {
   let name = props.member.firstName;
   if (props.member) {
     // @ts-ignore
-    if (props.user.nickname) name += ` "${props.user.nickname}"`;
+    if (props.member.nickname) name += ` "${props.member.nickname}"`;
   }
   name += ' ' + props.member.lastName;
   return name;
