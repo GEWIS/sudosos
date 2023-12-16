@@ -6,7 +6,8 @@
           <font-awesome-icon icon="fa-solid fa-xmark"/>
         </div>
         <input type="text" ref="searchInput" class="flex-sm-grow-1" v-model="searchQuery"
-               placeholder="Search user to charge..." @input="updateSearchQuery($event as InputEvent)"/>
+               placeholder="Search user to charge..."
+               @input="updateSearchQuery($event as InputEvent)"/>
         <div class="c-btn active rounder fs-5" @click="selectSelf()" v-if="!settings.isBorrelmode">
           Charge yourself
         </div>
@@ -57,16 +58,16 @@ const settings = useSettingStore();
 // });
 
 const updateSearchQuery = (event: InputEvent) => {
-    if (event.target) {
-        searchQuery.value = (event.target as HTMLInputElement).value;
-    }
+  if (event.target) {
+    searchQuery.value = (event.target as HTMLInputElement).value;
+  }
 };
 
 const delayedAPICall = debounce(() => {
   apiService.user.getAllUsers(Number.MAX_SAFE_INTEGER, 0, searchQuery.value, true)
     .then((res: AxiosResponse<PaginatedUserResponse, any>) => {
       users.value = res.data.records;
-  });
+    });
 }, 500);
 
 watch(searchQuery, () => {
@@ -76,12 +77,16 @@ watch(searchQuery, () => {
 const sortedUsers = computed(() => {
   // TODO: fix backend searching
   // This fuzzy search allows us to effectively search in the front-end, but this should be done in the backend.
-  const full = [...users.value].map((u: UserResponse) =>
-  { return { ...u, fullName: `${u.firstName.normalize("NFD").replace(/[\u0300-\u036f]/g,"")} ${u.lastName.normalize("NFD").replace(/[\u0300-\u036f]/g, "")}` }; });
+  const full = [...users.value].map((u: UserResponse) => {
+    return {
+      ...u, fullName: `${u.firstName.normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")} ${u.lastName.normalize("NFD").replace(/[\u0300-\u036f]/g, "")}`
+    };
+  });
   const fuzzed: UserResponse[] = new Fuse(
     full,
     {
-      keys: ['fullName', 'gewisID'],
+      keys: ['fullName', 'gewisID', 'nickname'],
       isCaseSensitive: false,
       shouldSort: true,
       threshold: 0.2,
