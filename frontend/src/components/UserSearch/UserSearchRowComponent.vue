@@ -31,7 +31,10 @@ const shouldShowAge = () => {
 
 const displayName = () => {
   let name = props.user.firstName;
-  if (props.user.nickname) name += ` "${props.user.nickname}"`;
+  if (props.user) {
+    // @ts-ignore
+    if (Object.prototype.hasOwnProperty.call(props.user, "nickname")) name += ` "${props.user.nickname}"`;
+  }
   name += ' ' + props.user.lastName;
 
   if ("gewisId" in props.user && props.user.gewisId) {
