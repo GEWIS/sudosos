@@ -1,7 +1,7 @@
 .p-menubar {
     padding: $horizontalMenuPadding;
-    background: $horizontalMenuBg;
-    color: $horizontalMenuTextColor;
+    background: $primaryColor;
+    color: $primaryTextColor;
     border: $horizontalMenuBorder;
     border-radius: $borderRadius;
 
@@ -32,6 +32,10 @@
         .p-submenu-icon {
             font-size: $menuitemSubmenuIconFontSize;
         }
+
+        .p-menuitem {
+            @include submenuitem();
+        }
     }
 }
 
@@ -46,12 +50,12 @@
             color: $horizontalMenuRootMenuitemIconColor;
             border-radius: $actionIconBorderRadius;
             transition: $actionIconTransition;
-        
+
             &:hover {
                 color: $horizontalMenuRootMenuitemIconHoverColor;
                 background: $horizontalMenuRootMenuitemHoverBg;
             }
-        
+
             &:focus {
                 @include focused();
             }
@@ -65,12 +69,12 @@
             border: $overlayMenuBorder;
             box-shadow: $overlayMenuShadow;
             width: 100%;
-    
+
             .p-menuitem-separator {
                 border-top: $divider;
                 margin: $menuSeparatorMargin;
             }
-    
+
             .p-submenu-icon {
                 font-size: $menuitemSubmenuIconFontSize;
             }
@@ -121,7 +125,7 @@
                     }
                 }
             }
-    
+
             .p-menuitem {
                 width: 100%;
                 position: static;
@@ -131,11 +135,16 @@
         }
 
         &.p-menubar-mobile-active .p-menubar-root-list {
+
             display: flex;
             flex-direction: column;
             top: 100%;
             left: 0;
             z-index: 1;
+
+            & * {
+                color:black;
+            }
         }
     }
 }
