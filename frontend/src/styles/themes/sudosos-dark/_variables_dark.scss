@@ -16,19 +16,19 @@ $colors: (
 //shades
 $shade000:rgba(255,255,255,.87) !default;  //text color
 $shade100:rgba(255,255,255,.60) !default;  //text secondary color
-$shade200:#7789a1 !default;  
-$shade300:#687c97 !default;  
+$shade200:#7789a1 !default;
+$shade300:#687c97 !default;
 $shade400:#5a6472 !default;
 $shade500:#4c5866 !default;
 $shade600:#3f4b5b !default;  //input bg, border, divider
-$shade700:#343e4d !default;  
+$shade700:#343e4d !default;
 $shade800:#2a323d !default;  //elevated surface
 $shade900:#20262e !default;  //ground surface
 
 $hoverBg:rgba(255,255,255,.04) !default;
 
 //global
-$fontFamily: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif !default;
+$fontFamily: Raleway, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif !default;
 $fontSize:1rem !default;
 $fontWeight:normal !default;
 $textColor:$shade000 !default;
@@ -645,6 +645,20 @@ $progressSpinnerColorThree:$successMessageTextColor !default;
 $progressSpinnerColorFour:$warningMessageTextColor !default;
 
 //menu (e.g. menu, menubar, tieredmenu)
+$submenuTextColor:$shade900 !default;
+$submenuitemTextColor:$shade000 !default;
+$submenuitemIconColor:$shade100 !default;
+$submenuitemTextHoverColor:$shade000 !default;
+$submenuitemIconHoverColor:$shade000 !default;
+$submenuitemHoverBg:$hoverBg !default;
+$submenuitemTextFocusColor:$shade000 !default;
+$submenuitemIconFocusColor:$shade000 !default;
+$submenuitemFocusBg:rgba(255,255,255,.12) !default;
+$submenuitemTextActiveColor:$shade000 !default;
+$submenuitemIconActiveColor:$shade000 !default;
+$submenuitemActiveBg:$shade900 !default;
+$submenuitemActiveFocusBg:$shade900 !default;
+
 $menuWidth:12.5rem !default;
 $menuBg:$shade800 !default;
 $menuBorder:1px solid $shade600 !default;

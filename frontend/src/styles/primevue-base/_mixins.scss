@@ -31,6 +31,35 @@
 	border-color: $inputErrorBorderColor;
 }
 
+@mixin submenuitem {
+    > .p-menuitem-content {
+        color: $submenuTextColor;
+        transition: $listItemTransition;
+        border-radius: $menuitemBorderRadius;
+
+        .p-menuitem-link {
+            color: $submenuitemTextColor;
+            padding: $menuitemPadding;
+            user-select: none;
+
+            .p-menuitem-text {
+                color: $submenuitemTextColor;
+                font-family: $fontFamily;
+                font-weight: 500;
+            }
+
+            .p-menuitem-icon {
+                color: $submenuitemIconColor;
+                margin-right: $inlineSpacing;
+            }
+
+            .p-submenu-icon {
+                color: $submenuitemIconColor;
+            }
+        }
+    }
+}
+
 @mixin menuitem {
     > .p-menuitem-content {
         color: $menuitemTextColor;
@@ -44,17 +73,20 @@
 
             .p-menuitem-text {
                 color: $menuitemTextColor;
+                font-family: $fontFamily;
+                font-weight: 500;
             }
-        
+
             .p-menuitem-icon {
                 color: $menuitemIconColor;
                 margin-right: $inlineSpacing;
             }
-            
+
             .p-submenu-icon {
                 color: $menuitemIconColor;
             }
         }
+
     }
 
     &.p-highlight {
@@ -85,12 +117,12 @@
             > .p-menuitem-content {
                 color: $menuitemTextFocusColor;
                 background: $menuitemFocusBg;
-    
+
                 .p-menuitem-link {
                     .p-menuitem-text {
                         color: $menuitemTextFocusColor;
                     }
-                
+
                     .p-menuitem-icon, .p-submenu-icon {
                         color: $menuitemIconFocusColor;
                     }
@@ -102,12 +134,12 @@
             &:hover {
                 color: $menuitemTextHoverColor;
                 background: $menuitemHoverBg;
-    
+
                 .p-menuitem-link {
                     .p-menuitem-text {
                         color: $menuitemTextHoverColor;
                     }
-    
+
                     .p-menuitem-icon, .p-submenu-icon {
                         color: $menuitemIconHoverColor;
                     }
@@ -130,12 +162,12 @@
             .p-menuitem-text {
                 color: $horizontalMenuRootMenuitemTextColor;
             }
-        
+
             .p-menuitem-icon {
                 color: $horizontalMenuRootMenuitemIconColor;
                 margin-right: $inlineSpacing;
             }
-            
+
             .p-submenu-icon {
                 color: $horizontalMenuRootMenuitemIconColor;
                 margin-left: $inlineSpacing;
@@ -148,12 +180,12 @@
             &:hover {
                 color: $horizontalMenuRootMenuitemTextHoverColor;
                 background: $horizontalMenuRootMenuitemHoverBg;
-    
+
                 .p-menuitem-link {
                     .p-menuitem-text {
                         color: $horizontalMenuRootMenuitemTextHoverColor;
                     }
-    
+
                     .p-menuitem-icon, .p-submenu-icon {
                         color: $horizontalMenuRootMenuitemIconHoverColor;
                     }
@@ -193,7 +225,7 @@
                 .p-menuitem-link {
                     padding-left: $val * ($index + 1);
                 }
-    
+
             }
             @if $index < $length {
                 @include nested-submenu-indents($val, $index + 2, $length);
