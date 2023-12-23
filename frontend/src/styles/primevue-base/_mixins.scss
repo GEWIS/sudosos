@@ -60,6 +60,67 @@
             }
         }
     }
+
+    &.p-highlight {
+        > .p-menuitem-content {
+            color: $submenuitemTextActiveColor;
+            background: $submenuitemActiveBg;
+
+            .p-menuitem-link {
+                .p-menuitem-text {
+                    color: $submenuitemTextActiveColor;
+                }
+
+                .p-menuitem-icon, .p-submenu-icon, .pi {
+                    color: $submenuitemIconActiveColor;
+                }
+            }
+        }
+
+        &.p-focus {
+            > .p-menuitem-content {
+                background: $submenuitemActiveFocusBg;
+            }
+        }
+    }
+
+    &:not(.p-highlight):not(.p-disabled) {
+        &.p-focus {
+            > .p-menuitem-content {
+                color: $submenuitemTextFocusColor;
+
+                .p-menuitem-link {
+                    color: $submenuitemTextFocusColor;
+
+                    .p-menuitem-text {
+                        color: $submenuitemTextFocusColor;
+                    }
+
+                    .p-menuitem-icon, .p-submenu-icon, .pi {
+                        color: $submenuitemIconFocusColor;
+                    }
+                }
+            }
+        }
+
+        > .p-menuitem-content {
+            &:hover {
+                color: $submenuitemTextHoverColor;
+
+                .p-menuitem-link {
+                    .p-menuitem-text {
+                        color: $submenuitemTextHoverColor;
+                        transition: $listItemTransition;
+                    }
+
+                    .p-menuitem-icon, .p-submenu-icon, .pi {
+                        color: $submenuitemIconHoverColor;
+                        transition: $listItemTransition;
+                    }
+                }
+            }
+        }
+    }
 }
 
 @mixin menuitem {
@@ -101,7 +162,7 @@
                     color: $menuitemTextActiveColor;
                 }
 
-                .p-menuitem-icon, .p-submenu-icon {
+                .p-menuitem-icon, .p-submenu-icon, .pi {
                     color: $menuitemIconActiveColor;
                 }
             }
@@ -121,11 +182,13 @@
                 background: $menuitemFocusBg;
 
                 .p-menuitem-link {
+                    color: $menuitemTextFocusColor;
+
                     .p-menuitem-text {
                         color: $menuitemTextFocusColor;
                     }
 
-                    .p-menuitem-icon, .p-submenu-icon {
+                    .p-menuitem-icon, .p-submenu-icon, .pi {
                         color: $menuitemIconFocusColor;
                     }
                 }
@@ -140,10 +203,12 @@
                 .p-menuitem-link {
                     .p-menuitem-text {
                         color: $menuitemTextHoverColor;
+                        transition: $listItemTransition;
                     }
 
-                    .p-menuitem-icon, .p-submenu-icon {
+                    .p-menuitem-icon, .p-submenu-icon, .pi {
                         color: $menuitemIconHoverColor;
+                        transition: $listItemTransition;
                     }
                 }
             }
@@ -188,7 +253,7 @@
                         color: $horizontalMenuRootMenuitemTextHoverColor;
                     }
 
-                    .p-menuitem-icon, .p-submenu-icon {
+                    .p-menuitem-icon, .p-submenu-icon, .pi {
                         color: $horizontalMenuRootMenuitemIconHoverColor;
                     }
                 }

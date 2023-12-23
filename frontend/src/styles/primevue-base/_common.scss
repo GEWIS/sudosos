@@ -3,7 +3,7 @@
 }
 
 .p-component {
-    font-family: var(--font-family);
+    font-family: $fontFamily;
     font-feature-settings: var(--font-feature-settings, normal);
     font-size: $fontSize;
     font-weight: $fontWeight;
@@ -63,7 +63,7 @@
             background-color: var(--maskbg);
         }
     }
-    
+
     @keyframes p-component-overlay-leave-animation {
         from {
             background-color: var(--maskbg);

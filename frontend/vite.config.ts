@@ -15,5 +15,8 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['ToastService'],
-  }
+  },
+  // server: {
+  //   host: '0.0.0.0',
+  // }
 });
