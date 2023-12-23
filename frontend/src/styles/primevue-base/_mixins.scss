@@ -37,6 +37,7 @@
         transition: $listItemTransition;
         border-radius: $menuitemBorderRadius;
 
+
         .p-menuitem-link {
             color: $submenuitemTextColor;
             padding: $menuitemPadding;
@@ -46,6 +47,7 @@
                 color: $submenuitemTextColor;
                 font-family: $fontFamily;
                 font-weight: 500;
+
             }
 
             .p-menuitem-icon {

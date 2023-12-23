@@ -36,10 +36,10 @@ $fontWeight:normal !default;
 $textColor:$shade900 !default;
 $textSecondaryColor:$shade600 !default;
 $borderRadius:4px !default;
-$transitionDuration:.15s !default;
+$transitionDuration:.2s !default;
 $formElementTransition:background-color $transitionDuration, border-color $transitionDuration, box-shadow $transitionDuration !default;
 $actionIconTransition:box-shadow $transitionDuration !default;
-$listItemTransition:box-shadow $transitionDuration !default;
+$listItemTransition:color $transitionDuration linear !default;
 $primeIconFontSize:1rem !default;
 $divider:1px solid $shade300 !default;
 $inlineSpacing:.5rem !default;
@@ -647,6 +647,7 @@ $progressSpinnerColorThree:$successMessageTextColor !default;
 $progressSpinnerColorFour:$warningMessageTextColor !default;
 
 //menu (e.g. menu, menubar, tieredmenu)
+$menuHoverTransition: color .2s linear;
 $submenuTextColor:$shade900 !default;
 $submenuitemTextColor:$shade900 !default;
 $submenuitemIconColor:$shade100 !default;
@@ -709,11 +710,11 @@ $horizontalMenuRootMenuitemPadding:1rem !default;
 $horizontalMenuRootMenuitemBorderRadius:$borderRadius !default;
 $horizontalMenuRootMenuitemTextColor:$shade000 !default;
 $horizontalMenuRootMenuitemIconColor:$shade000 !default;
-$horizontalMenuRootMenuitemTextHoverColor:rgba(0,0,0,.7) !default;
-$horizontalMenuRootMenuitemIconHoverColor:rgba(0,0,0,.7) !default;
+$horizontalMenuRootMenuitemTextHoverColor:hsla(0, 0%, 100%, .75) !default;
+$horizontalMenuRootMenuitemIconHoverColor:hsla(0, 0%, 100%, .75) !default;
 $horizontalMenuRootMenuitemHoverBg:transparent !default;
-$horizontalMenuRootMenuitemTextActiveColor:rgba(0,0,0,.9) !default;
-$horizontalMenuRootMenuitemIconActiveColor:rgba(0,0,0,.9) !default;
+$horizontalMenuRootMenuitemTextActiveColor:hsla(0, 0%, 100%, .75) !default;
+$horizontalMenuRootMenuitemIconActiveColor:hsla(0, 0%, 100%, .75) !default;
 $horizontalMenuRootMenuitemActiveBg:transparent !default;
 
 //badge and tag
