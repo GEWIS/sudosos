@@ -3,9 +3,9 @@
     <nav class="bg-primary w-full flex justify-content-around">
         <Menubar class="hidden md:flex" :model="leftItems">
           <template #start>
-            <router-link to="/" id="sudosos">
+            <router-link to="/" class="no-underline text-white font-bold flex align-items-center flex-row py-1">
               {{ $t("login.SudoSOS") }}
-              <img id="logo" src="../assets/img/gewis-branding.svg" alt="SudoSOS" />
+              <img class="h-4rem py-2" src="../assets/img/gewis-branding.svg" alt="SudoSOS" />
             </router-link>
           </template>
           <template #item="{ item, props, hasSubmenu }">
@@ -22,7 +22,7 @@
         </Menubar>
       <Menubar class="hidden md:flex" :model="rightItems">
         <template #start>
-          <img id="bier" src="../assets/img/bier.png"/>
+          <img class="h-1rem" src="../assets/img/bier.png"/>
         </template>
         <template #item="{ item, props, hasSubmenu }">
           <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
@@ -297,68 +297,4 @@ const mobileItems = ref([
 </script>
 
 <style scoped lang="scss">
-// Define normal top-level menu-items
-//:deep(.p-menuitem) {
-//  .p-menuitem-content {
-//    > a {
-//      > * {
-//        //color: white;
-//        transition: color .2s linear;
-//      }
-//    }
-//    &:hover {
-//      > a {
-//        &:hover {
-//          background-color: transparent;
-//        }
-//
-//        > * {
-//          color: hsla(0, 0%, 100%, .75);
-//        }
-//      }
-//    }
-//  }
-//}
-//
-//:deep(.p-submenu-list){
-//  //padding: 0.5rem 0;
-//  width: fit-content;
-//  height: fit-content;
-//}
-//
-//// Define an exception for submenu-items
-//:deep(.p-submenu-list .p-menuitem){
-//
-//  font-size: 1rem;
-//  white-space: nowrap;
-//  .p-menuitem-content > a > * {
-//    //padding: 0.5rem 1.5rem;
-//    //color: black;
-//    font-weight: 400;
-//  }
-//}
-
-#logo {
-  height: 65px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
-
-#sudosos {
-  color: white;
-  font-weight: 700;
-  font-family: Raleway, sans-serif;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0.3125rem 0;
-}
-
-:deep(svg){
-  margin: 0!important;
-}
-
-#bier {
-  height: 12px;
-}
 </style>
