@@ -349,9 +349,10 @@ $panelHeaderBorderColor: $shade300 !default;
 $panelHeaderBorder:1px solid $shade300 !default;
 $panelHeaderBg:$shade100 !default;
 $panelHeaderTextColor:$primaryColor !default;
-$panelHeaderFontWeight:600 !default;
-$panelHeaderPadding:1rem 1.25rem !default;
+$panelHeaderFontWeight:400 !default;
+$panelHeaderPadding:0 1.25rem !default;
 $panelToggleableHeaderPadding:.5rem 1.25rem !default;
+$panelTitlePadding: 1.25rem 0 !default;
 
 $panelHeaderHoverBg:$shade200 !default;
 $panelHeaderHoverBorderColor:$shade300 !default;
@@ -362,12 +363,12 @@ $panelContentBorder:1px solid $shade300 !default;
 $panelContentBg:$shade100 !default;
 $panelContentEvenRowBg:rgba(0,0,0,.05) !default;
 $panelContentTextColor:$shade900 !default;
-$panelContentPadding:1.25rem !default;
+$panelContentPadding:1rem 2rem !default;
 
 $panelFooterBorder:1px solid $shade300 !default;
 $panelFooterBg:$shade100 !default;
 $panelFooterTextColor:$shade900 !default;
-$panelFooterPadding:.5rem 1.25rem !default;
+$panelFooterPadding:0 !default;
 
 //accordion
 $accordionSpacing:0 !default;
