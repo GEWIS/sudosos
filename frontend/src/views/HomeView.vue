@@ -26,13 +26,10 @@ import router from "@/router";
 import { handleError } from "@/utils/errorUtils";
 import { useToast } from "primevue/usetoast";
 import UserInfoComponent from "@/components/UserInfoComponent.vue";
-import { storeToRefs } from "pinia";
 
 const authStore = useAuthStore();
 const userStore = useUserStore();
 const toast = useToast();
-
-const userRefs = storeToRefs(userStore);
 
 const getUserMutations = async (take: number, skip: number):
     Promise<PaginatedFinancialMutationResponse | undefined> => {
@@ -44,6 +41,7 @@ const getUserMutations = async (take: number, skip: number):
       .catch((err) => handleError(err, toast));
   return userStore.getCurrentUser.financialMutations;
 };
+
 </script>
 
 <style scoped lang="scss">

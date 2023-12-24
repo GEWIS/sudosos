@@ -566,8 +566,8 @@
     "productCreated": "Successfully created product."
   },
   "quickOverview": {
-  "quickOverview": "Quick Overview",
-  "quickOverviewMessage": "Show this at the bar so we can help you faster"
+    "quickOverview": "Quick Overview",
+    "quickOverviewMessage": "Show this at the bar so we can help you faster"
   }
 }
 

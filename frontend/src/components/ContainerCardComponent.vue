@@ -7,9 +7,9 @@
       </TabPanel>
       <TabPanel>
         <template #header>
-          
-            <span class="p-tabview-title createContainerButton">New container</span> 
-          
+
+            <span class="p-tabview-title createContainerButton">New container</span>
+
         </template>
       </TabPanel>
     </TabView>
@@ -26,10 +26,6 @@ import CardComponent from "./CardComponent.vue";
 const props = defineProps({
   data: {
     type: Array<ContainerWithProductsResponse>,
-    required: true,
-  },
-  header: {
-    type: String,
     required: true,
   },
 });
