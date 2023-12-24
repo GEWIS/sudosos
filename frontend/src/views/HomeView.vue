@@ -43,6 +43,7 @@ const getUserMutations = async (take: number, skip: number) :
 
 <style scoped lang="scss">
 <<<<<<< HEAD
+<<<<<<< HEAD
 @import '../styles/BasePage.css';
 
 .balance-component {
@@ -51,4 +52,7 @@ const getUserMutations = async (take: number, skip: number) :
 =======
 @import "../styles/BasePage.css";
 >>>>>>> 8ca1d52 (Fixed HomeView.vue en App.vue to use primeflex)
+=======
+@import "../styles/BasePage.css";
+>>>>>>> ebebcec39984fc34626b1045c9aa3a239b72b534
 </style>
