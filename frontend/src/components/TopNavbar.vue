@@ -37,15 +37,23 @@
           </a>
         </template>
       </Menubar>
-      <Menubar class="flex md:hidden" :model="mobileItems">
+      <Menubar class="flex md:hidden flex-row flex-wrap justify-content-between mx-2 my-2 transition-all" :model="mobileItems">
+        <template #start>
+          <router-link to="/" class="no-underline text-white font-bold flex align-items-center flex-row py-1">
+            {{ $t("login.SudoSOS") }}
+            <img class="h-4rem py-2" src="../assets/img/gewis-branding.svg" alt="SudoSOS" />
+          </router-link>
+        </template>
         <template #item="{ item, props, hasSubmenu }">
           <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
             <a :href="href" v-bind="props.action" @click="navigate">
-              <span class="p-menuitem-text">{{ item.label }}</span>
+              <span class="p-menuitem-text">{{ item.label}}</span>
+              <span v-if="item.icon" :class="item.icon" />
             </a>
           </router-link>
           <a v-else :href="item.url" :target="item.target" v-bind="props.action">
-            <span class="p-menuitem-text">{{ item.label }}</span>
+            <span class="p-menuitem-text">{{ item.label}}</span>
+              <span v-if="item.icon" :class="item.icon" />
             <span v-if="hasSubmenu" class="pi pi-fw pi-angle-down ml-2" />
           </a>
         </template>

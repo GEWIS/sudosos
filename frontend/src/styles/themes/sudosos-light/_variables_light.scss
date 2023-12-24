@@ -59,8 +59,8 @@ $focusOutlineOffset:0 !default;
 $focusShadow:0 0 0 0.2rem $focusOutlineColor !default;
 
 //action icons
-$actionIconWidth:2rem !default;
-$actionIconHeight:2rem !default;
+$actionIconWidth:1.5rem !default;
+$actionIconHeight:1.5rem !default;
 $actionIconBg:transparent !default;
 $actionIconBorder:0 none !default;
 $actionIconColor:$shade600 !default;
@@ -667,6 +667,8 @@ $menuBg:$shade100 !default;
 $menuBorder:1px solid $shade300 !default;
 $menuTextColor:$shade900 !default;
 $menuitemPadding:.75rem 1rem !default;
+$mobilemenuitemPadding: 0.5rem 0 !default;
+$mobilesubmenuitemPadding: 0.25rem 1.5rem !default;
 $menuitemBorderRadius:0 !default;
 $menuitemTextColor:$shade000 !default;
 $menuitemIconColor:$shade900 !default;

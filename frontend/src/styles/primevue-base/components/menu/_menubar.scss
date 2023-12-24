@@ -1,7 +1,7 @@
 .p-menubar {
     padding: $horizontalMenuPadding;
     background: $primaryColor;
-    color: $primaryTextColor;
+    //color: $primaryTextColor;
     border: $horizontalMenuBorder;
     border-radius: $borderRadius;
 
@@ -42,7 +42,14 @@
 @media screen and (max-width: 960px) {
     .p-menubar {
         position: relative;
+        width: 100%;
+        background-color: $primaryColor;
 
+        .p-submenu-list {
+            .p-menuitem {
+                @include mobilesubmenuitem();
+            }
+        }
         .p-menubar-button {
             display: flex;
             width: $actionIconWidth;
@@ -59,16 +66,24 @@
             &:focus {
                 @include focused();
             }
+
+            .p-icon {
+                width: 100%;
+                height: 100%;
+            }
         }
 
         .p-menubar-root-list {
-            position: absolute;
+            position: relative;
             display: none;
             padding: $verticalMenuPadding;
             background: $overlayMenuBg;
             border: $overlayMenuBorder;
             box-shadow: $overlayMenuShadow;
             width: 100%;
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.5s ease-in-out;
 
             .p-menuitem-separator {
                 border-top: $divider;
@@ -134,17 +149,28 @@
             @include nested-submenu-indents(nth($menuitemPadding, 1), 2, 10);
         }
 
+        &.p-menubar-mobile-active {
+            top: 0;
+
+        }
         &.p-menubar-mobile-active .p-menubar-root-list {
 
             display: flex;
             flex-direction: column;
-            top: 100%;
-            left: 0;
-            z-index: 1;
-
-            & * {
-                color:black;
+            position: relative !important;
+            top: 0 !important;
+            background-color: $primaryColor;
+            border: none;
+            max-height: fit-content !important;
+            transition: max-height 0.5s ease-in-out;
+            > .p-menuitem {
+                @include mobilemenuitem();
             }
+
+        }
+        &.p-menubar-mobile .p-menubar-root-list {
+            overflow: hidden;
+            max-height: 0;
         }
     }
 }
