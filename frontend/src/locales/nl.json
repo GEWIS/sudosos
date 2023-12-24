@@ -429,6 +429,9 @@
   "c_depositAlert": {
     "message": "Een of meer opwaarderingen worden nog verwerkt. Zodra dit is gelukt, wordt je opwaardering toegevoegd aan je saldo en zal dit bericht verdwijnen."
   },
+  "c_userInfo": {
+    "quick": "Quick Overview"
+  },
   "profile": {
     "My profile": "Mijn profiel",
     "Edit info": "Bewerk informatie",

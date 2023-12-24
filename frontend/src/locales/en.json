@@ -290,7 +290,7 @@
     "transaction": "You spent a total of {amount}",
     "transfer": "You topped up with {amount}"
   },
-  "c_bannerTable" : {
+  "c_bannerTable": {
     "Add": "Add",
     "save": "save",
     "cancel": "cancel",
@@ -449,6 +449,9 @@
   },
   "c_depositAlert": {
     "message": "One or more deposits are still being processed. When this is successful, your deposit will be added to your balance and this message will disappear."
+  },
+  "c_userInfo": {
+    "quick": "Quick Overview"
   },
   "profile": {
     "changeUserInfo": "Change user info",
