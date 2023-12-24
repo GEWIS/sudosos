@@ -50,5 +50,5 @@ const getUserMutations = async (take: number, skip: number)
 </script>
 
 <style scoped lang="scss">
-@import '../styles/BasePage.css';
+//@import '../styles/BasePage.css';
 </style>

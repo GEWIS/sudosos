@@ -67,7 +67,7 @@ const handleLogout = () => {
 </script>
 
 <style scoped lang="scss">
-@import '../styles/BasePage.css';
+//@import '../styles/BasePage.css';
 
 .checkbox {
   margin-right: 1rem;

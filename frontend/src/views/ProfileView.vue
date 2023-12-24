@@ -25,6 +25,6 @@ import ChangeApiKeyComponent from "@/components/ChangeApiKeyComponent.vue";
 import ChangeInfoComponent from "@/components/ChangeInfoComponent.vue";
 </script>
 
-<style scoped>
-@import "../styles/BasePage.css";
+<style scoped lang="scss">
+//@import "../styles/BasePage.css";
 </style>
