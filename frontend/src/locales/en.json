@@ -562,5 +562,10 @@
     "editPOS": "Succesfully edited POS.",
     "createContainer": "Successfully created container.",
     "productCreated": "Successfully created product."
+  },
+  "quickOverview": {
+  "quickOverview": "Quick Overview",
+  "quickOverviewMessage": "Show this at the bar so we can help you faster"
   }
 }
+

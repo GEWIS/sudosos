@@ -1,7 +1,7 @@
 <template>
   <CardComponent :header="$t('c_userInfo.quick')">
     <div class="body">
-      <p class="text-gray-700">Show this at the bar so we can help you faster.</p>
+      <p class="text-gray-700">{{$t('quickOverview.quickOverviewMessage')}}</p>
       <h1 class="text-center">
         {{ isGewisUser(props.user) ? props.user.gewisId : `E${props.user.id}` }} <br/>
         {{ props.user.firstName }} {{ props.user.lastName }}
