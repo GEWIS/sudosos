@@ -1,7 +1,7 @@
 <template>
-  <div class="page-container">
+  <div class="page-container flex flex-column">
     <div class="page-title">{{ $t('home.Overview') }}</div>
-    <div class="content-wrapper gap-5">
+    <div class="content-wrapper gap-5 flex md:flex-row flex-column">
       <BalanceComponent :showOption="true"/>
       <TransactionsTableComponent
           :header="$t('c_recentTransactionsTable.recent transactions')"
