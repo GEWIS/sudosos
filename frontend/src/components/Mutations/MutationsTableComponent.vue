@@ -9,7 +9,7 @@
         @page="onPage($event)"
         @row-click="(e: any) => openModal(e.data.mutationID, e.data.mutationType)"
         :totalRecords="totalRecords"
-        tableStyle="min-width: 60rem">
+        >
       <Column field="mutationMoment" style="width: 35%" header="When"/>
       <Column field="mutationDescription" style="width: 60%" header="What"/>
       <Column>
