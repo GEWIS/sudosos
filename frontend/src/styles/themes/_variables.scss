@@ -1,0 +1,10 @@
+$primaryLightColor: rgba(212, 0, 0, 0.5) !default;
+$primaryColor: #D40000 !default;
+$primaryDarkColor: #C40000 !default;
+$primaryDarkerColor: #B40000 !default;
+$primaryTextColor: #ffffff !default;
+$primaryAccentBg: #fcbfbf !default;
+
+$highlightBg: $primaryColor !default;
+$highlightTextColor: $primaryTextColor !default;
+$highlightFocusBg: darken($primaryColor, 8%) !default;

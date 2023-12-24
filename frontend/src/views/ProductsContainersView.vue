@@ -23,7 +23,7 @@
                 <InputText v-model="filters['global'].value" placeholder="Search" />
               </span>
               <span>
-                <Button severity="danger" @click="openCreateModal">{{ $t('app.Create') }}</Button>
+                <Button @click="openCreateModal">{{ $t('app.Create') }}</Button>
               </span>
             </div>
           </template>

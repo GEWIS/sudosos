@@ -4,14 +4,7 @@
 
 #app {
 
-  font-weight: normal;
-}
-
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+  //font-weight: normal;
 }
 
 @media (min-width: 1024px) {

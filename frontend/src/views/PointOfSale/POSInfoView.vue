@@ -10,7 +10,6 @@
           @click="handleEditClicked"
         />
         <Button
-          severity="danger"
           :label="$t('posInfo.Close')"
           icon="pi pi-times"
           @click="handleClosedClicked"

@@ -1,0 +1,176 @@
+.p-menubar {
+    padding: $horizontalMenuPadding;
+    background: $primaryColor;
+    //color: $primaryTextColor;
+    border: $horizontalMenuBorder;
+    border-radius: $borderRadius;
+
+    .p-menubar-root-list {
+        outline: 0 none;
+
+        > .p-menuitem {
+            @include horizontal-rootmenuitem();
+        }
+    }
+
+    .p-menuitem {
+        @include menuitem();
+    }
+
+    .p-submenu-list {
+        padding: $verticalMenuPadding;
+        background: $overlayMenuBg;
+        border: $overlayMenuBorder;
+        box-shadow: $overlayMenuShadow;
+        width: $menuWidth;
+
+        .p-menuitem-separator {
+            border-top: $divider;
+            margin: $menuSeparatorMargin;
+        }
+
+        .p-submenu-icon {
+            font-size: $menuitemSubmenuIconFontSize;
+        }
+
+        .p-menuitem {
+            @include submenuitem();
+        }
+    }
+}
+
+@media screen and (max-width: 960px) {
+    .p-menubar {
+        position: relative;
+        width: 100%;
+        background-color: $primaryColor;
+
+        .p-submenu-list {
+            .p-menuitem {
+                @include mobilesubmenuitem();
+            }
+        }
+        .p-menubar-button {
+            display: flex;
+            width: $actionIconWidth;
+            height: $actionIconHeight;
+            color: $horizontalMenuRootMenuitemIconColor;
+            border-radius: $actionIconBorderRadius;
+            transition: $actionIconTransition;
+
+            &:hover {
+                color: $horizontalMenuRootMenuitemIconHoverColor;
+                background: $horizontalMenuRootMenuitemHoverBg;
+            }
+
+            &:focus {
+                @include focused();
+            }
+
+            .p-icon {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        .p-menubar-root-list {
+            position: relative;
+            display: none;
+            padding: $verticalMenuPadding;
+            background: $overlayMenuBg;
+            border: $overlayMenuBorder;
+            box-shadow: $overlayMenuShadow;
+            width: 100%;
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.5s ease-in-out;
+
+            .p-menuitem-separator {
+                border-top: $divider;
+                margin: $menuSeparatorMargin;
+            }
+
+            .p-submenu-icon {
+                font-size: $menuitemSubmenuIconFontSize;
+            }
+
+            .p-menuitem {
+                width: 100%;
+                position: static;
+
+                .p-menuitem-content {
+                    .p-menuitem-link {
+                        .p-submenu-icon {
+                            margin-left: auto;
+                            transition: transform $transitionDuration;
+                        }
+                    }
+                }
+
+
+                &.p-menuitem-active {
+                    > .p-menuitem-content {
+                        > .p-menuitem-link {
+                            > .p-submenu-icon {
+                                transform: rotate(-180deg);
+                            }
+                        }
+                    }
+                }
+            }
+
+            .p-submenu-list {
+                width: 100%;
+                position: static;
+                box-shadow: none;
+                border: 0 none;
+
+                .p-submenu-icon {
+                    transition: transform $transitionDuration;
+                    transform: rotate(90deg);
+                }
+
+                .p-menuitem-active {
+                    > .p-menuitem-content {
+                        > .p-menuitem-link {
+                            > .p-submenu-icon {
+                                transform: rotate(-90deg);
+                            }
+                        }
+                    }
+                }
+            }
+
+            .p-menuitem {
+                width: 100%;
+                position: static;
+            }
+
+            @include nested-submenu-indents(nth($menuitemPadding, 1), 2, 10);
+        }
+
+        &.p-menubar-mobile-active {
+            top: 0;
+
+        }
+        &.p-menubar-mobile-active .p-menubar-root-list {
+
+            display: flex;
+            flex-direction: column;
+            position: relative !important;
+            top: 0 !important;
+            background-color: $primaryColor;
+            border: none;
+            max-height: fit-content !important;
+            transition: max-height 0.5s ease-in-out;
+            > .p-menuitem {
+                @include mobilemenuitem();
+            }
+
+        }
+        &.p-menubar-mobile .p-menubar-root-list {
+            overflow: hidden;
+            max-height: 0;
+        }
+    }
+}

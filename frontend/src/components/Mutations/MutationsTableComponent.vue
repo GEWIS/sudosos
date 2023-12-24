@@ -135,30 +135,4 @@ async function getMutations(take: number, skip: number):
 </script>
 
 <style lang="scss" scoped>
-:deep(.p-datatable .p-datatable-thead > tr > th) {
-  background-color: #f8f8f8;
-  border-top: none;
-  text-transform: uppercase;
-  font-family: Lato, Arial, sans-serif !important;
-  font-size: 1rem;
-  padding: 0.375rem 0;
-  line-height: 1.5;
-}
-
-:deep(.p-datatable .p-datatable-tbody > tr) {
-  background-color: #f8f8f8;
-}
-
-:deep(.p-datatable .p-paginator) {
-  background-color: #f8f8f8;
-}
-
-:deep(.p-datatable .p-datatable-tbody > tr > td) {
-  border: none;
-  padding: 0.375rem 0;
-  font-size: 1rem;
-  font-family: Lato, Arial, sans-serif !important;
-}
-
-
 </style>

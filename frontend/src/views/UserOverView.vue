@@ -23,7 +23,7 @@
             <InputText v-model="filters['global'].value" :placeholder="$t('app.Search')" />
           </span>
           <span>
-            <Button severity="danger" @click="visible = true">{{ $t('app.Create') }}</Button>
+            <Button @click="visible = true">{{ $t('app.Create') }}</Button>
           </span>
         </div>
       </template>
@@ -48,7 +48,6 @@
           <Button
             @click="handleInfoPush(slotProps.data.id)"
             type="button"
-            severity="danger"
             icon="pi pi-info-circle"
             outlined
           />
@@ -94,8 +93,8 @@
             <span class="error-text">{{ errors.email }}</span></div>
         </div>
         <div class="form-row" id="actions">
-          <Button severity="danger" outlined @click="visible = false">{{ $t('c_confirmationModal.Cancel' )}}</Button>
-          <Button type="submit" severity="danger" >{{ $t('c_confirmationModal.Save' )}}</Button>
+          <Button outlined @click="visible = false">{{ $t('c_confirmationModal.Cancel' )}}</Button>
+          <Button type="submit">{{ $t('c_confirmationModal.Save' )}}</Button>
         </div>
       </form>
     </Dialog>

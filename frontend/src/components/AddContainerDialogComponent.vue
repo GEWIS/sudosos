@@ -48,8 +48,8 @@
           <span class="error-text">{{ errors.isPublic }}</span>
         </div>
         <div class="row" id="actions">
-          <Button severity="danger" outlined @click="closeDialog">{{ $t("c_containerEditModal.cancel") }}</Button>
-          <Button severity="danger" type="submit">{{ $t("c_containerEditModal.save") }}</Button>
+          <Button outlined @click="closeDialog">{{ $t("c_containerEditModal.cancel") }}</Button>
+          <Button type="submit">{{ $t("c_containerEditModal.save") }}</Button>
         </div>
       </form>
     </div>

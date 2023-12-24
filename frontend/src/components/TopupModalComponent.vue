@@ -17,8 +17,8 @@
     </form>
 
     <template #footer>
-<!--      <Button label="cancel" severity="secondary" outlined @click="cancelPay" />-->
-      <Button label="pay" severity="danger" @click="submitPay" />
+      <Button label="cancel" severity="secondary" outlined />
+      <Button label="pay" />
     </template>
   </Dialog>
 </template>

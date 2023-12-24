@@ -1,8 +1,8 @@
 <template>
-  <div class="page-container">
+  <div class="page-container flex flex-column">
     <div class="page-title">{{ $t('home.Overview') }}</div>
-    <div class="content-wrapper">
-      <BalanceComponent class="balance-component" :showOption="true" />
+    <div class="content-wrapper gap-5 flex md:flex-row flex-column">
+      <BalanceComponent :showOption="true"/>
       <MutationsTableComponent
         :callback-function="getUserMutations"
         :header="$t('c_recentTransactionsTable.recent transactions')"
