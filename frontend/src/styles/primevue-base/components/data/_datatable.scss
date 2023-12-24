@@ -36,6 +36,7 @@
         color: $tableHeaderCellTextColor;
         background: $tableHeaderCellBg;
         transition: $listItemTransition;
+        text-transform: uppercase;
     }
 
     .p-datatable-tfoot > tr > td {
@@ -84,7 +85,7 @@
             &:hover {
                 background: $tableHeaderCellHighlightHoverBg;
                 color: $tableHeaderCellHighlightTextColor;
-    
+
                 .p-sortable-column-icon {
                     color: $tableHeaderCellHighlightTextColor;
                 }
@@ -279,14 +280,14 @@
         .p-datatable-tbody {
             > tr:nth-child(even) {
                 background: $tableBodyRowEvenBg;
-    
+
                 &.p-highlight {
                     background: $highlightBg;
                     color: $highlightTextColor;
-    
+
                     .p-row-toggler {
                         color: $highlightTextColor;
-    
+
                         &:hover {
                             color: $highlightTextColor;
                         }
