@@ -1,17 +1,17 @@
 <template>
   <div class="page-container">
     <div class="page-title">{{ $t('profile.myProfile')}}</div>
-    <div class="grid">
-      <div class="col-6">
+    <div class="flex flex-column gap-5 md:grid">
+      <div class="md:col-6">
           <ChangePinComponent />
       </div>
-      <div class="col-6">
+      <div class="md:col-6">
         <ChangePasswordComponent />
       </div>
-      <div class="col-6">
+      <div class="md:col-6">
         <ChangeApiKeyComponent />
       </div>
-      <div class="col-6">
+      <div class="md:col-6">
         <ChangeInfoComponent />
       </div>
     </div>

@@ -176,8 +176,8 @@ const rightItems = ref([
     ]
   },
   {
-    label: balance, // TODO: Fix balance view
-                    // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/28
+    label: balance,
+    route: '/balance',
   },
   {
     label: '',
@@ -274,8 +274,8 @@ const mobileItems = ref([
     ]
   },
   {
-    label: balance, // TODO: Fix balance view
-                    // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/28
+    label: balance,
+    route: '/balance',
   },
   {
     label: '',

@@ -90,6 +90,10 @@
     "Increase balance": "Increase balance",
     "Price": "Price"
   },
+  "payment": {
+    "pay": "pay",
+    "cancel": "cancel"
+  },
   "pointOfSaleOverview": {
     "Point of sale overview": "Point of sale overview"
   },
@@ -127,6 +131,7 @@
     "End date": "Point of sale start date",
     "Pick date": "Pick a date",
     "Selected containers": "Selected containers",
+    "noContainersSelected": "There are no containers selected.",
     "Management": "Management",
     "Owner": "Owner",
     "Managers": "Managers",

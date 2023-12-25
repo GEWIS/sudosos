@@ -17,8 +17,7 @@
     </form>
 
     <template #footer>
-      <Button label="cancel" severity="secondary" outlined />
-      <Button label="pay" />
+      <Button :label="$t('payment.pay').toUpperCase()" />
     </template>
   </Dialog>
 </template>
