@@ -57,29 +57,29 @@
           </Column>
         </DataTable>
         <Dialog
-            v-model:visible="visible"
-            modal
-            :header="$t('c_userTable.Create User')"
-            :style="{ width: '50vw' }"
-            @after-hide="resetForm"
+          class="w-auto flex w-9"
+          v-model:visible="visible"
+          modal
+          :header="$t('c_userTable.Create User')"
+          @after-hide="resetForm"
         >
           <form @submit="handleCreateUser">
-            <div class="form-row">
-              <label for="first-name">{{ $t('c_userTable.firstName') }}</label>
-              <div class="input-container">
+            <div class="field grid">
+              <label for="first-name" class="col-12 mb-2 md:col-2 md:mb-0">{{ $t('c_userTable.firstName') }}</label>
+              <div class="col-12 md:col-10">
                 <InputText v-bind="firstName" id="first-name" />
                 <span class="error-text">{{ errors.firstName }}</span>
               </div>
             </div>
-            <div class="form-row">
-              <label for="last-name">{{ $t('c_userTable.lastName') }}</label>
-              <div class="input-container">
+            <div class="field grid">
+              <label for="last-name" class="col-12 mb-2 md:col-2 md:mb-0">{{ $t('c_userTable.lastName') }}</label>
+              <div class="col-12 md:col-10">
                 <InputText v-bind="lastName" id="last-name"/>
                 <span class="error-text">{{ errors.lastName }}</span></div>
             </div>
-            <div class="form-row">
-              <label for="user-type">{{ $t('c_userTable.User Type') }}</label>
-              <div class="input-container">
+            <div class="field grid">
+              <label for="user-type" class="col-12 mb-2 md:col-2 md:mb-0">{{ $t('c_userTable.User Type') }}</label>
+              <div class="col-12 md:col-10">
                 <Dropdown
                     v-bind="userType"
                     :options="userTypes"
@@ -88,9 +88,9 @@
                 />
                 <span class="error-text">{{ errors.userType }}</span></div>
             </div>
-            <div class="form-row">
-              <label for="email">{{ $t('profile.Email address') }}</label>
-              <div class="input-container">
+            <div class="field grid">
+              <label for="email" class="col-12 mb-2 md:col-2 md:mb-0">{{ $t('profile.emailAddress') }}</label>
+              <div class="col-12 md:col-10">
                 <InputText v-bind="email" id="email"/>
                 <span class="error-text">{{ errors.email }}</span></div>
             </div>

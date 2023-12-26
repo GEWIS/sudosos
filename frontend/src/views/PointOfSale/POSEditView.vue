@@ -4,12 +4,11 @@
       {{ `${$t('c_POSCreate.Edit Point of Sale')}: ${pos ? pos.name : ''}` }}
     </div>
     <hr />
-    <div class="content-wrapper">
-      <div class="pos-row">
-        <div class="pos-general-info">
-          <form @submit="handleEditPOS">
-            <h3>{{ $t('c_POSCreate.General') }}</h3>
-            <span class="general-info-block">
+    <div class="flex flex-column md:flex-row gap-5 my-3">
+      <div class="flex flex-column">
+        <h2>{{ $t('c_POSCreate.General') }}</h2>
+          <form @submit="handleEditPOS" >
+            <div class="flex flex-column">
               <b>{{ $t('c_POSCreate.Title') }}</b>
               <InputText
                 class="input"
@@ -21,24 +20,23 @@
                 <i class="pi pi-exclamation-circle" />{{ ' ' + errors.title }}
               </small>
               <br v-else />
-            </span>
-            <div class="general-info-block">
+            </div>
+            <div class="flex flex-column">
               <b>{{ $t('c_POSCreate.Owner') }}</b>
               <p>{{ posDisplayName }}</p>
             </div>
-            <div>
-              <span class="general-info-block" style="flex-direction: row; align-items: center">
+            <div class="flex flex-row gap-2">
                 <Checkbox
                   v-bind="useAuthentication"
                   inputId="useAuthentication"
                   name="useAuthentication"
                   value="useAuthentication"
                   :binary="true"
+                  class="my-auto"
                 />
                 <label for="useAuthentication">{{ $t('c_POSCreate.Use authentication') }}</label>
-              </span>
             </div>
-            <div class="general-info-block">
+            <div class="flex flex-column">
               <b>{{ $t('c_POSCreate.Selected containers') }}</b>
               <ul class="selected-containers">
                 <li v-for="container in selectedContainers" :key="container.id">
@@ -56,13 +54,12 @@
         </div>
         <DetailedContainerCardComponent
           @selectedChanged="handleSelectedChanged"
-          class="container-card"
+          class="w-full"
           v-if="publicContainers && ownContainers"
           :own-containers="ownContainers"
           :public-containers="publicContainers"
           :selectedContainers="selectedContainers"
         />
-      </div>
     </div>
   </div>
 </template>
@@ -181,79 +178,6 @@ const handleEditPOS = handleSubmit(async (values) => {
 
 <style scoped lang="scss">
 // TODO: Generalize this style and the one from create view
-#pos-info-header {
-  display: flex;
-  justify-content: space-between;
-}
-
-hr {
-  margin: 1rem 0;
-}
-
-:deep(.p-button) {
-  margin: 0 5px !important;
-}
-
-.pos-row {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-}
-
-.pos-general-info {
-  flex: 1;
-  padding-left: 0.25rem !important;
-  font-family: Lato, Arial, sans-serif !important;
-  display: flex;
-  flex-direction: column;
-  color: black;
-  font-size: 1rem;
-  h3 {
-    font-size: 1.75rem;
-    font-family: Raleway, sans-serif !important;
-    margin-bottom: 0.5rem;
-  }
-
-  b {
-    font-weight: bolder;
-  }
-
-  .input {
-    width: 80%;
-  }
-
-  #create-pos-button {
-    width: fit-content;
-  }
-}
-
-.container-card {
-  flex: 3;
-}
-
-.content-wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
-.pos-transactions {
-  width: 100%;
-  margin-top: 3rem;
-}
-
-.general-info-block {
-  margin-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-
-  label {
-    margin-left: 10px;
-  }
-}
-
-:deep(tr.p-highlight) {
-  color: black;
-}
 
 .p-invalid {
   background-color: #fef0f0;

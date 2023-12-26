@@ -1,5 +1,5 @@
 <template>
-  <CardComponent :action="action" :header="header" :router-link="routerLink">
+  <CardComponent :action="action" :header="header" :router-link="routerLink" class="w-full">
     <DataTable
         :rows=rows
         :value="mutations"

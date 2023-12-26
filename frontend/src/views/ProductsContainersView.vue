@@ -1,8 +1,8 @@
 <template>
   <div class="page-container">
     <div class="page-title">{{ $t('manageProducts.Manage all products and containers') }}</div>
-    <div class="content-wrapper">
-      <CardComponent header="all products" class="full-width">
+    <div class="flex flex-column gap-5">
+      <CardComponent header="all products" class="w-full">
         <DataTable
           v-model:filters="filters"
           :value="products"
@@ -17,7 +17,7 @@
           @row-edit-init="rowEditInit"
         >
           <template #header>
-            <div class="product-table-header">
+            <div class="flex flex-row justify-content-between">
               <span class="p-input-icon-left">
                 <i class="pi pi-search" />
                 <InputText v-model="filters['global'].value" placeholder="Search" />
@@ -27,20 +27,19 @@
               </span>
             </div>
           </template>
-          <Column field="image" :header="$t('c_productEditModal.Image')" style="width: fit-content">
+          <Column field="image" :header="$t('c_productEditModal.Image')" >
             <template #body="rowData">
-              <img class="product-image" :src="getProductImageSrc(rowData.data)" alt="img" />
+              <img :src="getProductImageSrc(rowData.data)" alt="img" class="w-4rem mx-1" />
             </template>
           </Column>
           <Column field="name" :header="$t('c_productEditModal.Name')">
             <template #editor="{ data, field }">
-              <InputText v-model="data[field]" style="width: 100%" />
+              <InputText v-model="data[field]" />
             </template>
           </Column>
-          <Column field="category" :header="$t('c_productEditModal.Category')" style="width: 20%">
+          <Column field="category" :header="$t('c_productEditModal.Category')" >
             <template #editor="{ data, field }">
               <Dropdown
-                style="width: 100%"
                 :placeholder="$t('c_productEditModal.Please select')"
                 optionLabel="name"
                 :options="categories"
@@ -63,7 +62,6 @@
                 currency="EUR"
                 :minFractionDigits="2"
                 :maxFractionDigits="2"
-                style="width: 100%"
               />
             </template>
             <template #body="rowData">
@@ -72,7 +70,7 @@
           </Column>
           <Column field="alcoholPercentage" :header="$t('c_productEditModal.Alcohol Percentage')">
             <template #editor="{ data, field }">
-              <InputNumber v-model="data[field]" suffix="%" style="width: 100%" />
+              <InputNumber v-model="data[field]" suffix="%" />
             </template>
             <template #body="rowData">
               {{ `${rowData.data.alcoholPercentage} %` }}
@@ -85,7 +83,6 @@
                   :options="vatGroups"
                   optionLabel="percentage"
                   v-model="data[field]"
-                  style="width: 100%"
               >
                 <template #value="slotProps"> {{ `${slotProps.value.percentage} %` }} </template>
               </Dropdown>
@@ -96,13 +93,16 @@
           </Column>
           <Column
             :rowEditor="true"
-            style="width: 10%; min-width: 8rem"
             bodyStyle="text-align:center"
           />
         </DataTable>
         <ProductModalComponent :product="selectedProduct" v-model:visible="visible" />
       </CardComponent>
-      <ContainerCardComponent v-if="containers" :header="$t('manageProducts.Containers')" :data="containers" class="container-card" />
+      <ContainerCardComponent
+        v-if="containers"
+        :header="$t('manageProducts.Containers')"
+        :data="containers"
+        class="w-full"/>
     </div>
   </div>
 </template>
@@ -196,24 +196,24 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
 </script>
 
 <style scoped lang="scss">
-.product-image {
-  height: 4rem;
-}
-
-.product-table-header {
-  /* background-color: #f8f8f8; */
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.content-wrapper {
-  flex-direction: column;
-}
-
-.container-card {
-  margin-top: 1rem;
-  min-width: 100%;
-  width: 100%
-}
+//.product-image {
+//  height: 4rem;
+//}
+//
+//.product-table-header {
+//  /* background-color: #f8f8f8; */
+//  display: flex;
+//  flex-direction: row;
+//  justify-content: space-between;
+//}
+//
+//.content-wrapper {
+//  flex-direction: column;
+//}
+//
+//.container-card {
+//  margin-top: 1rem;
+//  min-width: 100%;
+//  width: 100%
+//}
 </style>

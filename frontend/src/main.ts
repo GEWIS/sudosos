@@ -31,6 +31,7 @@ import Toast from "primevue/toast";
 
 import 'primeflex/primeflex.css';
 import apiService from './services/ApiService';
+import Accordion from "primevue/accordion";
 const app = createApp(App);
 
 
@@ -63,6 +64,7 @@ app.component('TabView', TabView);
 app.component('ScrollPanel', ScrollPanel);
 app.component('FileUpload', FileUpload);
 app.component('Toast', Toast);
+app.component('Accordion', Accordion);
 
 populateStoresFromToken(apiService);
 app.mount('#app');

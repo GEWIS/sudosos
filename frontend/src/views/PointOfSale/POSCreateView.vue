@@ -8,7 +8,14 @@
           <form @submit="handleCreatePOS">
               <div class="flex flex-column">
                 <label for="title">{{ $t("posInfo.Title") }}</label>
-                <InputText inputId="title" id="title" class="input" type="text" v-bind="title" :class="{'p-invalid': errors.title}" />
+                <InputText
+                  inputId="title"
+                  id="title"
+                  class="input"
+                  type="text"
+                  v-bind="title"
+                  :class="{'p-invalid': errors.title}"
+                />
                 <small id="title-help" v-if="errors.title" class="p-error">
                   <i class="pi pi-exclamation-circle" />{{ " " + errors.title }}
                 </small>
@@ -39,7 +46,7 @@
                 />
                 <label for="useAuthentication">{{ $t("c_POSCreate.Use authentication") }}</label>
               </div>
-            <div class="flex flex-column">
+              <div class="flex flex-column">
               <b>{{ $t("c_POSCreate.Selected containers") }}</b>
               <i v-if="isEmpty(value)">{{ $t("c_POSCreate.noContainersSelected") }}</i>
               <ul v-else class="selected-containers">
@@ -149,11 +156,6 @@ const handleSelectedChanged = (selected: any) => {
 </script>
 
 <style scoped lang="scss">
-.general-info-block {
-  display: flex;
-  flex-direction: column;
-}
-
 .p-invalid {
   background-color: #fef0f0;
 }

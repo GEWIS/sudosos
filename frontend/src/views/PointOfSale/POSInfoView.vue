@@ -1,49 +1,34 @@
 <template>
-  <div class="page-container">
-    <div class="page-title" id="pos-info-header">
-      <span>{{ `${$t('posInfo.POS')}: ${pos ? pos.name : ''}` }}</span>
-      <div>
+  <div class="page-container flex flex-column gap-5">
+    <div class="page-title flex flex-row justify-content-between align-items-center">
+      <div class="flex flex-column">
+        <span>{{ `${$t("posInfo.POS")}: ${pos ? pos.name : ""}` }}</span>
+        <small class="font-italic text-base">
+          {{`Owned by ${pos ? (pos.owner ? pos.owner.firstName + pos.owner.lastName : '') : ''}`}}
+        </small>
+      </div>
         <Button
           severity="secondary"
           :label="$t('posInfo.Edit')"
           icon="pi pi-pencil"
           @click="handleEditClicked"
+          class="h-fit"
         />
-        <Button
-          :label="$t('posInfo.Close')"
-          icon="pi pi-times"
-          @click="handleClosedClicked"
-        />
-      </div>
     </div>
     <hr />
-    <div class="content-wrapper">
-      <div class="pos-row">
-        <div class="pos-general-info">
-          <h3>{{ $t('posInfo.General') }}</h3>
-          <b>{{ $t('posInfo.Title') }}</b>
-          <p>{{ pos ? pos.name : '' }}</p>
-          <b>{{ $t('posInfo.Owner') }}</b>
-          <p>{{ pos ? (pos.owner ? pos.owner.firstName + pos.owner.lastName : '') : '' }}</p>
-          <!--          TODO: Clean-up whatever the fuck is that above-->
-        </div>
-        <ContainerCardComponent
-          class="container-card"
-          v-if="pos && pos.containers"
-          :data="pos.containers"
-        />
-      </div>
-      <div class="row" style="width: 100%">
-        <MutationsTableComponent
-          :header="$t('app.Transactions')"
-          class="pos-transactions"
-          :callback-function="getPOSTransactions"
-          :modal="true"
-          paginator
-          style="width: 100% !important"
-        />
-      </div>
-    </div>
+    <ContainerCardComponent
+      class="container-card"
+      v-if="pos && pos.containers"
+      :data="pos.containers"
+    />
+    <MutationsTableComponent
+      :header="$t('app.Transactions')"
+      class="pos-transactions"
+      :callback-function="getPOSTransactions"
+      :modal="true"
+      paginator
+      style="width: 100% !important"
+    />
   </div>
 </template>
 
@@ -93,10 +78,6 @@ const getPOSTransactions = async (
     return;
   }
   return await apiService.pos.getTransactions(pos.id, take, skip).then((res) => res.data);
-};
-
-const handleClosedClicked = () => {
-  router.push('/point-of-sale/overview');
 };
 
 const handleEditClicked = () => {

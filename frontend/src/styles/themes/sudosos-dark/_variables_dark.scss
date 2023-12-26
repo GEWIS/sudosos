@@ -360,7 +360,7 @@ $panelContentBorder:1px solid $shade600 !default;
 $panelContentBg:$shade800 !default;
 $panelContentEvenRowBg:rgba(255,255,255,.02) !default;
 $panelContentTextColor:$shade000 !default;
-$panelContentPadding:1.25rem !default;
+$panelContentPadding:.5rem !default;
 
 $panelFooterBorder:1px solid $shade600 !default;
 $panelFooterBg:$shade800 !default;
@@ -373,7 +373,7 @@ $accordionHeaderBorder:$panelHeaderBorder !default;
 $accordionHeaderBg:$panelHeaderBg !default;
 $accordionHeaderTextColor:$panelHeaderTextColor !default;
 $accordionHeaderFontWeight:$panelHeaderFontWeight !default;
-$accordionHeaderPadding:$panelHeaderPadding !default;
+$accordionHeaderPadding:1.25rem 1.25rem !default;
 
 $accordionHeaderHoverBg:$hoverBg !default;
 $accordionHeaderHoverBorderColor:$shade600 !default;
@@ -452,7 +452,7 @@ $editorContentBorder:$panelContentBorder !default;
 $editorContentBg:$panelContentBg !default;
 
 //paginator
-$paginatorBg:$shade800 !default;
+$paginatorBg:$shade300 !default;
 $paginatorTextColor:$primaryColor !default;
 $paginatorBorder:solid $shade600 !default;
 $paginatorBorderWidth:0 !default;
