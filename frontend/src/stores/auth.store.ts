@@ -8,7 +8,7 @@ import {
   UserResponse, UpdateNfcRequest, AcceptTosRequest
 } from "@sudosos/sudosos-client";
 import { useUserStore } from "./user.store";
-import jwtDecode, { JwtPayload } from "jwt-decode";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 import { ApiService } from "../services/ApiService";
 import { clearTokenInStorage, getTokenFromStorage, setTokenInStorage, updateTokenIfNecessary } from "../helpers/TokenHelper";
 

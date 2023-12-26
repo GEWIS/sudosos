@@ -1,160 +1,161 @@
-var Rs = Object.defineProperty;
-var Ts = (i, c, u) => c in i ? Rs(i, c, { enumerable: !0, configurable: !0, writable: !0, value: u }) : i[c] = u;
-var q = (i, c, u) => (Ts(i, typeof c != "symbol" ? c + "" : c, u), u);
-import { createPinia as Fs, defineStore as Qe } from "pinia";
-async function vs(i, c, u) {
-  let e = i, p = [];
+var Ls = Object.defineProperty;
+var xs = (l, d, p) => d in l ? Ls(l, d, { enumerable: !0, configurable: !0, writable: !0, value: p }) : l[d] = p;
+var x = (l, d, p) => (xs(l, typeof d != "symbol" ? d + "" : d, p), p);
+import { createPinia as qs, defineStore as ze } from "pinia";
+async function Ds(l, d, p) {
+  let a = l, v = [];
   for (; ; ) {
-    const P = await u(c, e), { records: g } = P.data;
-    if (p = p.concat(g), e += c, P.data._pagination.count <= e + c)
+    const P = await p(d, a), { records: b } = P.data;
+    if (v = v.concat(b), a += d, P.data._pagination.count <= a + d)
       break;
   }
-  return p;
+  return v;
 }
-Fs();
-const Ye = Qe("user", {
+qs();
+const Ke = ze("user", {
   state: () => ({
     users: [],
     current: {
       balance: null,
       user: null,
       financialMutations: {
-        _pagination: {},
+        _pagination: {
+          take: -1,
+          skip: -1,
+          count: -1
+        },
         records: []
       }
     }
   }),
   getters: {
-    getUserById: (i) => (c) => i.users.find((u) => u.id === c),
+    getUserById: (l) => (d) => l.users.find((p) => p.id === d),
     getActiveUsers() {
-      return this.users.filter((i) => i.active);
+      return this.users.filter((l) => l.active);
     },
     getDeletedUsers() {
-      return this.users.filter((i) => i.deleted);
+      return this.users.filter((l) => l.deleted);
     },
     getCurrentUser() {
       return this.current;
     }
   },
   actions: {
-    async fetchUsers(i) {
-      this.users = await vs(0, 500, (c, u) => i.user.getAllUsers(c, u));
+    async fetchUsers(l) {
+      this.users = await Ds(0, 500, (d, p) => l.user.getAllUsers(d, p));
     },
-    async fetchCurrentUserBalance(i, c) {
-      this.current.balance = (await c.balance.getBalanceId(i)).data;
+    async fetchCurrentUserBalance(l, d) {
+      this.current.balance = (await d.balance.getBalanceId(l)).data;
     },
-    async fetchUsersFinancialMutations(i, c, u, e) {
-      this.current.financialMutations = (await c.user.getUsersFinancialMutations(i, u, e)).data;
+    async fetchUsersFinancialMutations(l, d, p, a) {
+      this.current.financialMutations = (await d.user.getUsersFinancialMutations(l, p, a)).data;
     },
-    setCurrentUser(i) {
-      this.current.user = i;
+    setCurrentUser(l) {
+      this.current.user = l;
     },
-    addUser(i) {
-      this.users.push(i);
+    addUser(l) {
+      this.users.push(l);
     },
     clearCurrent() {
       this.current.balance = null, this.current.user = null;
     },
-    deleteUser(i) {
-      const c = this.users.findIndex((u) => u.id === i);
-      c !== -1 && this.users.splice(c, 1);
+    deleteUser(l) {
+      const d = this.users.findIndex((p) => p.id === l);
+      d !== -1 && this.users.splice(d, 1);
     }
   }
 });
-function Se(i) {
-  this.message = i;
+class ae extends Error {
 }
-Se.prototype = new Error(), Se.prototype.name = "InvalidCharacterError";
-var qe = typeof window < "u" && window.atob && window.atob.bind(window) || function(i) {
-  var c = String(i).replace(/=+$/, "");
-  if (c.length % 4 == 1)
-    throw new Se("'atob' failed: The string to be decoded is not correctly encoded.");
-  for (var u, e, p = 0, P = 0, g = ""; e = c.charAt(P++); ~e && (u = p % 4 ? 64 * u + e : e, p++ % 4) ? g += String.fromCharCode(255 & u >> (-2 * p & 6)) : 0)
-    e = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".indexOf(e);
-  return g;
-};
-function Es(i) {
-  var c = i.replace(/-/g, "+").replace(/_/g, "/");
-  switch (c.length % 4) {
+ae.prototype.name = "InvalidTokenError";
+function Hs(l) {
+  return decodeURIComponent(atob(l).replace(/(.)/g, (d, p) => {
+    let a = p.charCodeAt(0).toString(16).toUpperCase();
+    return a.length < 2 && (a = "0" + a), "%" + a;
+  }));
+}
+function Ns(l) {
+  let d = l.replace(/-/g, "+").replace(/_/g, "/");
+  switch (d.length % 4) {
     case 0:
       break;
     case 2:
-      c += "==";
+      d += "==";
       break;
     case 3:
-      c += "=";
+      d += "=";
       break;
     default:
-      throw "Illegal base64url string!";
+      throw new Error("base64 string is not of the correct length");
   }
   try {
-    return function(u) {
-      return decodeURIComponent(qe(u).replace(/(.)/g, function(e, p) {
-        var P = p.charCodeAt(0).toString(16).toUpperCase();
-        return P.length < 2 && (P = "0" + P), "%" + P;
-      }));
-    }(c);
+    return Hs(d);
   } catch {
-    return qe(c);
+    return atob(d);
   }
 }
-function oe(i) {
-  this.message = i;
-}
-function $e(i, c) {
-  if (typeof i != "string")
-    throw new oe("Invalid token specified");
-  var u = (c = c || {}).header === !0 ? 0 : 1;
+function We(l, d) {
+  if (typeof l != "string")
+    throw new ae("Invalid token specified: must be a string");
+  d || (d = {});
+  const p = d.header === !0 ? 0 : 1, a = l.split(".")[p];
+  if (typeof a != "string")
+    throw new ae(`Invalid token specified: missing part #${p + 1}`);
+  let v;
   try {
-    return JSON.parse(Es(i.split(".")[u]));
-  } catch (e) {
-    throw new oe("Invalid token specified: " + e.message);
+    v = Ns(a);
+  } catch (P) {
+    throw new ae(`Invalid token specified: invalid base64 for part #${p + 1} (${P.message})`);
+  }
+  try {
+    return JSON.parse(v);
+  } catch (P) {
+    throw new ae(`Invalid token specified: invalid json for part #${p + 1} (${P.message})`);
   }
 }
-oe.prototype = new Error(), oe.prototype.name = "InvalidTokenError";
-function Bs(i) {
-  if (i.headers.has("Set-Authorization")) {
-    const c = i.headers.get("Set-Authorization");
-    c && We(c);
+function Gs(l) {
+  if (l.headers.has("Set-Authorization")) {
+    const d = l.headers.get("Set-Authorization");
+    d && Je(d);
   }
 }
-function _s() {
+function ks() {
   localStorage.clear();
 }
-function Cs(i) {
-  const c = String($e(i).exp);
-  return { token: i, expires: c };
+function Qs(l) {
+  const d = String(We(l).exp);
+  return { token: l, expires: d };
 }
-function We(i) {
-  localStorage.setItem("jwt_token", JSON.stringify(Cs(i)));
+function Je(l) {
+  localStorage.setItem("jwt_token", JSON.stringify(Qs(l)));
 }
-function Te() {
-  const i = localStorage.getItem("jwt_token");
-  let c = {};
-  return i !== null && (c = JSON.parse(i)), {
-    ...c
+function Re() {
+  const l = localStorage.getItem("jwt_token");
+  let d = {};
+  return l !== null && (d = JSON.parse(l)), {
+    ...d
   };
 }
-function ws(i) {
-  const c = i * 1e3;
-  return (/* @__PURE__ */ new Date()).getTime() > c;
+function Ys(l) {
+  const d = l * 1e3;
+  return (/* @__PURE__ */ new Date()).getTime() > d;
 }
-function Ls() {
-  const i = Te();
-  return !i.token || !i.expires ? !1 : !ws(Number(i.expires));
+function $s() {
+  const l = Re();
+  return !l.token || !l.expires ? !1 : !Ys(Number(l.expires));
 }
-function vr(i) {
-  if (Ls()) {
-    const u = qs();
-    u.extractStateFromToken();
-    const e = u.getUser;
-    if (e) {
-      const p = Ye();
-      p.setCurrentUser(e), p.fetchCurrentUserBalance(e.id, i);
+function kr(l) {
+  if ($s()) {
+    const p = zs();
+    p.extractStateFromToken();
+    const a = p.getUser;
+    if (a) {
+      const v = Ke();
+      v.setCurrentUser(a), v.fetchCurrentUserBalance(a.id, l);
     }
   }
 }
-const qs = Qe({
+const zs = ze({
   id: "auth",
   state: () => ({
     user: null,
@@ -175,376 +176,376 @@ const qs = Qe({
     }
   },
   actions: {
-    handleResponse(i, c) {
-      const { user: u, token: e, roles: p, organs: P, acceptedToS: g } = i;
-      !u || !e || !p || !P || !g || (this.user = u, this.token = e, We(this.token), this.roles = p, this.organs = P, this.acceptedToS = g, this.acceptedToS === "ACCEPTED" && c.user.getIndividualUser(this.user.id).then((m) => {
-        Ye().setCurrentUser(m.data);
+    handleResponse(l, d) {
+      const { user: p, token: a, roles: v, organs: P, acceptedToS: b } = l;
+      !p || !a || !v || !P || !b || (this.user = p, this.token = a, Je(this.token), this.roles = v, this.organs = P, this.acceptedToS = b, this.acceptedToS === "ACCEPTED" && d.user.getIndividualUser(this.user.id).then((g) => {
+        Ke().setCurrentUser(g.data);
       }));
     },
-    async gewisPinlogin(i, c, u) {
-      const e = {
-        gewisId: parseInt(i, 10),
-        pin: c
+    async gewisPinlogin(l, d, p) {
+      const a = {
+        gewisId: parseInt(l, 10),
+        pin: d
       };
-      await u.authenticate.gewisPinAuthentication(e).then((p) => {
-        this.handleResponse(p.data, u);
+      await p.authenticate.gewisPinAuthentication(a).then((v) => {
+        this.handleResponse(v.data, p);
       });
     },
-    async ldapLogin(i, c, u) {
-      const e = {
-        accountName: i,
-        password: c
+    async ldapLogin(l, d, p) {
+      const a = {
+        accountName: l,
+        password: d
       };
-      await u.authenticate.ldapAuthentication(e).then((p) => {
-        this.handleResponse(p.data, u);
+      await p.authenticate.ldapAuthentication(a).then((v) => {
+        this.handleResponse(v.data, p);
       });
     },
-    async gewisWebLogin(i, c, u) {
-      const e = {
-        nonce: i,
-        token: c
+    async gewisWebLogin(l, d, p) {
+      const a = {
+        nonce: l,
+        token: d
       };
-      await u.authenticate.gewisWebAuthentication(e).then((p) => {
-        this.handleResponse(p.data, u);
+      await p.authenticate.gewisWebAuthentication(a).then((v) => {
+        this.handleResponse(v.data, p);
       });
     },
-    async externalPinLogin(i, c, u) {
-      const e = {
-        pin: c,
-        userId: i
+    async externalPinLogin(l, d, p) {
+      const a = {
+        pin: d,
+        userId: l
       };
-      await u.authenticate.pinAuthentication(e).then((p) => {
-        this.handleResponse(p.data, u);
+      await p.authenticate.pinAuthentication(a).then((v) => {
+        this.handleResponse(v.data, p);
       });
     },
-    async eanLogin(i, c) {
-      const u = {
-        eanCode: i
+    async eanLogin(l, d) {
+      const p = {
+        eanCode: l
       };
-      await c.authenticate.eanAuthentication(u).then((e) => {
-        this.handleResponse(e.data, c);
+      await d.authenticate.eanAuthentication(p).then((a) => {
+        this.handleResponse(a.data, d);
       });
     },
-    async apiKeyLogin(i, c, u) {
-      const e = {
-        key: i,
-        userId: c
+    async apiKeyLogin(l, d, p) {
+      const a = {
+        key: l,
+        userId: d
       };
-      await u.authenticate.keyAuthentication(e).then((p) => {
-        this.handleResponse(p.data, u);
+      await p.authenticate.keyAuthentication(a).then((v) => {
+        this.handleResponse(v.data, p);
       });
     },
-    async gewisLdapLogin(i, c, u) {
-      const e = {
-        accountName: i,
-        password: c
+    async gewisLdapLogin(l, d, p) {
+      const a = {
+        accountName: l,
+        password: d
       };
-      await u.authenticate.gewisLDAPAuthentication(e).then((p) => {
-        this.handleResponse(p.data, u);
+      await p.authenticate.gewisLDAPAuthentication(a).then((v) => {
+        this.handleResponse(v.data, p);
       });
     },
-    async updateUserPin(i, c) {
+    async updateUserPin(l, d) {
       if (!this.user)
         return;
-      const u = {
-        pin: i
+      const p = {
+        pin: l
       };
-      await c.user.updateUserPin(this.user.id, u);
+      await d.user.updateUserPin(this.user.id, p);
     },
-    async updateUserLocalPassword(i, c) {
+    async updateUserLocalPassword(l, d) {
       if (!this.user)
         return;
-      const u = {
-        password: i
+      const p = {
+        password: l
       };
-      await c.user.updateUserLocalPassword(this.user.id, u);
+      await d.user.updateUserLocalPassword(this.user.id, p);
     },
-    async updateUserNfc(i, c) {
+    async updateUserNfc(l, d) {
       if (!this.user)
         return;
-      const u = {
-        nfcCode: i
+      const p = {
+        nfcCode: l
       };
-      await c.user.updateUserNfc(this.user.id, u);
+      await d.user.updateUserNfc(this.user.id, p);
     },
-    async updateUserKey(i) {
+    async updateUserKey(l) {
       if (this.user)
-        return (await i.user.updateUserKey(this.user.id)).data;
+        return (await l.user.updateUserKey(this.user.id)).data;
     },
-    async updateUserToSAccepted(i, c) {
+    async updateUserToSAccepted(l, d) {
       if (!this.user)
         return;
-      const u = {
-        extensiveDataProcessing: i
+      const p = {
+        extensiveDataProcessing: l
       };
-      await c.user.acceptTos(u);
-      const e = await c.authenticate.refreshToken();
-      this.handleResponse(e.data, c);
+      await d.user.acceptTos(p);
+      const a = await d.authenticate.refreshToken();
+      this.handleResponse(a.data, d);
     },
     extractStateFromToken() {
-      const i = Te();
-      if (!i.token)
+      const l = Re();
+      if (!l.token)
         return;
-      const c = $e(i.token);
-      this.user = c.user, this.roles = c.roles, this.token = i.token, this.organs = c.organs, this.acceptedToS = c.acceptedToS;
+      const d = We(l.token);
+      this.user = d.user, this.roles = d.roles, this.token = l.token, this.organs = d.organs, this.acceptedToS = d.acceptedToS;
     },
     logout() {
-      this.user = null, this.roles = [], this.token = null, this.organs = [], this.acceptedToS = null, _s();
+      this.user = null, this.roles = [], this.token = null, this.organs = [], this.acceptedToS = null, ks();
     }
   }
 });
-var Y = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
-function Ms(i) {
-  if (i.__esModule)
-    return i;
-  var c = i.default;
-  if (typeof c == "function") {
-    var u = function e() {
-      return this instanceof e ? Reflect.construct(c, arguments, this.constructor) : c.apply(this, arguments);
+var J = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
+function Ks(l) {
+  if (l.__esModule)
+    return l;
+  var d = l.default;
+  if (typeof d == "function") {
+    var p = function a() {
+      return this instanceof a ? Reflect.construct(d, arguments, this.constructor) : d.apply(this, arguments);
     };
-    u.prototype = c.prototype;
+    p.prototype = d.prototype;
   } else
-    u = {};
-  return Object.defineProperty(u, "__esModule", { value: !0 }), Object.keys(i).forEach(function(e) {
-    var p = Object.getOwnPropertyDescriptor(i, e);
-    Object.defineProperty(u, e, p.get ? p : {
+    p = {};
+  return Object.defineProperty(p, "__esModule", { value: !0 }), Object.keys(l).forEach(function(a) {
+    var v = Object.getOwnPropertyDescriptor(l, a);
+    Object.defineProperty(p, a, v.get ? v : {
       enumerable: !0,
       get: function() {
-        return i[e];
+        return l[a];
       }
     });
-  }), u;
+  }), p;
 }
-var w = {}, Je = {};
-function Xe(i, c) {
+var w = {}, Xe = {};
+function Ze(l, d) {
   return function() {
-    return i.apply(c, arguments);
+    return l.apply(d, arguments);
   };
 }
-const { toString: Hs } = Object.prototype, { getPrototypeOf: Fe } = Object, le = ((i) => (c) => {
-  const u = Hs.call(c);
-  return i[u] || (i[u] = u.slice(8, -1).toLowerCase());
-})(/* @__PURE__ */ Object.create(null)), N = (i) => (i = i.toLowerCase(), (c) => le(c) === i), de = (i) => (c) => typeof c === i, { isArray: J } = Array, ee = de("undefined");
-function Is(i) {
-  return i !== null && !ee(i) && i.constructor !== null && !ee(i.constructor) && k(i.constructor.isBuffer) && i.constructor.isBuffer(i);
+const { toString: Ws } = Object.prototype, { getPrototypeOf: Te } = Object, ue = /* @__PURE__ */ ((l) => (d) => {
+  const p = Ws.call(d);
+  return l[p] || (l[p] = p.slice(8, -1).toLowerCase());
+})(/* @__PURE__ */ Object.create(null)), z = (l) => (l = l.toLowerCase(), (d) => ue(d) === l), he = (l) => (d) => typeof d === l, { isArray: ee } = Array, re = he("undefined");
+function Js(l) {
+  return l !== null && !re(l) && l.constructor !== null && !re(l.constructor) && k(l.constructor.isBuffer) && l.constructor.isBuffer(l);
 }
-const Ze = N("ArrayBuffer");
-function Ds(i) {
-  let c;
-  return typeof ArrayBuffer < "u" && ArrayBuffer.isView ? c = ArrayBuffer.isView(i) : c = i && i.buffer && Ze(i.buffer), c;
+const et = z("ArrayBuffer");
+function Xs(l) {
+  let d;
+  return typeof ArrayBuffer < "u" && ArrayBuffer.isView ? d = ArrayBuffer.isView(l) : d = l && l.buffer && et(l.buffer), d;
 }
-const ks = de("string"), k = de("function"), et = de("number"), ue = (i) => i !== null && typeof i == "object", zs = (i) => i === !0 || i === !1, ae = (i) => {
-  if (le(i) !== "object")
+const Zs = he("string"), k = he("function"), tt = he("number"), pe = (l) => l !== null && typeof l == "object", ea = (l) => l === !0 || l === !1, oe = (l) => {
+  if (ue(l) !== "object")
     return !1;
-  const c = Fe(i);
-  return (c === null || c === Object.prototype || Object.getPrototypeOf(c) === null) && !(Symbol.toStringTag in i) && !(Symbol.iterator in i);
-}, xs = N("Date"), Ns = N("File"), Ks = N("Blob"), Gs = N("FileList"), Qs = (i) => ue(i) && k(i.pipe), Ys = (i) => {
-  let c;
-  return i && (typeof FormData == "function" && i instanceof FormData || k(i.append) && ((c = le(i)) === "formdata" || // detect form-data instance
-  c === "object" && k(i.toString) && i.toString() === "[object FormData]"));
-}, $s = N("URLSearchParams"), Ws = (i) => i.trim ? i.trim() : i.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
-function te(i, c, { allOwnKeys: u = !1 } = {}) {
-  if (i === null || typeof i > "u")
+  const d = Te(l);
+  return (d === null || d === Object.prototype || Object.getPrototypeOf(d) === null) && !(Symbol.toStringTag in l) && !(Symbol.iterator in l);
+}, ta = z("Date"), sa = z("File"), aa = z("Blob"), ra = z("FileList"), na = (l) => pe(l) && k(l.pipe), ia = (l) => {
+  let d;
+  return l && (typeof FormData == "function" && l instanceof FormData || k(l.append) && ((d = ue(l)) === "formdata" || // detect form-data instance
+  d === "object" && k(l.toString) && l.toString() === "[object FormData]"));
+}, oa = z("URLSearchParams"), la = (l) => l.trim ? l.trim() : l.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
+function ne(l, d, { allOwnKeys: p = !1 } = {}) {
+  if (l === null || typeof l > "u")
     return;
-  let e, p;
-  if (typeof i != "object" && (i = [i]), J(i))
-    for (e = 0, p = i.length; e < p; e++)
-      c.call(null, i[e], e, i);
+  let a, v;
+  if (typeof l != "object" && (l = [l]), ee(l))
+    for (a = 0, v = l.length; a < v; a++)
+      d.call(null, l[a], a, l);
   else {
-    const P = u ? Object.getOwnPropertyNames(i) : Object.keys(i), g = P.length;
-    let m;
-    for (e = 0; e < g; e++)
-      m = P[e], c.call(null, i[m], m, i);
+    const P = p ? Object.getOwnPropertyNames(l) : Object.keys(l), b = P.length;
+    let g;
+    for (a = 0; a < b; a++)
+      g = P[a], d.call(null, l[g], g, l);
   }
 }
-function tt(i, c) {
-  c = c.toLowerCase();
-  const u = Object.keys(i);
-  let e = u.length, p;
-  for (; e-- > 0; )
-    if (p = u[e], c === p.toLowerCase())
-      return p;
+function st(l, d) {
+  d = d.toLowerCase();
+  const p = Object.keys(l);
+  let a = p.length, v;
+  for (; a-- > 0; )
+    if (v = p[a], d === v.toLowerCase())
+      return v;
   return null;
 }
-const st = (() => typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : typeof window < "u" ? window : global)(), at = (i) => !ee(i) && i !== st;
-function Ue() {
-  const { caseless: i } = at(this) && this || {}, c = {}, u = (e, p) => {
-    const P = i && tt(c, p) || p;
-    ae(c[P]) && ae(e) ? c[P] = Ue(c[P], e) : ae(e) ? c[P] = Ue({}, e) : J(e) ? c[P] = e.slice() : c[P] = e;
+const at = typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : typeof window < "u" ? window : global, rt = (l) => !re(l) && l !== at;
+function ge() {
+  const { caseless: l } = rt(this) && this || {}, d = {}, p = (a, v) => {
+    const P = l && st(d, v) || v;
+    oe(d[P]) && oe(a) ? d[P] = ge(d[P], a) : oe(a) ? d[P] = ge({}, a) : ee(a) ? d[P] = a.slice() : d[P] = a;
   };
-  for (let e = 0, p = arguments.length; e < p; e++)
-    arguments[e] && te(arguments[e], u);
-  return c;
+  for (let a = 0, v = arguments.length; a < v; a++)
+    arguments[a] && ne(arguments[a], p);
+  return d;
 }
-const Js = (i, c, u, { allOwnKeys: e } = {}) => (te(c, (p, P) => {
-  u && k(p) ? i[P] = Xe(p, u) : i[P] = p;
-}, { allOwnKeys: e }), i), Xs = (i) => (i.charCodeAt(0) === 65279 && (i = i.slice(1)), i), Zs = (i, c, u, e) => {
-  i.prototype = Object.create(c.prototype, e), i.prototype.constructor = i, Object.defineProperty(i, "super", {
-    value: c.prototype
-  }), u && Object.assign(i.prototype, u);
-}, ea = (i, c, u, e) => {
-  let p, P, g;
-  const m = {};
-  if (c = c || {}, i == null)
-    return c;
+const ca = (l, d, p, { allOwnKeys: a } = {}) => (ne(d, (v, P) => {
+  p && k(v) ? l[P] = Ze(v, p) : l[P] = v;
+}, { allOwnKeys: a }), l), da = (l) => (l.charCodeAt(0) === 65279 && (l = l.slice(1)), l), ua = (l, d, p, a) => {
+  l.prototype = Object.create(d.prototype, a), l.prototype.constructor = l, Object.defineProperty(l, "super", {
+    value: d.prototype
+  }), p && Object.assign(l.prototype, p);
+}, ha = (l, d, p, a) => {
+  let v, P, b;
+  const g = {};
+  if (d = d || {}, l == null)
+    return d;
   do {
-    for (p = Object.getOwnPropertyNames(i), P = p.length; P-- > 0; )
-      g = p[P], (!e || e(g, i, c)) && !m[g] && (c[g] = i[g], m[g] = !0);
-    i = u !== !1 && Fe(i);
-  } while (i && (!u || u(i, c)) && i !== Object.prototype);
-  return c;
-}, ta = (i, c, u) => {
-  i = String(i), (u === void 0 || u > i.length) && (u = i.length), u -= c.length;
-  const e = i.indexOf(c, u);
-  return e !== -1 && e === u;
-}, sa = (i) => {
-  if (!i)
+    for (v = Object.getOwnPropertyNames(l), P = v.length; P-- > 0; )
+      b = v[P], (!a || a(b, l, d)) && !g[b] && (d[b] = l[b], g[b] = !0);
+    l = p !== !1 && Te(l);
+  } while (l && (!p || p(l, d)) && l !== Object.prototype);
+  return d;
+}, pa = (l, d, p) => {
+  l = String(l), (p === void 0 || p > l.length) && (p = l.length), p -= d.length;
+  const a = l.indexOf(d, p);
+  return a !== -1 && a === p;
+}, va = (l) => {
+  if (!l)
     return null;
-  if (J(i))
-    return i;
-  let c = i.length;
-  if (!et(c))
+  if (ee(l))
+    return l;
+  let d = l.length;
+  if (!tt(d))
     return null;
-  const u = new Array(c);
-  for (; c-- > 0; )
-    u[c] = i[c];
-  return u;
-}, aa = ((i) => (c) => i && c instanceof i)(typeof Uint8Array < "u" && Fe(Uint8Array)), ra = (i, c) => {
-  const e = (i && i[Symbol.iterator]).call(i);
+  const p = new Array(d);
+  for (; d-- > 0; )
+    p[d] = l[d];
+  return p;
+}, Aa = /* @__PURE__ */ ((l) => (d) => l && d instanceof l)(typeof Uint8Array < "u" && Te(Uint8Array)), Oa = (l, d) => {
+  const a = (l && l[Symbol.iterator]).call(l);
+  let v;
+  for (; (v = a.next()) && !v.done; ) {
+    const P = v.value;
+    d.call(l, P[0], P[1]);
+  }
+}, Pa = (l, d) => {
   let p;
-  for (; (p = e.next()) && !p.done; ) {
-    const P = p.value;
-    c.call(i, P[0], P[1]);
-  }
-}, na = (i, c) => {
-  let u;
-  const e = [];
-  for (; (u = i.exec(c)) !== null; )
-    e.push(u);
-  return e;
-}, ia = N("HTMLFormElement"), oa = (i) => i.toLowerCase().replace(
+  const a = [];
+  for (; (p = l.exec(d)) !== null; )
+    a.push(p);
+  return a;
+}, ba = z("HTMLFormElement"), ma = (l) => l.toLowerCase().replace(
   /[-_\s]([a-z\d])(\w*)/g,
-  function(u, e, p) {
-    return e.toUpperCase() + p;
+  function(p, a, v) {
+    return a.toUpperCase() + v;
   }
-), Me = (({ hasOwnProperty: i }) => (c, u) => i.call(c, u))(Object.prototype), ca = N("RegExp"), rt = (i, c) => {
-  const u = Object.getOwnPropertyDescriptors(i), e = {};
-  te(u, (p, P) => {
-    let g;
-    (g = c(p, P, i)) !== !1 && (e[P] = g || p);
-  }), Object.defineProperties(i, e);
-}, la = (i) => {
-  rt(i, (c, u) => {
-    if (k(i) && ["arguments", "caller", "callee"].indexOf(u) !== -1)
+), Le = (({ hasOwnProperty: l }) => (d, p) => l.call(d, p))(Object.prototype), Sa = z("RegExp"), nt = (l, d) => {
+  const p = Object.getOwnPropertyDescriptors(l), a = {};
+  ne(p, (v, P) => {
+    let b;
+    (b = d(v, P, l)) !== !1 && (a[P] = b || v);
+  }), Object.defineProperties(l, a);
+}, fa = (l) => {
+  nt(l, (d, p) => {
+    if (k(l) && ["arguments", "caller", "callee"].indexOf(p) !== -1)
       return !1;
-    const e = i[u];
-    if (k(e)) {
-      if (c.enumerable = !1, "writable" in c) {
-        c.writable = !1;
+    const a = l[p];
+    if (k(a)) {
+      if (d.enumerable = !1, "writable" in d) {
+        d.writable = !1;
         return;
       }
-      c.set || (c.set = () => {
-        throw Error("Can not rewrite read-only method '" + u + "'");
+      d.set || (d.set = () => {
+        throw Error("Can not rewrite read-only method '" + p + "'");
       });
     }
   });
-}, da = (i, c) => {
-  const u = {}, e = (p) => {
-    p.forEach((P) => {
-      u[P] = !0;
+}, ga = (l, d) => {
+  const p = {}, a = (v) => {
+    v.forEach((P) => {
+      p[P] = !0;
     });
   };
-  return J(i) ? e(i) : e(String(i).split(c)), u;
-}, ua = () => {
-}, ha = (i, c) => (i = +i, Number.isFinite(i) ? i : c), ge = "abcdefghijklmnopqrstuvwxyz", He = "0123456789", nt = {
-  DIGIT: He,
-  ALPHA: ge,
-  ALPHA_DIGIT: ge + ge.toUpperCase() + He
-}, pa = (i = 16, c = nt.ALPHA_DIGIT) => {
-  let u = "";
-  const { length: e } = c;
-  for (; i--; )
-    u += c[Math.random() * e | 0];
-  return u;
+  return ee(l) ? a(l) : a(String(l).split(d)), p;
+}, ja = () => {
+}, Ua = (l, d) => (l = +l, Number.isFinite(l) ? l : d), be = "abcdefghijklmnopqrstuvwxyz", xe = "0123456789", it = {
+  DIGIT: xe,
+  ALPHA: be,
+  ALPHA_DIGIT: be + be.toUpperCase() + xe
+}, _a = (l = 16, d = it.ALPHA_DIGIT) => {
+  let p = "";
+  const { length: a } = d;
+  for (; l--; )
+    p += d[Math.random() * a | 0];
+  return p;
 };
-function Aa(i) {
-  return !!(i && k(i.append) && i[Symbol.toStringTag] === "FormData" && i[Symbol.iterator]);
+function Va(l) {
+  return !!(l && k(l.append) && l[Symbol.toStringTag] === "FormData" && l[Symbol.iterator]);
 }
-const Oa = (i) => {
-  const c = new Array(10), u = (e, p) => {
-    if (ue(e)) {
-      if (c.indexOf(e) >= 0)
+const ya = (l) => {
+  const d = new Array(10), p = (a, v) => {
+    if (pe(a)) {
+      if (d.indexOf(a) >= 0)
         return;
-      if (!("toJSON" in e)) {
-        c[p] = e;
-        const P = J(e) ? [] : {};
-        return te(e, (g, m) => {
-          const R = u(g, p + 1);
-          !ee(R) && (P[m] = R);
-        }), c[p] = void 0, P;
+      if (!("toJSON" in a)) {
+        d[v] = a;
+        const P = ee(a) ? [] : {};
+        return ne(a, (b, g) => {
+          const y = p(b, v + 1);
+          !re(y) && (P[g] = y);
+        }), d[v] = void 0, P;
       }
     }
-    return e;
+    return a;
   };
-  return u(i, 0);
-}, Pa = N("AsyncFunction"), ga = (i) => i && (ue(i) || k(i)) && k(i.then) && k(i.catch), f = {
-  isArray: J,
-  isArrayBuffer: Ze,
-  isBuffer: Is,
-  isFormData: Ys,
-  isArrayBufferView: Ds,
-  isString: ks,
-  isNumber: et,
-  isBoolean: zs,
-  isObject: ue,
-  isPlainObject: ae,
-  isUndefined: ee,
-  isDate: xs,
-  isFile: Ns,
-  isBlob: Ks,
-  isRegExp: ca,
+  return p(l, 0);
+}, Ra = z("AsyncFunction"), Ta = (l) => l && (pe(l) || k(l)) && k(l.then) && k(l.catch), S = {
+  isArray: ee,
+  isArrayBuffer: et,
+  isBuffer: Js,
+  isFormData: ia,
+  isArrayBufferView: Xs,
+  isString: Zs,
+  isNumber: tt,
+  isBoolean: ea,
+  isObject: pe,
+  isPlainObject: oe,
+  isUndefined: re,
+  isDate: ta,
+  isFile: sa,
+  isBlob: aa,
+  isRegExp: Sa,
   isFunction: k,
-  isStream: Qs,
-  isURLSearchParams: $s,
-  isTypedArray: aa,
-  isFileList: Gs,
-  forEach: te,
-  merge: Ue,
-  extend: Js,
-  trim: Ws,
-  stripBOM: Xs,
-  inherits: Zs,
-  toFlatObject: ea,
-  kindOf: le,
-  kindOfTest: N,
-  endsWith: ta,
-  toArray: sa,
-  forEachEntry: ra,
-  matchAll: na,
-  isHTMLForm: ia,
-  hasOwnProperty: Me,
-  hasOwnProp: Me,
+  isStream: na,
+  isURLSearchParams: oa,
+  isTypedArray: Aa,
+  isFileList: ra,
+  forEach: ne,
+  merge: ge,
+  extend: ca,
+  trim: la,
+  stripBOM: da,
+  inherits: ua,
+  toFlatObject: ha,
+  kindOf: ue,
+  kindOfTest: z,
+  endsWith: pa,
+  toArray: va,
+  forEachEntry: Oa,
+  matchAll: Pa,
+  isHTMLForm: ba,
+  hasOwnProperty: Le,
+  hasOwnProp: Le,
   // an alias to avoid ESLint no-prototype-builtins detection
-  reduceDescriptors: rt,
-  freezeMethods: la,
-  toObjectSet: da,
-  toCamelCase: oa,
-  noop: ua,
-  toFiniteNumber: ha,
-  findKey: tt,
-  global: st,
-  isContextDefined: at,
-  ALPHABET: nt,
-  generateString: pa,
-  isSpecCompliantForm: Aa,
-  toJSONObject: Oa,
-  isAsyncFn: Pa,
-  isThenable: ga
+  reduceDescriptors: nt,
+  freezeMethods: fa,
+  toObjectSet: ga,
+  toCamelCase: ma,
+  noop: ja,
+  toFiniteNumber: Ua,
+  findKey: st,
+  global: at,
+  isContextDefined: rt,
+  ALPHABET: it,
+  generateString: _a,
+  isSpecCompliantForm: Va,
+  toJSONObject: ya,
+  isAsyncFn: Ra,
+  isThenable: Ta
 };
-function E(i, c, u, e, p) {
-  Error.call(this), Error.captureStackTrace ? Error.captureStackTrace(this, this.constructor) : this.stack = new Error().stack, this.message = i, this.name = "AxiosError", c && (this.code = c), u && (this.config = u), e && (this.request = e), p && (this.response = p);
+function C(l, d, p, a, v) {
+  Error.call(this), Error.captureStackTrace ? Error.captureStackTrace(this, this.constructor) : this.stack = new Error().stack, this.message = l, this.name = "AxiosError", d && (this.code = d), p && (this.config = p), a && (this.request = a), v && (this.response = v);
 }
-f.inherits(E, Error, {
+S.inherits(C, Error, {
   toJSON: function() {
     return {
       // Standard
@@ -559,13 +560,13 @@ f.inherits(E, Error, {
       columnNumber: this.columnNumber,
       stack: this.stack,
       // Axios
-      config: f.toJSONObject(this.config),
+      config: S.toJSONObject(this.config),
       code: this.code,
       status: this.response && this.response.status ? this.response.status : null
     };
   }
 });
-const it = E.prototype, ot = {};
+const ot = C.prototype, lt = {};
 [
   "ERR_BAD_OPTION_VALUE",
   "ERR_BAD_OPTION",
@@ -580,99 +581,99 @@ const it = E.prototype, ot = {};
   "ERR_NOT_SUPPORT",
   "ERR_INVALID_URL"
   // eslint-disable-next-line func-names
-].forEach((i) => {
-  ot[i] = { value: i };
+].forEach((l) => {
+  lt[l] = { value: l };
 });
-Object.defineProperties(E, ot);
-Object.defineProperty(it, "isAxiosError", { value: !0 });
-E.from = (i, c, u, e, p, P) => {
-  const g = Object.create(it);
-  return f.toFlatObject(i, g, function(R) {
-    return R !== Error.prototype;
-  }, (m) => m !== "isAxiosError"), E.call(g, i.message, c, u, e, p), g.cause = i, g.name = i.name, P && Object.assign(g, P), g;
+Object.defineProperties(C, lt);
+Object.defineProperty(ot, "isAxiosError", { value: !0 });
+C.from = (l, d, p, a, v, P) => {
+  const b = Object.create(ot);
+  return S.toFlatObject(l, b, function(y) {
+    return y !== Error.prototype;
+  }, (g) => g !== "isAxiosError"), C.call(b, l.message, d, p, a, v), b.cause = l, b.name = l.name, P && Object.assign(b, P), b;
 };
-const fa = null;
-function ye(i) {
-  return f.isPlainObject(i) || f.isArray(i);
+const Ea = null;
+function je(l) {
+  return S.isPlainObject(l) || S.isArray(l);
 }
-function ct(i) {
-  return f.endsWith(i, "[]") ? i.slice(0, -2) : i;
+function ct(l) {
+  return S.endsWith(l, "[]") ? l.slice(0, -2) : l;
 }
-function Ie(i, c, u) {
-  return i ? i.concat(c).map(function(p, P) {
-    return p = ct(p), !u && P ? "[" + p + "]" : p;
-  }).join(u ? "." : "") : c;
+function qe(l, d, p) {
+  return l ? l.concat(d).map(function(v, P) {
+    return v = ct(v), !p && P ? "[" + v + "]" : v;
+  }).join(p ? "." : "") : d;
 }
-function ba(i) {
-  return f.isArray(i) && !i.some(ye);
+function Ba(l) {
+  return S.isArray(l) && !l.some(je);
 }
-const ma = f.toFlatObject(f, {}, null, function(c) {
-  return /^is[A-Z]/.test(c);
+const Fa = S.toFlatObject(S, {}, null, function(d) {
+  return /^is[A-Z]/.test(d);
 });
-function he(i, c, u) {
-  if (!f.isObject(i))
+function ve(l, d, p) {
+  if (!S.isObject(l))
     throw new TypeError("target must be an object");
-  c = c || new FormData(), u = f.toFlatObject(u, {
+  d = d || new FormData(), p = S.toFlatObject(p, {
     metaTokens: !0,
     dots: !1,
     indexes: !1
-  }, !1, function(v, z) {
-    return !f.isUndefined(z[v]);
+  }, !1, function(T, D) {
+    return !S.isUndefined(D[T]);
   });
-  const e = u.metaTokens, p = u.visitor || U, P = u.dots, g = u.indexes, R = (u.Blob || typeof Blob < "u" && Blob) && f.isSpecCompliantForm(c);
-  if (!f.isFunction(p))
+  const a = p.metaTokens, v = p.visitor || _, P = p.dots, b = p.indexes, y = (p.Blob || typeof Blob < "u" && Blob) && S.isSpecCompliantForm(d);
+  if (!S.isFunction(v))
     throw new TypeError("visitor must be a function");
-  function S(y) {
-    if (y === null)
+  function E(R) {
+    if (R === null)
       return "";
-    if (f.isDate(y))
-      return y.toISOString();
-    if (!R && f.isBlob(y))
-      throw new E("Blob is not supported. Use a Buffer instead.");
-    return f.isArrayBuffer(y) || f.isTypedArray(y) ? R && typeof Blob == "function" ? new Blob([y]) : Buffer.from(y) : y;
+    if (S.isDate(R))
+      return R.toISOString();
+    if (!y && S.isBlob(R))
+      throw new C("Blob is not supported. Use a Buffer instead.");
+    return S.isArrayBuffer(R) || S.isTypedArray(R) ? y && typeof Blob == "function" ? new Blob([R]) : Buffer.from(R) : R;
   }
-  function U(y, v, z) {
-    let D = y;
-    if (y && !z && typeof y == "object") {
-      if (f.endsWith(v, "{}"))
-        v = e ? v : v.slice(0, -2), y = JSON.stringify(y);
-      else if (f.isArray(y) && ba(y) || (f.isFileList(y) || f.endsWith(v, "[]")) && (D = f.toArray(y)))
-        return v = ct(v), D.forEach(function($, Oe) {
-          !(f.isUndefined($) || $ === null) && c.append(
+  function _(R, T, D) {
+    let N = R;
+    if (R && !D && typeof R == "object") {
+      if (S.endsWith(T, "{}"))
+        T = a ? T : T.slice(0, -2), R = JSON.stringify(R);
+      else if (S.isArray(R) && Ba(R) || (S.isFileList(R) || S.endsWith(T, "[]")) && (N = S.toArray(R)))
+        return T = ct(T), N.forEach(function(Y, Pe) {
+          !(S.isUndefined(Y) || Y === null) && d.append(
             // eslint-disable-next-line no-nested-ternary
-            g === !0 ? Ie([v], Oe, P) : g === null ? v : v + "[]",
-            S($)
+            b === !0 ? qe([T], Pe, P) : b === null ? T : T + "[]",
+            E(Y)
           );
         }), !1;
     }
-    return ye(y) ? !0 : (c.append(Ie(z, v, P), S(y)), !1);
+    return je(R) ? !0 : (d.append(qe(D, T, P), E(R)), !1);
   }
-  const T = [], L = Object.assign(ma, {
-    defaultVisitor: U,
-    convertValue: S,
-    isVisitable: ye
+  const U = [], L = Object.assign(Fa, {
+    defaultVisitor: _,
+    convertValue: E,
+    isVisitable: je
   });
-  function B(y, v) {
-    if (!f.isUndefined(y)) {
-      if (T.indexOf(y) !== -1)
-        throw Error("Circular reference detected in " + v.join("."));
-      T.push(y), f.forEach(y, function(D, G) {
-        (!(f.isUndefined(D) || D === null) && p.call(
-          c,
-          D,
-          f.isString(G) ? G.trim() : G,
-          v,
+  function G(R, T) {
+    if (!S.isUndefined(R)) {
+      if (U.indexOf(R) !== -1)
+        throw Error("Circular reference detected in " + T.join("."));
+      U.push(R), S.forEach(R, function(N, Q) {
+        (!(S.isUndefined(N) || N === null) && v.call(
+          d,
+          N,
+          S.isString(Q) ? Q.trim() : Q,
+          T,
           L
-        )) === !0 && B(D, v ? v.concat(G) : [G]);
-      }), T.pop();
+        )) === !0 && G(N, T ? T.concat(Q) : [Q]);
+      }), U.pop();
     }
   }
-  if (!f.isObject(i))
+  if (!S.isObject(l))
     throw new TypeError("data must be an object");
-  return B(i), c;
+  return G(l), d;
 }
-function De(i) {
-  const c = {
+function De(l) {
+  const d = {
     "!": "%21",
     "'": "%27",
     "(": "%28",
@@ -681,40 +682,40 @@ function De(i) {
     "%20": "+",
     "%00": "\0"
   };
-  return encodeURIComponent(i).replace(/[!'()~]|%20|%00/g, function(e) {
-    return c[e];
+  return encodeURIComponent(l).replace(/[!'()~]|%20|%00/g, function(a) {
+    return d[a];
   });
 }
-function ve(i, c) {
-  this._pairs = [], i && he(i, this, c);
+function Ee(l, d) {
+  this._pairs = [], l && ve(l, this, d);
 }
-const lt = ve.prototype;
-lt.append = function(c, u) {
-  this._pairs.push([c, u]);
+const dt = Ee.prototype;
+dt.append = function(d, p) {
+  this._pairs.push([d, p]);
 };
-lt.toString = function(c) {
-  const u = c ? function(e) {
-    return c.call(this, e, De);
+dt.toString = function(d) {
+  const p = d ? function(a) {
+    return d.call(this, a, De);
   } : De;
-  return this._pairs.map(function(p) {
-    return u(p[0]) + "=" + u(p[1]);
+  return this._pairs.map(function(v) {
+    return p(v[0]) + "=" + p(v[1]);
   }, "").join("&");
 };
-function Sa(i) {
-  return encodeURIComponent(i).replace(/%3A/gi, ":").replace(/%24/g, "$").replace(/%2C/gi, ",").replace(/%20/g, "+").replace(/%5B/gi, "[").replace(/%5D/gi, "]");
+function Ca(l) {
+  return encodeURIComponent(l).replace(/%3A/gi, ":").replace(/%24/g, "$").replace(/%2C/gi, ",").replace(/%20/g, "+").replace(/%5B/gi, "[").replace(/%5D/gi, "]");
 }
-function dt(i, c, u) {
-  if (!c)
-    return i;
-  const e = u && u.encode || Sa, p = u && u.serialize;
+function ut(l, d, p) {
+  if (!d)
+    return l;
+  const a = p && p.encode || Ca, v = p && p.serialize;
   let P;
-  if (p ? P = p(c, u) : P = f.isURLSearchParams(c) ? c.toString() : new ve(c, u).toString(e), P) {
-    const g = i.indexOf("#");
-    g !== -1 && (i = i.slice(0, g)), i += (i.indexOf("?") === -1 ? "?" : "&") + P;
+  if (v ? P = v(d, p) : P = S.isURLSearchParams(d) ? d.toString() : new Ee(d, p).toString(a), P) {
+    const b = l.indexOf("#");
+    b !== -1 && (l = l.slice(0, b)), l += (l.indexOf("?") === -1 ? "?" : "&") + P;
   }
-  return i;
+  return l;
 }
-class Ua {
+class Ia {
   constructor() {
     this.handlers = [];
   }
@@ -726,12 +727,12 @@ class Ua {
    *
    * @return {Number} An ID used to remove interceptor later
    */
-  use(c, u, e) {
+  use(d, p, a) {
     return this.handlers.push({
-      fulfilled: c,
-      rejected: u,
-      synchronous: e ? e.synchronous : !1,
-      runWhen: e ? e.runWhen : null
+      fulfilled: d,
+      rejected: p,
+      synchronous: a ? a.synchronous : !1,
+      runWhen: a ? a.runWhen : null
     }), this.handlers.length - 1;
   }
   /**
@@ -741,8 +742,8 @@ class Ua {
    *
    * @returns {Boolean} `true` if the interceptor was removed, `false` otherwise
    */
-  eject(c) {
-    this.handlers[c] && (this.handlers[c] = null);
+  eject(d) {
+    this.handlers[d] && (this.handlers[d] = null);
   }
   /**
    * Clear all interceptors from the stack
@@ -762,114 +763,117 @@ class Ua {
    *
    * @returns {void}
    */
-  forEach(c) {
-    f.forEach(this.handlers, function(e) {
-      e !== null && c(e);
+  forEach(d) {
+    S.forEach(this.handlers, function(a) {
+      a !== null && d(a);
     });
   }
 }
-const ke = Ua, ut = {
+const He = Ia, ht = {
   silentJSONParsing: !0,
   forcedJSONParsing: !0,
   clarifyTimeoutError: !1
-}, ya = typeof URLSearchParams < "u" ? URLSearchParams : ve, ja = typeof FormData < "u" ? FormData : null, Va = typeof Blob < "u" ? Blob : null, Ra = (() => {
-  let i;
-  return typeof navigator < "u" && ((i = navigator.product) === "ReactNative" || i === "NativeScript" || i === "NS") ? !1 : typeof window < "u" && typeof document < "u";
-})(), Ta = (() => typeof WorkerGlobalScope < "u" && // eslint-disable-next-line no-undef
-self instanceof WorkerGlobalScope && typeof self.importScripts == "function")(), x = {
+}, Ma = typeof URLSearchParams < "u" ? URLSearchParams : Ee, wa = typeof FormData < "u" ? FormData : null, La = typeof Blob < "u" ? Blob : null, xa = {
   isBrowser: !0,
   classes: {
-    URLSearchParams: ya,
-    FormData: ja,
-    Blob: Va
+    URLSearchParams: Ma,
+    FormData: wa,
+    Blob: La
   },
-  isStandardBrowserEnv: Ra,
-  isStandardBrowserWebWorkerEnv: Ta,
   protocols: ["http", "https", "file", "blob", "url", "data"]
+}, pt = typeof window < "u" && typeof document < "u", qa = ((l) => pt && ["ReactNative", "NativeScript", "NS"].indexOf(l) < 0)(typeof navigator < "u" && navigator.product), Da = typeof WorkerGlobalScope < "u" && // eslint-disable-next-line no-undef
+self instanceof WorkerGlobalScope && typeof self.importScripts == "function", Ha = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  hasBrowserEnv: pt,
+  hasStandardBrowserEnv: qa,
+  hasStandardBrowserWebWorkerEnv: Da
+}, Symbol.toStringTag, { value: "Module" })), $ = {
+  ...Ha,
+  ...xa
 };
-function Fa(i, c) {
-  return he(i, new x.classes.URLSearchParams(), Object.assign({
-    visitor: function(u, e, p, P) {
-      return x.isNode && f.isBuffer(u) ? (this.append(e, u.toString("base64")), !1) : P.defaultVisitor.apply(this, arguments);
+function Na(l, d) {
+  return ve(l, new $.classes.URLSearchParams(), Object.assign({
+    visitor: function(p, a, v, P) {
+      return $.isNode && S.isBuffer(p) ? (this.append(a, p.toString("base64")), !1) : P.defaultVisitor.apply(this, arguments);
     }
-  }, c));
+  }, d));
 }
-function va(i) {
-  return f.matchAll(/\w+|\[(\w*)]/g, i).map((c) => c[0] === "[]" ? "" : c[1] || c[0]);
+function Ga(l) {
+  return S.matchAll(/\w+|\[(\w*)]/g, l).map((d) => d[0] === "[]" ? "" : d[1] || d[0]);
 }
-function Ea(i) {
-  const c = {}, u = Object.keys(i);
-  let e;
-  const p = u.length;
+function ka(l) {
+  const d = {}, p = Object.keys(l);
+  let a;
+  const v = p.length;
   let P;
-  for (e = 0; e < p; e++)
-    P = u[e], c[P] = i[P];
-  return c;
+  for (a = 0; a < v; a++)
+    P = p[a], d[P] = l[P];
+  return d;
 }
-function ht(i) {
-  function c(u, e, p, P) {
-    let g = u[P++];
-    const m = Number.isFinite(+g), R = P >= u.length;
-    return g = !g && f.isArray(p) ? p.length : g, R ? (f.hasOwnProp(p, g) ? p[g] = [p[g], e] : p[g] = e, !m) : ((!p[g] || !f.isObject(p[g])) && (p[g] = []), c(u, e, p[g], P) && f.isArray(p[g]) && (p[g] = Ea(p[g])), !m);
+function vt(l) {
+  function d(p, a, v, P) {
+    let b = p[P++];
+    const g = Number.isFinite(+b), y = P >= p.length;
+    return b = !b && S.isArray(v) ? v.length : b, y ? (S.hasOwnProp(v, b) ? v[b] = [v[b], a] : v[b] = a, !g) : ((!v[b] || !S.isObject(v[b])) && (v[b] = []), d(p, a, v[b], P) && S.isArray(v[b]) && (v[b] = ka(v[b])), !g);
   }
-  if (f.isFormData(i) && f.isFunction(i.entries)) {
-    const u = {};
-    return f.forEachEntry(i, (e, p) => {
-      c(va(e), p, u, 0);
-    }), u;
+  if (S.isFormData(l) && S.isFunction(l.entries)) {
+    const p = {};
+    return S.forEachEntry(l, (a, v) => {
+      d(Ga(a), v, p, 0);
+    }), p;
   }
   return null;
 }
-function Ba(i, c, u) {
-  if (f.isString(i))
+function Qa(l, d, p) {
+  if (S.isString(l))
     try {
-      return (c || JSON.parse)(i), f.trim(i);
-    } catch (e) {
-      if (e.name !== "SyntaxError")
-        throw e;
+      return (d || JSON.parse)(l), S.trim(l);
+    } catch (a) {
+      if (a.name !== "SyntaxError")
+        throw a;
     }
-  return (u || JSON.stringify)(i);
+  return (p || JSON.stringify)(l);
 }
-const Ee = {
-  transitional: ut,
-  adapter: x.isNode ? "http" : "xhr",
-  transformRequest: [function(c, u) {
-    const e = u.getContentType() || "", p = e.indexOf("application/json") > -1, P = f.isObject(c);
-    if (P && f.isHTMLForm(c) && (c = new FormData(c)), f.isFormData(c))
-      return p && p ? JSON.stringify(ht(c)) : c;
-    if (f.isArrayBuffer(c) || f.isBuffer(c) || f.isStream(c) || f.isFile(c) || f.isBlob(c))
-      return c;
-    if (f.isArrayBufferView(c))
-      return c.buffer;
-    if (f.isURLSearchParams(c))
-      return u.setContentType("application/x-www-form-urlencoded;charset=utf-8", !1), c.toString();
-    let m;
+const Be = {
+  transitional: ht,
+  adapter: ["xhr", "http"],
+  transformRequest: [function(d, p) {
+    const a = p.getContentType() || "", v = a.indexOf("application/json") > -1, P = S.isObject(d);
+    if (P && S.isHTMLForm(d) && (d = new FormData(d)), S.isFormData(d))
+      return v && v ? JSON.stringify(vt(d)) : d;
+    if (S.isArrayBuffer(d) || S.isBuffer(d) || S.isStream(d) || S.isFile(d) || S.isBlob(d))
+      return d;
+    if (S.isArrayBufferView(d))
+      return d.buffer;
+    if (S.isURLSearchParams(d))
+      return p.setContentType("application/x-www-form-urlencoded;charset=utf-8", !1), d.toString();
+    let g;
     if (P) {
-      if (e.indexOf("application/x-www-form-urlencoded") > -1)
-        return Fa(c, this.formSerializer).toString();
-      if ((m = f.isFileList(c)) || e.indexOf("multipart/form-data") > -1) {
-        const R = this.env && this.env.FormData;
-        return he(
-          m ? { "files[]": c } : c,
-          R && new R(),
+      if (a.indexOf("application/x-www-form-urlencoded") > -1)
+        return Na(d, this.formSerializer).toString();
+      if ((g = S.isFileList(d)) || a.indexOf("multipart/form-data") > -1) {
+        const y = this.env && this.env.FormData;
+        return ve(
+          g ? { "files[]": d } : d,
+          y && new y(),
           this.formSerializer
         );
       }
     }
-    return P || p ? (u.setContentType("application/json", !1), Ba(c)) : c;
+    return P || v ? (p.setContentType("application/json", !1), Qa(d)) : d;
   }],
-  transformResponse: [function(c) {
-    const u = this.transitional || Ee.transitional, e = u && u.forcedJSONParsing, p = this.responseType === "json";
-    if (c && f.isString(c) && (e && !this.responseType || p)) {
-      const g = !(u && u.silentJSONParsing) && p;
+  transformResponse: [function(d) {
+    const p = this.transitional || Be.transitional, a = p && p.forcedJSONParsing, v = this.responseType === "json";
+    if (d && S.isString(d) && (a && !this.responseType || v)) {
+      const b = !(p && p.silentJSONParsing) && v;
       try {
-        return JSON.parse(c);
-      } catch (m) {
-        if (g)
-          throw m.name === "SyntaxError" ? E.from(m, E.ERR_BAD_RESPONSE, this, null, this.response) : m;
+        return JSON.parse(d);
+      } catch (g) {
+        if (b)
+          throw g.name === "SyntaxError" ? C.from(g, C.ERR_BAD_RESPONSE, this, null, this.response) : g;
       }
     }
-    return c;
+    return d;
   }],
   /**
    * A timeout in milliseconds to abort a request. If set to 0 (default) a
@@ -881,11 +885,11 @@ const Ee = {
   maxContentLength: -1,
   maxBodyLength: -1,
   env: {
-    FormData: x.classes.FormData,
-    Blob: x.classes.Blob
+    FormData: $.classes.FormData,
+    Blob: $.classes.Blob
   },
-  validateStatus: function(c) {
-    return c >= 200 && c < 300;
+  validateStatus: function(d) {
+    return d >= 200 && d < 300;
   },
   headers: {
     common: {
@@ -894,10 +898,10 @@ const Ee = {
     }
   }
 };
-f.forEach(["delete", "get", "head", "post", "put", "patch"], (i) => {
-  Ee.headers[i] = {};
+S.forEach(["delete", "get", "head", "post", "put", "patch"], (l) => {
+  Be.headers[l] = {};
 });
-const Be = Ee, _a = f.toObjectSet([
+const Fe = Be, Ya = S.toObjectSet([
   "age",
   "authorization",
   "content-length",
@@ -915,547 +919,563 @@ const Be = Ee, _a = f.toObjectSet([
   "referer",
   "retry-after",
   "user-agent"
-]), Ca = (i) => {
-  const c = {};
-  let u, e, p;
-  return i && i.split(`
-`).forEach(function(g) {
-    p = g.indexOf(":"), u = g.substring(0, p).trim().toLowerCase(), e = g.substring(p + 1).trim(), !(!u || c[u] && _a[u]) && (u === "set-cookie" ? c[u] ? c[u].push(e) : c[u] = [e] : c[u] = c[u] ? c[u] + ", " + e : e);
-  }), c;
-}, ze = Symbol("internals");
-function Z(i) {
-  return i && String(i).trim().toLowerCase();
+]), $a = (l) => {
+  const d = {};
+  let p, a, v;
+  return l && l.split(`
+`).forEach(function(b) {
+    v = b.indexOf(":"), p = b.substring(0, v).trim().toLowerCase(), a = b.substring(v + 1).trim(), !(!p || d[p] && Ya[p]) && (p === "set-cookie" ? d[p] ? d[p].push(a) : d[p] = [a] : d[p] = d[p] ? d[p] + ", " + a : a);
+  }), d;
+}, Ne = Symbol("internals");
+function se(l) {
+  return l && String(l).trim().toLowerCase();
 }
-function re(i) {
-  return i === !1 || i == null ? i : f.isArray(i) ? i.map(re) : String(i);
+function le(l) {
+  return l === !1 || l == null ? l : S.isArray(l) ? l.map(le) : String(l);
 }
-function wa(i) {
-  const c = /* @__PURE__ */ Object.create(null), u = /([^\s,;=]+)\s*(?:=\s*([^,;]+))?/g;
-  let e;
-  for (; e = u.exec(i); )
-    c[e[1]] = e[2];
-  return c;
+function za(l) {
+  const d = /* @__PURE__ */ Object.create(null), p = /([^\s,;=]+)\s*(?:=\s*([^,;]+))?/g;
+  let a;
+  for (; a = p.exec(l); )
+    d[a[1]] = a[2];
+  return d;
 }
-const La = (i) => /^[-_a-zA-Z0-9^`|~,!#$%&'*+.]+$/.test(i.trim());
-function fe(i, c, u, e, p) {
-  if (f.isFunction(e))
-    return e.call(this, c, u);
-  if (p && (c = u), !!f.isString(c)) {
-    if (f.isString(e))
-      return c.indexOf(e) !== -1;
-    if (f.isRegExp(e))
-      return e.test(c);
+const Ka = (l) => /^[-_a-zA-Z0-9^`|~,!#$%&'*+.]+$/.test(l.trim());
+function me(l, d, p, a, v) {
+  if (S.isFunction(a))
+    return a.call(this, d, p);
+  if (v && (d = p), !!S.isString(d)) {
+    if (S.isString(a))
+      return d.indexOf(a) !== -1;
+    if (S.isRegExp(a))
+      return a.test(d);
   }
 }
-function qa(i) {
-  return i.trim().toLowerCase().replace(/([a-z\d])(\w*)/g, (c, u, e) => u.toUpperCase() + e);
+function Wa(l) {
+  return l.trim().toLowerCase().replace(/([a-z\d])(\w*)/g, (d, p, a) => p.toUpperCase() + a);
 }
-function Ma(i, c) {
-  const u = f.toCamelCase(" " + c);
-  ["get", "set", "has"].forEach((e) => {
-    Object.defineProperty(i, e + u, {
-      value: function(p, P, g) {
-        return this[e].call(this, c, p, P, g);
+function Ja(l, d) {
+  const p = S.toCamelCase(" " + d);
+  ["get", "set", "has"].forEach((a) => {
+    Object.defineProperty(l, a + p, {
+      value: function(v, P, b) {
+        return this[a].call(this, d, v, P, b);
       },
       configurable: !0
     });
   });
 }
-let pe = class {
-  constructor(c) {
-    c && this.set(c);
+let Ae = class {
+  constructor(d) {
+    d && this.set(d);
   }
-  set(c, u, e) {
-    const p = this;
-    function P(m, R, S) {
-      const U = Z(R);
-      if (!U)
+  set(d, p, a) {
+    const v = this;
+    function P(g, y, E) {
+      const _ = se(y);
+      if (!_)
         throw new Error("header name must be a non-empty string");
-      const T = f.findKey(p, U);
-      (!T || p[T] === void 0 || S === !0 || S === void 0 && p[T] !== !1) && (p[T || R] = re(m));
+      const U = S.findKey(v, _);
+      (!U || v[U] === void 0 || E === !0 || E === void 0 && v[U] !== !1) && (v[U || y] = le(g));
     }
-    const g = (m, R) => f.forEach(m, (S, U) => P(S, U, R));
-    return f.isPlainObject(c) || c instanceof this.constructor ? g(c, u) : f.isString(c) && (c = c.trim()) && !La(c) ? g(Ca(c), u) : c != null && P(u, c, e), this;
+    const b = (g, y) => S.forEach(g, (E, _) => P(E, _, y));
+    return S.isPlainObject(d) || d instanceof this.constructor ? b(d, p) : S.isString(d) && (d = d.trim()) && !Ka(d) ? b($a(d), p) : d != null && P(p, d, a), this;
   }
-  get(c, u) {
-    if (c = Z(c), c) {
-      const e = f.findKey(this, c);
-      if (e) {
-        const p = this[e];
-        if (!u)
-          return p;
-        if (u === !0)
-          return wa(p);
-        if (f.isFunction(u))
-          return u.call(this, p, e);
-        if (f.isRegExp(u))
-          return u.exec(p);
+  get(d, p) {
+    if (d = se(d), d) {
+      const a = S.findKey(this, d);
+      if (a) {
+        const v = this[a];
+        if (!p)
+          return v;
+        if (p === !0)
+          return za(v);
+        if (S.isFunction(p))
+          return p.call(this, v, a);
+        if (S.isRegExp(p))
+          return p.exec(v);
         throw new TypeError("parser must be boolean|regexp|function");
       }
     }
   }
-  has(c, u) {
-    if (c = Z(c), c) {
-      const e = f.findKey(this, c);
-      return !!(e && this[e] !== void 0 && (!u || fe(this, this[e], e, u)));
+  has(d, p) {
+    if (d = se(d), d) {
+      const a = S.findKey(this, d);
+      return !!(a && this[a] !== void 0 && (!p || me(this, this[a], a, p)));
     }
     return !1;
   }
-  delete(c, u) {
-    const e = this;
-    let p = !1;
-    function P(g) {
-      if (g = Z(g), g) {
-        const m = f.findKey(e, g);
-        m && (!u || fe(e, e[m], m, u)) && (delete e[m], p = !0);
+  delete(d, p) {
+    const a = this;
+    let v = !1;
+    function P(b) {
+      if (b = se(b), b) {
+        const g = S.findKey(a, b);
+        g && (!p || me(a, a[g], g, p)) && (delete a[g], v = !0);
       }
     }
-    return f.isArray(c) ? c.forEach(P) : P(c), p;
+    return S.isArray(d) ? d.forEach(P) : P(d), v;
   }
-  clear(c) {
-    const u = Object.keys(this);
-    let e = u.length, p = !1;
-    for (; e--; ) {
-      const P = u[e];
-      (!c || fe(this, this[P], P, c, !0)) && (delete this[P], p = !0);
+  clear(d) {
+    const p = Object.keys(this);
+    let a = p.length, v = !1;
+    for (; a--; ) {
+      const P = p[a];
+      (!d || me(this, this[P], P, d, !0)) && (delete this[P], v = !0);
     }
-    return p;
+    return v;
   }
-  normalize(c) {
-    const u = this, e = {};
-    return f.forEach(this, (p, P) => {
-      const g = f.findKey(e, P);
-      if (g) {
-        u[g] = re(p), delete u[P];
+  normalize(d) {
+    const p = this, a = {};
+    return S.forEach(this, (v, P) => {
+      const b = S.findKey(a, P);
+      if (b) {
+        p[b] = le(v), delete p[P];
         return;
       }
-      const m = c ? qa(P) : String(P).trim();
-      m !== P && delete u[P], u[m] = re(p), e[m] = !0;
+      const g = d ? Wa(P) : String(P).trim();
+      g !== P && delete p[P], p[g] = le(v), a[g] = !0;
     }), this;
   }
-  concat(...c) {
-    return this.constructor.concat(this, ...c);
+  concat(...d) {
+    return this.constructor.concat(this, ...d);
   }
-  toJSON(c) {
-    const u = /* @__PURE__ */ Object.create(null);
-    return f.forEach(this, (e, p) => {
-      e != null && e !== !1 && (u[p] = c && f.isArray(e) ? e.join(", ") : e);
-    }), u;
+  toJSON(d) {
+    const p = /* @__PURE__ */ Object.create(null);
+    return S.forEach(this, (a, v) => {
+      a != null && a !== !1 && (p[v] = d && S.isArray(a) ? a.join(", ") : a);
+    }), p;
   }
   [Symbol.iterator]() {
     return Object.entries(this.toJSON())[Symbol.iterator]();
   }
   toString() {
-    return Object.entries(this.toJSON()).map(([c, u]) => c + ": " + u).join(`
+    return Object.entries(this.toJSON()).map(([d, p]) => d + ": " + p).join(`
 `);
   }
   get [Symbol.toStringTag]() {
     return "AxiosHeaders";
   }
-  static from(c) {
-    return c instanceof this ? c : new this(c);
+  static from(d) {
+    return d instanceof this ? d : new this(d);
   }
-  static concat(c, ...u) {
-    const e = new this(c);
-    return u.forEach((p) => e.set(p)), e;
+  static concat(d, ...p) {
+    const a = new this(d);
+    return p.forEach((v) => a.set(v)), a;
   }
-  static accessor(c) {
-    const e = (this[ze] = this[ze] = {
+  static accessor(d) {
+    const a = (this[Ne] = this[Ne] = {
       accessors: {}
-    }).accessors, p = this.prototype;
-    function P(g) {
-      const m = Z(g);
-      e[m] || (Ma(p, g), e[m] = !0);
+    }).accessors, v = this.prototype;
+    function P(b) {
+      const g = se(b);
+      a[g] || (Ja(v, b), a[g] = !0);
     }
-    return f.isArray(c) ? c.forEach(P) : P(c), this;
+    return S.isArray(d) ? d.forEach(P) : P(d), this;
   }
 };
-pe.accessor(["Content-Type", "Content-Length", "Accept", "Accept-Encoding", "User-Agent", "Authorization"]);
-f.reduceDescriptors(pe.prototype, ({ value: i }, c) => {
-  let u = c[0].toUpperCase() + c.slice(1);
+Ae.accessor(["Content-Type", "Content-Length", "Accept", "Accept-Encoding", "User-Agent", "Authorization"]);
+S.reduceDescriptors(Ae.prototype, ({ value: l }, d) => {
+  let p = d[0].toUpperCase() + d.slice(1);
   return {
-    get: () => i,
-    set(e) {
-      this[u] = e;
+    get: () => l,
+    set(a) {
+      this[p] = a;
     }
   };
 });
-f.freezeMethods(pe);
-const K = pe;
-function be(i, c) {
-  const u = this || Be, e = c || u, p = K.from(e.headers);
-  let P = e.data;
-  return f.forEach(i, function(m) {
-    P = m.call(u, P, p.normalize(), c ? c.status : void 0);
-  }), p.normalize(), P;
+S.freezeMethods(Ae);
+const K = Ae;
+function Se(l, d) {
+  const p = this || Fe, a = d || p, v = K.from(a.headers);
+  let P = a.data;
+  return S.forEach(l, function(g) {
+    P = g.call(p, P, v.normalize(), d ? d.status : void 0);
+  }), v.normalize(), P;
 }
-function pt(i) {
-  return !!(i && i.__CANCEL__);
+function At(l) {
+  return !!(l && l.__CANCEL__);
 }
-function se(i, c, u) {
-  E.call(this, i ?? "canceled", E.ERR_CANCELED, c, u), this.name = "CanceledError";
+function ie(l, d, p) {
+  C.call(this, l ?? "canceled", C.ERR_CANCELED, d, p), this.name = "CanceledError";
 }
-f.inherits(se, E, {
+S.inherits(ie, C, {
   __CANCEL__: !0
 });
-function Ha(i, c, u) {
-  const e = u.config.validateStatus;
-  !u.status || !e || e(u.status) ? i(u) : c(new E(
-    "Request failed with status code " + u.status,
-    [E.ERR_BAD_REQUEST, E.ERR_BAD_RESPONSE][Math.floor(u.status / 100) - 4],
-    u.config,
-    u.request,
-    u
+function Xa(l, d, p) {
+  const a = p.config.validateStatus;
+  !p.status || !a || a(p.status) ? l(p) : d(new C(
+    "Request failed with status code " + p.status,
+    [C.ERR_BAD_REQUEST, C.ERR_BAD_RESPONSE][Math.floor(p.status / 100) - 4],
+    p.config,
+    p.request,
+    p
   ));
 }
-const Ia = x.isStandardBrowserEnv ? (
+const Za = $.hasStandardBrowserEnv ? (
   // Standard browser envs support document.cookie
-  function() {
-    return {
-      write: function(u, e, p, P, g, m) {
-        const R = [];
-        R.push(u + "=" + encodeURIComponent(e)), f.isNumber(p) && R.push("expires=" + new Date(p).toGMTString()), f.isString(P) && R.push("path=" + P), f.isString(g) && R.push("domain=" + g), m === !0 && R.push("secure"), document.cookie = R.join("; ");
-      },
-      read: function(u) {
-        const e = document.cookie.match(new RegExp("(^|;\\s*)(" + u + ")=([^;]*)"));
-        return e ? decodeURIComponent(e[3]) : null;
-      },
-      remove: function(u) {
-        this.write(u, "", Date.now() - 864e5);
-      }
-    };
-  }()
+  {
+    write(l, d, p, a, v, P) {
+      const b = [l + "=" + encodeURIComponent(d)];
+      S.isNumber(p) && b.push("expires=" + new Date(p).toGMTString()), S.isString(a) && b.push("path=" + a), S.isString(v) && b.push("domain=" + v), P === !0 && b.push("secure"), document.cookie = b.join("; ");
+    },
+    read(l) {
+      const d = document.cookie.match(new RegExp("(^|;\\s*)(" + l + ")=([^;]*)"));
+      return d ? decodeURIComponent(d[3]) : null;
+    },
+    remove(l) {
+      this.write(l, "", Date.now() - 864e5);
+    }
+  }
 ) : (
-  // Non standard browser env (web workers, react-native) lack needed support.
-  function() {
-    return {
-      write: function() {
-      },
-      read: function() {
-        return null;
-      },
-      remove: function() {
-      }
-    };
-  }()
+  // Non-standard browser env (web workers, react-native) lack needed support.
+  {
+    write() {
+    },
+    read() {
+      return null;
+    },
+    remove() {
+    }
+  }
 );
-function Da(i) {
-  return /^([a-z][a-z\d+\-.]*:)?\/\//i.test(i);
+function er(l) {
+  return /^([a-z][a-z\d+\-.]*:)?\/\//i.test(l);
 }
-function ka(i, c) {
-  return c ? i.replace(/\/+$/, "") + "/" + c.replace(/^\/+/, "") : i;
+function tr(l, d) {
+  return d ? l.replace(/\/+$/, "") + "/" + d.replace(/^\/+/, "") : l;
 }
-function At(i, c) {
-  return i && !Da(c) ? ka(i, c) : c;
+function Ot(l, d) {
+  return l && !er(d) ? tr(l, d) : d;
 }
-const za = x.isStandardBrowserEnv ? (
+const sr = $.hasStandardBrowserEnv ? (
   // Standard browser envs have full support of the APIs needed to test
   // whether the request URL is of the same origin as current location.
   function() {
-    const c = /(msie|trident)/i.test(navigator.userAgent), u = document.createElement("a");
-    let e;
-    function p(P) {
-      let g = P;
-      return c && (u.setAttribute("href", g), g = u.href), u.setAttribute("href", g), {
-        href: u.href,
-        protocol: u.protocol ? u.protocol.replace(/:$/, "") : "",
-        host: u.host,
-        search: u.search ? u.search.replace(/^\?/, "") : "",
-        hash: u.hash ? u.hash.replace(/^#/, "") : "",
-        hostname: u.hostname,
-        port: u.port,
-        pathname: u.pathname.charAt(0) === "/" ? u.pathname : "/" + u.pathname
+    const d = /(msie|trident)/i.test(navigator.userAgent), p = document.createElement("a");
+    let a;
+    function v(P) {
+      let b = P;
+      return d && (p.setAttribute("href", b), b = p.href), p.setAttribute("href", b), {
+        href: p.href,
+        protocol: p.protocol ? p.protocol.replace(/:$/, "") : "",
+        host: p.host,
+        search: p.search ? p.search.replace(/^\?/, "") : "",
+        hash: p.hash ? p.hash.replace(/^#/, "") : "",
+        hostname: p.hostname,
+        port: p.port,
+        pathname: p.pathname.charAt(0) === "/" ? p.pathname : "/" + p.pathname
       };
     }
-    return e = p(window.location.href), function(g) {
-      const m = f.isString(g) ? p(g) : g;
-      return m.protocol === e.protocol && m.host === e.host;
+    return a = v(window.location.href), function(b) {
+      const g = S.isString(b) ? v(b) : b;
+      return g.protocol === a.protocol && g.host === a.host;
     };
   }()
 ) : (
   // Non standard browser envs (web workers, react-native) lack needed support.
-  function() {
+  /* @__PURE__ */ function() {
     return function() {
       return !0;
     };
   }()
 );
-function xa(i) {
-  const c = /^([-+\w]{1,25})(:?\/\/|:)/.exec(i);
-  return c && c[1] || "";
+function ar(l) {
+  const d = /^([-+\w]{1,25})(:?\/\/|:)/.exec(l);
+  return d && d[1] || "";
 }
-function Na(i, c) {
-  i = i || 10;
-  const u = new Array(i), e = new Array(i);
-  let p = 0, P = 0, g;
-  return c = c !== void 0 ? c : 1e3, function(R) {
-    const S = Date.now(), U = e[P];
-    g || (g = S), u[p] = R, e[p] = S;
-    let T = P, L = 0;
-    for (; T !== p; )
-      L += u[T++], T = T % i;
-    if (p = (p + 1) % i, p === P && (P = (P + 1) % i), S - g < c)
+function rr(l, d) {
+  l = l || 10;
+  const p = new Array(l), a = new Array(l);
+  let v = 0, P = 0, b;
+  return d = d !== void 0 ? d : 1e3, function(y) {
+    const E = Date.now(), _ = a[P];
+    b || (b = E), p[v] = y, a[v] = E;
+    let U = P, L = 0;
+    for (; U !== v; )
+      L += p[U++], U = U % l;
+    if (v = (v + 1) % l, v === P && (P = (P + 1) % l), E - b < d)
       return;
-    const B = U && S - U;
-    return B ? Math.round(L * 1e3 / B) : void 0;
+    const G = _ && E - _;
+    return G ? Math.round(L * 1e3 / G) : void 0;
   };
 }
-function xe(i, c) {
-  let u = 0;
-  const e = Na(50, 250);
-  return (p) => {
-    const P = p.loaded, g = p.lengthComputable ? p.total : void 0, m = P - u, R = e(m), S = P <= g;
-    u = P;
-    const U = {
+function Ge(l, d) {
+  let p = 0;
+  const a = rr(50, 250);
+  return (v) => {
+    const P = v.loaded, b = v.lengthComputable ? v.total : void 0, g = P - p, y = a(g), E = P <= b;
+    p = P;
+    const _ = {
       loaded: P,
-      total: g,
-      progress: g ? P / g : void 0,
-      bytes: m,
-      rate: R || void 0,
-      estimated: R && g && S ? (g - P) / R : void 0,
-      event: p
+      total: b,
+      progress: b ? P / b : void 0,
+      bytes: g,
+      rate: y || void 0,
+      estimated: y && b && E ? (b - P) / y : void 0,
+      event: v
     };
-    U[c ? "download" : "upload"] = !0, i(U);
+    _[d ? "download" : "upload"] = !0, l(_);
   };
 }
-const Ka = typeof XMLHttpRequest < "u", Ga = Ka && function(i) {
-  return new Promise(function(u, e) {
-    let p = i.data;
-    const P = K.from(i.headers).normalize(), g = i.responseType;
-    let m;
-    function R() {
-      i.cancelToken && i.cancelToken.unsubscribe(m), i.signal && i.signal.removeEventListener("abort", m);
+const nr = typeof XMLHttpRequest < "u", ir = nr && function(l) {
+  return new Promise(function(p, a) {
+    let v = l.data;
+    const P = K.from(l.headers).normalize();
+    let { responseType: b, withXSRFToken: g } = l, y;
+    function E() {
+      l.cancelToken && l.cancelToken.unsubscribe(y), l.signal && l.signal.removeEventListener("abort", y);
     }
-    f.isFormData(p) && (x.isStandardBrowserEnv || x.isStandardBrowserWebWorkerEnv ? P.setContentType(!1) : P.setContentType("multipart/form-data;", !1));
-    let S = new XMLHttpRequest();
-    if (i.auth) {
-      const B = i.auth.username || "", y = i.auth.password ? unescape(encodeURIComponent(i.auth.password)) : "";
-      P.set("Authorization", "Basic " + btoa(B + ":" + y));
+    let _;
+    if (S.isFormData(v)) {
+      if ($.hasStandardBrowserEnv || $.hasStandardBrowserWebWorkerEnv)
+        P.setContentType(!1);
+      else if ((_ = P.getContentType()) !== !1) {
+        const [T, ...D] = _ ? _.split(";").map((N) => N.trim()).filter(Boolean) : [];
+        P.setContentType([T || "multipart/form-data", ...D].join("; "));
+      }
     }
-    const U = At(i.baseURL, i.url);
-    S.open(i.method.toUpperCase(), dt(U, i.params, i.paramsSerializer), !0), S.timeout = i.timeout;
-    function T() {
-      if (!S)
+    let U = new XMLHttpRequest();
+    if (l.auth) {
+      const T = l.auth.username || "", D = l.auth.password ? unescape(encodeURIComponent(l.auth.password)) : "";
+      P.set("Authorization", "Basic " + btoa(T + ":" + D));
+    }
+    const L = Ot(l.baseURL, l.url);
+    U.open(l.method.toUpperCase(), ut(L, l.params, l.paramsSerializer), !0), U.timeout = l.timeout;
+    function G() {
+      if (!U)
         return;
-      const B = K.from(
-        "getAllResponseHeaders" in S && S.getAllResponseHeaders()
-      ), v = {
-        data: !g || g === "text" || g === "json" ? S.responseText : S.response,
-        status: S.status,
-        statusText: S.statusText,
-        headers: B,
-        config: i,
-        request: S
+      const T = K.from(
+        "getAllResponseHeaders" in U && U.getAllResponseHeaders()
+      ), N = {
+        data: !b || b === "text" || b === "json" ? U.responseText : U.response,
+        status: U.status,
+        statusText: U.statusText,
+        headers: T,
+        config: l,
+        request: U
       };
-      Ha(function(D) {
-        u(D), R();
-      }, function(D) {
-        e(D), R();
-      }, v), S = null;
+      Xa(function(Y) {
+        p(Y), E();
+      }, function(Y) {
+        a(Y), E();
+      }, N), U = null;
     }
-    if ("onloadend" in S ? S.onloadend = T : S.onreadystatechange = function() {
-      !S || S.readyState !== 4 || S.status === 0 && !(S.responseURL && S.responseURL.indexOf("file:") === 0) || setTimeout(T);
-    }, S.onabort = function() {
-      S && (e(new E("Request aborted", E.ECONNABORTED, i, S)), S = null);
-    }, S.onerror = function() {
-      e(new E("Network Error", E.ERR_NETWORK, i, S)), S = null;
-    }, S.ontimeout = function() {
-      let y = i.timeout ? "timeout of " + i.timeout + "ms exceeded" : "timeout exceeded";
-      const v = i.transitional || ut;
-      i.timeoutErrorMessage && (y = i.timeoutErrorMessage), e(new E(
-        y,
-        v.clarifyTimeoutError ? E.ETIMEDOUT : E.ECONNABORTED,
-        i,
-        S
-      )), S = null;
-    }, x.isStandardBrowserEnv) {
-      const B = (i.withCredentials || za(U)) && i.xsrfCookieName && Ia.read(i.xsrfCookieName);
-      B && P.set(i.xsrfHeaderName, B);
+    if ("onloadend" in U ? U.onloadend = G : U.onreadystatechange = function() {
+      !U || U.readyState !== 4 || U.status === 0 && !(U.responseURL && U.responseURL.indexOf("file:") === 0) || setTimeout(G);
+    }, U.onabort = function() {
+      U && (a(new C("Request aborted", C.ECONNABORTED, l, U)), U = null);
+    }, U.onerror = function() {
+      a(new C("Network Error", C.ERR_NETWORK, l, U)), U = null;
+    }, U.ontimeout = function() {
+      let D = l.timeout ? "timeout of " + l.timeout + "ms exceeded" : "timeout exceeded";
+      const N = l.transitional || ht;
+      l.timeoutErrorMessage && (D = l.timeoutErrorMessage), a(new C(
+        D,
+        N.clarifyTimeoutError ? C.ETIMEDOUT : C.ECONNABORTED,
+        l,
+        U
+      )), U = null;
+    }, $.hasStandardBrowserEnv && (g && S.isFunction(g) && (g = g(l)), g || g !== !1 && sr(L))) {
+      const T = l.xsrfHeaderName && l.xsrfCookieName && Za.read(l.xsrfCookieName);
+      T && P.set(l.xsrfHeaderName, T);
     }
-    p === void 0 && P.setContentType(null), "setRequestHeader" in S && f.forEach(P.toJSON(), function(y, v) {
-      S.setRequestHeader(v, y);
-    }), f.isUndefined(i.withCredentials) || (S.withCredentials = !!i.withCredentials), g && g !== "json" && (S.responseType = i.responseType), typeof i.onDownloadProgress == "function" && S.addEventListener("progress", xe(i.onDownloadProgress, !0)), typeof i.onUploadProgress == "function" && S.upload && S.upload.addEventListener("progress", xe(i.onUploadProgress)), (i.cancelToken || i.signal) && (m = (B) => {
-      S && (e(!B || B.type ? new se(null, i, S) : B), S.abort(), S = null);
-    }, i.cancelToken && i.cancelToken.subscribe(m), i.signal && (i.signal.aborted ? m() : i.signal.addEventListener("abort", m)));
-    const L = xa(U);
-    if (L && x.protocols.indexOf(L) === -1) {
-      e(new E("Unsupported protocol " + L + ":", E.ERR_BAD_REQUEST, i));
+    v === void 0 && P.setContentType(null), "setRequestHeader" in U && S.forEach(P.toJSON(), function(D, N) {
+      U.setRequestHeader(N, D);
+    }), S.isUndefined(l.withCredentials) || (U.withCredentials = !!l.withCredentials), b && b !== "json" && (U.responseType = l.responseType), typeof l.onDownloadProgress == "function" && U.addEventListener("progress", Ge(l.onDownloadProgress, !0)), typeof l.onUploadProgress == "function" && U.upload && U.upload.addEventListener("progress", Ge(l.onUploadProgress)), (l.cancelToken || l.signal) && (y = (T) => {
+      U && (a(!T || T.type ? new ie(null, l, U) : T), U.abort(), U = null);
+    }, l.cancelToken && l.cancelToken.subscribe(y), l.signal && (l.signal.aborted ? y() : l.signal.addEventListener("abort", y)));
+    const R = ar(L);
+    if (R && $.protocols.indexOf(R) === -1) {
+      a(new C("Unsupported protocol " + R + ":", C.ERR_BAD_REQUEST, l));
       return;
     }
-    S.send(p || null);
+    U.send(v || null);
   });
-}, ne = {
-  http: fa,
-  xhr: Ga
+}, Ue = {
+  http: Ea,
+  xhr: ir
 };
-f.forEach(ne, (i, c) => {
-  if (i) {
+S.forEach(Ue, (l, d) => {
+  if (l) {
     try {
-      Object.defineProperty(i, "name", { value: c });
+      Object.defineProperty(l, "name", { value: d });
     } catch {
     }
-    Object.defineProperty(i, "adapterName", { value: c });
+    Object.defineProperty(l, "adapterName", { value: d });
   }
 });
-const Ot = {
-  getAdapter: (i) => {
-    i = f.isArray(i) ? i : [i];
-    const { length: c } = i;
-    let u, e;
-    for (let p = 0; p < c && (u = i[p], !(e = f.isString(u) ? ne[u.toLowerCase()] : u)); p++)
-      ;
-    if (!e)
-      throw e === !1 ? new E(
-        `Adapter ${u} is not supported by the environment`,
-        "ERR_NOT_SUPPORT"
-      ) : new Error(
-        f.hasOwnProp(ne, u) ? `Adapter '${u}' is not available in the build` : `Unknown adapter '${u}'`
+const ke = (l) => `- ${l}`, or = (l) => S.isFunction(l) || l === null || l === !1, Pt = {
+  getAdapter: (l) => {
+    l = S.isArray(l) ? l : [l];
+    const { length: d } = l;
+    let p, a;
+    const v = {};
+    for (let P = 0; P < d; P++) {
+      p = l[P];
+      let b;
+      if (a = p, !or(p) && (a = Ue[(b = String(p)).toLowerCase()], a === void 0))
+        throw new C(`Unknown adapter '${b}'`);
+      if (a)
+        break;
+      v[b || "#" + P] = a;
+    }
+    if (!a) {
+      const P = Object.entries(v).map(
+        ([g, y]) => `adapter ${g} ` + (y === !1 ? "is not supported by the environment" : "is not available in the build")
       );
-    if (!f.isFunction(e))
-      throw new TypeError("adapter is not a function");
-    return e;
+      let b = d ? P.length > 1 ? `since :
+` + P.map(ke).join(`
+`) : " " + ke(P[0]) : "as no adapter specified";
+      throw new C(
+        "There is no suitable adapter to dispatch the request " + b,
+        "ERR_NOT_SUPPORT"
+      );
+    }
+    return a;
   },
-  adapters: ne
+  adapters: Ue
 };
-function me(i) {
-  if (i.cancelToken && i.cancelToken.throwIfRequested(), i.signal && i.signal.aborted)
-    throw new se(null, i);
+function fe(l) {
+  if (l.cancelToken && l.cancelToken.throwIfRequested(), l.signal && l.signal.aborted)
+    throw new ie(null, l);
 }
-function Ne(i) {
-  return me(i), i.headers = K.from(i.headers), i.data = be.call(
-    i,
-    i.transformRequest
-  ), ["post", "put", "patch"].indexOf(i.method) !== -1 && i.headers.setContentType("application/x-www-form-urlencoded", !1), Ot.getAdapter(i.adapter || Be.adapter)(i).then(function(e) {
-    return me(i), e.data = be.call(
-      i,
-      i.transformResponse,
-      e
-    ), e.headers = K.from(e.headers), e;
-  }, function(e) {
-    return pt(e) || (me(i), e && e.response && (e.response.data = be.call(
-      i,
-      i.transformResponse,
-      e.response
-    ), e.response.headers = K.from(e.response.headers))), Promise.reject(e);
+function Qe(l) {
+  return fe(l), l.headers = K.from(l.headers), l.data = Se.call(
+    l,
+    l.transformRequest
+  ), ["post", "put", "patch"].indexOf(l.method) !== -1 && l.headers.setContentType("application/x-www-form-urlencoded", !1), Pt.getAdapter(l.adapter || Fe.adapter)(l).then(function(a) {
+    return fe(l), a.data = Se.call(
+      l,
+      l.transformResponse,
+      a
+    ), a.headers = K.from(a.headers), a;
+  }, function(a) {
+    return At(a) || (fe(l), a && a.response && (a.response.data = Se.call(
+      l,
+      l.transformResponse,
+      a.response
+    ), a.response.headers = K.from(a.response.headers))), Promise.reject(a);
   });
 }
-const Ke = (i) => i instanceof K ? i.toJSON() : i;
-function W(i, c) {
-  c = c || {};
-  const u = {};
-  function e(S, U, T) {
-    return f.isPlainObject(S) && f.isPlainObject(U) ? f.merge.call({ caseless: T }, S, U) : f.isPlainObject(U) ? f.merge({}, U) : f.isArray(U) ? U.slice() : U;
+const Ye = (l) => l instanceof K ? l.toJSON() : l;
+function Z(l, d) {
+  d = d || {};
+  const p = {};
+  function a(E, _, U) {
+    return S.isPlainObject(E) && S.isPlainObject(_) ? S.merge.call({ caseless: U }, E, _) : S.isPlainObject(_) ? S.merge({}, _) : S.isArray(_) ? _.slice() : _;
   }
-  function p(S, U, T) {
-    if (f.isUndefined(U)) {
-      if (!f.isUndefined(S))
-        return e(void 0, S, T);
+  function v(E, _, U) {
+    if (S.isUndefined(_)) {
+      if (!S.isUndefined(E))
+        return a(void 0, E, U);
     } else
-      return e(S, U, T);
+      return a(E, _, U);
   }
-  function P(S, U) {
-    if (!f.isUndefined(U))
-      return e(void 0, U);
+  function P(E, _) {
+    if (!S.isUndefined(_))
+      return a(void 0, _);
   }
-  function g(S, U) {
-    if (f.isUndefined(U)) {
-      if (!f.isUndefined(S))
-        return e(void 0, S);
+  function b(E, _) {
+    if (S.isUndefined(_)) {
+      if (!S.isUndefined(E))
+        return a(void 0, E);
     } else
-      return e(void 0, U);
+      return a(void 0, _);
   }
-  function m(S, U, T) {
-    if (T in c)
-      return e(S, U);
-    if (T in i)
-      return e(void 0, S);
+  function g(E, _, U) {
+    if (U in d)
+      return a(E, _);
+    if (U in l)
+      return a(void 0, E);
   }
-  const R = {
+  const y = {
     url: P,
     method: P,
     data: P,
-    baseURL: g,
-    transformRequest: g,
-    transformResponse: g,
-    paramsSerializer: g,
-    timeout: g,
-    timeoutMessage: g,
-    withCredentials: g,
-    adapter: g,
-    responseType: g,
-    xsrfCookieName: g,
-    xsrfHeaderName: g,
-    onUploadProgress: g,
-    onDownloadProgress: g,
-    decompress: g,
-    maxContentLength: g,
-    maxBodyLength: g,
-    beforeRedirect: g,
-    transport: g,
-    httpAgent: g,
-    httpsAgent: g,
-    cancelToken: g,
-    socketPath: g,
-    responseEncoding: g,
-    validateStatus: m,
-    headers: (S, U) => p(Ke(S), Ke(U), !0)
+    baseURL: b,
+    transformRequest: b,
+    transformResponse: b,
+    paramsSerializer: b,
+    timeout: b,
+    timeoutMessage: b,
+    withCredentials: b,
+    withXSRFToken: b,
+    adapter: b,
+    responseType: b,
+    xsrfCookieName: b,
+    xsrfHeaderName: b,
+    onUploadProgress: b,
+    onDownloadProgress: b,
+    decompress: b,
+    maxContentLength: b,
+    maxBodyLength: b,
+    beforeRedirect: b,
+    transport: b,
+    httpAgent: b,
+    httpsAgent: b,
+    cancelToken: b,
+    socketPath: b,
+    responseEncoding: b,
+    validateStatus: g,
+    headers: (E, _) => v(Ye(E), Ye(_), !0)
   };
-  return f.forEach(Object.keys(Object.assign({}, i, c)), function(U) {
-    const T = R[U] || p, L = T(i[U], c[U], U);
-    f.isUndefined(L) && T !== m || (u[U] = L);
-  }), u;
+  return S.forEach(Object.keys(Object.assign({}, l, d)), function(_) {
+    const U = y[_] || v, L = U(l[_], d[_], _);
+    S.isUndefined(L) && U !== g || (p[_] = L);
+  }), p;
 }
-const Pt = "1.5.0", _e = {};
-["object", "boolean", "number", "function", "string", "symbol"].forEach((i, c) => {
-  _e[i] = function(e) {
-    return typeof e === i || "a" + (c < 1 ? "n " : " ") + i;
+const bt = "1.6.2", Ce = {};
+["object", "boolean", "number", "function", "string", "symbol"].forEach((l, d) => {
+  Ce[l] = function(a) {
+    return typeof a === l || "a" + (d < 1 ? "n " : " ") + l;
   };
 });
-const Ge = {};
-_e.transitional = function(c, u, e) {
-  function p(P, g) {
-    return "[Axios v" + Pt + "] Transitional option '" + P + "'" + g + (e ? ". " + e : "");
+const $e = {};
+Ce.transitional = function(d, p, a) {
+  function v(P, b) {
+    return "[Axios v" + bt + "] Transitional option '" + P + "'" + b + (a ? ". " + a : "");
   }
-  return (P, g, m) => {
-    if (c === !1)
-      throw new E(
-        p(g, " has been removed" + (u ? " in " + u : "")),
-        E.ERR_DEPRECATED
+  return (P, b, g) => {
+    if (d === !1)
+      throw new C(
+        v(b, " has been removed" + (p ? " in " + p : "")),
+        C.ERR_DEPRECATED
       );
-    return u && !Ge[g] && (Ge[g] = !0, console.warn(
-      p(
-        g,
-        " has been deprecated since v" + u + " and will be removed in the near future"
+    return p && !$e[b] && ($e[b] = !0, console.warn(
+      v(
+        b,
+        " has been deprecated since v" + p + " and will be removed in the near future"
       )
-    )), c ? c(P, g, m) : !0;
+    )), d ? d(P, b, g) : !0;
   };
 };
-function Qa(i, c, u) {
-  if (typeof i != "object")
-    throw new E("options must be an object", E.ERR_BAD_OPTION_VALUE);
-  const e = Object.keys(i);
-  let p = e.length;
-  for (; p-- > 0; ) {
-    const P = e[p], g = c[P];
-    if (g) {
-      const m = i[P], R = m === void 0 || g(m, P, i);
-      if (R !== !0)
-        throw new E("option " + P + " must be " + R, E.ERR_BAD_OPTION_VALUE);
+function lr(l, d, p) {
+  if (typeof l != "object")
+    throw new C("options must be an object", C.ERR_BAD_OPTION_VALUE);
+  const a = Object.keys(l);
+  let v = a.length;
+  for (; v-- > 0; ) {
+    const P = a[v], b = d[P];
+    if (b) {
+      const g = l[P], y = g === void 0 || b(g, P, l);
+      if (y !== !0)
+        throw new C("option " + P + " must be " + y, C.ERR_BAD_OPTION_VALUE);
       continue;
     }
-    if (u !== !0)
-      throw new E("Unknown option " + P, E.ERR_BAD_OPTION);
+    if (p !== !0)
+      throw new C("Unknown option " + P, C.ERR_BAD_OPTION);
   }
 }
-const je = {
-  assertOptions: Qa,
-  validators: _e
-}, Q = je.validators;
-let ce = class {
-  constructor(c) {
-    this.defaults = c, this.interceptors = {
-      request: new ke(),
-      response: new ke()
+const _e = {
+  assertOptions: lr,
+  validators: Ce
+}, W = _e.validators;
+let de = class {
+  constructor(d) {
+    this.defaults = d, this.interceptors = {
+      request: new He(),
+      response: new He()
     };
   }
   /**
@@ -1466,122 +1486,122 @@ let ce = class {
    *
    * @returns {Promise} The Promise to be fulfilled
    */
-  request(c, u) {
-    typeof c == "string" ? (u = u || {}, u.url = c) : u = c || {}, u = W(this.defaults, u);
-    const { transitional: e, paramsSerializer: p, headers: P } = u;
-    e !== void 0 && je.assertOptions(e, {
-      silentJSONParsing: Q.transitional(Q.boolean),
-      forcedJSONParsing: Q.transitional(Q.boolean),
-      clarifyTimeoutError: Q.transitional(Q.boolean)
-    }, !1), p != null && (f.isFunction(p) ? u.paramsSerializer = {
-      serialize: p
-    } : je.assertOptions(p, {
-      encode: Q.function,
-      serialize: Q.function
-    }, !0)), u.method = (u.method || this.defaults.method || "get").toLowerCase();
-    let g = P && f.merge(
+  request(d, p) {
+    typeof d == "string" ? (p = p || {}, p.url = d) : p = d || {}, p = Z(this.defaults, p);
+    const { transitional: a, paramsSerializer: v, headers: P } = p;
+    a !== void 0 && _e.assertOptions(a, {
+      silentJSONParsing: W.transitional(W.boolean),
+      forcedJSONParsing: W.transitional(W.boolean),
+      clarifyTimeoutError: W.transitional(W.boolean)
+    }, !1), v != null && (S.isFunction(v) ? p.paramsSerializer = {
+      serialize: v
+    } : _e.assertOptions(v, {
+      encode: W.function,
+      serialize: W.function
+    }, !0)), p.method = (p.method || this.defaults.method || "get").toLowerCase();
+    let b = P && S.merge(
       P.common,
-      P[u.method]
+      P[p.method]
     );
-    P && f.forEach(
+    P && S.forEach(
       ["delete", "get", "head", "post", "put", "patch", "common"],
-      (y) => {
-        delete P[y];
+      (R) => {
+        delete P[R];
       }
-    ), u.headers = K.concat(g, P);
-    const m = [];
-    let R = !0;
-    this.interceptors.request.forEach(function(v) {
-      typeof v.runWhen == "function" && v.runWhen(u) === !1 || (R = R && v.synchronous, m.unshift(v.fulfilled, v.rejected));
+    ), p.headers = K.concat(b, P);
+    const g = [];
+    let y = !0;
+    this.interceptors.request.forEach(function(T) {
+      typeof T.runWhen == "function" && T.runWhen(p) === !1 || (y = y && T.synchronous, g.unshift(T.fulfilled, T.rejected));
     });
-    const S = [];
-    this.interceptors.response.forEach(function(v) {
-      S.push(v.fulfilled, v.rejected);
+    const E = [];
+    this.interceptors.response.forEach(function(T) {
+      E.push(T.fulfilled, T.rejected);
     });
-    let U, T = 0, L;
-    if (!R) {
-      const y = [Ne.bind(this), void 0];
-      for (y.unshift.apply(y, m), y.push.apply(y, S), L = y.length, U = Promise.resolve(u); T < L; )
-        U = U.then(y[T++], y[T++]);
-      return U;
+    let _, U = 0, L;
+    if (!y) {
+      const R = [Qe.bind(this), void 0];
+      for (R.unshift.apply(R, g), R.push.apply(R, E), L = R.length, _ = Promise.resolve(p); U < L; )
+        _ = _.then(R[U++], R[U++]);
+      return _;
     }
-    L = m.length;
-    let B = u;
-    for (T = 0; T < L; ) {
-      const y = m[T++], v = m[T++];
+    L = g.length;
+    let G = p;
+    for (U = 0; U < L; ) {
+      const R = g[U++], T = g[U++];
       try {
-        B = y(B);
-      } catch (z) {
-        v.call(this, z);
+        G = R(G);
+      } catch (D) {
+        T.call(this, D);
         break;
       }
     }
     try {
-      U = Ne.call(this, B);
-    } catch (y) {
-      return Promise.reject(y);
+      _ = Qe.call(this, G);
+    } catch (R) {
+      return Promise.reject(R);
     }
-    for (T = 0, L = S.length; T < L; )
-      U = U.then(S[T++], S[T++]);
-    return U;
+    for (U = 0, L = E.length; U < L; )
+      _ = _.then(E[U++], E[U++]);
+    return _;
   }
-  getUri(c) {
-    c = W(this.defaults, c);
-    const u = At(c.baseURL, c.url);
-    return dt(u, c.params, c.paramsSerializer);
+  getUri(d) {
+    d = Z(this.defaults, d);
+    const p = Ot(d.baseURL, d.url);
+    return ut(p, d.params, d.paramsSerializer);
   }
 };
-f.forEach(["delete", "get", "head", "options"], function(c) {
-  ce.prototype[c] = function(u, e) {
-    return this.request(W(e || {}, {
-      method: c,
-      url: u,
-      data: (e || {}).data
+S.forEach(["delete", "get", "head", "options"], function(d) {
+  de.prototype[d] = function(p, a) {
+    return this.request(Z(a || {}, {
+      method: d,
+      url: p,
+      data: (a || {}).data
     }));
   };
 });
-f.forEach(["post", "put", "patch"], function(c) {
-  function u(e) {
-    return function(P, g, m) {
-      return this.request(W(m || {}, {
-        method: c,
-        headers: e ? {
+S.forEach(["post", "put", "patch"], function(d) {
+  function p(a) {
+    return function(P, b, g) {
+      return this.request(Z(g || {}, {
+        method: d,
+        headers: a ? {
           "Content-Type": "multipart/form-data"
         } : {},
         url: P,
-        data: g
+        data: b
       }));
     };
   }
-  ce.prototype[c] = u(), ce.prototype[c + "Form"] = u(!0);
+  de.prototype[d] = p(), de.prototype[d + "Form"] = p(!0);
 });
-const ie = ce;
-let Ya = class gt {
-  constructor(c) {
-    if (typeof c != "function")
+const ce = de;
+let cr = class mt {
+  constructor(d) {
+    if (typeof d != "function")
       throw new TypeError("executor must be a function.");
-    let u;
+    let p;
     this.promise = new Promise(function(P) {
-      u = P;
+      p = P;
     });
-    const e = this;
-    this.promise.then((p) => {
-      if (!e._listeners)
+    const a = this;
+    this.promise.then((v) => {
+      if (!a._listeners)
         return;
-      let P = e._listeners.length;
+      let P = a._listeners.length;
       for (; P-- > 0; )
-        e._listeners[P](p);
-      e._listeners = null;
-    }), this.promise.then = (p) => {
+        a._listeners[P](v);
+      a._listeners = null;
+    }), this.promise.then = (v) => {
       let P;
-      const g = new Promise((m) => {
-        e.subscribe(m), P = m;
-      }).then(p);
-      return g.cancel = function() {
-        e.unsubscribe(P);
-      }, g;
-    }, c(function(P, g, m) {
-      e.reason || (e.reason = new se(P, g, m), u(e.reason));
+      const b = new Promise((g) => {
+        a.subscribe(g), P = g;
+      }).then(v);
+      return b.cancel = function() {
+        a.unsubscribe(P);
+      }, b;
+    }, d(function(P, b, g) {
+      a.reason || (a.reason = new ie(P, b, g), p(a.reason));
     });
   }
   /**
@@ -1594,44 +1614,44 @@ let Ya = class gt {
   /**
    * Subscribe to the cancel signal
    */
-  subscribe(c) {
+  subscribe(d) {
     if (this.reason) {
-      c(this.reason);
+      d(this.reason);
       return;
     }
-    this._listeners ? this._listeners.push(c) : this._listeners = [c];
+    this._listeners ? this._listeners.push(d) : this._listeners = [d];
   }
   /**
    * Unsubscribe from the cancel signal
    */
-  unsubscribe(c) {
+  unsubscribe(d) {
     if (!this._listeners)
       return;
-    const u = this._listeners.indexOf(c);
-    u !== -1 && this._listeners.splice(u, 1);
+    const p = this._listeners.indexOf(d);
+    p !== -1 && this._listeners.splice(p, 1);
   }
   /**
    * Returns an object that contains a new `CancelToken` and a function that, when called,
    * cancels the `CancelToken`.
    */
   static source() {
-    let c;
+    let d;
     return {
-      token: new gt(function(p) {
-        c = p;
+      token: new mt(function(v) {
+        d = v;
       }),
-      cancel: c
+      cancel: d
     };
   }
 };
-const $a = Ya;
-function Wa(i) {
-  return function(u) {
-    return i.apply(null, u);
+const dr = cr;
+function ur(l) {
+  return function(p) {
+    return l.apply(null, p);
   };
 }
-function Ja(i) {
-  return f.isObject(i) && i.isAxiosError === !0;
+function hr(l) {
+  return S.isObject(l) && l.isAxiosError === !0;
 }
 const Ve = {
   Continue: 100,
@@ -1698,2159 +1718,2004 @@ const Ve = {
   NotExtended: 510,
   NetworkAuthenticationRequired: 511
 };
-Object.entries(Ve).forEach(([i, c]) => {
-  Ve[c] = i;
+Object.entries(Ve).forEach(([l, d]) => {
+  Ve[d] = l;
 });
-const Xa = Ve;
-function ft(i) {
-  const c = new ie(i), u = Xe(ie.prototype.request, c);
-  return f.extend(u, ie.prototype, c, { allOwnKeys: !0 }), f.extend(u, c, null, { allOwnKeys: !0 }), u.create = function(p) {
-    return ft(W(i, p));
-  }, u;
+const pr = Ve;
+function St(l) {
+  const d = new ce(l), p = Ze(ce.prototype.request, d);
+  return S.extend(p, ce.prototype, d, { allOwnKeys: !0 }), S.extend(p, d, null, { allOwnKeys: !0 }), p.create = function(v) {
+    return St(Z(l, v));
+  }, p;
 }
-const M = ft(Be);
-M.Axios = ie;
-M.CanceledError = se;
-M.CancelToken = $a;
-M.isCancel = pt;
-M.VERSION = Pt;
-M.toFormData = he;
-M.AxiosError = E;
-M.Cancel = M.CanceledError;
-M.all = function(c) {
-  return Promise.all(c);
+const q = St(Fe);
+q.Axios = ce;
+q.CanceledError = ie;
+q.CancelToken = dr;
+q.isCancel = At;
+q.VERSION = bt;
+q.toFormData = ve;
+q.AxiosError = C;
+q.Cancel = q.CanceledError;
+q.all = function(d) {
+  return Promise.all(d);
 };
-M.spread = Wa;
-M.isAxiosError = Ja;
-M.mergeConfig = W;
-M.AxiosHeaders = K;
-M.formToJSON = (i) => ht(f.isHTMLForm(i) ? new FormData(i) : i);
-M.getAdapter = Ot.getAdapter;
-M.HttpStatusCode = Xa;
-M.default = M;
-const Ce = M, {
-  Axios: Za,
-  AxiosError: er,
-  CanceledError: tr,
-  isCancel: sr,
-  CancelToken: ar,
-  VERSION: rr,
-  all: nr,
-  Cancel: ir,
-  isAxiosError: or,
-  spread: cr,
-  toFormData: lr,
-  AxiosHeaders: dr,
-  HttpStatusCode: ur,
-  formToJSON: hr,
-  getAdapter: pr,
-  mergeConfig: Ar
-} = Ce, Or = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+q.spread = ur;
+q.isAxiosError = hr;
+q.mergeConfig = Z;
+q.AxiosHeaders = K;
+q.formToJSON = (l) => vt(S.isHTMLForm(l) ? new FormData(l) : l);
+q.getAdapter = Pt.getAdapter;
+q.HttpStatusCode = pr;
+q.default = q;
+const Ie = q, {
+  Axios: vr,
+  AxiosError: Ar,
+  CanceledError: Or,
+  isCancel: Pr,
+  CancelToken: br,
+  VERSION: mr,
+  all: Sr,
+  Cancel: fr,
+  isAxiosError: gr,
+  spread: jr,
+  toFormData: Ur,
+  AxiosHeaders: _r,
+  HttpStatusCode: Vr,
+  formToJSON: yr,
+  getAdapter: Rr,
+  mergeConfig: Tr
+} = Ie, Er = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  Axios: Za,
-  AxiosError: er,
-  AxiosHeaders: dr,
-  Cancel: ir,
-  CancelToken: ar,
-  CanceledError: tr,
-  HttpStatusCode: ur,
-  VERSION: rr,
-  all: nr,
-  default: Ce,
-  formToJSON: hr,
-  getAdapter: pr,
-  isAxiosError: or,
-  isCancel: sr,
-  mergeConfig: Ar,
-  spread: cr,
-  toFormData: lr
-}, Symbol.toStringTag, { value: "Module" })), bt = /* @__PURE__ */ Ms(Or);
-var C = {}, we = {};
-(function(i) {
-  Object.defineProperty(i, "__esModule", { value: !0 }), i.RequiredError = i.BaseAPI = i.COLLECTION_FORMATS = i.BASE_PATH = void 0;
-  const c = bt;
-  i.BASE_PATH = "http://localhost".replace(/\/+$/, ""), i.COLLECTION_FORMATS = {
+  Axios: vr,
+  AxiosError: Ar,
+  AxiosHeaders: _r,
+  Cancel: fr,
+  CancelToken: br,
+  CanceledError: Or,
+  HttpStatusCode: Vr,
+  VERSION: mr,
+  all: Sr,
+  default: Ie,
+  formToJSON: yr,
+  getAdapter: Rr,
+  isAxiosError: gr,
+  isCancel: Pr,
+  mergeConfig: Tr,
+  spread: jr,
+  toFormData: Ur
+}, Symbol.toStringTag, { value: "Module" })), ft = /* @__PURE__ */ Ks(Er);
+var M = {}, Me = {};
+(function(l) {
+  Object.defineProperty(l, "__esModule", { value: !0 }), l.operationServerMap = l.RequiredError = l.BaseAPI = l.COLLECTION_FORMATS = l.BASE_PATH = void 0;
+  const d = ft;
+  l.BASE_PATH = "http://undefinedundefined".replace(/\/+$/, ""), l.COLLECTION_FORMATS = {
     csv: ",",
     ssv: " ",
     tsv: "	",
     pipes: "|"
   };
-  class u {
-    constructor(P, g = i.BASE_PATH, m = c.default) {
-      this.basePath = g, this.axios = m, P && (this.configuration = P, this.basePath = P.basePath || this.basePath);
+  class p {
+    constructor(P, b = l.BASE_PATH, g = d.default) {
+      var y;
+      this.basePath = b, this.axios = g, P && (this.configuration = P, this.basePath = (y = P.basePath) !== null && y !== void 0 ? y : b);
     }
   }
-  i.BaseAPI = u;
-  class e extends Error {
-    constructor(P, g) {
-      super(g), this.field = P, this.name = "RequiredError";
+  l.BaseAPI = p;
+  class a extends Error {
+    constructor(P, b) {
+      super(b), this.field = P, this.name = "RequiredError";
     }
   }
-  i.RequiredError = e;
-})(we);
-var Le = Y && Y.__awaiter || function(i, c, u, e) {
-  function p(P) {
-    return P instanceof u ? P : new u(function(g) {
-      g(P);
+  l.RequiredError = a, l.operationServerMap = {};
+})(Me);
+var we = J && J.__awaiter || function(l, d, p, a) {
+  function v(P) {
+    return P instanceof p ? P : new p(function(b) {
+      b(P);
     });
   }
-  return new (u || (u = Promise))(function(P, g) {
-    function m(U) {
+  return new (p || (p = Promise))(function(P, b) {
+    function g(_) {
       try {
-        S(e.next(U));
-      } catch (T) {
-        g(T);
+        E(a.next(_));
+      } catch (U) {
+        b(U);
       }
     }
-    function R(U) {
+    function y(_) {
       try {
-        S(e.throw(U));
-      } catch (T) {
-        g(T);
+        E(a.throw(_));
+      } catch (U) {
+        b(U);
       }
     }
-    function S(U) {
-      U.done ? P(U.value) : p(U.value).then(m, R);
+    function E(_) {
+      _.done ? P(_.value) : v(_.value).then(g, y);
     }
-    S((e = e.apply(i, c || [])).next());
+    E((a = a.apply(l, d || [])).next());
   });
 };
-Object.defineProperty(C, "__esModule", { value: !0 });
-C.createRequestFunction = C.toPathString = C.serializeDataIfNeeded = C.setSearchParams = C.setOAuthToObject = C.setBearerAuthToObject = C.setBasicAuthToObject = C.setApiKeyToObject = C.assertParamExists = C.DUMMY_BASE_URL = void 0;
-const Pr = we;
-C.DUMMY_BASE_URL = "https://example.com";
-const gr = function(i, c, u) {
-  if (u == null)
-    throw new Pr.RequiredError(c, `Required parameter ${c} was null or undefined when calling ${i}.`);
+Object.defineProperty(M, "__esModule", { value: !0 });
+M.createRequestFunction = M.toPathString = M.serializeDataIfNeeded = M.setSearchParams = M.setOAuthToObject = M.setBearerAuthToObject = M.setBasicAuthToObject = M.setApiKeyToObject = M.assertParamExists = M.DUMMY_BASE_URL = void 0;
+const Br = Me;
+M.DUMMY_BASE_URL = "https://example.com";
+const Fr = function(l, d, p) {
+  if (p == null)
+    throw new Br.RequiredError(d, `Required parameter ${d} was null or undefined when calling ${l}.`);
 };
-C.assertParamExists = gr;
-const fr = function(i, c, u) {
-  return Le(this, void 0, void 0, function* () {
-    if (u && u.apiKey) {
-      const e = typeof u.apiKey == "function" ? yield u.apiKey(c) : yield u.apiKey;
-      i[c] = e;
-    }
-  });
-};
-C.setApiKeyToObject = fr;
-const br = function(i, c) {
-  c && (c.username || c.password) && (i.auth = { username: c.username, password: c.password });
-};
-C.setBasicAuthToObject = br;
-const mr = function(i, c) {
-  return Le(this, void 0, void 0, function* () {
-    if (c && c.accessToken) {
-      const u = typeof c.accessToken == "function" ? yield c.accessToken() : yield c.accessToken;
-      i.Authorization = "Bearer " + u;
+M.assertParamExists = Fr;
+const Cr = function(l, d, p) {
+  return we(this, void 0, void 0, function* () {
+    if (p && p.apiKey) {
+      const a = typeof p.apiKey == "function" ? yield p.apiKey(d) : yield p.apiKey;
+      l[d] = a;
     }
   });
 };
-C.setBearerAuthToObject = mr;
-const Sr = function(i, c, u, e) {
-  return Le(this, void 0, void 0, function* () {
-    if (e && e.accessToken) {
-      const p = typeof e.accessToken == "function" ? yield e.accessToken(c, u) : yield e.accessToken;
-      i.Authorization = "Bearer " + p;
+M.setApiKeyToObject = Cr;
+const Ir = function(l, d) {
+  d && (d.username || d.password) && (l.auth = { username: d.username, password: d.password });
+};
+M.setBasicAuthToObject = Ir;
+const Mr = function(l, d) {
+  return we(this, void 0, void 0, function* () {
+    if (d && d.accessToken) {
+      const p = typeof d.accessToken == "function" ? yield d.accessToken() : yield d.accessToken;
+      l.Authorization = "Bearer " + p;
     }
   });
 };
-C.setOAuthToObject = Sr;
-function Re(i, c, u = "") {
-  c != null && (typeof c == "object" ? Array.isArray(c) ? c.forEach((e) => Re(i, e, u)) : Object.keys(c).forEach((e) => Re(i, c[e], `${u}${u !== "" ? "." : ""}${e}`)) : i.has(u) ? i.append(u, c) : i.set(u, c));
+M.setBearerAuthToObject = Mr;
+const wr = function(l, d, p, a) {
+  return we(this, void 0, void 0, function* () {
+    if (a && a.accessToken) {
+      const v = typeof a.accessToken == "function" ? yield a.accessToken(d, p) : yield a.accessToken;
+      l.Authorization = "Bearer " + v;
+    }
+  });
+};
+M.setOAuthToObject = wr;
+function ye(l, d, p = "") {
+  d != null && (typeof d == "object" ? Array.isArray(d) ? d.forEach((a) => ye(l, a, p)) : Object.keys(d).forEach((a) => ye(l, d[a], `${p}${p !== "" ? "." : ""}${a}`)) : l.has(p) ? l.append(p, d) : l.set(p, d));
 }
-const Ur = function(i, ...c) {
-  const u = new URLSearchParams(i.search);
-  Re(u, c), i.search = u.toString();
+const Lr = function(l, ...d) {
+  const p = new URLSearchParams(l.search);
+  ye(p, d), l.search = p.toString();
 };
-C.setSearchParams = Ur;
-const yr = function(i, c, u) {
-  const e = typeof i != "string";
-  return (e && u && u.isJsonMime ? u.isJsonMime(c.headers["Content-Type"]) : e) ? JSON.stringify(i !== void 0 ? i : {}) : i || "";
+M.setSearchParams = Lr;
+const xr = function(l, d, p) {
+  const a = typeof l != "string";
+  return (a && p && p.isJsonMime ? p.isJsonMime(d.headers["Content-Type"]) : a) ? JSON.stringify(l !== void 0 ? l : {}) : l || "";
 };
-C.serializeDataIfNeeded = yr;
-const jr = function(i) {
-  return i.pathname + i.search + i.hash;
+M.serializeDataIfNeeded = xr;
+const qr = function(l) {
+  return l.pathname + l.search + l.hash;
 };
-C.toPathString = jr;
-const Vr = function(i, c, u, e) {
-  return (p = c, P = u) => {
-    const g = Object.assign(Object.assign({}, i.options), { url: ((e == null ? void 0 : e.basePath) || P) + i.url });
-    return p.request(g);
+M.toPathString = qr;
+const Dr = function(l, d, p, a) {
+  return (v = d, P = p) => {
+    var b;
+    const g = Object.assign(Object.assign({}, l.options), { url: (v.defaults.baseURL ? "" : (b = a == null ? void 0 : a.basePath) !== null && b !== void 0 ? b : P) + l.url });
+    return v.request(g);
   };
 };
-C.createRequestFunction = Vr;
-(function(i) {
-  var c = Y && Y.__awaiter || function(l, n, t, r) {
-    function a(s) {
-      return s instanceof t ? s : new t(function(o) {
-        o(s);
+M.createRequestFunction = Dr;
+(function(l) {
+  var d = J && J.__awaiter || function(r, c, n, i) {
+    function s(e) {
+      return e instanceof n ? e : new n(function(t) {
+        t(e);
       });
     }
-    return new (t || (t = Promise))(function(s, o) {
-      function d(O) {
+    return new (n || (n = Promise))(function(e, t) {
+      function o(A) {
         try {
-          A(r.next(O));
-        } catch (b) {
-          o(b);
+          h(i.next(A));
+        } catch (O) {
+          t(O);
         }
       }
-      function h(O) {
+      function u(A) {
         try {
-          A(r.throw(O));
-        } catch (b) {
-          o(b);
+          h(i.throw(A));
+        } catch (O) {
+          t(O);
         }
       }
-      function A(O) {
-        O.done ? s(O.value) : a(O.value).then(d, h);
+      function h(A) {
+        A.done ? e(A.value) : s(A.value).then(o, u);
       }
-      A((r = r.apply(l, n || [])).next());
+      h((i = i.apply(r, c || [])).next());
     });
   };
-  Object.defineProperty(i, "__esModule", { value: !0 }), i.RootApiFp = i.RootApiAxiosParamCreator = i.RbacApi = i.RbacApiFactory = i.RbacApiFp = i.RbacApiAxiosParamCreator = i.ProductsApi = i.ProductsApiFactory = i.ProductsApiFp = i.ProductsApiAxiosParamCreator = i.ProductCategoriesApi = i.ProductCategoriesApiFactory = i.ProductCategoriesApiFp = i.ProductCategoriesApiAxiosParamCreator = i.PointofsaleApi = i.PointofsaleApiFactory = i.PointofsaleApiFp = i.PointofsaleApiAxiosParamCreator = i.PayoutRequestsApi = i.PayoutRequestsApiFactory = i.PayoutRequestsApiFp = i.PayoutRequestsApiAxiosParamCreator = i.InvoicesApi = i.InvoicesApiFactory = i.InvoicesApiFp = i.InvoicesApiAxiosParamCreator = i.FilesApi = i.FilesApiFactory = i.FilesApiFp = i.FilesApiAxiosParamCreator = i.ContainersApi = i.ContainersApiFactory = i.ContainersApiFp = i.ContainersApiAxiosParamCreator = i.BorrelkaartgroupsApi = i.BorrelkaartgroupsApiFactory = i.BorrelkaartgroupsApiFp = i.BorrelkaartgroupsApiAxiosParamCreator = i.BannersApi = i.BannersApiFactory = i.BannersApiFp = i.BannersApiAxiosParamCreator = i.BalanceApi = i.BalanceApiFactory = i.BalanceApiFp = i.BalanceApiAxiosParamCreator = i.AuthenticateApi = i.AuthenticateApiFactory = i.AuthenticateApiFp = i.AuthenticateApiAxiosParamCreator = void 0, i.VatGroupsApi = i.VatGroupsApiFactory = i.VatGroupsApiFp = i.VatGroupsApiAxiosParamCreator = i.UsersApi = i.UsersApiFactory = i.UsersApiFp = i.UsersApiAxiosParamCreator = i.TransfersApi = i.TransfersApiFactory = i.TransfersApiFp = i.TransfersApiAxiosParamCreator = i.TransactionsApi = i.TransactionsApiFactory = i.TransactionsApiFp = i.TransactionsApiAxiosParamCreator = i.TestApi = i.TestApiFactory = i.TestApiFp = i.TestApiAxiosParamCreator = i.StripeApi = i.StripeApiFactory = i.StripeApiFp = i.StripeApiAxiosParamCreator = i.RootApi = i.RootApiFactory = void 0;
-  const u = bt, e = C, p = we, P = function(l) {
+  Object.defineProperty(l, "__esModule", { value: !0 }), l.ProductCategoriesApiFactory = l.ProductCategoriesApiFp = l.ProductCategoriesApiAxiosParamCreator = l.PointofsaleApi = l.PointofsaleApiFactory = l.PointofsaleApiFp = l.PointofsaleApiAxiosParamCreator = l.PayoutRequestsApi = l.PayoutRequestsApiFactory = l.PayoutRequestsApiFp = l.PayoutRequestsApiAxiosParamCreator = l.InvoicesApi = l.InvoicesApiFactory = l.InvoicesApiFp = l.InvoicesApiAxiosParamCreator = l.FilesApi = l.FilesApiFactory = l.FilesApiFp = l.FilesApiAxiosParamCreator = l.EventsApi = l.EventsApiFactory = l.EventsApiFp = l.EventsApiAxiosParamCreator = l.DebtorsApi = l.DebtorsApiFactory = l.DebtorsApiFp = l.DebtorsApiAxiosParamCreator = l.ContainersApi = l.ContainersApiFactory = l.ContainersApiFp = l.ContainersApiAxiosParamCreator = l.BannersApi = l.BannersApiFactory = l.BannersApiFp = l.BannersApiAxiosParamCreator = l.GetAllBalanceOrderDirectionEnum = l.GetAllBalanceUserTypeEnum = l.BalanceApi = l.BalanceApiFactory = l.BalanceApiFp = l.BalanceApiAxiosParamCreator = l.AuthenticateApi = l.AuthenticateApiFactory = l.AuthenticateApiFp = l.AuthenticateApiAxiosParamCreator = l.UserTypeEnum = l.UpdateInvoiceRequestStateEnum = l.PayoutRequestStatusRequestStateEnum = l.InvoiceStatusResponseStateEnum = l.FinancialMutationResponseTypeEnum = void 0, l.VouchergroupsApi = l.VouchergroupsApiFactory = l.VouchergroupsApiFp = l.VouchergroupsApiAxiosParamCreator = l.VatGroupsApi = l.VatGroupsApiFactory = l.VatGroupsApiFp = l.VatGroupsApiAxiosParamCreator = l.GetAllUsersTypeEnum = l.UsersApi = l.UsersApiFactory = l.UsersApiFp = l.UsersApiAxiosParamCreator = l.TransfersApi = l.TransfersApiFactory = l.TransfersApiFp = l.TransfersApiAxiosParamCreator = l.TransactionsApi = l.TransactionsApiFactory = l.TransactionsApiFp = l.TransactionsApiAxiosParamCreator = l.TestOperationsOfTheTestControllerApi = l.TestOperationsOfTheTestControllerApiFactory = l.TestOperationsOfTheTestControllerApiFp = l.TestOperationsOfTheTestControllerApiAxiosParamCreator = l.StripeApi = l.StripeApiFactory = l.StripeApiFp = l.StripeApiAxiosParamCreator = l.RootApi = l.RootApiFactory = l.RootApiFp = l.RootApiAxiosParamCreator = l.RbacApi = l.RbacApiFactory = l.RbacApiFp = l.RbacApiAxiosParamCreator = l.ProductsApi = l.ProductsApiFactory = l.ProductsApiFp = l.ProductsApiAxiosParamCreator = l.ProductCategoriesApi = void 0;
+  const p = ft, a = M, v = Me;
+  l.FinancialMutationResponseTypeEnum = {
+    Transfer: "transfer",
+    Transaction: "transaction"
+  }, l.InvoiceStatusResponseStateEnum = {
+    Created: "CREATED",
+    Sent: "SENT",
+    Paid: "PAID",
+    Deleted: "DELETED"
+  }, l.PayoutRequestStatusRequestStateEnum = {
+    Created: "CREATED",
+    Approved: "APPROVED",
+    Denied: "DENIED",
+    Cancelled: "CANCELLED"
+  }, l.UpdateInvoiceRequestStateEnum = {
+    Created: "CREATED",
+    Sent: "SENT",
+    Paid: "PAID",
+    Deleted: "DELETED"
+  }, l.UserTypeEnum = {
+    _1: "1",
+    _2: "2",
+    _3: "3",
+    _4: "4",
+    _5: "5",
+    _6: "6",
+    _7: "7"
+  };
+  const P = function(r) {
     return {
       /**
-       *  EAN login and hand out token
-       * @param {AuthenticationEanRequest} req The EAN login.
+       *
+       * @summary EAN login and hand out token
+       * @param {AuthenticationEanRequest} authenticationEanRequest The EAN login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      eanAuthentication: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("eanAuthentication", "req", n);
-        const r = "/authentication/ean", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      eanAuthentication: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("eanAuthentication", "authenticationEanRequest", c);
+        const i = "/authentication/ean", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  LDAP login and hand out token    If user has never signed in before this also creates an GEWIS account.
-       * @param {AuthenticationLDAPRequest} req The LDAP login.
+       *
+       * @summary LDAP login and hand out token    If user has never signed in before this also creates an GEWIS account.
+       * @param {AuthenticationLDAPRequest} authenticationLDAPRequest The LDAP login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      gewisLDAPAuthentication: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("gewisLDAPAuthentication", "req", n);
-        const r = "/authentication/GEWIS/LDAP", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      gewisLDAPAuthentication: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("gewisLDAPAuthentication", "authenticationLDAPRequest", c);
+        const i = "/authentication/GEWIS/LDAP", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  PIN login and hand out token.
-       * @param {GEWISAuthenticationPinRequest} req The PIN login.
+       *
+       * @summary PIN login and hand out token.
+       * @param {GEWISAuthenticationPinRequest} gEWISAuthenticationPinRequest The PIN login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      gewisPinAuthentication: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("gewisPinAuthentication", "req", n);
-        const r = "/authentication/GEWIS/pin", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      gewisPinAuthentication: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("gewisPinAuthentication", "gEWISAuthenticationPinRequest", c);
+        const i = "/authentication/GEWIS/pin", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  GEWIS login verification based on gewisweb JWT tokens. This method verifies the validity of the gewisweb JWT token, and returns a SudoSOS token if the GEWIS token is valid.
-       * @param {GewiswebAuthenticationRequest} req The mock login.
+       *
+       * @summary GEWIS login verification based on gewisweb JWT tokens. This method verifies the validity of the gewisweb JWT token, and returns a SudoSOS token if the GEWIS token is valid.
+       * @param {GewiswebAuthenticationRequest} gewiswebAuthenticationRequest The mock login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      gewisWebAuthentication: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("gewisWebAuthentication", "req", n);
-        const r = "/authentication/gewisweb", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      gewisWebAuthentication: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("gewisWebAuthentication", "gewiswebAuthenticationRequest", c);
+        const i = "/authentication/gewisweb", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Key login and hand out token.
-       * @param {AuthenticationKeyRequest} req The key login.
+       *
+       * @summary Key login and hand out token.
+       * @param {AuthenticationKeyRequest} authenticationKeyRequest The key login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      keyAuthentication: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("keyAuthentication", "req", n);
-        const r = "/authentication/key", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      keyAuthentication: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("keyAuthentication", "authenticationKeyRequest", c);
+        const i = "/authentication/key", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  LDAP login and hand out token If user has never signed in before this also creates an account.
-       * @param {AuthenticationLDAPRequest} req The LDAP login.
+       *
+       * @summary LDAP login and hand out token If user has never signed in before this also creates an account.
+       * @param {AuthenticationLDAPRequest} authenticationLDAPRequest The LDAP login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      ldapAuthentication: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("ldapAuthentication", "req", n);
-        const r = "/authentication/LDAP", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      ldapAuthentication: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("ldapAuthentication", "authenticationLDAPRequest", c);
+        const i = "/authentication/LDAP", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Local login and hand out token
-       * @param {AuthenticationLocalRequest} req The local login.
+       *
+       * @summary Local login and hand out token
+       * @param {AuthenticationLocalRequest} authenticationLocalRequest The local login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      localAuthentication: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("localAuthentication", "req", n);
-        const r = "/authentication/local", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      localAuthentication: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("localAuthentication", "authenticationLocalRequest", c);
+        const i = "/authentication/local", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Mock login and hand out token.
-       * @param {AuthenticationMockRequest} req The mock login.
+       *
+       * @summary Mock login and hand out token.
+       * @param {AuthenticationMockRequest} authenticationMockRequest The mock login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      mockAuthentication: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("mockAuthentication", "req", n);
-        const r = "/authentication/mock", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      mockAuthentication: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("mockAuthentication", "authenticationMockRequest", c);
+        const i = "/authentication/mock", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  NFC login and hand out token
-       * @param {AuthenticationNfcRequest} req The NFC login.
+       *
+       * @summary NFC login and hand out token
+       * @param {AuthenticationNfcRequest} authenticationNfcRequest The NFC login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      nfcAuthentication: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("nfcAuthentication", "req", n);
-        const r = "/authentication/nfc", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      nfcAuthentication: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("nfcAuthentication", "authenticationNfcRequest", c);
+        const i = "/authentication/nfc", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  PIN login and hand out token
-       * @param {AuthenticationPinRequest} req The PIN login.
+       *
+       * @summary PIN login and hand out token
+       * @param {AuthenticationPinRequest} authenticationPinRequest The PIN login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      pinAuthentication: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("pinAuthentication", "req", n);
-        const r = "/authentication/pin", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      pinAuthentication: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("pinAuthentication", "authenticationPinRequest", c);
+        const i = "/authentication/pin", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Get a new JWT token, lesser if the existing token is also lesser
+       *
+       * @summary Get a new JWT token, lesser if the existing token is also lesser
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      refreshToken: (n = {}) => c(this, void 0, void 0, function* () {
-        const t = "/authentication/refreshToken", r = new URL(t, e.DUMMY_BASE_URL);
-        let a;
-        l && (a = l.baseOptions);
-        const s = Object.assign(Object.assign({ method: "GET" }, a), n), o = {}, d = {};
-        yield (0, e.setApiKeyToObject)(o, "Authorization", l), (0, e.setSearchParams)(r, d);
-        let h = a && a.headers ? a.headers : {};
-        return s.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
-          url: (0, e.toPathString)(r),
-          options: s
+      refreshToken: (c = {}) => d(this, void 0, void 0, function* () {
+        const n = "/authentication/refreshToken", i = new URL(n, a.DUMMY_BASE_URL);
+        let s;
+        r && (s = r.baseOptions);
+        const e = Object.assign(Object.assign({ method: "GET" }, s), c), t = {}, o = {};
+        yield (0, a.setBearerAuthToObject)(t, r), (0, a.setSearchParams)(i, o);
+        let u = s && s.headers ? s.headers : {};
+        return e.headers = Object.assign(Object.assign(Object.assign({}, t), u), c.headers), {
+          url: (0, a.toPathString)(i),
+          options: e
         };
       }),
       /**
-       *  Creates a reset token for the local authentication
-       * @param {ResetLocalRequest} req The reset info.
+       *
+       * @summary Creates a reset token for the local authentication
+       * @param {ResetLocalRequest} resetLocalRequest The reset info.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      resetLocal: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("resetLocal", "req", n);
-        const r = "/authentication/local/reset", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      resetLocal: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("resetLocal", "resetLocalRequest", c);
+        const i = "/authentication/local/reset", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Reset local authentication using the provided token
-       * @param {AuthenticationResetTokenRequest} req The reset token.
+       *
+       * @summary Reset local authentication using the provided token
+       * @param {AuthenticationResetTokenRequest} authenticationResetTokenRequest The reset token.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      resetLocalWithToken: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("resetLocalWithToken", "req", n);
-        const r = "/authentication/local", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "PUT" }, s), t), d = {}, h = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      resetLocalWithToken: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("resetLocalWithToken", "authenticationResetTokenRequest", c);
+        const i = "/authentication/local", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "PUT" }, e), n), o = {}, u = {};
+        o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       })
     };
   };
-  i.AuthenticateApiAxiosParamCreator = P;
-  const g = function(l) {
-    const n = (0, i.AuthenticateApiAxiosParamCreator)(l);
+  l.AuthenticateApiAxiosParamCreator = P;
+  const b = function(r) {
+    const c = (0, l.AuthenticateApiAxiosParamCreator)(r);
     return {
       /**
-       *  EAN login and hand out token
-       * @param {AuthenticationEanRequest} req The EAN login.
+       *
+       * @summary EAN login and hand out token
+       * @param {AuthenticationEanRequest} authenticationEanRequest The EAN login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      eanAuthentication(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.eanAuthentication(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      eanAuthentication(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.eanAuthentication(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["AuthenticateApi.eanAuthentication"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  LDAP login and hand out token    If user has never signed in before this also creates an GEWIS account.
-       * @param {AuthenticationLDAPRequest} req The LDAP login.
+       *
+       * @summary LDAP login and hand out token    If user has never signed in before this also creates an GEWIS account.
+       * @param {AuthenticationLDAPRequest} authenticationLDAPRequest The LDAP login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      gewisLDAPAuthentication(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.gewisLDAPAuthentication(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      gewisLDAPAuthentication(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.gewisLDAPAuthentication(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["AuthenticateApi.gewisLDAPAuthentication"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  PIN login and hand out token.
-       * @param {GEWISAuthenticationPinRequest} req The PIN login.
+       *
+       * @summary PIN login and hand out token.
+       * @param {GEWISAuthenticationPinRequest} gEWISAuthenticationPinRequest The PIN login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      gewisPinAuthentication(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.gewisPinAuthentication(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      gewisPinAuthentication(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.gewisPinAuthentication(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["AuthenticateApi.gewisPinAuthentication"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  GEWIS login verification based on gewisweb JWT tokens. This method verifies the validity of the gewisweb JWT token, and returns a SudoSOS token if the GEWIS token is valid.
-       * @param {GewiswebAuthenticationRequest} req The mock login.
+       *
+       * @summary GEWIS login verification based on gewisweb JWT tokens. This method verifies the validity of the gewisweb JWT token, and returns a SudoSOS token if the GEWIS token is valid.
+       * @param {GewiswebAuthenticationRequest} gewiswebAuthenticationRequest The mock login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      gewisWebAuthentication(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.gewisWebAuthentication(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      gewisWebAuthentication(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.gewisWebAuthentication(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["AuthenticateApi.gewisWebAuthentication"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Key login and hand out token.
-       * @param {AuthenticationKeyRequest} req The key login.
+       *
+       * @summary Key login and hand out token.
+       * @param {AuthenticationKeyRequest} authenticationKeyRequest The key login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      keyAuthentication(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.keyAuthentication(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      keyAuthentication(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.keyAuthentication(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["AuthenticateApi.keyAuthentication"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  LDAP login and hand out token If user has never signed in before this also creates an account.
-       * @param {AuthenticationLDAPRequest} req The LDAP login.
+       *
+       * @summary LDAP login and hand out token If user has never signed in before this also creates an account.
+       * @param {AuthenticationLDAPRequest} authenticationLDAPRequest The LDAP login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      ldapAuthentication(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.ldapAuthentication(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      ldapAuthentication(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.ldapAuthentication(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["AuthenticateApi.ldapAuthentication"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Local login and hand out token
-       * @param {AuthenticationLocalRequest} req The local login.
+       *
+       * @summary Local login and hand out token
+       * @param {AuthenticationLocalRequest} authenticationLocalRequest The local login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      localAuthentication(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.localAuthentication(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      localAuthentication(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.localAuthentication(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["AuthenticateApi.localAuthentication"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Mock login and hand out token.
-       * @param {AuthenticationMockRequest} req The mock login.
+       *
+       * @summary Mock login and hand out token.
+       * @param {AuthenticationMockRequest} authenticationMockRequest The mock login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      mockAuthentication(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.mockAuthentication(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      mockAuthentication(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.mockAuthentication(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["AuthenticateApi.mockAuthentication"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  NFC login and hand out token
-       * @param {AuthenticationNfcRequest} req The NFC login.
+       *
+       * @summary NFC login and hand out token
+       * @param {AuthenticationNfcRequest} authenticationNfcRequest The NFC login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      nfcAuthentication(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.nfcAuthentication(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      nfcAuthentication(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.nfcAuthentication(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["AuthenticateApi.nfcAuthentication"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  PIN login and hand out token
-       * @param {AuthenticationPinRequest} req The PIN login.
+       *
+       * @summary PIN login and hand out token
+       * @param {AuthenticationPinRequest} authenticationPinRequest The PIN login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      pinAuthentication(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.pinAuthentication(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      pinAuthentication(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.pinAuthentication(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["AuthenticateApi.pinAuthentication"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Get a new JWT token, lesser if the existing token is also lesser
+       *
+       * @summary Get a new JWT token, lesser if the existing token is also lesser
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      refreshToken(t) {
-        return c(this, void 0, void 0, function* () {
-          const r = yield n.refreshToken(t);
-          return (0, e.createRequestFunction)(r, u.default, p.BASE_PATH, l);
+      refreshToken(n) {
+        var i, s, e;
+        return d(this, void 0, void 0, function* () {
+          const t = yield c.refreshToken(n), o = (i = r == null ? void 0 : r.serverIndex) !== null && i !== void 0 ? i : 0, u = (e = (s = v.operationServerMap["AuthenticateApi.refreshToken"]) === null || s === void 0 ? void 0 : s[o]) === null || e === void 0 ? void 0 : e.url;
+          return (h, A) => (0, a.createRequestFunction)(t, p.default, v.BASE_PATH, r)(h, u || A);
         });
       },
       /**
-       *  Creates a reset token for the local authentication
-       * @param {ResetLocalRequest} req The reset info.
+       *
+       * @summary Creates a reset token for the local authentication
+       * @param {ResetLocalRequest} resetLocalRequest The reset info.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      resetLocal(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.resetLocal(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      resetLocal(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.resetLocal(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["AuthenticateApi.resetLocal"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Reset local authentication using the provided token
-       * @param {AuthenticationResetTokenRequest} req The reset token.
+       *
+       * @summary Reset local authentication using the provided token
+       * @param {AuthenticationResetTokenRequest} authenticationResetTokenRequest The reset token.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      resetLocalWithToken(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.resetLocalWithToken(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      resetLocalWithToken(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.resetLocalWithToken(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["AuthenticateApi.resetLocalWithToken"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       }
     };
   };
-  i.AuthenticateApiFp = g;
-  const m = function(l, n, t) {
-    const r = (0, i.AuthenticateApiFp)(l);
+  l.AuthenticateApiFp = b;
+  const g = function(r, c, n) {
+    const i = (0, l.AuthenticateApiFp)(r);
     return {
       /**
-       *  EAN login and hand out token
-       * @param {AuthenticationEanRequest} req The EAN login.
+       *
+       * @summary EAN login and hand out token
+       * @param {AuthenticationEanRequest} authenticationEanRequest The EAN login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      eanAuthentication(a, s) {
-        return r.eanAuthentication(a, s).then((o) => o(t, n));
+      eanAuthentication(s, e) {
+        return i.eanAuthentication(s, e).then((t) => t(n, c));
       },
       /**
-       *  LDAP login and hand out token    If user has never signed in before this also creates an GEWIS account.
-       * @param {AuthenticationLDAPRequest} req The LDAP login.
+       *
+       * @summary LDAP login and hand out token    If user has never signed in before this also creates an GEWIS account.
+       * @param {AuthenticationLDAPRequest} authenticationLDAPRequest The LDAP login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      gewisLDAPAuthentication(a, s) {
-        return r.gewisLDAPAuthentication(a, s).then((o) => o(t, n));
+      gewisLDAPAuthentication(s, e) {
+        return i.gewisLDAPAuthentication(s, e).then((t) => t(n, c));
       },
       /**
-       *  PIN login and hand out token.
-       * @param {GEWISAuthenticationPinRequest} req The PIN login.
+       *
+       * @summary PIN login and hand out token.
+       * @param {GEWISAuthenticationPinRequest} gEWISAuthenticationPinRequest The PIN login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      gewisPinAuthentication(a, s) {
-        return r.gewisPinAuthentication(a, s).then((o) => o(t, n));
+      gewisPinAuthentication(s, e) {
+        return i.gewisPinAuthentication(s, e).then((t) => t(n, c));
       },
       /**
-       *  GEWIS login verification based on gewisweb JWT tokens. This method verifies the validity of the gewisweb JWT token, and returns a SudoSOS token if the GEWIS token is valid.
-       * @param {GewiswebAuthenticationRequest} req The mock login.
+       *
+       * @summary GEWIS login verification based on gewisweb JWT tokens. This method verifies the validity of the gewisweb JWT token, and returns a SudoSOS token if the GEWIS token is valid.
+       * @param {GewiswebAuthenticationRequest} gewiswebAuthenticationRequest The mock login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      gewisWebAuthentication(a, s) {
-        return r.gewisWebAuthentication(a, s).then((o) => o(t, n));
+      gewisWebAuthentication(s, e) {
+        return i.gewisWebAuthentication(s, e).then((t) => t(n, c));
       },
       /**
-       *  Key login and hand out token.
-       * @param {AuthenticationKeyRequest} req The key login.
+       *
+       * @summary Key login and hand out token.
+       * @param {AuthenticationKeyRequest} authenticationKeyRequest The key login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      keyAuthentication(a, s) {
-        return r.keyAuthentication(a, s).then((o) => o(t, n));
+      keyAuthentication(s, e) {
+        return i.keyAuthentication(s, e).then((t) => t(n, c));
       },
       /**
-       *  LDAP login and hand out token If user has never signed in before this also creates an account.
-       * @param {AuthenticationLDAPRequest} req The LDAP login.
+       *
+       * @summary LDAP login and hand out token If user has never signed in before this also creates an account.
+       * @param {AuthenticationLDAPRequest} authenticationLDAPRequest The LDAP login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      ldapAuthentication(a, s) {
-        return r.ldapAuthentication(a, s).then((o) => o(t, n));
+      ldapAuthentication(s, e) {
+        return i.ldapAuthentication(s, e).then((t) => t(n, c));
       },
       /**
-       *  Local login and hand out token
-       * @param {AuthenticationLocalRequest} req The local login.
+       *
+       * @summary Local login and hand out token
+       * @param {AuthenticationLocalRequest} authenticationLocalRequest The local login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      localAuthentication(a, s) {
-        return r.localAuthentication(a, s).then((o) => o(t, n));
+      localAuthentication(s, e) {
+        return i.localAuthentication(s, e).then((t) => t(n, c));
       },
       /**
-       *  Mock login and hand out token.
-       * @param {AuthenticationMockRequest} req The mock login.
+       *
+       * @summary Mock login and hand out token.
+       * @param {AuthenticationMockRequest} authenticationMockRequest The mock login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      mockAuthentication(a, s) {
-        return r.mockAuthentication(a, s).then((o) => o(t, n));
+      mockAuthentication(s, e) {
+        return i.mockAuthentication(s, e).then((t) => t(n, c));
       },
       /**
-       *  NFC login and hand out token
-       * @param {AuthenticationNfcRequest} req The NFC login.
+       *
+       * @summary NFC login and hand out token
+       * @param {AuthenticationNfcRequest} authenticationNfcRequest The NFC login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      nfcAuthentication(a, s) {
-        return r.nfcAuthentication(a, s).then((o) => o(t, n));
+      nfcAuthentication(s, e) {
+        return i.nfcAuthentication(s, e).then((t) => t(n, c));
       },
       /**
-       *  PIN login and hand out token
-       * @param {AuthenticationPinRequest} req The PIN login.
+       *
+       * @summary PIN login and hand out token
+       * @param {AuthenticationPinRequest} authenticationPinRequest The PIN login.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      pinAuthentication(a, s) {
-        return r.pinAuthentication(a, s).then((o) => o(t, n));
+      pinAuthentication(s, e) {
+        return i.pinAuthentication(s, e).then((t) => t(n, c));
       },
       /**
-       *  Get a new JWT token, lesser if the existing token is also lesser
+       *
+       * @summary Get a new JWT token, lesser if the existing token is also lesser
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      refreshToken(a) {
-        return r.refreshToken(a).then((s) => s(t, n));
+      refreshToken(s) {
+        return i.refreshToken(s).then((e) => e(n, c));
       },
       /**
-       *  Creates a reset token for the local authentication
-       * @param {ResetLocalRequest} req The reset info.
+       *
+       * @summary Creates a reset token for the local authentication
+       * @param {ResetLocalRequest} resetLocalRequest The reset info.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      resetLocal(a, s) {
-        return r.resetLocal(a, s).then((o) => o(t, n));
+      resetLocal(s, e) {
+        return i.resetLocal(s, e).then((t) => t(n, c));
       },
       /**
-       *  Reset local authentication using the provided token
-       * @param {AuthenticationResetTokenRequest} req The reset token.
+       *
+       * @summary Reset local authentication using the provided token
+       * @param {AuthenticationResetTokenRequest} authenticationResetTokenRequest The reset token.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      resetLocalWithToken(a, s) {
-        return r.resetLocalWithToken(a, s).then((o) => o(t, n));
+      resetLocalWithToken(s, e) {
+        return i.resetLocalWithToken(s, e).then((t) => t(n, c));
       }
     };
   };
-  i.AuthenticateApiFactory = m;
-  class R extends p.BaseAPI {
+  l.AuthenticateApiFactory = g;
+  class y extends v.BaseAPI {
     /**
-     *  EAN login and hand out token
-     * @param {AuthenticationEanRequest} req The EAN login.
+     *
+     * @summary EAN login and hand out token
+     * @param {AuthenticationEanRequest} authenticationEanRequest The EAN login.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    eanAuthentication(n, t) {
-      return (0, i.AuthenticateApiFp)(this.configuration).eanAuthentication(n, t).then((r) => r(this.axios, this.basePath));
+    eanAuthentication(c, n) {
+      return (0, l.AuthenticateApiFp)(this.configuration).eanAuthentication(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  LDAP login and hand out token    If user has never signed in before this also creates an GEWIS account.
-     * @param {AuthenticationLDAPRequest} req The LDAP login.
+     *
+     * @summary LDAP login and hand out token    If user has never signed in before this also creates an GEWIS account.
+     * @param {AuthenticationLDAPRequest} authenticationLDAPRequest The LDAP login.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    gewisLDAPAuthentication(n, t) {
-      return (0, i.AuthenticateApiFp)(this.configuration).gewisLDAPAuthentication(n, t).then((r) => r(this.axios, this.basePath));
+    gewisLDAPAuthentication(c, n) {
+      return (0, l.AuthenticateApiFp)(this.configuration).gewisLDAPAuthentication(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  PIN login and hand out token.
-     * @param {GEWISAuthenticationPinRequest} req The PIN login.
+     *
+     * @summary PIN login and hand out token.
+     * @param {GEWISAuthenticationPinRequest} gEWISAuthenticationPinRequest The PIN login.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    gewisPinAuthentication(n, t) {
-      return (0, i.AuthenticateApiFp)(this.configuration).gewisPinAuthentication(n, t).then((r) => r(this.axios, this.basePath));
+    gewisPinAuthentication(c, n) {
+      return (0, l.AuthenticateApiFp)(this.configuration).gewisPinAuthentication(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  GEWIS login verification based on gewisweb JWT tokens. This method verifies the validity of the gewisweb JWT token, and returns a SudoSOS token if the GEWIS token is valid.
-     * @param {GewiswebAuthenticationRequest} req The mock login.
+     *
+     * @summary GEWIS login verification based on gewisweb JWT tokens. This method verifies the validity of the gewisweb JWT token, and returns a SudoSOS token if the GEWIS token is valid.
+     * @param {GewiswebAuthenticationRequest} gewiswebAuthenticationRequest The mock login.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    gewisWebAuthentication(n, t) {
-      return (0, i.AuthenticateApiFp)(this.configuration).gewisWebAuthentication(n, t).then((r) => r(this.axios, this.basePath));
+    gewisWebAuthentication(c, n) {
+      return (0, l.AuthenticateApiFp)(this.configuration).gewisWebAuthentication(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Key login and hand out token.
-     * @param {AuthenticationKeyRequest} req The key login.
+     *
+     * @summary Key login and hand out token.
+     * @param {AuthenticationKeyRequest} authenticationKeyRequest The key login.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    keyAuthentication(n, t) {
-      return (0, i.AuthenticateApiFp)(this.configuration).keyAuthentication(n, t).then((r) => r(this.axios, this.basePath));
+    keyAuthentication(c, n) {
+      return (0, l.AuthenticateApiFp)(this.configuration).keyAuthentication(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  LDAP login and hand out token If user has never signed in before this also creates an account.
-     * @param {AuthenticationLDAPRequest} req The LDAP login.
+     *
+     * @summary LDAP login and hand out token If user has never signed in before this also creates an account.
+     * @param {AuthenticationLDAPRequest} authenticationLDAPRequest The LDAP login.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    ldapAuthentication(n, t) {
-      return (0, i.AuthenticateApiFp)(this.configuration).ldapAuthentication(n, t).then((r) => r(this.axios, this.basePath));
+    ldapAuthentication(c, n) {
+      return (0, l.AuthenticateApiFp)(this.configuration).ldapAuthentication(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Local login and hand out token
-     * @param {AuthenticationLocalRequest} req The local login.
+     *
+     * @summary Local login and hand out token
+     * @param {AuthenticationLocalRequest} authenticationLocalRequest The local login.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    localAuthentication(n, t) {
-      return (0, i.AuthenticateApiFp)(this.configuration).localAuthentication(n, t).then((r) => r(this.axios, this.basePath));
+    localAuthentication(c, n) {
+      return (0, l.AuthenticateApiFp)(this.configuration).localAuthentication(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Mock login and hand out token.
-     * @param {AuthenticationMockRequest} req The mock login.
+     *
+     * @summary Mock login and hand out token.
+     * @param {AuthenticationMockRequest} authenticationMockRequest The mock login.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    mockAuthentication(n, t) {
-      return (0, i.AuthenticateApiFp)(this.configuration).mockAuthentication(n, t).then((r) => r(this.axios, this.basePath));
+    mockAuthentication(c, n) {
+      return (0, l.AuthenticateApiFp)(this.configuration).mockAuthentication(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  NFC login and hand out token
-     * @param {AuthenticationNfcRequest} req The NFC login.
+     *
+     * @summary NFC login and hand out token
+     * @param {AuthenticationNfcRequest} authenticationNfcRequest The NFC login.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    nfcAuthentication(n, t) {
-      return (0, i.AuthenticateApiFp)(this.configuration).nfcAuthentication(n, t).then((r) => r(this.axios, this.basePath));
+    nfcAuthentication(c, n) {
+      return (0, l.AuthenticateApiFp)(this.configuration).nfcAuthentication(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  PIN login and hand out token
-     * @param {AuthenticationPinRequest} req The PIN login.
+     *
+     * @summary PIN login and hand out token
+     * @param {AuthenticationPinRequest} authenticationPinRequest The PIN login.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    pinAuthentication(n, t) {
-      return (0, i.AuthenticateApiFp)(this.configuration).pinAuthentication(n, t).then((r) => r(this.axios, this.basePath));
+    pinAuthentication(c, n) {
+      return (0, l.AuthenticateApiFp)(this.configuration).pinAuthentication(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Get a new JWT token, lesser if the existing token is also lesser
+     *
+     * @summary Get a new JWT token, lesser if the existing token is also lesser
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    refreshToken(n) {
-      return (0, i.AuthenticateApiFp)(this.configuration).refreshToken(n).then((t) => t(this.axios, this.basePath));
+    refreshToken(c) {
+      return (0, l.AuthenticateApiFp)(this.configuration).refreshToken(c).then((n) => n(this.axios, this.basePath));
     }
     /**
-     *  Creates a reset token for the local authentication
-     * @param {ResetLocalRequest} req The reset info.
+     *
+     * @summary Creates a reset token for the local authentication
+     * @param {ResetLocalRequest} resetLocalRequest The reset info.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    resetLocal(n, t) {
-      return (0, i.AuthenticateApiFp)(this.configuration).resetLocal(n, t).then((r) => r(this.axios, this.basePath));
+    resetLocal(c, n) {
+      return (0, l.AuthenticateApiFp)(this.configuration).resetLocal(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Reset local authentication using the provided token
-     * @param {AuthenticationResetTokenRequest} req The reset token.
+     *
+     * @summary Reset local authentication using the provided token
+     * @param {AuthenticationResetTokenRequest} authenticationResetTokenRequest The reset token.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    resetLocalWithToken(n, t) {
-      return (0, i.AuthenticateApiFp)(this.configuration).resetLocalWithToken(n, t).then((r) => r(this.axios, this.basePath));
+    resetLocalWithToken(c, n) {
+      return (0, l.AuthenticateApiFp)(this.configuration).resetLocalWithToken(c, n).then((i) => i(this.axios, this.basePath));
     }
   }
-  i.AuthenticateApi = R;
-  const S = function(l) {
+  l.AuthenticateApi = y;
+  const E = function(r) {
     return {
       /**
-       *  Get balance of the current user
+       *
+       * @summary Get balance of the current user
        * @param {string} [date] Timestamp to get balances for
        * @param {number} [minBalance] Minimum balance
        * @param {number} [maxBalance] Maximum balance
-       * @param {'id' | 'amount'} [orderBy] Column to order balance by - eg: id,amount
-       * @param {'ASC' | 'DESC'} [orderDirection] Order direction - eg: ASC,DESC
+       * @param {boolean} [hasFine] Only users with(out) fines
+       * @param {number} [minFine] Minimum fine
+       * @param {number} [maxFine] Maximum fine
+       * @param {GetAllBalanceUserTypeEnum} [userType] Filter based on user type.
+       * @param {string} [orderBy] Column to order balance by - eg: id,amount
+       * @param {GetAllBalanceOrderDirectionEnum} [orderDirection] Order direction
        * @param {number} [take] How many transactions the endpoint should return
        * @param {number} [skip] How many transactions should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllBalance: (n, t, r, a, s, o, d, h = {}) => c(this, void 0, void 0, function* () {
-        const A = "/balances/all", O = new URL(A, e.DUMMY_BASE_URL);
-        let b;
-        l && (b = l.baseOptions);
-        const F = Object.assign(Object.assign({ method: "GET" }, b), h), j = {}, V = {};
-        yield (0, e.setApiKeyToObject)(j, "Authorization", l), n !== void 0 && (V.date = n), t !== void 0 && (V.minBalance = t), r !== void 0 && (V.maxBalance = r), a !== void 0 && (V.orderBy = a), s !== void 0 && (V.orderDirection = s), o !== void 0 && (V.take = o), d !== void 0 && (V.skip = d), (0, e.setSearchParams)(O, V);
-        let I = b && b.headers ? b.headers : {};
-        return F.headers = Object.assign(Object.assign(Object.assign({}, j), I), h.headers), {
-          url: (0, e.toPathString)(O),
+      getAllBalance: (c, n, i, s, e, t, o, u, h, A, O, m = {}) => d(this, void 0, void 0, function* () {
+        const f = "/balances/all", j = new URL(f, a.DUMMY_BASE_URL);
+        let V;
+        r && (V = r.baseOptions);
+        const F = Object.assign(Object.assign({ method: "GET" }, V), m), B = {}, I = {};
+        yield (0, a.setBearerAuthToObject)(B, r), c !== void 0 && (I.date = c), n !== void 0 && (I.minBalance = n), i !== void 0 && (I.maxBalance = i), s !== void 0 && (I.hasFine = s), e !== void 0 && (I.minFine = e), t !== void 0 && (I.maxFine = t), o !== void 0 && (I.userType = o), u !== void 0 && (I.orderBy = u), h !== void 0 && (I.orderDirection = h), A !== void 0 && (I.take = A), O !== void 0 && (I.skip = O), (0, a.setSearchParams)(j, I);
+        let X = V && V.headers ? V.headers : {};
+        return F.headers = Object.assign(Object.assign(Object.assign({}, B), X), m.headers), {
+          url: (0, a.toPathString)(j),
           options: F
         };
       }),
       /**
-       *  Retrieves the requested balance
+       *
+       * @summary Retrieves the requested balance
        * @param {number} id The id of the user for which the saldo is requested
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getBalanceId: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getBalanceId", "id", n);
-        const r = "/balances/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      getBalanceId: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getBalanceId", "id", c);
+        const i = "/balances/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Get balance of the current user
+       *
+       * @summary Get balance of the current user
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getBalances: (n = {}) => c(this, void 0, void 0, function* () {
-        const t = "/balances", r = new URL(t, e.DUMMY_BASE_URL);
-        let a;
-        l && (a = l.baseOptions);
-        const s = Object.assign(Object.assign({ method: "GET" }, a), n), o = {}, d = {};
-        yield (0, e.setApiKeyToObject)(o, "Authorization", l), (0, e.setSearchParams)(r, d);
-        let h = a && a.headers ? a.headers : {};
-        return s.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
-          url: (0, e.toPathString)(r),
-          options: s
+      getBalances: (c = {}) => d(this, void 0, void 0, function* () {
+        const n = "/balances", i = new URL(n, a.DUMMY_BASE_URL);
+        let s;
+        r && (s = r.baseOptions);
+        const e = Object.assign(Object.assign({ method: "GET" }, s), c), t = {}, o = {};
+        yield (0, a.setBearerAuthToObject)(t, r), (0, a.setSearchParams)(i, o);
+        let u = s && s.headers ? s.headers : {};
+        return e.headers = Object.assign(Object.assign(Object.assign({}, t), u), c.headers), {
+          url: (0, a.toPathString)(i),
+          options: e
         };
       })
     };
   };
-  i.BalanceApiAxiosParamCreator = S;
-  const U = function(l) {
-    const n = (0, i.BalanceApiAxiosParamCreator)(l);
+  l.BalanceApiAxiosParamCreator = E;
+  const _ = function(r) {
+    const c = (0, l.BalanceApiAxiosParamCreator)(r);
     return {
       /**
-       *  Get balance of the current user
+       *
+       * @summary Get balance of the current user
        * @param {string} [date] Timestamp to get balances for
        * @param {number} [minBalance] Minimum balance
        * @param {number} [maxBalance] Maximum balance
-       * @param {'id' | 'amount'} [orderBy] Column to order balance by - eg: id,amount
-       * @param {'ASC' | 'DESC'} [orderDirection] Order direction - eg: ASC,DESC
+       * @param {boolean} [hasFine] Only users with(out) fines
+       * @param {number} [minFine] Minimum fine
+       * @param {number} [maxFine] Maximum fine
+       * @param {GetAllBalanceUserTypeEnum} [userType] Filter based on user type.
+       * @param {string} [orderBy] Column to order balance by - eg: id,amount
+       * @param {GetAllBalanceOrderDirectionEnum} [orderDirection] Order direction
        * @param {number} [take] How many transactions the endpoint should return
        * @param {number} [skip] How many transactions should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllBalance(t, r, a, s, o, d, h, A) {
-        return c(this, void 0, void 0, function* () {
-          const O = yield n.getAllBalance(t, r, a, s, o, d, h, A);
-          return (0, e.createRequestFunction)(O, u.default, p.BASE_PATH, l);
+      getAllBalance(n, i, s, e, t, o, u, h, A, O, m, f) {
+        var j, V, F;
+        return d(this, void 0, void 0, function* () {
+          const B = yield c.getAllBalance(n, i, s, e, t, o, u, h, A, O, m, f), I = (j = r == null ? void 0 : r.serverIndex) !== null && j !== void 0 ? j : 0, X = (F = (V = v.operationServerMap["BalanceApi.getAllBalance"]) === null || V === void 0 ? void 0 : V[I]) === null || F === void 0 ? void 0 : F.url;
+          return (te, ws) => (0, a.createRequestFunction)(B, p.default, v.BASE_PATH, r)(te, X || ws);
         });
       },
       /**
-       *  Retrieves the requested balance
+       *
+       * @summary Retrieves the requested balance
        * @param {number} id The id of the user for which the saldo is requested
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getBalanceId(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getBalanceId(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      getBalanceId(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getBalanceId(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["BalanceApi.getBalanceId"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Get balance of the current user
+       *
+       * @summary Get balance of the current user
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getBalances(t) {
-        return c(this, void 0, void 0, function* () {
-          const r = yield n.getBalances(t);
-          return (0, e.createRequestFunction)(r, u.default, p.BASE_PATH, l);
+      getBalances(n) {
+        var i, s, e;
+        return d(this, void 0, void 0, function* () {
+          const t = yield c.getBalances(n), o = (i = r == null ? void 0 : r.serverIndex) !== null && i !== void 0 ? i : 0, u = (e = (s = v.operationServerMap["BalanceApi.getBalances"]) === null || s === void 0 ? void 0 : s[o]) === null || e === void 0 ? void 0 : e.url;
+          return (h, A) => (0, a.createRequestFunction)(t, p.default, v.BASE_PATH, r)(h, u || A);
         });
       }
     };
   };
-  i.BalanceApiFp = U;
-  const T = function(l, n, t) {
-    const r = (0, i.BalanceApiFp)(l);
+  l.BalanceApiFp = _;
+  const U = function(r, c, n) {
+    const i = (0, l.BalanceApiFp)(r);
     return {
       /**
-       *  Get balance of the current user
+       *
+       * @summary Get balance of the current user
        * @param {string} [date] Timestamp to get balances for
        * @param {number} [minBalance] Minimum balance
        * @param {number} [maxBalance] Maximum balance
-       * @param {'id' | 'amount'} [orderBy] Column to order balance by - eg: id,amount
-       * @param {'ASC' | 'DESC'} [orderDirection] Order direction - eg: ASC,DESC
+       * @param {boolean} [hasFine] Only users with(out) fines
+       * @param {number} [minFine] Minimum fine
+       * @param {number} [maxFine] Maximum fine
+       * @param {GetAllBalanceUserTypeEnum} [userType] Filter based on user type.
+       * @param {string} [orderBy] Column to order balance by - eg: id,amount
+       * @param {GetAllBalanceOrderDirectionEnum} [orderDirection] Order direction
        * @param {number} [take] How many transactions the endpoint should return
        * @param {number} [skip] How many transactions should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllBalance(a, s, o, d, h, A, O, b) {
-        return r.getAllBalance(a, s, o, d, h, A, O, b).then((F) => F(t, n));
+      getAllBalance(s, e, t, o, u, h, A, O, m, f, j, V) {
+        return i.getAllBalance(s, e, t, o, u, h, A, O, m, f, j, V).then((F) => F(n, c));
       },
       /**
-       *  Retrieves the requested balance
+       *
+       * @summary Retrieves the requested balance
        * @param {number} id The id of the user for which the saldo is requested
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getBalanceId(a, s) {
-        return r.getBalanceId(a, s).then((o) => o(t, n));
+      getBalanceId(s, e) {
+        return i.getBalanceId(s, e).then((t) => t(n, c));
       },
       /**
-       *  Get balance of the current user
+       *
+       * @summary Get balance of the current user
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getBalances(a) {
-        return r.getBalances(a).then((s) => s(t, n));
+      getBalances(s) {
+        return i.getBalances(s).then((e) => e(n, c));
       }
     };
   };
-  i.BalanceApiFactory = T;
-  class L extends p.BaseAPI {
+  l.BalanceApiFactory = U;
+  class L extends v.BaseAPI {
     /**
-     *  Get balance of the current user
+     *
+     * @summary Get balance of the current user
      * @param {string} [date] Timestamp to get balances for
      * @param {number} [minBalance] Minimum balance
      * @param {number} [maxBalance] Maximum balance
-     * @param {'id' | 'amount'} [orderBy] Column to order balance by - eg: id,amount
-     * @param {'ASC' | 'DESC'} [orderDirection] Order direction - eg: ASC,DESC
+     * @param {boolean} [hasFine] Only users with(out) fines
+     * @param {number} [minFine] Minimum fine
+     * @param {number} [maxFine] Maximum fine
+     * @param {GetAllBalanceUserTypeEnum} [userType] Filter based on user type.
+     * @param {string} [orderBy] Column to order balance by - eg: id,amount
+     * @param {GetAllBalanceOrderDirectionEnum} [orderDirection] Order direction
      * @param {number} [take] How many transactions the endpoint should return
      * @param {number} [skip] How many transactions should be skipped (for pagination)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BalanceApi
      */
-    getAllBalance(n, t, r, a, s, o, d, h) {
-      return (0, i.BalanceApiFp)(this.configuration).getAllBalance(n, t, r, a, s, o, d, h).then((A) => A(this.axios, this.basePath));
+    getAllBalance(c, n, i, s, e, t, o, u, h, A, O, m) {
+      return (0, l.BalanceApiFp)(this.configuration).getAllBalance(c, n, i, s, e, t, o, u, h, A, O, m).then((f) => f(this.axios, this.basePath));
     }
     /**
-     *  Retrieves the requested balance
+     *
+     * @summary Retrieves the requested balance
      * @param {number} id The id of the user for which the saldo is requested
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BalanceApi
      */
-    getBalanceId(n, t) {
-      return (0, i.BalanceApiFp)(this.configuration).getBalanceId(n, t).then((r) => r(this.axios, this.basePath));
+    getBalanceId(c, n) {
+      return (0, l.BalanceApiFp)(this.configuration).getBalanceId(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Get balance of the current user
+     *
+     * @summary Get balance of the current user
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BalanceApi
      */
-    getBalances(n) {
-      return (0, i.BalanceApiFp)(this.configuration).getBalances(n).then((t) => t(this.axios, this.basePath));
+    getBalances(c) {
+      return (0, l.BalanceApiFp)(this.configuration).getBalances(c).then((n) => n(this.axios, this.basePath));
     }
   }
-  i.BalanceApi = L;
-  const B = function(l) {
+  l.BalanceApi = L, l.GetAllBalanceUserTypeEnum = {
+    Member: "MEMBER",
+    Organ: "ORGAN",
+    Voucher: "VOUCHER",
+    LocalUser: "LOCAL_USER",
+    LocalAdmin: "LOCAL_ADMIN",
+    Invoice: "INVOICE",
+    AutomaticInvoice: "AUTOMATIC_INVOICE"
+  }, l.GetAllBalanceOrderDirectionEnum = {
+    Asc: "ASC",
+    Desc: "DESC"
+  };
+  const G = function(r) {
     return {
       /**
-       *  Deletes the requested banner
+       *
+       * @summary Deletes the requested banner
        * @param {number} id The id of the banner which should be deleted
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      _delete: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("_delete", "id", n);
-        const r = "/banners/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "DELETE" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
+      _delete: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("_delete", "id", c);
+        const i = "/banners/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "DELETE" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Saves a banner to the database
+       * @param {BannerRequest} bannerRequest The banner which should be created
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      create: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("create", "bannerRequest", c);
+        const i = "/banners", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Returns all active banners
+       * @param {number} [take] How many banners the endpoint should return
+       * @param {number} [skip] How many banners should be skipped (for pagination)
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getActive: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        const s = "/banners/active", e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "GET" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), c !== void 0 && (h.take = c), n !== void 0 && (h.skip = n), (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), {
+          url: (0, a.toPathString)(e),
           options: o
         };
       }),
       /**
-       *  Saves a banner to the database
-       * @param {BannerRequest} banner The banner which should be created
+       *
+       * @summary Returns all existing banners
+       * @param {number} [take] How many banners the endpoint should return
+       * @param {number} [skip] How many banners should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      create: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("create", "banner", n);
-        const r = "/banners", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
+      getAllBanners: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        const s = "/banners", e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "GET" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), c !== void 0 && (h.take = c), n !== void 0 && (h.skip = n), (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), {
+          url: (0, a.toPathString)(e),
           options: o
         };
       }),
       /**
-       *  Returns all active banners
+       *
+       * @summary Returns all existing banners
        * @param {number} [take] How many banners the endpoint should return
        * @param {number} [skip] How many banners should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getActive: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        const a = "/banners/active", s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "GET" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), n !== void 0 && (A.take = n), t !== void 0 && (A.skip = t), (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), {
-          url: (0, e.toPathString)(s),
-          options: d
+      getAllOpenBanners: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        const s = "/open/banners", e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "GET" }, t), i), u = {}, h = {};
+        c !== void 0 && (h.take = c), n !== void 0 && (h.skip = n), (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), {
+          url: (0, a.toPathString)(e),
+          options: o
         };
       }),
       /**
-       *  Returns all existing banners
-       * @param {number} [take] How many banners the endpoint should return
-       * @param {number} [skip] How many banners should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getAllBanners: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        const a = "/banners", s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "GET" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), n !== void 0 && (A.take = n), t !== void 0 && (A.skip = t), (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), {
-          url: (0, e.toPathString)(s),
-          options: d
-        };
-      }),
-      /**
-       *  Returns all existing banners
-       * @param {number} [take] How many banners the endpoint should return
-       * @param {number} [skip] How many banners should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getAllOpenBanners: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        const a = "/open/banners", s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "GET" }, o), r), h = {}, A = {};
-        n !== void 0 && (A.take = n), t !== void 0 && (A.skip = t), (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), {
-          url: (0, e.toPathString)(s),
-          options: d
-        };
-      }),
-      /**
-       *  Returns the requested banner
+       *
+       * @summary Returns the requested banner
        * @param {number} id The id of the banner which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getBanner: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getBanner", "id", n);
-        const r = "/banners/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
+      getBanner: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getBanner", "id", c);
+        const i = "/banners/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Updates the requested banner
+       * @param {number} id The id of the banner which should be updated
+       * @param {BannerRequest} bannerRequest The updated banner
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      update: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("update", "id", c), (0, a.assertParamExists)("update", "bannerRequest", n);
+        const s = "/banners/{id}".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "PATCH" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), o.data = (0, a.serializeDataIfNeeded)(n, o, r), {
+          url: (0, a.toPathString)(e),
           options: o
         };
       }),
       /**
-       *  Updates the requested banner
-       * @param {number} id The id of the banner which should be updated
-       * @param {BannerRequest} banner The updated banner
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      update: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("update", "id", n), (0, e.assertParamExists)("update", "banner", t);
-        const a = "/banners/{id}".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "PATCH" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), h["Content-Type"] = "application/json", (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), d.data = (0, e.serializeDataIfNeeded)(t, d, l), {
-          url: (0, e.toPathString)(s),
-          options: d
-        };
-      }),
-      /**
-       *  Uploads a banner image to the given banner
+       *
+       * @summary Uploads a banner image to the given banner
        * @param {number} id The id of the banner
-       * @param {File} [file] null
+       * @param {File} [file] file
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateImage: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("updateImage", "id", n);
-        const a = "/banners/{id}/image".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "POST" }, o), r), h = {}, A = {}, O = new (l && l.formDataCtor || FormData)();
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), t !== void 0 && O.append("file", t), h["Content-Type"] = "multipart/form-data", (0, e.setSearchParams)(s, A);
-        let b = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), b), r.headers), d.data = O, {
-          url: (0, e.toPathString)(s),
-          options: d
+      updateImage: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateImage", "id", c);
+        const s = "/banners/{id}/image".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "POST" }, t), i), u = {}, h = {}, A = new (r && r.formDataCtor || FormData)();
+        yield (0, a.setBearerAuthToObject)(u, r), n !== void 0 && A.append("file", n), u["Content-Type"] = "multipart/form-data", (0, a.setSearchParams)(e, h);
+        let O = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), O), i.headers), o.data = A, {
+          url: (0, a.toPathString)(e),
+          options: o
         };
       })
     };
   };
-  i.BannersApiAxiosParamCreator = B;
-  const y = function(l) {
-    const n = (0, i.BannersApiAxiosParamCreator)(l);
+  l.BannersApiAxiosParamCreator = G;
+  const R = function(r) {
+    const c = (0, l.BannersApiAxiosParamCreator)(r);
     return {
       /**
-       *  Deletes the requested banner
+       *
+       * @summary Deletes the requested banner
        * @param {number} id The id of the banner which should be deleted
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      _delete(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n._delete(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      _delete(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c._delete(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["BannersApi._delete"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Saves a banner to the database
-       * @param {BannerRequest} banner The banner which should be created
+       *
+       * @summary Saves a banner to the database
+       * @param {BannerRequest} bannerRequest The banner which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      create(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.create(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      create(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.create(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["BannersApi.create"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Returns all active banners
+       *
+       * @summary Returns all active banners
        * @param {number} [take] How many banners the endpoint should return
        * @param {number} [skip] How many banners should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getActive(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.getActive(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      getActive(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.getActive(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["BannersApi.getActive"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       },
       /**
-       *  Returns all existing banners
+       *
+       * @summary Returns all existing banners
        * @param {number} [take] How many banners the endpoint should return
        * @param {number} [skip] How many banners should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllBanners(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.getAllBanners(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      getAllBanners(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.getAllBanners(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["BannersApi.getAllBanners"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       },
       /**
-       *  Returns all existing banners
+       *
+       * @summary Returns all existing banners
        * @param {number} [take] How many banners the endpoint should return
        * @param {number} [skip] How many banners should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllOpenBanners(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.getAllOpenBanners(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      getAllOpenBanners(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.getAllOpenBanners(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["BannersApi.getAllOpenBanners"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       },
       /**
-       *  Returns the requested banner
+       *
+       * @summary Returns the requested banner
        * @param {number} id The id of the banner which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getBanner(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getBanner(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      getBanner(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getBanner(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["BannersApi.getBanner"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Updates the requested banner
+       *
+       * @summary Updates the requested banner
        * @param {number} id The id of the banner which should be updated
-       * @param {BannerRequest} banner The updated banner
+       * @param {BannerRequest} bannerRequest The updated banner
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      update(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.update(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      update(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.update(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["BannersApi.update"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       },
       /**
-       *  Uploads a banner image to the given banner
+       *
+       * @summary Uploads a banner image to the given banner
        * @param {number} id The id of the banner
-       * @param {File} [file] null
+       * @param {File} [file] file
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateImage(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.updateImage(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      updateImage(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.updateImage(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["BannersApi.updateImage"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       }
     };
   };
-  i.BannersApiFp = y;
-  const v = function(l, n, t) {
-    const r = (0, i.BannersApiFp)(l);
+  l.BannersApiFp = R;
+  const T = function(r, c, n) {
+    const i = (0, l.BannersApiFp)(r);
     return {
       /**
-       *  Deletes the requested banner
+       *
+       * @summary Deletes the requested banner
        * @param {number} id The id of the banner which should be deleted
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      _delete(a, s) {
-        return r._delete(a, s).then((o) => o(t, n));
+      _delete(s, e) {
+        return i._delete(s, e).then((t) => t(n, c));
       },
       /**
-       *  Saves a banner to the database
-       * @param {BannerRequest} banner The banner which should be created
+       *
+       * @summary Saves a banner to the database
+       * @param {BannerRequest} bannerRequest The banner which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      create(a, s) {
-        return r.create(a, s).then((o) => o(t, n));
+      create(s, e) {
+        return i.create(s, e).then((t) => t(n, c));
       },
       /**
-       *  Returns all active banners
+       *
+       * @summary Returns all active banners
        * @param {number} [take] How many banners the endpoint should return
        * @param {number} [skip] How many banners should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getActive(a, s, o) {
-        return r.getActive(a, s, o).then((d) => d(t, n));
+      getActive(s, e, t) {
+        return i.getActive(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Returns all existing banners
+       *
+       * @summary Returns all existing banners
        * @param {number} [take] How many banners the endpoint should return
        * @param {number} [skip] How many banners should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllBanners(a, s, o) {
-        return r.getAllBanners(a, s, o).then((d) => d(t, n));
+      getAllBanners(s, e, t) {
+        return i.getAllBanners(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Returns all existing banners
+       *
+       * @summary Returns all existing banners
        * @param {number} [take] How many banners the endpoint should return
        * @param {number} [skip] How many banners should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllOpenBanners(a, s, o) {
-        return r.getAllOpenBanners(a, s, o).then((d) => d(t, n));
+      getAllOpenBanners(s, e, t) {
+        return i.getAllOpenBanners(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Returns the requested banner
+       *
+       * @summary Returns the requested banner
        * @param {number} id The id of the banner which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getBanner(a, s) {
-        return r.getBanner(a, s).then((o) => o(t, n));
+      getBanner(s, e) {
+        return i.getBanner(s, e).then((t) => t(n, c));
       },
       /**
-       *  Updates the requested banner
+       *
+       * @summary Updates the requested banner
        * @param {number} id The id of the banner which should be updated
-       * @param {BannerRequest} banner The updated banner
+       * @param {BannerRequest} bannerRequest The updated banner
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      update(a, s, o) {
-        return r.update(a, s, o).then((d) => d(t, n));
+      update(s, e, t) {
+        return i.update(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Uploads a banner image to the given banner
+       *
+       * @summary Uploads a banner image to the given banner
        * @param {number} id The id of the banner
-       * @param {File} [file] null
+       * @param {File} [file] file
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateImage(a, s, o) {
-        return r.updateImage(a, s, o).then((d) => d(t, n));
+      updateImage(s, e, t) {
+        return i.updateImage(s, e, t).then((o) => o(n, c));
       }
     };
   };
-  i.BannersApiFactory = v;
-  class z extends p.BaseAPI {
+  l.BannersApiFactory = T;
+  class D extends v.BaseAPI {
     /**
-     *  Deletes the requested banner
+     *
+     * @summary Deletes the requested banner
      * @param {number} id The id of the banner which should be deleted
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BannersApi
      */
-    _delete(n, t) {
-      return (0, i.BannersApiFp)(this.configuration)._delete(n, t).then((r) => r(this.axios, this.basePath));
+    _delete(c, n) {
+      return (0, l.BannersApiFp)(this.configuration)._delete(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Saves a banner to the database
-     * @param {BannerRequest} banner The banner which should be created
+     *
+     * @summary Saves a banner to the database
+     * @param {BannerRequest} bannerRequest The banner which should be created
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BannersApi
      */
-    create(n, t) {
-      return (0, i.BannersApiFp)(this.configuration).create(n, t).then((r) => r(this.axios, this.basePath));
+    create(c, n) {
+      return (0, l.BannersApiFp)(this.configuration).create(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Returns all active banners
+     *
+     * @summary Returns all active banners
      * @param {number} [take] How many banners the endpoint should return
      * @param {number} [skip] How many banners should be skipped (for pagination)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BannersApi
      */
-    getActive(n, t, r) {
-      return (0, i.BannersApiFp)(this.configuration).getActive(n, t, r).then((a) => a(this.axios, this.basePath));
+    getActive(c, n, i) {
+      return (0, l.BannersApiFp)(this.configuration).getActive(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Returns all existing banners
+     *
+     * @summary Returns all existing banners
      * @param {number} [take] How many banners the endpoint should return
      * @param {number} [skip] How many banners should be skipped (for pagination)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BannersApi
      */
-    getAllBanners(n, t, r) {
-      return (0, i.BannersApiFp)(this.configuration).getAllBanners(n, t, r).then((a) => a(this.axios, this.basePath));
+    getAllBanners(c, n, i) {
+      return (0, l.BannersApiFp)(this.configuration).getAllBanners(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Returns all existing banners
+     *
+     * @summary Returns all existing banners
      * @param {number} [take] How many banners the endpoint should return
      * @param {number} [skip] How many banners should be skipped (for pagination)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BannersApi
      */
-    getAllOpenBanners(n, t, r) {
-      return (0, i.BannersApiFp)(this.configuration).getAllOpenBanners(n, t, r).then((a) => a(this.axios, this.basePath));
+    getAllOpenBanners(c, n, i) {
+      return (0, l.BannersApiFp)(this.configuration).getAllOpenBanners(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Returns the requested banner
+     *
+     * @summary Returns the requested banner
      * @param {number} id The id of the banner which should be returned
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BannersApi
      */
-    getBanner(n, t) {
-      return (0, i.BannersApiFp)(this.configuration).getBanner(n, t).then((r) => r(this.axios, this.basePath));
+    getBanner(c, n) {
+      return (0, l.BannersApiFp)(this.configuration).getBanner(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Updates the requested banner
+     *
+     * @summary Updates the requested banner
      * @param {number} id The id of the banner which should be updated
-     * @param {BannerRequest} banner The updated banner
+     * @param {BannerRequest} bannerRequest The updated banner
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BannersApi
      */
-    update(n, t, r) {
-      return (0, i.BannersApiFp)(this.configuration).update(n, t, r).then((a) => a(this.axios, this.basePath));
+    update(c, n, i) {
+      return (0, l.BannersApiFp)(this.configuration).update(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Uploads a banner image to the given banner
+     *
+     * @summary Uploads a banner image to the given banner
      * @param {number} id The id of the banner
-     * @param {File} [file] null
+     * @param {File} [file] file
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BannersApi
      */
-    updateImage(n, t, r) {
-      return (0, i.BannersApiFp)(this.configuration).updateImage(n, t, r).then((a) => a(this.axios, this.basePath));
+    updateImage(c, n, i) {
+      return (0, l.BannersApiFp)(this.configuration).updateImage(c, n, i).then((s) => s(this.axios, this.basePath));
     }
   }
-  i.BannersApi = z;
-  const D = function(l) {
+  l.BannersApi = D;
+  const N = function(r) {
     return {
       /**
-       *  Creates a new borrelkaart group
-       * @param {BorrelkaartGroupRequest} borrelkaartgroup The borrelkaart group which should be created
+       *
+       * @summary Create a new container.
+       * @param {CreateContainerRequest} createContainerRequest    The container which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createBorrelkaartgroup: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("createBorrelkaartgroup", "borrelkaartgroup", n);
-        const r = "/borrelkaartgroups", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
+      createContainer: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("createContainer", "createContainerRequest", c);
+        const i = "/containers", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Returns all existing containers
+       * @param {number} [take] How many containers the endpoint should return
+       * @param {number} [skip] How many containers should be skipped (for pagination)
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getAllContainers: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        const s = "/containers", e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "GET" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), c !== void 0 && (h.take = c), n !== void 0 && (h.skip = n), (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), {
+          url: (0, a.toPathString)(e),
           options: o
         };
       }),
       /**
-       *  Returns all existing borrelkaart groups
-       * @param {number} [take] How many borrelkaart groups the endpoint should return
-       * @param {number} [skip] How many borrelkaart groups should be skipped (for pagination)
+       *
+       * @summary Returns all the products in the container
+       * @param {number} id The id of the container which should be returned
+       * @param {number} [take] How many products the endpoint should return
+       * @param {number} [skip] How many products should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getALlBorrelkaartgroups: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        const a = "/borrelkaartgroups", s = new URL(a, e.DUMMY_BASE_URL);
+      getProductsContainer: (c, n, i, s = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getProductsContainer", "id", c);
+        const e = "/containers/{id}/products".replace("{id}", encodeURIComponent(String(c))), t = new URL(e, a.DUMMY_BASE_URL);
         let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "GET" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), n !== void 0 && (A.take = n), t !== void 0 && (A.skip = t), (0, e.setSearchParams)(s, A);
+        r && (o = r.baseOptions);
+        const u = Object.assign(Object.assign({ method: "GET" }, o), s), h = {}, A = {};
+        yield (0, a.setBearerAuthToObject)(h, r), n !== void 0 && (A.take = n), i !== void 0 && (A.skip = i), (0, a.setSearchParams)(t, A);
         let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), {
-          url: (0, e.toPathString)(s),
-          options: d
+        return u.headers = Object.assign(Object.assign(Object.assign({}, h), O), s.headers), {
+          url: (0, a.toPathString)(t),
+          options: u
         };
       }),
       /**
-       *  Returns the requested borrelkaart group
-       * @param {number} id The id of the borrelkaart group which should be returned
+       *
+       * @summary Returns all public container
+       * @param {number} [take] How many containers the endpoint should return
+       * @param {number} [skip] How many containers should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getBorrelkaartgroupId: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getBorrelkaartgroupId", "id", n);
-        const r = "/borrelkaartgroups/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
+      getPublicContainers: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        const s = "/containers/public", e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "GET" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), c !== void 0 && (h.take = c), n !== void 0 && (h.skip = n), (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), {
+          url: (0, a.toPathString)(e),
           options: o
         };
       }),
       /**
-       *  Updates the requested borrelkaart group
-       * @param {number} id The id of the borrelkaart group which should be updated
-       * @param {BorrelkaartGroupRequest} borrelkaartgroup The updated borrelkaart group
+       *
+       * @summary Returns the requested container
+       * @param {number} id The id of the container which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateBorrelkaartGroup: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("updateBorrelkaartGroup", "id", n), (0, e.assertParamExists)("updateBorrelkaartGroup", "borrelkaartgroup", t);
-        const a = "/borrelkaartgroups/{id}".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "PATCH" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), h["Content-Type"] = "application/json", (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), d.data = (0, e.serializeDataIfNeeded)(t, d, l), {
-          url: (0, e.toPathString)(s),
-          options: d
+      getSingleContainer: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getSingleContainer", "id", c);
+        const i = "/containers/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Update an existing container.
+       * @param {number} id The id of the container which should be updated
+       * @param {UpdateContainerRequest} updateContainerRequest    The container which should be updated
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      updateContainer: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateContainer", "id", c), (0, a.assertParamExists)("updateContainer", "updateContainerRequest", n);
+        const s = "/containers/{id}".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "PATCH" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), o.data = (0, a.serializeDataIfNeeded)(n, o, r), {
+          url: (0, a.toPathString)(e),
+          options: o
         };
       })
     };
   };
-  i.BorrelkaartgroupsApiAxiosParamCreator = D;
-  const G = function(l) {
-    const n = (0, i.BorrelkaartgroupsApiAxiosParamCreator)(l);
+  l.ContainersApiAxiosParamCreator = N;
+  const Q = function(r) {
+    const c = (0, l.ContainersApiAxiosParamCreator)(r);
     return {
       /**
-       *  Creates a new borrelkaart group
-       * @param {BorrelkaartGroupRequest} borrelkaartgroup The borrelkaart group which should be created
+       *
+       * @summary Create a new container.
+       * @param {CreateContainerRequest} createContainerRequest    The container which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createBorrelkaartgroup(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.createBorrelkaartgroup(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      createContainer(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.createContainer(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["ContainersApi.createContainer"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Returns all existing borrelkaart groups
-       * @param {number} [take] How many borrelkaart groups the endpoint should return
-       * @param {number} [skip] How many borrelkaart groups should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getALlBorrelkaartgroups(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.getALlBorrelkaartgroups(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
-        });
-      },
-      /**
-       *  Returns the requested borrelkaart group
-       * @param {number} id The id of the borrelkaart group which should be returned
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getBorrelkaartgroupId(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getBorrelkaartgroupId(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
-        });
-      },
-      /**
-       *  Updates the requested borrelkaart group
-       * @param {number} id The id of the borrelkaart group which should be updated
-       * @param {BorrelkaartGroupRequest} borrelkaartgroup The updated borrelkaart group
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      updateBorrelkaartGroup(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.updateBorrelkaartGroup(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
-        });
-      }
-    };
-  };
-  i.BorrelkaartgroupsApiFp = G;
-  const $ = function(l, n, t) {
-    const r = (0, i.BorrelkaartgroupsApiFp)(l);
-    return {
-      /**
-       *  Creates a new borrelkaart group
-       * @param {BorrelkaartGroupRequest} borrelkaartgroup The borrelkaart group which should be created
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      createBorrelkaartgroup(a, s) {
-        return r.createBorrelkaartgroup(a, s).then((o) => o(t, n));
-      },
-      /**
-       *  Returns all existing borrelkaart groups
-       * @param {number} [take] How many borrelkaart groups the endpoint should return
-       * @param {number} [skip] How many borrelkaart groups should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getALlBorrelkaartgroups(a, s, o) {
-        return r.getALlBorrelkaartgroups(a, s, o).then((d) => d(t, n));
-      },
-      /**
-       *  Returns the requested borrelkaart group
-       * @param {number} id The id of the borrelkaart group which should be returned
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getBorrelkaartgroupId(a, s) {
-        return r.getBorrelkaartgroupId(a, s).then((o) => o(t, n));
-      },
-      /**
-       *  Updates the requested borrelkaart group
-       * @param {number} id The id of the borrelkaart group which should be updated
-       * @param {BorrelkaartGroupRequest} borrelkaartgroup The updated borrelkaart group
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      updateBorrelkaartGroup(a, s, o) {
-        return r.updateBorrelkaartGroup(a, s, o).then((d) => d(t, n));
-      }
-    };
-  };
-  i.BorrelkaartgroupsApiFactory = $;
-  class Oe extends p.BaseAPI {
-    /**
-     *  Creates a new borrelkaart group
-     * @param {BorrelkaartGroupRequest} borrelkaartgroup The borrelkaart group which should be created
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof BorrelkaartgroupsApi
-     */
-    createBorrelkaartgroup(n, t) {
-      return (0, i.BorrelkaartgroupsApiFp)(this.configuration).createBorrelkaartgroup(n, t).then((r) => r(this.axios, this.basePath));
-    }
-    /**
-     *  Returns all existing borrelkaart groups
-     * @param {number} [take] How many borrelkaart groups the endpoint should return
-     * @param {number} [skip] How many borrelkaart groups should be skipped (for pagination)
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof BorrelkaartgroupsApi
-     */
-    getALlBorrelkaartgroups(n, t, r) {
-      return (0, i.BorrelkaartgroupsApiFp)(this.configuration).getALlBorrelkaartgroups(n, t, r).then((a) => a(this.axios, this.basePath));
-    }
-    /**
-     *  Returns the requested borrelkaart group
-     * @param {number} id The id of the borrelkaart group which should be returned
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof BorrelkaartgroupsApi
-     */
-    getBorrelkaartgroupId(n, t) {
-      return (0, i.BorrelkaartgroupsApiFp)(this.configuration).getBorrelkaartgroupId(n, t).then((r) => r(this.axios, this.basePath));
-    }
-    /**
-     *  Updates the requested borrelkaart group
-     * @param {number} id The id of the borrelkaart group which should be updated
-     * @param {BorrelkaartGroupRequest} borrelkaartgroup The updated borrelkaart group
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof BorrelkaartgroupsApi
-     */
-    updateBorrelkaartGroup(n, t, r) {
-      return (0, i.BorrelkaartgroupsApiFp)(this.configuration).updateBorrelkaartGroup(n, t, r).then((a) => a(this.axios, this.basePath));
-    }
-  }
-  i.BorrelkaartgroupsApi = Oe;
-  const mt = function(l) {
-    return {
-      /**
-       *  Approve a container update.
-       * @param {number} id The id of the container update to approve
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      approveContainer: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("approveContainer", "id", n);
-        const r = "/containers/{id}/approve".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
-        };
-      }),
-      /**
-       *  Create a new container.
-       * @param {CreateContainerRequest} container    The container which should be created
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      createContainer: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("createContainer", "container", n);
-        const r = "/containers", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
-        };
-      }),
-      /**
-       *  Returns all existing containers
+       *
+       * @summary Returns all existing containers
        * @param {number} [take] How many containers the endpoint should return
        * @param {number} [skip] How many containers should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllContainers: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        const a = "/containers", s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "GET" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), n !== void 0 && (A.take = n), t !== void 0 && (A.skip = t), (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), {
-          url: (0, e.toPathString)(s),
-          options: d
-        };
-      }),
+      getAllContainers(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.getAllContainers(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["ContainersApi.getAllContainers"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
+        });
+      },
       /**
-       *  Returns all the products in the container
+       *
+       * @summary Returns all the products in the container
        * @param {number} id The id of the container which should be returned
        * @param {number} [take] How many products the endpoint should return
        * @param {number} [skip] How many products should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getProductsContainer: (n, t, r, a = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getProductsContainer", "id", n);
-        const s = "/containers/{id}/products".replace("{id}", encodeURIComponent(String(n))), o = new URL(s, e.DUMMY_BASE_URL);
-        let d;
-        l && (d = l.baseOptions);
-        const h = Object.assign(Object.assign({ method: "GET" }, d), a), A = {}, O = {};
-        yield (0, e.setApiKeyToObject)(A, "Authorization", l), t !== void 0 && (O.take = t), r !== void 0 && (O.skip = r), (0, e.setSearchParams)(o, O);
-        let b = d && d.headers ? d.headers : {};
-        return h.headers = Object.assign(Object.assign(Object.assign({}, A), b), a.headers), {
-          url: (0, e.toPathString)(o),
-          options: h
-        };
-      }),
+      getProductsContainer(n, i, s, e) {
+        var t, o, u;
+        return d(this, void 0, void 0, function* () {
+          const h = yield c.getProductsContainer(n, i, s, e), A = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, O = (u = (o = v.operationServerMap["ContainersApi.getProductsContainer"]) === null || o === void 0 ? void 0 : o[A]) === null || u === void 0 ? void 0 : u.url;
+          return (m, f) => (0, a.createRequestFunction)(h, p.default, v.BASE_PATH, r)(m, O || f);
+        });
+      },
       /**
-       *  Returns all public container
+       *
+       * @summary Returns all public container
        * @param {number} [take] How many containers the endpoint should return
        * @param {number} [skip] How many containers should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getPublicContainers: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        const a = "/containers/public", s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "GET" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), n !== void 0 && (A.take = n), t !== void 0 && (A.skip = t), (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), {
-          url: (0, e.toPathString)(s),
-          options: d
-        };
-      }),
+      getPublicContainers(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.getPublicContainers(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["ContainersApi.getPublicContainers"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
+        });
+      },
       /**
-       *  Returns the requested container
+       *
+       * @summary Returns the requested container
        * @param {number} id The id of the container which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleContainer: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getSingleContainer", "id", n);
-        const r = "/containers/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
-        };
-      }),
+      getSingleContainer(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getSingleContainer(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["ContainersApi.getSingleContainer"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
+        });
+      },
       /**
-       *  Returns the requested updated container
-       * @param {number} id The id of the container which should be returned
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getSingleUpdatedContainer: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getSingleUpdatedContainer", "id", n);
-        const r = "/containers/{id}/update".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
-        };
-      }),
-      /**
-       *  Returns all updated containers
-       * @param {number} [take] How many containers the endpoint should return
-       * @param {number} [skip] How many containers should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUpdatedContainers: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        const a = "/containers/updated", s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "GET" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), n !== void 0 && (A.take = n), t !== void 0 && (A.skip = t), (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), {
-          url: (0, e.toPathString)(s),
-          options: d
-        };
-      }),
-      /**
-       *  Update an existing container.
+       *
+       * @summary Update an existing container.
        * @param {number} id The id of the container which should be updated
-       * @param {UpdateContainerRequest} container    The container which should be updated
+       * @param {UpdateContainerRequest} updateContainerRequest    The container which should be updated
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateContainer: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("updateContainer", "id", n), (0, e.assertParamExists)("updateContainer", "container", t);
-        const a = "/containers/{id}".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "PATCH" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), h["Content-Type"] = "application/json", (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), d.data = (0, e.serializeDataIfNeeded)(t, d, l), {
-          url: (0, e.toPathString)(s),
-          options: d
-        };
-      })
+      updateContainer(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.updateContainer(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["ContainersApi.updateContainer"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
+        });
+      }
     };
   };
-  i.ContainersApiAxiosParamCreator = mt;
-  const St = function(l) {
-    const n = (0, i.ContainersApiAxiosParamCreator)(l);
+  l.ContainersApiFp = Q;
+  const Y = function(r, c, n) {
+    const i = (0, l.ContainersApiFp)(r);
     return {
       /**
-       *  Approve a container update.
-       * @param {number} id The id of the container update to approve
+       *
+       * @summary Create a new container.
+       * @param {CreateContainerRequest} createContainerRequest    The container which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      approveContainer(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.approveContainer(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
-        });
+      createContainer(s, e) {
+        return i.createContainer(s, e).then((t) => t(n, c));
       },
       /**
-       *  Create a new container.
-       * @param {CreateContainerRequest} container    The container which should be created
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      createContainer(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.createContainer(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
-        });
-      },
-      /**
-       *  Returns all existing containers
+       *
+       * @summary Returns all existing containers
        * @param {number} [take] How many containers the endpoint should return
        * @param {number} [skip] How many containers should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllContainers(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.getAllContainers(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
-        });
+      getAllContainers(s, e, t) {
+        return i.getAllContainers(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Returns all the products in the container
+       *
+       * @summary Returns all the products in the container
        * @param {number} id The id of the container which should be returned
        * @param {number} [take] How many products the endpoint should return
        * @param {number} [skip] How many products should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getProductsContainer(t, r, a, s) {
-        return c(this, void 0, void 0, function* () {
-          const o = yield n.getProductsContainer(t, r, a, s);
-          return (0, e.createRequestFunction)(o, u.default, p.BASE_PATH, l);
-        });
+      getProductsContainer(s, e, t, o) {
+        return i.getProductsContainer(s, e, t, o).then((u) => u(n, c));
       },
       /**
-       *  Returns all public container
+       *
+       * @summary Returns all public container
        * @param {number} [take] How many containers the endpoint should return
        * @param {number} [skip] How many containers should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getPublicContainers(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.getPublicContainers(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
-        });
+      getPublicContainers(s, e, t) {
+        return i.getPublicContainers(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Returns the requested container
+       *
+       * @summary Returns the requested container
        * @param {number} id The id of the container which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleContainer(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getSingleContainer(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
-        });
+      getSingleContainer(s, e) {
+        return i.getSingleContainer(s, e).then((t) => t(n, c));
       },
       /**
-       *  Returns the requested updated container
-       * @param {number} id The id of the container which should be returned
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getSingleUpdatedContainer(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getSingleUpdatedContainer(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
-        });
-      },
-      /**
-       *  Returns all updated containers
-       * @param {number} [take] How many containers the endpoint should return
-       * @param {number} [skip] How many containers should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUpdatedContainers(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.getUpdatedContainers(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
-        });
-      },
-      /**
-       *  Update an existing container.
+       *
+       * @summary Update an existing container.
        * @param {number} id The id of the container which should be updated
-       * @param {UpdateContainerRequest} container    The container which should be updated
+       * @param {UpdateContainerRequest} updateContainerRequest    The container which should be updated
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateContainer(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.updateContainer(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
-        });
+      updateContainer(s, e, t) {
+        return i.updateContainer(s, e, t).then((o) => o(n, c));
       }
     };
   };
-  i.ContainersApiFp = St;
-  const Ut = function(l, n, t) {
-    const r = (0, i.ContainersApiFp)(l);
-    return {
-      /**
-       *  Approve a container update.
-       * @param {number} id The id of the container update to approve
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      approveContainer(a, s) {
-        return r.approveContainer(a, s).then((o) => o(t, n));
-      },
-      /**
-       *  Create a new container.
-       * @param {CreateContainerRequest} container    The container which should be created
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      createContainer(a, s) {
-        return r.createContainer(a, s).then((o) => o(t, n));
-      },
-      /**
-       *  Returns all existing containers
-       * @param {number} [take] How many containers the endpoint should return
-       * @param {number} [skip] How many containers should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getAllContainers(a, s, o) {
-        return r.getAllContainers(a, s, o).then((d) => d(t, n));
-      },
-      /**
-       *  Returns all the products in the container
-       * @param {number} id The id of the container which should be returned
-       * @param {number} [take] How many products the endpoint should return
-       * @param {number} [skip] How many products should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getProductsContainer(a, s, o, d) {
-        return r.getProductsContainer(a, s, o, d).then((h) => h(t, n));
-      },
-      /**
-       *  Returns all public container
-       * @param {number} [take] How many containers the endpoint should return
-       * @param {number} [skip] How many containers should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getPublicContainers(a, s, o) {
-        return r.getPublicContainers(a, s, o).then((d) => d(t, n));
-      },
-      /**
-       *  Returns the requested container
-       * @param {number} id The id of the container which should be returned
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getSingleContainer(a, s) {
-        return r.getSingleContainer(a, s).then((o) => o(t, n));
-      },
-      /**
-       *  Returns the requested updated container
-       * @param {number} id The id of the container which should be returned
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getSingleUpdatedContainer(a, s) {
-        return r.getSingleUpdatedContainer(a, s).then((o) => o(t, n));
-      },
-      /**
-       *  Returns all updated containers
-       * @param {number} [take] How many containers the endpoint should return
-       * @param {number} [skip] How many containers should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUpdatedContainers(a, s, o) {
-        return r.getUpdatedContainers(a, s, o).then((d) => d(t, n));
-      },
-      /**
-       *  Update an existing container.
-       * @param {number} id The id of the container which should be updated
-       * @param {UpdateContainerRequest} container    The container which should be updated
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      updateContainer(a, s, o) {
-        return r.updateContainer(a, s, o).then((d) => d(t, n));
-      }
-    };
-  };
-  i.ContainersApiFactory = Ut;
-  class yt extends p.BaseAPI {
+  l.ContainersApiFactory = Y;
+  class Pe extends v.BaseAPI {
     /**
-     *  Approve a container update.
-     * @param {number} id The id of the container update to approve
+     *
+     * @summary Create a new container.
+     * @param {CreateContainerRequest} createContainerRequest    The container which should be created
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ContainersApi
      */
-    approveContainer(n, t) {
-      return (0, i.ContainersApiFp)(this.configuration).approveContainer(n, t).then((r) => r(this.axios, this.basePath));
+    createContainer(c, n) {
+      return (0, l.ContainersApiFp)(this.configuration).createContainer(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Create a new container.
-     * @param {CreateContainerRequest} container    The container which should be created
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ContainersApi
-     */
-    createContainer(n, t) {
-      return (0, i.ContainersApiFp)(this.configuration).createContainer(n, t).then((r) => r(this.axios, this.basePath));
-    }
-    /**
-     *  Returns all existing containers
+     *
+     * @summary Returns all existing containers
      * @param {number} [take] How many containers the endpoint should return
      * @param {number} [skip] How many containers should be skipped (for pagination)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ContainersApi
      */
-    getAllContainers(n, t, r) {
-      return (0, i.ContainersApiFp)(this.configuration).getAllContainers(n, t, r).then((a) => a(this.axios, this.basePath));
+    getAllContainers(c, n, i) {
+      return (0, l.ContainersApiFp)(this.configuration).getAllContainers(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Returns all the products in the container
+     *
+     * @summary Returns all the products in the container
      * @param {number} id The id of the container which should be returned
      * @param {number} [take] How many products the endpoint should return
      * @param {number} [skip] How many products should be skipped (for pagination)
@@ -3858,559 +3723,1638 @@ C.createRequestFunction = Vr;
      * @throws {RequiredError}
      * @memberof ContainersApi
      */
-    getProductsContainer(n, t, r, a) {
-      return (0, i.ContainersApiFp)(this.configuration).getProductsContainer(n, t, r, a).then((s) => s(this.axios, this.basePath));
+    getProductsContainer(c, n, i, s) {
+      return (0, l.ContainersApiFp)(this.configuration).getProductsContainer(c, n, i, s).then((e) => e(this.axios, this.basePath));
     }
     /**
-     *  Returns all public container
+     *
+     * @summary Returns all public container
      * @param {number} [take] How many containers the endpoint should return
      * @param {number} [skip] How many containers should be skipped (for pagination)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ContainersApi
      */
-    getPublicContainers(n, t, r) {
-      return (0, i.ContainersApiFp)(this.configuration).getPublicContainers(n, t, r).then((a) => a(this.axios, this.basePath));
+    getPublicContainers(c, n, i) {
+      return (0, l.ContainersApiFp)(this.configuration).getPublicContainers(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Returns the requested container
+     *
+     * @summary Returns the requested container
      * @param {number} id The id of the container which should be returned
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ContainersApi
      */
-    getSingleContainer(n, t) {
-      return (0, i.ContainersApiFp)(this.configuration).getSingleContainer(n, t).then((r) => r(this.axios, this.basePath));
+    getSingleContainer(c, n) {
+      return (0, l.ContainersApiFp)(this.configuration).getSingleContainer(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Returns the requested updated container
-     * @param {number} id The id of the container which should be returned
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ContainersApi
-     */
-    getSingleUpdatedContainer(n, t) {
-      return (0, i.ContainersApiFp)(this.configuration).getSingleUpdatedContainer(n, t).then((r) => r(this.axios, this.basePath));
-    }
-    /**
-     *  Returns all updated containers
-     * @param {number} [take] How many containers the endpoint should return
-     * @param {number} [skip] How many containers should be skipped (for pagination)
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ContainersApi
-     */
-    getUpdatedContainers(n, t, r) {
-      return (0, i.ContainersApiFp)(this.configuration).getUpdatedContainers(n, t, r).then((a) => a(this.axios, this.basePath));
-    }
-    /**
-     *  Update an existing container.
+     *
+     * @summary Update an existing container.
      * @param {number} id The id of the container which should be updated
-     * @param {UpdateContainerRequest} container    The container which should be updated
+     * @param {UpdateContainerRequest} updateContainerRequest    The container which should be updated
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ContainersApi
      */
-    updateContainer(n, t, r) {
-      return (0, i.ContainersApiFp)(this.configuration).updateContainer(n, t, r).then((a) => a(this.axios, this.basePath));
+    updateContainer(c, n, i) {
+      return (0, l.ContainersApiFp)(this.configuration).updateContainer(c, n, i).then((s) => s(this.axios, this.basePath));
     }
   }
-  i.ContainersApi = yt;
-  const jt = function(l) {
+  l.ContainersApi = Pe;
+  const gt = function(r) {
     return {
       /**
-       *  Upload a file with the given name.
-       * @param {File} [file] null
-       * @param {string} [name] null
+       *
+       * @summary Delete a fine
+       * @param {number} id The id of the fine which should be deleted
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createFile: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        const a = "/files", s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "POST" }, o), r), h = {}, A = {}, O = new (l && l.formDataCtor || FormData)();
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), n !== void 0 && O.append("file", n), t !== void 0 && O.append("name", t), h["Content-Type"] = "multipart/form-data", (0, e.setSearchParams)(s, A);
-        let b = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), b), r.headers), d.data = O, {
-          url: (0, e.toPathString)(s),
-          options: d
+      deleteFine: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("deleteFine", "id", c);
+        const i = "/fines/single/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "DELETE" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Delete the file with the given id.
-       * @param {number} id The id of the file which should be deleted
+       *
+       * @summary Handout fines to all given users. Fines will be handed out \"now\" to prevent rewriting history.
+       * @param {HandoutFinesRequest} handoutFinesRequest
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteFile: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("deleteFile", "id", n);
-        const r = "/files/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "DELETE" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
+      handoutFines: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("handoutFines", "handoutFinesRequest", c);
+        const i = "/fines/handout", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Send an email to all given users about their possible future fine.
+       * @param {HandoutFinesRequest} handoutFinesRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      notifyAboutFutureFines: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("notifyAboutFutureFines", "handoutFinesRequest", c);
+        const i = "/fines/notify", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Get all fine handout events
+       * @param {number} [take] How many entries the endpoint should return
+       * @param {number} [skip] How many entries should be skipped (for pagination)
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      returnAllFineHandoutEvents: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        const s = "/fines", e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "GET" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), c !== void 0 && (h.take = c), n !== void 0 && (h.skip = n), (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), {
+          url: (0, a.toPathString)(e),
           options: o
         };
       }),
       /**
-       *  Download a file with the given id.
-       * @param {number} id The id of the file which should be downloaded
+       *
+       * @summary Get all fine handout events
+       * @param {number} id The id of the fine handout event which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getFile: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getFile", "id", n);
-        const r = "/files/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      returnSingleFineHandoutEvent: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("returnSingleFineHandoutEvent", "id", c);
+        const i = "/fines/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       })
     };
   };
-  i.FilesApiAxiosParamCreator = jt;
-  const Vt = function(l) {
-    const n = (0, i.FilesApiAxiosParamCreator)(l);
+  l.DebtorsApiAxiosParamCreator = gt;
+  const jt = function(r) {
+    const c = (0, l.DebtorsApiAxiosParamCreator)(r);
     return {
       /**
-       *  Upload a file with the given name.
-       * @param {File} [file] null
-       * @param {string} [name] null
+       *
+       * @summary Delete a fine
+       * @param {number} id The id of the fine which should be deleted
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createFile(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.createFile(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      deleteFine(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.deleteFine(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["DebtorsApi.deleteFine"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Delete the file with the given id.
-       * @param {number} id The id of the file which should be deleted
+       *
+       * @summary Handout fines to all given users. Fines will be handed out \"now\" to prevent rewriting history.
+       * @param {HandoutFinesRequest} handoutFinesRequest
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteFile(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.deleteFile(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      handoutFines(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.handoutFines(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["DebtorsApi.handoutFines"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Download a file with the given id.
-       * @param {number} id The id of the file which should be downloaded
+       *
+       * @summary Send an email to all given users about their possible future fine.
+       * @param {HandoutFinesRequest} handoutFinesRequest
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getFile(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getFile(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      notifyAboutFutureFines(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.notifyAboutFutureFines(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["DebtorsApi.notifyAboutFutureFines"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
+        });
+      },
+      /**
+       *
+       * @summary Get all fine handout events
+       * @param {number} [take] How many entries the endpoint should return
+       * @param {number} [skip] How many entries should be skipped (for pagination)
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      returnAllFineHandoutEvents(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.returnAllFineHandoutEvents(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["DebtorsApi.returnAllFineHandoutEvents"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
+        });
+      },
+      /**
+       *
+       * @summary Get all fine handout events
+       * @param {number} id The id of the fine handout event which should be returned
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      returnSingleFineHandoutEvent(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.returnSingleFineHandoutEvent(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["DebtorsApi.returnSingleFineHandoutEvent"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       }
     };
   };
-  i.FilesApiFp = Vt;
-  const Rt = function(l, n, t) {
-    const r = (0, i.FilesApiFp)(l);
+  l.DebtorsApiFp = jt;
+  const Ut = function(r, c, n) {
+    const i = (0, l.DebtorsApiFp)(r);
     return {
       /**
-       *  Upload a file with the given name.
-       * @param {File} [file] null
-       * @param {string} [name] null
+       *
+       * @summary Delete a fine
+       * @param {number} id The id of the fine which should be deleted
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createFile(a, s, o) {
-        return r.createFile(a, s, o).then((d) => d(t, n));
+      deleteFine(s, e) {
+        return i.deleteFine(s, e).then((t) => t(n, c));
       },
       /**
-       *  Delete the file with the given id.
-       * @param {number} id The id of the file which should be deleted
+       *
+       * @summary Handout fines to all given users. Fines will be handed out \"now\" to prevent rewriting history.
+       * @param {HandoutFinesRequest} handoutFinesRequest
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteFile(a, s) {
-        return r.deleteFile(a, s).then((o) => o(t, n));
+      handoutFines(s, e) {
+        return i.handoutFines(s, e).then((t) => t(n, c));
       },
       /**
-       *  Download a file with the given id.
-       * @param {number} id The id of the file which should be downloaded
+       *
+       * @summary Send an email to all given users about their possible future fine.
+       * @param {HandoutFinesRequest} handoutFinesRequest
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getFile(a, s) {
-        return r.getFile(a, s).then((o) => o(t, n));
+      notifyAboutFutureFines(s, e) {
+        return i.notifyAboutFutureFines(s, e).then((t) => t(n, c));
+      },
+      /**
+       *
+       * @summary Get all fine handout events
+       * @param {number} [take] How many entries the endpoint should return
+       * @param {number} [skip] How many entries should be skipped (for pagination)
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      returnAllFineHandoutEvents(s, e, t) {
+        return i.returnAllFineHandoutEvents(s, e, t).then((o) => o(n, c));
+      },
+      /**
+       *
+       * @summary Get all fine handout events
+       * @param {number} id The id of the fine handout event which should be returned
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      returnSingleFineHandoutEvent(s, e) {
+        return i.returnSingleFineHandoutEvent(s, e).then((t) => t(n, c));
       }
     };
   };
-  i.FilesApiFactory = Rt;
-  class Tt extends p.BaseAPI {
+  l.DebtorsApiFactory = Ut;
+  class _t extends v.BaseAPI {
     /**
-     *  Upload a file with the given name.
-     * @param {File} [file] null
-     * @param {string} [name] null
+     *
+     * @summary Delete a fine
+     * @param {number} id The id of the fine which should be deleted
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DebtorsApi
+     */
+    deleteFine(c, n) {
+      return (0, l.DebtorsApiFp)(this.configuration).deleteFine(c, n).then((i) => i(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Handout fines to all given users. Fines will be handed out \"now\" to prevent rewriting history.
+     * @param {HandoutFinesRequest} handoutFinesRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DebtorsApi
+     */
+    handoutFines(c, n) {
+      return (0, l.DebtorsApiFp)(this.configuration).handoutFines(c, n).then((i) => i(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Send an email to all given users about their possible future fine.
+     * @param {HandoutFinesRequest} handoutFinesRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DebtorsApi
+     */
+    notifyAboutFutureFines(c, n) {
+      return (0, l.DebtorsApiFp)(this.configuration).notifyAboutFutureFines(c, n).then((i) => i(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Get all fine handout events
+     * @param {number} [take] How many entries the endpoint should return
+     * @param {number} [skip] How many entries should be skipped (for pagination)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DebtorsApi
+     */
+    returnAllFineHandoutEvents(c, n, i) {
+      return (0, l.DebtorsApiFp)(this.configuration).returnAllFineHandoutEvents(c, n, i).then((s) => s(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Get all fine handout events
+     * @param {number} id The id of the fine handout event which should be returned
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DebtorsApi
+     */
+    returnSingleFineHandoutEvent(c, n) {
+      return (0, l.DebtorsApiFp)(this.configuration).returnSingleFineHandoutEvent(c, n).then((i) => i(this.axios, this.basePath));
+    }
+  }
+  l.DebtorsApi = _t;
+  const Vt = function(r) {
+    return {
+      /**
+       *
+       * @summary Change the assignment of users to shifts on an event
+       * @param {number} eventId The id of the event
+       * @param {number} shiftId The id of the shift
+       * @param {number} userId The id of the user
+       * @param {EventAnswerAssignmentRequest} eventAnswerAssignmentRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      assignEventShift: (c, n, i, s, e = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("assignEventShift", "eventId", c), (0, a.assertParamExists)("assignEventShift", "shiftId", n), (0, a.assertParamExists)("assignEventShift", "userId", i), (0, a.assertParamExists)("assignEventShift", "eventAnswerAssignmentRequest", s);
+        const t = "/events/{eventId}/shift/{shiftId}/user/{userId}/assign".replace("{eventId}", encodeURIComponent(String(c))).replace("{shiftId}", encodeURIComponent(String(n))).replace("{userId}", encodeURIComponent(String(i))), o = new URL(t, a.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const h = Object.assign(Object.assign({ method: "PUT" }, u), e), A = {}, O = {};
+        yield (0, a.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, a.setSearchParams)(o, O);
+        let m = u && u.headers ? u.headers : {};
+        return h.headers = Object.assign(Object.assign(Object.assign({}, A), m), e.headers), h.data = (0, a.serializeDataIfNeeded)(s, h, r), {
+          url: (0, a.toPathString)(o),
+          options: h
+        };
+      }),
+      /**
+       *
+       * @summary Create an event with its corresponding answers objects
+       * @param {CreateEventRequest} createEventRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      createEvent: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("createEvent", "createEventRequest", c);
+        const i = "/events", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Create an event shift
+       * @param {CreateShiftRequest} createShiftRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      createEventShift: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("createEventShift", "createShiftRequest", c);
+        const i = "/eventshifts", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Delete an event with its answers
+       * @param {number} id The id of the event which should be deleted
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      deleteEvent: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("deleteEvent", "id", c);
+        const i = "/events/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "DELETE" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Delete an event shift with its answers
+       * @param {number} id The id of the event which should be deleted
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      deleteEventShift: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("deleteEventShift", "id", c);
+        const i = "/eventshifts/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "DELETE" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Get all event shifts
+       * @param {number} [take] How many entries the endpoint should return
+       * @param {number} [skip] How many entries should be skipped (for pagination)
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getAllEventShifts: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        const s = "/eventshifts", e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "GET" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), c !== void 0 && (h.take = c), n !== void 0 && (h.skip = n), (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), {
+          url: (0, a.toPathString)(e),
+          options: o
+        };
+      }),
+      /**
+       *
+       * @summary Get all events
+       * @param {string} [name] Name of the event
+       * @param {number} [createdById] ID of user that created the event
+       * @param {string} [beforeDate] Get only events that start after this date
+       * @param {string} [afterDate] Get only events that start before this date
+       * @param {string} [type] Get only events that are this type
+       * @param {number} [take] How many entries the endpoint should return
+       * @param {number} [skip] How many entries should be skipped (for pagination)
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getAllEvents: (c, n, i, s, e, t, o, u = {}) => d(this, void 0, void 0, function* () {
+        const h = "/events", A = new URL(h, a.DUMMY_BASE_URL);
+        let O;
+        r && (O = r.baseOptions);
+        const m = Object.assign(Object.assign({ method: "GET" }, O), u), f = {}, j = {};
+        yield (0, a.setBearerAuthToObject)(f, r), c !== void 0 && (j.name = c), n !== void 0 && (j.createdById = n), i !== void 0 && (j.beforeDate = i), s !== void 0 && (j.afterDate = s), e !== void 0 && (j.type = e), t !== void 0 && (j.take = t), o !== void 0 && (j.skip = o), (0, a.setSearchParams)(A, j);
+        let V = O && O.headers ? O.headers : {};
+        return m.headers = Object.assign(Object.assign(Object.assign({}, f), V), u.headers), {
+          url: (0, a.toPathString)(A),
+          options: m
+        };
+      }),
+      /**
+       *
+       * @summary Get the number of times a user has been selected for the given shift
+       * @param {number} id The id of the event shift
+       * @param {string} [eventType] Only include events of this type
+       * @param {string} [afterDate] Only include events after this date
+       * @param {string} [beforeDate] Only include events before this date
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getEventShiftCount: (c, n, i, s, e = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getEventShiftCount", "id", c);
+        const t = "/eventshifts/{id}/counts".replace("{id}", encodeURIComponent(String(c))), o = new URL(t, a.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const h = Object.assign(Object.assign({ method: "GET" }, u), e), A = {}, O = {};
+        yield (0, a.setBearerAuthToObject)(A, r), n !== void 0 && (O.eventType = n), i !== void 0 && (O.afterDate = i), s !== void 0 && (O.beforeDate = s), (0, a.setSearchParams)(o, O);
+        let m = u && u.headers ? u.headers : {};
+        return h.headers = Object.assign(Object.assign(Object.assign({}, A), m), e.headers), {
+          url: (0, a.toPathString)(o),
+          options: h
+        };
+      }),
+      /**
+       *
+       * @summary Get a single event with its answers and shifts
+       * @param {number} id The id of the event which should be returned
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getSingleEvent: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getSingleEvent", "id", c);
+        const i = "/events/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Update an event with its corresponding answers objects
+       * @param {number} id The id of the event which should be returned
+       * @param {UpdateEventRequest} updateEventRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      updateEvent: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateEvent", "id", c), (0, a.assertParamExists)("updateEvent", "updateEventRequest", n);
+        const s = "/events/{id}".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "PATCH" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), o.data = (0, a.serializeDataIfNeeded)(n, o, r), {
+          url: (0, a.toPathString)(e),
+          options: o
+        };
+      }),
+      /**
+       *
+       * @summary Update an event shift
+       * @param {number} id The id of the event which should be returned
+       * @param {UpdateShiftRequest} updateShiftRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      updateEventShift: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateEventShift", "id", c), (0, a.assertParamExists)("updateEventShift", "updateShiftRequest", n);
+        const s = "/eventshifts/{id}".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "PATCH" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), o.data = (0, a.serializeDataIfNeeded)(n, o, r), {
+          url: (0, a.toPathString)(e),
+          options: o
+        };
+      }),
+      /**
+       *
+       * @summary Update the availability of a user for a shift in an event
+       * @param {number} eventId The id of the event
+       * @param {number} shiftId The id of the shift
+       * @param {number} userId The id of the user
+       * @param {EventAnswerAvailabilityRequest} eventAnswerAvailabilityRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      updateEventShiftAvailability: (c, n, i, s, e = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateEventShiftAvailability", "eventId", c), (0, a.assertParamExists)("updateEventShiftAvailability", "shiftId", n), (0, a.assertParamExists)("updateEventShiftAvailability", "userId", i), (0, a.assertParamExists)("updateEventShiftAvailability", "eventAnswerAvailabilityRequest", s);
+        const t = "/events/{eventId}/shift/{shiftId}/user/{userId}/availability".replace("{eventId}", encodeURIComponent(String(c))).replace("{shiftId}", encodeURIComponent(String(n))).replace("{userId}", encodeURIComponent(String(i))), o = new URL(t, a.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const h = Object.assign(Object.assign({ method: "POST" }, u), e), A = {}, O = {};
+        yield (0, a.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, a.setSearchParams)(o, O);
+        let m = u && u.headers ? u.headers : {};
+        return h.headers = Object.assign(Object.assign(Object.assign({}, A), m), e.headers), h.data = (0, a.serializeDataIfNeeded)(s, h, r), {
+          url: (0, a.toPathString)(o),
+          options: h
+        };
+      })
+    };
+  };
+  l.EventsApiAxiosParamCreator = Vt;
+  const yt = function(r) {
+    const c = (0, l.EventsApiAxiosParamCreator)(r);
+    return {
+      /**
+       *
+       * @summary Change the assignment of users to shifts on an event
+       * @param {number} eventId The id of the event
+       * @param {number} shiftId The id of the shift
+       * @param {number} userId The id of the user
+       * @param {EventAnswerAssignmentRequest} eventAnswerAssignmentRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      assignEventShift(n, i, s, e, t) {
+        var o, u, h;
+        return d(this, void 0, void 0, function* () {
+          const A = yield c.assignEventShift(n, i, s, e, t), O = (o = r == null ? void 0 : r.serverIndex) !== null && o !== void 0 ? o : 0, m = (h = (u = v.operationServerMap["EventsApi.assignEventShift"]) === null || u === void 0 ? void 0 : u[O]) === null || h === void 0 ? void 0 : h.url;
+          return (f, j) => (0, a.createRequestFunction)(A, p.default, v.BASE_PATH, r)(f, m || j);
+        });
+      },
+      /**
+       *
+       * @summary Create an event with its corresponding answers objects
+       * @param {CreateEventRequest} createEventRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      createEvent(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.createEvent(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["EventsApi.createEvent"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
+        });
+      },
+      /**
+       *
+       * @summary Create an event shift
+       * @param {CreateShiftRequest} createShiftRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      createEventShift(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.createEventShift(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["EventsApi.createEventShift"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
+        });
+      },
+      /**
+       *
+       * @summary Delete an event with its answers
+       * @param {number} id The id of the event which should be deleted
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      deleteEvent(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.deleteEvent(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["EventsApi.deleteEvent"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
+        });
+      },
+      /**
+       *
+       * @summary Delete an event shift with its answers
+       * @param {number} id The id of the event which should be deleted
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      deleteEventShift(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.deleteEventShift(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["EventsApi.deleteEventShift"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
+        });
+      },
+      /**
+       *
+       * @summary Get all event shifts
+       * @param {number} [take] How many entries the endpoint should return
+       * @param {number} [skip] How many entries should be skipped (for pagination)
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getAllEventShifts(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.getAllEventShifts(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["EventsApi.getAllEventShifts"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
+        });
+      },
+      /**
+       *
+       * @summary Get all events
+       * @param {string} [name] Name of the event
+       * @param {number} [createdById] ID of user that created the event
+       * @param {string} [beforeDate] Get only events that start after this date
+       * @param {string} [afterDate] Get only events that start before this date
+       * @param {string} [type] Get only events that are this type
+       * @param {number} [take] How many entries the endpoint should return
+       * @param {number} [skip] How many entries should be skipped (for pagination)
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getAllEvents(n, i, s, e, t, o, u, h) {
+        var A, O, m;
+        return d(this, void 0, void 0, function* () {
+          const f = yield c.getAllEvents(n, i, s, e, t, o, u, h), j = (A = r == null ? void 0 : r.serverIndex) !== null && A !== void 0 ? A : 0, V = (m = (O = v.operationServerMap["EventsApi.getAllEvents"]) === null || O === void 0 ? void 0 : O[j]) === null || m === void 0 ? void 0 : m.url;
+          return (F, B) => (0, a.createRequestFunction)(f, p.default, v.BASE_PATH, r)(F, V || B);
+        });
+      },
+      /**
+       *
+       * @summary Get the number of times a user has been selected for the given shift
+       * @param {number} id The id of the event shift
+       * @param {string} [eventType] Only include events of this type
+       * @param {string} [afterDate] Only include events after this date
+       * @param {string} [beforeDate] Only include events before this date
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getEventShiftCount(n, i, s, e, t) {
+        var o, u, h;
+        return d(this, void 0, void 0, function* () {
+          const A = yield c.getEventShiftCount(n, i, s, e, t), O = (o = r == null ? void 0 : r.serverIndex) !== null && o !== void 0 ? o : 0, m = (h = (u = v.operationServerMap["EventsApi.getEventShiftCount"]) === null || u === void 0 ? void 0 : u[O]) === null || h === void 0 ? void 0 : h.url;
+          return (f, j) => (0, a.createRequestFunction)(A, p.default, v.BASE_PATH, r)(f, m || j);
+        });
+      },
+      /**
+       *
+       * @summary Get a single event with its answers and shifts
+       * @param {number} id The id of the event which should be returned
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getSingleEvent(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getSingleEvent(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["EventsApi.getSingleEvent"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
+        });
+      },
+      /**
+       *
+       * @summary Update an event with its corresponding answers objects
+       * @param {number} id The id of the event which should be returned
+       * @param {UpdateEventRequest} updateEventRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      updateEvent(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.updateEvent(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["EventsApi.updateEvent"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
+        });
+      },
+      /**
+       *
+       * @summary Update an event shift
+       * @param {number} id The id of the event which should be returned
+       * @param {UpdateShiftRequest} updateShiftRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      updateEventShift(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.updateEventShift(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["EventsApi.updateEventShift"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
+        });
+      },
+      /**
+       *
+       * @summary Update the availability of a user for a shift in an event
+       * @param {number} eventId The id of the event
+       * @param {number} shiftId The id of the shift
+       * @param {number} userId The id of the user
+       * @param {EventAnswerAvailabilityRequest} eventAnswerAvailabilityRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      updateEventShiftAvailability(n, i, s, e, t) {
+        var o, u, h;
+        return d(this, void 0, void 0, function* () {
+          const A = yield c.updateEventShiftAvailability(n, i, s, e, t), O = (o = r == null ? void 0 : r.serverIndex) !== null && o !== void 0 ? o : 0, m = (h = (u = v.operationServerMap["EventsApi.updateEventShiftAvailability"]) === null || u === void 0 ? void 0 : u[O]) === null || h === void 0 ? void 0 : h.url;
+          return (f, j) => (0, a.createRequestFunction)(A, p.default, v.BASE_PATH, r)(f, m || j);
+        });
+      }
+    };
+  };
+  l.EventsApiFp = yt;
+  const Rt = function(r, c, n) {
+    const i = (0, l.EventsApiFp)(r);
+    return {
+      /**
+       *
+       * @summary Change the assignment of users to shifts on an event
+       * @param {number} eventId The id of the event
+       * @param {number} shiftId The id of the shift
+       * @param {number} userId The id of the user
+       * @param {EventAnswerAssignmentRequest} eventAnswerAssignmentRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      assignEventShift(s, e, t, o, u) {
+        return i.assignEventShift(s, e, t, o, u).then((h) => h(n, c));
+      },
+      /**
+       *
+       * @summary Create an event with its corresponding answers objects
+       * @param {CreateEventRequest} createEventRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      createEvent(s, e) {
+        return i.createEvent(s, e).then((t) => t(n, c));
+      },
+      /**
+       *
+       * @summary Create an event shift
+       * @param {CreateShiftRequest} createShiftRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      createEventShift(s, e) {
+        return i.createEventShift(s, e).then((t) => t(n, c));
+      },
+      /**
+       *
+       * @summary Delete an event with its answers
+       * @param {number} id The id of the event which should be deleted
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      deleteEvent(s, e) {
+        return i.deleteEvent(s, e).then((t) => t(n, c));
+      },
+      /**
+       *
+       * @summary Delete an event shift with its answers
+       * @param {number} id The id of the event which should be deleted
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      deleteEventShift(s, e) {
+        return i.deleteEventShift(s, e).then((t) => t(n, c));
+      },
+      /**
+       *
+       * @summary Get all event shifts
+       * @param {number} [take] How many entries the endpoint should return
+       * @param {number} [skip] How many entries should be skipped (for pagination)
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getAllEventShifts(s, e, t) {
+        return i.getAllEventShifts(s, e, t).then((o) => o(n, c));
+      },
+      /**
+       *
+       * @summary Get all events
+       * @param {string} [name] Name of the event
+       * @param {number} [createdById] ID of user that created the event
+       * @param {string} [beforeDate] Get only events that start after this date
+       * @param {string} [afterDate] Get only events that start before this date
+       * @param {string} [type] Get only events that are this type
+       * @param {number} [take] How many entries the endpoint should return
+       * @param {number} [skip] How many entries should be skipped (for pagination)
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getAllEvents(s, e, t, o, u, h, A, O) {
+        return i.getAllEvents(s, e, t, o, u, h, A, O).then((m) => m(n, c));
+      },
+      /**
+       *
+       * @summary Get the number of times a user has been selected for the given shift
+       * @param {number} id The id of the event shift
+       * @param {string} [eventType] Only include events of this type
+       * @param {string} [afterDate] Only include events after this date
+       * @param {string} [beforeDate] Only include events before this date
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getEventShiftCount(s, e, t, o, u) {
+        return i.getEventShiftCount(s, e, t, o, u).then((h) => h(n, c));
+      },
+      /**
+       *
+       * @summary Get a single event with its answers and shifts
+       * @param {number} id The id of the event which should be returned
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getSingleEvent(s, e) {
+        return i.getSingleEvent(s, e).then((t) => t(n, c));
+      },
+      /**
+       *
+       * @summary Update an event with its corresponding answers objects
+       * @param {number} id The id of the event which should be returned
+       * @param {UpdateEventRequest} updateEventRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      updateEvent(s, e, t) {
+        return i.updateEvent(s, e, t).then((o) => o(n, c));
+      },
+      /**
+       *
+       * @summary Update an event shift
+       * @param {number} id The id of the event which should be returned
+       * @param {UpdateShiftRequest} updateShiftRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      updateEventShift(s, e, t) {
+        return i.updateEventShift(s, e, t).then((o) => o(n, c));
+      },
+      /**
+       *
+       * @summary Update the availability of a user for a shift in an event
+       * @param {number} eventId The id of the event
+       * @param {number} shiftId The id of the shift
+       * @param {number} userId The id of the user
+       * @param {EventAnswerAvailabilityRequest} eventAnswerAvailabilityRequest
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      updateEventShiftAvailability(s, e, t, o, u) {
+        return i.updateEventShiftAvailability(s, e, t, o, u).then((h) => h(n, c));
+      }
+    };
+  };
+  l.EventsApiFactory = Rt;
+  class Tt extends v.BaseAPI {
+    /**
+     *
+     * @summary Change the assignment of users to shifts on an event
+     * @param {number} eventId The id of the event
+     * @param {number} shiftId The id of the shift
+     * @param {number} userId The id of the user
+     * @param {EventAnswerAssignmentRequest} eventAnswerAssignmentRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventsApi
+     */
+    assignEventShift(c, n, i, s, e) {
+      return (0, l.EventsApiFp)(this.configuration).assignEventShift(c, n, i, s, e).then((t) => t(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Create an event with its corresponding answers objects
+     * @param {CreateEventRequest} createEventRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventsApi
+     */
+    createEvent(c, n) {
+      return (0, l.EventsApiFp)(this.configuration).createEvent(c, n).then((i) => i(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Create an event shift
+     * @param {CreateShiftRequest} createShiftRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventsApi
+     */
+    createEventShift(c, n) {
+      return (0, l.EventsApiFp)(this.configuration).createEventShift(c, n).then((i) => i(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Delete an event with its answers
+     * @param {number} id The id of the event which should be deleted
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventsApi
+     */
+    deleteEvent(c, n) {
+      return (0, l.EventsApiFp)(this.configuration).deleteEvent(c, n).then((i) => i(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Delete an event shift with its answers
+     * @param {number} id The id of the event which should be deleted
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventsApi
+     */
+    deleteEventShift(c, n) {
+      return (0, l.EventsApiFp)(this.configuration).deleteEventShift(c, n).then((i) => i(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Get all event shifts
+     * @param {number} [take] How many entries the endpoint should return
+     * @param {number} [skip] How many entries should be skipped (for pagination)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventsApi
+     */
+    getAllEventShifts(c, n, i) {
+      return (0, l.EventsApiFp)(this.configuration).getAllEventShifts(c, n, i).then((s) => s(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Get all events
+     * @param {string} [name] Name of the event
+     * @param {number} [createdById] ID of user that created the event
+     * @param {string} [beforeDate] Get only events that start after this date
+     * @param {string} [afterDate] Get only events that start before this date
+     * @param {string} [type] Get only events that are this type
+     * @param {number} [take] How many entries the endpoint should return
+     * @param {number} [skip] How many entries should be skipped (for pagination)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventsApi
+     */
+    getAllEvents(c, n, i, s, e, t, o, u) {
+      return (0, l.EventsApiFp)(this.configuration).getAllEvents(c, n, i, s, e, t, o, u).then((h) => h(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Get the number of times a user has been selected for the given shift
+     * @param {number} id The id of the event shift
+     * @param {string} [eventType] Only include events of this type
+     * @param {string} [afterDate] Only include events after this date
+     * @param {string} [beforeDate] Only include events before this date
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventsApi
+     */
+    getEventShiftCount(c, n, i, s, e) {
+      return (0, l.EventsApiFp)(this.configuration).getEventShiftCount(c, n, i, s, e).then((t) => t(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Get a single event with its answers and shifts
+     * @param {number} id The id of the event which should be returned
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventsApi
+     */
+    getSingleEvent(c, n) {
+      return (0, l.EventsApiFp)(this.configuration).getSingleEvent(c, n).then((i) => i(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Update an event with its corresponding answers objects
+     * @param {number} id The id of the event which should be returned
+     * @param {UpdateEventRequest} updateEventRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventsApi
+     */
+    updateEvent(c, n, i) {
+      return (0, l.EventsApiFp)(this.configuration).updateEvent(c, n, i).then((s) => s(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Update an event shift
+     * @param {number} id The id of the event which should be returned
+     * @param {UpdateShiftRequest} updateShiftRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventsApi
+     */
+    updateEventShift(c, n, i) {
+      return (0, l.EventsApiFp)(this.configuration).updateEventShift(c, n, i).then((s) => s(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Update the availability of a user for a shift in an event
+     * @param {number} eventId The id of the event
+     * @param {number} shiftId The id of the shift
+     * @param {number} userId The id of the user
+     * @param {EventAnswerAvailabilityRequest} eventAnswerAvailabilityRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EventsApi
+     */
+    updateEventShiftAvailability(c, n, i, s, e) {
+      return (0, l.EventsApiFp)(this.configuration).updateEventShiftAvailability(c, n, i, s, e).then((t) => t(this.axios, this.basePath));
+    }
+  }
+  l.EventsApi = Tt;
+  const Et = function(r) {
+    return {
+      /**
+       *
+       * @summary Upload a file with the given name.
+       * @param {string} name The name of the file
+       * @param {File} [file] file
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      createFile: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("createFile", "name", c);
+        const s = "/files", e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "POST" }, t), i), u = {}, h = {}, A = new (r && r.formDataCtor || FormData)();
+        yield (0, a.setBearerAuthToObject)(u, r), c !== void 0 && A.append("name", c), n !== void 0 && A.append("file", n), u["Content-Type"] = "multipart/form-data", (0, a.setSearchParams)(e, h);
+        let O = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), O), i.headers), o.data = A, {
+          url: (0, a.toPathString)(e),
+          options: o
+        };
+      }),
+      /**
+       *
+       * @summary Delete the file with the given id.
+       * @param {number} id The id of the file which should be deleted
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      deleteFile: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("deleteFile", "id", c);
+        const i = "/files/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "DELETE" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Download a file with the given id.
+       * @param {number} id The id of the file which should be downloaded
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getFile: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getFile", "id", c);
+        const i = "/files/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      })
+    };
+  };
+  l.FilesApiAxiosParamCreator = Et;
+  const Bt = function(r) {
+    const c = (0, l.FilesApiAxiosParamCreator)(r);
+    return {
+      /**
+       *
+       * @summary Upload a file with the given name.
+       * @param {string} name The name of the file
+       * @param {File} [file] file
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      createFile(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.createFile(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["FilesApi.createFile"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
+        });
+      },
+      /**
+       *
+       * @summary Delete the file with the given id.
+       * @param {number} id The id of the file which should be deleted
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      deleteFile(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.deleteFile(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["FilesApi.deleteFile"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
+        });
+      },
+      /**
+       *
+       * @summary Download a file with the given id.
+       * @param {number} id The id of the file which should be downloaded
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getFile(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getFile(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["FilesApi.getFile"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
+        });
+      }
+    };
+  };
+  l.FilesApiFp = Bt;
+  const Ft = function(r, c, n) {
+    const i = (0, l.FilesApiFp)(r);
+    return {
+      /**
+       *
+       * @summary Upload a file with the given name.
+       * @param {string} name The name of the file
+       * @param {File} [file] file
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      createFile(s, e, t) {
+        return i.createFile(s, e, t).then((o) => o(n, c));
+      },
+      /**
+       *
+       * @summary Delete the file with the given id.
+       * @param {number} id The id of the file which should be deleted
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      deleteFile(s, e) {
+        return i.deleteFile(s, e).then((t) => t(n, c));
+      },
+      /**
+       *
+       * @summary Download a file with the given id.
+       * @param {number} id The id of the file which should be downloaded
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getFile(s, e) {
+        return i.getFile(s, e).then((t) => t(n, c));
+      }
+    };
+  };
+  l.FilesApiFactory = Ft;
+  class Ct extends v.BaseAPI {
+    /**
+     *
+     * @summary Upload a file with the given name.
+     * @param {string} name The name of the file
+     * @param {File} [file] file
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FilesApi
      */
-    createFile(n, t, r) {
-      return (0, i.FilesApiFp)(this.configuration).createFile(n, t, r).then((a) => a(this.axios, this.basePath));
+    createFile(c, n, i) {
+      return (0, l.FilesApiFp)(this.configuration).createFile(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Delete the file with the given id.
+     *
+     * @summary Delete the file with the given id.
      * @param {number} id The id of the file which should be deleted
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FilesApi
      */
-    deleteFile(n, t) {
-      return (0, i.FilesApiFp)(this.configuration).deleteFile(n, t).then((r) => r(this.axios, this.basePath));
+    deleteFile(c, n) {
+      return (0, l.FilesApiFp)(this.configuration).deleteFile(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Download a file with the given id.
+     *
+     * @summary Download a file with the given id.
      * @param {number} id The id of the file which should be downloaded
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FilesApi
      */
-    getFile(n, t) {
-      return (0, i.FilesApiFp)(this.configuration).getFile(n, t).then((r) => r(this.axios, this.basePath));
+    getFile(c, n) {
+      return (0, l.FilesApiFp)(this.configuration).getFile(c, n).then((i) => i(this.axios, this.basePath));
     }
   }
-  i.FilesApi = Tt;
-  const Ft = function(l) {
+  l.FilesApi = Ct;
+  const It = function(r) {
     return {
       /**
-       *  Adds an invoice to the system.
-       * @param {CreateInvoiceRequest} invoice The invoice which should be created
+       *
+       * @summary Adds an invoice to the system.
+       * @param {CreateInvoiceRequest} [createInvoiceRequest] The invoice which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createInvoice: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("createInvoice", "invoice", n);
-        const r = "/invoices", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      createInvoice: (c, n = {}) => d(this, void 0, void 0, function* () {
+        const i = "/invoices", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Deletes an invoice.
+       *
+       * @summary Deletes an invoice.
        * @param {number} id The id of the invoice which should be deleted
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteInvoice: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("deleteInvoice", "id", n);
-        const r = "/invoices/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "DELETE" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      deleteInvoice: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("deleteInvoice", "id", c);
+        const i = "/invoices/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "DELETE" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Returns all invoices in the system.
+       *
+       * @summary Returns all invoices in the system.
        * @param {number} [toId] Filter on Id of the debtor
        * @param {number} [invoiceId] Filter on invoice ID
        * @param {number} [state] {1,2,3,4} - Filter based on Invoice State.    Possible values: 1 (CREATED), 2 (SENT), 3 (PAID), 4 (DELETED)
        * @param {boolean} [returnEntries] Boolean if invoice entries should be returned
        * @param {string} [fromDate] Start date for selected invoices (inclusive)
        * @param {string} [tillDate] End date for selected invoices (exclusive)
+       * @param {number} [take] How many entries the endpoint should return
+       * @param {number} [skip] How many entries should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllInvoices: (n, t, r, a, s, o, d = {}) => c(this, void 0, void 0, function* () {
-        const h = "/invoices", A = new URL(h, e.DUMMY_BASE_URL);
-        let O;
-        l && (O = l.baseOptions);
-        const b = Object.assign(Object.assign({ method: "GET" }, O), d), F = {}, j = {};
-        yield (0, e.setApiKeyToObject)(F, "Authorization", l), n !== void 0 && (j.toId = n), t !== void 0 && (j.invoiceId = t), r !== void 0 && (j.state = r), a !== void 0 && (j.returnEntries = a), s !== void 0 && (j.fromDate = s), o !== void 0 && (j.tillDate = o), (0, e.setSearchParams)(A, j);
-        let V = O && O.headers ? O.headers : {};
-        return b.headers = Object.assign(Object.assign(Object.assign({}, F), V), d.headers), {
-          url: (0, e.toPathString)(A),
-          options: b
+      getAllInvoices: (c, n, i, s, e, t, o, u, h = {}) => d(this, void 0, void 0, function* () {
+        const A = "/invoices", O = new URL(A, a.DUMMY_BASE_URL);
+        let m;
+        r && (m = r.baseOptions);
+        const f = Object.assign(Object.assign({ method: "GET" }, m), h), j = {}, V = {};
+        yield (0, a.setBearerAuthToObject)(j, r), c !== void 0 && (V.toId = c), n !== void 0 && (V.invoiceId = n), i !== void 0 && (V.state = i), s !== void 0 && (V.returnEntries = s), e !== void 0 && (V.fromDate = e), t !== void 0 && (V.tillDate = t), o !== void 0 && (V.take = o), u !== void 0 && (V.skip = u), (0, a.setSearchParams)(O, V);
+        let F = m && m.headers ? m.headers : {};
+        return f.headers = Object.assign(Object.assign(Object.assign({}, j), F), h.headers), {
+          url: (0, a.toPathString)(O),
+          options: f
         };
       }),
       /**
-       *  Returns a single invoice in the system.
+       *
+       * @summary Returns a single invoice in the system.
        * @param {number} id The id of the requested invoice
        * @param {boolean} [returnEntries] Boolean if invoice entries should be returned, defaults to true.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleInvoice: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getSingleInvoice", "id", n);
-        const a = "/invoices/{id}".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "GET" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), t !== void 0 && (A.returnEntries = t), (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), {
-          url: (0, e.toPathString)(s),
-          options: d
+      getSingleInvoice: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getSingleInvoice", "id", c);
+        const s = "/invoices/{id}".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "GET" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), n !== void 0 && (h.returnEntries = n), (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), {
+          url: (0, a.toPathString)(e),
+          options: o
         };
       }),
       /**
-       *  Adds an invoice to the system.
+       *
+       * @summary Adds an invoice to the system.
        * @param {number} id The id of the invoice which should be updated
-       * @param {UpdateInvoiceRequest} invoice The invoice update to process
+       * @param {UpdateInvoiceRequest} [updateInvoiceRequest] The invoice update to process
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateInvoice: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("updateInvoice", "id", n), (0, e.assertParamExists)("updateInvoice", "invoice", t);
-        const a = "/invoices/{id}".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "PATCH" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), h["Content-Type"] = "application/json", (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), d.data = (0, e.serializeDataIfNeeded)(t, d, l), {
-          url: (0, e.toPathString)(s),
-          options: d
+      updateInvoice: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateInvoice", "id", c);
+        const s = "/invoices/{id}".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "PATCH" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), o.data = (0, a.serializeDataIfNeeded)(n, o, r), {
+          url: (0, a.toPathString)(e),
+          options: o
         };
       })
     };
   };
-  i.InvoicesApiAxiosParamCreator = Ft;
-  const vt = function(l) {
-    const n = (0, i.InvoicesApiAxiosParamCreator)(l);
+  l.InvoicesApiAxiosParamCreator = It;
+  const Mt = function(r) {
+    const c = (0, l.InvoicesApiAxiosParamCreator)(r);
     return {
       /**
-       *  Adds an invoice to the system.
-       * @param {CreateInvoiceRequest} invoice The invoice which should be created
+       *
+       * @summary Adds an invoice to the system.
+       * @param {CreateInvoiceRequest} [createInvoiceRequest] The invoice which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createInvoice(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.createInvoice(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      createInvoice(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.createInvoice(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["InvoicesApi.createInvoice"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Deletes an invoice.
+       *
+       * @summary Deletes an invoice.
        * @param {number} id The id of the invoice which should be deleted
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteInvoice(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.deleteInvoice(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      deleteInvoice(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.deleteInvoice(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["InvoicesApi.deleteInvoice"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Returns all invoices in the system.
+       *
+       * @summary Returns all invoices in the system.
        * @param {number} [toId] Filter on Id of the debtor
        * @param {number} [invoiceId] Filter on invoice ID
        * @param {number} [state] {1,2,3,4} - Filter based on Invoice State.    Possible values: 1 (CREATED), 2 (SENT), 3 (PAID), 4 (DELETED)
        * @param {boolean} [returnEntries] Boolean if invoice entries should be returned
        * @param {string} [fromDate] Start date for selected invoices (inclusive)
        * @param {string} [tillDate] End date for selected invoices (exclusive)
+       * @param {number} [take] How many entries the endpoint should return
+       * @param {number} [skip] How many entries should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllInvoices(t, r, a, s, o, d, h) {
-        return c(this, void 0, void 0, function* () {
-          const A = yield n.getAllInvoices(t, r, a, s, o, d, h);
-          return (0, e.createRequestFunction)(A, u.default, p.BASE_PATH, l);
+      getAllInvoices(n, i, s, e, t, o, u, h, A) {
+        var O, m, f;
+        return d(this, void 0, void 0, function* () {
+          const j = yield c.getAllInvoices(n, i, s, e, t, o, u, h, A), V = (O = r == null ? void 0 : r.serverIndex) !== null && O !== void 0 ? O : 0, F = (f = (m = v.operationServerMap["InvoicesApi.getAllInvoices"]) === null || m === void 0 ? void 0 : m[V]) === null || f === void 0 ? void 0 : f.url;
+          return (B, I) => (0, a.createRequestFunction)(j, p.default, v.BASE_PATH, r)(B, F || I);
         });
       },
       /**
-       *  Returns a single invoice in the system.
+       *
+       * @summary Returns a single invoice in the system.
        * @param {number} id The id of the requested invoice
        * @param {boolean} [returnEntries] Boolean if invoice entries should be returned, defaults to true.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleInvoice(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.getSingleInvoice(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      getSingleInvoice(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.getSingleInvoice(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["InvoicesApi.getSingleInvoice"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       },
       /**
-       *  Adds an invoice to the system.
+       *
+       * @summary Adds an invoice to the system.
        * @param {number} id The id of the invoice which should be updated
-       * @param {UpdateInvoiceRequest} invoice The invoice update to process
+       * @param {UpdateInvoiceRequest} [updateInvoiceRequest] The invoice update to process
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateInvoice(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.updateInvoice(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      updateInvoice(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.updateInvoice(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["InvoicesApi.updateInvoice"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       }
     };
   };
-  i.InvoicesApiFp = vt;
-  const Et = function(l, n, t) {
-    const r = (0, i.InvoicesApiFp)(l);
+  l.InvoicesApiFp = Mt;
+  const wt = function(r, c, n) {
+    const i = (0, l.InvoicesApiFp)(r);
     return {
       /**
-       *  Adds an invoice to the system.
-       * @param {CreateInvoiceRequest} invoice The invoice which should be created
+       *
+       * @summary Adds an invoice to the system.
+       * @param {CreateInvoiceRequest} [createInvoiceRequest] The invoice which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createInvoice(a, s) {
-        return r.createInvoice(a, s).then((o) => o(t, n));
+      createInvoice(s, e) {
+        return i.createInvoice(s, e).then((t) => t(n, c));
       },
       /**
-       *  Deletes an invoice.
+       *
+       * @summary Deletes an invoice.
        * @param {number} id The id of the invoice which should be deleted
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteInvoice(a, s) {
-        return r.deleteInvoice(a, s).then((o) => o(t, n));
+      deleteInvoice(s, e) {
+        return i.deleteInvoice(s, e).then((t) => t(n, c));
       },
       /**
-       *  Returns all invoices in the system.
+       *
+       * @summary Returns all invoices in the system.
        * @param {number} [toId] Filter on Id of the debtor
        * @param {number} [invoiceId] Filter on invoice ID
        * @param {number} [state] {1,2,3,4} - Filter based on Invoice State.    Possible values: 1 (CREATED), 2 (SENT), 3 (PAID), 4 (DELETED)
        * @param {boolean} [returnEntries] Boolean if invoice entries should be returned
        * @param {string} [fromDate] Start date for selected invoices (inclusive)
        * @param {string} [tillDate] End date for selected invoices (exclusive)
+       * @param {number} [take] How many entries the endpoint should return
+       * @param {number} [skip] How many entries should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllInvoices(a, s, o, d, h, A, O) {
-        return r.getAllInvoices(a, s, o, d, h, A, O).then((b) => b(t, n));
+      getAllInvoices(s, e, t, o, u, h, A, O, m) {
+        return i.getAllInvoices(s, e, t, o, u, h, A, O, m).then((f) => f(n, c));
       },
       /**
-       *  Returns a single invoice in the system.
+       *
+       * @summary Returns a single invoice in the system.
        * @param {number} id The id of the requested invoice
        * @param {boolean} [returnEntries] Boolean if invoice entries should be returned, defaults to true.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleInvoice(a, s, o) {
-        return r.getSingleInvoice(a, s, o).then((d) => d(t, n));
+      getSingleInvoice(s, e, t) {
+        return i.getSingleInvoice(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Adds an invoice to the system.
+       *
+       * @summary Adds an invoice to the system.
        * @param {number} id The id of the invoice which should be updated
-       * @param {UpdateInvoiceRequest} invoice The invoice update to process
+       * @param {UpdateInvoiceRequest} [updateInvoiceRequest] The invoice update to process
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateInvoice(a, s, o) {
-        return r.updateInvoice(a, s, o).then((d) => d(t, n));
+      updateInvoice(s, e, t) {
+        return i.updateInvoice(s, e, t).then((o) => o(n, c));
       }
     };
   };
-  i.InvoicesApiFactory = Et;
-  class Bt extends p.BaseAPI {
+  l.InvoicesApiFactory = wt;
+  class Lt extends v.BaseAPI {
     /**
-     *  Adds an invoice to the system.
-     * @param {CreateInvoiceRequest} invoice The invoice which should be created
+     *
+     * @summary Adds an invoice to the system.
+     * @param {CreateInvoiceRequest} [createInvoiceRequest] The invoice which should be created
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof InvoicesApi
      */
-    createInvoice(n, t) {
-      return (0, i.InvoicesApiFp)(this.configuration).createInvoice(n, t).then((r) => r(this.axios, this.basePath));
+    createInvoice(c, n) {
+      return (0, l.InvoicesApiFp)(this.configuration).createInvoice(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Deletes an invoice.
+     *
+     * @summary Deletes an invoice.
      * @param {number} id The id of the invoice which should be deleted
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof InvoicesApi
      */
-    deleteInvoice(n, t) {
-      return (0, i.InvoicesApiFp)(this.configuration).deleteInvoice(n, t).then((r) => r(this.axios, this.basePath));
+    deleteInvoice(c, n) {
+      return (0, l.InvoicesApiFp)(this.configuration).deleteInvoice(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Returns all invoices in the system.
+     *
+     * @summary Returns all invoices in the system.
      * @param {number} [toId] Filter on Id of the debtor
      * @param {number} [invoiceId] Filter on invoice ID
      * @param {number} [state] {1,2,3,4} - Filter based on Invoice State.    Possible values: 1 (CREATED), 2 (SENT), 3 (PAID), 4 (DELETED)
      * @param {boolean} [returnEntries] Boolean if invoice entries should be returned
      * @param {string} [fromDate] Start date for selected invoices (inclusive)
      * @param {string} [tillDate] End date for selected invoices (exclusive)
+     * @param {number} [take] How many entries the endpoint should return
+     * @param {number} [skip] How many entries should be skipped (for pagination)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof InvoicesApi
      */
-    getAllInvoices(n, t, r, a, s, o, d) {
-      return (0, i.InvoicesApiFp)(this.configuration).getAllInvoices(n, t, r, a, s, o, d).then((h) => h(this.axios, this.basePath));
+    getAllInvoices(c, n, i, s, e, t, o, u, h) {
+      return (0, l.InvoicesApiFp)(this.configuration).getAllInvoices(c, n, i, s, e, t, o, u, h).then((A) => A(this.axios, this.basePath));
     }
     /**
-     *  Returns a single invoice in the system.
+     *
+     * @summary Returns a single invoice in the system.
      * @param {number} id The id of the requested invoice
      * @param {boolean} [returnEntries] Boolean if invoice entries should be returned, defaults to true.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof InvoicesApi
      */
-    getSingleInvoice(n, t, r) {
-      return (0, i.InvoicesApiFp)(this.configuration).getSingleInvoice(n, t, r).then((a) => a(this.axios, this.basePath));
+    getSingleInvoice(c, n, i) {
+      return (0, l.InvoicesApiFp)(this.configuration).getSingleInvoice(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Adds an invoice to the system.
+     *
+     * @summary Adds an invoice to the system.
      * @param {number} id The id of the invoice which should be updated
-     * @param {UpdateInvoiceRequest} invoice The invoice update to process
+     * @param {UpdateInvoiceRequest} [updateInvoiceRequest] The invoice update to process
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof InvoicesApi
      */
-    updateInvoice(n, t, r) {
-      return (0, i.InvoicesApiFp)(this.configuration).updateInvoice(n, t, r).then((a) => a(this.axios, this.basePath));
+    updateInvoice(c, n, i) {
+      return (0, l.InvoicesApiFp)(this.configuration).updateInvoice(c, n, i).then((s) => s(this.axios, this.basePath));
     }
   }
-  i.InvoicesApi = Bt;
-  const _t = function(l) {
+  l.InvoicesApi = Lt;
+  const xt = function(r) {
     return {
       /**
-       *  Create a new payout request
-       * @param {PayoutRequestRequest} payoutRequest New payout request
+       *
+       * @summary Create a new payout request
+       * @param {PayoutRequestRequest} [payoutRequestRequest] New payout request
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createPayoutRequest: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("createPayoutRequest", "payoutRequest", n);
-        const r = "/payoutrequests", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      createPayoutRequest: (c, n = {}) => d(this, void 0, void 0, function* () {
+        const i = "/payoutrequests", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Returns all payout requests given the filter parameters
-       * @param {string} [requestedById] ID of user(s) who requested a payout
-       * @param {string} [approvedById] ID of user(s) who approved a payout
+       *
+       * @summary Returns all payout requests given the filter parameters
+       * @param {GetAllPayoutRequestsRequestedByIdParameter} [requestedById] ID of user(s) who requested a payout
+       * @param {GetAllPayoutRequestsRequestedByIdParameter} [approvedById] ID of user(s) who approved a payout
        * @param {string} [fromDate] Start date for selected transactions (inclusive)
        * @param {string} [tillDate] End date for selected transactions (exclusive)
        * @param {string} [status] Status of the payout requests (OR relation)
@@ -4419,79 +5363,90 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPayoutRequests: (n, t, r, a, s, o, d, h = {}) => c(this, void 0, void 0, function* () {
-        const A = "/payoutrequests", O = new URL(A, e.DUMMY_BASE_URL);
-        let b;
-        l && (b = l.baseOptions);
-        const F = Object.assign(Object.assign({ method: "GET" }, b), h), j = {}, V = {};
-        yield (0, e.setApiKeyToObject)(j, "Authorization", l), n !== void 0 && (V.requestedById = n), t !== void 0 && (V.approvedById = t), r !== void 0 && (V.fromDate = r), a !== void 0 && (V.tillDate = a), s !== void 0 && (V.status = s), o !== void 0 && (V.take = o), d !== void 0 && (V.skip = d), (0, e.setSearchParams)(O, V);
-        let I = b && b.headers ? b.headers : {};
-        return F.headers = Object.assign(Object.assign(Object.assign({}, j), I), h.headers), {
-          url: (0, e.toPathString)(O),
-          options: F
+      getAllPayoutRequests: (c, n, i, s, e, t, o, u = {}) => d(this, void 0, void 0, function* () {
+        const h = "/payoutrequests", A = new URL(h, a.DUMMY_BASE_URL);
+        let O;
+        r && (O = r.baseOptions);
+        const m = Object.assign(Object.assign({ method: "GET" }, O), u), f = {}, j = {};
+        if (yield (0, a.setBearerAuthToObject)(f, r), c !== void 0)
+          for (const [F, B] of Object.entries(c))
+            j[F] = B;
+        if (n !== void 0)
+          for (const [F, B] of Object.entries(n))
+            j[F] = B;
+        i !== void 0 && (j.fromDate = i), s !== void 0 && (j.tillDate = s), e !== void 0 && (j.status = e), t !== void 0 && (j.take = t), o !== void 0 && (j.skip = o), (0, a.setSearchParams)(A, j);
+        let V = O && O.headers ? O.headers : {};
+        return m.headers = Object.assign(Object.assign(Object.assign({}, f), V), u.headers), {
+          url: (0, a.toPathString)(A),
+          options: m
         };
       }),
       /**
-       *  Get a single payout request
+       *
+       * @summary Get a single payout request
        * @param {number} id The ID of the payout request object that should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSinglePayoutRequest: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getSinglePayoutRequest", "id", n);
-        const r = "/payoutrequests/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
+      getSinglePayoutRequest: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getSinglePayoutRequest", "id", c);
+        const i = "/payoutrequests/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Create a new status for a payout request
+       * @param {number} id The ID of the payout request object that should be returned
+       * @param {PayoutRequestStatusRequest} [payoutRequestStatusRequest] New state of payout request
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      setPayoutRequestStatus: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("setPayoutRequestStatus", "id", c);
+        const s = "/payoutrequests/{id}/status".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "POST" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), o.data = (0, a.serializeDataIfNeeded)(n, o, r), {
+          url: (0, a.toPathString)(e),
           options: o
-        };
-      }),
-      /**
-       *  Create a new status for a payout request
-       * @param {number} id The ID of the payout request object that should be returned
-       * @param {PayoutRequestStatusRequest} state New state of payout request
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      setPayoutRequestStatus: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("setPayoutRequestStatus", "id", n), (0, e.assertParamExists)("setPayoutRequestStatus", "state", t);
-        const a = "/payoutrequests/{id}/status".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "POST" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), h["Content-Type"] = "application/json", (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), d.data = (0, e.serializeDataIfNeeded)(t, d, l), {
-          url: (0, e.toPathString)(s),
-          options: d
         };
       })
     };
   };
-  i.PayoutRequestsApiAxiosParamCreator = _t;
-  const Ct = function(l) {
-    const n = (0, i.PayoutRequestsApiAxiosParamCreator)(l);
+  l.PayoutRequestsApiAxiosParamCreator = xt;
+  const qt = function(r) {
+    const c = (0, l.PayoutRequestsApiAxiosParamCreator)(r);
     return {
       /**
-       *  Create a new payout request
-       * @param {PayoutRequestRequest} payoutRequest New payout request
+       *
+       * @summary Create a new payout request
+       * @param {PayoutRequestRequest} [payoutRequestRequest] New payout request
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createPayoutRequest(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.createPayoutRequest(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      createPayoutRequest(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.createPayoutRequest(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["PayoutRequestsApi.createPayoutRequest"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Returns all payout requests given the filter parameters
-       * @param {string} [requestedById] ID of user(s) who requested a payout
-       * @param {string} [approvedById] ID of user(s) who approved a payout
+       *
+       * @summary Returns all payout requests given the filter parameters
+       * @param {GetAllPayoutRequestsRequestedByIdParameter} [requestedById] ID of user(s) who requested a payout
+       * @param {GetAllPayoutRequestsRequestedByIdParameter} [approvedById] ID of user(s) who approved a payout
        * @param {string} [fromDate] Start date for selected transactions (inclusive)
        * @param {string} [tillDate] End date for selected transactions (exclusive)
        * @param {string} [status] Status of the payout requests (OR relation)
@@ -4500,56 +5455,63 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPayoutRequests(t, r, a, s, o, d, h, A) {
-        return c(this, void 0, void 0, function* () {
-          const O = yield n.getAllPayoutRequests(t, r, a, s, o, d, h, A);
-          return (0, e.createRequestFunction)(O, u.default, p.BASE_PATH, l);
+      getAllPayoutRequests(n, i, s, e, t, o, u, h) {
+        var A, O, m;
+        return d(this, void 0, void 0, function* () {
+          const f = yield c.getAllPayoutRequests(n, i, s, e, t, o, u, h), j = (A = r == null ? void 0 : r.serverIndex) !== null && A !== void 0 ? A : 0, V = (m = (O = v.operationServerMap["PayoutRequestsApi.getAllPayoutRequests"]) === null || O === void 0 ? void 0 : O[j]) === null || m === void 0 ? void 0 : m.url;
+          return (F, B) => (0, a.createRequestFunction)(f, p.default, v.BASE_PATH, r)(F, V || B);
         });
       },
       /**
-       *  Get a single payout request
+       *
+       * @summary Get a single payout request
        * @param {number} id The ID of the payout request object that should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSinglePayoutRequest(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getSinglePayoutRequest(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      getSinglePayoutRequest(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getSinglePayoutRequest(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["PayoutRequestsApi.getSinglePayoutRequest"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Create a new status for a payout request
+       *
+       * @summary Create a new status for a payout request
        * @param {number} id The ID of the payout request object that should be returned
-       * @param {PayoutRequestStatusRequest} state New state of payout request
+       * @param {PayoutRequestStatusRequest} [payoutRequestStatusRequest] New state of payout request
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      setPayoutRequestStatus(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.setPayoutRequestStatus(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      setPayoutRequestStatus(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.setPayoutRequestStatus(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["PayoutRequestsApi.setPayoutRequestStatus"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       }
     };
   };
-  i.PayoutRequestsApiFp = Ct;
-  const wt = function(l, n, t) {
-    const r = (0, i.PayoutRequestsApiFp)(l);
+  l.PayoutRequestsApiFp = qt;
+  const Dt = function(r, c, n) {
+    const i = (0, l.PayoutRequestsApiFp)(r);
     return {
       /**
-       *  Create a new payout request
-       * @param {PayoutRequestRequest} payoutRequest New payout request
+       *
+       * @summary Create a new payout request
+       * @param {PayoutRequestRequest} [payoutRequestRequest] New payout request
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createPayoutRequest(a, s) {
-        return r.createPayoutRequest(a, s).then((o) => o(t, n));
+      createPayoutRequest(s, e) {
+        return i.createPayoutRequest(s, e).then((t) => t(n, c));
       },
       /**
-       *  Returns all payout requests given the filter parameters
-       * @param {string} [requestedById] ID of user(s) who requested a payout
-       * @param {string} [approvedById] ID of user(s) who approved a payout
+       *
+       * @summary Returns all payout requests given the filter parameters
+       * @param {GetAllPayoutRequestsRequestedByIdParameter} [requestedById] ID of user(s) who requested a payout
+       * @param {GetAllPayoutRequestsRequestedByIdParameter} [approvedById] ID of user(s) who approved a payout
        * @param {string} [fromDate] Start date for selected transactions (inclusive)
        * @param {string} [tillDate] End date for selected transactions (exclusive)
        * @param {string} [status] Status of the payout requests (OR relation)
@@ -4558,46 +5520,50 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPayoutRequests(a, s, o, d, h, A, O, b) {
-        return r.getAllPayoutRequests(a, s, o, d, h, A, O, b).then((F) => F(t, n));
+      getAllPayoutRequests(s, e, t, o, u, h, A, O) {
+        return i.getAllPayoutRequests(s, e, t, o, u, h, A, O).then((m) => m(n, c));
       },
       /**
-       *  Get a single payout request
+       *
+       * @summary Get a single payout request
        * @param {number} id The ID of the payout request object that should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSinglePayoutRequest(a, s) {
-        return r.getSinglePayoutRequest(a, s).then((o) => o(t, n));
+      getSinglePayoutRequest(s, e) {
+        return i.getSinglePayoutRequest(s, e).then((t) => t(n, c));
       },
       /**
-       *  Create a new status for a payout request
+       *
+       * @summary Create a new status for a payout request
        * @param {number} id The ID of the payout request object that should be returned
-       * @param {PayoutRequestStatusRequest} state New state of payout request
+       * @param {PayoutRequestStatusRequest} [payoutRequestStatusRequest] New state of payout request
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      setPayoutRequestStatus(a, s, o) {
-        return r.setPayoutRequestStatus(a, s, o).then((d) => d(t, n));
+      setPayoutRequestStatus(s, e, t) {
+        return i.setPayoutRequestStatus(s, e, t).then((o) => o(n, c));
       }
     };
   };
-  i.PayoutRequestsApiFactory = wt;
-  class Lt extends p.BaseAPI {
+  l.PayoutRequestsApiFactory = Dt;
+  class Ht extends v.BaseAPI {
     /**
-     *  Create a new payout request
-     * @param {PayoutRequestRequest} payoutRequest New payout request
+     *
+     * @summary Create a new payout request
+     * @param {PayoutRequestRequest} [payoutRequestRequest] New payout request
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PayoutRequestsApi
      */
-    createPayoutRequest(n, t) {
-      return (0, i.PayoutRequestsApiFp)(this.configuration).createPayoutRequest(n, t).then((r) => r(this.axios, this.basePath));
+    createPayoutRequest(c, n) {
+      return (0, l.PayoutRequestsApiFp)(this.configuration).createPayoutRequest(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Returns all payout requests given the filter parameters
-     * @param {string} [requestedById] ID of user(s) who requested a payout
-     * @param {string} [approvedById] ID of user(s) who approved a payout
+     *
+     * @summary Returns all payout requests given the filter parameters
+     * @param {GetAllPayoutRequestsRequestedByIdParameter} [requestedById] ID of user(s) who requested a payout
+     * @param {GetAllPayoutRequestsRequestedByIdParameter} [approvedById] ID of user(s) who approved a payout
      * @param {string} [fromDate] Start date for selected transactions (inclusive)
      * @param {string} [tillDate] End date for selected transactions (exclusive)
      * @param {string} [status] Status of the payout requests (OR relation)
@@ -4607,497 +5573,396 @@ C.createRequestFunction = Vr;
      * @throws {RequiredError}
      * @memberof PayoutRequestsApi
      */
-    getAllPayoutRequests(n, t, r, a, s, o, d, h) {
-      return (0, i.PayoutRequestsApiFp)(this.configuration).getAllPayoutRequests(n, t, r, a, s, o, d, h).then((A) => A(this.axios, this.basePath));
+    getAllPayoutRequests(c, n, i, s, e, t, o, u) {
+      return (0, l.PayoutRequestsApiFp)(this.configuration).getAllPayoutRequests(c, n, i, s, e, t, o, u).then((h) => h(this.axios, this.basePath));
     }
     /**
-     *  Get a single payout request
+     *
+     * @summary Get a single payout request
      * @param {number} id The ID of the payout request object that should be returned
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PayoutRequestsApi
      */
-    getSinglePayoutRequest(n, t) {
-      return (0, i.PayoutRequestsApiFp)(this.configuration).getSinglePayoutRequest(n, t).then((r) => r(this.axios, this.basePath));
+    getSinglePayoutRequest(c, n) {
+      return (0, l.PayoutRequestsApiFp)(this.configuration).getSinglePayoutRequest(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Create a new status for a payout request
+     *
+     * @summary Create a new status for a payout request
      * @param {number} id The ID of the payout request object that should be returned
-     * @param {PayoutRequestStatusRequest} state New state of payout request
+     * @param {PayoutRequestStatusRequest} [payoutRequestStatusRequest] New state of payout request
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PayoutRequestsApi
      */
-    setPayoutRequestStatus(n, t, r) {
-      return (0, i.PayoutRequestsApiFp)(this.configuration).setPayoutRequestStatus(n, t, r).then((a) => a(this.axios, this.basePath));
+    setPayoutRequestStatus(c, n, i) {
+      return (0, l.PayoutRequestsApiFp)(this.configuration).setPayoutRequestStatus(c, n, i).then((s) => s(this.axios, this.basePath));
     }
   }
-  i.PayoutRequestsApi = Lt;
-  const qt = function(l) {
+  l.PayoutRequestsApi = Ht;
+  const Nt = function(r) {
     return {
       /**
-       *  Approve a Point of Sale update.
-       * @param {number} id The id of the Point of Sale update to approve
+       *
+       * @summary Create a new Point of Sale.
+       * @param {CreatePointOfSaleRequest} [createPointOfSaleRequest] The point of sale which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      approvePointOfSale: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("approvePointOfSale", "id", n);
-        const r = "/pointsofsale/{id}/approve".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      createPointOfSale: (c, n = {}) => d(this, void 0, void 0, function* () {
+        const i = "/pointsofsale", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Create a new Point of Sale.
-       * @param {CreatePointOfSaleRequest} pointofsale The point of sale which should be created
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      createPointOfSale: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("createPointOfSale", "pointofsale", n);
-        const r = "/pointsofsale", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
-        };
-      }),
-      /**
-       *  Returns the containers of the requested Point of Sale, empty list if POS does not exist
+       *
+       * @summary Returns the containers of the requested Point of Sale, empty list if POS does not exist
        * @param {number} id The id of the point of sale
        * @param {number} [take] How many containers the endpoint should return
        * @param {number} [skip] How many containers should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPointOfSaleContainers: (n, t, r, a = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getAllPointOfSaleContainers", "id", n);
-        const s = "/pointsofsale/{id}/containers".replace("{id}", encodeURIComponent(String(n))), o = new URL(s, e.DUMMY_BASE_URL);
-        let d;
-        l && (d = l.baseOptions);
-        const h = Object.assign(Object.assign({ method: "GET" }, d), a), A = {}, O = {};
-        yield (0, e.setApiKeyToObject)(A, "Authorization", l), t !== void 0 && (O.take = t), r !== void 0 && (O.skip = r), (0, e.setSearchParams)(o, O);
-        let b = d && d.headers ? d.headers : {};
-        return h.headers = Object.assign(Object.assign(Object.assign({}, A), b), a.headers), {
-          url: (0, e.toPathString)(o),
-          options: h
+      getAllPointOfSaleContainers: (c, n, i, s = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getAllPointOfSaleContainers", "id", c);
+        const e = "/pointsofsale/{id}/containers".replace("{id}", encodeURIComponent(String(c))), t = new URL(e, a.DUMMY_BASE_URL);
+        let o;
+        r && (o = r.baseOptions);
+        const u = Object.assign(Object.assign({ method: "GET" }, o), s), h = {}, A = {};
+        yield (0, a.setBearerAuthToObject)(h, r), n !== void 0 && (A.take = n), i !== void 0 && (A.skip = i), (0, a.setSearchParams)(t, A);
+        let O = o && o.headers ? o.headers : {};
+        return u.headers = Object.assign(Object.assign(Object.assign({}, h), O), s.headers), {
+          url: (0, a.toPathString)(t),
+          options: u
         };
       }),
       /**
-       *  Returns the products of the requested Point of Sale, empty list if POS does not exist
+       *
+       * @summary Returns the products of the requested Point of Sale, empty list if POS does not exist
        * @param {number} id The id of the point of sale
        * @param {number} [take] How many products the endpoint should return
        * @param {number} [skip] How many products should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPointOfSaleProducts: (n, t, r, a = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getAllPointOfSaleProducts", "id", n);
-        const s = "/pointsofsale/{id}/products".replace("{id}", encodeURIComponent(String(n))), o = new URL(s, e.DUMMY_BASE_URL);
-        let d;
-        l && (d = l.baseOptions);
-        const h = Object.assign(Object.assign({ method: "GET" }, d), a), A = {}, O = {};
-        yield (0, e.setApiKeyToObject)(A, "Authorization", l), t !== void 0 && (O.take = t), r !== void 0 && (O.skip = r), (0, e.setSearchParams)(o, O);
-        let b = d && d.headers ? d.headers : {};
-        return h.headers = Object.assign(Object.assign(Object.assign({}, A), b), a.headers), {
-          url: (0, e.toPathString)(o),
-          options: h
+      getAllPointOfSaleProducts: (c, n, i, s = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getAllPointOfSaleProducts", "id", c);
+        const e = "/pointsofsale/{id}/products".replace("{id}", encodeURIComponent(String(c))), t = new URL(e, a.DUMMY_BASE_URL);
+        let o;
+        r && (o = r.baseOptions);
+        const u = Object.assign(Object.assign({ method: "GET" }, o), s), h = {}, A = {};
+        yield (0, a.setBearerAuthToObject)(h, r), n !== void 0 && (A.take = n), i !== void 0 && (A.skip = i), (0, a.setSearchParams)(t, A);
+        let O = o && o.headers ? o.headers : {};
+        return u.headers = Object.assign(Object.assign(Object.assign({}, h), O), s.headers), {
+          url: (0, a.toPathString)(t),
+          options: u
         };
       }),
       /**
-       *  Returns all existing Point of Sales
+       *
+       * @summary Returns all existing Point of Sales
        * @param {number} [take] How many points of sale the endpoint should return
        * @param {number} [skip] How many points of sale should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPointsOfSale: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        const a = "/pointsofsale", s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "GET" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), n !== void 0 && (A.take = n), t !== void 0 && (A.skip = t), (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), {
-          url: (0, e.toPathString)(s),
-          options: d
-        };
-      }),
-      /**
-       *  Returns the requested Point of Sale
-       * @param {number} id The id of the Point of Sale which should be returned
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getSinglePointOfSale: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getSinglePointOfSale", "id", n);
-        const r = "/pointsofsale/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
+      getAllPointsOfSale: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        const s = "/pointsofsale", e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "GET" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), c !== void 0 && (h.take = c), n !== void 0 && (h.skip = n), (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), {
+          url: (0, a.toPathString)(e),
           options: o
         };
       }),
       /**
-       *  Returns a single Points of Sale update
+       *
+       * @summary Returns the requested Point of Sale
        * @param {number} id The id of the Point of Sale which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleUpdatedPointOfSale: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getSingleUpdatedPointOfSale", "id", n);
-        const r = "/pointsofsale/{id}/update".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      getSinglePointOfSale: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getSinglePointOfSale", "id", c);
+        const i = "/pointsofsale/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Returns a Point of Sale transactions
-       * @param {number} id          The id of the Point of Sale of which to get the transactions.
+       *
+       * @summary Returns a Point of Sale transactions
+       * @param {number} id The id of the Point of Sale of which to get the transactions.
        * @param {number} [take] How many transactions the endpoint should return
        * @param {number} [skip] How many transactions should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getTransactions: (n, t, r, a = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getTransactions", "id", n);
-        const s = "/pointsofsale/{id}/transactions".replace("{id}", encodeURIComponent(String(n))), o = new URL(s, e.DUMMY_BASE_URL);
-        let d;
-        l && (d = l.baseOptions);
-        const h = Object.assign(Object.assign({ method: "GET" }, d), a), A = {}, O = {};
-        yield (0, e.setApiKeyToObject)(A, "Authorization", l), t !== void 0 && (O.take = t), r !== void 0 && (O.skip = r), (0, e.setSearchParams)(o, O);
-        let b = d && d.headers ? d.headers : {};
-        return h.headers = Object.assign(Object.assign(Object.assign({}, A), b), a.headers), {
-          url: (0, e.toPathString)(o),
-          options: h
-        };
-      }),
-      /**
-       *  Returns all updated Points of Sale
-       * @param {number} [take] How many points of sale the endpoint should return
-       * @param {number} [skip] How many points of sale should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUpdated: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        const a = "/pointsofsale/updated", s = new URL(a, e.DUMMY_BASE_URL);
+      getTransactions: (c, n, i, s = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getTransactions", "id", c);
+        const e = "/pointsofsale/{id}/transactions".replace("{id}", encodeURIComponent(String(c))), t = new URL(e, a.DUMMY_BASE_URL);
         let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "GET" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), n !== void 0 && (A.take = n), t !== void 0 && (A.skip = t), (0, e.setSearchParams)(s, A);
+        r && (o = r.baseOptions);
+        const u = Object.assign(Object.assign({ method: "GET" }, o), s), h = {}, A = {};
+        yield (0, a.setBearerAuthToObject)(h, r), n !== void 0 && (A.take = n), i !== void 0 && (A.skip = i), (0, a.setSearchParams)(t, A);
         let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), {
-          url: (0, e.toPathString)(s),
-          options: d
+        return u.headers = Object.assign(Object.assign(Object.assign({}, h), O), s.headers), {
+          url: (0, a.toPathString)(t),
+          options: u
         };
       }),
       /**
-       *  Update an existing Point of Sale.
+       *
+       * @summary Update an existing Point of Sale.
        * @param {number} id The id of the Point of Sale which should be updated
-       * @param {UpdatePointOfSaleRequest} pointofsale    The Point of Sale which should be updated
+       * @param {UpdatePointOfSaleRequest} [updatePointOfSaleRequest]    The Point of Sale which should be updated
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updatePointOfSale: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("updatePointOfSale", "id", n), (0, e.assertParamExists)("updatePointOfSale", "pointofsale", t);
-        const a = "/pointsofsale/{id}".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "PATCH" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), h["Content-Type"] = "application/json", (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), d.data = (0, e.serializeDataIfNeeded)(t, d, l), {
-          url: (0, e.toPathString)(s),
-          options: d
+      updatePointOfSale: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updatePointOfSale", "id", c);
+        const s = "/pointsofsale/{id}".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "PATCH" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), o.data = (0, a.serializeDataIfNeeded)(n, o, r), {
+          url: (0, a.toPathString)(e),
+          options: o
         };
       })
     };
   };
-  i.PointofsaleApiAxiosParamCreator = qt;
-  const Mt = function(l) {
-    const n = (0, i.PointofsaleApiAxiosParamCreator)(l);
+  l.PointofsaleApiAxiosParamCreator = Nt;
+  const Gt = function(r) {
+    const c = (0, l.PointofsaleApiAxiosParamCreator)(r);
     return {
       /**
-       *  Approve a Point of Sale update.
-       * @param {number} id The id of the Point of Sale update to approve
+       *
+       * @summary Create a new Point of Sale.
+       * @param {CreatePointOfSaleRequest} [createPointOfSaleRequest] The point of sale which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      approvePointOfSale(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.approvePointOfSale(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      createPointOfSale(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.createPointOfSale(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["PointofsaleApi.createPointOfSale"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Create a new Point of Sale.
-       * @param {CreatePointOfSaleRequest} pointofsale The point of sale which should be created
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      createPointOfSale(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.createPointOfSale(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
-        });
-      },
-      /**
-       *  Returns the containers of the requested Point of Sale, empty list if POS does not exist
+       *
+       * @summary Returns the containers of the requested Point of Sale, empty list if POS does not exist
        * @param {number} id The id of the point of sale
        * @param {number} [take] How many containers the endpoint should return
        * @param {number} [skip] How many containers should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPointOfSaleContainers(t, r, a, s) {
-        return c(this, void 0, void 0, function* () {
-          const o = yield n.getAllPointOfSaleContainers(t, r, a, s);
-          return (0, e.createRequestFunction)(o, u.default, p.BASE_PATH, l);
+      getAllPointOfSaleContainers(n, i, s, e) {
+        var t, o, u;
+        return d(this, void 0, void 0, function* () {
+          const h = yield c.getAllPointOfSaleContainers(n, i, s, e), A = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, O = (u = (o = v.operationServerMap["PointofsaleApi.getAllPointOfSaleContainers"]) === null || o === void 0 ? void 0 : o[A]) === null || u === void 0 ? void 0 : u.url;
+          return (m, f) => (0, a.createRequestFunction)(h, p.default, v.BASE_PATH, r)(m, O || f);
         });
       },
       /**
-       *  Returns the products of the requested Point of Sale, empty list if POS does not exist
+       *
+       * @summary Returns the products of the requested Point of Sale, empty list if POS does not exist
        * @param {number} id The id of the point of sale
        * @param {number} [take] How many products the endpoint should return
        * @param {number} [skip] How many products should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPointOfSaleProducts(t, r, a, s) {
-        return c(this, void 0, void 0, function* () {
-          const o = yield n.getAllPointOfSaleProducts(t, r, a, s);
-          return (0, e.createRequestFunction)(o, u.default, p.BASE_PATH, l);
+      getAllPointOfSaleProducts(n, i, s, e) {
+        var t, o, u;
+        return d(this, void 0, void 0, function* () {
+          const h = yield c.getAllPointOfSaleProducts(n, i, s, e), A = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, O = (u = (o = v.operationServerMap["PointofsaleApi.getAllPointOfSaleProducts"]) === null || o === void 0 ? void 0 : o[A]) === null || u === void 0 ? void 0 : u.url;
+          return (m, f) => (0, a.createRequestFunction)(h, p.default, v.BASE_PATH, r)(m, O || f);
         });
       },
       /**
-       *  Returns all existing Point of Sales
+       *
+       * @summary Returns all existing Point of Sales
        * @param {number} [take] How many points of sale the endpoint should return
        * @param {number} [skip] How many points of sale should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPointsOfSale(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.getAllPointsOfSale(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      getAllPointsOfSale(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.getAllPointsOfSale(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["PointofsaleApi.getAllPointsOfSale"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       },
       /**
-       *  Returns the requested Point of Sale
+       *
+       * @summary Returns the requested Point of Sale
        * @param {number} id The id of the Point of Sale which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSinglePointOfSale(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getSinglePointOfSale(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      getSinglePointOfSale(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getSinglePointOfSale(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["PointofsaleApi.getSinglePointOfSale"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Returns a single Points of Sale update
-       * @param {number} id The id of the Point of Sale which should be returned
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getSingleUpdatedPointOfSale(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getSingleUpdatedPointOfSale(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
-        });
-      },
-      /**
-       *  Returns a Point of Sale transactions
-       * @param {number} id          The id of the Point of Sale of which to get the transactions.
+       *
+       * @summary Returns a Point of Sale transactions
+       * @param {number} id The id of the Point of Sale of which to get the transactions.
        * @param {number} [take] How many transactions the endpoint should return
        * @param {number} [skip] How many transactions should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getTransactions(t, r, a, s) {
-        return c(this, void 0, void 0, function* () {
-          const o = yield n.getTransactions(t, r, a, s);
-          return (0, e.createRequestFunction)(o, u.default, p.BASE_PATH, l);
+      getTransactions(n, i, s, e) {
+        var t, o, u;
+        return d(this, void 0, void 0, function* () {
+          const h = yield c.getTransactions(n, i, s, e), A = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, O = (u = (o = v.operationServerMap["PointofsaleApi.getTransactions"]) === null || o === void 0 ? void 0 : o[A]) === null || u === void 0 ? void 0 : u.url;
+          return (m, f) => (0, a.createRequestFunction)(h, p.default, v.BASE_PATH, r)(m, O || f);
         });
       },
       /**
-       *  Returns all updated Points of Sale
-       * @param {number} [take] How many points of sale the endpoint should return
-       * @param {number} [skip] How many points of sale should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUpdated(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.getUpdated(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
-        });
-      },
-      /**
-       *  Update an existing Point of Sale.
+       *
+       * @summary Update an existing Point of Sale.
        * @param {number} id The id of the Point of Sale which should be updated
-       * @param {UpdatePointOfSaleRequest} pointofsale    The Point of Sale which should be updated
+       * @param {UpdatePointOfSaleRequest} [updatePointOfSaleRequest]    The Point of Sale which should be updated
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updatePointOfSale(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.updatePointOfSale(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      updatePointOfSale(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.updatePointOfSale(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["PointofsaleApi.updatePointOfSale"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       }
     };
   };
-  i.PointofsaleApiFp = Mt;
-  const Ht = function(l, n, t) {
-    const r = (0, i.PointofsaleApiFp)(l);
+  l.PointofsaleApiFp = Gt;
+  const kt = function(r, c, n) {
+    const i = (0, l.PointofsaleApiFp)(r);
     return {
       /**
-       *  Approve a Point of Sale update.
-       * @param {number} id The id of the Point of Sale update to approve
+       *
+       * @summary Create a new Point of Sale.
+       * @param {CreatePointOfSaleRequest} [createPointOfSaleRequest] The point of sale which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      approvePointOfSale(a, s) {
-        return r.approvePointOfSale(a, s).then((o) => o(t, n));
+      createPointOfSale(s, e) {
+        return i.createPointOfSale(s, e).then((t) => t(n, c));
       },
       /**
-       *  Create a new Point of Sale.
-       * @param {CreatePointOfSaleRequest} pointofsale The point of sale which should be created
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      createPointOfSale(a, s) {
-        return r.createPointOfSale(a, s).then((o) => o(t, n));
-      },
-      /**
-       *  Returns the containers of the requested Point of Sale, empty list if POS does not exist
+       *
+       * @summary Returns the containers of the requested Point of Sale, empty list if POS does not exist
        * @param {number} id The id of the point of sale
        * @param {number} [take] How many containers the endpoint should return
        * @param {number} [skip] How many containers should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPointOfSaleContainers(a, s, o, d) {
-        return r.getAllPointOfSaleContainers(a, s, o, d).then((h) => h(t, n));
+      getAllPointOfSaleContainers(s, e, t, o) {
+        return i.getAllPointOfSaleContainers(s, e, t, o).then((u) => u(n, c));
       },
       /**
-       *  Returns the products of the requested Point of Sale, empty list if POS does not exist
+       *
+       * @summary Returns the products of the requested Point of Sale, empty list if POS does not exist
        * @param {number} id The id of the point of sale
        * @param {number} [take] How many products the endpoint should return
        * @param {number} [skip] How many products should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPointOfSaleProducts(a, s, o, d) {
-        return r.getAllPointOfSaleProducts(a, s, o, d).then((h) => h(t, n));
+      getAllPointOfSaleProducts(s, e, t, o) {
+        return i.getAllPointOfSaleProducts(s, e, t, o).then((u) => u(n, c));
       },
       /**
-       *  Returns all existing Point of Sales
+       *
+       * @summary Returns all existing Point of Sales
        * @param {number} [take] How many points of sale the endpoint should return
        * @param {number} [skip] How many points of sale should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPointsOfSale(a, s, o) {
-        return r.getAllPointsOfSale(a, s, o).then((d) => d(t, n));
+      getAllPointsOfSale(s, e, t) {
+        return i.getAllPointsOfSale(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Returns the requested Point of Sale
+       *
+       * @summary Returns the requested Point of Sale
        * @param {number} id The id of the Point of Sale which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSinglePointOfSale(a, s) {
-        return r.getSinglePointOfSale(a, s).then((o) => o(t, n));
+      getSinglePointOfSale(s, e) {
+        return i.getSinglePointOfSale(s, e).then((t) => t(n, c));
       },
       /**
-       *  Returns a single Points of Sale update
-       * @param {number} id The id of the Point of Sale which should be returned
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getSingleUpdatedPointOfSale(a, s) {
-        return r.getSingleUpdatedPointOfSale(a, s).then((o) => o(t, n));
-      },
-      /**
-       *  Returns a Point of Sale transactions
-       * @param {number} id          The id of the Point of Sale of which to get the transactions.
+       *
+       * @summary Returns a Point of Sale transactions
+       * @param {number} id The id of the Point of Sale of which to get the transactions.
        * @param {number} [take] How many transactions the endpoint should return
        * @param {number} [skip] How many transactions should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getTransactions(a, s, o, d) {
-        return r.getTransactions(a, s, o, d).then((h) => h(t, n));
+      getTransactions(s, e, t, o) {
+        return i.getTransactions(s, e, t, o).then((u) => u(n, c));
       },
       /**
-       *  Returns all updated Points of Sale
-       * @param {number} [take] How many points of sale the endpoint should return
-       * @param {number} [skip] How many points of sale should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUpdated(a, s, o) {
-        return r.getUpdated(a, s, o).then((d) => d(t, n));
-      },
-      /**
-       *  Update an existing Point of Sale.
+       *
+       * @summary Update an existing Point of Sale.
        * @param {number} id The id of the Point of Sale which should be updated
-       * @param {UpdatePointOfSaleRequest} pointofsale    The Point of Sale which should be updated
+       * @param {UpdatePointOfSaleRequest} [updatePointOfSaleRequest]    The Point of Sale which should be updated
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updatePointOfSale(a, s, o) {
-        return r.updatePointOfSale(a, s, o).then((d) => d(t, n));
+      updatePointOfSale(s, e, t) {
+        return i.updatePointOfSale(s, e, t).then((o) => o(n, c));
       }
     };
   };
-  i.PointofsaleApiFactory = Ht;
-  class It extends p.BaseAPI {
+  l.PointofsaleApiFactory = kt;
+  class Qt extends v.BaseAPI {
     /**
-     *  Approve a Point of Sale update.
-     * @param {number} id The id of the Point of Sale update to approve
+     *
+     * @summary Create a new Point of Sale.
+     * @param {CreatePointOfSaleRequest} [createPointOfSaleRequest] The point of sale which should be created
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PointofsaleApi
      */
-    approvePointOfSale(n, t) {
-      return (0, i.PointofsaleApiFp)(this.configuration).approvePointOfSale(n, t).then((r) => r(this.axios, this.basePath));
+    createPointOfSale(c, n) {
+      return (0, l.PointofsaleApiFp)(this.configuration).createPointOfSale(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Create a new Point of Sale.
-     * @param {CreatePointOfSaleRequest} pointofsale The point of sale which should be created
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof PointofsaleApi
-     */
-    createPointOfSale(n, t) {
-      return (0, i.PointofsaleApiFp)(this.configuration).createPointOfSale(n, t).then((r) => r(this.axios, this.basePath));
-    }
-    /**
-     *  Returns the containers of the requested Point of Sale, empty list if POS does not exist
+     *
+     * @summary Returns the containers of the requested Point of Sale, empty list if POS does not exist
      * @param {number} id The id of the point of sale
      * @param {number} [take] How many containers the endpoint should return
      * @param {number} [skip] How many containers should be skipped (for pagination)
@@ -5105,11 +5970,12 @@ C.createRequestFunction = Vr;
      * @throws {RequiredError}
      * @memberof PointofsaleApi
      */
-    getAllPointOfSaleContainers(n, t, r, a) {
-      return (0, i.PointofsaleApiFp)(this.configuration).getAllPointOfSaleContainers(n, t, r, a).then((s) => s(this.axios, this.basePath));
+    getAllPointOfSaleContainers(c, n, i, s) {
+      return (0, l.PointofsaleApiFp)(this.configuration).getAllPointOfSaleContainers(c, n, i, s).then((e) => e(this.axios, this.basePath));
     }
     /**
-     *  Returns the products of the requested Point of Sale, empty list if POS does not exist
+     *
+     * @summary Returns the products of the requested Point of Sale, empty list if POS does not exist
      * @param {number} id The id of the point of sale
      * @param {number} [take] How many products the endpoint should return
      * @param {number} [skip] How many products should be skipped (for pagination)
@@ -5117,1089 +5983,938 @@ C.createRequestFunction = Vr;
      * @throws {RequiredError}
      * @memberof PointofsaleApi
      */
-    getAllPointOfSaleProducts(n, t, r, a) {
-      return (0, i.PointofsaleApiFp)(this.configuration).getAllPointOfSaleProducts(n, t, r, a).then((s) => s(this.axios, this.basePath));
+    getAllPointOfSaleProducts(c, n, i, s) {
+      return (0, l.PointofsaleApiFp)(this.configuration).getAllPointOfSaleProducts(c, n, i, s).then((e) => e(this.axios, this.basePath));
     }
     /**
-     *  Returns all existing Point of Sales
+     *
+     * @summary Returns all existing Point of Sales
      * @param {number} [take] How many points of sale the endpoint should return
      * @param {number} [skip] How many points of sale should be skipped (for pagination)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PointofsaleApi
      */
-    getAllPointsOfSale(n, t, r) {
-      return (0, i.PointofsaleApiFp)(this.configuration).getAllPointsOfSale(n, t, r).then((a) => a(this.axios, this.basePath));
+    getAllPointsOfSale(c, n, i) {
+      return (0, l.PointofsaleApiFp)(this.configuration).getAllPointsOfSale(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Returns the requested Point of Sale
+     *
+     * @summary Returns the requested Point of Sale
      * @param {number} id The id of the Point of Sale which should be returned
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PointofsaleApi
      */
-    getSinglePointOfSale(n, t) {
-      return (0, i.PointofsaleApiFp)(this.configuration).getSinglePointOfSale(n, t).then((r) => r(this.axios, this.basePath));
+    getSinglePointOfSale(c, n) {
+      return (0, l.PointofsaleApiFp)(this.configuration).getSinglePointOfSale(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Returns a single Points of Sale update
-     * @param {number} id The id of the Point of Sale which should be returned
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof PointofsaleApi
-     */
-    getSingleUpdatedPointOfSale(n, t) {
-      return (0, i.PointofsaleApiFp)(this.configuration).getSingleUpdatedPointOfSale(n, t).then((r) => r(this.axios, this.basePath));
-    }
-    /**
-     *  Returns a Point of Sale transactions
-     * @param {number} id          The id of the Point of Sale of which to get the transactions.
+     *
+     * @summary Returns a Point of Sale transactions
+     * @param {number} id The id of the Point of Sale of which to get the transactions.
      * @param {number} [take] How many transactions the endpoint should return
      * @param {number} [skip] How many transactions should be skipped (for pagination)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PointofsaleApi
      */
-    getTransactions(n, t, r, a) {
-      return (0, i.PointofsaleApiFp)(this.configuration).getTransactions(n, t, r, a).then((s) => s(this.axios, this.basePath));
+    getTransactions(c, n, i, s) {
+      return (0, l.PointofsaleApiFp)(this.configuration).getTransactions(c, n, i, s).then((e) => e(this.axios, this.basePath));
     }
     /**
-     *  Returns all updated Points of Sale
-     * @param {number} [take] How many points of sale the endpoint should return
-     * @param {number} [skip] How many points of sale should be skipped (for pagination)
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof PointofsaleApi
-     */
-    getUpdated(n, t, r) {
-      return (0, i.PointofsaleApiFp)(this.configuration).getUpdated(n, t, r).then((a) => a(this.axios, this.basePath));
-    }
-    /**
-     *  Update an existing Point of Sale.
+     *
+     * @summary Update an existing Point of Sale.
      * @param {number} id The id of the Point of Sale which should be updated
-     * @param {UpdatePointOfSaleRequest} pointofsale    The Point of Sale which should be updated
+     * @param {UpdatePointOfSaleRequest} [updatePointOfSaleRequest]    The Point of Sale which should be updated
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PointofsaleApi
      */
-    updatePointOfSale(n, t, r) {
-      return (0, i.PointofsaleApiFp)(this.configuration).updatePointOfSale(n, t, r).then((a) => a(this.axios, this.basePath));
+    updatePointOfSale(c, n, i) {
+      return (0, l.PointofsaleApiFp)(this.configuration).updatePointOfSale(c, n, i).then((s) => s(this.axios, this.basePath));
     }
   }
-  i.PointofsaleApi = It;
-  const Dt = function(l) {
+  l.PointofsaleApi = Qt;
+  const Yt = function(r) {
     return {
       /**
-       *  Post a new productCategory.
-       * @param {ProductCategoryRequest} productCategory The productCategory which should be created
+       *
+       * @summary Post a new productCategory.
+       * @param {ProductCategoryRequest} [productCategoryRequest] The productCategory which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createProductCategory: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("createProductCategory", "productCategory", n);
-        const r = "/productcategories", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      createProductCategory: (c, n = {}) => d(this, void 0, void 0, function* () {
+        const i = "/productcategories", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Returns all existing productcategories
+       *
+       * @summary Returns all existing productcategories
        * @param {number} [take] How many product categories the endpoint should return
        * @param {number} [skip] How many product categories should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllProductCategories: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        const a = "/productcategories", s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "GET" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), n !== void 0 && (A.take = n), t !== void 0 && (A.skip = t), (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), {
-          url: (0, e.toPathString)(s),
-          options: d
-        };
-      }),
-      /**
-       *  Returns the requested productcategory
-       * @param {number} id The id of the productcategory which should be returned
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getSingleProductCategory: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getSingleProductCategory", "id", n);
-        const r = "/productcategories/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
+      getAllProductCategories: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        const s = "/productcategories", e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "GET" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), c !== void 0 && (h.take = c), n !== void 0 && (h.skip = n), (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), {
+          url: (0, a.toPathString)(e),
           options: o
         };
       }),
       /**
-       *  Update an existing productcategory.
+       *
+       * @summary Returns the requested productcategory
        * @param {number} id The id of the productcategory which should be returned
-       * @param {ProductCategoryRequest} productCategory The productcategory which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateProductCategory: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("updateProductCategory", "id", n), (0, e.assertParamExists)("updateProductCategory", "productCategory", t);
-        const a = "/productcategories/{id}".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "PATCH" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), h["Content-Type"] = "application/json", (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), d.data = (0, e.serializeDataIfNeeded)(t, d, l), {
-          url: (0, e.toPathString)(s),
-          options: d
+      getSingleProductCategory: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getSingleProductCategory", "id", c);
+        const i = "/productcategories/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Update an existing productcategory.
+       * @param {number} id The id of the productcategory which should be returned
+       * @param {ProductCategoryRequest} [productCategoryRequest] The productcategory which should be created
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      updateProductCategory: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateProductCategory", "id", c);
+        const s = "/productcategories/{id}".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "PATCH" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), o.data = (0, a.serializeDataIfNeeded)(n, o, r), {
+          url: (0, a.toPathString)(e),
+          options: o
         };
       })
     };
   };
-  i.ProductCategoriesApiAxiosParamCreator = Dt;
-  const kt = function(l) {
-    const n = (0, i.ProductCategoriesApiAxiosParamCreator)(l);
+  l.ProductCategoriesApiAxiosParamCreator = Yt;
+  const $t = function(r) {
+    const c = (0, l.ProductCategoriesApiAxiosParamCreator)(r);
     return {
       /**
-       *  Post a new productCategory.
-       * @param {ProductCategoryRequest} productCategory The productCategory which should be created
+       *
+       * @summary Post a new productCategory.
+       * @param {ProductCategoryRequest} [productCategoryRequest] The productCategory which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createProductCategory(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.createProductCategory(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      createProductCategory(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.createProductCategory(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["ProductCategoriesApi.createProductCategory"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Returns all existing productcategories
+       *
+       * @summary Returns all existing productcategories
        * @param {number} [take] How many product categories the endpoint should return
        * @param {number} [skip] How many product categories should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllProductCategories(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.getAllProductCategories(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      getAllProductCategories(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.getAllProductCategories(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["ProductCategoriesApi.getAllProductCategories"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       },
       /**
-       *  Returns the requested productcategory
+       *
+       * @summary Returns the requested productcategory
        * @param {number} id The id of the productcategory which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleProductCategory(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getSingleProductCategory(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      getSingleProductCategory(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getSingleProductCategory(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["ProductCategoriesApi.getSingleProductCategory"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Update an existing productcategory.
+       *
+       * @summary Update an existing productcategory.
        * @param {number} id The id of the productcategory which should be returned
-       * @param {ProductCategoryRequest} productCategory The productcategory which should be created
+       * @param {ProductCategoryRequest} [productCategoryRequest] The productcategory which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateProductCategory(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.updateProductCategory(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      updateProductCategory(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.updateProductCategory(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["ProductCategoriesApi.updateProductCategory"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       }
     };
   };
-  i.ProductCategoriesApiFp = kt;
-  const zt = function(l, n, t) {
-    const r = (0, i.ProductCategoriesApiFp)(l);
+  l.ProductCategoriesApiFp = $t;
+  const zt = function(r, c, n) {
+    const i = (0, l.ProductCategoriesApiFp)(r);
     return {
       /**
-       *  Post a new productCategory.
-       * @param {ProductCategoryRequest} productCategory The productCategory which should be created
+       *
+       * @summary Post a new productCategory.
+       * @param {ProductCategoryRequest} [productCategoryRequest] The productCategory which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createProductCategory(a, s) {
-        return r.createProductCategory(a, s).then((o) => o(t, n));
+      createProductCategory(s, e) {
+        return i.createProductCategory(s, e).then((t) => t(n, c));
       },
       /**
-       *  Returns all existing productcategories
+       *
+       * @summary Returns all existing productcategories
        * @param {number} [take] How many product categories the endpoint should return
        * @param {number} [skip] How many product categories should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllProductCategories(a, s, o) {
-        return r.getAllProductCategories(a, s, o).then((d) => d(t, n));
+      getAllProductCategories(s, e, t) {
+        return i.getAllProductCategories(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Returns the requested productcategory
+       *
+       * @summary Returns the requested productcategory
        * @param {number} id The id of the productcategory which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleProductCategory(a, s) {
-        return r.getSingleProductCategory(a, s).then((o) => o(t, n));
+      getSingleProductCategory(s, e) {
+        return i.getSingleProductCategory(s, e).then((t) => t(n, c));
       },
       /**
-       *  Update an existing productcategory.
+       *
+       * @summary Update an existing productcategory.
        * @param {number} id The id of the productcategory which should be returned
-       * @param {ProductCategoryRequest} productCategory The productcategory which should be created
+       * @param {ProductCategoryRequest} [productCategoryRequest] The productcategory which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateProductCategory(a, s, o) {
-        return r.updateProductCategory(a, s, o).then((d) => d(t, n));
+      updateProductCategory(s, e, t) {
+        return i.updateProductCategory(s, e, t).then((o) => o(n, c));
       }
     };
   };
-  i.ProductCategoriesApiFactory = zt;
-  class xt extends p.BaseAPI {
+  l.ProductCategoriesApiFactory = zt;
+  class Kt extends v.BaseAPI {
     /**
-     *  Post a new productCategory.
-     * @param {ProductCategoryRequest} productCategory The productCategory which should be created
+     *
+     * @summary Post a new productCategory.
+     * @param {ProductCategoryRequest} [productCategoryRequest] The productCategory which should be created
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProductCategoriesApi
      */
-    createProductCategory(n, t) {
-      return (0, i.ProductCategoriesApiFp)(this.configuration).createProductCategory(n, t).then((r) => r(this.axios, this.basePath));
+    createProductCategory(c, n) {
+      return (0, l.ProductCategoriesApiFp)(this.configuration).createProductCategory(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Returns all existing productcategories
+     *
+     * @summary Returns all existing productcategories
      * @param {number} [take] How many product categories the endpoint should return
      * @param {number} [skip] How many product categories should be skipped (for pagination)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProductCategoriesApi
      */
-    getAllProductCategories(n, t, r) {
-      return (0, i.ProductCategoriesApiFp)(this.configuration).getAllProductCategories(n, t, r).then((a) => a(this.axios, this.basePath));
+    getAllProductCategories(c, n, i) {
+      return (0, l.ProductCategoriesApiFp)(this.configuration).getAllProductCategories(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Returns the requested productcategory
+     *
+     * @summary Returns the requested productcategory
      * @param {number} id The id of the productcategory which should be returned
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProductCategoriesApi
      */
-    getSingleProductCategory(n, t) {
-      return (0, i.ProductCategoriesApiFp)(this.configuration).getSingleProductCategory(n, t).then((r) => r(this.axios, this.basePath));
+    getSingleProductCategory(c, n) {
+      return (0, l.ProductCategoriesApiFp)(this.configuration).getSingleProductCategory(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Update an existing productcategory.
+     *
+     * @summary Update an existing productcategory.
      * @param {number} id The id of the productcategory which should be returned
-     * @param {ProductCategoryRequest} productCategory The productcategory which should be created
+     * @param {ProductCategoryRequest} [productCategoryRequest] The productcategory which should be created
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProductCategoriesApi
      */
-    updateProductCategory(n, t, r) {
-      return (0, i.ProductCategoriesApiFp)(this.configuration).updateProductCategory(n, t, r).then((a) => a(this.axios, this.basePath));
+    updateProductCategory(c, n, i) {
+      return (0, l.ProductCategoriesApiFp)(this.configuration).updateProductCategory(c, n, i).then((s) => s(this.axios, this.basePath));
     }
   }
-  i.ProductCategoriesApi = xt;
-  const Nt = function(l) {
+  l.ProductCategoriesApi = Kt;
+  const Wt = function(r) {
     return {
       /**
-       *  Approve a product update.
-       * @param {number} id The id of the product update to approve
+       *
+       * @summary Create a new product.
+       * @param {CreateProductRequest} [createProductRequest] The product which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      approveProduct: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("approveProduct", "id", n);
-        const r = "/products/{id}/approve".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      createProduct: (c, n = {}) => d(this, void 0, void 0, function* () {
+        const i = "/products", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Create a new product.
-       * @param {CreateProductRequest} product The product which should be created
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      createProduct: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("createProduct", "product", n);
-        const r = "/products", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
-        };
-      }),
-      /**
-       *  Returns all existing products
+       *
+       * @summary Returns all existing products
        * @param {number} [take] How many products the endpoint should return
        * @param {number} [skip] How many products should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllProducts: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        const a = "/products", s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "GET" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), n !== void 0 && (A.take = n), t !== void 0 && (A.skip = t), (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), {
-          url: (0, e.toPathString)(s),
-          options: d
-        };
-      }),
-      /**
-       *  Returns the requested product
-       * @param {number} id The id of the product which should be returned
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getSingleProduct: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getSingleProduct", "id", n);
-        const r = "/products/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
+      getAllProducts: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        const s = "/products", e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "GET" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), c !== void 0 && (h.take = c), n !== void 0 && (h.skip = n), (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), {
+          url: (0, a.toPathString)(e),
           options: o
         };
       }),
       /**
-       *  Returns the requested updated product
+       *
+       * @summary Returns the requested product
        * @param {number} id The id of the product which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUpdateProduct: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getUpdateProduct", "id", n);
-        const r = "/products/{id}/update".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      getSingleProduct: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getSingleProduct", "id", c);
+        const i = "/products/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Returns all updated products
-       * @param {number} [take] How many products the endpoint should return
-       * @param {number} [skip] How many products should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUpdatedProducts: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        const a = "/products/updated", s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "GET" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), n !== void 0 && (A.take = n), t !== void 0 && (A.skip = t), (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), {
-          url: (0, e.toPathString)(s),
-          options: d
-        };
-      }),
-      /**
-       *  Update an existing product.
+       *
+       * @summary Update an existing product.
        * @param {number} id The id of the product which should be updated
-       * @param {UpdateProductRequest} product The product which should be updated
+       * @param {UpdateProductRequest} [updateProductRequest] The product which should be updated
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateProduct: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("updateProduct", "id", n), (0, e.assertParamExists)("updateProduct", "product", t);
-        const a = "/products/{id}".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "PATCH" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), h["Content-Type"] = "application/json", (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), d.data = (0, e.serializeDataIfNeeded)(t, d, l), {
-          url: (0, e.toPathString)(s),
-          options: d
+      updateProduct: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateProduct", "id", c);
+        const s = "/products/{id}".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "PATCH" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), o.data = (0, a.serializeDataIfNeeded)(n, o, r), {
+          url: (0, a.toPathString)(e),
+          options: o
         };
       }),
       /**
-       *  Upload a new image for a product
+       *
+       * @summary Upload a new image for a product
        * @param {number} id The id of the product which should be returned
-       * @param {File} [file] null
+       * @param {File} [file] file
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateProductImage: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("updateProductImage", "id", n);
-        const a = "/products/{id}/image".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "POST" }, o), r), h = {}, A = {}, O = new (l && l.formDataCtor || FormData)();
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), t !== void 0 && O.append("file", t), h["Content-Type"] = "multipart/form-data", (0, e.setSearchParams)(s, A);
-        let b = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), b), r.headers), d.data = O, {
-          url: (0, e.toPathString)(s),
-          options: d
+      updateProductImage: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateProductImage", "id", c);
+        const s = "/products/{id}/image".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "POST" }, t), i), u = {}, h = {}, A = new (r && r.formDataCtor || FormData)();
+        yield (0, a.setBearerAuthToObject)(u, r), n !== void 0 && A.append("file", n), u["Content-Type"] = "multipart/form-data", (0, a.setSearchParams)(e, h);
+        let O = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), O), i.headers), o.data = A, {
+          url: (0, a.toPathString)(e),
+          options: o
         };
       })
     };
   };
-  i.ProductsApiAxiosParamCreator = Nt;
-  const Kt = function(l) {
-    const n = (0, i.ProductsApiAxiosParamCreator)(l);
+  l.ProductsApiAxiosParamCreator = Wt;
+  const Jt = function(r) {
+    const c = (0, l.ProductsApiAxiosParamCreator)(r);
     return {
       /**
-       *  Approve a product update.
-       * @param {number} id The id of the product update to approve
+       *
+       * @summary Create a new product.
+       * @param {CreateProductRequest} [createProductRequest] The product which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      approveProduct(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.approveProduct(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      createProduct(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.createProduct(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["ProductsApi.createProduct"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Create a new product.
-       * @param {CreateProductRequest} product The product which should be created
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      createProduct(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.createProduct(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
-        });
-      },
-      /**
-       *  Returns all existing products
+       *
+       * @summary Returns all existing products
        * @param {number} [take] How many products the endpoint should return
        * @param {number} [skip] How many products should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllProducts(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.getAllProducts(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      getAllProducts(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.getAllProducts(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["ProductsApi.getAllProducts"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       },
       /**
-       *  Returns the requested product
+       *
+       * @summary Returns the requested product
        * @param {number} id The id of the product which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleProduct(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getSingleProduct(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      getSingleProduct(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getSingleProduct(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["ProductsApi.getSingleProduct"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Returns the requested updated product
-       * @param {number} id The id of the product which should be returned
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUpdateProduct(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getUpdateProduct(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
-        });
-      },
-      /**
-       *  Returns all updated products
-       * @param {number} [take] How many products the endpoint should return
-       * @param {number} [skip] How many products should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUpdatedProducts(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.getUpdatedProducts(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
-        });
-      },
-      /**
-       *  Update an existing product.
+       *
+       * @summary Update an existing product.
        * @param {number} id The id of the product which should be updated
-       * @param {UpdateProductRequest} product The product which should be updated
+       * @param {UpdateProductRequest} [updateProductRequest] The product which should be updated
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateProduct(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.updateProduct(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      updateProduct(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.updateProduct(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["ProductsApi.updateProduct"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       },
       /**
-       *  Upload a new image for a product
+       *
+       * @summary Upload a new image for a product
        * @param {number} id The id of the product which should be returned
-       * @param {File} [file] null
+       * @param {File} [file] file
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateProductImage(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.updateProductImage(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      updateProductImage(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.updateProductImage(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["ProductsApi.updateProductImage"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       }
     };
   };
-  i.ProductsApiFp = Kt;
-  const Gt = function(l, n, t) {
-    const r = (0, i.ProductsApiFp)(l);
+  l.ProductsApiFp = Jt;
+  const Xt = function(r, c, n) {
+    const i = (0, l.ProductsApiFp)(r);
     return {
       /**
-       *  Approve a product update.
-       * @param {number} id The id of the product update to approve
+       *
+       * @summary Create a new product.
+       * @param {CreateProductRequest} [createProductRequest] The product which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      approveProduct(a, s) {
-        return r.approveProduct(a, s).then((o) => o(t, n));
+      createProduct(s, e) {
+        return i.createProduct(s, e).then((t) => t(n, c));
       },
       /**
-       *  Create a new product.
-       * @param {CreateProductRequest} product The product which should be created
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      createProduct(a, s) {
-        return r.createProduct(a, s).then((o) => o(t, n));
-      },
-      /**
-       *  Returns all existing products
+       *
+       * @summary Returns all existing products
        * @param {number} [take] How many products the endpoint should return
        * @param {number} [skip] How many products should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllProducts(a, s, o) {
-        return r.getAllProducts(a, s, o).then((d) => d(t, n));
+      getAllProducts(s, e, t) {
+        return i.getAllProducts(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Returns the requested product
+       *
+       * @summary Returns the requested product
        * @param {number} id The id of the product which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleProduct(a, s) {
-        return r.getSingleProduct(a, s).then((o) => o(t, n));
+      getSingleProduct(s, e) {
+        return i.getSingleProduct(s, e).then((t) => t(n, c));
       },
       /**
-       *  Returns the requested updated product
-       * @param {number} id The id of the product which should be returned
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUpdateProduct(a, s) {
-        return r.getUpdateProduct(a, s).then((o) => o(t, n));
-      },
-      /**
-       *  Returns all updated products
-       * @param {number} [take] How many products the endpoint should return
-       * @param {number} [skip] How many products should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUpdatedProducts(a, s, o) {
-        return r.getUpdatedProducts(a, s, o).then((d) => d(t, n));
-      },
-      /**
-       *  Update an existing product.
+       *
+       * @summary Update an existing product.
        * @param {number} id The id of the product which should be updated
-       * @param {UpdateProductRequest} product The product which should be updated
+       * @param {UpdateProductRequest} [updateProductRequest] The product which should be updated
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateProduct(a, s, o) {
-        return r.updateProduct(a, s, o).then((d) => d(t, n));
+      updateProduct(s, e, t) {
+        return i.updateProduct(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Upload a new image for a product
+       *
+       * @summary Upload a new image for a product
        * @param {number} id The id of the product which should be returned
-       * @param {File} [file] null
+       * @param {File} [file] file
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateProductImage(a, s, o) {
-        return r.updateProductImage(a, s, o).then((d) => d(t, n));
+      updateProductImage(s, e, t) {
+        return i.updateProductImage(s, e, t).then((o) => o(n, c));
       }
     };
   };
-  i.ProductsApiFactory = Gt;
-  class Qt extends p.BaseAPI {
+  l.ProductsApiFactory = Xt;
+  class Zt extends v.BaseAPI {
     /**
-     *  Approve a product update.
-     * @param {number} id The id of the product update to approve
+     *
+     * @summary Create a new product.
+     * @param {CreateProductRequest} [createProductRequest] The product which should be created
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProductsApi
      */
-    approveProduct(n, t) {
-      return (0, i.ProductsApiFp)(this.configuration).approveProduct(n, t).then((r) => r(this.axios, this.basePath));
+    createProduct(c, n) {
+      return (0, l.ProductsApiFp)(this.configuration).createProduct(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Create a new product.
-     * @param {CreateProductRequest} product The product which should be created
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ProductsApi
-     */
-    createProduct(n, t) {
-      return (0, i.ProductsApiFp)(this.configuration).createProduct(n, t).then((r) => r(this.axios, this.basePath));
-    }
-    /**
-     *  Returns all existing products
+     *
+     * @summary Returns all existing products
      * @param {number} [take] How many products the endpoint should return
      * @param {number} [skip] How many products should be skipped (for pagination)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProductsApi
      */
-    getAllProducts(n, t, r) {
-      return (0, i.ProductsApiFp)(this.configuration).getAllProducts(n, t, r).then((a) => a(this.axios, this.basePath));
+    getAllProducts(c, n, i) {
+      return (0, l.ProductsApiFp)(this.configuration).getAllProducts(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Returns the requested product
+     *
+     * @summary Returns the requested product
      * @param {number} id The id of the product which should be returned
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProductsApi
      */
-    getSingleProduct(n, t) {
-      return (0, i.ProductsApiFp)(this.configuration).getSingleProduct(n, t).then((r) => r(this.axios, this.basePath));
+    getSingleProduct(c, n) {
+      return (0, l.ProductsApiFp)(this.configuration).getSingleProduct(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Returns the requested updated product
-     * @param {number} id The id of the product which should be returned
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ProductsApi
-     */
-    getUpdateProduct(n, t) {
-      return (0, i.ProductsApiFp)(this.configuration).getUpdateProduct(n, t).then((r) => r(this.axios, this.basePath));
-    }
-    /**
-     *  Returns all updated products
-     * @param {number} [take] How many products the endpoint should return
-     * @param {number} [skip] How many products should be skipped (for pagination)
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ProductsApi
-     */
-    getUpdatedProducts(n, t, r) {
-      return (0, i.ProductsApiFp)(this.configuration).getUpdatedProducts(n, t, r).then((a) => a(this.axios, this.basePath));
-    }
-    /**
-     *  Update an existing product.
+     *
+     * @summary Update an existing product.
      * @param {number} id The id of the product which should be updated
-     * @param {UpdateProductRequest} product The product which should be updated
+     * @param {UpdateProductRequest} [updateProductRequest] The product which should be updated
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProductsApi
      */
-    updateProduct(n, t, r) {
-      return (0, i.ProductsApiFp)(this.configuration).updateProduct(n, t, r).then((a) => a(this.axios, this.basePath));
+    updateProduct(c, n, i) {
+      return (0, l.ProductsApiFp)(this.configuration).updateProduct(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Upload a new image for a product
+     *
+     * @summary Upload a new image for a product
      * @param {number} id The id of the product which should be returned
-     * @param {File} [file] null
+     * @param {File} [file] file
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProductsApi
      */
-    updateProductImage(n, t, r) {
-      return (0, i.ProductsApiFp)(this.configuration).updateProductImage(n, t, r).then((a) => a(this.axios, this.basePath));
+    updateProductImage(c, n, i) {
+      return (0, l.ProductsApiFp)(this.configuration).updateProductImage(c, n, i).then((s) => s(this.axios, this.basePath));
     }
   }
-  i.ProductsApi = Qt;
-  const Yt = function(l) {
+  l.ProductsApi = Zt;
+  const es = function(r) {
     return {
       /**
-       *  Returns all existing roles
+       *
+       * @summary Returns all existing roles
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllRoles: (n = {}) => c(this, void 0, void 0, function* () {
-        const t = "/rbac/roles", r = new URL(t, e.DUMMY_BASE_URL);
-        let a;
-        l && (a = l.baseOptions);
-        const s = Object.assign(Object.assign({ method: "GET" }, a), n), o = {}, d = {};
-        yield (0, e.setApiKeyToObject)(o, "Authorization", l), (0, e.setSearchParams)(r, d);
-        let h = a && a.headers ? a.headers : {};
-        return s.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
-          url: (0, e.toPathString)(r),
-          options: s
+      getAllRoles: (c = {}) => d(this, void 0, void 0, function* () {
+        const n = "/rbac/roles", i = new URL(n, a.DUMMY_BASE_URL);
+        let s;
+        r && (s = r.baseOptions);
+        const e = Object.assign(Object.assign({ method: "GET" }, s), c), t = {}, o = {};
+        yield (0, a.setBearerAuthToObject)(t, r), (0, a.setSearchParams)(i, o);
+        let u = s && s.headers ? s.headers : {};
+        return e.headers = Object.assign(Object.assign(Object.assign({}, t), u), c.headers), {
+          url: (0, a.toPathString)(i),
+          options: e
         };
       })
     };
   };
-  i.RbacApiAxiosParamCreator = Yt;
-  const $t = function(l) {
-    const n = (0, i.RbacApiAxiosParamCreator)(l);
+  l.RbacApiAxiosParamCreator = es;
+  const ts = function(r) {
+    const c = (0, l.RbacApiAxiosParamCreator)(r);
     return {
       /**
-       *  Returns all existing roles
+       *
+       * @summary Returns all existing roles
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllRoles(t) {
-        return c(this, void 0, void 0, function* () {
-          const r = yield n.getAllRoles(t);
-          return (0, e.createRequestFunction)(r, u.default, p.BASE_PATH, l);
+      getAllRoles(n) {
+        var i, s, e;
+        return d(this, void 0, void 0, function* () {
+          const t = yield c.getAllRoles(n), o = (i = r == null ? void 0 : r.serverIndex) !== null && i !== void 0 ? i : 0, u = (e = (s = v.operationServerMap["RbacApi.getAllRoles"]) === null || s === void 0 ? void 0 : s[o]) === null || e === void 0 ? void 0 : e.url;
+          return (h, A) => (0, a.createRequestFunction)(t, p.default, v.BASE_PATH, r)(h, u || A);
         });
       }
     };
   };
-  i.RbacApiFp = $t;
-  const Wt = function(l, n, t) {
-    const r = (0, i.RbacApiFp)(l);
+  l.RbacApiFp = ts;
+  const ss = function(r, c, n) {
+    const i = (0, l.RbacApiFp)(r);
     return {
       /**
-       *  Returns all existing roles
+       *
+       * @summary Returns all existing roles
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllRoles(a) {
-        return r.getAllRoles(a).then((s) => s(t, n));
+      getAllRoles(s) {
+        return i.getAllRoles(s).then((e) => e(n, c));
       }
     };
   };
-  i.RbacApiFactory = Wt;
-  class Jt extends p.BaseAPI {
+  l.RbacApiFactory = ss;
+  class as extends v.BaseAPI {
     /**
-     *  Returns all existing roles
+     *
+     * @summary Returns all existing roles
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RbacApi
      */
-    getAllRoles(n) {
-      return (0, i.RbacApiFp)(this.configuration).getAllRoles(n).then((t) => t(this.axios, this.basePath));
+    getAllRoles(c) {
+      return (0, l.RbacApiFp)(this.configuration).getAllRoles(c).then((n) => n(this.axios, this.basePath));
     }
   }
-  i.RbacApi = Jt;
-  const Xt = function(l) {
+  l.RbacApi = as;
+  const rs = function(r) {
     return {
       /**
-       *  Ping the backend to check whether everything is working correctly
+       *
+       * @summary Ping the backend to check whether everything is working correctly
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      ping: (n = {}) => c(this, void 0, void 0, function* () {
-        const t = "/ping", r = new URL(t, e.DUMMY_BASE_URL);
-        let a;
-        l && (a = l.baseOptions);
-        const s = Object.assign(Object.assign({ method: "GET" }, a), n), o = {}, d = {};
-        (0, e.setSearchParams)(r, d);
-        let h = a && a.headers ? a.headers : {};
-        return s.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
-          url: (0, e.toPathString)(r),
-          options: s
+      ping: (c = {}) => d(this, void 0, void 0, function* () {
+        const n = "/ping", i = new URL(n, a.DUMMY_BASE_URL);
+        let s;
+        r && (s = r.baseOptions);
+        const e = Object.assign(Object.assign({ method: "GET" }, s), c), t = {}, o = {};
+        (0, a.setSearchParams)(i, o);
+        let u = s && s.headers ? s.headers : {};
+        return e.headers = Object.assign(Object.assign(Object.assign({}, t), u), c.headers), {
+          url: (0, a.toPathString)(i),
+          options: e
         };
       })
     };
   };
-  i.RootApiAxiosParamCreator = Xt;
-  const Zt = function(l) {
-    const n = (0, i.RootApiAxiosParamCreator)(l);
+  l.RootApiAxiosParamCreator = rs;
+  const ns = function(r) {
+    const c = (0, l.RootApiAxiosParamCreator)(r);
     return {
       /**
-       *  Ping the backend to check whether everything is working correctly
+       *
+       * @summary Ping the backend to check whether everything is working correctly
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      ping(t) {
-        return c(this, void 0, void 0, function* () {
-          const r = yield n.ping(t);
-          return (0, e.createRequestFunction)(r, u.default, p.BASE_PATH, l);
+      ping(n) {
+        var i, s, e;
+        return d(this, void 0, void 0, function* () {
+          const t = yield c.ping(n), o = (i = r == null ? void 0 : r.serverIndex) !== null && i !== void 0 ? i : 0, u = (e = (s = v.operationServerMap["RootApi.ping"]) === null || s === void 0 ? void 0 : s[o]) === null || e === void 0 ? void 0 : e.url;
+          return (h, A) => (0, a.createRequestFunction)(t, p.default, v.BASE_PATH, r)(h, u || A);
         });
       }
     };
   };
-  i.RootApiFp = Zt;
-  const es = function(l, n, t) {
-    const r = (0, i.RootApiFp)(l);
+  l.RootApiFp = ns;
+  const is = function(r, c, n) {
+    const i = (0, l.RootApiFp)(r);
     return {
       /**
-       *  Ping the backend to check whether everything is working correctly
+       *
+       * @summary Ping the backend to check whether everything is working correctly
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      ping(a) {
-        return r.ping(a).then((s) => s(t, n));
+      ping(s) {
+        return i.ping(s).then((e) => e(n, c));
       }
     };
   };
-  i.RootApiFactory = es;
-  class ts extends p.BaseAPI {
+  l.RootApiFactory = is;
+  class os extends v.BaseAPI {
     /**
-     *  Ping the backend to check whether everything is working correctly
+     *
+     * @summary Ping the backend to check whether everything is working correctly
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RootApi
      */
-    ping(n) {
-      return (0, i.RootApiFp)(this.configuration).ping(n).then((t) => t(this.axios, this.basePath));
+    ping(c) {
+      return (0, l.RootApiFp)(this.configuration).ping(c).then((n) => n(this.axios, this.basePath));
     }
   }
-  i.RootApi = ts;
-  const ss = function(l) {
+  l.RootApi = os;
+  const ls = function(r) {
     return {
       /**
-       *  Start the stripe deposit flow
-       * @param {StripeRequest} stripe The deposit that should be created
+       *
+       * @summary Start the stripe deposit flow
+       * @param {StripeRequest} [stripeRequest] The deposit that should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deposit: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("deposit", "stripe", n);
-        const r = "/stripe/deposit", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
-        };
-      }),
-      /**
-       *  Webhook for Stripe event updates
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      webhook: (n = {}) => c(this, void 0, void 0, function* () {
-        const t = "/stripe/webhook", r = new URL(t, e.DUMMY_BASE_URL);
-        let a;
-        l && (a = l.baseOptions);
-        const s = Object.assign(Object.assign({ method: "POST" }, a), n), o = {}, d = {};
-        (0, e.setSearchParams)(r, d);
-        let h = a && a.headers ? a.headers : {};
-        return s.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
-          url: (0, e.toPathString)(r),
-          options: s
+      deposit: (c, n = {}) => d(this, void 0, void 0, function* () {
+        const i = "/stripe/deposit", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       })
     };
   };
-  i.StripeApiAxiosParamCreator = ss;
-  const as = function(l) {
-    const n = (0, i.StripeApiAxiosParamCreator)(l);
+  l.StripeApiAxiosParamCreator = ls;
+  const cs = function(r) {
+    const c = (0, l.StripeApiAxiosParamCreator)(r);
     return {
       /**
-       *  Start the stripe deposit flow
-       * @param {StripeRequest} stripe The deposit that should be created
+       *
+       * @summary Start the stripe deposit flow
+       * @param {StripeRequest} [stripeRequest] The deposit that should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deposit(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.deposit(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
-        });
-      },
-      /**
-       *  Webhook for Stripe event updates
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      webhook(t) {
-        return c(this, void 0, void 0, function* () {
-          const r = yield n.webhook(t);
-          return (0, e.createRequestFunction)(r, u.default, p.BASE_PATH, l);
+      deposit(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.deposit(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["StripeApi.deposit"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       }
     };
   };
-  i.StripeApiFp = as;
-  const rs = function(l, n, t) {
-    const r = (0, i.StripeApiFp)(l);
+  l.StripeApiFp = cs;
+  const ds = function(r, c, n) {
+    const i = (0, l.StripeApiFp)(r);
     return {
       /**
-       *  Start the stripe deposit flow
-       * @param {StripeRequest} stripe The deposit that should be created
+       *
+       * @summary Start the stripe deposit flow
+       * @param {StripeRequest} [stripeRequest] The deposit that should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deposit(a, s) {
-        return r.deposit(a, s).then((o) => o(t, n));
-      },
-      /**
-       *  Webhook for Stripe event updates
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      webhook(a) {
-        return r.webhook(a).then((s) => s(t, n));
+      deposit(s, e) {
+        return i.deposit(s, e).then((t) => t(n, c));
       }
     };
   };
-  i.StripeApiFactory = rs;
-  class ns extends p.BaseAPI {
+  l.StripeApiFactory = ds;
+  class us extends v.BaseAPI {
     /**
-     *  Start the stripe deposit flow
-     * @param {StripeRequest} stripe The deposit that should be created
+     *
+     * @summary Start the stripe deposit flow
+     * @param {StripeRequest} [stripeRequest] The deposit that should be created
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof StripeApi
      */
-    deposit(n, t) {
-      return (0, i.StripeApiFp)(this.configuration).deposit(n, t).then((r) => r(this.axios, this.basePath));
-    }
-    /**
-     *  Webhook for Stripe event updates
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof StripeApi
-     */
-    webhook(n) {
-      return (0, i.StripeApiFp)(this.configuration).webhook(n).then((t) => t(this.axios, this.basePath));
+    deposit(c, n) {
+      return (0, l.StripeApiFp)(this.configuration).deposit(c, n).then((i) => i(this.axios, this.basePath));
     }
   }
-  i.StripeApi = ns;
-  const is = function(l) {
+  l.StripeApi = us;
+  const hs = function(r) {
     return {
       /**
-       *  Get a beautiful Hello World email to your inbox
+       *
+       * @summary Get a beautiful Hello World email to your inbox
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      helloworld: (n = {}) => c(this, void 0, void 0, function* () {
-        const t = "/test/helloworld", r = new URL(t, e.DUMMY_BASE_URL);
-        let a;
-        l && (a = l.baseOptions);
-        const s = Object.assign(Object.assign({ method: "POST" }, a), n), o = {}, d = {};
-        yield (0, e.setApiKeyToObject)(o, "Authorization", l), (0, e.setSearchParams)(r, d);
-        let h = a && a.headers ? a.headers : {};
-        return s.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
-          url: (0, e.toPathString)(r),
-          options: s
+      helloworld: (c = {}) => d(this, void 0, void 0, function* () {
+        const n = "/test/helloworld", i = new URL(n, a.DUMMY_BASE_URL);
+        let s;
+        r && (s = r.baseOptions);
+        const e = Object.assign(Object.assign({ method: "POST" }, s), c), t = {}, o = {};
+        yield (0, a.setBearerAuthToObject)(t, r), (0, a.setSearchParams)(i, o);
+        let u = s && s.headers ? s.headers : {};
+        return e.headers = Object.assign(Object.assign(Object.assign({}, t), u), c.headers), {
+          url: (0, a.toPathString)(i),
+          options: e
         };
       })
     };
   };
-  i.TestApiAxiosParamCreator = is;
-  const os = function(l) {
-    const n = (0, i.TestApiAxiosParamCreator)(l);
+  l.TestOperationsOfTheTestControllerApiAxiosParamCreator = hs;
+  const ps = function(r) {
+    const c = (0, l.TestOperationsOfTheTestControllerApiAxiosParamCreator)(r);
     return {
       /**
-       *  Get a beautiful Hello World email to your inbox
+       *
+       * @summary Get a beautiful Hello World email to your inbox
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      helloworld(t) {
-        return c(this, void 0, void 0, function* () {
-          const r = yield n.helloworld(t);
-          return (0, e.createRequestFunction)(r, u.default, p.BASE_PATH, l);
+      helloworld(n) {
+        var i, s, e;
+        return d(this, void 0, void 0, function* () {
+          const t = yield c.helloworld(n), o = (i = r == null ? void 0 : r.serverIndex) !== null && i !== void 0 ? i : 0, u = (e = (s = v.operationServerMap["TestOperationsOfTheTestControllerApi.helloworld"]) === null || s === void 0 ? void 0 : s[o]) === null || e === void 0 ? void 0 : e.url;
+          return (h, A) => (0, a.createRequestFunction)(t, p.default, v.BASE_PATH, r)(h, u || A);
         });
       }
     };
   };
-  i.TestApiFp = os;
-  const cs = function(l, n, t) {
-    const r = (0, i.TestApiFp)(l);
+  l.TestOperationsOfTheTestControllerApiFp = ps;
+  const vs = function(r, c, n) {
+    const i = (0, l.TestOperationsOfTheTestControllerApiFp)(r);
     return {
       /**
-       *  Get a beautiful Hello World email to your inbox
+       *
+       * @summary Get a beautiful Hello World email to your inbox
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      helloworld(a) {
-        return r.helloworld(a).then((s) => s(t, n));
+      helloworld(s) {
+        return i.helloworld(s).then((e) => e(n, c));
       }
     };
   };
-  i.TestApiFactory = cs;
-  class ls extends p.BaseAPI {
+  l.TestOperationsOfTheTestControllerApiFactory = vs;
+  class As extends v.BaseAPI {
     /**
-     *  Get a beautiful Hello World email to your inbox
+     *
+     * @summary Get a beautiful Hello World email to your inbox
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TestApi
+     * @memberof TestOperationsOfTheTestControllerApi
      */
-    helloworld(n) {
-      return (0, i.TestApiFp)(this.configuration).helloworld(n).then((t) => t(this.axios, this.basePath));
+    helloworld(c) {
+      return (0, l.TestOperationsOfTheTestControllerApiFp)(this.configuration).helloworld(c).then((n) => n(this.axios, this.basePath));
     }
   }
-  i.TestApi = ls;
-  const ds = function(l) {
+  l.TestOperationsOfTheTestControllerApi = As;
+  const Os = function(r) {
     return {
       /**
-       *  Creates a new transaction
-       * @param {TransactionRequest} transaction The transaction which should be created
+       *
+       * @summary Creates a new transaction
+       * @param {TransactionRequest} [transactionRequest] The transaction which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createTransaction: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("createTransaction", "transaction", n);
-        const r = "/transactions", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      createTransaction: (c, n = {}) => d(this, void 0, void 0, function* () {
+        const i = "/transactions", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Deletes a transaction
+       *
+       * @summary Deletes a transaction
        * @param {number} id The id of the transaction which should be deleted
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteTransaction: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("deleteTransaction", "id", n);
-        const r = "/transactions/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "DELETE" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      deleteTransaction: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("deleteTransaction", "id", c);
+        const i = "/transactions/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "DELETE" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Get a list of all transactions
+       *
+       * @summary Get a list of all transactions
        * @param {number} [fromId] From-user for selected transactions
        * @param {number} [createdById] User that created selected transaction
        * @param {number} [toId] To-user for selected transactions transactions. Requires ContainerId
@@ -6213,108 +6928,115 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllTransactions: (n, t, r, a, s, o, d, h, A, O, b = {}) => c(this, void 0, void 0, function* () {
-        const F = "/transactions", j = new URL(F, e.DUMMY_BASE_URL);
-        let V;
-        l && (V = l.baseOptions);
-        const I = Object.assign(Object.assign({ method: "GET" }, V), b), X = {}, _ = {};
-        yield (0, e.setApiKeyToObject)(X, "Authorization", l), n !== void 0 && (_.fromId = n), t !== void 0 && (_.createdById = t), r !== void 0 && (_.toId = r), a !== void 0 && (_.pointOfSaleId = a), s !== void 0 && (_.productId = s), o !== void 0 && (_.productRevision = o), d !== void 0 && (_.fromDate = d), h !== void 0 && (_.tillDate = h), A !== void 0 && (_.take = A), O !== void 0 && (_.skip = O), (0, e.setSearchParams)(j, _);
-        let Pe = V && V.headers ? V.headers : {};
-        return I.headers = Object.assign(Object.assign(Object.assign({}, X), Pe), b.headers), {
-          url: (0, e.toPathString)(j),
-          options: I
+      getAllTransactions: (c, n, i, s, e, t, o, u, h, A, O = {}) => d(this, void 0, void 0, function* () {
+        const m = "/transactions", f = new URL(m, a.DUMMY_BASE_URL);
+        let j;
+        r && (j = r.baseOptions);
+        const V = Object.assign(Object.assign({ method: "GET" }, j), O), F = {}, B = {};
+        yield (0, a.setBearerAuthToObject)(F, r), c !== void 0 && (B.fromId = c), n !== void 0 && (B.createdById = n), i !== void 0 && (B.toId = i), s !== void 0 && (B.pointOfSaleId = s), e !== void 0 && (B.productId = e), t !== void 0 && (B.productRevision = t), o !== void 0 && (B.fromDate = o), u !== void 0 && (B.tillDate = u), h !== void 0 && (B.take = h), A !== void 0 && (B.skip = A), (0, a.setSearchParams)(f, B);
+        let I = j && j.headers ? j.headers : {};
+        return V.headers = Object.assign(Object.assign(Object.assign({}, F), I), O.headers), {
+          url: (0, a.toPathString)(f),
+          options: V
         };
       }),
       /**
-       *  Get a single transaction
+       *
+       * @summary Get a single transaction
        * @param {number} id The id of the transaction which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleTransaction: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getSingleTransaction", "id", n);
-        const r = "/transactions/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      getSingleTransaction: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getSingleTransaction", "id", c);
+        const i = "/transactions/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Updates the requested transaction
+       *
+       * @summary Updates the requested transaction
        * @param {number} id The id of the transaction which should be updated
-       * @param {TransactionRequest} transaction The updated transaction
+       * @param {TransactionRequest} [transactionRequest] The updated transaction
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateTransaction: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("updateTransaction", "id", n), (0, e.assertParamExists)("updateTransaction", "transaction", t);
-        const a = "/transactions/{id}".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "PATCH" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), h["Content-Type"] = "application/json", (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), d.data = (0, e.serializeDataIfNeeded)(t, d, l), {
-          url: (0, e.toPathString)(s),
-          options: d
+      updateTransaction: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateTransaction", "id", c);
+        const s = "/transactions/{id}".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "PATCH" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), o.data = (0, a.serializeDataIfNeeded)(n, o, r), {
+          url: (0, a.toPathString)(e),
+          options: o
         };
       }),
       /**
-       *  Function to validate the transaction immediatly after it is created
-       * @param {TransactionRequest} transaction The transaction which should be validated
+       *
+       * @summary Function to validate the transaction immediatly after it is created
+       * @param {TransactionRequest} [transactionRequest] The transaction which should be validated
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      validateTransaction: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("validateTransaction", "transaction", n);
-        const r = "/transactions/validate", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      validateTransaction: (c, n = {}) => d(this, void 0, void 0, function* () {
+        const i = "/transactions/validate", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       })
     };
   };
-  i.TransactionsApiAxiosParamCreator = ds;
-  const us = function(l) {
-    const n = (0, i.TransactionsApiAxiosParamCreator)(l);
+  l.TransactionsApiAxiosParamCreator = Os;
+  const Ps = function(r) {
+    const c = (0, l.TransactionsApiAxiosParamCreator)(r);
     return {
       /**
-       *  Creates a new transaction
-       * @param {TransactionRequest} transaction The transaction which should be created
+       *
+       * @summary Creates a new transaction
+       * @param {TransactionRequest} [transactionRequest] The transaction which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createTransaction(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.createTransaction(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      createTransaction(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.createTransaction(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["TransactionsApi.createTransaction"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Deletes a transaction
+       *
+       * @summary Deletes a transaction
        * @param {number} id The id of the transaction which should be deleted
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteTransaction(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.deleteTransaction(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      deleteTransaction(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.deleteTransaction(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["TransactionsApi.deleteTransaction"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Get a list of all transactions
+       *
+       * @summary Get a list of all transactions
        * @param {number} [fromId] From-user for selected transactions
        * @param {number} [createdById] User that created selected transaction
        * @param {number} [toId] To-user for selected transactions transactions. Requires ContainerId
@@ -6328,75 +7050,85 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllTransactions(t, r, a, s, o, d, h, A, O, b, F) {
-        return c(this, void 0, void 0, function* () {
-          const j = yield n.getAllTransactions(t, r, a, s, o, d, h, A, O, b, F);
-          return (0, e.createRequestFunction)(j, u.default, p.BASE_PATH, l);
+      getAllTransactions(n, i, s, e, t, o, u, h, A, O, m) {
+        var f, j, V;
+        return d(this, void 0, void 0, function* () {
+          const F = yield c.getAllTransactions(n, i, s, e, t, o, u, h, A, O, m), B = (f = r == null ? void 0 : r.serverIndex) !== null && f !== void 0 ? f : 0, I = (V = (j = v.operationServerMap["TransactionsApi.getAllTransactions"]) === null || j === void 0 ? void 0 : j[B]) === null || V === void 0 ? void 0 : V.url;
+          return (X, te) => (0, a.createRequestFunction)(F, p.default, v.BASE_PATH, r)(X, I || te);
         });
       },
       /**
-       *  Get a single transaction
+       *
+       * @summary Get a single transaction
        * @param {number} id The id of the transaction which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleTransaction(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getSingleTransaction(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      getSingleTransaction(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getSingleTransaction(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["TransactionsApi.getSingleTransaction"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Updates the requested transaction
+       *
+       * @summary Updates the requested transaction
        * @param {number} id The id of the transaction which should be updated
-       * @param {TransactionRequest} transaction The updated transaction
+       * @param {TransactionRequest} [transactionRequest] The updated transaction
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateTransaction(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.updateTransaction(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      updateTransaction(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.updateTransaction(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["TransactionsApi.updateTransaction"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       },
       /**
-       *  Function to validate the transaction immediatly after it is created
-       * @param {TransactionRequest} transaction The transaction which should be validated
+       *
+       * @summary Function to validate the transaction immediatly after it is created
+       * @param {TransactionRequest} [transactionRequest] The transaction which should be validated
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      validateTransaction(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.validateTransaction(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      validateTransaction(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.validateTransaction(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["TransactionsApi.validateTransaction"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       }
     };
   };
-  i.TransactionsApiFp = us;
-  const hs = function(l, n, t) {
-    const r = (0, i.TransactionsApiFp)(l);
+  l.TransactionsApiFp = Ps;
+  const bs = function(r, c, n) {
+    const i = (0, l.TransactionsApiFp)(r);
     return {
       /**
-       *  Creates a new transaction
-       * @param {TransactionRequest} transaction The transaction which should be created
+       *
+       * @summary Creates a new transaction
+       * @param {TransactionRequest} [transactionRequest] The transaction which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createTransaction(a, s) {
-        return r.createTransaction(a, s).then((o) => o(t, n));
+      createTransaction(s, e) {
+        return i.createTransaction(s, e).then((t) => t(n, c));
       },
       /**
-       *  Deletes a transaction
+       *
+       * @summary Deletes a transaction
        * @param {number} id The id of the transaction which should be deleted
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteTransaction(a, s) {
-        return r.deleteTransaction(a, s).then((o) => o(t, n));
+      deleteTransaction(s, e) {
+        return i.deleteTransaction(s, e).then((t) => t(n, c));
       },
       /**
-       *  Get a list of all transactions
+       *
+       * @summary Get a list of all transactions
        * @param {number} [fromId] From-user for selected transactions
        * @param {number} [createdById] User that created selected transaction
        * @param {number} [toId] To-user for selected transactions transactions. Requires ContainerId
@@ -6410,63 +7142,69 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllTransactions(a, s, o, d, h, A, O, b, F, j, V) {
-        return r.getAllTransactions(a, s, o, d, h, A, O, b, F, j, V).then((I) => I(t, n));
+      getAllTransactions(s, e, t, o, u, h, A, O, m, f, j) {
+        return i.getAllTransactions(s, e, t, o, u, h, A, O, m, f, j).then((V) => V(n, c));
       },
       /**
-       *  Get a single transaction
+       *
+       * @summary Get a single transaction
        * @param {number} id The id of the transaction which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleTransaction(a, s) {
-        return r.getSingleTransaction(a, s).then((o) => o(t, n));
+      getSingleTransaction(s, e) {
+        return i.getSingleTransaction(s, e).then((t) => t(n, c));
       },
       /**
-       *  Updates the requested transaction
+       *
+       * @summary Updates the requested transaction
        * @param {number} id The id of the transaction which should be updated
-       * @param {TransactionRequest} transaction The updated transaction
+       * @param {TransactionRequest} [transactionRequest] The updated transaction
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateTransaction(a, s, o) {
-        return r.updateTransaction(a, s, o).then((d) => d(t, n));
+      updateTransaction(s, e, t) {
+        return i.updateTransaction(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Function to validate the transaction immediatly after it is created
-       * @param {TransactionRequest} transaction The transaction which should be validated
+       *
+       * @summary Function to validate the transaction immediatly after it is created
+       * @param {TransactionRequest} [transactionRequest] The transaction which should be validated
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      validateTransaction(a, s) {
-        return r.validateTransaction(a, s).then((o) => o(t, n));
+      validateTransaction(s, e) {
+        return i.validateTransaction(s, e).then((t) => t(n, c));
       }
     };
   };
-  i.TransactionsApiFactory = hs;
-  class ps extends p.BaseAPI {
+  l.TransactionsApiFactory = bs;
+  class ms extends v.BaseAPI {
     /**
-     *  Creates a new transaction
-     * @param {TransactionRequest} transaction The transaction which should be created
+     *
+     * @summary Creates a new transaction
+     * @param {TransactionRequest} [transactionRequest] The transaction which should be created
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TransactionsApi
      */
-    createTransaction(n, t) {
-      return (0, i.TransactionsApiFp)(this.configuration).createTransaction(n, t).then((r) => r(this.axios, this.basePath));
+    createTransaction(c, n) {
+      return (0, l.TransactionsApiFp)(this.configuration).createTransaction(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Deletes a transaction
+     *
+     * @summary Deletes a transaction
      * @param {number} id The id of the transaction which should be deleted
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TransactionsApi
      */
-    deleteTransaction(n, t) {
-      return (0, i.TransactionsApiFp)(this.configuration).deleteTransaction(n, t).then((r) => r(this.axios, this.basePath));
+    deleteTransaction(c, n) {
+      return (0, l.TransactionsApiFp)(this.configuration).deleteTransaction(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Get a list of all transactions
+     *
+     * @summary Get a list of all transactions
      * @param {number} [fromId] From-user for selected transactions
      * @param {number} [createdById] User that created selected transaction
      * @param {number} [toId] To-user for selected transactions transactions. Requires ContainerId
@@ -6481,557 +7219,592 @@ C.createRequestFunction = Vr;
      * @throws {RequiredError}
      * @memberof TransactionsApi
      */
-    getAllTransactions(n, t, r, a, s, o, d, h, A, O, b) {
-      return (0, i.TransactionsApiFp)(this.configuration).getAllTransactions(n, t, r, a, s, o, d, h, A, O, b).then((F) => F(this.axios, this.basePath));
+    getAllTransactions(c, n, i, s, e, t, o, u, h, A, O) {
+      return (0, l.TransactionsApiFp)(this.configuration).getAllTransactions(c, n, i, s, e, t, o, u, h, A, O).then((m) => m(this.axios, this.basePath));
     }
     /**
-     *  Get a single transaction
+     *
+     * @summary Get a single transaction
      * @param {number} id The id of the transaction which should be returned
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TransactionsApi
      */
-    getSingleTransaction(n, t) {
-      return (0, i.TransactionsApiFp)(this.configuration).getSingleTransaction(n, t).then((r) => r(this.axios, this.basePath));
+    getSingleTransaction(c, n) {
+      return (0, l.TransactionsApiFp)(this.configuration).getSingleTransaction(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Updates the requested transaction
+     *
+     * @summary Updates the requested transaction
      * @param {number} id The id of the transaction which should be updated
-     * @param {TransactionRequest} transaction The updated transaction
+     * @param {TransactionRequest} [transactionRequest] The updated transaction
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TransactionsApi
      */
-    updateTransaction(n, t, r) {
-      return (0, i.TransactionsApiFp)(this.configuration).updateTransaction(n, t, r).then((a) => a(this.axios, this.basePath));
+    updateTransaction(c, n, i) {
+      return (0, l.TransactionsApiFp)(this.configuration).updateTransaction(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Function to validate the transaction immediatly after it is created
-     * @param {TransactionRequest} transaction The transaction which should be validated
+     *
+     * @summary Function to validate the transaction immediatly after it is created
+     * @param {TransactionRequest} [transactionRequest] The transaction which should be validated
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TransactionsApi
      */
-    validateTransaction(n, t) {
-      return (0, i.TransactionsApiFp)(this.configuration).validateTransaction(n, t).then((r) => r(this.axios, this.basePath));
+    validateTransaction(c, n) {
+      return (0, l.TransactionsApiFp)(this.configuration).validateTransaction(c, n).then((i) => i(this.axios, this.basePath));
     }
   }
-  i.TransactionsApi = ps;
-  const As = function(l) {
+  l.TransactionsApi = ms;
+  const Ss = function(r) {
     return {
       /**
-       *  Post a new transfer.
-       * @param {TransferRequest} transfer The transfer which should be created
+       *
+       * @summary Post a new transfer.
+       * @param {TransferRequest} [transferRequest] The transfer which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createTransfer: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("createTransfer", "transfer", n);
-        const r = "/transfers", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      createTransfer: (c, n = {}) => d(this, void 0, void 0, function* () {
+        const i = "/transfers", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Returns all existing transfers
+       *
+       * @summary Returns all existing transfers
        * @param {number} [take] How many transfers the endpoint should return
        * @param {number} [skip] How many transfers should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllTransfers: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        const a = "/transfers", s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "GET" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), n !== void 0 && (A.take = n), t !== void 0 && (A.skip = t), (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), {
-          url: (0, e.toPathString)(s),
-          options: d
+      getAllTransfers: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        const s = "/transfers", e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "GET" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), c !== void 0 && (h.take = c), n !== void 0 && (h.skip = n), (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), {
+          url: (0, a.toPathString)(e),
+          options: o
         };
       }),
       /**
-       *  Returns the requested transfer
+       *
+       * @summary Returns the requested transfer
        * @param {number} id The id of the transfer which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleTransfer: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getSingleTransfer", "id", n);
-        const r = "/transfers/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      getSingleTransfer: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getSingleTransfer", "id", c);
+        const i = "/transfers/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       })
     };
   };
-  i.TransfersApiAxiosParamCreator = As;
-  const Os = function(l) {
-    const n = (0, i.TransfersApiAxiosParamCreator)(l);
+  l.TransfersApiAxiosParamCreator = Ss;
+  const fs = function(r) {
+    const c = (0, l.TransfersApiAxiosParamCreator)(r);
     return {
       /**
-       *  Post a new transfer.
-       * @param {TransferRequest} transfer The transfer which should be created
+       *
+       * @summary Post a new transfer.
+       * @param {TransferRequest} [transferRequest] The transfer which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createTransfer(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.createTransfer(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      createTransfer(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.createTransfer(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["TransfersApi.createTransfer"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Returns all existing transfers
+       *
+       * @summary Returns all existing transfers
        * @param {number} [take] How many transfers the endpoint should return
        * @param {number} [skip] How many transfers should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllTransfers(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.getAllTransfers(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      getAllTransfers(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.getAllTransfers(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["TransfersApi.getAllTransfers"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       },
       /**
-       *  Returns the requested transfer
+       *
+       * @summary Returns the requested transfer
        * @param {number} id The id of the transfer which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleTransfer(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getSingleTransfer(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      getSingleTransfer(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getSingleTransfer(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["TransfersApi.getSingleTransfer"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       }
     };
   };
-  i.TransfersApiFp = Os;
-  const Ps = function(l, n, t) {
-    const r = (0, i.TransfersApiFp)(l);
+  l.TransfersApiFp = fs;
+  const gs = function(r, c, n) {
+    const i = (0, l.TransfersApiFp)(r);
     return {
       /**
-       *  Post a new transfer.
-       * @param {TransferRequest} transfer The transfer which should be created
+       *
+       * @summary Post a new transfer.
+       * @param {TransferRequest} [transferRequest] The transfer which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createTransfer(a, s) {
-        return r.createTransfer(a, s).then((o) => o(t, n));
+      createTransfer(s, e) {
+        return i.createTransfer(s, e).then((t) => t(n, c));
       },
       /**
-       *  Returns all existing transfers
+       *
+       * @summary Returns all existing transfers
        * @param {number} [take] How many transfers the endpoint should return
        * @param {number} [skip] How many transfers should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllTransfers(a, s, o) {
-        return r.getAllTransfers(a, s, o).then((d) => d(t, n));
+      getAllTransfers(s, e, t) {
+        return i.getAllTransfers(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Returns the requested transfer
+       *
+       * @summary Returns the requested transfer
        * @param {number} id The id of the transfer which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleTransfer(a, s) {
-        return r.getSingleTransfer(a, s).then((o) => o(t, n));
+      getSingleTransfer(s, e) {
+        return i.getSingleTransfer(s, e).then((t) => t(n, c));
       }
     };
   };
-  i.TransfersApiFactory = Ps;
-  class gs extends p.BaseAPI {
+  l.TransfersApiFactory = gs;
+  class js extends v.BaseAPI {
     /**
-     *  Post a new transfer.
-     * @param {TransferRequest} transfer The transfer which should be created
+     *
+     * @summary Post a new transfer.
+     * @param {TransferRequest} [transferRequest] The transfer which should be created
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TransfersApi
      */
-    createTransfer(n, t) {
-      return (0, i.TransfersApiFp)(this.configuration).createTransfer(n, t).then((r) => r(this.axios, this.basePath));
+    createTransfer(c, n) {
+      return (0, l.TransfersApiFp)(this.configuration).createTransfer(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Returns all existing transfers
+     *
+     * @summary Returns all existing transfers
      * @param {number} [take] How many transfers the endpoint should return
      * @param {number} [skip] How many transfers should be skipped (for pagination)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TransfersApi
      */
-    getAllTransfers(n, t, r) {
-      return (0, i.TransfersApiFp)(this.configuration).getAllTransfers(n, t, r).then((a) => a(this.axios, this.basePath));
+    getAllTransfers(c, n, i) {
+      return (0, l.TransfersApiFp)(this.configuration).getAllTransfers(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Returns the requested transfer
+     *
+     * @summary Returns the requested transfer
      * @param {number} id The id of the transfer which should be returned
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TransfersApi
      */
-    getSingleTransfer(n, t) {
-      return (0, i.TransfersApiFp)(this.configuration).getSingleTransfer(n, t).then((r) => r(this.axios, this.basePath));
+    getSingleTransfer(c, n) {
+      return (0, l.TransfersApiFp)(this.configuration).getSingleTransfer(c, n).then((i) => i(this.axios, this.basePath));
     }
   }
-  i.TransfersApi = gs;
-  const fs = function(l) {
+  l.TransfersApi = js;
+  const Us = function(r) {
     return {
       /**
-       *  Accept the Terms of Service if you have not accepted it yet
-       * @param {AcceptTosRequest} params \&quot;Tosrequest body\&quot;
+       *
+       * @summary Accept the Terms of Service if you have not accepted it yet
+       * @param {AcceptTosRequest} [acceptTosRequest] \&quot;Tosrequest body\&quot;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      acceptTos: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("acceptTos", "params", n);
-        const r = "/users/acceptTos", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      acceptTos: (c, n = {}) => d(this, void 0, void 0, function* () {
+        const i = "/users/acceptTos", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Authenticate as another user
+       *
+       * @summary Authenticate as another user
        * @param {number} id The id of the user that should be authenticated as
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      authenticateAs: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("authenticateAs", "id", n);
-        const r = "/users/{id}/authenticate".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      authenticateAs: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("authenticateAs", "id", c);
+        const i = "/users/{id}/authenticate".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Create a new user
-       * @param {CreateUserRequest} user The user which should be created
+       *
+       * @summary Create a new user
+       * @param {CreateUserRequest} [createUserRequest] The user which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createUser: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("createUser", "user", n);
-        const r = "/users", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      createUser: (c, n = {}) => d(this, void 0, void 0, function* () {
+        const i = "/users", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Delete a single user
+       *
+       * @summary Delete a single user
        * @param {number} id The id of the user
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteUser: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("deleteUser", "id", n);
-        const r = "/users/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "DELETE" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      deleteUser: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("deleteUser", "id", c);
+        const i = "/users/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "DELETE" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Delete a users key code
+       *
+       * @summary Delete a users key code
        * @param {number} id The id of the user
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteUserKey: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("deleteUserKey", "id", n);
-        const r = "/users/{id}/authenticator/key".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "DELETE" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      deleteUserKey: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("deleteUserKey", "id", c);
+        const i = "/users/{id}/authenticator/key".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "DELETE" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Delete a nfc code
+       *
+       * @summary Delete a nfc code
        * @param {number} id The id of the user
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteUserNfc: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("deleteUserNfc", "id", n);
-        const r = "/users/{id}/authenticator/nfc".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "DELETE" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      deleteUserNfc: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("deleteUserNfc", "id", c);
+        const i = "/users/{id}/authenticator/nfc".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "DELETE" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Get a list of all users
+       *
+       * @summary Get a list of all users
        * @param {number} [take] How many users the endpoint should return
        * @param {number} [skip] How many users should be skipped (for pagination)
        * @param {string} [search] Filter based on first name
        * @param {boolean} [active] Filter based if the user is active
        * @param {boolean} [ofAge] Filter based if the user is 18+
        * @param {number} [id] Filter based on user ID
-       * @param {number} [type] {1,2,3,4,5,6,7} - Filter based on user type. Possible values:      1 (MEMBER), 2 (ORGAN), 3 (BORRELKAART), 4 (LOCAL_USER), 5 (LOCAL_ADMIN), 6 (INVOICE), 7 (AUTOMATIC_INVOICE)
+       * @param {GetAllUsersTypeEnum} [type] Filter based on user type.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllUsers: (n, t, r, a, s, o, d, h = {}) => c(this, void 0, void 0, function* () {
-        const A = "/users", O = new URL(A, e.DUMMY_BASE_URL);
-        let b;
-        l && (b = l.baseOptions);
-        const F = Object.assign(Object.assign({ method: "GET" }, b), h), j = {}, V = {};
-        yield (0, e.setApiKeyToObject)(j, "Authorization", l), n !== void 0 && (V.take = n), t !== void 0 && (V.skip = t), r !== void 0 && (V.search = r), a !== void 0 && (V.active = a), s !== void 0 && (V.ofAge = s), o !== void 0 && (V.id = o), d !== void 0 && (V.type = d), (0, e.setSearchParams)(O, V);
-        let I = b && b.headers ? b.headers : {};
-        return F.headers = Object.assign(Object.assign(Object.assign({}, j), I), h.headers), {
-          url: (0, e.toPathString)(O),
-          options: F
+      getAllUsers: (c, n, i, s, e, t, o, u = {}) => d(this, void 0, void 0, function* () {
+        const h = "/users", A = new URL(h, a.DUMMY_BASE_URL);
+        let O;
+        r && (O = r.baseOptions);
+        const m = Object.assign(Object.assign({ method: "GET" }, O), u), f = {}, j = {};
+        yield (0, a.setBearerAuthToObject)(f, r), c !== void 0 && (j.take = c), n !== void 0 && (j.skip = n), i !== void 0 && (j.search = i), s !== void 0 && (j.active = s), e !== void 0 && (j.ofAge = e), t !== void 0 && (j.id = t), o !== void 0 && (j.type = o), (0, a.setSearchParams)(A, j);
+        let V = O && O.headers ? O.headers : {};
+        return m.headers = Object.assign(Object.assign(Object.assign({}, f), V), u.headers), {
+          url: (0, a.toPathString)(A),
+          options: m
         };
       }),
       /**
-       *  Get all users of user type
+       *
+       * @summary Get all users of user type
        * @param {string} userType The userType of the requested users
        * @param {number} [take] How many users the endpoint should return
        * @param {number} [skip] How many users should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllUsersOfUserType: (n, t, r, a = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getAllUsersOfUserType", "userType", n);
-        const s = "/users/usertype/{userType}".replace("{userType}", encodeURIComponent(String(n))), o = new URL(s, e.DUMMY_BASE_URL);
-        let d;
-        l && (d = l.baseOptions);
-        const h = Object.assign(Object.assign({ method: "GET" }, d), a), A = {}, O = {};
-        yield (0, e.setApiKeyToObject)(A, "Authorization", l), t !== void 0 && (O.take = t), r !== void 0 && (O.skip = r), (0, e.setSearchParams)(o, O);
-        let b = d && d.headers ? d.headers : {};
-        return h.headers = Object.assign(Object.assign(Object.assign({}, A), b), a.headers), {
-          url: (0, e.toPathString)(o),
-          options: h
+      getAllUsersOfUserType: (c, n, i, s = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getAllUsersOfUserType", "userType", c);
+        const e = "/users/usertype/{userType}".replace("{userType}", encodeURIComponent(String(c))), t = new URL(e, a.DUMMY_BASE_URL);
+        let o;
+        r && (o = r.baseOptions);
+        const u = Object.assign(Object.assign({ method: "GET" }, o), s), h = {}, A = {};
+        yield (0, a.setBearerAuthToObject)(h, r), n !== void 0 && (A.take = n), i !== void 0 && (A.skip = i), (0, a.setSearchParams)(t, A);
+        let O = o && o.headers ? o.headers : {};
+        return u.headers = Object.assign(Object.assign(Object.assign({}, h), O), s.headers), {
+          url: (0, a.toPathString)(t),
+          options: u
         };
       }),
       /**
-       *  Get an individual user
+       *
+       * @summary Get an individual user
        * @param {number} id userID
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getIndividualUser: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getIndividualUser", "id", n);
-        const r = "/users/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      getIndividualUser: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getIndividualUser", "id", c);
+        const i = "/users/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Get an organs members
+       *
+       * @summary Get an organs members
        * @param {number} id The id of the user
+       * @param {number} [take] How many members the endpoint should return
+       * @param {number} [skip] How many members should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getOrganMembers: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getOrganMembers", "id", n);
-        const r = "/users/{id}/members".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      getOrganMembers: (c, n, i, s = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getOrganMembers", "id", c);
+        const e = "/users/{id}/members".replace("{id}", encodeURIComponent(String(c))), t = new URL(e, a.DUMMY_BASE_URL);
+        let o;
+        r && (o = r.baseOptions);
+        const u = Object.assign(Object.assign({ method: "GET" }, o), s), h = {}, A = {};
+        yield (0, a.setBearerAuthToObject)(h, r), n !== void 0 && (A.take = n), i !== void 0 && (A.skip = i), (0, a.setSearchParams)(t, A);
+        let O = o && o.headers ? o.headers : {};
+        return u.headers = Object.assign(Object.assign(Object.assign({}, h), O), s.headers), {
+          url: (0, a.toPathString)(t),
+          options: u
         };
       }),
       /**
-       *  Get all users that the user can authenticate as
+       *
+       * @summary Get all users that the user can authenticate as
        * @param {number} id The id of the user to get authentications of
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUserAuthenticatable: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getUserAuthenticatable", "id", n);
-        const r = "/users/{id}/authenticate".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      getUserAuthenticatable: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getUserAuthenticatable", "id", c);
+        const i = "/users/{id}/authenticate".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Get all roles assigned to the user.
+       *
+       * @summary Get all roles assigned to the user.
        * @param {number} id The id of the user to get the roles from
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUserRoles: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getUserRoles", "id", n);
-        const r = "/users/{id}/roles".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      getUserRoles: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getUserRoles", "id", c);
+        const i = "/users/{id}/roles".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Returns the user\'s containers
+       *
+       * @summary Returns the user\'s containers
        * @param {number} id The id of the user
        * @param {number} [take] How many containers the endpoint should return
        * @param {number} [skip] How many containers should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersContainers: (n, t, r, a = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getUsersContainers", "id", n);
-        const s = "/users/{id}/containers".replace("{id}", encodeURIComponent(String(n))), o = new URL(s, e.DUMMY_BASE_URL);
-        let d;
-        l && (d = l.baseOptions);
-        const h = Object.assign(Object.assign({ method: "GET" }, d), a), A = {}, O = {};
-        yield (0, e.setApiKeyToObject)(A, "Authorization", l), t !== void 0 && (O.take = t), r !== void 0 && (O.skip = r), (0, e.setSearchParams)(o, O);
-        let b = d && d.headers ? d.headers : {};
-        return h.headers = Object.assign(Object.assign(Object.assign({}, A), b), a.headers), {
-          url: (0, e.toPathString)(o),
-          options: h
+      getUsersContainers: (c, n, i, s = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getUsersContainers", "id", c);
+        const e = "/users/{id}/containers".replace("{id}", encodeURIComponent(String(c))), t = new URL(e, a.DUMMY_BASE_URL);
+        let o;
+        r && (o = r.baseOptions);
+        const u = Object.assign(Object.assign({ method: "GET" }, o), s), h = {}, A = {};
+        yield (0, a.setBearerAuthToObject)(h, r), n !== void 0 && (A.take = n), i !== void 0 && (A.skip = i), (0, a.setSearchParams)(t, A);
+        let O = o && o.headers ? o.headers : {};
+        return u.headers = Object.assign(Object.assign(Object.assign({}, h), O), s.headers), {
+          url: (0, a.toPathString)(t),
+          options: u
         };
       }),
       /**
-       *  Get all financial mutations of a user.
+       *
+       * @summary Get all financial mutations of a user.
        * @param {number} id The id of the user to get the mutations from
        * @param {number} [take] How many transactions the endpoint should return
        * @param {number} [skip] How many transactions should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersFinancialMutations: (n, t, r, a = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getUsersFinancialMutations", "id", n);
-        const s = "/users/{id}/financialmutations".replace("{id}", encodeURIComponent(String(n))), o = new URL(s, e.DUMMY_BASE_URL);
-        let d;
-        l && (d = l.baseOptions);
-        const h = Object.assign(Object.assign({ method: "GET" }, d), a), A = {}, O = {};
-        yield (0, e.setApiKeyToObject)(A, "Authorization", l), t !== void 0 && (O.take = t), r !== void 0 && (O.skip = r), (0, e.setSearchParams)(o, O);
-        let b = d && d.headers ? d.headers : {};
-        return h.headers = Object.assign(Object.assign(Object.assign({}, A), b), a.headers), {
-          url: (0, e.toPathString)(o),
-          options: h
+      getUsersFinancialMutations: (c, n, i, s = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getUsersFinancialMutations", "id", c);
+        const e = "/users/{id}/financialmutations".replace("{id}", encodeURIComponent(String(c))), t = new URL(e, a.DUMMY_BASE_URL);
+        let o;
+        r && (o = r.baseOptions);
+        const u = Object.assign(Object.assign({ method: "GET" }, o), s), h = {}, A = {};
+        yield (0, a.setBearerAuthToObject)(h, r), n !== void 0 && (A.take = n), i !== void 0 && (A.skip = i), (0, a.setSearchParams)(t, A);
+        let O = o && o.headers ? o.headers : {};
+        return u.headers = Object.assign(Object.assign(Object.assign({}, h), O), s.headers), {
+          url: (0, a.toPathString)(t),
+          options: u
         };
       }),
       /**
-       *  Returns the user\'s Points of Sale
+       *
+       * @summary Returns the user\'s Points of Sale
        * @param {number} id The id of the user
        * @param {number} [take] How many points of sale the endpoint should return
        * @param {number} [skip] How many points of sale should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersPointsOfSale: (n, t, r, a = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getUsersPointsOfSale", "id", n);
-        const s = "/users/{id}/pointsofsale".replace("{id}", encodeURIComponent(String(n))), o = new URL(s, e.DUMMY_BASE_URL);
-        let d;
-        l && (d = l.baseOptions);
-        const h = Object.assign(Object.assign({ method: "GET" }, d), a), A = {}, O = {};
-        yield (0, e.setApiKeyToObject)(A, "Authorization", l), t !== void 0 && (O.take = t), r !== void 0 && (O.skip = r), (0, e.setSearchParams)(o, O);
-        let b = d && d.headers ? d.headers : {};
-        return h.headers = Object.assign(Object.assign(Object.assign({}, A), b), a.headers), {
-          url: (0, e.toPathString)(o),
-          options: h
+      getUsersPointsOfSale: (c, n, i, s = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getUsersPointsOfSale", "id", c);
+        const e = "/users/{id}/pointsofsale".replace("{id}", encodeURIComponent(String(c))), t = new URL(e, a.DUMMY_BASE_URL);
+        let o;
+        r && (o = r.baseOptions);
+        const u = Object.assign(Object.assign({ method: "GET" }, o), s), h = {}, A = {};
+        yield (0, a.setBearerAuthToObject)(h, r), n !== void 0 && (A.take = n), i !== void 0 && (A.skip = i), (0, a.setSearchParams)(t, A);
+        let O = o && o.headers ? o.headers : {};
+        return u.headers = Object.assign(Object.assign(Object.assign({}, h), O), s.headers), {
+          url: (0, a.toPathString)(t),
+          options: u
         };
       }),
       /**
-       *  Get all deposits of a user that are still being processed by Stripe
+       *
+       * @summary Get all deposits of a user that are still being processed by Stripe
        * @param {number} id The id of the user to get the deposits from
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersProcessingDeposits: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getUsersProcessingDeposits", "id", n);
-        const r = "/users/{id}/deposits".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      getUsersProcessingDeposits: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getUsersProcessingDeposits", "id", c);
+        const i = "/users/{id}/deposits".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Get an user\'s products
+       *
+       * @summary Get an user\'s products
        * @param {number} id The id of the user
        * @param {number} [take] How many products the endpoint should return
        * @param {number} [skip] How many products should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersProducts: (n, t, r, a = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getUsersProducts", "id", n);
-        const s = "/users/{id}/products".replace("{id}", encodeURIComponent(String(n))), o = new URL(s, e.DUMMY_BASE_URL);
-        let d;
-        l && (d = l.baseOptions);
-        const h = Object.assign(Object.assign({ method: "GET" }, d), a), A = {}, O = {};
-        yield (0, e.setApiKeyToObject)(A, "Authorization", l), t !== void 0 && (O.take = t), r !== void 0 && (O.skip = r), (0, e.setSearchParams)(o, O);
-        let b = d && d.headers ? d.headers : {};
-        return h.headers = Object.assign(Object.assign(Object.assign({}, A), b), a.headers), {
-          url: (0, e.toPathString)(o),
-          options: h
+      getUsersProducts: (c, n, i, s = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getUsersProducts", "id", c);
+        const e = "/users/{id}/products".replace("{id}", encodeURIComponent(String(c))), t = new URL(e, a.DUMMY_BASE_URL);
+        let o;
+        r && (o = r.baseOptions);
+        const u = Object.assign(Object.assign({ method: "GET" }, o), s), h = {}, A = {};
+        yield (0, a.setBearerAuthToObject)(h, r), n !== void 0 && (A.take = n), i !== void 0 && (A.skip = i), (0, a.setSearchParams)(t, A);
+        let O = o && o.headers ? o.headers : {};
+        return u.headers = Object.assign(Object.assign(Object.assign({}, h), O), s.headers), {
+          url: (0, a.toPathString)(t),
+          options: u
         };
       }),
       /**
-       *  Get an user\'s transactions (from, to or created)
+       *
+       * @summary Get an user\'s transactions (from, to or created)
        * @param {number} id The id of the user that should be involved in all returned transactions
        * @param {number} [fromId] From-user for selected transactions
        * @param {number} [createdById] User that created selected transaction
@@ -7045,21 +7818,22 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactions: (n, t, r, a, s, o, d, h, A, O, b = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getUsersTransactions", "id", n);
-        const F = "/users/{id}/transactions".replace("{id}", encodeURIComponent(String(n))), j = new URL(F, e.DUMMY_BASE_URL);
-        let V;
-        l && (V = l.baseOptions);
-        const I = Object.assign(Object.assign({ method: "GET" }, V), b), X = {}, _ = {};
-        yield (0, e.setApiKeyToObject)(X, "Authorization", l), t !== void 0 && (_.fromId = t), r !== void 0 && (_.createdById = r), a !== void 0 && (_.toId = a), s !== void 0 && (_.productId = s), o !== void 0 && (_.productRevision = o), d !== void 0 && (_.fromDate = d), h !== void 0 && (_.tillDate = h), A !== void 0 && (_.take = A), O !== void 0 && (_.skip = O), (0, e.setSearchParams)(j, _);
-        let Pe = V && V.headers ? V.headers : {};
-        return I.headers = Object.assign(Object.assign(Object.assign({}, X), Pe), b.headers), {
-          url: (0, e.toPathString)(j),
-          options: I
+      getUsersTransactions: (c, n, i, s, e, t, o, u, h, A, O = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getUsersTransactions", "id", c);
+        const m = "/users/{id}/transactions".replace("{id}", encodeURIComponent(String(c))), f = new URL(m, a.DUMMY_BASE_URL);
+        let j;
+        r && (j = r.baseOptions);
+        const V = Object.assign(Object.assign({ method: "GET" }, j), O), F = {}, B = {};
+        yield (0, a.setBearerAuthToObject)(F, r), n !== void 0 && (B.fromId = n), i !== void 0 && (B.createdById = i), s !== void 0 && (B.toId = s), e !== void 0 && (B.productId = e), t !== void 0 && (B.productRevision = t), o !== void 0 && (B.fromDate = o), u !== void 0 && (B.tillDate = u), h !== void 0 && (B.take = h), A !== void 0 && (B.skip = A), (0, a.setSearchParams)(f, B);
+        let I = j && j.headers ? j.headers : {};
+        return V.headers = Object.assign(Object.assign(Object.assign({}, F), I), O.headers), {
+          url: (0, a.toPathString)(f),
+          options: V
         };
       }),
       /**
-       *  Get transaction report for the given user
+       *
+       * @summary Get transaction report for the given user
        * @param {number} id The id of the user to get the transaction report from
        * @param {string} [fromDate] Start date for selected transactions (inclusive)
        * @param {string} [tillDate] End date for selected transactions (exclusive)
@@ -7069,21 +7843,22 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactionsReport: (n, t, r, a, s, o, d = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getUsersTransactionsReport", "id", n);
-        const h = "/users/{id}/transactions/report".replace("{id}", encodeURIComponent(String(n))), A = new URL(h, e.DUMMY_BASE_URL);
-        let O;
-        l && (O = l.baseOptions);
-        const b = Object.assign(Object.assign({ method: "GET" }, O), d), F = {}, j = {};
-        yield (0, e.setApiKeyToObject)(F, "Authorization", l), t !== void 0 && (j.fromDate = t), r !== void 0 && (j.tillDate = r), a !== void 0 && (j.fromId = a), s !== void 0 && (j.toId = s), o !== void 0 && (j.exclusiveToId = o), (0, e.setSearchParams)(A, j);
-        let V = O && O.headers ? O.headers : {};
-        return b.headers = Object.assign(Object.assign(Object.assign({}, F), V), d.headers), {
-          url: (0, e.toPathString)(A),
-          options: b
+      getUsersTransactionsReport: (c, n, i, s, e, t, o = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getUsersTransactionsReport", "id", c);
+        const u = "/users/{id}/transactions/report".replace("{id}", encodeURIComponent(String(c))), h = new URL(u, a.DUMMY_BASE_URL);
+        let A;
+        r && (A = r.baseOptions);
+        const O = Object.assign(Object.assign({ method: "GET" }, A), o), m = {}, f = {};
+        yield (0, a.setBearerAuthToObject)(m, r), n !== void 0 && (f.fromDate = n), i !== void 0 && (f.tillDate = i), s !== void 0 && (f.fromId = s), e !== void 0 && (f.toId = e), t !== void 0 && (f.exclusiveToId = t), (0, a.setSearchParams)(h, f);
+        let j = A && A.headers ? A.headers : {};
+        return O.headers = Object.assign(Object.assign(Object.assign({}, m), j), o.headers), {
+          url: (0, a.toPathString)(h),
+          options: O
         };
       }),
       /**
-       *  Get an user\'s transfers
+       *
+       * @summary Get an user\'s transfers
        * @param {number} id The id of the user that should be involved in all returned transfers
        * @param {number} [take] How many transfers the endpoint should return
        * @param {number} [skip] How many transfers should be skipped (for pagination)
@@ -7093,409 +7868,408 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransfers: (n, t, r, a, s, o, d = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getUsersTransfers", "id", n);
-        const h = "/users/{id}/transfers".replace("{id}", encodeURIComponent(String(n))), A = new URL(h, e.DUMMY_BASE_URL);
-        let O;
-        l && (O = l.baseOptions);
-        const b = Object.assign(Object.assign({ method: "GET" }, O), d), F = {}, j = {};
-        yield (0, e.setApiKeyToObject)(F, "Authorization", l), t !== void 0 && (j.take = t), r !== void 0 && (j.skip = r), a !== void 0 && (j.fromId = a), s !== void 0 && (j.toId = s), o !== void 0 && (j.id = o), (0, e.setSearchParams)(A, j);
-        let V = O && O.headers ? O.headers : {};
-        return b.headers = Object.assign(Object.assign(Object.assign({}, F), V), d.headers), {
-          url: (0, e.toPathString)(A),
-          options: b
+      getUsersTransfers: (c, n, i, s, e, t, o = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getUsersTransfers", "id", c);
+        const u = "/users/{id}/transfers".replace("{id}", encodeURIComponent(String(c))), h = new URL(u, a.DUMMY_BASE_URL);
+        let A;
+        r && (A = r.baseOptions);
+        const O = Object.assign(Object.assign({ method: "GET" }, A), o), m = {}, f = {};
+        yield (0, a.setBearerAuthToObject)(m, r), n !== void 0 && (f.take = n), i !== void 0 && (f.skip = i), s !== void 0 && (f.fromId = s), e !== void 0 && (f.toId = e), t !== void 0 && (f.id = t), (0, a.setSearchParams)(h, f);
+        let j = A && A.headers ? A.headers : {};
+        return O.headers = Object.assign(Object.assign(Object.assign({}, m), j), o.headers), {
+          url: (0, a.toPathString)(h),
+          options: O
         };
       }),
       /**
-       *  Returns the user\'s updated containers
+       *
+       * @summary Update a user
        * @param {number} id The id of the user
-       * @param {number} [take] How many containers the endpoint should return
-       * @param {number} [skip] How many containers should be skipped (for pagination)
+       * @param {UpdateUserRequest} updateUserRequest The user which should be updated
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersUpdatedContainers: (n, t, r, a = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getUsersUpdatedContainers", "id", n);
-        const s = "/users/{id}/containers/updated".replace("{id}", encodeURIComponent(String(n))), o = new URL(s, e.DUMMY_BASE_URL);
-        let d;
-        l && (d = l.baseOptions);
-        const h = Object.assign(Object.assign({ method: "GET" }, d), a), A = {}, O = {};
-        yield (0, e.setApiKeyToObject)(A, "Authorization", l), t !== void 0 && (O.take = t), r !== void 0 && (O.skip = r), (0, e.setSearchParams)(o, O);
-        let b = d && d.headers ? d.headers : {};
-        return h.headers = Object.assign(Object.assign(Object.assign({}, A), b), a.headers), {
-          url: (0, e.toPathString)(o),
-          options: h
-        };
-      }),
-      /**
-       *  Returns the user\'s updated Points of Sale
-       * @param {number} id The id of the user
-       * @param {number} [take] How many points of sale the endpoint should return
-       * @param {number} [skip] How many points of sale should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUsersUpdatedPointsOfSale: (n, t, r, a = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getUsersUpdatedPointsOfSale", "id", n);
-        const s = "/users/{id}/pointsofsale/updated".replace("{id}", encodeURIComponent(String(n))), o = new URL(s, e.DUMMY_BASE_URL);
-        let d;
-        l && (d = l.baseOptions);
-        const h = Object.assign(Object.assign({ method: "GET" }, d), a), A = {}, O = {};
-        yield (0, e.setApiKeyToObject)(A, "Authorization", l), t !== void 0 && (O.take = t), r !== void 0 && (O.skip = r), (0, e.setSearchParams)(o, O);
-        let b = d && d.headers ? d.headers : {};
-        return h.headers = Object.assign(Object.assign(Object.assign({}, A), b), a.headers), {
-          url: (0, e.toPathString)(o),
-          options: h
-        };
-      }),
-      /**
-       *  Get an user\'s updated products
-       * @param {number} id The id of the user
-       * @param {number} [take] How many products the endpoint should return
-       * @param {number} [skip] How many products should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUsersUpdatedProducts: (n, t, r, a = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getUsersUpdatedProducts", "id", n);
-        const s = "/users/{id}/products/updated".replace("{id}", encodeURIComponent(String(n))), o = new URL(s, e.DUMMY_BASE_URL);
-        let d;
-        l && (d = l.baseOptions);
-        const h = Object.assign(Object.assign({ method: "GET" }, d), a), A = {}, O = {};
-        yield (0, e.setApiKeyToObject)(A, "Authorization", l), t !== void 0 && (O.take = t), r !== void 0 && (O.skip = r), (0, e.setSearchParams)(o, O);
-        let b = d && d.headers ? d.headers : {};
-        return h.headers = Object.assign(Object.assign(Object.assign({}, A), b), a.headers), {
-          url: (0, e.toPathString)(o),
-          options: h
-        };
-      }),
-      /**
-       *  Update a user
-       * @param {number} id The id of the user
-       * @param {UpdateUserRequest} user The user which should be updated
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      updateUser: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("updateUser", "id", n), (0, e.assertParamExists)("updateUser", "user", t);
-        const a = "/users/{id}".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "PATCH" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), h["Content-Type"] = "application/json", (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), d.data = (0, e.serializeDataIfNeeded)(t, d, l), {
-          url: (0, e.toPathString)(s),
-          options: d
-        };
-      }),
-      /**
-       *  POST an users update to new key code
-       * @param {number} id The id of the user
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      updateUserKey: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("updateUserKey", "id", n);
-        const r = "/users/{id}/authenticator/key".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
+      updateUser: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateUser", "id", c), (0, a.assertParamExists)("updateUser", "updateUserRequest", n);
+        const s = "/users/{id}".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "PATCH" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), o.data = (0, a.serializeDataIfNeeded)(n, o, r), {
+          url: (0, a.toPathString)(e),
           options: o
         };
       }),
       /**
-       *  Put a user\'s local password
+       *
+       * @summary POST an users update to new key code
        * @param {number} id The id of the user
-       * @param {UpdateLocalRequest} update    The password update
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateUserLocalPassword: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("updateUserLocalPassword", "id", n), (0, e.assertParamExists)("updateUserLocalPassword", "update", t);
-        const a = "/users/{id}/authenticator/local".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "PUT" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), h["Content-Type"] = "application/json", (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), d.data = (0, e.serializeDataIfNeeded)(t, d, l), {
-          url: (0, e.toPathString)(s),
-          options: d
+      updateUserKey: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateUserKey", "id", c);
+        const i = "/users/{id}/authenticator/key".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Put a users NFC code
+       *
+       * @summary Put a user\'s local password
        * @param {number} id The id of the user
-       * @param {UpdateNfcRequest} update    The NFC code to update to
+       * @param {UpdateLocalRequest} [updateLocalRequest]    The password update
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateUserNfc: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("updateUserNfc", "id", n), (0, e.assertParamExists)("updateUserNfc", "update", t);
-        const a = "/users/{id}/authenticator/nfc".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "PUT" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), h["Content-Type"] = "application/json", (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), d.data = (0, e.serializeDataIfNeeded)(t, d, l), {
-          url: (0, e.toPathString)(s),
-          options: d
+      updateUserLocalPassword: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateUserLocalPassword", "id", c);
+        const s = "/users/{id}/authenticator/local".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "PUT" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), o.data = (0, a.serializeDataIfNeeded)(n, o, r), {
+          url: (0, a.toPathString)(e),
+          options: o
         };
       }),
       /**
-       *  Put an users pin code
+       *
+       * @summary Put a users NFC code
        * @param {number} id The id of the user
-       * @param {UpdatePinRequest} update    The PIN code to update to
+       * @param {UpdateNfcRequest} [updateNfcRequest]    The NFC code to update to
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateUserPin: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("updateUserPin", "id", n), (0, e.assertParamExists)("updateUserPin", "update", t);
-        const a = "/users/{id}/authenticator/pin".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "PUT" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), h["Content-Type"] = "application/json", (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), d.data = (0, e.serializeDataIfNeeded)(t, d, l), {
-          url: (0, e.toPathString)(s),
-          options: d
+      updateUserNfc: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateUserNfc", "id", c);
+        const s = "/users/{id}/authenticator/nfc".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "PUT" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), o.data = (0, a.serializeDataIfNeeded)(n, o, r), {
+          url: (0, a.toPathString)(e),
+          options: o
+        };
+      }),
+      /**
+       *
+       * @summary Put an users pin code
+       * @param {number} id The id of the user
+       * @param {UpdatePinRequest} [updatePinRequest]    The PIN code to update to
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      updateUserPin: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateUserPin", "id", c);
+        const s = "/users/{id}/authenticator/pin".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "PUT" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), o.data = (0, a.serializeDataIfNeeded)(n, o, r), {
+          url: (0, a.toPathString)(e),
+          options: o
+        };
+      }),
+      /**
+       *
+       * @summary Waive all given user\'s fines
+       * @param {number} id The id of the user
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      waiveUserFines: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("waiveUserFines", "id", c);
+        const i = "/users/{id}/fines/waive".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       })
     };
   };
-  i.UsersApiAxiosParamCreator = fs;
-  const bs = function(l) {
-    const n = (0, i.UsersApiAxiosParamCreator)(l);
+  l.UsersApiAxiosParamCreator = Us;
+  const _s = function(r) {
+    const c = (0, l.UsersApiAxiosParamCreator)(r);
     return {
       /**
-       *  Accept the Terms of Service if you have not accepted it yet
-       * @param {AcceptTosRequest} params \&quot;Tosrequest body\&quot;
+       *
+       * @summary Accept the Terms of Service if you have not accepted it yet
+       * @param {AcceptTosRequest} [acceptTosRequest] \&quot;Tosrequest body\&quot;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      acceptTos(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.acceptTos(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      acceptTos(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.acceptTos(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["UsersApi.acceptTos"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Authenticate as another user
+       *
+       * @summary Authenticate as another user
        * @param {number} id The id of the user that should be authenticated as
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      authenticateAs(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.authenticateAs(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      authenticateAs(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.authenticateAs(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["UsersApi.authenticateAs"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Create a new user
-       * @param {CreateUserRequest} user The user which should be created
+       *
+       * @summary Create a new user
+       * @param {CreateUserRequest} [createUserRequest] The user which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createUser(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.createUser(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      createUser(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.createUser(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["UsersApi.createUser"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Delete a single user
+       *
+       * @summary Delete a single user
        * @param {number} id The id of the user
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteUser(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.deleteUser(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      deleteUser(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.deleteUser(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["UsersApi.deleteUser"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Delete a users key code
+       *
+       * @summary Delete a users key code
        * @param {number} id The id of the user
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteUserKey(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.deleteUserKey(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      deleteUserKey(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.deleteUserKey(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["UsersApi.deleteUserKey"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Delete a nfc code
+       *
+       * @summary Delete a nfc code
        * @param {number} id The id of the user
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteUserNfc(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.deleteUserNfc(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      deleteUserNfc(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.deleteUserNfc(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["UsersApi.deleteUserNfc"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Get a list of all users
+       *
+       * @summary Get a list of all users
        * @param {number} [take] How many users the endpoint should return
        * @param {number} [skip] How many users should be skipped (for pagination)
        * @param {string} [search] Filter based on first name
        * @param {boolean} [active] Filter based if the user is active
        * @param {boolean} [ofAge] Filter based if the user is 18+
        * @param {number} [id] Filter based on user ID
-       * @param {number} [type] {1,2,3,4,5,6,7} - Filter based on user type. Possible values:      1 (MEMBER), 2 (ORGAN), 3 (BORRELKAART), 4 (LOCAL_USER), 5 (LOCAL_ADMIN), 6 (INVOICE), 7 (AUTOMATIC_INVOICE)
+       * @param {GetAllUsersTypeEnum} [type] Filter based on user type.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllUsers(t, r, a, s, o, d, h, A) {
-        return c(this, void 0, void 0, function* () {
-          const O = yield n.getAllUsers(t, r, a, s, o, d, h, A);
-          return (0, e.createRequestFunction)(O, u.default, p.BASE_PATH, l);
+      getAllUsers(n, i, s, e, t, o, u, h) {
+        var A, O, m;
+        return d(this, void 0, void 0, function* () {
+          const f = yield c.getAllUsers(n, i, s, e, t, o, u, h), j = (A = r == null ? void 0 : r.serverIndex) !== null && A !== void 0 ? A : 0, V = (m = (O = v.operationServerMap["UsersApi.getAllUsers"]) === null || O === void 0 ? void 0 : O[j]) === null || m === void 0 ? void 0 : m.url;
+          return (F, B) => (0, a.createRequestFunction)(f, p.default, v.BASE_PATH, r)(F, V || B);
         });
       },
       /**
-       *  Get all users of user type
+       *
+       * @summary Get all users of user type
        * @param {string} userType The userType of the requested users
        * @param {number} [take] How many users the endpoint should return
        * @param {number} [skip] How many users should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllUsersOfUserType(t, r, a, s) {
-        return c(this, void 0, void 0, function* () {
-          const o = yield n.getAllUsersOfUserType(t, r, a, s);
-          return (0, e.createRequestFunction)(o, u.default, p.BASE_PATH, l);
+      getAllUsersOfUserType(n, i, s, e) {
+        var t, o, u;
+        return d(this, void 0, void 0, function* () {
+          const h = yield c.getAllUsersOfUserType(n, i, s, e), A = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, O = (u = (o = v.operationServerMap["UsersApi.getAllUsersOfUserType"]) === null || o === void 0 ? void 0 : o[A]) === null || u === void 0 ? void 0 : u.url;
+          return (m, f) => (0, a.createRequestFunction)(h, p.default, v.BASE_PATH, r)(m, O || f);
         });
       },
       /**
-       *  Get an individual user
+       *
+       * @summary Get an individual user
        * @param {number} id userID
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getIndividualUser(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getIndividualUser(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      getIndividualUser(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getIndividualUser(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["UsersApi.getIndividualUser"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Get an organs members
+       *
+       * @summary Get an organs members
        * @param {number} id The id of the user
+       * @param {number} [take] How many members the endpoint should return
+       * @param {number} [skip] How many members should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getOrganMembers(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getOrganMembers(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      getOrganMembers(n, i, s, e) {
+        var t, o, u;
+        return d(this, void 0, void 0, function* () {
+          const h = yield c.getOrganMembers(n, i, s, e), A = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, O = (u = (o = v.operationServerMap["UsersApi.getOrganMembers"]) === null || o === void 0 ? void 0 : o[A]) === null || u === void 0 ? void 0 : u.url;
+          return (m, f) => (0, a.createRequestFunction)(h, p.default, v.BASE_PATH, r)(m, O || f);
         });
       },
       /**
-       *  Get all users that the user can authenticate as
+       *
+       * @summary Get all users that the user can authenticate as
        * @param {number} id The id of the user to get authentications of
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUserAuthenticatable(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getUserAuthenticatable(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      getUserAuthenticatable(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getUserAuthenticatable(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["UsersApi.getUserAuthenticatable"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Get all roles assigned to the user.
+       *
+       * @summary Get all roles assigned to the user.
        * @param {number} id The id of the user to get the roles from
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUserRoles(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getUserRoles(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      getUserRoles(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getUserRoles(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["UsersApi.getUserRoles"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Returns the user\'s containers
+       *
+       * @summary Returns the user\'s containers
        * @param {number} id The id of the user
        * @param {number} [take] How many containers the endpoint should return
        * @param {number} [skip] How many containers should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersContainers(t, r, a, s) {
-        return c(this, void 0, void 0, function* () {
-          const o = yield n.getUsersContainers(t, r, a, s);
-          return (0, e.createRequestFunction)(o, u.default, p.BASE_PATH, l);
+      getUsersContainers(n, i, s, e) {
+        var t, o, u;
+        return d(this, void 0, void 0, function* () {
+          const h = yield c.getUsersContainers(n, i, s, e), A = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, O = (u = (o = v.operationServerMap["UsersApi.getUsersContainers"]) === null || o === void 0 ? void 0 : o[A]) === null || u === void 0 ? void 0 : u.url;
+          return (m, f) => (0, a.createRequestFunction)(h, p.default, v.BASE_PATH, r)(m, O || f);
         });
       },
       /**
-       *  Get all financial mutations of a user.
+       *
+       * @summary Get all financial mutations of a user.
        * @param {number} id The id of the user to get the mutations from
        * @param {number} [take] How many transactions the endpoint should return
        * @param {number} [skip] How many transactions should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersFinancialMutations(t, r, a, s) {
-        return c(this, void 0, void 0, function* () {
-          const o = yield n.getUsersFinancialMutations(t, r, a, s);
-          return (0, e.createRequestFunction)(o, u.default, p.BASE_PATH, l);
+      getUsersFinancialMutations(n, i, s, e) {
+        var t, o, u;
+        return d(this, void 0, void 0, function* () {
+          const h = yield c.getUsersFinancialMutations(n, i, s, e), A = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, O = (u = (o = v.operationServerMap["UsersApi.getUsersFinancialMutations"]) === null || o === void 0 ? void 0 : o[A]) === null || u === void 0 ? void 0 : u.url;
+          return (m, f) => (0, a.createRequestFunction)(h, p.default, v.BASE_PATH, r)(m, O || f);
         });
       },
       /**
-       *  Returns the user\'s Points of Sale
+       *
+       * @summary Returns the user\'s Points of Sale
        * @param {number} id The id of the user
        * @param {number} [take] How many points of sale the endpoint should return
        * @param {number} [skip] How many points of sale should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersPointsOfSale(t, r, a, s) {
-        return c(this, void 0, void 0, function* () {
-          const o = yield n.getUsersPointsOfSale(t, r, a, s);
-          return (0, e.createRequestFunction)(o, u.default, p.BASE_PATH, l);
+      getUsersPointsOfSale(n, i, s, e) {
+        var t, o, u;
+        return d(this, void 0, void 0, function* () {
+          const h = yield c.getUsersPointsOfSale(n, i, s, e), A = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, O = (u = (o = v.operationServerMap["UsersApi.getUsersPointsOfSale"]) === null || o === void 0 ? void 0 : o[A]) === null || u === void 0 ? void 0 : u.url;
+          return (m, f) => (0, a.createRequestFunction)(h, p.default, v.BASE_PATH, r)(m, O || f);
         });
       },
       /**
-       *  Get all deposits of a user that are still being processed by Stripe
+       *
+       * @summary Get all deposits of a user that are still being processed by Stripe
        * @param {number} id The id of the user to get the deposits from
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersProcessingDeposits(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getUsersProcessingDeposits(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      getUsersProcessingDeposits(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getUsersProcessingDeposits(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["UsersApi.getUsersProcessingDeposits"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Get an user\'s products
+       *
+       * @summary Get an user\'s products
        * @param {number} id The id of the user
        * @param {number} [take] How many products the endpoint should return
        * @param {number} [skip] How many products should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersProducts(t, r, a, s) {
-        return c(this, void 0, void 0, function* () {
-          const o = yield n.getUsersProducts(t, r, a, s);
-          return (0, e.createRequestFunction)(o, u.default, p.BASE_PATH, l);
+      getUsersProducts(n, i, s, e) {
+        var t, o, u;
+        return d(this, void 0, void 0, function* () {
+          const h = yield c.getUsersProducts(n, i, s, e), A = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, O = (u = (o = v.operationServerMap["UsersApi.getUsersProducts"]) === null || o === void 0 ? void 0 : o[A]) === null || u === void 0 ? void 0 : u.url;
+          return (m, f) => (0, a.createRequestFunction)(h, p.default, v.BASE_PATH, r)(m, O || f);
         });
       },
       /**
-       *  Get an user\'s transactions (from, to or created)
+       *
+       * @summary Get an user\'s transactions (from, to or created)
        * @param {number} id The id of the user that should be involved in all returned transactions
        * @param {number} [fromId] From-user for selected transactions
        * @param {number} [createdById] User that created selected transaction
@@ -7509,14 +8283,16 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactions(t, r, a, s, o, d, h, A, O, b, F) {
-        return c(this, void 0, void 0, function* () {
-          const j = yield n.getUsersTransactions(t, r, a, s, o, d, h, A, O, b, F);
-          return (0, e.createRequestFunction)(j, u.default, p.BASE_PATH, l);
+      getUsersTransactions(n, i, s, e, t, o, u, h, A, O, m) {
+        var f, j, V;
+        return d(this, void 0, void 0, function* () {
+          const F = yield c.getUsersTransactions(n, i, s, e, t, o, u, h, A, O, m), B = (f = r == null ? void 0 : r.serverIndex) !== null && f !== void 0 ? f : 0, I = (V = (j = v.operationServerMap["UsersApi.getUsersTransactions"]) === null || j === void 0 ? void 0 : j[B]) === null || V === void 0 ? void 0 : V.url;
+          return (X, te) => (0, a.createRequestFunction)(F, p.default, v.BASE_PATH, r)(X, I || te);
         });
       },
       /**
-       *  Get transaction report for the given user
+       *
+       * @summary Get transaction report for the given user
        * @param {number} id The id of the user to get the transaction report from
        * @param {string} [fromDate] Start date for selected transactions (inclusive)
        * @param {string} [tillDate] End date for selected transactions (exclusive)
@@ -7526,14 +8302,16 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactionsReport(t, r, a, s, o, d, h) {
-        return c(this, void 0, void 0, function* () {
-          const A = yield n.getUsersTransactionsReport(t, r, a, s, o, d, h);
-          return (0, e.createRequestFunction)(A, u.default, p.BASE_PATH, l);
+      getUsersTransactionsReport(n, i, s, e, t, o, u) {
+        var h, A, O;
+        return d(this, void 0, void 0, function* () {
+          const m = yield c.getUsersTransactionsReport(n, i, s, e, t, o, u), f = (h = r == null ? void 0 : r.serverIndex) !== null && h !== void 0 ? h : 0, j = (O = (A = v.operationServerMap["UsersApi.getUsersTransactionsReport"]) === null || A === void 0 ? void 0 : A[f]) === null || O === void 0 ? void 0 : O.url;
+          return (V, F) => (0, a.createRequestFunction)(m, p.default, v.BASE_PATH, r)(V, j || F);
         });
       },
       /**
-       *  Get an user\'s transfers
+       *
+       * @summary Get an user\'s transfers
        * @param {number} id The id of the user that should be involved in all returned transfers
        * @param {number} [take] How many transfers the endpoint should return
        * @param {number} [skip] How many transfers should be skipped (for pagination)
@@ -7543,295 +8321,298 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransfers(t, r, a, s, o, d, h) {
-        return c(this, void 0, void 0, function* () {
-          const A = yield n.getUsersTransfers(t, r, a, s, o, d, h);
-          return (0, e.createRequestFunction)(A, u.default, p.BASE_PATH, l);
+      getUsersTransfers(n, i, s, e, t, o, u) {
+        var h, A, O;
+        return d(this, void 0, void 0, function* () {
+          const m = yield c.getUsersTransfers(n, i, s, e, t, o, u), f = (h = r == null ? void 0 : r.serverIndex) !== null && h !== void 0 ? h : 0, j = (O = (A = v.operationServerMap["UsersApi.getUsersTransfers"]) === null || A === void 0 ? void 0 : A[f]) === null || O === void 0 ? void 0 : O.url;
+          return (V, F) => (0, a.createRequestFunction)(m, p.default, v.BASE_PATH, r)(V, j || F);
         });
       },
       /**
-       *  Returns the user\'s updated containers
+       *
+       * @summary Update a user
        * @param {number} id The id of the user
-       * @param {number} [take] How many containers the endpoint should return
-       * @param {number} [skip] How many containers should be skipped (for pagination)
+       * @param {UpdateUserRequest} updateUserRequest The user which should be updated
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersUpdatedContainers(t, r, a, s) {
-        return c(this, void 0, void 0, function* () {
-          const o = yield n.getUsersUpdatedContainers(t, r, a, s);
-          return (0, e.createRequestFunction)(o, u.default, p.BASE_PATH, l);
+      updateUser(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.updateUser(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["UsersApi.updateUser"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       },
       /**
-       *  Returns the user\'s updated Points of Sale
-       * @param {number} id The id of the user
-       * @param {number} [take] How many points of sale the endpoint should return
-       * @param {number} [skip] How many points of sale should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUsersUpdatedPointsOfSale(t, r, a, s) {
-        return c(this, void 0, void 0, function* () {
-          const o = yield n.getUsersUpdatedPointsOfSale(t, r, a, s);
-          return (0, e.createRequestFunction)(o, u.default, p.BASE_PATH, l);
-        });
-      },
-      /**
-       *  Get an user\'s updated products
-       * @param {number} id The id of the user
-       * @param {number} [take] How many products the endpoint should return
-       * @param {number} [skip] How many products should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUsersUpdatedProducts(t, r, a, s) {
-        return c(this, void 0, void 0, function* () {
-          const o = yield n.getUsersUpdatedProducts(t, r, a, s);
-          return (0, e.createRequestFunction)(o, u.default, p.BASE_PATH, l);
-        });
-      },
-      /**
-       *  Update a user
-       * @param {number} id The id of the user
-       * @param {UpdateUserRequest} user The user which should be updated
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      updateUser(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.updateUser(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
-        });
-      },
-      /**
-       *  POST an users update to new key code
+       *
+       * @summary POST an users update to new key code
        * @param {number} id The id of the user
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateUserKey(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.updateUserKey(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      updateUserKey(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.updateUserKey(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["UsersApi.updateUserKey"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Put a user\'s local password
+       *
+       * @summary Put a user\'s local password
        * @param {number} id The id of the user
-       * @param {UpdateLocalRequest} update    The password update
+       * @param {UpdateLocalRequest} [updateLocalRequest]    The password update
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateUserLocalPassword(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.updateUserLocalPassword(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      updateUserLocalPassword(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.updateUserLocalPassword(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["UsersApi.updateUserLocalPassword"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       },
       /**
-       *  Put a users NFC code
+       *
+       * @summary Put a users NFC code
        * @param {number} id The id of the user
-       * @param {UpdateNfcRequest} update    The NFC code to update to
+       * @param {UpdateNfcRequest} [updateNfcRequest]    The NFC code to update to
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateUserNfc(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.updateUserNfc(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      updateUserNfc(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.updateUserNfc(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["UsersApi.updateUserNfc"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       },
       /**
-       *  Put an users pin code
+       *
+       * @summary Put an users pin code
        * @param {number} id The id of the user
-       * @param {UpdatePinRequest} update    The PIN code to update to
+       * @param {UpdatePinRequest} [updatePinRequest]    The PIN code to update to
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateUserPin(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.updateUserPin(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      updateUserPin(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.updateUserPin(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["UsersApi.updateUserPin"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
+        });
+      },
+      /**
+       *
+       * @summary Waive all given user\'s fines
+       * @param {number} id The id of the user
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      waiveUserFines(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.waiveUserFines(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["UsersApi.waiveUserFines"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       }
     };
   };
-  i.UsersApiFp = bs;
-  const ms = function(l, n, t) {
-    const r = (0, i.UsersApiFp)(l);
+  l.UsersApiFp = _s;
+  const Vs = function(r, c, n) {
+    const i = (0, l.UsersApiFp)(r);
     return {
       /**
-       *  Accept the Terms of Service if you have not accepted it yet
-       * @param {AcceptTosRequest} params \&quot;Tosrequest body\&quot;
+       *
+       * @summary Accept the Terms of Service if you have not accepted it yet
+       * @param {AcceptTosRequest} [acceptTosRequest] \&quot;Tosrequest body\&quot;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      acceptTos(a, s) {
-        return r.acceptTos(a, s).then((o) => o(t, n));
+      acceptTos(s, e) {
+        return i.acceptTos(s, e).then((t) => t(n, c));
       },
       /**
-       *  Authenticate as another user
+       *
+       * @summary Authenticate as another user
        * @param {number} id The id of the user that should be authenticated as
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      authenticateAs(a, s) {
-        return r.authenticateAs(a, s).then((o) => o(t, n));
+      authenticateAs(s, e) {
+        return i.authenticateAs(s, e).then((t) => t(n, c));
       },
       /**
-       *  Create a new user
-       * @param {CreateUserRequest} user The user which should be created
+       *
+       * @summary Create a new user
+       * @param {CreateUserRequest} [createUserRequest] The user which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createUser(a, s) {
-        return r.createUser(a, s).then((o) => o(t, n));
+      createUser(s, e) {
+        return i.createUser(s, e).then((t) => t(n, c));
       },
       /**
-       *  Delete a single user
+       *
+       * @summary Delete a single user
        * @param {number} id The id of the user
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteUser(a, s) {
-        return r.deleteUser(a, s).then((o) => o(t, n));
+      deleteUser(s, e) {
+        return i.deleteUser(s, e).then((t) => t(n, c));
       },
       /**
-       *  Delete a users key code
+       *
+       * @summary Delete a users key code
        * @param {number} id The id of the user
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteUserKey(a, s) {
-        return r.deleteUserKey(a, s).then((o) => o(t, n));
+      deleteUserKey(s, e) {
+        return i.deleteUserKey(s, e).then((t) => t(n, c));
       },
       /**
-       *  Delete a nfc code
+       *
+       * @summary Delete a nfc code
        * @param {number} id The id of the user
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteUserNfc(a, s) {
-        return r.deleteUserNfc(a, s).then((o) => o(t, n));
+      deleteUserNfc(s, e) {
+        return i.deleteUserNfc(s, e).then((t) => t(n, c));
       },
       /**
-       *  Get a list of all users
+       *
+       * @summary Get a list of all users
        * @param {number} [take] How many users the endpoint should return
        * @param {number} [skip] How many users should be skipped (for pagination)
        * @param {string} [search] Filter based on first name
        * @param {boolean} [active] Filter based if the user is active
        * @param {boolean} [ofAge] Filter based if the user is 18+
        * @param {number} [id] Filter based on user ID
-       * @param {number} [type] {1,2,3,4,5,6,7} - Filter based on user type. Possible values:      1 (MEMBER), 2 (ORGAN), 3 (BORRELKAART), 4 (LOCAL_USER), 5 (LOCAL_ADMIN), 6 (INVOICE), 7 (AUTOMATIC_INVOICE)
+       * @param {GetAllUsersTypeEnum} [type] Filter based on user type.
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllUsers(a, s, o, d, h, A, O, b) {
-        return r.getAllUsers(a, s, o, d, h, A, O, b).then((F) => F(t, n));
+      getAllUsers(s, e, t, o, u, h, A, O) {
+        return i.getAllUsers(s, e, t, o, u, h, A, O).then((m) => m(n, c));
       },
       /**
-       *  Get all users of user type
+       *
+       * @summary Get all users of user type
        * @param {string} userType The userType of the requested users
        * @param {number} [take] How many users the endpoint should return
        * @param {number} [skip] How many users should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllUsersOfUserType(a, s, o, d) {
-        return r.getAllUsersOfUserType(a, s, o, d).then((h) => h(t, n));
+      getAllUsersOfUserType(s, e, t, o) {
+        return i.getAllUsersOfUserType(s, e, t, o).then((u) => u(n, c));
       },
       /**
-       *  Get an individual user
+       *
+       * @summary Get an individual user
        * @param {number} id userID
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getIndividualUser(a, s) {
-        return r.getIndividualUser(a, s).then((o) => o(t, n));
+      getIndividualUser(s, e) {
+        return i.getIndividualUser(s, e).then((t) => t(n, c));
       },
       /**
-       *  Get an organs members
+       *
+       * @summary Get an organs members
        * @param {number} id The id of the user
+       * @param {number} [take] How many members the endpoint should return
+       * @param {number} [skip] How many members should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getOrganMembers(a, s) {
-        return r.getOrganMembers(a, s).then((o) => o(t, n));
+      getOrganMembers(s, e, t, o) {
+        return i.getOrganMembers(s, e, t, o).then((u) => u(n, c));
       },
       /**
-       *  Get all users that the user can authenticate as
+       *
+       * @summary Get all users that the user can authenticate as
        * @param {number} id The id of the user to get authentications of
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUserAuthenticatable(a, s) {
-        return r.getUserAuthenticatable(a, s).then((o) => o(t, n));
+      getUserAuthenticatable(s, e) {
+        return i.getUserAuthenticatable(s, e).then((t) => t(n, c));
       },
       /**
-       *  Get all roles assigned to the user.
+       *
+       * @summary Get all roles assigned to the user.
        * @param {number} id The id of the user to get the roles from
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUserRoles(a, s) {
-        return r.getUserRoles(a, s).then((o) => o(t, n));
+      getUserRoles(s, e) {
+        return i.getUserRoles(s, e).then((t) => t(n, c));
       },
       /**
-       *  Returns the user\'s containers
+       *
+       * @summary Returns the user\'s containers
        * @param {number} id The id of the user
        * @param {number} [take] How many containers the endpoint should return
        * @param {number} [skip] How many containers should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersContainers(a, s, o, d) {
-        return r.getUsersContainers(a, s, o, d).then((h) => h(t, n));
+      getUsersContainers(s, e, t, o) {
+        return i.getUsersContainers(s, e, t, o).then((u) => u(n, c));
       },
       /**
-       *  Get all financial mutations of a user.
+       *
+       * @summary Get all financial mutations of a user.
        * @param {number} id The id of the user to get the mutations from
        * @param {number} [take] How many transactions the endpoint should return
        * @param {number} [skip] How many transactions should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersFinancialMutations(a, s, o, d) {
-        return r.getUsersFinancialMutations(a, s, o, d).then((h) => h(t, n));
+      getUsersFinancialMutations(s, e, t, o) {
+        return i.getUsersFinancialMutations(s, e, t, o).then((u) => u(n, c));
       },
       /**
-       *  Returns the user\'s Points of Sale
+       *
+       * @summary Returns the user\'s Points of Sale
        * @param {number} id The id of the user
        * @param {number} [take] How many points of sale the endpoint should return
        * @param {number} [skip] How many points of sale should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersPointsOfSale(a, s, o, d) {
-        return r.getUsersPointsOfSale(a, s, o, d).then((h) => h(t, n));
+      getUsersPointsOfSale(s, e, t, o) {
+        return i.getUsersPointsOfSale(s, e, t, o).then((u) => u(n, c));
       },
       /**
-       *  Get all deposits of a user that are still being processed by Stripe
+       *
+       * @summary Get all deposits of a user that are still being processed by Stripe
        * @param {number} id The id of the user to get the deposits from
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersProcessingDeposits(a, s) {
-        return r.getUsersProcessingDeposits(a, s).then((o) => o(t, n));
+      getUsersProcessingDeposits(s, e) {
+        return i.getUsersProcessingDeposits(s, e).then((t) => t(n, c));
       },
       /**
-       *  Get an user\'s products
+       *
+       * @summary Get an user\'s products
        * @param {number} id The id of the user
        * @param {number} [take] How many products the endpoint should return
        * @param {number} [skip] How many products should be skipped (for pagination)
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersProducts(a, s, o, d) {
-        return r.getUsersProducts(a, s, o, d).then((h) => h(t, n));
+      getUsersProducts(s, e, t, o) {
+        return i.getUsersProducts(s, e, t, o).then((u) => u(n, c));
       },
       /**
-       *  Get an user\'s transactions (from, to or created)
+       *
+       * @summary Get an user\'s transactions (from, to or created)
        * @param {number} id The id of the user that should be involved in all returned transactions
        * @param {number} [fromId] From-user for selected transactions
        * @param {number} [createdById] User that created selected transaction
@@ -7845,11 +8626,12 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactions(a, s, o, d, h, A, O, b, F, j, V) {
-        return r.getUsersTransactions(a, s, o, d, h, A, O, b, F, j, V).then((I) => I(t, n));
+      getUsersTransactions(s, e, t, o, u, h, A, O, m, f, j) {
+        return i.getUsersTransactions(s, e, t, o, u, h, A, O, m, f, j).then((V) => V(n, c));
       },
       /**
-       *  Get transaction report for the given user
+       *
+       * @summary Get transaction report for the given user
        * @param {number} id The id of the user to get the transaction report from
        * @param {string} [fromDate] Start date for selected transactions (inclusive)
        * @param {string} [tillDate] End date for selected transactions (exclusive)
@@ -7859,11 +8641,12 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactionsReport(a, s, o, d, h, A, O) {
-        return r.getUsersTransactionsReport(a, s, o, d, h, A, O).then((b) => b(t, n));
+      getUsersTransactionsReport(s, e, t, o, u, h, A) {
+        return i.getUsersTransactionsReport(s, e, t, o, u, h, A).then((O) => O(n, c));
       },
       /**
-       *  Get an user\'s transfers
+       *
+       * @summary Get an user\'s transfers
        * @param {number} id The id of the user that should be involved in all returned transfers
        * @param {number} [take] How many transfers the endpoint should return
        * @param {number} [skip] How many transfers should be skipped (for pagination)
@@ -7873,173 +8656,163 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransfers(a, s, o, d, h, A, O) {
-        return r.getUsersTransfers(a, s, o, d, h, A, O).then((b) => b(t, n));
+      getUsersTransfers(s, e, t, o, u, h, A) {
+        return i.getUsersTransfers(s, e, t, o, u, h, A).then((O) => O(n, c));
       },
       /**
-       *  Returns the user\'s updated containers
+       *
+       * @summary Update a user
        * @param {number} id The id of the user
-       * @param {number} [take] How many containers the endpoint should return
-       * @param {number} [skip] How many containers should be skipped (for pagination)
+       * @param {UpdateUserRequest} updateUserRequest The user which should be updated
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersUpdatedContainers(a, s, o, d) {
-        return r.getUsersUpdatedContainers(a, s, o, d).then((h) => h(t, n));
+      updateUser(s, e, t) {
+        return i.updateUser(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Returns the user\'s updated Points of Sale
-       * @param {number} id The id of the user
-       * @param {number} [take] How many points of sale the endpoint should return
-       * @param {number} [skip] How many points of sale should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUsersUpdatedPointsOfSale(a, s, o, d) {
-        return r.getUsersUpdatedPointsOfSale(a, s, o, d).then((h) => h(t, n));
-      },
-      /**
-       *  Get an user\'s updated products
-       * @param {number} id The id of the user
-       * @param {number} [take] How many products the endpoint should return
-       * @param {number} [skip] How many products should be skipped (for pagination)
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      getUsersUpdatedProducts(a, s, o, d) {
-        return r.getUsersUpdatedProducts(a, s, o, d).then((h) => h(t, n));
-      },
-      /**
-       *  Update a user
-       * @param {number} id The id of the user
-       * @param {UpdateUserRequest} user The user which should be updated
-       * @param {*} [options] Override http request option.
-       * @throws {RequiredError}
-       */
-      updateUser(a, s, o) {
-        return r.updateUser(a, s, o).then((d) => d(t, n));
-      },
-      /**
-       *  POST an users update to new key code
+       *
+       * @summary POST an users update to new key code
        * @param {number} id The id of the user
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateUserKey(a, s) {
-        return r.updateUserKey(a, s).then((o) => o(t, n));
+      updateUserKey(s, e) {
+        return i.updateUserKey(s, e).then((t) => t(n, c));
       },
       /**
-       *  Put a user\'s local password
+       *
+       * @summary Put a user\'s local password
        * @param {number} id The id of the user
-       * @param {UpdateLocalRequest} update    The password update
+       * @param {UpdateLocalRequest} [updateLocalRequest]    The password update
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateUserLocalPassword(a, s, o) {
-        return r.updateUserLocalPassword(a, s, o).then((d) => d(t, n));
+      updateUserLocalPassword(s, e, t) {
+        return i.updateUserLocalPassword(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Put a users NFC code
+       *
+       * @summary Put a users NFC code
        * @param {number} id The id of the user
-       * @param {UpdateNfcRequest} update    The NFC code to update to
+       * @param {UpdateNfcRequest} [updateNfcRequest]    The NFC code to update to
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateUserNfc(a, s, o) {
-        return r.updateUserNfc(a, s, o).then((d) => d(t, n));
+      updateUserNfc(s, e, t) {
+        return i.updateUserNfc(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Put an users pin code
+       *
+       * @summary Put an users pin code
        * @param {number} id The id of the user
-       * @param {UpdatePinRequest} update    The PIN code to update to
+       * @param {UpdatePinRequest} [updatePinRequest]    The PIN code to update to
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateUserPin(a, s, o) {
-        return r.updateUserPin(a, s, o).then((d) => d(t, n));
+      updateUserPin(s, e, t) {
+        return i.updateUserPin(s, e, t).then((o) => o(n, c));
+      },
+      /**
+       *
+       * @summary Waive all given user\'s fines
+       * @param {number} id The id of the user
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      waiveUserFines(s, e) {
+        return i.waiveUserFines(s, e).then((t) => t(n, c));
       }
     };
   };
-  i.UsersApiFactory = ms;
-  class Ss extends p.BaseAPI {
+  l.UsersApiFactory = Vs;
+  class ys extends v.BaseAPI {
     /**
-     *  Accept the Terms of Service if you have not accepted it yet
-     * @param {AcceptTosRequest} params \&quot;Tosrequest body\&quot;
+     *
+     * @summary Accept the Terms of Service if you have not accepted it yet
+     * @param {AcceptTosRequest} [acceptTosRequest] \&quot;Tosrequest body\&quot;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    acceptTos(n, t) {
-      return (0, i.UsersApiFp)(this.configuration).acceptTos(n, t).then((r) => r(this.axios, this.basePath));
+    acceptTos(c, n) {
+      return (0, l.UsersApiFp)(this.configuration).acceptTos(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Authenticate as another user
+     *
+     * @summary Authenticate as another user
      * @param {number} id The id of the user that should be authenticated as
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    authenticateAs(n, t) {
-      return (0, i.UsersApiFp)(this.configuration).authenticateAs(n, t).then((r) => r(this.axios, this.basePath));
+    authenticateAs(c, n) {
+      return (0, l.UsersApiFp)(this.configuration).authenticateAs(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Create a new user
-     * @param {CreateUserRequest} user The user which should be created
+     *
+     * @summary Create a new user
+     * @param {CreateUserRequest} [createUserRequest] The user which should be created
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    createUser(n, t) {
-      return (0, i.UsersApiFp)(this.configuration).createUser(n, t).then((r) => r(this.axios, this.basePath));
+    createUser(c, n) {
+      return (0, l.UsersApiFp)(this.configuration).createUser(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Delete a single user
+     *
+     * @summary Delete a single user
      * @param {number} id The id of the user
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    deleteUser(n, t) {
-      return (0, i.UsersApiFp)(this.configuration).deleteUser(n, t).then((r) => r(this.axios, this.basePath));
+    deleteUser(c, n) {
+      return (0, l.UsersApiFp)(this.configuration).deleteUser(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Delete a users key code
+     *
+     * @summary Delete a users key code
      * @param {number} id The id of the user
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    deleteUserKey(n, t) {
-      return (0, i.UsersApiFp)(this.configuration).deleteUserKey(n, t).then((r) => r(this.axios, this.basePath));
+    deleteUserKey(c, n) {
+      return (0, l.UsersApiFp)(this.configuration).deleteUserKey(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Delete a nfc code
+     *
+     * @summary Delete a nfc code
      * @param {number} id The id of the user
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    deleteUserNfc(n, t) {
-      return (0, i.UsersApiFp)(this.configuration).deleteUserNfc(n, t).then((r) => r(this.axios, this.basePath));
+    deleteUserNfc(c, n) {
+      return (0, l.UsersApiFp)(this.configuration).deleteUserNfc(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Get a list of all users
+     *
+     * @summary Get a list of all users
      * @param {number} [take] How many users the endpoint should return
      * @param {number} [skip] How many users should be skipped (for pagination)
      * @param {string} [search] Filter based on first name
      * @param {boolean} [active] Filter based if the user is active
      * @param {boolean} [ofAge] Filter based if the user is 18+
      * @param {number} [id] Filter based on user ID
-     * @param {number} [type] {1,2,3,4,5,6,7} - Filter based on user type. Possible values:      1 (MEMBER), 2 (ORGAN), 3 (BORRELKAART), 4 (LOCAL_USER), 5 (LOCAL_ADMIN), 6 (INVOICE), 7 (AUTOMATIC_INVOICE)
+     * @param {GetAllUsersTypeEnum} [type] Filter based on user type.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getAllUsers(n, t, r, a, s, o, d, h) {
-      return (0, i.UsersApiFp)(this.configuration).getAllUsers(n, t, r, a, s, o, d, h).then((A) => A(this.axios, this.basePath));
+    getAllUsers(c, n, i, s, e, t, o, u) {
+      return (0, l.UsersApiFp)(this.configuration).getAllUsers(c, n, i, s, e, t, o, u).then((h) => h(this.axios, this.basePath));
     }
     /**
-     *  Get all users of user type
+     *
+     * @summary Get all users of user type
      * @param {string} userType The userType of the requested users
      * @param {number} [take] How many users the endpoint should return
      * @param {number} [skip] How many users should be skipped (for pagination)
@@ -8047,51 +8820,58 @@ C.createRequestFunction = Vr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getAllUsersOfUserType(n, t, r, a) {
-      return (0, i.UsersApiFp)(this.configuration).getAllUsersOfUserType(n, t, r, a).then((s) => s(this.axios, this.basePath));
+    getAllUsersOfUserType(c, n, i, s) {
+      return (0, l.UsersApiFp)(this.configuration).getAllUsersOfUserType(c, n, i, s).then((e) => e(this.axios, this.basePath));
     }
     /**
-     *  Get an individual user
+     *
+     * @summary Get an individual user
      * @param {number} id userID
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getIndividualUser(n, t) {
-      return (0, i.UsersApiFp)(this.configuration).getIndividualUser(n, t).then((r) => r(this.axios, this.basePath));
+    getIndividualUser(c, n) {
+      return (0, l.UsersApiFp)(this.configuration).getIndividualUser(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Get an organs members
+     *
+     * @summary Get an organs members
      * @param {number} id The id of the user
+     * @param {number} [take] How many members the endpoint should return
+     * @param {number} [skip] How many members should be skipped (for pagination)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getOrganMembers(n, t) {
-      return (0, i.UsersApiFp)(this.configuration).getOrganMembers(n, t).then((r) => r(this.axios, this.basePath));
+    getOrganMembers(c, n, i, s) {
+      return (0, l.UsersApiFp)(this.configuration).getOrganMembers(c, n, i, s).then((e) => e(this.axios, this.basePath));
     }
     /**
-     *  Get all users that the user can authenticate as
+     *
+     * @summary Get all users that the user can authenticate as
      * @param {number} id The id of the user to get authentications of
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUserAuthenticatable(n, t) {
-      return (0, i.UsersApiFp)(this.configuration).getUserAuthenticatable(n, t).then((r) => r(this.axios, this.basePath));
+    getUserAuthenticatable(c, n) {
+      return (0, l.UsersApiFp)(this.configuration).getUserAuthenticatable(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Get all roles assigned to the user.
+     *
+     * @summary Get all roles assigned to the user.
      * @param {number} id The id of the user to get the roles from
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUserRoles(n, t) {
-      return (0, i.UsersApiFp)(this.configuration).getUserRoles(n, t).then((r) => r(this.axios, this.basePath));
+    getUserRoles(c, n) {
+      return (0, l.UsersApiFp)(this.configuration).getUserRoles(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Returns the user\'s containers
+     *
+     * @summary Returns the user\'s containers
      * @param {number} id The id of the user
      * @param {number} [take] How many containers the endpoint should return
      * @param {number} [skip] How many containers should be skipped (for pagination)
@@ -8099,11 +8879,12 @@ C.createRequestFunction = Vr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersContainers(n, t, r, a) {
-      return (0, i.UsersApiFp)(this.configuration).getUsersContainers(n, t, r, a).then((s) => s(this.axios, this.basePath));
+    getUsersContainers(c, n, i, s) {
+      return (0, l.UsersApiFp)(this.configuration).getUsersContainers(c, n, i, s).then((e) => e(this.axios, this.basePath));
     }
     /**
-     *  Get all financial mutations of a user.
+     *
+     * @summary Get all financial mutations of a user.
      * @param {number} id The id of the user to get the mutations from
      * @param {number} [take] How many transactions the endpoint should return
      * @param {number} [skip] How many transactions should be skipped (for pagination)
@@ -8111,11 +8892,12 @@ C.createRequestFunction = Vr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersFinancialMutations(n, t, r, a) {
-      return (0, i.UsersApiFp)(this.configuration).getUsersFinancialMutations(n, t, r, a).then((s) => s(this.axios, this.basePath));
+    getUsersFinancialMutations(c, n, i, s) {
+      return (0, l.UsersApiFp)(this.configuration).getUsersFinancialMutations(c, n, i, s).then((e) => e(this.axios, this.basePath));
     }
     /**
-     *  Returns the user\'s Points of Sale
+     *
+     * @summary Returns the user\'s Points of Sale
      * @param {number} id The id of the user
      * @param {number} [take] How many points of sale the endpoint should return
      * @param {number} [skip] How many points of sale should be skipped (for pagination)
@@ -8123,21 +8905,23 @@ C.createRequestFunction = Vr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersPointsOfSale(n, t, r, a) {
-      return (0, i.UsersApiFp)(this.configuration).getUsersPointsOfSale(n, t, r, a).then((s) => s(this.axios, this.basePath));
+    getUsersPointsOfSale(c, n, i, s) {
+      return (0, l.UsersApiFp)(this.configuration).getUsersPointsOfSale(c, n, i, s).then((e) => e(this.axios, this.basePath));
     }
     /**
-     *  Get all deposits of a user that are still being processed by Stripe
+     *
+     * @summary Get all deposits of a user that are still being processed by Stripe
      * @param {number} id The id of the user to get the deposits from
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersProcessingDeposits(n, t) {
-      return (0, i.UsersApiFp)(this.configuration).getUsersProcessingDeposits(n, t).then((r) => r(this.axios, this.basePath));
+    getUsersProcessingDeposits(c, n) {
+      return (0, l.UsersApiFp)(this.configuration).getUsersProcessingDeposits(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Get an user\'s products
+     *
+     * @summary Get an user\'s products
      * @param {number} id The id of the user
      * @param {number} [take] How many products the endpoint should return
      * @param {number} [skip] How many products should be skipped (for pagination)
@@ -8145,11 +8929,12 @@ C.createRequestFunction = Vr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersProducts(n, t, r, a) {
-      return (0, i.UsersApiFp)(this.configuration).getUsersProducts(n, t, r, a).then((s) => s(this.axios, this.basePath));
+    getUsersProducts(c, n, i, s) {
+      return (0, l.UsersApiFp)(this.configuration).getUsersProducts(c, n, i, s).then((e) => e(this.axios, this.basePath));
     }
     /**
-     *  Get an user\'s transactions (from, to or created)
+     *
+     * @summary Get an user\'s transactions (from, to or created)
      * @param {number} id The id of the user that should be involved in all returned transactions
      * @param {number} [fromId] From-user for selected transactions
      * @param {number} [createdById] User that created selected transaction
@@ -8164,11 +8949,12 @@ C.createRequestFunction = Vr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersTransactions(n, t, r, a, s, o, d, h, A, O, b) {
-      return (0, i.UsersApiFp)(this.configuration).getUsersTransactions(n, t, r, a, s, o, d, h, A, O, b).then((F) => F(this.axios, this.basePath));
+    getUsersTransactions(c, n, i, s, e, t, o, u, h, A, O) {
+      return (0, l.UsersApiFp)(this.configuration).getUsersTransactions(c, n, i, s, e, t, o, u, h, A, O).then((m) => m(this.axios, this.basePath));
     }
     /**
-     *  Get transaction report for the given user
+     *
+     * @summary Get transaction report for the given user
      * @param {number} id The id of the user to get the transaction report from
      * @param {string} [fromDate] Start date for selected transactions (inclusive)
      * @param {string} [tillDate] End date for selected transactions (exclusive)
@@ -8179,11 +8965,12 @@ C.createRequestFunction = Vr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersTransactionsReport(n, t, r, a, s, o, d) {
-      return (0, i.UsersApiFp)(this.configuration).getUsersTransactionsReport(n, t, r, a, s, o, d).then((h) => h(this.axios, this.basePath));
+    getUsersTransactionsReport(c, n, i, s, e, t, o) {
+      return (0, l.UsersApiFp)(this.configuration).getUsersTransactionsReport(c, n, i, s, e, t, o).then((u) => u(this.axios, this.basePath));
     }
     /**
-     *  Get an user\'s transfers
+     *
+     * @summary Get an user\'s transfers
      * @param {number} id The id of the user that should be involved in all returned transfers
      * @param {number} [take] How many transfers the endpoint should return
      * @param {number} [skip] How many transfers should be skipped (for pagination)
@@ -8194,124 +8981,113 @@ C.createRequestFunction = Vr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersTransfers(n, t, r, a, s, o, d) {
-      return (0, i.UsersApiFp)(this.configuration).getUsersTransfers(n, t, r, a, s, o, d).then((h) => h(this.axios, this.basePath));
+    getUsersTransfers(c, n, i, s, e, t, o) {
+      return (0, l.UsersApiFp)(this.configuration).getUsersTransfers(c, n, i, s, e, t, o).then((u) => u(this.axios, this.basePath));
     }
     /**
-     *  Returns the user\'s updated containers
+     *
+     * @summary Update a user
      * @param {number} id The id of the user
-     * @param {number} [take] How many containers the endpoint should return
-     * @param {number} [skip] How many containers should be skipped (for pagination)
+     * @param {UpdateUserRequest} updateUserRequest The user which should be updated
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersUpdatedContainers(n, t, r, a) {
-      return (0, i.UsersApiFp)(this.configuration).getUsersUpdatedContainers(n, t, r, a).then((s) => s(this.axios, this.basePath));
+    updateUser(c, n, i) {
+      return (0, l.UsersApiFp)(this.configuration).updateUser(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Returns the user\'s updated Points of Sale
-     * @param {number} id The id of the user
-     * @param {number} [take] How many points of sale the endpoint should return
-     * @param {number} [skip] How many points of sale should be skipped (for pagination)
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof UsersApi
-     */
-    getUsersUpdatedPointsOfSale(n, t, r, a) {
-      return (0, i.UsersApiFp)(this.configuration).getUsersUpdatedPointsOfSale(n, t, r, a).then((s) => s(this.axios, this.basePath));
-    }
-    /**
-     *  Get an user\'s updated products
-     * @param {number} id The id of the user
-     * @param {number} [take] How many products the endpoint should return
-     * @param {number} [skip] How many products should be skipped (for pagination)
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof UsersApi
-     */
-    getUsersUpdatedProducts(n, t, r, a) {
-      return (0, i.UsersApiFp)(this.configuration).getUsersUpdatedProducts(n, t, r, a).then((s) => s(this.axios, this.basePath));
-    }
-    /**
-     *  Update a user
-     * @param {number} id The id of the user
-     * @param {UpdateUserRequest} user The user which should be updated
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof UsersApi
-     */
-    updateUser(n, t, r) {
-      return (0, i.UsersApiFp)(this.configuration).updateUser(n, t, r).then((a) => a(this.axios, this.basePath));
-    }
-    /**
-     *  POST an users update to new key code
+     *
+     * @summary POST an users update to new key code
      * @param {number} id The id of the user
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    updateUserKey(n, t) {
-      return (0, i.UsersApiFp)(this.configuration).updateUserKey(n, t).then((r) => r(this.axios, this.basePath));
+    updateUserKey(c, n) {
+      return (0, l.UsersApiFp)(this.configuration).updateUserKey(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Put a user\'s local password
+     *
+     * @summary Put a user\'s local password
      * @param {number} id The id of the user
-     * @param {UpdateLocalRequest} update    The password update
+     * @param {UpdateLocalRequest} [updateLocalRequest]    The password update
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    updateUserLocalPassword(n, t, r) {
-      return (0, i.UsersApiFp)(this.configuration).updateUserLocalPassword(n, t, r).then((a) => a(this.axios, this.basePath));
+    updateUserLocalPassword(c, n, i) {
+      return (0, l.UsersApiFp)(this.configuration).updateUserLocalPassword(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Put a users NFC code
+     *
+     * @summary Put a users NFC code
      * @param {number} id The id of the user
-     * @param {UpdateNfcRequest} update    The NFC code to update to
+     * @param {UpdateNfcRequest} [updateNfcRequest]    The NFC code to update to
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    updateUserNfc(n, t, r) {
-      return (0, i.UsersApiFp)(this.configuration).updateUserNfc(n, t, r).then((a) => a(this.axios, this.basePath));
+    updateUserNfc(c, n, i) {
+      return (0, l.UsersApiFp)(this.configuration).updateUserNfc(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Put an users pin code
+     *
+     * @summary Put an users pin code
      * @param {number} id The id of the user
-     * @param {UpdatePinRequest} update    The PIN code to update to
+     * @param {UpdatePinRequest} [updatePinRequest]    The PIN code to update to
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    updateUserPin(n, t, r) {
-      return (0, i.UsersApiFp)(this.configuration).updateUserPin(n, t, r).then((a) => a(this.axios, this.basePath));
+    updateUserPin(c, n, i) {
+      return (0, l.UsersApiFp)(this.configuration).updateUserPin(c, n, i).then((s) => s(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Waive all given user\'s fines
+     * @param {number} id The id of the user
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UsersApi
+     */
+    waiveUserFines(c, n) {
+      return (0, l.UsersApiFp)(this.configuration).waiveUserFines(c, n).then((i) => i(this.axios, this.basePath));
     }
   }
-  i.UsersApi = Ss;
-  const Us = function(l) {
+  l.UsersApi = ys, l.GetAllUsersTypeEnum = {
+    Member: "MEMBER",
+    Organ: "ORGAN",
+    Voucher: "VOUCHER",
+    LocalUser: "LOCAL_USER",
+    LocalAdmin: "LOCAL_ADMIN",
+    Invoice: "INVOICE",
+    AutomaticInvoice: "AUTOMATIC_INVOICE"
+  };
+  const Rs = function(r) {
     return {
       /**
-       *  Create a new VAT group
-       * @param {VatGroupRequest} vatGroup The VAT group which should be created
+       *
+       * @summary Create a new VAT group
+       * @param {VatGroupRequest} [vatGroupRequest] The VAT group which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createVatGroup: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("createVatGroup", "vatGroup", n);
-        const r = "/vatgroups", a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "POST" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), d["Content-Type"] = "application/json", (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), o.data = (0, e.serializeDataIfNeeded)(n, o, l), {
-          url: (0, e.toPathString)(a),
-          options: o
+      createVatGroup: (c, n = {}) => d(this, void 0, void 0, function* () {
+        const i = "/vatgroups", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Get a list of all VAT groups
+       *
+       * @summary Get a list of all VAT groups
        * @param {number} [vatGroupId] ID of the VAT group
        * @param {string} [name] Name of the VAT group
        * @param {number} [percentage] VAT percentage
@@ -8321,97 +9097,103 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllVatGroups: (n, t, r, a, s, o, d = {}) => c(this, void 0, void 0, function* () {
-        const h = "/vatgroups", A = new URL(h, e.DUMMY_BASE_URL);
-        let O;
-        l && (O = l.baseOptions);
-        const b = Object.assign(Object.assign({ method: "GET" }, O), d), F = {}, j = {};
-        yield (0, e.setApiKeyToObject)(F, "Authorization", l), n !== void 0 && (j.vatGroupId = n), t !== void 0 && (j.name = t), r !== void 0 && (j.percentage = r), a !== void 0 && (j.deleted = a), s !== void 0 && (j.take = s), o !== void 0 && (j.skip = o), (0, e.setSearchParams)(A, j);
-        let V = O && O.headers ? O.headers : {};
-        return b.headers = Object.assign(Object.assign(Object.assign({}, F), V), d.headers), {
-          url: (0, e.toPathString)(A),
-          options: b
+      getAllVatGroups: (c, n, i, s, e, t, o = {}) => d(this, void 0, void 0, function* () {
+        const u = "/vatgroups", h = new URL(u, a.DUMMY_BASE_URL);
+        let A;
+        r && (A = r.baseOptions);
+        const O = Object.assign(Object.assign({ method: "GET" }, A), o), m = {}, f = {};
+        yield (0, a.setBearerAuthToObject)(m, r), c !== void 0 && (f.vatGroupId = c), n !== void 0 && (f.name = n), i !== void 0 && (f.percentage = i), s !== void 0 && (f.deleted = s), e !== void 0 && (f.take = e), t !== void 0 && (f.skip = t), (0, a.setSearchParams)(h, f);
+        let j = A && A.headers ? A.headers : {};
+        return O.headers = Object.assign(Object.assign(Object.assign({}, m), j), o.headers), {
+          url: (0, a.toPathString)(h),
+          options: O
         };
       }),
       /**
-       *  Returns the requested VAT group
+       *
+       * @summary Returns the requested VAT group
        * @param {number} id The ID of the VAT group which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleVatGroup: (n, t = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getSingleVatGroup", "id", n);
-        const r = "/vatgroups/{id}".replace("{id}", encodeURIComponent(String(n))), a = new URL(r, e.DUMMY_BASE_URL);
-        let s;
-        l && (s = l.baseOptions);
-        const o = Object.assign(Object.assign({ method: "GET" }, s), t), d = {}, h = {};
-        yield (0, e.setApiKeyToObject)(d, "Authorization", l), (0, e.setSearchParams)(a, h);
-        let A = s && s.headers ? s.headers : {};
-        return o.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
-          url: (0, e.toPathString)(a),
-          options: o
+      getSingleVatGroup: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getSingleVatGroup", "id", c);
+        const i = "/vatgroups/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
         };
       }),
       /**
-       *  Get the VAT collections needed for VAT declarations
+       *
+       * @summary Get the VAT collections needed for VAT declarations
        * @param {number} year Calendar year for VAT declarations
        * @param {string} period Period for VAT declarations
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getVatDeclarationAmounts: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("getVatDeclarationAmounts", "year", n), (0, e.assertParamExists)("getVatDeclarationAmounts", "period", t);
-        const a = "/vatgroups/declaration", s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "GET" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), n !== void 0 && (A.year = n), t !== void 0 && (A.period = t), (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), {
-          url: (0, e.toPathString)(s),
-          options: d
+      getVatDeclarationAmounts: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getVatDeclarationAmounts", "year", c), (0, a.assertParamExists)("getVatDeclarationAmounts", "period", n);
+        const s = "/vatgroups/declaration", e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "GET" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), c !== void 0 && (h.year = c), n !== void 0 && (h.period = n), (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), {
+          url: (0, a.toPathString)(e),
+          options: o
         };
       }),
       /**
-       *  Create a new VAT group
+       *
+       * @summary Create a new VAT group
        * @param {number} id The ID of the VAT group which should be updated
-       * @param {UpdateVatGroupRequest} vatGroup The VAT group information
+       * @param {UpdateVatGroupRequest} [updateVatGroupRequest] The VAT group information
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateVatGroup: (n, t, r = {}) => c(this, void 0, void 0, function* () {
-        (0, e.assertParamExists)("updateVatGroup", "id", n), (0, e.assertParamExists)("updateVatGroup", "vatGroup", t);
-        const a = "/vatgroups/{id}".replace("{id}", encodeURIComponent(String(n))), s = new URL(a, e.DUMMY_BASE_URL);
-        let o;
-        l && (o = l.baseOptions);
-        const d = Object.assign(Object.assign({ method: "PATCH" }, o), r), h = {}, A = {};
-        yield (0, e.setApiKeyToObject)(h, "Authorization", l), h["Content-Type"] = "application/json", (0, e.setSearchParams)(s, A);
-        let O = o && o.headers ? o.headers : {};
-        return d.headers = Object.assign(Object.assign(Object.assign({}, h), O), r.headers), d.data = (0, e.serializeDataIfNeeded)(t, d, l), {
-          url: (0, e.toPathString)(s),
-          options: d
+      updateVatGroup: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateVatGroup", "id", c);
+        const s = "/vatgroups/{id}".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "PATCH" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), o.data = (0, a.serializeDataIfNeeded)(n, o, r), {
+          url: (0, a.toPathString)(e),
+          options: o
         };
       })
     };
   };
-  i.VatGroupsApiAxiosParamCreator = Us;
-  const ys = function(l) {
-    const n = (0, i.VatGroupsApiAxiosParamCreator)(l);
+  l.VatGroupsApiAxiosParamCreator = Rs;
+  const Ts = function(r) {
+    const c = (0, l.VatGroupsApiAxiosParamCreator)(r);
     return {
       /**
-       *  Create a new VAT group
-       * @param {VatGroupRequest} vatGroup The VAT group which should be created
+       *
+       * @summary Create a new VAT group
+       * @param {VatGroupRequest} [vatGroupRequest] The VAT group which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createVatGroup(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.createVatGroup(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      createVatGroup(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.createVatGroup(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["VatGroupsApi.createVatGroup"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Get a list of all VAT groups
+       *
+       * @summary Get a list of all VAT groups
        * @param {number} [vatGroupId] ID of the VAT group
        * @param {string} [name] Name of the VAT group
        * @param {number} [percentage] VAT percentage
@@ -8421,67 +9203,76 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllVatGroups(t, r, a, s, o, d, h) {
-        return c(this, void 0, void 0, function* () {
-          const A = yield n.getAllVatGroups(t, r, a, s, o, d, h);
-          return (0, e.createRequestFunction)(A, u.default, p.BASE_PATH, l);
+      getAllVatGroups(n, i, s, e, t, o, u) {
+        var h, A, O;
+        return d(this, void 0, void 0, function* () {
+          const m = yield c.getAllVatGroups(n, i, s, e, t, o, u), f = (h = r == null ? void 0 : r.serverIndex) !== null && h !== void 0 ? h : 0, j = (O = (A = v.operationServerMap["VatGroupsApi.getAllVatGroups"]) === null || A === void 0 ? void 0 : A[f]) === null || O === void 0 ? void 0 : O.url;
+          return (V, F) => (0, a.createRequestFunction)(m, p.default, v.BASE_PATH, r)(V, j || F);
         });
       },
       /**
-       *  Returns the requested VAT group
+       *
+       * @summary Returns the requested VAT group
        * @param {number} id The ID of the VAT group which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleVatGroup(t, r) {
-        return c(this, void 0, void 0, function* () {
-          const a = yield n.getSingleVatGroup(t, r);
-          return (0, e.createRequestFunction)(a, u.default, p.BASE_PATH, l);
+      getSingleVatGroup(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getSingleVatGroup(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["VatGroupsApi.getSingleVatGroup"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
         });
       },
       /**
-       *  Get the VAT collections needed for VAT declarations
+       *
+       * @summary Get the VAT collections needed for VAT declarations
        * @param {number} year Calendar year for VAT declarations
        * @param {string} period Period for VAT declarations
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getVatDeclarationAmounts(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.getVatDeclarationAmounts(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      getVatDeclarationAmounts(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.getVatDeclarationAmounts(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["VatGroupsApi.getVatDeclarationAmounts"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       },
       /**
-       *  Create a new VAT group
+       *
+       * @summary Create a new VAT group
        * @param {number} id The ID of the VAT group which should be updated
-       * @param {UpdateVatGroupRequest} vatGroup The VAT group information
+       * @param {UpdateVatGroupRequest} [updateVatGroupRequest] The VAT group information
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateVatGroup(t, r, a) {
-        return c(this, void 0, void 0, function* () {
-          const s = yield n.updateVatGroup(t, r, a);
-          return (0, e.createRequestFunction)(s, u.default, p.BASE_PATH, l);
+      updateVatGroup(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.updateVatGroup(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["VatGroupsApi.updateVatGroup"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
         });
       }
     };
   };
-  i.VatGroupsApiFp = ys;
-  const js = function(l, n, t) {
-    const r = (0, i.VatGroupsApiFp)(l);
+  l.VatGroupsApiFp = Ts;
+  const Es = function(r, c, n) {
+    const i = (0, l.VatGroupsApiFp)(r);
     return {
       /**
-       *  Create a new VAT group
-       * @param {VatGroupRequest} vatGroup The VAT group which should be created
+       *
+       * @summary Create a new VAT group
+       * @param {VatGroupRequest} [vatGroupRequest] The VAT group which should be created
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createVatGroup(a, s) {
-        return r.createVatGroup(a, s).then((o) => o(t, n));
+      createVatGroup(s, e) {
+        return i.createVatGroup(s, e).then((t) => t(n, c));
       },
       /**
-       *  Get a list of all VAT groups
+       *
+       * @summary Get a list of all VAT groups
        * @param {number} [vatGroupId] ID of the VAT group
        * @param {string} [name] Name of the VAT group
        * @param {number} [percentage] VAT percentage
@@ -8491,54 +9282,59 @@ C.createRequestFunction = Vr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllVatGroups(a, s, o, d, h, A, O) {
-        return r.getAllVatGroups(a, s, o, d, h, A, O).then((b) => b(t, n));
+      getAllVatGroups(s, e, t, o, u, h, A) {
+        return i.getAllVatGroups(s, e, t, o, u, h, A).then((O) => O(n, c));
       },
       /**
-       *  Returns the requested VAT group
+       *
+       * @summary Returns the requested VAT group
        * @param {number} id The ID of the VAT group which should be returned
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleVatGroup(a, s) {
-        return r.getSingleVatGroup(a, s).then((o) => o(t, n));
+      getSingleVatGroup(s, e) {
+        return i.getSingleVatGroup(s, e).then((t) => t(n, c));
       },
       /**
-       *  Get the VAT collections needed for VAT declarations
+       *
+       * @summary Get the VAT collections needed for VAT declarations
        * @param {number} year Calendar year for VAT declarations
        * @param {string} period Period for VAT declarations
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getVatDeclarationAmounts(a, s, o) {
-        return r.getVatDeclarationAmounts(a, s, o).then((d) => d(t, n));
+      getVatDeclarationAmounts(s, e, t) {
+        return i.getVatDeclarationAmounts(s, e, t).then((o) => o(n, c));
       },
       /**
-       *  Create a new VAT group
+       *
+       * @summary Create a new VAT group
        * @param {number} id The ID of the VAT group which should be updated
-       * @param {UpdateVatGroupRequest} vatGroup The VAT group information
+       * @param {UpdateVatGroupRequest} [updateVatGroupRequest] The VAT group information
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateVatGroup(a, s, o) {
-        return r.updateVatGroup(a, s, o).then((d) => d(t, n));
+      updateVatGroup(s, e, t) {
+        return i.updateVatGroup(s, e, t).then((o) => o(n, c));
       }
     };
   };
-  i.VatGroupsApiFactory = js;
-  class Vs extends p.BaseAPI {
+  l.VatGroupsApiFactory = Es;
+  class Bs extends v.BaseAPI {
     /**
-     *  Create a new VAT group
-     * @param {VatGroupRequest} vatGroup The VAT group which should be created
+     *
+     * @summary Create a new VAT group
+     * @param {VatGroupRequest} [vatGroupRequest] The VAT group which should be created
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof VatGroupsApi
      */
-    createVatGroup(n, t) {
-      return (0, i.VatGroupsApiFp)(this.configuration).createVatGroup(n, t).then((r) => r(this.axios, this.basePath));
+    createVatGroup(c, n) {
+      return (0, l.VatGroupsApiFp)(this.configuration).createVatGroup(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Get a list of all VAT groups
+     *
+     * @summary Get a list of all VAT groups
      * @param {number} [vatGroupId] ID of the VAT group
      * @param {string} [name] Name of the VAT group
      * @param {number} [percentage] VAT percentage
@@ -8549,50 +9345,299 @@ C.createRequestFunction = Vr;
      * @throws {RequiredError}
      * @memberof VatGroupsApi
      */
-    getAllVatGroups(n, t, r, a, s, o, d) {
-      return (0, i.VatGroupsApiFp)(this.configuration).getAllVatGroups(n, t, r, a, s, o, d).then((h) => h(this.axios, this.basePath));
+    getAllVatGroups(c, n, i, s, e, t, o) {
+      return (0, l.VatGroupsApiFp)(this.configuration).getAllVatGroups(c, n, i, s, e, t, o).then((u) => u(this.axios, this.basePath));
     }
     /**
-     *  Returns the requested VAT group
+     *
+     * @summary Returns the requested VAT group
      * @param {number} id The ID of the VAT group which should be returned
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof VatGroupsApi
      */
-    getSingleVatGroup(n, t) {
-      return (0, i.VatGroupsApiFp)(this.configuration).getSingleVatGroup(n, t).then((r) => r(this.axios, this.basePath));
+    getSingleVatGroup(c, n) {
+      return (0, l.VatGroupsApiFp)(this.configuration).getSingleVatGroup(c, n).then((i) => i(this.axios, this.basePath));
     }
     /**
-     *  Get the VAT collections needed for VAT declarations
+     *
+     * @summary Get the VAT collections needed for VAT declarations
      * @param {number} year Calendar year for VAT declarations
      * @param {string} period Period for VAT declarations
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof VatGroupsApi
      */
-    getVatDeclarationAmounts(n, t, r) {
-      return (0, i.VatGroupsApiFp)(this.configuration).getVatDeclarationAmounts(n, t, r).then((a) => a(this.axios, this.basePath));
+    getVatDeclarationAmounts(c, n, i) {
+      return (0, l.VatGroupsApiFp)(this.configuration).getVatDeclarationAmounts(c, n, i).then((s) => s(this.axios, this.basePath));
     }
     /**
-     *  Create a new VAT group
+     *
+     * @summary Create a new VAT group
      * @param {number} id The ID of the VAT group which should be updated
-     * @param {UpdateVatGroupRequest} vatGroup The VAT group information
+     * @param {UpdateVatGroupRequest} [updateVatGroupRequest] The VAT group information
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof VatGroupsApi
      */
-    updateVatGroup(n, t, r) {
-      return (0, i.VatGroupsApiFp)(this.configuration).updateVatGroup(n, t, r).then((a) => a(this.axios, this.basePath));
+    updateVatGroup(c, n, i) {
+      return (0, l.VatGroupsApiFp)(this.configuration).updateVatGroup(c, n, i).then((s) => s(this.axios, this.basePath));
     }
   }
-  i.VatGroupsApi = Vs;
-})(Je);
-var Ae = {};
-Object.defineProperty(Ae, "__esModule", { value: !0 });
-Ae.Configuration = void 0;
-class Rr {
-  constructor(c = {}) {
-    this.apiKey = c.apiKey, this.username = c.username, this.password = c.password, this.accessToken = c.accessToken, this.basePath = c.basePath, this.baseOptions = c.baseOptions, this.formDataCtor = c.formDataCtor;
+  l.VatGroupsApi = Bs;
+  const Fs = function(r) {
+    return {
+      /**
+       *
+       * @summary Creates a new voucher group
+       * @param {VoucherGroupRequest} [voucherGroupRequest] The voucher group which should be created
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      createVouchergroup: (c, n = {}) => d(this, void 0, void 0, function* () {
+        const i = "/vouchergroups", s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "POST" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), o["Content-Type"] = "application/json", (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), t.data = (0, a.serializeDataIfNeeded)(c, t, r), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Returns all existing voucher groups
+       * @param {number} [take] How many voucher groups the endpoint should return
+       * @param {number} [skip] How many voucher groups should be skipped (for pagination)
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getAllVouchergroups: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        const s = "/vouchergroups", e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "GET" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), c !== void 0 && (h.take = c), n !== void 0 && (h.skip = n), (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), {
+          url: (0, a.toPathString)(e),
+          options: o
+        };
+      }),
+      /**
+       *
+       * @summary Returns the requested voucher group
+       * @param {number} id The id of the voucher group which should be returned
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getVouchergroupId: (c, n = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("getVouchergroupId", "id", c);
+        const i = "/vouchergroups/{id}".replace("{id}", encodeURIComponent(String(c))), s = new URL(i, a.DUMMY_BASE_URL);
+        let e;
+        r && (e = r.baseOptions);
+        const t = Object.assign(Object.assign({ method: "GET" }, e), n), o = {}, u = {};
+        yield (0, a.setBearerAuthToObject)(o, r), (0, a.setSearchParams)(s, u);
+        let h = e && e.headers ? e.headers : {};
+        return t.headers = Object.assign(Object.assign(Object.assign({}, o), h), n.headers), {
+          url: (0, a.toPathString)(s),
+          options: t
+        };
+      }),
+      /**
+       *
+       * @summary Updates the requested voucher group
+       * @param {number} id The id of the voucher group which should be updated
+       * @param {VoucherGroupRequest} [voucherGroupRequest] The updated voucher group
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      updateVoucherGroup: (c, n, i = {}) => d(this, void 0, void 0, function* () {
+        (0, a.assertParamExists)("updateVoucherGroup", "id", c);
+        const s = "/vouchergroups/{id}".replace("{id}", encodeURIComponent(String(c))), e = new URL(s, a.DUMMY_BASE_URL);
+        let t;
+        r && (t = r.baseOptions);
+        const o = Object.assign(Object.assign({ method: "PATCH" }, t), i), u = {}, h = {};
+        yield (0, a.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, a.setSearchParams)(e, h);
+        let A = t && t.headers ? t.headers : {};
+        return o.headers = Object.assign(Object.assign(Object.assign({}, u), A), i.headers), o.data = (0, a.serializeDataIfNeeded)(n, o, r), {
+          url: (0, a.toPathString)(e),
+          options: o
+        };
+      })
+    };
+  };
+  l.VouchergroupsApiAxiosParamCreator = Fs;
+  const Cs = function(r) {
+    const c = (0, l.VouchergroupsApiAxiosParamCreator)(r);
+    return {
+      /**
+       *
+       * @summary Creates a new voucher group
+       * @param {VoucherGroupRequest} [voucherGroupRequest] The voucher group which should be created
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      createVouchergroup(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.createVouchergroup(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["VouchergroupsApi.createVouchergroup"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
+        });
+      },
+      /**
+       *
+       * @summary Returns all existing voucher groups
+       * @param {number} [take] How many voucher groups the endpoint should return
+       * @param {number} [skip] How many voucher groups should be skipped (for pagination)
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getAllVouchergroups(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.getAllVouchergroups(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["VouchergroupsApi.getAllVouchergroups"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
+        });
+      },
+      /**
+       *
+       * @summary Returns the requested voucher group
+       * @param {number} id The id of the voucher group which should be returned
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getVouchergroupId(n, i) {
+        var s, e, t;
+        return d(this, void 0, void 0, function* () {
+          const o = yield c.getVouchergroupId(n, i), u = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, h = (t = (e = v.operationServerMap["VouchergroupsApi.getVouchergroupId"]) === null || e === void 0 ? void 0 : e[u]) === null || t === void 0 ? void 0 : t.url;
+          return (A, O) => (0, a.createRequestFunction)(o, p.default, v.BASE_PATH, r)(A, h || O);
+        });
+      },
+      /**
+       *
+       * @summary Updates the requested voucher group
+       * @param {number} id The id of the voucher group which should be updated
+       * @param {VoucherGroupRequest} [voucherGroupRequest] The updated voucher group
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      updateVoucherGroup(n, i, s) {
+        var e, t, o;
+        return d(this, void 0, void 0, function* () {
+          const u = yield c.updateVoucherGroup(n, i, s), h = (e = r == null ? void 0 : r.serverIndex) !== null && e !== void 0 ? e : 0, A = (o = (t = v.operationServerMap["VouchergroupsApi.updateVoucherGroup"]) === null || t === void 0 ? void 0 : t[h]) === null || o === void 0 ? void 0 : o.url;
+          return (O, m) => (0, a.createRequestFunction)(u, p.default, v.BASE_PATH, r)(O, A || m);
+        });
+      }
+    };
+  };
+  l.VouchergroupsApiFp = Cs;
+  const Is = function(r, c, n) {
+    const i = (0, l.VouchergroupsApiFp)(r);
+    return {
+      /**
+       *
+       * @summary Creates a new voucher group
+       * @param {VoucherGroupRequest} [voucherGroupRequest] The voucher group which should be created
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      createVouchergroup(s, e) {
+        return i.createVouchergroup(s, e).then((t) => t(n, c));
+      },
+      /**
+       *
+       * @summary Returns all existing voucher groups
+       * @param {number} [take] How many voucher groups the endpoint should return
+       * @param {number} [skip] How many voucher groups should be skipped (for pagination)
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getAllVouchergroups(s, e, t) {
+        return i.getAllVouchergroups(s, e, t).then((o) => o(n, c));
+      },
+      /**
+       *
+       * @summary Returns the requested voucher group
+       * @param {number} id The id of the voucher group which should be returned
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      getVouchergroupId(s, e) {
+        return i.getVouchergroupId(s, e).then((t) => t(n, c));
+      },
+      /**
+       *
+       * @summary Updates the requested voucher group
+       * @param {number} id The id of the voucher group which should be updated
+       * @param {VoucherGroupRequest} [voucherGroupRequest] The updated voucher group
+       * @param {*} [options] Override http request option.
+       * @throws {RequiredError}
+       */
+      updateVoucherGroup(s, e, t) {
+        return i.updateVoucherGroup(s, e, t).then((o) => o(n, c));
+      }
+    };
+  };
+  l.VouchergroupsApiFactory = Is;
+  class Ms extends v.BaseAPI {
+    /**
+     *
+     * @summary Creates a new voucher group
+     * @param {VoucherGroupRequest} [voucherGroupRequest] The voucher group which should be created
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof VouchergroupsApi
+     */
+    createVouchergroup(c, n) {
+      return (0, l.VouchergroupsApiFp)(this.configuration).createVouchergroup(c, n).then((i) => i(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Returns all existing voucher groups
+     * @param {number} [take] How many voucher groups the endpoint should return
+     * @param {number} [skip] How many voucher groups should be skipped (for pagination)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof VouchergroupsApi
+     */
+    getAllVouchergroups(c, n, i) {
+      return (0, l.VouchergroupsApiFp)(this.configuration).getAllVouchergroups(c, n, i).then((s) => s(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Returns the requested voucher group
+     * @param {number} id The id of the voucher group which should be returned
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof VouchergroupsApi
+     */
+    getVouchergroupId(c, n) {
+      return (0, l.VouchergroupsApiFp)(this.configuration).getVouchergroupId(c, n).then((i) => i(this.axios, this.basePath));
+    }
+    /**
+     *
+     * @summary Updates the requested voucher group
+     * @param {number} id The id of the voucher group which should be updated
+     * @param {VoucherGroupRequest} [voucherGroupRequest] The updated voucher group
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof VouchergroupsApi
+     */
+    updateVoucherGroup(c, n, i) {
+      return (0, l.VouchergroupsApiFp)(this.configuration).updateVoucherGroup(c, n, i).then((s) => s(this.axios, this.basePath));
+    }
+  }
+  l.VouchergroupsApi = Ms;
+})(Xe);
+var Oe = {};
+Object.defineProperty(Oe, "__esModule", { value: !0 });
+Oe.Configuration = void 0;
+class Hr {
+  constructor(d = {}) {
+    this.apiKey = d.apiKey, this.username = d.username, this.password = d.password, this.accessToken = d.accessToken, this.basePath = d.basePath, this.serverIndex = d.serverIndex, this.baseOptions = d.baseOptions, this.formDataCtor = d.formDataCtor;
   }
   /**
    * Check if the given MIME is a JSON MIME.
@@ -8604,54 +9649,54 @@ class Rr {
    * @param mime - MIME (Multipurpose Internet Mail Extensions)
    * @return True if the given MIME is JSON, false otherwise.
    */
-  isJsonMime(c) {
-    const u = new RegExp("^(application/json|[^;/ 	]+/[^;/ 	]+[+]json)[ 	]*(;.*)?$", "i");
-    return c !== null && (u.test(c) || c.toLowerCase() === "application/json-patch+json");
+  isJsonMime(d) {
+    const p = new RegExp("^(application/json|[^;/ 	]+/[^;/ 	]+[+]json)[ 	]*(;.*)?$", "i");
+    return d !== null && (p.test(d) || d.toLowerCase() === "application/json-patch+json");
   }
 }
-Ae.Configuration = Rr;
-(function(i) {
-  var c = Y && Y.__createBinding || (Object.create ? function(e, p, P, g) {
-    g === void 0 && (g = P);
-    var m = Object.getOwnPropertyDescriptor(p, P);
-    (!m || ("get" in m ? !p.__esModule : m.writable || m.configurable)) && (m = { enumerable: !0, get: function() {
-      return p[P];
-    } }), Object.defineProperty(e, g, m);
-  } : function(e, p, P, g) {
-    g === void 0 && (g = P), e[g] = p[P];
-  }), u = Y && Y.__exportStar || function(e, p) {
-    for (var P in e)
-      P !== "default" && !Object.prototype.hasOwnProperty.call(p, P) && c(p, e, P);
+Oe.Configuration = Hr;
+(function(l) {
+  var d = J && J.__createBinding || (Object.create ? function(a, v, P, b) {
+    b === void 0 && (b = P);
+    var g = Object.getOwnPropertyDescriptor(v, P);
+    (!g || ("get" in g ? !v.__esModule : g.writable || g.configurable)) && (g = { enumerable: !0, get: function() {
+      return v[P];
+    } }), Object.defineProperty(a, b, g);
+  } : function(a, v, P, b) {
+    b === void 0 && (b = P), a[b] = v[P];
+  }), p = J && J.__exportStar || function(a, v) {
+    for (var P in a)
+      P !== "default" && !Object.prototype.hasOwnProperty.call(v, P) && d(v, a, P);
   };
-  Object.defineProperty(i, "__esModule", { value: !0 }), u(Je, i), u(Ae, i);
+  Object.defineProperty(l, "__esModule", { value: !0 }), p(Xe, l), p(Oe, l);
 })(w);
-const H = Ce.create();
-H.interceptors.response.use((i) => (Bs(i), i));
-class _r {
-  constructor(c) {
-    q(this, "_authenticateApi");
-    q(this, "_balanceApi");
-    q(this, "_usersApi");
-    q(this, "_posApi");
-    q(this, "_categoryApi");
-    q(this, "_transactionApi");
-    q(this, "_bannerApi");
-    q(this, "_rootApi");
-    q(this, "_borrelkaartApi");
-    q(this, "_containerApi");
-    q(this, "_filesApi");
-    q(this, "_invoicesApi");
-    q(this, "_payoutsApi");
-    q(this, "_productsApi");
-    q(this, "_transfersApi");
-    q(this, "_vatGroupsApi");
-    q(this, "_stripeApi");
-    q(this, "_rbacApi");
-    q(this, "_openBannerApi");
-    const u = new w.Configuration({
-      apiKey: () => `Bearer ${Te().token}`
+const H = Ie.create();
+H.interceptors.response.use((l) => (Gs(l), l));
+class $r {
+  constructor(d) {
+    x(this, "_authenticateApi");
+    x(this, "_balanceApi");
+    x(this, "_usersApi");
+    x(this, "_posApi");
+    x(this, "_categoryApi");
+    x(this, "_transactionApi");
+    x(this, "_bannerApi");
+    x(this, "_rootApi");
+    x(this, "_voucherGroupApi");
+    x(this, "_containerApi");
+    x(this, "_filesApi");
+    x(this, "_invoicesApi");
+    x(this, "_payoutsApi");
+    x(this, "_productsApi");
+    x(this, "_transfersApi");
+    x(this, "_vatGroupsApi");
+    x(this, "_stripeApi");
+    x(this, "_rbacApi");
+    x(this, "_openBannerApi");
+    const p = new w.Configuration({
+      apiKey: () => `Bearer ${Re().token}`
     });
-    this._authenticateApi = new w.AuthenticateApi(u, c, H), this._balanceApi = new w.BalanceApi(u, c, H), this._usersApi = new w.UsersApi(u, c, H), this._posApi = new w.PointofsaleApi(u, c, H), this._categoryApi = new w.ProductCategoriesApi(u, c, H), this._transactionApi = new w.TransactionsApi(u, c, H), this._bannerApi = new w.BannersApi(u, c, H), this._openBannerApi = new w.BannersApi(void 0, c, H), this._rootApi = new w.RootApi(), this._borrelkaartApi = new w.BorrelkaartgroupsApi(u, c, H), this._containerApi = new w.ContainersApi(u, c, H), this._filesApi = new w.FilesApi(u, c, H), this._invoicesApi = new w.InvoicesApi(u, c, H), this._payoutsApi = new w.PayoutRequestsApi(u, c, H), this._productsApi = new w.ProductsApi(u, c, H), this._transfersApi = new w.TransfersApi(u, c, H), this._vatGroupsApi = new w.VatGroupsApi(u, c, H), this._stripeApi = new w.StripeApi(u, c, H), this._rbacApi = new w.RbacApi(u, c, H);
+    this._authenticateApi = new w.AuthenticateApi(p, d, H), this._balanceApi = new w.BalanceApi(p, d, H), this._usersApi = new w.UsersApi(p, d, H), this._posApi = new w.PointofsaleApi(p, d, H), this._categoryApi = new w.ProductCategoriesApi(p, d, H), this._transactionApi = new w.TransactionsApi(p, d, H), this._bannerApi = new w.BannersApi(p, d, H), this._openBannerApi = new w.BannersApi(void 0, d, H), this._rootApi = new w.RootApi(), this._voucherGroupApi = new w.VouchergroupsApi(p, d, H), this._containerApi = new w.ContainersApi(p, d, H), this._filesApi = new w.FilesApi(p, d, H), this._invoicesApi = new w.InvoicesApi(p, d, H), this._payoutsApi = new w.PayoutRequestsApi(p, d, H), this._productsApi = new w.ProductsApi(p, d, H), this._transfersApi = new w.TransfersApi(p, d, H), this._vatGroupsApi = new w.VatGroupsApi(p, d, H), this._stripeApi = new w.StripeApi(p, d, H), this._rbacApi = new w.RbacApi(p, d, H);
   }
   get authenticate() {
     return this._authenticateApi;
@@ -8675,7 +9720,7 @@ class _r {
     return this._rootApi;
   }
   get borrelkaart() {
-    return this._borrelkaartApi;
+    return this._voucherGroupApi;
   }
   get container() {
     return this._containerApi;
@@ -8712,16 +9757,16 @@ class _r {
   }
 }
 export {
-  _r as ApiService,
-  _s as clearTokenInStorage,
-  vs as fetchAllPages,
-  Te as getTokenFromStorage,
-  Ls as isAuthenticated,
-  ws as isTokenExpired,
-  Cs as parseToken,
-  vr as populateStoresFromToken,
-  We as setTokenInStorage,
-  Bs as updateTokenIfNecessary,
-  qs as useAuthStore,
-  Ye as useUserStore
+  $r as ApiService,
+  ks as clearTokenInStorage,
+  Ds as fetchAllPages,
+  Re as getTokenFromStorage,
+  $s as isAuthenticated,
+  Ys as isTokenExpired,
+  Qs as parseToken,
+  kr as populateStoresFromToken,
+  Je as setTokenInStorage,
+  Gs as updateTokenIfNecessary,
+  zs as useAuthStore,
+  Ke as useUserStore
 };

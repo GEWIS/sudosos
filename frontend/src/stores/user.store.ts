@@ -25,7 +25,11 @@ export const useUserStore = defineStore('user', {
       balance: null,
       user: null,
       financialMutations: {
-        _pagination: {},
+        _pagination: {
+          take: -1,
+          skip: -1,
+          count: -1,
+        },
         records: [],
       }
     },

@@ -1,4 +1,4 @@
-import { AuthenticateApi, BalanceApi, BannersApi, BorrelkaartgroupsApi, ContainersApi, FilesApi, InvoicesApi, PayoutRequestsApi, PointofsaleApi, ProductCategoriesApi, ProductsApi, RbacApi, RootApi, StripeApi, TransactionsApi, TransfersApi, UsersApi, VatGroupsApi } from '@sudosos/sudosos-client';
+import { AuthenticateApi, BalanceApi, BannersApi, VouchergroupsApi, ContainersApi, FilesApi, InvoicesApi, PayoutRequestsApi, PointofsaleApi, ProductCategoriesApi, ProductsApi, RbacApi, RootApi, StripeApi, TransactionsApi, TransfersApi, UsersApi, VatGroupsApi } from '@sudosos/sudosos-client';
 export declare class ApiService {
     private readonly _authenticateApi;
     private readonly _balanceApi;
@@ -8,7 +8,7 @@ export declare class ApiService {
     private readonly _transactionApi;
     private readonly _bannerApi;
     private readonly _rootApi;
-    private readonly _borrelkaartApi;
+    private readonly _voucherGroupApi;
     private readonly _containerApi;
     private readonly _filesApi;
     private readonly _invoicesApi;
@@ -27,7 +27,7 @@ export declare class ApiService {
     get transaction(): TransactionsApi;
     get banner(): BannersApi;
     get rootApi(): RootApi;
-    get borrelkaart(): BorrelkaartgroupsApi;
+    get borrelkaart(): VouchergroupsApi;
     get container(): ContainersApi;
     get files(): FilesApi;
     get invoices(): InvoicesApi;

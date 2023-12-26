@@ -2,7 +2,7 @@ import {
     AuthenticateApi,
     BalanceApi,
     BannersApi,
-    BorrelkaartgroupsApi,
+    VouchergroupsApi,
     Configuration,
     ContainersApi,
     FilesApi,
@@ -50,7 +50,7 @@ export class ApiService {
 
     private readonly _rootApi: RootApi;
 
-    private readonly _borrelkaartApi: BorrelkaartgroupsApi;
+    private readonly _voucherGroupApi: VouchergroupsApi;
 
     private readonly _containerApi: ContainersApi;
 
@@ -86,7 +86,7 @@ export class ApiService {
         this._bannerApi = new BannersApi(withKeyConfiguration, basePath, axiosInstance);
         this._openBannerApi = new BannersApi(undefined, basePath, axiosInstance);
         this._rootApi = new RootApi();
-        this._borrelkaartApi = new BorrelkaartgroupsApi(withKeyConfiguration, basePath, axiosInstance);
+        this._voucherGroupApi = new VouchergroupsApi(withKeyConfiguration, basePath, axiosInstance);
         this._containerApi = new ContainersApi(withKeyConfiguration, basePath, axiosInstance);
         this._filesApi = new FilesApi(withKeyConfiguration, basePath, axiosInstance);
         this._invoicesApi = new InvoicesApi(withKeyConfiguration, basePath, axiosInstance);
@@ -126,8 +126,8 @@ export class ApiService {
         return this._rootApi;
     }
 
-    get borrelkaart(): BorrelkaartgroupsApi {
-        return this._borrelkaartApi;
+    get borrelkaart(): VouchergroupsApi {
+        return this._voucherGroupApi;
     }
 
     get container(): ContainersApi {

@@ -1,8 +1,8 @@
 import { AxiosHeaders, AxiosResponse } from "axios/index";
-import jwtDecode, { JwtPayload } from "jwt-decode";
 import { ApiService } from "../services/ApiService";
 import { useAuthStore } from "../stores/auth.store";
 import { useUserStore } from "../stores/user.store";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 
 type Token = { token: string, expires: string };
 
