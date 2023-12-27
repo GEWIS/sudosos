@@ -3,6 +3,7 @@
             :header="$t('c_ContainerAssign.Assign product')"
             :draggable="false"
             modal
+            @after-hide="resetForm"
     >
         <form @submit="handleProductCreate">
             <div class="row">
@@ -49,7 +50,7 @@ const schema = toTypedSchema(
   })
 )
 
-const { defineField, values, errors, handleSubmit } = useForm({
+const { defineField, resetForm, errors, handleSubmit } = useForm({
   validationSchema: schema,
 });
 
