@@ -22,7 +22,7 @@
           </div>
         </div>
         <br />
-        <Button severity="danger" @click="showDialog">{{ $t('balance.Start payment') }}</Button>
+        <Button severity="success" @click="showDialog">{{ $t('balance.Start payment') }}</Button>
       </CardComponent>
     </div>
   </div>

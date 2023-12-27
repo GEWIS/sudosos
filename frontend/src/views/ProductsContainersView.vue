@@ -96,7 +96,7 @@
             bodyStyle="text-align:center"
           />
         </DataTable>
-        <ProductModalComponent :product="selectedProduct" v-model:visible="visible" />
+        <ProductCreateComponent v-model:visible="visible" />
       </CardComponent>
       <ContainerCardComponent
         v-if="containers"
@@ -131,6 +131,7 @@ import ProductModalComponent from '@/components/ProductCreateComponent.vue';
 import Dropdown from 'primevue/dropdown';
 
 import ContainerCardComponent from '@/components/ContainerCardComponent.vue';
+import ProductCreateComponent from "@/components/ProductCreateComponent.vue";
 
 const containers: Ref<ContainerWithProductsResponse[]> = ref([]);
 

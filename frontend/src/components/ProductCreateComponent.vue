@@ -10,7 +10,7 @@
         <div class="field grid">
           <label for="name" class="col-12 mb-2 md:col-2 md:mb-0">{{ $t('c_productInfoModal.Name') }}</label>
           <div class="col-12 md:col-10">
-            <InputText id="name" v-bind="name" />
+            <InputText id="name" v-model="name" type="text" v-bind="nameAttrs" />
             <span class="error-text">{{ errors.name }}</span>
           </div>
         </div>
@@ -23,6 +23,7 @@
               optionLabel="name"
               v-model="category"
               id="category"
+              v-bind="categoryAttrs"
             />
             <span class="error-text">{{ errors.category }}</span>
           </div>
@@ -35,19 +36,32 @@
               :options="vatGroups"
               optionLabel="percentage"
               v-model="vat"
+              v-bind="vatAttrs"
             />
             <span class="error-text">{{ errors.vatGroup }}</span></div>
         </div>
         <div class="field grid" v-if="category && null === 'Alcoholic'">
-          <label for="alcohol" class="col-12 mb-2 md:col-2 md:mb-0">{{ $t('c_productEditModal.Alcohol Percentage') }}</label>
+          <label
+            for="alcohol"
+            class="col-12 mb-2 md:col-2 md:mb-0"
+          >
+            {{ $t('c_productEditModal.Alcohol Percentage') }}
+          </label>
           <div class="col-12 md:col-10">
-            <InputNumber id="alcohol" placeholder="" :options="vatGroups" v-bind="alcoholPercentage" />
-            <span class="error-text">{{ errors.alcoholPercentage }}</span></div>
+            <InputNumber
+              id="alcohol"
+              placeholder=""
+              :options="vatGroups"
+              v-model="alcoholPercentage"
+              v-bind="alcoholPercentageAttrs"
+            />
+            <span class="error-text">{{ errors.alcoholPercentage }}</span>
+          </div>
         </div>
         <div class="field grid">
           <label for="price" class="col-12 mb-2 md:col-2 md:mb-0">{{ $t('c_productEditModal.Price') }}</label>
           <div class="col-12 md:col-10">
-            <InputNumber id="price" placeholder="" v-bind="price" :max-fraction-digits="2" />
+            <InputNumber id="price" placeholder="" v-model="price" v-bind="priceAttrs" :max-fraction-digits="2" />
             <span class="error-text">{{ errors.price }}</span></div>
         </div>
         <div class="field grid">
@@ -65,6 +79,7 @@
               optionLabel="firstName"
               v-model="owner"
               id="owner"
+              v-bind="ownerAttrs"
             />
             <span class="error-text">{{ errors.owner }}</span>
           </div>
@@ -108,30 +123,24 @@ const productSchema = toTypedSchema(
   })
 );
 
-const { defineField, handleSubmit, errors, values } = useForm({
+const { defineField, handleSubmit, errors, setValues } = useForm({
   validationSchema: productSchema
 });
 
 const authStore = useAuthStore();
-defineProps({
-  product: {
-    type: Object as () => ProductResponse,
-    required: false
-  }
-});
 const toast = useToast();
 const { t } = useI18n();
-const visible = ref(false);
+const visible: Ref<boolean | undefined> = ref(false);
 const emit = defineEmits(['update:visible']);
 const categories: Ref<ProductCategoryResponse[]> = ref([]);
 const vatGroups: Ref<VatGroup[]> = ref([]);
 const organsList: Ref<BaseUserResponse[]> = ref([]);
-const name = defineField('name');
-const category = defineField('category');
-const vat = defineField('vatGroup');
-const price = defineField('price');
-const owner = defineField('owner');
-const alcoholPercentage = defineField('alcoholPercentage');
+const [name, nameAttrs] = defineField('name');
+const [category, categoryAttrs] = defineField('category');
+const [vat, vatAttrs] = defineField('vatGroup');
+const [price, priceAttrs] = defineField('price');
+const [owner, ownerAttrs] = defineField('owner');
+const [alcoholPercentage, alcoholPercentageAttrs] = defineField('alcoholPercentage');
 const productImage: Ref<File | undefined> = ref();
 
 onMounted(async () => {

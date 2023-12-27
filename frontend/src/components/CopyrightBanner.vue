@@ -22,6 +22,7 @@ footer {
   height: 60px;
   line-height: 60px;
   background-color: #f5f5f5;
+  position: absolute;
 }
 
 b {
