@@ -26,4 +26,33 @@ defineProps({
 </script>
 
 <style scoped lang="scss">
+//.product-card {
+//  overflow: hidden;
+//  text-align: center;
+//  height: 10rem;
+//  width: 8rem;
+//  border: 1px solid #ccc;
+//  border-radius: 5px;
+//  box-sizing: border-box; /* Include padding and border in the .card's width */
+//
+//  .product {
+//    display: flex;
+//    flex-direction: column; /* Align items vertically */
+//    justify-content: space-between;
+//    > img {
+//      width: 100%;
+//      height: auto;
+//      object-fit: contain;
+//    }
+//  }
+//}
+//
+//.product-name {
+//  margin: 0;
+//  font-weight: bold;
+//  font-size: 1rem;
+//  overflow: hidden;
+//  text-overflow: ellipsis;
+//  white-space: nowrap;
+//}
 </style>
