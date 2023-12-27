@@ -89,7 +89,4 @@ const cancelPay = async () => {
 
 </script>
 <style scoped>
-:deep(.p-panel-content) {
-  padding-left: 1.25rem !important;
-}
 </style>

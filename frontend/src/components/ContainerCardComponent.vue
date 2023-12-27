@@ -49,17 +49,4 @@ const containers = ref();
 </script>
 <style scoped lang="scss">
 
-:deep(.p-tabview-header-action):has(.createContainerButton) {
-  background-color: #d40000;
-  color: white;
-}
-
-:deep(.p-disabled){
-  opacity: 1;
-  a {
-    color: white!important;
-    background-color: #d40000!important;
-    text-transform: uppercase;
-  }
-}
 </style>
