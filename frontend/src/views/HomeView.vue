@@ -24,7 +24,7 @@ import BalanceComponent from '@/components/BalanceComponent.vue';
 import MutationsTableComponent from '@/components/Mutations/MutationsTableComponent.vue';
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
 import apiService from '@/services/ApiService';
-import type { GewisUserResponse, PaginatedFinancialMutationResponse } from '@sudosos/sudosos-client';
+import type { GewisUserResponse, PaginatedFinancialMutationResponse, UserResponse } from "@sudosos/sudosos-client";
 import router from "@/router";
 import { handleError } from "@/utils/errorUtils";
 import { useToast } from "primevue/usetoast";
