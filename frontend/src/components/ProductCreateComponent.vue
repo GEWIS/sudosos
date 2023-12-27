@@ -109,7 +109,7 @@ const productSchema = toTypedSchema(
   })
 );
 
-const { defineComponentBinds, handleSubmit, errors } = useForm({
+const { defineField, handleSubmit, errors } = useForm({
   validationSchema: productSchema
 });
 
@@ -127,12 +127,12 @@ const emit = defineEmits(['update:visible']);
 const categories: Ref<ProductCategoryResponse[]> = ref([]);
 const vatGroups: Ref<VatGroup[]> = ref([]);
 const organsList: Ref<BaseUserResponse[]> = ref([]);
-const name = defineComponentBinds('name');
-const category = defineComponentBinds('category');
-const vat = defineComponentBinds('vatGroup');
-const price = defineComponentBinds('price');
-const owner = defineComponentBinds('owner');
-const alcoholPercentage = defineComponentBinds('alcoholPercentage');
+const name = defineField('name');
+const category = defineField('category');
+const vat = defineField('vatGroup');
+const price = defineField('price');
+const owner = defineField('owner');
+const alcoholPercentage = defineField('alcoholPercentage');
 const productImage: Ref<File | undefined> = ref();
 
 onMounted(async () => {
