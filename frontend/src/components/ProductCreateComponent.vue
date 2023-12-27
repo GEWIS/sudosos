@@ -21,7 +21,7 @@
               :placeholder="$t('c_productEditModal.Please select')"
               :options="categories"
               optionLabel="name"
-              v-bind="category"
+              v-model="category"
               id="category"
             />
             <span class="error-text">{{ errors.category }}</span>
@@ -34,12 +34,11 @@
               :placeholder="$t('c_productEditModal.Please select VAT')"
               :options="vatGroups"
               optionLabel="percentage"
-              v-bind="vat"
-              id="vat"
+              v-model="vat"
             />
             <span class="error-text">{{ errors.vatGroup }}</span></div>
         </div>
-        <div class="field grid" v-if="category.modelValue && category.modelValue.name === 'Alcoholic'">
+        <div class="field grid" v-if="category && null === 'Alcoholic'">
           <label for="alcohol" class="col-12 mb-2 md:col-2 md:mb-0">{{ $t('c_productEditModal.Alcohol Percentage') }}</label>
           <div class="col-12 md:col-10">
             <InputNumber id="alcohol" placeholder="" :options="vatGroups" v-bind="alcoholPercentage" />
@@ -64,7 +63,7 @@
               :placeholder="$t('c_POSCreate.Select owner')"
               :options="organsList"
               optionLabel="firstName"
-              v-bind="owner"
+              v-model="owner"
               id="owner"
             />
             <span class="error-text">{{ errors.owner }}</span>
@@ -109,7 +108,7 @@ const productSchema = toTypedSchema(
   })
 );
 
-const { defineField, handleSubmit, errors } = useForm({
+const { defineField, handleSubmit, errors, values } = useForm({
   validationSchema: productSchema
 });
 

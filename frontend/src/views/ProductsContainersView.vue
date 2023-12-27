@@ -146,6 +146,7 @@ const selectedProduct: Ref<ProductResponse | undefined> = ref();
 const visible: Ref<Boolean> = ref(false);
 const editingRows = ref([]);
 const openCreateModal = () => {
+  console.log(selectedProduct.value, visible.value, editingRows.value);
   selectedProduct.value = undefined;
   visible.value = true;
 };
@@ -196,24 +197,4 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
 </script>
 
 <style scoped lang="scss">
-//.product-image {
-//  height: 4rem;
-//}
-//
-//.product-table-header {
-//  /* background-color: #f8f8f8; */
-//  display: flex;
-//  flex-direction: row;
-//  justify-content: space-between;
-//}
-//
-//.content-wrapper {
-//  flex-direction: column;
-//}
-//
-//.container-card {
-//  margin-top: 1rem;
-//  min-width: 100%;
-//  width: 100%
-//}
 </style>
