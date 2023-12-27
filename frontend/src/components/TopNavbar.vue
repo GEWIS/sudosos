@@ -37,7 +37,10 @@
           </a>
         </template>
       </Menubar>
-      <Menubar class="flex md:hidden flex-row flex-wrap justify-content-between mx-2 my-2 transition-all" :model="mobileItems">
+      <Menubar
+        class="flex md:hidden flex-row flex-wrap justify-content-between mx-2 my-2 transition-all"
+        :model="mobileItems"
+      >
         <template #start>
           <router-link to="/" class="no-underline text-white font-bold flex align-items-center flex-row py-1">
             {{ $t("login.SudoSOS") }}

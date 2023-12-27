@@ -2,7 +2,10 @@
   <div class="page-container flex flex-column">
     <div class="page-title">{{ $t('home.Overview') }}</div>
     <div class="content-wrapper gap-5 flex md:flex-row flex-column">
-      <UserInfoComponent :user="userStore.getCurrentUser.user as GewisUserResponse | UserResponse" class="xl:hidden lg:hidden"/>
+      <UserInfoComponent
+        :user="userStore.getCurrentUser.user as GewisUserResponse | UserResponse"
+        class="xl:hidden lg:hidden"
+      />
       <BalanceComponent :showOption="true"/>
       <MutationsTableComponent
           :callback-function="getUserMutations"
@@ -21,7 +24,7 @@ import BalanceComponent from '@/components/BalanceComponent.vue';
 import MutationsTableComponent from '@/components/Mutations/MutationsTableComponent.vue';
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
 import apiService from '@/services/ApiService';
-import type { GewisUserResponse, PaginatedFinancialMutationResponse, UserResponse } from '@sudosos/sudosos-client';
+import type { GewisUserResponse, PaginatedFinancialMutationResponse } from '@sudosos/sudosos-client';
 import router from "@/router";
 import { handleError } from "@/utils/errorUtils";
 import { useToast } from "primevue/usetoast";

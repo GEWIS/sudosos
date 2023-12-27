@@ -1,9 +1,9 @@
 <template>
   <CardComponent
-    :header="$t('quickOverview.quickOverview')"
+    :header=" t('quickOverview.quickOverview')"
   >
     <div class="flex flex-column align-items-center">
-      <p>{{$t('quickOverview.quickOverviewMessage')}}</p>
+      <p>{{ t('quickOverview.quickOverviewMessage')}}</p>
       <h1 class="text-5xl font-medium my-1">{{props.gewisId}}</h1>
       <h1 class="text-5xl font-medium text-center my-1">{{props.name}}</h1>
     </div>

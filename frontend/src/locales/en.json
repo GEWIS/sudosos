@@ -330,7 +330,8 @@
     "Save": "Save"
   },
   "containersOverview": {
-    "Containers": "Containers"
+    "Containers": "Containers",
+    "newContainer": "New container"
   },
   "c_containerEditModal": {
     "save": "Save",

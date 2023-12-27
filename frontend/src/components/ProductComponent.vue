@@ -1,5 +1,8 @@
 <template>
-  <div class="flex flex-column h-10rem w-8rem border-300 border-1 border-round-sm overflow-hidden" @click="visible = true">
+  <div
+    class="flex flex-column h-10rem w-8rem border-300 border-1 border-round-sm overflow-hidden"
+    @click="visible = true"
+  >
       <img :src="getProductImageSrc(product)" :alt="product.name" />
       <p class="text-center m-0 text-base text-overflow-ellipsis font-bold">{{ product.name }}</p>
   </div>
@@ -23,33 +26,4 @@ defineProps({
 </script>
 
 <style scoped lang="scss">
-//.product-card {
-//  overflow: hidden;
-//  text-align: center;
-//  height: 9.5rem;
-//  width: 8rem;
-//  border: 1px solid #ccc;
-//  border-radius: 5px;
-//  box-sizing: border-box; /* Include padding and border in the .card's width */
-//
-//  .product {
-//    display: flex;
-//    flex-direction: column; /* Align items vertically */
-//    justify-content: space-between;
-//    > img {
-//      width: 100%;
-//      height: auto;
-//      object-fit: contain;
-//    }
-//  }
-//}
-//
-//.product-name {
-//  margin: 0;
-//  font-weight: bold;
-//  font-size: 1rem;
-//  overflow: hidden;
-//  text-overflow: ellipsis;
-//  white-space: nowrap;
-//}
 </style>

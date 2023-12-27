@@ -127,7 +127,6 @@ import { getProductImageSrc } from '@/utils/imageUtils';
 import { formatPrice } from '@/utils/formatterUtils';
 import { FilterMatchMode } from 'primevue/api';
 import InputText from 'primevue/inputtext';
-import ProductModalComponent from '@/components/ProductCreateComponent.vue';
 import Dropdown from 'primevue/dropdown';
 
 import ContainerCardComponent from '@/components/ContainerCardComponent.vue';

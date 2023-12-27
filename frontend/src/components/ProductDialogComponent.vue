@@ -72,41 +72,4 @@ const visible = ref(false);
 </script>
 
 <style scoped lang="scss">
-//
-//.product-dialog {
-//  width: 50vw;
-//  display: flex;
-//  flex-direction: column;
-//  padding-bottom: 1rem;
-//
-//  .rfow {
-//    display: flex;
-//    width: 100%;
-//    padding-left: 1rem;
-//    padding-right: 1rem;
-//
-//    h6 {
-//      font-weight: 700!important;
-//      font-family: Lato,Arial,sans-serif!important;
-//      font-size: 1rem!important;
-//      flex: 0 0 33.33333%;
-//      max-width: 33.33333%;
-//    }
-//
-//    p {
-//      font-family: Lato,Arial,sans-serif!important;
-//      font-size: 1rem!important;
-//      flex: 0 0 66.66666%;
-//      max-width: 66.66666%;
-//      margin-bottom: 0.25rem;
-//    }
-//
-//    img {
-//      max-width: 10rem;
-//      max-height: 10rem;
-//      width: 100%;
-//      height: 100%;
-//    }
-//  }
-//}
 </style>

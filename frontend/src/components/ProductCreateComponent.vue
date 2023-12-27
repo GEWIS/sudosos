@@ -97,7 +97,6 @@ import type {
   BaseUserResponse,
   CreateProductRequest,
   ProductCategoryResponse,
-  ProductResponse,
   VatGroup
 } from '@sudosos/sudosos-client';
 import apiService from '@/services/ApiService';
@@ -123,7 +122,7 @@ const productSchema = toTypedSchema(
   })
 );
 
-const { defineField, handleSubmit, errors, setValues } = useForm({
+const { defineField, handleSubmit, errors } = useForm({
   validationSchema: productSchema
 });
 
