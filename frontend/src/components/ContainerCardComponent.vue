@@ -4,8 +4,7 @@
       <TabPanel :header="$t('containersOverview.Containers')" :disabled="true" />
       <TabPanel v-for="container in containers" :key="container.id" :header="container.name">
         <ScrollPanel style="min-height: 22rem;">
-          <ProductGridComponent :products="container.products" v-if="container.products.length !== 0"/>
-          <p v-if="container.products.length === 0">{{$t('c_containerComponent.no products')}}</p>
+          <ProductGridComponent :container="container"/>
         </ScrollPanel>
       </TabPanel>
     </TabView>
@@ -19,17 +18,12 @@ import ProductGridComponent from "@/components/ProductGridComponent.vue";
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import ScrollPanel from "primevue/scrollpanel";
-const props = defineProps({
-  data: {
+defineProps({
+  containers: {
     type: Array<ContainerWithProductsResponse>,
     required: true,
   },
 });
-onMounted(()=>{
-  containers.value = props.data;
-
-});
-const containers = ref();
 </script>
 <style scoped lang="scss">
 :deep(.p-datatable-thead) {

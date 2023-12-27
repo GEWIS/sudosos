@@ -28,7 +28,7 @@ defineProps({
 .product-card {
   overflow: hidden;
   text-align: center;
-  height: 9.5rem;
+  height: 10rem;
   width: 8rem;
   border: 1px solid #ccc;
   border-radius: 5px;

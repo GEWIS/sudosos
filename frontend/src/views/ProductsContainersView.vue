@@ -102,7 +102,7 @@
         </DataTable>
         <ProductModalComponent :product="selectedProduct" v-model:visible="visible" />
       </CardComponent>
-      <ContainerCardComponent v-if="containers" :data="containers" class="container-card" />
+      <ContainerCardComponent v-if="containers" :containers="containers" class="container-card" />
     </div>
   </div>
 </template>
