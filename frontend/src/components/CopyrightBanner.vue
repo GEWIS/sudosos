@@ -15,6 +15,7 @@ import TermsOfServiceModal from './TermsOfServiceModal.vue';
 
 <style scoped>
 footer {
+  position: sticky;
   bottom: 0;
   left: 0;
   width: 100%;
