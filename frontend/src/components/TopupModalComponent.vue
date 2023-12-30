@@ -17,7 +17,7 @@
     </form>
 
     <template #footer>
-      <Button :label="$t('payment.pay').toUpperCase()" />
+      <Button :label="$t('payment.pay').toUpperCase()" @click="submitPay"/>
     </template>
   </Dialog>
 </template>
