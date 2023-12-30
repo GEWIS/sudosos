@@ -1,7 +1,9 @@
 <template>
-  <TopNavbar class="flex-none" />
-  <RouterView class="flex-grow-1"/>
-  <CopyrightBanner class="flex-none" />
+  <div class="h-screen flex flex-column">
+    <TopNavbar class="flex-none" />
+    <RouterView class="flex-grow-1" />
+    <CopyrightBanner class="flex-none" />
+  </div>
 </template>
 
 <script setup lang="ts">

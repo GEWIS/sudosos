@@ -5,6 +5,6 @@ import Toast from "primevue/toast";
 </script>
 
 <template>
-  <Toast />
-  <RouterView />
+  <Toast /> 
+  <RouterView/>
 </template>
