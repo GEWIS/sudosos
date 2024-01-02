@@ -503,6 +503,18 @@
     "Page": "Pagina",
     "Manage users": "Manager users"
   },
+  "c_ContainerAssign": {
+    "Assign product": "Product toewijzen",
+    "Product": "Kies product:",
+    "Select product": "Selecteer product",
+    "Product selection error": " is een vereist veld."
+  },
+  "c_ContainerAssign": {
+    "Assign product": "Product toewijzen",
+    "Product": "Kies product:",
+    "Select product": "Selecteer product",
+    "Product selection error": " is een vereist veld."
+  },
   "signOut": {
     "message": "Je wordt uitgelogd! Hopelijk heb je het naar je zin gehad en zien we je snel weer :)"
   },

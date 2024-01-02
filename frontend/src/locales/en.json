@@ -550,6 +550,18 @@
     "Select User Type": "Select User Type",
     "Manage users": "Manage users"
   },
+  "c_ContainerAssign": {
+    "Assign product": "Assign product",
+    "Product": "Choose product:",
+    "Select product": "Select product",
+    "Product selection error": " is een vereist veld."
+  },
+  "c_ContainerAssign": {
+    "Assign product": "Assign product",
+    "Product": "Choose product:",
+    "Select product": "Select product",
+    "Product selection error": " is een vereist veld."
+  },
   "signOut": {
     "message": "Signing you out! Hope you had a nice time :) Be sure to come back soon!"
   },
