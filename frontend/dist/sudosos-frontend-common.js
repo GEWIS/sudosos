@@ -9699,7 +9699,7 @@ class Qr {
     q(this, "_rbacApi");
     q(this, "_openBannerApi");
     const p = new x.Configuration({
-      apiKey: () => `Bearer ${Re().token}`
+      accessToken: () => `Bearer ${Re().token}`
     });
     this._authenticateApi = new x.AuthenticateApi(p, d, H), this._balanceApi = new x.BalanceApi(p, d, H), this._usersApi = new x.UsersApi(p, d, H), this._posApi = new x.PointofsaleApi(p, d, H), this._categoryApi = new x.ProductCategoriesApi(p, d, H), this._transactionApi = new x.TransactionsApi(p, d, H), this._bannerApi = new x.BannersApi(p, d, H), this._openBannerApi = new x.BannersApi(void 0, d, H), this._rootApi = new x.RootApi(), this._voucherGroupApi = new x.VouchergroupsApi(p, d, H), this._containerApi = new x.ContainersApi(p, d, H), this._filesApi = new x.FilesApi(p, d, H), this._invoicesApi = new x.InvoicesApi(p, d, H), this._payoutsApi = new x.PayoutRequestsApi(p, d, H), this._productsApi = new x.ProductsApi(p, d, H), this._transfersApi = new x.TransfersApi(p, d, H), this._vatGroupsApi = new x.VatGroupsApi(p, d, H), this._stripeApi = new x.StripeApi(p, d, H), this._rbacApi = new x.RbacApi(p, d, H);
   }

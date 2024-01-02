@@ -74,7 +74,7 @@ export class ApiService {
 
     constructor(basePath: string) {
         const withKeyConfiguration = new Configuration({
-            apiKey: () => `Bearer ${getTokenFromStorage().token}`,
+            accessToken: () => `Bearer ${getTokenFromStorage().token}`,
         });
 
         this._authenticateApi = new AuthenticateApi(withKeyConfiguration, basePath, axiosInstance);
