@@ -55,8 +55,6 @@ const { defineField, resetForm, errors, handleSubmit } = useForm({
 });
 
 const [product, productAttrs] = defineField('product');
-
-
 const allProducts: Ref<ProductResponse[]> = ref([]);
 
 

@@ -19,14 +19,12 @@ import ContainerAssignProductDialog from "@/components/ContainerAssignProductDia
 import { type Ref, ref, type PropType } from "vue";
 
 let visible: Ref<boolean> = ref(false);
-
 const props = defineProps({
   container: {
     type: Object as PropType<ContainerWithProductsResponse>,
     required: true
   }
 });
-
 const products: Ref<ProductResponse[]> = ref(props.container.products);
 
 </script>
