@@ -8,19 +8,20 @@
 <!--      See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/21-->
         <CardComponent :header="$t('userDetails.Personal Info')" class="">
           <form @submit="handleEditUser">
+            <small v-if="!isLocal">{{ $t('profile.notManagedThroughSudoSOS') }}</small>
             <div class="field">
               <label for="firstName">{{ $t("userDetails.First name") }}</label>
-              <InputText id="firstName" v-bind="firstName" class="w-full" />
+              <InputText :disabled="!isLocal" id="firstName" v-model="firstName" v-bind="firstNameAttrs" class="w-full" />
               <span class="error-text">{{ errors.firstName }}</span>
             </div>
             <div class="field">
               <label for="lastName">{{ $t("userDetails.Last name") }}</label>
-              <InputText id="lastName" v-bind="lastName" class="w-full"/>
+              <InputText :disabled="!isLocal" id="lastName" v-model="lastName" v-bind="lastNameAttrs" class="w-full"/>
               <span class="error-text">{{ errors.lastName }}</span>
             </div>
             <div class="field">
               <label for="email">{{ $t("userDetails.Email address") }}</label>
-              <InputText id="email" v-bind="email" class="w-full"/>
+              <InputText :disabled="!isLocal" id="email" v-model="email" v-bind="emailAttrs" class="w-full"/>
             </div>
             <div class="field">
               <label for="type">{{ $t("userDetails.Usertype") }}</label>
@@ -28,14 +29,25 @@
                 id="userType"
                 disabled
                 :placeholder="currentUser ? currentUser.type : undefined"
-                v-bind="userType"
+                v-model="userType"
+                v-bind="userTypeAttrs"
                 class="w-full"
               />
               <span class="error-text">{{ errors.userType }}</span>
             </div>
             <div class="field">
               <label for="active">{{ $t("userDetails.Active") }}</label>
-              <Checkbox :binary="true" id="active" v-bind="isActive" class="w-full"/>
+              <Checkbox :binary="true" id="active" v-model="isActive" v-bind="isActiveAttrs" class="w-full"/>
+            </div>
+            <div class="field">
+              <label for="ofAge">{{ $t('profile.ofAge') }}</label>
+                <Checkbox :binary="true" v-model="ofAge" v-bind="ofAgeAttrs" id="ofAge" class="w-full"/>
+                <span class="error-text">{{ errors.ofAge }}</span>
+            </div>
+            <div class="field">
+              <label for="canGoIntoDebt">{{ $t('profile.canGoIntoDebt') }}</label>
+                <Checkbox :binary="true" v-model="canGoIntoDebt" v-bind="canGoIntoDebtAttrs" id="canGoIntoDebt" class="w-full"/>
+                <span class="error-text">{{ errors.canGoIntoDebt }}</span>
             </div>
             <Button type="submit" class="update-button">{{ $t('userDetails.Update information') }}</Button>
           </form>
@@ -68,35 +80,51 @@ import { userDetailsSchema } from "@/utils/validation-schema";
 import MutationsTableComponent from "@/components/Mutations/MutationsTableComponent.vue";
 import { handleError } from "@/utils/errorUtils";
 import { useToast } from "primevue/usetoast";
+import type { AxiosError } from "axios";
+import Button from "primevue/button";
+import { useI18n } from "vue-i18n";
 
-const { defineComponentBinds, handleSubmit, errors, setValues } = useForm({
+const { defineField, handleSubmit, errors, setValues } = useForm({
   validationSchema: userDetailsSchema,
 });
 
 const userId = ref();
 const route = useRoute();
 const userStore = useUserStore();
-const authStore = useAuthStore();
 const toast = useToast();
+const { t } = useI18n();
 const currentUser: Ref<UserResponse | undefined> = ref();
-const firstName = defineComponentBinds('firstName', {});
-const lastName = defineComponentBinds('lastName', {});
-const email = defineComponentBinds('email', {});
-const isActive = defineComponentBinds('isActive', {});
-const userType = defineComponentBinds('userType', {});
+const [firstName, firstNameAttrs] = defineField('firstName', {});
+const [lastName, lastNameAttrs] = defineField('lastName', {});
+const [email, emailAttrs] = defineField('email', {});
+const [isActive, isActiveAttrs] = defineField('isActive', {});
+const [userType, userTypeAttrs] = defineField('userType', {});
+const [canGoIntoDebt, canGoIntoDebtAttrs] = defineField('canGoIntoDebt', {});
+const [ofAge, ofAgeAttrs] = defineField('ofAge', {});
+
+const isLocal: Ref<Boolean> = ref(false);
 
 onBeforeMount(async () => {
   userId.value = route.params.userId;
-  currentUser.value = userStore.users.find((user) => user.id == userId.value);
-  if (currentUser.value) {
-    setValues({
-      firstName: currentUser.value?.firstName,
-      lastName: currentUser.value?.lastName,
-      email: currentUser.value.email ? currentUser.value.email : '',
-      userType: currentUser.value ? currentUser.value.type : '',
-      isActive: currentUser.value.active,
-    });
+  await apiService.user.getIndividualUser(userId.value).then((res) => {
+    currentUser.value = res.data;
+  }).catch((error: AxiosError) => {
+    handleError(error, toast);
+  });
+  if (!currentUser.value) {
+    await router.replace({ path: '/error' });
+    return;
   }
+  isLocal.value = currentUser.value.type == "LOCAL_USER";
+  setValues({
+    firstName: currentUser.value?.firstName,
+    lastName: currentUser.value?.lastName,
+    email: currentUser.value.email ? currentUser.value.email : '',
+    userType: currentUser.value ? currentUser.value.type : '',
+    isActive: currentUser.value.active,
+    ofAge: currentUser.value.ofAge,
+    canGoIntoDebt: currentUser.value?.canGoIntoDebt,
+  });
 });
 
 const handleEditUser = handleSubmit(async (values) => {
@@ -110,7 +138,14 @@ const handleEditUser = handleSubmit(async (values) => {
     };
     const response = await apiService.user.updateUser(userId, updateUserRequest);
     if (response.status === 200) {
-      await router.push({ name: 'user', params: { userId } });
+      await router.push({ name: 'user', params: { userId } }).then(() => {
+        toast.add({
+          severity: 'success',
+          summary: t('successMessages.success'),
+          detail: t('userDetails.updatedUserInfo'),
+          life: 3000
+        });
+      });
     } else {
       console.error(response.status + ": " + response.statusText);
     }
@@ -119,12 +154,8 @@ const handleEditUser = handleSubmit(async (values) => {
 
 const getUserMutations = async (take: number, skip: number) :
   Promise<PaginatedFinancialMutationResponse | undefined> => {
-  if (!authStore.getUser) {
-    await router.replace({ path: '/error' });
-    return;
-  }
-  await userStore.fetchUsersFinancialMutations(authStore.getUser.id, apiService, take, skip)
-    .catch((err) => handleError(err, toast));
+  await userStore.fetchUsersFinancialMutations(userId.value, apiService, take, skip)
+    .catch((err: AxiosError) => handleError(err, toast));
   return userStore.getCurrentUser.financialMutations;
 };
 

@@ -525,7 +525,7 @@
     "401": "Je hebt niet de juist rechten om deze data op te vragen",
     "403": "Je hebt mag deze data niet opvragen",
     "404": "Deze data lijkt niet te bestaan",
-    "500": "Er gaat iets mis, neem contact op met het SudoSOS team"
+    "500": "Iets gaat fout, open alstublieft een probleem op {link} waarin u het probleem beschrijft."
   },
   "successMessages": {
     "success": "Gelukt!",
