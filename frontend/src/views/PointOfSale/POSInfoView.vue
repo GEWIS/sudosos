@@ -63,6 +63,7 @@ onBeforeMount(async () => {
   });
   pos.value = pointOfSaleStore.getPos;
   if (!pos.value) {
+    console.error('POS had no value');
     await router.replace('/error');
     return;
   }
@@ -72,18 +73,14 @@ const getPOSTransactions = async (
   take: number,
   skip: number
 ): Promise<PaginatedBaseTransactionResponse | undefined> => {
-  const pos = pointOfSaleStore.getPos;
-  if (!pos) {
-    await router.replace('/error');
-    return;
-  }
-  return await apiService.pos.getTransactions(pos.id, take, skip).then((res) => res.data);
+  return await apiService.pos.getTransactions(id.value, take, skip).then((res) => res.data);
 };
 
 const handleEditClicked = () => {
   if (pos.value) {
     router.push(`/point-of-sale/edit/${pos.value.id}`);
   } else {
+    console.error('Could not find pos');
     router.replace({ path: '/error' });
     toast.add({
       severity: 'error',

@@ -154,7 +154,7 @@ const handleEditUser = handleSubmit(async (values) => {
 
 const getUserMutations = async (take: number, skip: number) :
   Promise<PaginatedFinancialMutationResponse | undefined> => {
-  await userStore.fetchUsersFinancialMutations(route.params.userId, apiService, take, skip)
+  await userStore.fetchUsersFinancialMutations(userId.value, apiService, take, skip)
     .catch((err: AxiosError) => handleError(err, toast));
   return userStore.getCurrentUser.financialMutations;
 };
