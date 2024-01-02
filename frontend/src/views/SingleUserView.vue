@@ -135,6 +135,8 @@ const handleEditUser = handleSubmit(async (values) => {
       lastName: values.lastName,
       active: values.isActive,
       email: values.email || '',
+      canGoIntoDebt: values.canGoIntoDebt,
+      ofAge: values.ofAge
     };
     const response = await apiService.user.updateUser(userId, updateUserRequest);
     if (response.status === 200) {
