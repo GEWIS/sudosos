@@ -30,7 +30,7 @@ const { t, locale } = useI18n();
 
 const financialMutationsResponse = ref<PaginatedFinancialMutationResponse>({
   _pagination: {
-    take: 25,
+    take: 0,
     skip: 0,
     count: 0,
   },
