@@ -101,7 +101,7 @@
       <ContainerCardComponent
         v-if="containers"
         :header="$t('manageProducts.Containers')"
-        :data="containers"
+        :containers="containers"
         class="w-full"/>
     </div>
   </div>

@@ -28,13 +28,13 @@
 <script setup lang="ts">
 import type { ContainerWithProductsResponse } from "@sudosos/sudosos-client";
 import apiService from '@/services/ApiService';
-import type { Product, ProductResponse, UpdateContainerRequest } from '@sudosos/sudosos-client';
+import type { ProductResponse, UpdateContainerRequest } from '@sudosos/sudosos-client';
 import Dialog from 'primevue/dialog';
 import { onMounted, ref, type PropType, type Ref } from 'vue';
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { toTypedSchema } from "@vee-validate/yup";
-import { computed } from 'vue'
+import { computed } from 'vue';
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
@@ -48,7 +48,7 @@ const schema = toTypedSchema(
       })
       .required(),
   })
-)
+);
 
 const { defineField, resetForm, errors, handleSubmit } = useForm({
   validationSchema: schema,
@@ -57,7 +57,7 @@ const { defineField, resetForm, errors, handleSubmit } = useForm({
 const [product, productAttrs] = defineField('product');
 
 
-const allProducts: Ref<ProductResponse[]> = ref([])
+const allProducts: Ref<ProductResponse[]> = ref([]);
 
 
 const props = defineProps({
@@ -73,27 +73,27 @@ const props = defineProps({
     type: Object as PropType<ProductResponse[]>,
     required: true
   }
-})
+});
 
-const emit = defineEmits(['update:visible', 'update:products'])
+const emit = defineEmits(['update:visible', 'update:products']);
 
 const products = computed({
   get() {
-    return props.products
+    return props.products;
   },
   set(value) {
-    emit('update:products', value)
+    emit('update:products', value);
   }
-})
+});
 
 const visible = computed({
   get() {
-    return props.visible
+    return props.visible;
   },
   set(value) {
-    emit('update:visible', value)
+    emit('update:visible', value);
   }
-})
+});
 onMounted(async () => {
 
   const productsResp = await apiService.products.getAllProducts(500, 0);
@@ -105,14 +105,14 @@ const handleProductCreate = handleSubmit(async (values) => {
   const updateContainerReq: UpdateContainerRequest = {
     name: props.container.name,
     products: [values.product.id, ...props.container.products.map(e => e.id)],
-    public: props.container.public
-  }
+    public: props.container.public || false,
+  };
 
-  apiService.container.updateContainer(props.container.id, updateContainerReq)
+  apiService.container.updateContainer(props.container.id, updateContainerReq);
 
-  products.value.push(values.product)
+  products.value.push(values.product);
 
-  visible.value = false
+  visible.value = false;
 });
 
 </script>

@@ -5,7 +5,7 @@
     <div v-for="product in products" :key="product.id" class="card">
       <ProductComponent :product="product" />
     </div>
-    <Button class="text-center m-2 w-8rem flex-column align-items-center h-10rem" @click="visible = true">
+    <Button class="flex flex-column h-10rem w-8rem border-300 border-1 border-round-sm overflow-hidden" @click="visible = true">
       <i class="pi pi-plus text-5xl my-auto product-card"></i>
     </Button>
     <ContainerAssignProductDialog v-model:visible="visible" v-model:products="products" :container="props.container"/>
@@ -27,7 +27,7 @@ const props = defineProps({
   }
 });
 
-const products: Ref<ProductResponse[]> = ref(props.container.products)
+const products: Ref<ProductResponse[]> = ref(props.container.products);
 
 </script>
 

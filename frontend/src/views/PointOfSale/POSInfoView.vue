@@ -19,7 +19,7 @@
     <ContainerCardComponent
       class="container-card"
       v-if="pos && pos.containers"
-      :data="pos.containers"
+      :containers="pos.containers"
     />
     <MutationsTableComponent
       :header="$t('app.Transactions')"
