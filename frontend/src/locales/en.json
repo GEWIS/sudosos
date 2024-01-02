@@ -533,7 +533,8 @@
     "Usertype": "Usertype",
     "Update information": "Update information",
     "Personal Info": "Personal Info",
-    "User Transactions": "User Transactions"
+    "User Transactions": "User Transactions",
+    "updatedUserInfo": "Succesfully updated user info."
   },
   "c_userTable": {
     "firstName": "First Name",
