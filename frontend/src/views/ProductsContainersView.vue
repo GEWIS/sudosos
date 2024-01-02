@@ -118,7 +118,7 @@ import type {
   ContainerWithProductsResponse,
   ProductCategoryResponse,
   ProductResponse,
-  VatGroup
+  VatGroupResponse
 } from '@sudosos/sudosos-client';
 import type { DataTableRowEditInitEvent, DataTableRowEditSaveEvent } from 'primevue/datatable';
 import DataTable from 'primevue/datatable';
@@ -150,7 +150,7 @@ const openCreateModal = () => {
   selectedProduct.value = undefined;
   visible.value = true;
 };
-const vatGroups: Ref<VatGroup[]> = ref([]);
+const vatGroups: Ref<VatGroupResponse[]> = ref([]);
 const categories: Ref<ProductCategoryResponse[]> = ref([]);
 
 const rowEditInit = (event: DataTableRowEditInitEvent) => {

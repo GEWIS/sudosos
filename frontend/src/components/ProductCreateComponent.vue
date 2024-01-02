@@ -97,7 +97,7 @@ import type {
   BaseUserResponse,
   CreateProductRequest,
   ProductCategoryResponse,
-  VatGroup
+  VatGroupResponse
 } from '@sudosos/sudosos-client';
 import apiService from '@/services/ApiService';
 import Dropdown from 'primevue/dropdown';
@@ -115,7 +115,7 @@ const productSchema = toTypedSchema(
   yup.object({
     name: yup.string().required(),
     category: yup.mixed<ProductCategoryResponse>().required(),
-    vatGroup: yup.mixed<VatGroup>().required(),
+    vatGroup: yup.mixed<VatGroupResponse>().required(),
     alcoholPercentage: yup.number(),
     price: yup.number().required(),
     owner: yup.mixed<BaseUserResponse>().required()
@@ -132,7 +132,7 @@ const { t } = useI18n();
 const visible: Ref<boolean | undefined> = ref(false);
 const emit = defineEmits(['update:visible']);
 const categories: Ref<ProductCategoryResponse[]> = ref([]);
-const vatGroups: Ref<VatGroup[]> = ref([]);
+const vatGroups: Ref<VatGroupResponse[]> = ref([]);
 const organsList: Ref<BaseUserResponse[]> = ref([]);
 const [name, nameAttrs] = defineField('name');
 const [category, categoryAttrs] = defineField('category');

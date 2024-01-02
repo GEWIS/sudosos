@@ -8,6 +8,8 @@ export const userDetailsSchema = toTypedSchema(
         email: yup.string().email(),
         userType: yup.string().required(),
         isActive: yup.boolean().required().default(true),
+        ofAge: yup.boolean().required(),
+        canGoIntoDebt: yup.boolean().required(),
     })
 );
 

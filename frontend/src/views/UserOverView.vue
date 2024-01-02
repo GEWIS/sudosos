@@ -94,6 +94,18 @@
                 <InputText v-bind="email" id="email"/>
                 <span class="error-text">{{ errors.email }}</span></div>
             </div>
+            <div class="field grid">
+              <label for="ofAge" class="col-12 mb-2 md:col-2 md:mb-0">{{ $t('profile.ofAge') }}</label>
+              <div class="col-12 md:col-10">
+                <Checkbox v-bind="ofAge" id="ofAge"/>
+                <span class="error-text">{{ errors.ofAge }}</span></div>
+            </div>
+            <div class="field grid">
+              <label for="canGoIntoDebt" class="col-12 mb-2 md:col-2 md:mb-0">{{ $t('profile.canGoIntoDebt') }}</label>
+              <div class="col-12 md:col-10">
+                <Checkbox v-bind="canGoIntoDebt" id="canGoIntoDebt"/>
+                <span class="error-text">{{ errors.canGoIntoDebt }}</span></div>
+            </div>
             <div class="form-row" id="actions">
               <Button outlined @click="visible = false">{{ $t('c_confirmationModal.Cancel' )}}</Button>
               <Button type="submit">{{ $t('c_confirmationModal.Save' )}}</Button>
@@ -138,6 +150,8 @@ const firstName = defineComponentBinds('firstName');
 const lastName = defineComponentBinds('lastName');
 const userType = defineComponentBinds('userType');
 const email = defineComponentBinds('email');
+const ofAge = defineComponentBinds('ofAge');
+const canGoIntoDebt = defineComponentBinds('canGoIntoDebt');
 
 const visible: Ref<boolean> = ref(false);
 const loading = ref(false);
@@ -197,6 +211,8 @@ const handleCreateUser = handleSubmit(async (values) => {
     lastName: values.lastName,
     type: userTypes.indexOf(values.userType),
     email: values.email || '',
+    ofAge: values.ofAge,
+    canGoIntoDebt: values.canGoIntoDebt,
   };
   const response = await apiService.user.createUser(createUserRequest);
   if (response.status === 200) {

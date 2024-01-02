@@ -493,7 +493,9 @@
     "keyGet": "Get API key",
     "keyOldRemoved": "NOTE: any old API key will be replaced",
     "keyGetNew": "Get new API key",
-    "notManagedThroughSudoSOS": "This account is not managed through SudoSOS!"
+    "notManagedThroughSudoSOS": "This account is not managed through SudoSOS!",
+    "canGoIntoDebt": "User can go into debt",
+    "ofAge": "User is of age"
   },
   "userDetails": {
     "profile": "{name}'s profile",
