@@ -1,8 +1,8 @@
 <template>
   <CardComponent
-      :header="$t('c_currentBalance.balance')"
-      :action="showOption ? $t('c_currentBalance.Increase balance') : ''"
-      routerLink="balance"
+    :header="$t('c_currentBalance.balance')"
+    :action="showOption ? $t('c_currentBalance.Increase balance') : ''"
+    routerLink="balance"
   >
     <div class="body">
       <h1>{{ displayBalance }}</h1>
@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import CardComponent from '@/components/CardComponent.vue';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { UserResponse } from '@sudosos/sudosos-client';
 import apiService from '@/services/ApiService';
 import { formatPrice } from "@/utils/formatterUtils";
@@ -30,15 +30,15 @@ const props = defineProps({
 });
 
 const userStore = useUserStore();
-
 const balanceFromApi = ref<string | undefined>(undefined);
 
-onMounted(async () => {
-  if (props.user) {
-    const response = await apiService.balance.getBalanceId(props.user.id);
+// Watch for changes on props.user
+watch(() => props.user, async (newUser, oldUser) => {
+  if (newUser) {
+    const response = await apiService.balance.getBalanceId(newUser.id);
     balanceFromApi.value = formatPrice(response.data.amount);
   }
-});
+}, { immediate: true });
 
 const displayBalance = computed(() => {
   if (props.user) {

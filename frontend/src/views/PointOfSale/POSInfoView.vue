@@ -72,12 +72,7 @@ const getPOSTransactions = async (
   take: number,
   skip: number
 ): Promise<PaginatedBaseTransactionResponse | undefined> => {
-  const pos = pointOfSaleStore.getPos;
-  if (!pos) {
-    await router.replace('/error');
-    return;
-  }
-  return await apiService.pos.getTransactions(pos.id, take, skip).then((res) => res.data);
+  return await apiService.pos.getTransactions(id.value, take, skip).then((res) => res.data);
 };
 
 const handleEditClicked = () => {

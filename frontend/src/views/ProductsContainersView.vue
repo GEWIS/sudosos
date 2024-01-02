@@ -96,7 +96,7 @@
             bodyStyle="text-align:center"
           />
         </DataTable>
-        <ProductCreateComponent v-model:visible="visible" />
+        <ProductCreateComponent v-model:visible="visible" @productCreated="handleNewProduct"/>
       </CardComponent>
       <ContainerCardComponent
         v-if="containers"
@@ -146,7 +146,6 @@ const selectedProduct: Ref<ProductResponse | undefined> = ref();
 const visible: Ref<Boolean> = ref(false);
 const editingRows = ref([]);
 const openCreateModal = () => {
-  console.log(selectedProduct.value, visible.value, editingRows.value);
   selectedProduct.value = undefined;
   visible.value = true;
 };
@@ -155,6 +154,15 @@ const categories: Ref<ProductCategoryResponse[]> = ref([]);
 
 const rowEditInit = (event: DataTableRowEditInitEvent) => {
   event.data['editPrice'] = (event.data as ProductResponse).priceInclVat.amount / 100;
+};
+
+const handleNewProduct = async () => {
+  products.value = await fetchAllPages<ProductResponse>(
+    0,
+    Number.MAX_SAFE_INTEGER,
+    // @ts-ignore
+    (take, skip) => apiService.products.getAllProducts(take, skip)
+  );
 };
 
 onMounted(async () => {

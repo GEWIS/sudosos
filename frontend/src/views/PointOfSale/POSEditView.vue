@@ -13,7 +13,8 @@
               <InputText
                 class="input"
                 type="text"
-                v-bind="title"
+                v-model="title"
+                v-bind="titleAttrs"
                 :class="{ 'p-invalid': errors.title }"
               />
               <small v-if="errors.title" class="p-error">
@@ -27,7 +28,8 @@
             </div>
             <div class="flex flex-row gap-2">
                 <Checkbox
-                  v-bind="useAuthentication"
+                  v-model="useAuthentication"
+                  v-bind="useAuthenticationAttrs"
                   inputId="useAuthentication"
                   name="useAuthentication"
                   value="useAuthentication"
@@ -84,7 +86,7 @@ import router from "@/router";
 
 const toast = useToast();
 const { t } = useI18n();
-const { defineComponentBinds, handleSubmit, errors, setValues } = useForm({
+const { defineField, handleSubmit, errors, setValues } = useForm({
   validationSchema: {
     title: yup.string().required(),
     useAuthentication: yup.boolean().required(),
@@ -92,14 +94,14 @@ const { defineComponentBinds, handleSubmit, errors, setValues } = useForm({
   }
 });
 
-const title = defineComponentBinds('title');
+const [title, titleAttrs] = defineField('title');
 
 const containerStore = useContainerStore();
 const userStore = useUserStore();
 const publicContainers: Ref<Array<ContainerResponse> | null | undefined> = ref();
 const ownContainers: Ref<Array<ContainerResponse> | null | undefined> = ref();
 const selectedContainers: Ref<Array<ContainerResponse> | undefined> = ref();
-const useAuthentication = defineComponentBinds('useAuthentication');
+const [useAuthentication, useAuthenticationAttrs] = defineField('useAuthentication');
 const organsList: Ref<Array<UserResponse>> = ref([]);
 const authStore = useAuthStore();
 const pointOfSaleStore = usePointOfSaleStore();
@@ -157,13 +159,16 @@ const handleSelectedChanged = (selected: any) => {
 };
 
 const handleEditPOS = handleSubmit(async (values) => {
-  if (!pos.value) return;
+  if (!pos.value || !selectedContainers.value) {
+    await router.replace({ path: '/error' });
+    return;
+  }
   await pointOfSaleStore
     .updatePointOfSale(
       values.title,
       pos.value.id,
       values.useAuthentication,
-      values.selectedContainers.map((cont: ContainerResponse) => cont.id)
+      selectedContainers.value.map((cont: ContainerResponse) => cont.id)
     )
     .then(() => {
       toast.add({
@@ -172,6 +177,7 @@ const handleEditPOS = handleSubmit(async (values) => {
         detail: t('successMessages.editPOS'),
         life: 3000
       });
+      router.push({ name: 'pointOfSaleInfo', params: { id: id.value } });
     }).catch((error) => handleError(error, toast));
 });
 </script>

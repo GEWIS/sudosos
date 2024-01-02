@@ -168,23 +168,38 @@ const userTypes = [
   'AUTOMATIC_INVOICE'
 ];
 
-onMounted(async () => {
-  await delayedAPICall(0);
+onMounted(() => {
+  delayedAPICall(0);
 });
 
-const delayedAPICall = async (skip: number) => {
+function debounce(func: (skip: number) => Promise<void>, delay: number): (skip: number) => Promise<void> {
+  let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+  return async function(...args: [number]) {
+    if (debounceTimer !== null) {
+      clearTimeout(debounceTimer);
+    }
+    debounceTimer = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+}
+
+const apiCall: (skip: number) => Promise<void> = async (skip: number) => {
   let res = await apiService.user.getAllUsers(
     Number.MAX_SAFE_INTEGER,
     skip,
     filters.value.global.value || '',
     true,
-      undefined,
-      undefined,
-      filters.value.type.value || undefined,
+    undefined,
+    undefined,
+    filters.value.type.value || undefined,
   );
   totalRecords.value = res.data._pagination.count || 0;
   allUsers.value = res.data.records;
 };
+
+// Wrap apiCall with debounce
+const delayedAPICall = debounce(apiCall, 250);
 
 const onPage = (event: any) => {
   delayedAPICall(event.originalEvent.first);

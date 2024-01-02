@@ -54,7 +54,6 @@ const paymentElement = ref();
 const elements = ref();
 onBeforeMount(async () => {
   stripe.value = await loadStripe(`${import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY}`);
-  console.warn(`${import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY}`);
 });
 
 const pay = async () => {

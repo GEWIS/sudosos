@@ -130,7 +130,7 @@ const authStore = useAuthStore();
 const toast = useToast();
 const { t } = useI18n();
 const visible: Ref<boolean | undefined> = ref(false);
-const emit = defineEmits(['update:visible']);
+const emit = defineEmits(['update:visible', 'productCreated']);
 const categories: Ref<ProductCategoryResponse[]> = ref([]);
 const vatGroups: Ref<VatGroupResponse[]> = ref([]);
 const organsList: Ref<BaseUserResponse[]> = ref([]);
@@ -174,7 +174,9 @@ const handleProductCreate = handleSubmit(async (values) => {
       detail: t('successMessages.productCreated'),
       life: 3000,
     });
+    emit('productCreated');
     emit('update:visible', false);
+
   }).catch((err) => handleError(err, toast));
 });
 
