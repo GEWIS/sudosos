@@ -155,9 +155,7 @@ onBeforeMount(async () => {
 });
 
 const handleSelectedChanged = (selected: any) => {
-  console.log(selected);
   selectedContainers.value = selected;
-  console.log(selectedContainers.value);
 };
 
 const handleEditPOS = handleSubmit(async (values) => {

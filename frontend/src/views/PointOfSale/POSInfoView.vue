@@ -63,7 +63,6 @@ onBeforeMount(async () => {
   });
   pos.value = pointOfSaleStore.getPos;
   if (!pos.value) {
-    console.error('POS had no value');
     await router.replace('/error');
     return;
   }
@@ -80,7 +79,6 @@ const handleEditClicked = () => {
   if (pos.value) {
     router.push(`/point-of-sale/edit/${pos.value.id}`);
   } else {
-    console.error('Could not find pos');
     router.replace({ path: '/error' });
     toast.add({
       severity: 'error',

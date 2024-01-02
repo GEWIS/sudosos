@@ -146,7 +146,6 @@ const selectedProduct: Ref<ProductResponse | undefined> = ref();
 const visible: Ref<Boolean> = ref(false);
 const editingRows = ref([]);
 const openCreateModal = () => {
-  console.log(selectedProduct.value, visible.value, editingRows.value);
   selectedProduct.value = undefined;
   visible.value = true;
 };
