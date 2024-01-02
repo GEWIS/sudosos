@@ -131,32 +131,4 @@ const getUserMutations = async (take: number, skip: number) :
 </script>
 
 <style scoped lang="scss">
-//form {
-//  display: flex;
-//  flex-direction: column;
-//}
-//
-//.update-button {
-//  margin-top: 10px;
-//  width: fit-content;
-//}
-//
-//#userBalance {
-//  width: 20rem;
-//  height: 20rem;
-//}
-//
-//.row {
-//  display: flex;
-//  flex-direction: row;
-//  justify-content: space-between;
-//  width: 100%;
-//  margin-bottom: 10px;
-//  margin-top: 10px;
-//}
-//
-//.content-wrapper {
-//  display: flex;
-//  flex-direction: column;
-//}
 </style>
