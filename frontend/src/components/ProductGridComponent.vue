@@ -1,9 +1,7 @@
 <template>
-  <div class="grid">
+  <div class="flex flex-row flex-wrap w-full gap-1 w-full">
     <!-- Loop through each product and render a card for each -->
-    <div v-for="product in products" :key="product.id" class="card">
-      <ProductComponent :product="product" />
-    </div>
+      <ProductComponent v-for="product in products" :product="product" />
   </div>
 </template>
 
@@ -21,9 +19,4 @@ defineProps({
 </script>
 
 <style scoped>
-.grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-gap: 20px;
-}
 </style>

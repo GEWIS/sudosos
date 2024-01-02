@@ -22,7 +22,7 @@
           </div>
         </div>
         <br />
-        <Button severity="danger" @click="showDialog">{{ $t('balance.Start payment') }}</Button>
+        <Button severity="success" @click="showDialog">{{ $t('balance.Start payment') }}</Button>
       </CardComponent>
     </div>
   </div>
@@ -46,8 +46,4 @@ const showDialog = () => {
 </script>
 
 <style scoped>
-@import "../styles/BasePage.css";
-:deep(.p-panel-content) {
-  padding-left: 1.25rem!important;
-}
 </style>

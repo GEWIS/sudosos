@@ -6,13 +6,13 @@
           @update:visible="closeDialog"
           ref="addContainer"
           @show="addListenerOnDialogueOverlay(addContainer)"
+          class="w-auto flex w-9"
   >
-    <div class="dialog">
       <form @submit="handleCreateContainer">
-        <div class="row">
-          <h6>{{ $t("c_containerEditModal.Name") }}</h6>
-          <div class="input-container">
-            <InputText class="flex-child" :class="{'p-invalid': errors.name}" v-bind="name"/>
+        <div class="field grid">
+          <label class="col-12 mb-2 md:col-2 md:mb-0">{{ $t("c_containerEditModal.Name") }}</label>
+          <div class="col-12 md:col-10">
+            <InputText :class="{'p-invalid': errors.name}" v-bind="name"/>
             <small
                 v-if="errors.name"
                 class="p-error"
@@ -22,11 +22,10 @@
             <br v-else>
           </div>
         </div>
-        <div class="row">
-          <h6>{{ $t("c_containerEditModal.owner") }}</h6>
-          <div class="input-container">
+        <div class="field grid">
+          <label class="col-12 mb-2 md:col-2 md:mb-0">{{ $t("c_containerEditModal.owner") }}</label>
+          <div class="col-12 md:col-10">
             <Dropdown
-                class="flex-child"
                 :options="organsList"
                 optionLabel="firstName"
                 v-bind="selectedOwner"
@@ -42,17 +41,18 @@
             <br v-else>
             </div>
         </div>
-        <div class="row">
-          <h6>{{ $t("c_containerEditModal.Public") }}</h6>
-          <Checkbox class="flex-child" :binary="true" v-bind="isPublic"/>
-          <span class="error-text">{{ errors.isPublic }}</span>
+        <div class="field grid">
+          <label class="col-12 mb-2 md:col-2 md:mb-0">{{ $t("c_containerEditModal.Public") }}</label>
+          <div class="col-12 md:col-10">
+            <Checkbox class="flex-child" :binary="true" v-bind="isPublic" />
+            <span class="error-text">{{ errors.isPublic }}</span>
+          </div>
         </div>
-        <div class="row" id="actions">
+        <div class="flex flex-row justify-content-end gap-2">
           <Button outlined @click="closeDialog">{{ $t("c_containerEditModal.cancel") }}</Button>
           <Button type="submit">{{ $t("c_containerEditModal.save") }}</Button>
         </div>
       </form>
-    </div>
   </Dialog>
 </template>
 
@@ -119,72 +119,4 @@ const handleCreateContainer = handleSubmit(async (values) => {
 </script>
 
 <style scoped lang="scss">
-.dialog {
-  width: 50vw;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 1rem;
-
-  .row {
-    display: flex;
-    width: 100%;
-    padding-left: 1rem;
-    padding-right: 1rem;
-
-    h6 {
-      font-weight: 700!important;
-      font-family: Lato,Arial,sans-serif!important;
-      font-size: 1rem!important;
-      flex: 0 0 33.33333%;
-      max-width: 20%;
-    }
-
-    .flex-child {
-      font-family: Lato,Arial,sans-serif!important;
-      font-size: 1rem!important;
-
-      margin-bottom: 0.25rem;
-    }
-
-    img {
-      max-width: 10rem;
-      max-height: 10rem;
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  #actions {
-    display: flex;
-    justify-content: flex-end;
-    flex-direction: row;
-
-    .p-button {
-      margin: 0 0.2rem;
-    }
-  }
-}
-
-.input-container {
-  display: flex;
-  flex-direction: column;
-  width: 50%;
-}
-
-.p-invalid {
-  background-color: #fef0f0;
-}
-
-.p-error {
-  display: block;
-  font-size: 12px;
-  text-align: left;
-  line-height:18px;
-}
-
-.p-error > i {
-  font-size:12px;
-  margin-right: 3.6px;
-  line-height:12px;
-}
 </style>

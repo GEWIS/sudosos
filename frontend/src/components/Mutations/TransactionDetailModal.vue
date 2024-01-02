@@ -17,16 +17,16 @@ defineProps({
 </script>
 
 <template>
-  <div class="content-wrapper">
-    <div class="transaction-row">
+  <div class="flex flex-column">
+    <div class="flex flex-row justify-content-between">
       <div class="transaction-left-column"><p>{{ $t("transactions.total") }}</p></div>
       <div class="transaction-right-column"><p>{{ formatValueEuro(transactionInfo.totalPriceInclVat) }}</p></div>
     </div>
-    <div class="transaction-row">
+    <div class="flex flex-row justify-content-between">
       <div class="transaction-left-column"><p>{{ $t("transactions.pos") }}</p></div>
       <div class="transaction-right-column"><p>{{ transactionInfo.pointOfSale.name }}</p></div>
     </div>
-    <div class="transaction-row">
+    <div class="flex flex-row justify-content-between">
       <div class="transaction-left-column"><p>{{ $t("transactions.boughtBy") }}</p></div>
       <div class="transaction-right-column">
         <p>
@@ -35,7 +35,7 @@ defineProps({
         </p>
       </div>
     </div>
-    <div v-if="transactionInfo.createdBy" class="transaction-row" >
+    <div v-if="transactionInfo.createdBy" class="flex flex-row justify-content-between" >
       <div class="transaction-left-column">
         <p>{{ $t("transactions.putInBy") }}
       </p>
@@ -47,7 +47,7 @@ defineProps({
         </p>
       </div>
     </div>
-    <div class="transaction-row">
+    <div class="flex flex-row justify-content-between">
       <div class="transaction-left-column"><p>{{ $t("transactions.products") }}</p></div>
       <div class="transaction-right-column">
         <div v-for="transactionProduct in productsInfo" :key="transactionProduct.id" class="product-row">
@@ -70,5 +70,4 @@ defineProps({
 </template>
 
 <style scoped lang="scss">
-@import '../../styles/Modal.css';
 </style>

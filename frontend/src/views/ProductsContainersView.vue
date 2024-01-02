@@ -1,8 +1,8 @@
 <template>
   <div class="page-container">
     <div class="page-title">{{ $t('manageProducts.Manage all products and containers') }}</div>
-    <div class="content-wrapper">
-      <CardComponent header="all products">
+    <div class="flex flex-column gap-5">
+      <CardComponent header="all products" class="w-full">
         <DataTable
           v-model:filters="filters"
           :value="products"
@@ -17,7 +17,7 @@
           @row-edit-init="rowEditInit"
         >
           <template #header>
-            <div class="product-table-header">
+            <div class="flex flex-row justify-content-between">
               <span class="p-input-icon-left">
                 <i class="pi pi-search" />
                 <InputText v-model="filters['global'].value" placeholder="Search" />
@@ -27,20 +27,19 @@
               </span>
             </div>
           </template>
-          <Column field="image" :header="$t('c_productEditModal.Image')" style="width: fit-content">
+          <Column field="image" :header="$t('c_productEditModal.Image')" >
             <template #body="rowData">
-              <img class="product-image" :src="getProductImageSrc(rowData.data)" alt="img" />
+              <img :src="getProductImageSrc(rowData.data)" alt="img" class="w-4rem mx-1" />
             </template>
           </Column>
           <Column field="name" :header="$t('c_productEditModal.Name')">
             <template #editor="{ data, field }">
-              <InputText v-model="data[field]" style="width: 100%" />
+              <InputText v-model="data[field]" />
             </template>
           </Column>
-          <Column field="category" :header="$t('c_productEditModal.Category')" style="width: 20%">
+          <Column field="category" :header="$t('c_productEditModal.Category')" >
             <template #editor="{ data, field }">
               <Dropdown
-                style="width: 100%"
                 :placeholder="$t('c_productEditModal.Please select')"
                 optionLabel="name"
                 :options="categories"
@@ -63,7 +62,6 @@
                 currency="EUR"
                 :minFractionDigits="2"
                 :maxFractionDigits="2"
-                style="width: 100%"
               />
             </template>
             <template #body="rowData">
@@ -72,7 +70,7 @@
           </Column>
           <Column field="alcoholPercentage" :header="$t('c_productEditModal.Alcohol Percentage')">
             <template #editor="{ data, field }">
-              <InputNumber v-model="data[field]" suffix="%" style="width: 100%" />
+              <InputNumber v-model="data[field]" suffix="%" />
             </template>
             <template #body="rowData">
               {{ `${rowData.data.alcoholPercentage} %` }}
@@ -85,7 +83,6 @@
                   :options="vatGroups"
                   optionLabel="percentage"
                   v-model="data[field]"
-                  style="width: 100%"
               >
                 <template #value="slotProps"> {{ `${slotProps.value.percentage} %` }} </template>
               </Dropdown>
@@ -96,13 +93,16 @@
           </Column>
           <Column
             :rowEditor="true"
-            style="width: 10%; min-width: 8rem"
             bodyStyle="text-align:center"
           />
         </DataTable>
-        <ProductModalComponent :product="selectedProduct" v-model:visible="visible" />
+        <ProductCreateComponent v-model:visible="visible" />
       </CardComponent>
-      <ContainerCardComponent v-if="containers" :data="containers" class="container-card" />
+      <ContainerCardComponent
+        v-if="containers"
+        :header="$t('manageProducts.Containers')"
+        :data="containers"
+        class="w-full"/>
     </div>
   </div>
 </template>
@@ -118,7 +118,7 @@ import type {
   ContainerWithProductsResponse,
   ProductCategoryResponse,
   ProductResponse,
-  VatGroup
+  VatGroupResponse
 } from '@sudosos/sudosos-client';
 import type { DataTableRowEditInitEvent, DataTableRowEditSaveEvent } from 'primevue/datatable';
 import DataTable from 'primevue/datatable';
@@ -127,10 +127,10 @@ import { getProductImageSrc } from '@/utils/imageUtils';
 import { formatPrice } from '@/utils/formatterUtils';
 import { FilterMatchMode } from 'primevue/api';
 import InputText from 'primevue/inputtext';
-import ProductModalComponent from '@/components/ProductCreateComponent.vue';
 import Dropdown from 'primevue/dropdown';
 
 import ContainerCardComponent from '@/components/ContainerCardComponent.vue';
+import ProductCreateComponent from "@/components/ProductCreateComponent.vue";
 
 const containers: Ref<ContainerWithProductsResponse[]> = ref([]);
 
@@ -146,10 +146,11 @@ const selectedProduct: Ref<ProductResponse | undefined> = ref();
 const visible: Ref<Boolean> = ref(false);
 const editingRows = ref([]);
 const openCreateModal = () => {
+  console.log(selectedProduct.value, visible.value, editingRows.value);
   selectedProduct.value = undefined;
   visible.value = true;
 };
-const vatGroups: Ref<VatGroup[]> = ref([]);
+const vatGroups: Ref<VatGroupResponse[]> = ref([]);
 const categories: Ref<ProductCategoryResponse[]> = ref([]);
 
 const rowEditInit = (event: DataTableRowEditInitEvent) => {
@@ -195,84 +196,5 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
 };
 </script>
 
-<style scoped>
-@import '../styles/BasePage.css';
-
-:deep(.p-datatable .p-datatable-thead > tr > th) {
-  background-color: #f8f8f8;
-  border-top: none;
-  text-transform: uppercase;
-  font-family: Lato, Arial, sans-serif !important;
-  font-size: 1rem;
-  padding: 0.375rem 0;
-  line-height: 1.5;
-}
-
-:deep(.p-datatable .p-datatable-tbody > tr) {
-  background-color: #f8f8f8;
-}
-
-:deep(.p-datatable .p-datatable-tbody > tr > td) {
-  border: none;
-  padding: 0.375rem 0.2rem;
-  font-size: 1rem;
-  font-family: Lato, Arial, sans-serif !important;
-}
-
-.product-image {
-  height: 4rem;
-}
-
-.p-panel {
-  width: 100%;
-}
-
-.product-table-header {
-  background-color: #f8f8f8;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-:deep(.p-datatable-header) {
-  background-color: #f8f8f8 !important;
-  border: none !important;
-}
-
-:deep(.p-paginator) {
-  background-color: #f8f8f8;
-}
-
-:deep(.p-inputtext) {
-  width: 100%;
-}
-
-.content-wrapper {
-  flex-direction: column;
-}
-
-.container-card {
-  margin-top: 1rem;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  padding: 1rem;
-  background-color: #f8f8f8 !important;
-  min-width: 100%;
-  width: 100%
-}
-
-:deep(.p-tabview) {
-  background-color: #f8f8f8;
-}
-
-:deep(.p-tabview-nav-link) {
-  background-color: #f8f8f8 !important;
-}
-
-:deep(.p-tabview-panel) {
-  background-color: #f8f8f8;
-}
-:deep(.p-tabview-panels) {
-  background-color: #f8f8f8 !important;
-}
+<style scoped lang="scss">
 </style>

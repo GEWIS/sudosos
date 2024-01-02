@@ -3,44 +3,51 @@
 <template>
   <div class="page-container">
     <div class="page-title">{{ `${currentUser ? currentUser.firstName : ''}'s profile` }}</div>
-    <div class="content-wrapper">
+    <div class="flex flex-column md:flex-row flex-wrap justify-content-between gap-5">
 <!--      TODO: Refactor to extract this component-->
 <!--      See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/21-->
-      <div class="row">
-        <CardComponent :header="$t('userDetails.Personal Info')" class="personal-info-card">
+        <CardComponent :header="$t('userDetails.Personal Info')" class="">
           <form @submit="handleEditUser">
-            <label for="firstName">{{ $t('userDetails.First name') }}</label>
-            <InputText id="firstName" v-bind="firstName" />
-            <span class="error-text">{{ errors.firstName }}</span>
-            <label for="lastName">{{ $t('userDetails.Last name') }}</label>
-            <InputText id="lastName" v-bind="lastName" />
-            <span class="error-text">{{ errors.lastName }}</span>
-            <label for="email">{{ $t('userDetails.Email address') }}</label>
-            <InputText id="email" v-bind="email"/>
-            <label for="type">{{ $t('userDetails.Usertype') }}</label>
-            <InputText
+            <div class="field">
+              <label for="firstName">{{ $t("userDetails.First name") }}</label>
+              <InputText id="firstName" v-bind="firstName" class="w-full" />
+              <span class="error-text">{{ errors.firstName }}</span>
+            </div>
+            <div class="field">
+              <label for="lastName">{{ $t("userDetails.Last name") }}</label>
+              <InputText id="lastName" v-bind="lastName" class="w-full"/>
+              <span class="error-text">{{ errors.lastName }}</span>
+            </div>
+            <div class="field">
+              <label for="email">{{ $t("userDetails.Email address") }}</label>
+              <InputText id="email" v-bind="email" class="w-full"/>
+            </div>
+            <div class="field">
+              <label for="type">{{ $t("userDetails.Usertype") }}</label>
+              <InputText
                 id="userType"
                 disabled
                 :placeholder="currentUser ? currentUser.type : undefined"
                 v-bind="userType"
-            />
-            <span class="error-text">{{ errors.userType }}</span>
-            <label for="active">{{ $t('userDetails.Active') }}</label>
-            <Checkbox :binary="true" id="active" v-bind="isActive" />
-            <Button type="submit">{{ $t('userDetails.Update information') }}</Button>
+                class="w-full"
+              />
+              <span class="error-text">{{ errors.userType }}</span>
+            </div>
+            <div class="field">
+              <label for="active">{{ $t("userDetails.Active") }}</label>
+              <Checkbox :binary="true" id="active" v-bind="isActive" class="w-full"/>
+            </div>
+            <Button type="submit" class="update-button">{{ $t('userDetails.Update information') }}</Button>
           </form>
         </CardComponent>
         <BalanceComponent :user="currentUser" :showOption="false" id="userBalance"/>
-      </div>
-      <div class="row" style="width: 100%;">
         <MutationsTableComponent
+          class="w-full"
           :header="$t('userDetails.User Transactions')"
-          style="width: 100%;"
           paginator
           modal
           :callbackFunction="getUserMutations"
         />
-      </div>
     </div>
   </div>
 </template>
@@ -123,35 +130,5 @@ const getUserMutations = async (take: number, skip: number) :
 
 </script>
 
-<style scoped>
-@import '../styles/BasePage.css';
-
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-:deep(.p-button){
-  margin-top: 10px;
-  width: fit-content;
-}
-
-#userBalance {
-  width: 20rem;
-  height: 20rem;
-}
-
-.row {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 10px;
-  margin-top: 10px;
-}
-
-.content-wrapper {
-  display: flex;
-  flex-direction: column;
-}
+<style scoped lang="scss">
 </style>

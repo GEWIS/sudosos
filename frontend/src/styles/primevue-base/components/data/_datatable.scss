@@ -85,7 +85,6 @@
             &:hover {
                 background: $tableHeaderCellHighlightHoverBg;
                 color: $tableHeaderCellHighlightTextColor;
-
                 .p-sortable-column-icon {
                     color: $tableHeaderCellHighlightTextColor;
                 }
@@ -287,7 +286,6 @@
 
                     .p-row-toggler {
                         color: $highlightTextColor;
-
                         &:hover {
                             color: $highlightTextColor;
                         }

@@ -29,7 +29,11 @@ import { useI18n } from "vue-i18n";
 const { t, locale } = useI18n();
 
 const financialMutationsResponse = ref<PaginatedFinancialMutationResponse>({
-  _pagination: {},
+  _pagination: {
+    take: 0,
+    skip: 0,
+    count: 0,
+  },
   records: []
 });
 
@@ -50,5 +54,4 @@ const getUserMutations = async (take: number, skip: number)
 </script>
 
 <style scoped lang="scss">
-@import '../styles/BasePage.css';
 </style>

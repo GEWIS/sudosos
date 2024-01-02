@@ -171,7 +171,8 @@
     "Default containers": "Standaard containers",
     "Add container": "Container toevoegen",
     "Are you sure": "Weet je zeker dat je de container wil verwijderen?",
-    "Confirm": "Bevestig verwijderen"
+    "Confirm": "Bevestig verwijderen",
+    "Containers": "Containers"
   },
   "c_productTable": {
     "image": "Plaatje",
@@ -499,7 +500,8 @@
     "Active": "Actief",
     "Filter by name": "Filter op naam of ID",
     "Fill in a name": "Vul een naam of ID in",
-    "Page": "Pagina"
+    "Page": "Pagina",
+    "Manage users": "Manager users"
   },
   "signOut": {
     "message": "Je wordt uitgelogd! Hopelijk heb je het naar je zin gehad en zien we je snel weer :)"

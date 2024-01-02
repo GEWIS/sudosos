@@ -1,5 +1,5 @@
 <template>
-  <CardComponent :header="$t('app.Points of Sale')">
+  <CardComponent :header="$t('app.Points of Sale')" class="w-full">
     <DataTable :value="listOfPOS">
       <Column field="name" header="Title"/>
       <Column field="owner.firstName" header="Owner"/>
@@ -8,7 +8,6 @@
           <Button
               @click="$router.push({name: 'pointOfSaleInfo', params: {id: slotProps.data.id}})"
               type="button"
-              severity='danger'
               icon="pi pi-info-circle"
               outlined
           />
@@ -40,24 +39,4 @@ const listOfPOS = ref();
 </script>
 
 <style scoped lang="scss">
-:deep(.p-datatable .p-datatable-thead > tr > th) {
-  background-color: #f8f8f8;
-  border-top: none;
-  text-transform: uppercase;
-  font-family: Lato,Arial,sans-serif!important;
-  font-size: 1rem;
-  padding: 0.375rem 0;
-  line-height: 1.5;
-}
-
-:deep(.p-datatable .p-datatable-tbody > tr) {
-  background-color: #f8f8f8;
-}
-
-:deep(.p-datatable .p-datatable-tbody > tr > td) {
-  border: none;
-  padding: 0.375rem 0;
-  font-size: 1rem;
-  font-family: Lato,Arial,sans-serif!important;
-}
 </style>

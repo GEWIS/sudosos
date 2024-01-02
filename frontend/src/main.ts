@@ -1,6 +1,5 @@
 /* eslint vue/multi-word-component-names: 0 */
 /* eslint vue/no-reserved-component-names: 0 */
-import './assets/main.css';
 
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
@@ -29,9 +28,10 @@ import en from "./locales/en.json";
 import nl from "./locales/nl.json";
 import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
-import 'primeflex/primeflex.css';
-import apiService from "@/services/ApiService";
 
+import 'primeflex/primeflex.css';
+import apiService from './services/ApiService';
+import Accordion from "primevue/accordion";
 const app = createApp(App);
 
 
@@ -64,6 +64,7 @@ app.component('TabView', TabView);
 app.component('ScrollPanel', ScrollPanel);
 app.component('FileUpload', FileUpload);
 app.component('Toast', Toast);
-populateStoresFromToken(apiService);
+app.component('Accordion', Accordion);
 
+populateStoresFromToken(apiService);
 app.mount('#app');

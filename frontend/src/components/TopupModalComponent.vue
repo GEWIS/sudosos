@@ -17,8 +17,7 @@
     </form>
 
     <template #footer>
-      <Button label="cancel" severity="secondary" outlined />
-      <Button label="pay" />
+      <Button :label="$t('payment.pay').toUpperCase()" @click="submitPay"/>
     </template>
   </Dialog>
 </template>
@@ -89,11 +88,5 @@ const cancelPay = async () => {
 };
 
 </script>
-
 <style scoped>
-@import '../styles/BasePage.css';
-
-:deep(.p-panel-content) {
-  padding-left: 1.25rem !important;
-}
 </style>

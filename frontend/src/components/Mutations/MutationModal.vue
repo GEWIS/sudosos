@@ -1,6 +1,6 @@
 <template>
   <Dialog @show="addListenerOnDialogueOverlay(dialog)" :visible="visible" modal header="Details"
-          :style="{ width: '50vw' }" ref="dialog">
+          class="w-auto flex w-9" ref="dialog">
     <TransactionDetailModal
         v-if="shouldShowTransaction"
         :transactionInfo="transactionsDetails[props.id]"

@@ -1,9 +1,14 @@
 <template>
-  <div>
-    <main class="flex flex-column text-center mx-auto my-7 max-w-21rem">
+  <div class="flex flex-column h-screen">
+    <main class="flex flex-column flex-grow-1 text-center mx-auto my-7 max-w-21rem">
       <img class="max-h-9rem block mx-auto my-0" src="@/assets/img/bier.png" alt="logo"/>
       <div class="text-900 text-5xl mt-0 mx-auto mb-2 w-full">{{ $t('login.SudoSOS Login') }}</div>
-      <Button id="login-gewis-button" @click="loginViaGEWIS" severity="success">
+      <Button
+        id="login-gewis-button"
+        @click="loginViaGEWIS"
+        severity="success"
+        class="my-3 mx-auto w-full flex justify-content-center align-items-center"
+      >
         <img class="max-h-2rem py-1 mr-3" src="@/assets/img/gewis-branding.svg" alt="GEWIS"/>
         {{ $t('login.Login via GEWIS') }}
       </Button>
@@ -18,7 +23,7 @@
               v-bind="username"
               size="large"
               name="username"
-              class="input-field"
+              class="w-full pt-2 pb-0 pl-1 h-4rem"
               :class="{ 'p-invalid': loginForm.errors.value.username }"
           />
           <label :class="{ 'contains-text': username.modelValue }" for="username"
@@ -38,18 +43,22 @@
               v-bind="password"
               size="large"
               name="password"
-              class="input-field"
+              class="w-full pt-2 pb-0 pl-1 h-4rem"
               :class="{ 'p-invalid': loginForm.errors.value.password }"
           />
           <label :class="{ 'contains-text': password.modelValue }" for="password"
           >{{ $t('login.Password') }}
           </label>
-          <smal class="p-error">
+          <small class="p-error">
             <i v-if="loginForm.errors.value.password" class="pi pi-exclamation-circle"/>
             {{ loginForm.errors.value.password }}
-          </smal>
+          </small>
         </span>
-        <Button type="submit" id="login-button">
+        <Button
+          type="submit"
+          id="login-button"
+          class="my-3 mx-auto w-full flex justify-content-center align-items-center"
+        >
           {{ $t('login.Login') }}
         </Button>
         <div class="text-900 underline" @click="resetPassword">
@@ -66,7 +75,7 @@
 import CopyrightBanner from "@/components/CopyrightBanner.vue";
 import { useRoute } from "vue-router";
 import { onBeforeMount } from "vue";
-import { useUserStore, useAuthStore } from "@sudosos/sudosos-frontend-common";
+import {useUserStore, useAuthStore, getTokenFromStorage} from "@sudosos/sudosos-frontend-common";
 import apiService from "@/services/ApiService";
 import router from "@/router";
 import { v4 as uuid } from 'uuid';
@@ -133,6 +142,7 @@ const loginHandler = loginForm.handleSubmit(async (values) => {
       toHomeView();
     }
   } catch (err) {
+    console.error('ERROR?',getTokenFromStorage());
     handleError(err as AxiosError, toast);
   }
 });
@@ -152,15 +162,6 @@ const toHomeView = () => {
 
 <style scoped lang="scss">
 //TODO Fix the amount of css used related to #14 and #29
-.p-button {
-  margin: 1rem auto;
-  max-width: 350px;
-  width: 100%;
-  max-height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 .p-error {
   display: block;
@@ -174,14 +175,6 @@ const toHomeView = () => {
   font-size: 12px;
   margin-right: 3.6px;
   line-height: 12px;
-}
-
-.input-field {
-  width: 100%;
-  padding-top: 18px;
-  padding-left: 12px;
-  padding-bottom: 0;
-  height: 60px;
 }
 
 .p-float-label label {

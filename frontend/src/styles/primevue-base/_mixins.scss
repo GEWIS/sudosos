@@ -122,7 +122,6 @@
         }
     }
 }
-
 @mixin menuitem {
     > .p-menuitem-content {
         color: $menuitemTextColor;
@@ -139,7 +138,6 @@
                 font-family: $fontFamily;
                 font-weight: 500;
             }
-
             .p-menuitem-icon {
                 color: $menuitemIconColor;
                 margin-right: $inlineSpacing;
@@ -149,7 +147,6 @@
                 color: $menuitemIconColor;
             }
         }
-
     }
 
     &.p-highlight {
@@ -201,7 +198,7 @@
                 background: $menuitemHoverBg;
 
                 .p-menuitem-link {
-                    padding: $mobilemenuitemPadding;
+                    padding: $menuitemPadding;
                     .p-menuitem-text {
                         color: $menuitemTextHoverColor;
                         transition: $listItemTransition;
@@ -313,7 +310,7 @@
 }
 
 @mixin mobilesubmenuitem {
-     .p-menuitem-content {
+    .p-menuitem-content {
         color: $submenuTextColor;
         transition: $listItemTransition;
         border-radius: $menuitemBorderRadius;
@@ -348,6 +345,7 @@
 
             .p-menuitem-link {
                 padding: $mobilemenuitemPadding;
+
                 .p-menuitem-text {
                     color: $submenuitemTextActiveColor;
                 }
@@ -373,6 +371,7 @@
                 .p-menuitem-link {
                     color: $submenuitemTextFocusColor;
                     padding: $mobilemenuitemPadding;
+
                     .p-menuitem-text {
                         color: $submenuitemTextFocusColor;
                     }
@@ -390,6 +389,7 @@
 
                 .p-menuitem-link {
                     padding: $mobilemenuitemPadding;
+
                     .p-menuitem-text {
                         color: $submenuitemTextHoverColor;
                         transition: $listItemTransition;
@@ -422,7 +422,6 @@
                 color: $horizontalMenuRootMenuitemIconColor;
                 margin-right: $inlineSpacing;
             }
-
             .p-submenu-icon {
                 color: $horizontalMenuRootMenuitemIconColor;
                 margin-left: $inlineSpacing;
@@ -440,7 +439,6 @@
                     .p-menuitem-text {
                         color: $horizontalMenuRootMenuitemTextHoverColor;
                     }
-
                     .p-menuitem-icon, .p-submenu-icon, .pi {
                         color: $horizontalMenuRootMenuitemIconHoverColor;
                     }
@@ -480,7 +478,6 @@
                 .p-menuitem-link {
                     padding-left: $val * ($index + 1);
                 }
-
             }
             @if $index < $length {
                 @include nested-submenu-indents($val, $index + 2, $length);

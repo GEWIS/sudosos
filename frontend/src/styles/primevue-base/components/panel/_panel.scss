@@ -29,7 +29,6 @@
         background: $panelContentBg;
         color: $panelContentTextColor;
         border-top: 0 none;
-
         &:last-child {
             border-bottom-right-radius: $borderRadius;
             border-bottom-left-radius: $borderRadius;
@@ -44,5 +43,11 @@
         border-bottom-right-radius: $borderRadius;
         border-bottom-left-radius: $borderRadius;
         border-top: 0 none;
+    }
+}
+
+@media screen and (max-width: 960px) {
+    .p-panel {
+        width: 100%;
     }
 }
