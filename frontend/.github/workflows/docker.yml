@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   dockerize:
-    runs-on: [self-hosted, linux, docker]
+    runs-on: ubuntu-latest
     container:
       image: docker:dind
     steps:
