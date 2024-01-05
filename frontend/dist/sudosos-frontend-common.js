@@ -1,6 +1,6 @@
 var ws = Object.defineProperty;
 var xs = (c, d, p) => d in c ? ws(c, d, { enumerable: !0, configurable: !0, writable: !0, value: p }) : c[d] = p;
-var q = (c, d, p) => (xs(c, typeof d != "symbol" ? d + "" : d, p), p);
+var L = (c, d, p) => (xs(c, typeof d != "symbol" ? d + "" : d, p), p);
 import { createPinia as Ls, defineStore as $e } from "pinia";
 async function qs(c, d, p) {
   let s = c, v = [];
@@ -316,7 +316,7 @@ function zs(c) {
     });
   }), p;
 }
-var x = {}, Je = {};
+var M = {}, Je = {};
 function Xe(c, d) {
   return function() {
     return c.apply(d, arguments);
@@ -617,8 +617,8 @@ function ve(c, d, p) {
     metaTokens: !0,
     dots: !1,
     indexes: !1
-  }, !1, function(E, D) {
-    return !S.isUndefined(D[E]);
+  }, !1, function(E, H) {
+    return !S.isUndefined(H[E]);
   });
   const s = p.metaTokens, v = p.visitor || V, P = p.dots, b = p.indexes, y = (p.Blob || typeof Blob < "u" && Blob) && S.isSpecCompliantForm(d);
   if (!S.isFunction(v))
@@ -632,9 +632,9 @@ function ve(c, d, p) {
       throw new C("Blob is not supported. Use a Buffer instead.");
     return S.isArrayBuffer(R) || S.isTypedArray(R) ? y && typeof Blob == "function" ? new Blob([R]) : Buffer.from(R) : R;
   }
-  function V(R, E, D) {
+  function V(R, E, H) {
     let N = R;
-    if (R && !D && typeof R == "object") {
+    if (R && !H && typeof R == "object") {
       if (S.endsWith(E, "{}"))
         E = s ? E : E.slice(0, -2), R = JSON.stringify(R);
       else if (S.isArray(R) && Ta(R) || (S.isFileList(R) || S.endsWith(E, "[]")) && (N = S.toArray(R)))
@@ -646,9 +646,9 @@ function ve(c, d, p) {
           );
         }), !1;
     }
-    return je(R) ? !0 : (d.append(Le(D, E, P), T(R)), !1);
+    return je(R) ? !0 : (d.append(Le(H, E, P), T(R)), !1);
   }
-  const U = [], L = Object.assign(Ba, {
+  const U = [], q = Object.assign(Ba, {
     defaultVisitor: V,
     convertValue: T,
     isVisitable: je
@@ -663,7 +663,7 @@ function ve(c, d, p) {
           N,
           S.isString(Q) ? Q.trim() : Q,
           E,
-          L
+          q
         )) === !0 && G(N, E ? E.concat(Q) : [Q]);
       }), U.pop();
     }
@@ -1191,13 +1191,13 @@ function sr(c, d) {
   return d = d !== void 0 ? d : 1e3, function(y) {
     const T = Date.now(), V = s[P];
     b || (b = T), p[v] = y, s[v] = T;
-    let U = P, L = 0;
+    let U = P, q = 0;
     for (; U !== v; )
-      L += p[U++], U = U % c;
+      q += p[U++], U = U % c;
     if (v = (v + 1) % c, v === P && (P = (P + 1) % c), T - b < d)
       return;
     const G = V && T - V;
-    return G ? Math.round(L * 1e3 / G) : void 0;
+    return G ? Math.round(q * 1e3 / G) : void 0;
   };
 }
 function Ne(c, d) {
@@ -1231,17 +1231,17 @@ const ar = typeof XMLHttpRequest < "u", rr = ar && function(c) {
       if ($.hasStandardBrowserEnv || $.hasStandardBrowserWebWorkerEnv)
         P.setContentType(!1);
       else if ((V = P.getContentType()) !== !1) {
-        const [E, ...D] = V ? V.split(";").map((N) => N.trim()).filter(Boolean) : [];
-        P.setContentType([E || "multipart/form-data", ...D].join("; "));
+        const [E, ...H] = V ? V.split(";").map((N) => N.trim()).filter(Boolean) : [];
+        P.setContentType([E || "multipart/form-data", ...H].join("; "));
       }
     }
     let U = new XMLHttpRequest();
     if (c.auth) {
-      const E = c.auth.username || "", D = c.auth.password ? unescape(encodeURIComponent(c.auth.password)) : "";
-      P.set("Authorization", "Basic " + btoa(E + ":" + D));
+      const E = c.auth.username || "", H = c.auth.password ? unescape(encodeURIComponent(c.auth.password)) : "";
+      P.set("Authorization", "Basic " + btoa(E + ":" + H));
     }
-    const L = At(c.baseURL, c.url);
-    U.open(c.method.toUpperCase(), dt(L, c.params, c.paramsSerializer), !0), U.timeout = c.timeout;
+    const q = At(c.baseURL, c.url);
+    U.open(c.method.toUpperCase(), dt(q, c.params, c.paramsSerializer), !0), U.timeout = c.timeout;
     function G() {
       if (!U)
         return;
@@ -1268,24 +1268,24 @@ const ar = typeof XMLHttpRequest < "u", rr = ar && function(c) {
     }, U.onerror = function() {
       s(new C("Network Error", C.ERR_NETWORK, c, U)), U = null;
     }, U.ontimeout = function() {
-      let D = c.timeout ? "timeout of " + c.timeout + "ms exceeded" : "timeout exceeded";
+      let H = c.timeout ? "timeout of " + c.timeout + "ms exceeded" : "timeout exceeded";
       const N = c.transitional || ut;
-      c.timeoutErrorMessage && (D = c.timeoutErrorMessage), s(new C(
-        D,
+      c.timeoutErrorMessage && (H = c.timeoutErrorMessage), s(new C(
+        H,
         N.clarifyTimeoutError ? C.ETIMEDOUT : C.ECONNABORTED,
         c,
         U
       )), U = null;
-    }, $.hasStandardBrowserEnv && (g && S.isFunction(g) && (g = g(c)), g || g !== !1 && er(L))) {
+    }, $.hasStandardBrowserEnv && (g && S.isFunction(g) && (g = g(c)), g || g !== !1 && er(q))) {
       const E = c.xsrfHeaderName && c.xsrfCookieName && Ja.read(c.xsrfCookieName);
       E && P.set(c.xsrfHeaderName, E);
     }
-    v === void 0 && P.setContentType(null), "setRequestHeader" in U && S.forEach(P.toJSON(), function(D, N) {
-      U.setRequestHeader(N, D);
+    v === void 0 && P.setContentType(null), "setRequestHeader" in U && S.forEach(P.toJSON(), function(H, N) {
+      U.setRequestHeader(N, H);
     }), S.isUndefined(c.withCredentials) || (U.withCredentials = !!c.withCredentials), b && b !== "json" && (U.responseType = c.responseType), typeof c.onDownloadProgress == "function" && U.addEventListener("progress", Ne(c.onDownloadProgress, !0)), typeof c.onUploadProgress == "function" && U.upload && U.upload.addEventListener("progress", Ne(c.onUploadProgress)), (c.cancelToken || c.signal) && (y = (E) => {
       U && (s(!E || E.type ? new ie(null, c, U) : E), U.abort(), U = null);
     }, c.cancelToken && c.cancelToken.subscribe(y), c.signal && (c.signal.aborted ? y() : c.signal.addEventListener("abort", y)));
-    const R = tr(L);
+    const R = tr(q);
     if (R && $.protocols.indexOf(R) === -1) {
       s(new C("Unsupported protocol " + R + ":", C.ERR_BAD_REQUEST, c));
       return;
@@ -1421,8 +1421,8 @@ function Z(c, d) {
     headers: (T, V) => v(Qe(T), Qe(V), !0)
   };
   return S.forEach(Object.keys(Object.assign({}, c, d)), function(V) {
-    const U = y[V] || v, L = U(c[V], d[V], V);
-    S.isUndefined(L) && U !== g || (p[V] = L);
+    const U = y[V] || v, q = U(c[V], d[V], V);
+    S.isUndefined(q) && U !== g || (p[V] = q);
   }), p;
 }
 const Pt = "1.6.3", Ce = {};
@@ -1518,21 +1518,21 @@ let de = class {
     this.interceptors.response.forEach(function(E) {
       T.push(E.fulfilled, E.rejected);
     });
-    let V, U = 0, L;
+    let V, U = 0, q;
     if (!y) {
       const R = [ke.bind(this), void 0];
-      for (R.unshift.apply(R, g), R.push.apply(R, T), L = R.length, V = Promise.resolve(p); U < L; )
+      for (R.unshift.apply(R, g), R.push.apply(R, T), q = R.length, V = Promise.resolve(p); U < q; )
         V = V.then(R[U++], R[U++]);
       return V;
     }
-    L = g.length;
+    q = g.length;
     let G = p;
-    for (U = 0; U < L; ) {
+    for (U = 0; U < q; ) {
       const R = g[U++], E = g[U++];
       try {
         G = R(G);
-      } catch (D) {
-        E.call(this, D);
+      } catch (H) {
+        E.call(this, H);
         break;
       }
     }
@@ -1541,7 +1541,7 @@ let de = class {
     } catch (R) {
       return Promise.reject(R);
     }
-    for (U = 0, L = T.length; U < L; )
+    for (U = 0, q = T.length; U < q; )
       V = V.then(T[U++], T[U++]);
     return V;
   }
@@ -1728,26 +1728,26 @@ function mt(c) {
     return mt(Z(c, v));
   }, p;
 }
-const w = mt(Fe);
-w.Axios = ce;
-w.CanceledError = ie;
-w.CancelToken = lr;
-w.isCancel = vt;
-w.VERSION = Pt;
-w.toFormData = ve;
-w.AxiosError = C;
-w.Cancel = w.CanceledError;
-w.all = function(d) {
+const x = mt(Fe);
+x.Axios = ce;
+x.CanceledError = ie;
+x.CancelToken = lr;
+x.isCancel = vt;
+x.VERSION = Pt;
+x.toFormData = ve;
+x.AxiosError = C;
+x.Cancel = x.CanceledError;
+x.all = function(d) {
   return Promise.all(d);
 };
-w.spread = cr;
-w.isAxiosError = dr;
-w.mergeConfig = Z;
-w.AxiosHeaders = K;
-w.formToJSON = (c) => pt(S.isHTMLForm(c) ? new FormData(c) : c);
-w.getAdapter = Ot.getAdapter;
-w.HttpStatusCode = ur;
-w.default = w;
+x.spread = cr;
+x.isAxiosError = dr;
+x.mergeConfig = Z;
+x.AxiosHeaders = K;
+x.formToJSON = (c) => pt(S.isHTMLForm(c) ? new FormData(c) : c);
+x.getAdapter = Ot.getAdapter;
+x.HttpStatusCode = ur;
+x.default = x;
 const {
   Axios: hr,
   AxiosError: pr,
@@ -1765,7 +1765,7 @@ const {
   formToJSON: Vr,
   getAdapter: _r,
   mergeConfig: yr
-} = w, Rr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+} = x, Rr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   Axios: hr,
   AxiosError: pr,
@@ -1776,7 +1776,7 @@ const {
   HttpStatusCode: Ur,
   VERSION: Pr,
   all: br,
-  default: w,
+  default: x,
   formToJSON: Vr,
   getAdapter: _r,
   isAxiosError: Sr,
@@ -1785,7 +1785,7 @@ const {
   spread: fr,
   toFormData: gr
 }, Symbol.toStringTag, { value: "Module" })), St = /* @__PURE__ */ zs(Rr);
-var M = {}, Ie = {};
+var w = {}, Ie = {};
 (function(c) {
   Object.defineProperty(c, "__esModule", { value: !0 }), c.operationServerMap = c.RequiredError = c.BaseAPI = c.COLLECTION_FORMATS = c.BASE_PATH = void 0;
   const d = St;
@@ -1836,15 +1836,15 @@ var Me = J && J.__awaiter || function(c, d, p, s) {
     T((s = s.apply(c, d || [])).next());
   });
 };
-Object.defineProperty(M, "__esModule", { value: !0 });
-M.createRequestFunction = M.toPathString = M.serializeDataIfNeeded = M.setSearchParams = M.setOAuthToObject = M.setBearerAuthToObject = M.setBasicAuthToObject = M.setApiKeyToObject = M.assertParamExists = M.DUMMY_BASE_URL = void 0;
+Object.defineProperty(w, "__esModule", { value: !0 });
+w.createRequestFunction = w.toPathString = w.serializeDataIfNeeded = w.setSearchParams = w.setOAuthToObject = w.setBearerAuthToObject = w.setBasicAuthToObject = w.setApiKeyToObject = w.assertParamExists = w.DUMMY_BASE_URL = void 0;
 const Er = Ie;
-M.DUMMY_BASE_URL = "https://example.com";
+w.DUMMY_BASE_URL = "https://example.com";
 const Tr = function(c, d, p) {
   if (p == null)
     throw new Er.RequiredError(d, `Required parameter ${d} was null or undefined when calling ${c}.`);
 };
-M.assertParamExists = Tr;
+w.assertParamExists = Tr;
 const Br = function(c, d, p) {
   return Me(this, void 0, void 0, function* () {
     if (p && p.apiKey) {
@@ -1853,11 +1853,11 @@ const Br = function(c, d, p) {
     }
   });
 };
-M.setApiKeyToObject = Br;
+w.setApiKeyToObject = Br;
 const Fr = function(c, d) {
   d && (d.username || d.password) && (c.auth = { username: d.username, password: d.password });
 };
-M.setBasicAuthToObject = Fr;
+w.setBasicAuthToObject = Fr;
 const Cr = function(c, d) {
   return Me(this, void 0, void 0, function* () {
     if (d && d.accessToken) {
@@ -1866,7 +1866,7 @@ const Cr = function(c, d) {
     }
   });
 };
-M.setBearerAuthToObject = Cr;
+w.setBearerAuthToObject = Cr;
 const Ir = function(c, d, p, s) {
   return Me(this, void 0, void 0, function* () {
     if (s && s.accessToken) {
@@ -1875,7 +1875,7 @@ const Ir = function(c, d, p, s) {
     }
   });
 };
-M.setOAuthToObject = Ir;
+w.setOAuthToObject = Ir;
 function ye(c, d, p = "") {
   d != null && (typeof d == "object" ? Array.isArray(d) ? d.forEach((s) => ye(c, s, p)) : Object.keys(d).forEach((s) => ye(c, d[s], `${p}${p !== "" ? "." : ""}${s}`)) : c.has(p) ? c.append(p, d) : c.set(p, d));
 }
@@ -1883,16 +1883,16 @@ const Mr = function(c, ...d) {
   const p = new URLSearchParams(c.search);
   ye(p, d), c.search = p.toString();
 };
-M.setSearchParams = Mr;
+w.setSearchParams = Mr;
 const wr = function(c, d, p) {
   const s = typeof c != "string";
   return (s && p && p.isJsonMime ? p.isJsonMime(d.headers["Content-Type"]) : s) ? JSON.stringify(c !== void 0 ? c : {}) : c || "";
 };
-M.serializeDataIfNeeded = wr;
+w.serializeDataIfNeeded = wr;
 const xr = function(c) {
   return c.pathname + c.search + c.hash;
 };
-M.toPathString = xr;
+w.toPathString = xr;
 const Lr = function(c, d, p, s) {
   return (v = d, P = p) => {
     var b;
@@ -1900,7 +1900,7 @@ const Lr = function(c, d, p, s) {
     return v.request(g);
   };
 };
-M.createRequestFunction = Lr;
+w.createRequestFunction = Lr;
 (function(c) {
   var d = J && J.__awaiter || function(r, l, n, i) {
     function a(e) {
@@ -1930,7 +1930,7 @@ M.createRequestFunction = Lr;
     });
   };
   Object.defineProperty(c, "__esModule", { value: !0 }), c.ProductCategoriesApi = c.ProductCategoriesApiFactory = c.ProductCategoriesApiFp = c.ProductCategoriesApiAxiosParamCreator = c.PointofsaleApi = c.PointofsaleApiFactory = c.PointofsaleApiFp = c.PointofsaleApiAxiosParamCreator = c.PayoutRequestsApi = c.PayoutRequestsApiFactory = c.PayoutRequestsApiFp = c.PayoutRequestsApiAxiosParamCreator = c.InvoicesApi = c.InvoicesApiFactory = c.InvoicesApiFp = c.InvoicesApiAxiosParamCreator = c.FilesApi = c.FilesApiFactory = c.FilesApiFp = c.FilesApiAxiosParamCreator = c.EventsApi = c.EventsApiFactory = c.EventsApiFp = c.EventsApiAxiosParamCreator = c.DebtorsApi = c.DebtorsApiFactory = c.DebtorsApiFp = c.DebtorsApiAxiosParamCreator = c.ContainersApi = c.ContainersApiFactory = c.ContainersApiFp = c.ContainersApiAxiosParamCreator = c.BannersApi = c.BannersApiFactory = c.BannersApiFp = c.BannersApiAxiosParamCreator = c.GetAllBalanceOrderDirectionEnum = c.GetAllBalanceUserTypeEnum = c.BalanceApi = c.BalanceApiFactory = c.BalanceApiFp = c.BalanceApiAxiosParamCreator = c.AuthenticateApi = c.AuthenticateApiFactory = c.AuthenticateApiFp = c.AuthenticateApiAxiosParamCreator = c.UpdateInvoiceRequestStateEnum = c.PayoutRequestStatusRequestStateEnum = c.InvoiceStatusResponseStateEnum = c.FinancialMutationResponseTypeEnum = void 0, c.VouchergroupsApi = c.VouchergroupsApiFactory = c.VouchergroupsApiFp = c.VouchergroupsApiAxiosParamCreator = c.VatGroupsApi = c.VatGroupsApiFactory = c.VatGroupsApiFp = c.VatGroupsApiAxiosParamCreator = c.GetAllUsersTypeEnum = c.UsersApi = c.UsersApiFactory = c.UsersApiFp = c.UsersApiAxiosParamCreator = c.TransfersApi = c.TransfersApiFactory = c.TransfersApiFp = c.TransfersApiAxiosParamCreator = c.TransactionsApi = c.TransactionsApiFactory = c.TransactionsApiFp = c.TransactionsApiAxiosParamCreator = c.TestOperationsOfTheTestControllerApi = c.TestOperationsOfTheTestControllerApiFactory = c.TestOperationsOfTheTestControllerApiFp = c.TestOperationsOfTheTestControllerApiAxiosParamCreator = c.StripeApi = c.StripeApiFactory = c.StripeApiFp = c.StripeApiAxiosParamCreator = c.RootApi = c.RootApiFactory = c.RootApiFp = c.RootApiAxiosParamCreator = c.RbacApi = c.RbacApiFactory = c.RbacApiFp = c.RbacApiAxiosParamCreator = c.ProductsApi = c.ProductsApiFactory = c.ProductsApiFp = c.ProductsApiAxiosParamCreator = void 0;
-  const p = St, s = M, v = Ie;
+  const p = St, s = w, v = Ie;
   c.FinancialMutationResponseTypeEnum = {
     Transfer: "transfer",
     Transaction: "transaction"
@@ -2854,7 +2854,7 @@ M.createRequestFunction = Lr;
     };
   };
   c.BalanceApiFactory = U;
-  class L extends v.BaseAPI {
+  class q extends v.BaseAPI {
     /**
      *
      * @summary Get balance of the current user
@@ -2898,7 +2898,7 @@ M.createRequestFunction = Lr;
       return (0, c.BalanceApiFp)(this.configuration).getBalances(l).then((n) => n(this.axios, this.basePath));
     }
   }
-  c.BalanceApi = L, c.GetAllBalanceUserTypeEnum = {
+  c.BalanceApi = q, c.GetAllBalanceUserTypeEnum = {
     Member: "MEMBER",
     Organ: "ORGAN",
     Voucher: "VOUCHER",
@@ -3291,7 +3291,7 @@ M.createRequestFunction = Lr;
     };
   };
   c.BannersApiFactory = E;
-  class D extends v.BaseAPI {
+  class H extends v.BaseAPI {
     /**
      *
      * @summary Deletes the requested banner
@@ -3386,7 +3386,7 @@ M.createRequestFunction = Lr;
       return (0, c.BannersApiFp)(this.configuration).updateImage(l, n, i).then((a) => a(this.axios, this.basePath));
     }
   }
-  c.BannersApi = D;
+  c.BannersApi = H;
   const N = function(r) {
     return {
       /**
@@ -9674,40 +9674,44 @@ Oe.Configuration = qr;
       P !== "default" && !Object.prototype.hasOwnProperty.call(v, P) && d(v, s, P);
   };
   Object.defineProperty(c, "__esModule", { value: !0 }), p(Je, c), p(Oe, c);
-})(x);
-const H = w.create();
-H.interceptors.response.use((c) => (Ns(c), c));
+})(M);
+const D = x.create();
+D.interceptors.response.use((c) => (Ns(c), c));
 class Qr {
   constructor(d) {
-    q(this, "_authenticateApi");
-    q(this, "_balanceApi");
-    q(this, "_usersApi");
-    q(this, "_posApi");
-    q(this, "_categoryApi");
-    q(this, "_transactionApi");
-    q(this, "_bannerApi");
-    q(this, "_rootApi");
-    q(this, "_voucherGroupApi");
-    q(this, "_containerApi");
-    q(this, "_filesApi");
-    q(this, "_invoicesApi");
-    q(this, "_payoutsApi");
-    q(this, "_productsApi");
-    q(this, "_transfersApi");
-    q(this, "_vatGroupsApi");
-    q(this, "_stripeApi");
-    q(this, "_rbacApi");
-    q(this, "_openBannerApi");
-    const p = new x.Configuration({
+    L(this, "_authenticateApi");
+    L(this, "_balanceApi");
+    L(this, "_debtorsApi");
+    L(this, "_usersApi");
+    L(this, "_posApi");
+    L(this, "_categoryApi");
+    L(this, "_transactionApi");
+    L(this, "_bannerApi");
+    L(this, "_rootApi");
+    L(this, "_voucherGroupApi");
+    L(this, "_containerApi");
+    L(this, "_filesApi");
+    L(this, "_invoicesApi");
+    L(this, "_payoutsApi");
+    L(this, "_productsApi");
+    L(this, "_transfersApi");
+    L(this, "_vatGroupsApi");
+    L(this, "_stripeApi");
+    L(this, "_rbacApi");
+    L(this, "_openBannerApi");
+    const p = new M.Configuration({
       accessToken: () => Re().token
     });
-    this._authenticateApi = new x.AuthenticateApi(p, d, H), this._balanceApi = new x.BalanceApi(p, d, H), this._usersApi = new x.UsersApi(p, d, H), this._posApi = new x.PointofsaleApi(p, d, H), this._categoryApi = new x.ProductCategoriesApi(p, d, H), this._transactionApi = new x.TransactionsApi(p, d, H), this._bannerApi = new x.BannersApi(p, d, H), this._openBannerApi = new x.BannersApi(void 0, d, H), this._rootApi = new x.RootApi(), this._voucherGroupApi = new x.VouchergroupsApi(p, d, H), this._containerApi = new x.ContainersApi(p, d, H), this._filesApi = new x.FilesApi(p, d, H), this._invoicesApi = new x.InvoicesApi(p, d, H), this._payoutsApi = new x.PayoutRequestsApi(p, d, H), this._productsApi = new x.ProductsApi(p, d, H), this._transfersApi = new x.TransfersApi(p, d, H), this._vatGroupsApi = new x.VatGroupsApi(p, d, H), this._stripeApi = new x.StripeApi(p, d, H), this._rbacApi = new x.RbacApi(p, d, H);
+    this._authenticateApi = new M.AuthenticateApi(p, d, D), this._balanceApi = new M.BalanceApi(p, d, D), this._debtorsApi = new M.DebtorsApi(p, d, D), this._usersApi = new M.UsersApi(p, d, D), this._posApi = new M.PointofsaleApi(p, d, D), this._categoryApi = new M.ProductCategoriesApi(p, d, D), this._transactionApi = new M.TransactionsApi(p, d, D), this._bannerApi = new M.BannersApi(p, d, D), this._openBannerApi = new M.BannersApi(void 0, d, D), this._rootApi = new M.RootApi(), this._voucherGroupApi = new M.VouchergroupsApi(p, d, D), this._containerApi = new M.ContainersApi(p, d, D), this._filesApi = new M.FilesApi(p, d, D), this._invoicesApi = new M.InvoicesApi(p, d, D), this._payoutsApi = new M.PayoutRequestsApi(p, d, D), this._productsApi = new M.ProductsApi(p, d, D), this._transfersApi = new M.TransfersApi(p, d, D), this._vatGroupsApi = new M.VatGroupsApi(p, d, D), this._stripeApi = new M.StripeApi(p, d, D), this._rbacApi = new M.RbacApi(p, d, D);
   }
   get authenticate() {
     return this._authenticateApi;
   }
   get balance() {
     return this._balanceApi;
+  }
+  get debtor() {
+    return this._debtorsApi;
   }
   get pos() {
     return this._posApi;

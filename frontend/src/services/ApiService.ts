@@ -17,7 +17,7 @@ import {
     TransactionsApi,
     TransfersApi,
     UsersApi,
-    VatGroupsApi,
+    VatGroupsApi, DebtorsApi,
 } from '@sudosos/sudosos-client';
 import axios, { AxiosInstance } from "axios";
 import { AxiosResponse } from "axios";
@@ -37,6 +37,8 @@ export class ApiService {
     private readonly _authenticateApi: AuthenticateApi;
 
     private readonly _balanceApi: BalanceApi;
+
+    private readonly _debtorsApi: DebtorsApi
 
     private readonly _usersApi: UsersApi;
 
@@ -79,6 +81,7 @@ export class ApiService {
 
         this._authenticateApi = new AuthenticateApi(withKeyConfiguration, basePath, axiosInstance);
         this._balanceApi = new BalanceApi(withKeyConfiguration, basePath, axiosInstance);
+        this._debtorsApi = new DebtorsApi(withKeyConfiguration, basePath, axiosInstance);
         this._usersApi = new UsersApi(withKeyConfiguration, basePath, axiosInstance);
         this._posApi = new PointofsaleApi(withKeyConfiguration, basePath, axiosInstance);
         this._categoryApi = new ProductCategoriesApi(withKeyConfiguration, basePath, axiosInstance);
@@ -104,6 +107,10 @@ export class ApiService {
 
     get balance(): BalanceApi {
         return this._balanceApi;
+    }
+
+    get debtor(): DebtorsApi {
+        return this._debtorsApi;
     }
 
     get pos(): PointofsaleApi {
