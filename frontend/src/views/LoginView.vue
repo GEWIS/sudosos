@@ -75,7 +75,7 @@
 import CopyrightBanner from "@/components/CopyrightBanner.vue";
 import { useRoute } from "vue-router";
 import { onBeforeMount } from "vue";
-import {useUserStore, useAuthStore, getTokenFromStorage} from "@sudosos/sudosos-frontend-common";
+import { useUserStore, useAuthStore, getTokenFromStorage } from "@sudosos/sudosos-frontend-common";
 import apiService from "@/services/ApiService";
 import router from "@/router";
 import { v4 as uuid } from 'uuid';

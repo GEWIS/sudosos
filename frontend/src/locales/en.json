@@ -549,7 +549,8 @@
     "Create User": "Create User",
     "User Type": "User Type",
     "Select User Type": "Select User Type",
-    "Manage users": "Manage users"
+    "Manage users": "Manage users",
+    "ofAge": "18+"
   },
   "c_ContainerAssign": {
     "Assign product": "Assign product",
