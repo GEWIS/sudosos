@@ -15,6 +15,11 @@
           editMode="row"
           @row-edit-save="updateRow"
           @row-edit-init="rowEditInit"
+          :pt="{
+              table: { 
+                style: 'table-layout: fixed; width: 100%;' 
+              }
+          }"
         >
           <template #header>
             <div class="flex flex-row justify-content-between">
@@ -27,23 +32,36 @@
               </span>
             </div>
           </template>
-          <Column field="image" :header="$t('c_productEditModal.Image')" >
+          <Column field="image" :header="$t('c_productEditModal.Image')" style="width: 10%">
             <template #body="rowData">
               <img :src="getProductImageSrc(rowData.data)" alt="img" class="w-4rem mx-1" />
             </template>
           </Column>
-          <Column field="name" :header="$t('c_productEditModal.Name')">
+          <Column field="name" :header="$t('c_productEditModal.Name')" style="width: 35%">
             <template #editor="{ data, field }">
-              <InputText v-model="data[field]" />
+              <InputText 
+                v-model="data[field]"
+                :pt="{ 
+                  root: {
+                    class: 'm-1',
+                    style: 'width: 99%;'
+                  },
+                  
+                }"
+                />
             </template>
           </Column>
-          <Column field="category" :header="$t('c_productEditModal.Category')" >
+          <Column field="category" :header="$t('c_productEditModal.Category')" style="width: 15%">
             <template #editor="{ data, field }">
               <Dropdown
                 :placeholder="$t('c_productEditModal.Please select')"
                 optionLabel="name"
                 :options="categories"
                 v-model="data[field]"
+                :pt="{ 
+                  input: 'w-full pt-1 pb-1',
+                  root: 'm-1'
+                }"
               >
                 <template #value="slotProps">
                   {{ slotProps.value.name }}
@@ -54,7 +72,7 @@
               {{ rowData.data.category.name }}
             </template>
           </Column>
-          <Column field="priceInclVat" :header="$t('c_productEditModal.Price')">
+          <Column field="priceInclVat" :header="$t('c_productEditModal.Price')"  style="width: 10%">
             <template #editor="{ data }">
               <InputNumber
                 v-model="data['editPrice']"
@@ -62,27 +80,44 @@
                 currency="EUR"
                 :minFractionDigits="2"
                 :maxFractionDigits="2"
+                :pt="{ 
+                  input: { 
+                    root: 'w-full pt-2 pb-2 m-1' 
+                  }
+                }"
               />
             </template>
             <template #body="rowData">
               {{ formatPrice(rowData.data.priceInclVat) }}
             </template>
           </Column>
-          <Column field="alcoholPercentage" :header="$t('c_productEditModal.Alcohol Percentage')">
+          <Column field="alcoholPercentage" :header="$t('c_productEditModal.Alcohol Percentage')" style="width: 6%">
             <template #editor="{ data, field }">
-              <InputNumber v-model="data[field]" suffix="%" />
+              <InputNumber 
+                v-model="data[field]" 
+                suffix="%" 
+                :pt="{ 
+                  input: { 
+                    root: 'w-full pt-2 pb-2 m-1' 
+                  }
+                }"
+                />
             </template>
             <template #body="rowData">
               {{ `${rowData.data.alcoholPercentage} %` }}
             </template>
           </Column>
-          <Column field="vat" :header="$t('c_productEditModal.VAT')">
+          <Column field="vat" :header="$t('c_productEditModal.VAT')" style="width: 8%">
             <template #editor="{ data, field }">
               <Dropdown
                   :placeholder="$t('c_productEditModal.Please select VAT')"
                   :options="vatGroups"
                   optionLabel="percentage"
                   v-model="data[field]"
+                  :pt="{ 
+                    input: 'w-full pt-1 pb-1' ,
+                    root: 'm-1'
+                  }"
               >
                 <template #value="slotProps"> {{ `${slotProps.value.percentage} %` }} </template>
               </Dropdown>
@@ -94,6 +129,7 @@
           <Column
             :rowEditor="true"
             bodyStyle="text-align:center"
+            style="width: 16%"
           />
         </DataTable>
         <ProductCreateComponent v-model:visible="visible" @productCreated="handleNewProduct"/>
