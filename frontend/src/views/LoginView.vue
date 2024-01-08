@@ -27,6 +27,7 @@
     </div>
   </div>
   <SettingsIconComponent />
+  <EanLoginComponent :handle-login="eanLogin"/>
 </template>
 
 <script setup lang="ts">
@@ -39,6 +40,7 @@ import router from '@/router';
 import { useCartStore } from '@/stores/cart.store';
 import apiService from '@/services/ApiService';
 import BannerComponent from '@/components/Banner/BannerComponent.vue';
+import EanLoginComponent from "@/components/EanLoginComponent.vue";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
@@ -148,6 +150,18 @@ const login = () => {
   }
 
   loggingIn.value = false;
+};
+
+
+const eanLogin = async (eanCode: string) => {
+  console.error(eanCode);
+  try {
+    await authStore.eanLogin(eanCode, apiService).then(async () => {
+      await loginSucces();
+    });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const handleContinue = () => {
