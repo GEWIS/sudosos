@@ -121,7 +121,7 @@ export const useCartStore = defineStore('cart', {
           to: container.owner.id,
           container: {
             id: container.id,
-            revision: container.revision
+            revision: container.revision as number
           },
           subTransactionRows: row,
           totalPriceInclVat: {
