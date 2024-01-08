@@ -1427,7 +1427,7 @@ function Z(c, d) {
     S.isUndefined(q) && U !== g || (p[_] = q);
   }), p;
 }
-const Pt = "1.6.4", Ce = {};
+const Pt = "1.6.5", Ce = {};
 ["object", "boolean", "number", "function", "string", "symbol"].forEach((c, d) => {
   Ce[c] = function(s) {
     return typeof s === c || "a" + (d < 1 ? "n " : " ") + c;
