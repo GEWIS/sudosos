@@ -58,6 +58,8 @@ export function transferDescription(transfer: TransferResponse): string {
         return `You were refunded ${formatValueEuro(transfer.amount)}`;
     } else if (transfer.fine) {
         return `You were fined ${formatValueEuro(transfer.amount)}`;
+    } else if (transfer.description == 'Initial transfer from SuSOS') {
+        return `You got ${formatValueEuro(transfer.amount)} transferred from your SuSOS account.`;
     } else {
         return `An unknown transaction was performed on your account.`; // This is probably not even possible.
     }
