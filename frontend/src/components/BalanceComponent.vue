@@ -1,22 +1,27 @@
 <template>
   <CardComponent
-    :header="$t('c_currentBalance.balance')"
-    :action="showOption ? $t('c_currentBalance.Increase balance') : ''"
-    routerLink="balance"
+      :header="$t('c_currentBalance.balance')"
+      :action="showOption ? $t('c_currentBalance.Increase balance') : ''"
+      routerLink="balance"
   >
-    <div class="body">
-      <h1>{{ displayBalance }}</h1>
+    <div class="flex flex-column justify-content-center">
+      <h1 class="text-center font-medium text-6xl">{{ displayBalance }}</h1>
+      <p class="text-center text-base font-semibold text-red-500" v-if="userBalance && userBalance.fine">
+        {{ isAllFine ? $t('c_currentBalance.allIsFines') : $t('c_currentBalance.someIsFines', { fine: displayFine }) }}
+      </p>
     </div>
   </CardComponent>
 </template>
 
 <script setup lang="ts">
 import CardComponent from '@/components/CardComponent.vue';
-import { useUserStore } from '@sudosos/sudosos-frontend-common';
-import { computed, ref, watch } from 'vue';
-import type { UserResponse } from '@sudosos/sudosos-client';
+import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
+import { computed, ref, onMounted, type Ref, watch } from "vue";
+import type { BalanceResponse, UserResponse } from '@sudosos/sudosos-client';
 import apiService from '@/services/ApiService';
 import { formatPrice } from "@/utils/formatterUtils";
+import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
   user: {
@@ -30,33 +35,52 @@ const props = defineProps({
 });
 
 const userStore = useUserStore();
-const balanceFromApi = ref<string | undefined>(undefined);
-
-// Watch for changes on props.user
-watch(() => props.user, async (newUser, oldUser) => {
-  if (newUser) {
-    const response = await apiService.balance.getBalanceId(newUser.id);
-    balanceFromApi.value = formatPrice(response.data.amount);
+const userBalance: Ref<BalanceResponse | null> = ref(null);
+const { current } = storeToRefs(userStore);
+const router = useRouter();
+const updateUserBalance = async () => {
+  if (props.user) {
+    const response = await apiService.balance.getBalanceId(props.user.id);
+    userBalance.value = response.data;
+  } else {
+    // Force refresh balance, since people tend to refresh pages like this to ensure an up to date balance.
+    const auth = useAuthStore();
+    if (!auth.getUser){
+      await router.replace({ path: '/error' });
+      return;
+    }
+    await userStore.fetchCurrentUserBalance(auth.getUser.id, apiService);
+    userBalance.value = userStore.getCurrentUser.balance;
   }
-}, { immediate: true });
+};
+
+onMounted(updateUserBalance);
+
+watch(() => props.user, () => {
+  updateUserBalance();
+});
+
+watch(current, () => {
+  updateUserBalance();
+});
+
+
+const isAllFine = computed(() => {
+  if (!userBalance.value?.fine) return false;
+  return userBalance.value.fine.amount >= -1*userBalance.value?.amount.amount;
+});
+
+const displayFine = computed(() => {
+  if (!userBalance.value?.fine) return undefined;
+  return formatPrice(userBalance.value.fine || { amount: 0, currency: 'EUR', precision: 2 });
+});
 
 const displayBalance = computed(() => {
-  if (props.user) {
-    return balanceFromApi.value;
-  } else {
-    const balanceInCents = userStore.getCurrentUser.balance;
-    if (!balanceInCents) return undefined;
-    const balanceInEuros = (balanceInCents.amount.amount / 100).toFixed(2);
-    return `€${balanceInEuros}`;
-  }
+  if (!userBalance.value?.amount.amount) return undefined;
+  return formatPrice(userBalance.value.amount);
 });
+
 </script>
 
 <style scoped lang="scss">
-h1 {
-  font-size: 50px;
-  text-align: center;
-  font-family: Raleway, sans-serif !important;
-  font-weight: 500;
-}
 </style>

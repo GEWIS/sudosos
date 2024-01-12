@@ -12,7 +12,7 @@
         >
       <Column field="mutationMoment" style="width: 35%" header="When"/>
       <Column field="mutationDescription" style="width: 60%" header="What"/>
-      <Column>
+      <Column field="">
         <template #body>
             <i class="pi pi-info-circle"/>
         </template>

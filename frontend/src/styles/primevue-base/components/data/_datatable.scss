@@ -31,6 +31,7 @@
         text-align: $tableCellContentAlignment;
         padding: $tableHeaderCellPadding;
         border: $tableHeaderCellBorder;
+        border-top: none;
         border-width: $tableHeaderCellBorderWidth;
         font-weight: $tableHeaderCellFontWeight;
         color: $tableHeaderCellTextColor;
@@ -98,6 +99,7 @@
     }
 
     .p-datatable-tbody {
+
         > tr {
             background: $tableBodyRowBg;
             color: $tableBodyRowTextColor;
@@ -105,7 +107,7 @@
 
             > td {
                 text-align: $tableCellContentAlignment;
-                border: $tableBodyCellBorder;
+                border: none;
                 border-width: $tableBodyCellBorderWidth;
                 padding: $tableBodyCellPadding;
 
@@ -206,6 +208,7 @@
             > tr {
                 > td {
                     border-width: 1px 0 0 1px;
+                    border:none;
 
                     &:last-child {
                         border-width: 1px 1px 0 1px;

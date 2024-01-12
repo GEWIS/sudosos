@@ -128,6 +128,7 @@ const loginHandler = loginForm.handleSubmit(async (values) => {
       }).then((res) => authStore.handleResponse(res.data, apiService));
       if (authStore.getToS == 'ACCEPTED' && authStore.getUser) {
         await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
+        await userStore.fetchUsers(apiService);
       } else {
         await router.replace({ path: '/error' });
       }
@@ -136,6 +137,7 @@ const loginHandler = loginForm.handleSubmit(async (values) => {
       await authStore.gewisLdapLogin(values.username, values.password, apiService);
       if (authStore.getToS == 'ACCEPTED' && authStore.getUser) {
         await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
+        await userStore.fetchUsers(apiService);
       } else {
         await router.replace({ path: '/error' });
       }

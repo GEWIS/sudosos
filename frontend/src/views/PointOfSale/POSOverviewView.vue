@@ -10,7 +10,6 @@
 <script setup lang="ts">
 import POSOverviewTableComponent from "@/components/POSOverviewTableComponent.vue";
 
-
 </script>
 
 <style scoped lang="scss">

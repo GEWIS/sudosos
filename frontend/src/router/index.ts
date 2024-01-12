@@ -19,6 +19,7 @@ import { UserRole } from '@/utils/rbacUtils';
 import 'vue-router';
 import ErrorView from "@/views/ErrorView.vue";
 import ProfileView from "@/views/ProfileView.vue";
+import FineView from "@/views/FineView.vue";
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -144,7 +145,13 @@ const router = createRouter({
           path: '/profile',
           component: ProfileView,
           name: 'profile',
-        }
+        },
+        {
+          path: '/fine',
+          component: FineView,
+          name: 'fine',
+          meta: { requiresAuth: true, isBAC: true }
+        },
         // Add other routes for authenticated users here
       ]
     }

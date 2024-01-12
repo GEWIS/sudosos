@@ -260,7 +260,9 @@
     "upgrade online": "Online opwaarderen",
     "of which": "Waarvan",
     "fine": "boete",
-    "Increase balance": "Saldo opwaarderen"
+    "Increase balance": "Saldo opwaarderen",
+    "allIsFines": "Waarvan alles een boete is",
+    "someIsFines": "Waarvan {fine} boetes zijn"
   },
   "c_recentTransactionsTable": {
     "recent transactions": "recente transacties",
