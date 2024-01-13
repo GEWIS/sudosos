@@ -16,8 +16,8 @@
           @row-edit-save="updateRow"
           @row-edit-init="rowEditInit"
           :pt="{
-              table: { 
-                style: 'table-layout: fixed; width: 100%;' 
+              table: {
+                style: 'table-layout: fixed; width: 100%;'
               }
           }"
         >
@@ -32,21 +32,30 @@
               </span>
             </div>
           </template>
-          <Column field="image" :header="$t('c_productEditModal.Image')" style="width: 10%">
+          <Column field="image" :header="$t('c_productEditModal.Image')" >
+            <template #editor="rowData">
+              <span class="w-4rem h-4rem mx-1 cursor-pointer image-preview-container">
+                <img class="w-4rem h-4rem" :src="getProductImageSrc(rowData.data)"/>
+                <button ref="previewButton" type="button" class="image-preview-indicator p-image-preview-indicator fileupload" @click="fileInput.click()">
+                  <i class="pi pi-upload"></i>
+                  <input ref="fileInput" type="file" accept="image/*" @change="(e: Event) => onImgUpload(e, (rowData.data as ProductResponse).id)"/>
+                </button>
+              </span>
+            </template>
             <template #body="rowData">
-              <img :src="getProductImageSrc(rowData.data)" alt="img" class="w-4rem mx-1" />
+              <img :src="getProductImageSrc(rowData.data)" alt="img" class="w-4rem h-4rem mx-1" />
             </template>
           </Column>
           <Column field="name" :header="$t('c_productEditModal.Name')" style="width: 35%">
             <template #editor="{ data, field }">
-              <InputText 
+              <InputText
                 v-model="data[field]"
-                :pt="{ 
+                :pt="{
                   root: {
                     class: 'm-1',
                     style: 'width: 99%;'
                   },
-                  
+
                 }"
                 />
             </template>
@@ -58,7 +67,7 @@
                 optionLabel="name"
                 :options="categories"
                 v-model="data[field]"
-                :pt="{ 
+                :pt="{
                   input: 'w-full pt-1 pb-1',
                   root: 'm-1'
                 }"
@@ -80,9 +89,9 @@
                 currency="EUR"
                 :minFractionDigits="2"
                 :maxFractionDigits="2"
-                :pt="{ 
-                  input: { 
-                    root: 'w-full pt-2 pb-2 m-1' 
+                :pt="{
+                  input: {
+                    root: 'w-full pt-2 pb-2 m-1'
                   }
                 }"
               />
@@ -93,12 +102,12 @@
           </Column>
           <Column field="alcoholPercentage" :header="$t('c_productEditModal.Alcohol Percentage')" style="width: 6%">
             <template #editor="{ data, field }">
-              <InputNumber 
-                v-model="data[field]" 
-                suffix="%" 
-                :pt="{ 
-                  input: { 
-                    root: 'w-full pt-2 pb-2 m-1' 
+              <InputNumber
+                v-model="data[field]"
+                suffix="%"
+                :pt="{
+                  input: {
+                    root: 'w-full pt-2 pb-2 m-1'
                   }
                 }"
                 />
@@ -114,7 +123,7 @@
                   :options="vatGroups"
                   optionLabel="percentage"
                   v-model="data[field]"
-                  :pt="{ 
+                  :pt="{
                     input: 'w-full pt-1 pb-1' ,
                     root: 'm-1'
                   }"
@@ -181,6 +190,7 @@ const filters = ref({
 const selectedProduct: Ref<ProductResponse | undefined> = ref();
 const visible: Ref<Boolean> = ref(false);
 const editingRows = ref([]);
+const fileInput = ref();
 const openCreateModal = () => {
   selectedProduct.value = undefined;
   visible.value = true;
@@ -238,7 +248,49 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
   });
   products.value[event.index] = event.newData;
 };
+
+const onImgUpload = async (event: Event, productId: number) => {
+  const el = (event.target as HTMLInputElement);
+  if(el == null || el.files == null) return;
+  console.log('uploading')
+  console.log(el.files[0])
+  console.log(productId)
+  await apiService.products.updateProductImage(productId, el.files[0]);
+  handleNewProduct();
+}
 </script>
 
 <style scoped lang="scss">
+
+.image-preview-container {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+
+.image-preview-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+  border: none;
+  padding: 0;
+}
+
+.fileupload > input[type='file'],
+.fileupload-basic input[type='file'] {
+  display: none;
+}
+
+.image-preview-container:hover > .image-preview-indicator {
+  opacity: 1;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.5)
+}
 </style>

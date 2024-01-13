@@ -161,7 +161,8 @@
     "Alcohol percentage": "Alcohol percentage",
     "Picture": "Picture",
     "Product picture": "Product picture",
-    "VAT": "VAT"
+    "VAT": "VAT",
+    "delete": "Delete Product from container"
   },
   "flagged": {
     "Flagged transactions": "Flagged transactions"
@@ -585,7 +586,8 @@
     "productCreated": "Successfully created product.",
     "fineDeleted": "Successfully deleted fine.",
     "transactionDeleted": "Successfully deleted transaction.",
-    "finesHandedOut": "Successfully handed out fines"
+    "finesHandedOut": "Successfully handed out fines",
+    "deleteProductContainer": "Successfully deleted product from container."
   },
   "quickOverview": {
     "quickOverview": "Quick Overview",

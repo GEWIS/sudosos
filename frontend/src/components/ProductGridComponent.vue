@@ -3,7 +3,7 @@
     <!-- Loop through each product and render a card for each -->
 
     <div v-for="product in products" :key="product.id" class="card">
-      <ProductComponent :product="product"/>
+      <ProductComponent :container="container" :product="product" />
     </div>
     <Button class="flex flex-column h-10rem w-8rem border-300
     border-1 border-round-sm overflow-hidden" @click="visible = true">

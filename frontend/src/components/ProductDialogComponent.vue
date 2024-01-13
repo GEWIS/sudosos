@@ -51,23 +51,55 @@
           <h4 class="my-0">{{ $t("c_productInfoModal.Picture") }}</h4>
           <img class="max-w-10rem max-h-10rem w-full h-full" :src="getProductImageSrc(product)" :alt="product.name">
       </div>
+      <Button severity="danger" @click="handleDeleteProduct">
+        {{ $t("c_productInfoModal.delete") }}
+      </Button>
   </Dialog>
 </template>
 
 <script setup lang="ts">
-import type { ProductResponse } from "@sudosos/sudosos-client";
+import type { ContainerWithProductsResponse, ProductResponse } from "@sudosos/sudosos-client";
 import Dialog from 'primevue/dialog';
 import { ref } from "vue";
 import { getProductImageSrc } from "@/utils/imageUtils";
 import { formatDateTime, formatPrice } from "@/utils/formatterUtils";
+import apiService from "@/services/ApiService";
+import { useToast } from "primevue/usetoast";
+import { useI18n } from "vue-i18n";
+import { handleError } from "@/utils/errorUtils";
+import { useRouter } from "vue-router";
 
-defineProps({
+const router = useRouter();
+const toast = useToast();
+const props = defineProps({
   product: {
     type: Object as () => ProductResponse,
+    required: true,
+  },
+  container: {
+    type: Object as () => ContainerWithProductsResponse,
     required: true,
   }
 });
 const visible = ref(false);
+const { t } = useI18n();
+const handleDeleteProduct = async () => {
+  const newProducts = props.container.products.filter(product => product.id !== props.product.id).map(product => product.id);
+  await apiService.container.updateContainer(props.container.id, {
+    name: props.container.name,
+    products: newProducts,
+    public: props.container.public || false,
+    }).then(() => {
+        toast.add({
+          severity: 'success',
+          summary: t('successMessages.success'),
+          detail: t('successMessages.deleteProductContainer'),
+          life: 3000,
+        });
+        router.go(0);
+      }
+    ).catch((error) => handleError(error, toast));
+};
 
 </script>
 
