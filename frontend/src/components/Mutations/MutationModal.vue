@@ -1,6 +1,11 @@
 <template>
-  <Dialog @show="addListenerOnDialogueOverlay(dialog)" :visible="visible" modal header="Details"
-          class="w-auto flex w-9" ref="dialog">
+  <Dialog
+    @show="addListenerOnDialogueOverlay(dialog)"
+    :visible="visible"
+    modal
+    :header="t('c_transactionDetailsModal.transactionDetails')"
+    class="w-auto flex w-9 md:w-4" ref="dialog"
+  >
     <TransactionDetailModal
         v-if="shouldShowTransaction"
         :transactionInfo="transactionsDetails[props.id]"
@@ -8,11 +13,19 @@
     />
     <InvoiceDetailModal v-else-if="shouldShowInvoice" :invoiceInfo="transferDetails[props.id]"/>
     <DepositDetailModal v-else-if="shouldShowDeposit" :depositInfo="transferDetails[props.id]"/>
+    <FineDetailModal v-else-if="shouldShowFine" :fine="transferDetails[props.id]"/>
+    <template #footer v-if="!shouldShowDeposit && !shouldShowInvoice">
+      <div class="flex flex-column align-items-end">
+        <Button @click="deleteMutation" severity="danger">
+          {{ t('c_transactionDetailsModal.delete').toUpperCase() }}
+        </Button>
+      </div>
+    </template>
   </Dialog>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch } from "vue";
 import type { Ref } from 'vue';
 import { useTransactionStore } from '@/stores/transaction.store';
 import type { TransactionResponse, TransferResponse } from '@sudosos/sudosos-client';
@@ -24,6 +37,11 @@ import DepositDetailModal from '@/components/Mutations/DepositDetailModal.vue';
 import InvoiceDetailModal from '@/components/Mutations/InvoiceDetailModal.vue';
 import router from "@/router";
 import { addListenerOnDialogueOverlay } from "@/utils/dialogUtil";
+import FineDetailModal from "@/components/Mutations/FineDetailModal.vue";
+import { useI18n } from "vue-i18n";
+import { useToast } from "primevue/usetoast";
+import type { AxiosError } from "axios";
+import { handleError } from "@/utils/errorUtils";
 
 const props = defineProps({
   type: {
@@ -35,6 +53,7 @@ const props = defineProps({
     required: true
   }
 });
+const { t } = useI18n();
 
 const visible = ref<boolean>(false);
 const transactionStore = useTransactionStore();
@@ -43,6 +62,7 @@ const transactionProducts: Ref<{ [id: number]: Array<SubTransactionRowResponse> 
 const transferStore = useTransferStore();
 const transferDetails: Ref<{ [id: number]: TransferResponse }> = ref({});
 const dialog: Ref<null | any> = ref(null);
+const toast = useToast();
 
 const shouldShowInvoice = computed(() => {
   if (!transferDetails.value[props.id]) return false;
@@ -57,6 +77,11 @@ const shouldShowTransaction = computed(() => {
 const shouldShowDeposit = computed(() => {
   if (!transferDetails.value[props.id]) return false;
   return props.type === 'transfer' && transferDetails.value[props.id].deposit;
+});
+
+const shouldShowFine = computed(() => {
+  if (!transferDetails.value[props.id]) return false;
+  return props.type === 'transfer' && transferDetails.value[props.id].fine;
 });
 
 async function fetchTransferInfo() {
@@ -101,6 +126,49 @@ watch(
       await fetchMutation();
     }
 );
+
+const deleteMutation = async () => {
+  if (shouldShowFine.value) {
+    const transferDetail = transferDetails.value[props.id];
+
+    if (!transferDetail || !transferDetail.fine) {
+      await router.replace({ path: '/error' });
+      return;
+    }
+
+    await apiService.debtor.deleteFine(transferDetail.fine.id).then(() => {
+      toast.add({
+        summary: t('successMessages.success'),
+        detail: t('successMessages.fineDeleted'),
+        severity: 'success',
+        life: 3000,
+      });
+      router.go(0);
+    }).catch((err: AxiosError) => {
+      handleError(err, toast);
+    });
+  } else {
+    const transactionsDetail = transactionsDetails.value[props.id];
+
+    if (!transactionsDetail) {
+      await router.replace({ path: '/error' });
+      return;
+    }
+
+    await apiService.transaction.deleteTransaction(transactionsDetail.id).then(() => {
+      toast.add({
+        summary: t('successMessages.success'),
+        detail: t('successMessages.transactionDeleted'),
+        severity: 'success',
+        life: 3000,
+      });
+      router.go(0);
+    }).catch((err: AxiosError) => {
+      handleError(err, toast);
+    });
+  }
+};
+
 </script>
 
 <style scoped lang="scss"></style>

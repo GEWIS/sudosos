@@ -71,7 +71,7 @@ const pay = async () => {
 };
 
 const submitPay = async () => {
-  const { error } = await stripe.value.confirmPayment({
+  await stripe.value.confirmPayment({
     elements: elements.value,
     confirmParams: {
       return_url: import.meta.env.VITE_APP_STRIPE_RETURN_URL

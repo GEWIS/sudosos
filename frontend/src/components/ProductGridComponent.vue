@@ -3,9 +3,10 @@
     <!-- Loop through each product and render a card for each -->
 
     <div v-for="product in products" :key="product.id" class="card">
-      <ProductComponent :product="product" />
+      <ProductComponent :product="product"/>
     </div>
-    <Button class="flex flex-column h-10rem w-8rem border-300 border-1 border-round-sm overflow-hidden" @click="visible = true">
+    <Button class="flex flex-column h-10rem w-8rem border-300
+    border-1 border-round-sm overflow-hidden" @click="visible = true">
       <i class="pi pi-plus text-5xl my-auto product-card"></i>
     </Button>
     <ContainerAssignProductDialog v-model:visible="visible" v-model:products="products" :container="props.container"/>

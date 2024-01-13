@@ -10,6 +10,7 @@
            {{ $t('termsOfService.termsOfService') }}
         </template>
         <div>
+          <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
              <p>SudoSOS Terms of Service - version 1.0 (14/08/2022)</p>
           <!-- TOS is also english so we can leave this untranslated -->
             <div v-html="tos"></div>

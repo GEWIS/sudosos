@@ -3,6 +3,7 @@
     <h1 class="page-title">{{ $t('termsOfService.acceptFirst') }}</h1>
     <p>{{ $t('termsOfService.description') }}</p>
     <hr />
+    <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
     <p>SudoSOS Terms of Service - version 1.0 (14/08/2022)</p>
 
     <div v-html="tos"/>

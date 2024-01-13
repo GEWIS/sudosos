@@ -43,8 +43,9 @@ const schema = toTypedSchema(
     product: yup.mixed<ProductResponse>()
       .test({
         name: 'unique-product',
-        message: (d) => t("c_ContainerAssign.Product selection error"),
-        test: (product: ProductResponse | undefined) => product == null || !props.container.products.map(e => e.id).includes(product.id)
+        message: () => t("c_ContainerAssign.Product selection error"),
+        test: (product: ProductResponse | undefined) =>
+            product == null || !props.container.products.map(e => e.id).includes(product.id)
       })
       .required(),
   })

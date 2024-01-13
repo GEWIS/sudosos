@@ -430,12 +430,13 @@
     "Empty": "No transactions found."
   },
   "c_transactionDetailsModal": {
-    "transaction details": "transaction details",
+    "transactionDetails": "Transaction Details",
     "Cancel": "Close",
     "Flag transaction": "Flag transaction",
     "flag reason": "Please provide a reason for flagging the transaction",
     "reason placeholder": "Provide a reason",
-    "flag invalid": "Please provide a reason"
+    "flag invalid": "Please provide a reason",
+    "delete": "Delete"
   },
   "c_transactionDetails": {
     "Total": "Total",
@@ -560,12 +561,6 @@
     "Select product": "Select product",
     "Product selection error": " is een vereist veld."
   },
-  "c_ContainerAssign": {
-    "Assign product": "Assign product",
-    "Product": "Choose product:",
-    "Select product": "Select product",
-    "Product selection error": " is een vereist veld."
-  },
   "signOut": {
     "message": "Signing you out! Hope you had a nice time :) Be sure to come back soon!"
   },
@@ -587,7 +582,10 @@
     "success": "Success",
     "editPOS": "Succesfully edited POS.",
     "createContainer": "Successfully created container.",
-    "productCreated": "Successfully created product."
+    "productCreated": "Successfully created product.",
+    "fineDeleted": "Successfully deleted fine.",
+    "transactionDeleted": "Successfully deleted transaction.",
+    "finesHandedOut": "Successfully handed out fines"
   },
   "quickOverview": {
     "quickOverview": "Quick Overview",
@@ -610,6 +608,18 @@
     "count": "Count",
     "info": "Info",
     "notify": "Notify Users",
-    "handout": "Handout Fines"
+    "handout": "Handout Fines",
+    "infoMessage": "Currently, eligible users have a total debt of {debt}. This would result in a total of {fines} in fines being handed out.",
+    "pleaseSelect": "Please apply two dates to see how much users are in debt.",
+    "total": "Total",
+    "from": "From",
+    "type": "Transaction type",
+    "fine": "Fine",
+    "description": "Description",
+    "fineNumber": "Number of fines",
+    "fineTotal": "Total of fines",
+    "createdBy": "Created by",
+    "createdAt": "Created at",
+    "handoutEventDetails": "Fine Handout Event Details"
   }
 }

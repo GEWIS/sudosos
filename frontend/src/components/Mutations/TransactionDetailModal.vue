@@ -52,11 +52,12 @@ defineProps({
       <div class="transaction-right-column">
         <div v-for="transactionProduct in productsInfo" :key="transactionProduct.id" class="product-row">
           <div class="product-row-left-column">
+            <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
             <p>{{ transactionProduct.amount }} x {{ transactionProduct.product.name }}</p>
           </div>
           <div class="product-row-right-column">
-            <p>
-              ({{ formatValueEuro(transactionProduct.product.priceInclVat) }})
+            <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
+            <p> ({{ formatValueEuro(transactionProduct.product.priceInclVat) }})
               = {{ formatValueEuro(transactionProduct.totalPriceInclVat) }}
             </p>
           </div>

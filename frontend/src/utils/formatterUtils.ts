@@ -13,7 +13,7 @@ export function formatDateTime(date: Date): string {
     ];
 
     const day = parseTime(date.getDate());
-    const monthIndex = parseTime(date.getMonth());
+    const monthIndex = parseTime(date.getMonth() + 1);
     const year = date.getFullYear().toString();
     const dayOfWeek = daysOfWeek[date.getDay()];
     return `${day}-${monthIndex}-${year} (${dayOfWeek})`;

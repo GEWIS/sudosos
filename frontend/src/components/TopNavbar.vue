@@ -159,7 +159,11 @@ const leftItems = ref([
       },
       {
         label: t('app.Social drink cards'),
-      }
+      },
+      {
+        label: t('fine.fineOverview'),
+        route: '/fine',
+      },
     ]
   },
     ]);
@@ -260,7 +264,11 @@ const mobileItems = ref([
       },
       {
         label: t('app.Social drink cards'),
-      }
+      },
+      {
+        label: t('fine.fineOverview'),
+        route: '/fine',
+      },
     ]
   },
   {

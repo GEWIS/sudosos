@@ -3,6 +3,7 @@
   <span class="copyright">
     <b>{{ $t('login.copyright') }}</b>
   </span>
+<!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
   <span class="separator"> | </span>
   <TermsOfServiceModal />
 </footer>

@@ -4,62 +4,66 @@
   <div class="page-container">
     <div class="page-title">{{ `${currentUser ? currentUser.firstName : ''}'s profile` }}</div>
     <div class="flex flex-column md:flex-row flex-wrap justify-content-between gap-5">
-<!--      TODO: Refactor to extract this component-->
-<!--      See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/21-->
-        <CardComponent :header="$t('userDetails.Personal Info')" class="">
-          <form @submit="handleEditUser">
-            <small v-if="!isLocal">{{ $t('profile.notManagedThroughSudoSOS') }}</small>
-            <div class="field">
-              <label for="firstName">{{ $t("userDetails.First name") }}</label>
-              <InputText :disabled="!isLocal" id="firstName" v-model="firstName" v-bind="firstNameAttrs" class="w-full" />
-              <span class="error-text">{{ errors.firstName }}</span>
-            </div>
-            <div class="field">
-              <label for="lastName">{{ $t("userDetails.Last name") }}</label>
-              <InputText :disabled="!isLocal" id="lastName" v-model="lastName" v-bind="lastNameAttrs" class="w-full"/>
-              <span class="error-text">{{ errors.lastName }}</span>
-            </div>
-            <div class="field">
-              <label for="email">{{ $t("userDetails.Email address") }}</label>
-              <InputText :disabled="!isLocal" id="email" v-model="email" v-bind="emailAttrs" class="w-full"/>
-            </div>
-            <div class="field">
-              <label for="type">{{ $t("userDetails.Usertype") }}</label>
-              <InputText
+      <!--      TODO: Refactor to extract this component-->
+      <!--      See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/21-->
+      <CardComponent :header="$t('userDetails.Personal Info')" class="">
+        <form @submit="handleEditUser">
+          <small v-if="!isLocal">{{ $t('profile.notManagedThroughSudoSOS') }}</small>
+          <div class="field">
+            <label for="firstName">{{ $t("userDetails.First name") }}</label>
+            <InputText :disabled="!isLocal" id="firstName"
+                       v-model="firstName" v-bind="firstNameAttrs" class="w-full"/>
+            <span class="error-text">{{ errors.firstName }}</span>
+          </div>
+          <div class="field">
+            <label for="lastName">{{ $t("userDetails.Last name") }}</label>
+            <InputText :disabled="!isLocal" id="lastName"
+                       v-model="lastName" v-bind="lastNameAttrs" class="w-full"/>
+            <span class="error-text">{{ errors.lastName }}</span>
+          </div>
+          <div class="field">
+            <label for="email">{{ $t("userDetails.Email address") }}</label>
+            <InputText :disabled="!isLocal" id="email"
+                       v-model="email" v-bind="emailAttrs" class="w-full"/>
+          </div>
+          <div class="field">
+            <label for="type">{{ $t("userDetails.Usertype") }}</label>
+            <InputText
                 id="userType"
                 disabled
                 :placeholder="currentUser ? currentUser.type : undefined"
                 v-model="userType"
                 v-bind="userTypeAttrs"
                 class="w-full"
-              />
-              <span class="error-text">{{ errors.userType }}</span>
-            </div>
-            <div class="field">
-              <label for="active">{{ $t("userDetails.Active") }}</label>
-              <Checkbox :binary="true" id="active" v-model="isActive" v-bind="isActiveAttrs" class="w-full"/>
-            </div>
-            <div class="field">
-              <label for="ofAge">{{ $t('profile.ofAge') }}</label>
-                <Checkbox :binary="true" v-model="ofAge" v-bind="ofAgeAttrs" id="ofAge" class="w-full"/>
-                <span class="error-text">{{ errors.ofAge }}</span>
-            </div>
-            <div class="field">
-              <label for="canGoIntoDebt">{{ $t('profile.canGoIntoDebt') }}</label>
-                <Checkbox :binary="true" v-model="canGoIntoDebt" v-bind="canGoIntoDebtAttrs" id="canGoIntoDebt" class="w-full"/>
-                <span class="error-text">{{ errors.canGoIntoDebt }}</span>
-            </div>
-            <Button type="submit" class="update-button">{{ $t('userDetails.Update information') }}</Button>
-          </form>
-        </CardComponent>
-        <BalanceComponent :user="currentUser" :showOption="false" id="userBalance"/>
-        <MutationsTableComponent
+            />
+            <span class="error-text">{{ errors.userType }}</span>
+          </div>
+          <div class="field">
+            <label for="active">{{ $t("userDetails.Active") }}</label>
+            <Checkbox :binary="true" id="active" v-model="isActive" v-bind="isActiveAttrs" class="w-full"/>
+          </div>
+          <div class="field">
+            <label for="ofAge">{{ $t('profile.ofAge') }}</label>
+            <Checkbox :binary="true" v-model="ofAge" v-bind="ofAgeAttrs" id="ofAge" class="w-full"/>
+            <span class="error-text">{{ errors.ofAge }}</span>
+          </div>
+          <div class="field">
+            <label for="canGoIntoDebt">{{ $t('profile.canGoIntoDebt') }}</label>
+            <Checkbox :binary="true" v-model="canGoIntoDebt" v-bind="canGoIntoDebtAttrs" id="canGoIntoDebt"
+                      class="w-full"/>
+            <span class="error-text">{{ errors.canGoIntoDebt }}</span>
+          </div>
+          <Button type="submit" class="update-button">{{ $t('userDetails.Update information') }}</Button>
+        </form>
+      </CardComponent>
+      <BalanceComponent :user="currentUser" :showOption="false" id="userBalance"/>
+      <MutationsTableComponent
           class="w-full"
           :header="$t('userDetails.User Transactions')"
           paginator
           modal
           :callbackFunction="getUserMutations"
-        />
+      />
     </div>
   </div>
 </template>
@@ -68,7 +72,7 @@
 import { onBeforeMount, ref } from 'vue';
 import type { Ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
+import { useUserStore } from "@sudosos/sudosos-frontend-common";
 import type { PaginatedFinancialMutationResponse, UpdateUserRequest, UserResponse } from "@sudosos/sudosos-client";
 import CardComponent from "@/components/CardComponent.vue";
 import Checkbox from "primevue/checkbox";
@@ -128,7 +132,7 @@ onBeforeMount(async () => {
 });
 
 const handleEditUser = handleSubmit(async (values) => {
-  if (currentUser.value){
+  if (currentUser.value) {
     const userId = currentUser.value.id;
     const updateUserRequest: UpdateUserRequest = {
       firstName: values.firstName,
@@ -154,10 +158,10 @@ const handleEditUser = handleSubmit(async (values) => {
   }
 });
 
-const getUserMutations = async (take: number, skip: number) :
-  Promise<PaginatedFinancialMutationResponse | undefined> => {
+const getUserMutations = async (take: number, skip: number):
+    Promise<PaginatedFinancialMutationResponse | undefined> => {
   await userStore.fetchUsersFinancialMutations(userId.value, apiService, take, skip)
-    .catch((err: AxiosError) => handleError(err, toast));
+      .catch((err: AxiosError) => handleError(err, toast));
   return userStore.getCurrentUser.financialMutations;
 };
 
