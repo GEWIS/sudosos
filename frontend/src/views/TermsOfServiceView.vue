@@ -36,7 +36,7 @@ import apiService from '@/services/ApiService';
 import router from '@/router';
 import { marked } from 'marked';
 import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
-import termsOfService from '@/locales/TermsOfService.md?raw';
+import termsOfService from '@/locales/termsOfService.md?raw';
 import { ref } from 'vue';
 
 const authStore = useAuthStore();
