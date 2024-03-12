@@ -50,13 +50,12 @@
         border-radius: $menuitemBorderRadius;
 
         .p-menuitem-link {
+            color: $menuitemTextColor;
             padding: $menuitemPadding;
             user-select: none;
 
             .p-menuitem-text {
                 color: $menuitemTextColor;
-                font-family: $fontFamily;
-                font-weight: 500;
             }
         
             .p-menuitem-icon {
@@ -96,12 +95,31 @@
     &:not(.p-highlight):not(.p-disabled) {
         &.p-focus {
             > .p-menuitem-content {
-                color: $menuitemTextFocusColor;
-                background: $menuitemFocusBg;
+                color: $menuitemTextHoverColor;
+                background: $menuitemHoverBg;
     
                 .p-menuitem-link {
+                    .p-menuitem-text {
+                        color: $menuitemTextHoverColor;
+                    }
+                
                     .p-menuitem-icon, .p-submenu-icon {
-                        color: $menuitemIconFocusColor;
+                        color: $menuitemTextHoverColor;
+                    }
+                }
+
+                &:hover {
+                    color: $menuitemTextHoverColor;
+                    background: $menuitemHoverBg;
+        
+                    .p-menuitem-link {
+                        .p-menuitem-text {
+                            color: $menuitemTextHoverColor;
+                        }
+        
+                        .p-menuitem-icon, .p-submenu-icon {
+                            color: $menuitemIconHoverColor;
+                        }
                     }
                 }
             }
@@ -123,17 +141,7 @@
                 }
             }
         }
-            }
-            }
-
-            .p-menuitem-icon {
-                color: $submenuitemIconColor;
-                margin-right: $inlineSpacing;
     }
-
-            .p-menuitem-icon {
-                color: $submenuitemIconColor;
-                margin-right: $inlineSpacing;
 }
 
 @mixin horizontal-rootmenuitem {

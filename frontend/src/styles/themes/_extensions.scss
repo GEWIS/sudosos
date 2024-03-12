@@ -18,3 +18,414 @@ body {
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
 }
+
+/* Fix menubar color to GEWIS red */
+.p-menubar {
+  background: $primaryColor;
+  
+}
+
+
+/* Fix original font */
+.p-component {
+  font-family: $fontFamily;
+}
+.p-link {
+  font-family: $fontFamily;
+}
+
+/* Remove the borders from the datatables */
+.p-datatable {
+  .p-datatable-thead>tr>th {
+    border-top: none;
+    text-transform: uppercase;
+  }
+
+  &.p-datatable-striped {
+    .p-datatable-tbody {
+      >tr:nth-child(even) {
+        background: $tableBodyRowEvenBg;
+
+        &.p-highlight {
+          background: $highlightBg;
+          color: $highlightTextColor;
+
+          .p-row-toggler {
+            color: $highlightTextColor;
+
+            &:hover {
+              color: $highlightTextColor;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .p-datatable-tbody {
+    > tr {
+      > td {
+        border: none;
+      }
+    }
+  }
+
+  &.p-datatable-gridlines {
+    .p-datatable-tbody {
+      > tr {
+        > td {
+          border: none;
+        }
+      }
+    }
+  }
+}
+
+
+
+/* Fixing submenuitem link colors */
+.p-menubar {
+  .p-submenu-list {
+    .p-menuitem {
+      .p-menuitem-content {
+        .p-menuitem-link {
+          .p-menuitem-text {
+            color: $submenuTextColor;
+
+            
+          }
+        }
+
+        &:hover {
+          .p-menuitem-link {
+              .p-menuitem-text {
+                color: $submenuitemTextHoverColor;
+              }
+            }
+        }
+      }
+
+      &.p-highlight {
+        >.p-menuitem-content {
+          color: $menuitemTextActiveColor;
+          background: $menuitemActiveBg;
+
+          .p-menuitem-link {
+            .p-menuitem-text {
+              color: $menuitemTextActiveColor;
+            }
+
+            .p-menuitem-icon,
+            .p-submenu-icon {
+              color: $menuitemIconActiveColor;
+            }
+          }
+        }
+
+        &.p-focus {
+          >.p-menuitem-content {
+            background: $menuitemActiveFocusBg;
+          }
+        }
+      }
+
+      &:not(.p-highlight):not(.p-disabled) {
+        &.p-focus {
+          >.p-menuitem-content {
+            color: $submenuitemTextFocusColor;
+            background: $submenuitemFocusBg;
+
+            .p-menuitem-link {
+              .p-menuitem-text {
+                color: $submenuitemTextFocusColor;
+              }
+
+              .p-menuitem-icon,
+              .p-submenu-icon {
+                color: $submenuitemIconFocusColor;
+              }
+            }
+          }
+        }
+
+        >.p-menuitem-content {
+          &:hover {
+            color: $submenuitemTextHoverColor;
+            background: $submenuitemFocusBg;
+
+            .p-menuitem-link {
+              .p-menuitem-text {
+                color: $submenuitemTextHoverColor;
+              }
+
+              .p-menuitem-icon,
+              .p-submenu-icon {
+                color: $submenuitemIconHoverColor;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Fix mobile menubar */
+@mixin mobilemenuitem {
+  >.p-menuitem-content {
+    color: $menuitemTextColor;
+    transition: $listItemTransition;
+    border-radius: $menuitemBorderRadius;
+
+    .p-menuitem-link {
+      color: $menuitemTextColor;
+      padding: $mobilemenuitemPadding;
+      user-select: none;
+
+      .p-menuitem-text {
+        color: $menuitemTextColor;
+        font-family: $fontFamily;
+        font-weight: 500;
+      }
+
+      .p-menuitem-icon {
+        color: $menuitemIconColor;
+        margin-right: $inlineSpacing;
+      }
+
+      .p-submenu-icon {
+        color: $menuitemIconColor;
+      }
+    }
+
+  }
+
+  &.p-highlight {
+    >.p-menuitem-content {
+      color: $menuitemTextActiveColor;
+      background: $menuitemActiveBg;
+
+      .p-menuitem-link {
+        padding: $mobilemenuitemPadding;
+
+        .p-menuitem-text {
+          color: $menuitemTextActiveColor;
+        }
+
+        .p-menuitem-icon,
+        .p-submenu-icon,
+        .pi {
+          color: $menuitemIconActiveColor;
+        }
+      }
+    }
+
+    &.p-focus {
+      >.p-menuitem-content {
+        background: transparent;
+      }
+    }
+  }
+
+  &:not(.p-highlight):not(.p-disabled) {
+    &.p-focus {
+      >.p-menuitem-content {
+        color: $menuitemTextFocusColor;
+        background: transparent;
+
+        .p-menuitem-link {
+          color: $menuitemTextFocusColor;
+          padding: $mobilemenuitemPadding;
+
+          .p-menuitem-text {
+            color: $menuitemTextFocusColor;
+          }
+
+          .p-menuitem-icon,
+          .p-submenu-icon,
+          .pi {
+            color: $menuitemIconFocusColor;
+          }
+        }
+      }
+    }
+
+    >.p-menuitem-content {
+      &:hover {
+        color: $menuitemTextHoverColor;
+        background: transparent;
+
+        .p-menuitem-link {
+          padding: $mobilemenuitemPadding;
+          .p-menuitem-text {
+            color: $menuitemTextHoverColor;
+            transition: $listItemTransition;
+          }
+
+          .p-menuitem-icon,
+          .p-submenu-icon,
+          .pi {
+            color: $menuitemIconHoverColor;
+            transition: $listItemTransition;
+          }
+        }
+      }
+    }
+  }
+}
+
+@mixin mobilesubmenuitem {
+  .p-menuitem-content {
+    color: $submenuTextColor;
+    transition: $listItemTransition;
+    border-radius: $menuitemBorderRadius;
+
+    .p-menuitem-link {
+      color: $submenuitemTextColor;
+      padding: $mobilesubmenuitemPadding !important;
+      user-select: none;
+
+      .p-menuitem-text {
+        color: $submenuitemTextColor;
+        font-family: $fontFamily;
+        font-weight: 500;
+
+      }
+
+      .p-menuitem-icon {
+        color: $submenuitemIconColor;
+        margin-right: $inlineSpacing;
+      }
+
+      .p-submenu-icon {
+        color: $submenuitemIconColor;
+      }
+    }
+  }
+
+  &.p-highlight {
+    >.p-menuitem-content {
+      color: $submenuitemTextActiveColor;
+      background: $submenuitemActiveBg;
+
+      .p-menuitem-link {
+        padding: $mobilemenuitemPadding;
+
+        .p-menuitem-text {
+          color: $submenuitemTextActiveColor;
+        }
+
+        .p-menuitem-icon,
+        .p-submenu-icon,
+        .pi {
+          color: $submenuitemIconActiveColor;
+        }
+      }
+    }
+
+    &.p-focus {
+      >.p-menuitem-content {
+        background: $submenuitemActiveFocusBg;
+      }
+    }
+  }
+
+  &:not(.p-highlight):not(.p-disabled) {
+    &.p-focus {
+      >.p-menuitem-content {
+        color: $submenuitemTextFocusColor;
+
+        .p-menuitem-link {
+          color: $submenuitemTextFocusColor;
+          padding: $mobilemenuitemPadding;
+
+          .p-menuitem-text {
+            color: $submenuitemTextFocusColor;
+          }
+
+          .p-menuitem-icon,
+          .p-submenu-icon,
+          .pi {
+            color: $submenuitemIconFocusColor;
+          }
+        }
+      }
+    }
+
+    >.p-menuitem-content {
+      &:hover {
+        color: $submenuitemTextHoverColor;
+
+        .p-menuitem-link {
+          padding: $mobilemenuitemPadding;
+
+          .p-menuitem-text {
+            color: $submenuitemTextHoverColor;
+            transition: $listItemTransition;
+          }
+
+          .p-menuitem-icon,
+          .p-submenu-icon,
+          .pi {
+            color: $submenuitemIconHoverColor;
+            transition: $listItemTransition;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 960px) {
+  .p-menubar {
+    width: 100%;
+    background-color: $primaryColor;
+
+    .p-submenu-list {
+      .p-menuitem {
+        @include mobilesubmenuitem();
+      }
+    }
+
+    .p-menubar-button {
+      .p-icon {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .p-menubar-root-list {
+      position: relative;
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.5s ease-in-out;
+
+     
+
+    }
+
+    &.p-menubar-mobile-active {
+      top: 0;
+
+    }
+
+    &.p-menubar-mobile-active .p-menubar-root-list {
+      position: relative !important;
+      top: 0 !important;
+      background-color: $primaryColor;
+      border: none;
+      max-height: fit-content !important;
+      transition: max-height 0.5s ease-in-out;
+
+      >.p-menuitem {
+        @include mobilemenuitem();
+      }
+
+    }
+
+    &.p-menubar-mobile .p-menubar-root-list {
+      overflow: hidden;
+      max-height: 0;
+    }
+  }
+}

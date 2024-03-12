@@ -38,7 +38,7 @@
         </template>
       </Menubar>
       <Menubar
-        class="flex md:hidden flex-row flex-wrap justify-content-between mx-2 my-2 transition-all"
+        class="flex md:hidden flex-row flex-wrap justify-content-between mx-2 my-2 transition-all w-full"
         :model="mobileItems"
       >
         <template #start>
