@@ -35,10 +35,10 @@
                     />
                     <label for="secondDate">{{ t('fine.secondDate') }}</label>
                   </span>
-                  <Button severity="success" type="submit">{{ t('fine.apply') }}</Button>
+                  <Button type="submit">{{ t('fine.apply') }}</Button>
                 </form>
                 <Button @click="notifyUsers" severity="info">{{ t('fine.notify') }}</Button>
-                <Button @click="handoutFines" severity="success">{{ t('fine.handout') }}</Button>
+                <Button @click="handoutFines">{{ t('fine.handout') }}</Button>
               </div>
               <p class="text-red-500">
                 {{

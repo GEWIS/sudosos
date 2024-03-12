@@ -2,7 +2,7 @@
   <CardComponent header="containers">
     <template #topAction>
       <!-- Header content goes here -->
-      <Button severity="success"
+      <Button
               @click="visible = true"
       >{{ $t("c_POSCreate.add container") }}</Button>
       <AddContainerDialogComponent v-model:visible="visible"/>

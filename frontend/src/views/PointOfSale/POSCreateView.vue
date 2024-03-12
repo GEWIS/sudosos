@@ -59,7 +59,6 @@
                 id="create-pos-button"
                 :label="$t('c_POSCreate.Create')"
                 type="submit"
-                severity="success"
               />
           </form>
         </div>

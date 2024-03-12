@@ -50,7 +50,6 @@
               id="create-pos-button"
               :label="$t('c_containerEditModal.save')"
               type="submit"
-              severity="success"
             />
           </form>
         </div>
