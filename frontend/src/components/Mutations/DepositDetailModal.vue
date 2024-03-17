@@ -1,7 +1,45 @@
+<template>
+  <div class="flex flex-column">
+    <span>
+      {{ dateString }}
+    </span>
+    <span>{{ $t("transactions.depositDescr") }}</span>
+    <br>
+    <DataTable
+      :value="[depositInfo]"
+      :pt="{
+        tfoot: 'font-bold'
+      }"
+    >
+      <Column 
+        field="description" 
+        :header="$t('transactions.depositID')" 
+        class="p-1">
+        <template #body="product">
+          <span class="text-sm xl:text-base">{{ depositInfo.description }}</span>
+        </template>
+      </Column>
+      <Column 
+        field="totalPriceInclVat" 
+        :header="$t('transactions.amount')"
+        class="p-1"
+        footerClass="font-bold"
+        >
+        <template #body="product">
+            {{ formatPrice(depositInfo.amount) }}
+        </template>
+      </Column>
+    </DataTable>
+  </div>
+</template>
 <script setup lang="ts">
 import type { TransferResponse } from "@sudosos/sudosos-client";
 import { formatPrice } from "../../utils/formatterUtils";
-defineProps({
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import { computed } from "vue";
+
+const { depositInfo } = defineProps({
   depositInfo: {
     type: Object as () => TransferResponse,
     required: true,
@@ -9,30 +47,12 @@ defineProps({
 });
 
 
+const dateString = computed(() => {
+  return new Date(depositInfo.createdAt!!).toLocaleString('nl-NL', {
+    dateStyle: 'short',
+    timeStyle: 'short'
+  })
+})
+
+
 </script>
-
-<template>
-  <div class="flex flex-column">
-    <div class="flex flex-row justify-content-between">
-      <div class="transaction-left-column"><p>{{ $t("transactions.total") }}</p></div>
-      <div class="transaction-right-column"><p>{{ formatPrice(depositInfo.amount) }}</p></div>
-    </div>
-    <div class="flex flex-row justify-content-between">
-      <div class="transaction-left-column"><p>{{ $t("transactions.to") }}</p></div>
-      <div class="transaction-right-column">
-        <p>{{ depositInfo.deposit?.to.firstName + ' ' +depositInfo.deposit?.to.lastName }}</p>
-      </div>
-    </div>
-    <div class="flex flex-row justify-content-between">
-      <div class="transaction-left-column"><p>{{ $t("transactions.transferRef") }}</p></div>
-      <div class="transaction-right-column"><p>{{ depositInfo.deposit?.stripeId }}</p></div>
-    </div>
-    <div class="flex flex-row justify-content-between">
-      <div class="transaction-left-column"><p>{{ $t("transactions.transferType") }}</p></div>
-      <div class="transaction-right-column"><p>{{ $t("transactions.deposit") }}</p></div>
-    </div>
-  </div>
-</template>
-
-<style scoped lang="scss">
-</style>

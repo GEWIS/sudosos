@@ -1,28 +1,43 @@
 <template>
   <div class="flex flex-column">
-    <div class="flex flex-row justify-content-between">
-      <p>{{ t('fine.total') }}</p>
-      <p>{{ formatPrice(amount) }}</p>
-    </div>
-    <div class="flex flex-row justify-content-between">
-      <p>{{ t('fine.from') }}</p>
-      <p>{{ `${firstName} ${lastName}` }}</p>
-    </div>
-    <div class="flex flex-row justify-content-between">
-      <p>{{ t('fine.type') }}</p>
-      <p>{{ t('fine.fine')  }}</p>
-    </div>
-    <div class="flex flex-row justify-content-between">
-      <p>{{ t('fine.description') }}</p>
-      <p>{{ description }}</p>
-    </div>
+    <span>
+    {{ dateString }}
+    </span>
+      <span>{{ $t("transactions.fineDescr") }}</span>
+      <br>
+      <DataTable
+        :value="[{
+          amount: amount,
+          firstName: firstName,
+          lastName: lastName,
+          description: description
+        }]"
+        :pt="{
+          tfoot: 'font-bold'
+        }"
+      >
+        <Column field="description" :header="$t('transactions.description')" class="p-1">
+        </Column>
+        <Column 
+          field="totalPriceInclVat" 
+          :header="$t('transactions.fineAmount')"
+          class="p-1"
+          footerClass="font-bold"
+          >
+          <template #body="product">
+              {{ formatPrice(product.data.amount) }}
+          </template>
+        </Column>
+      </DataTable>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { formatPrice } from "../../utils/formatterUtils";
-import { onMounted, type Ref, ref } from "vue";
+import { onMounted, type Ref, ref, computed } from "vue";
+import Column from "primevue/column";
+import DataTable from "primevue/datatable";
 import type {
   DineroObjectResponse,
   TransferResponse
@@ -53,6 +68,13 @@ onMounted(async () => {
   lastName.value = props.fine.from.lastName;
   description.value = props.fine.description;
 });
+
+const dateString = computed(() => {
+  return new Date(props.fine.createdAt!!).toLocaleString('nl-NL', {
+    dateStyle: 'short',
+    timeStyle: 'short'
+  })
+})
 
 </script>
 

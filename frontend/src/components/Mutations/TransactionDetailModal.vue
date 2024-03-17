@@ -1,7 +1,99 @@
+<template>
+  <div class="flex flex-column">
+    <span>
+      {{ new Date(transactionInfo.createdAt!!).toLocaleString('nl-NL', {
+        dateStyle: 'short',
+        timeStyle: 'short'
+      }) }}
+    </span>
+    <Translation 
+      v-if="
+        transactionInfo.from.id == userStore.current.user!!.id
+      "
+      keypath="transactions.userBoughtAt" tag="div">
+      <template v-slot:pos>
+        <span class="font-bold">{{ transactionInfo.pointOfSale.name }}</span>
+      </template>
+    </Translation>
+
+    <Translation 
+      v-if="
+        transactionInfo.from.id != userStore.current.user!!.id
+      "
+      keypath="transactions.otherBoughtAt" tag="div">
+      <template v-slot:user>
+        <span 
+          class="font-bold">
+          {{ transactionInfo.from.firstName }}
+          {{ transactionInfo.from.lastName }}
+        </span>
+
+      </template>
+      <template v-slot:pos>
+        <span class="font-bold">{{ transactionInfo.pointOfSale.name }}</span>
+      </template>
+    </Translation>
+
+    <Translation 
+      v-if="
+        transactionInfo.createdBy
+        && transactionInfo.createdBy.id != transactionInfo.from.id
+      " 
+      keypath="transactions.putInBy" tag="div">
+
+      <template v-slot:createdBy>
+        <span class="font-bold">
+          {{ transactionInfo.createdBy.firstName }}
+          {{ transactionInfo.createdBy.lastName }}
+        </span>
+      </template>
+    </Translation>
+    
+    <br>
+    <DataTable
+      :value="productsInfo"
+      :pt="{
+        tfoot: 'font-bold'
+      }"
+    >
+      <Column field="amount" header="#" class="p-1"></Column>
+      <Column field="product.name" :header="$t('transactions.title')" class="p-1"></Column>
+      <Column 
+        field="product.priceInclVat" 
+        :header="$t('transactions.price')"
+        class="p-1"
+        footerClass="font-bold"
+        :footer="$t('transactions.total')"
+      >
+        <template #body="product">
+            {{ formatPrice(product.data.product.priceInclVat) }}
+        </template></Column>
+      <Column 
+        field="totalPriceInclVat" 
+        :header="$t('transactions.amount')"
+        class="p-1"
+        footerClass="font-bold"
+        :footer="formatPrice(transactionInfo.totalPriceInclVat)"
+        >
+        <template #body="product">
+            {{ formatPrice(product.data.totalPriceInclVat) }}
+        </template>
+      </Column>
+    </DataTable>
+    
+    
+  </div>
+</template>
 <script setup lang="ts">
-import { formatValueEuro } from "../../utils/mutationUtils";
+import { formatPrice } from "../../utils/formatterUtils";
 import type { SubTransactionRowResponse } from "@sudosos/sudosos-client/src/api";
 import type { TransactionResponse } from "@sudosos/sudosos-client";
+import { useUserStore } from '@sudosos/sudosos-frontend-common';
+import { Translation } from "vue-i18n"
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+
+const userStore = useUserStore()
 
 defineProps({
   transactionInfo: {
@@ -10,65 +102,7 @@ defineProps({
   },
   productsInfo: {
     type: Object as () => Array<SubTransactionRowResponse>,
-    required: true
-  }
+      required: true
+    }
 });
-
 </script>
-
-<template>
-  <div class="flex flex-column">
-    <div class="flex flex-row justify-content-between">
-      <div class="transaction-left-column"><p>{{ $t("transactions.total") }}</p></div>
-      <div class="transaction-right-column"><p>{{ formatValueEuro(transactionInfo.totalPriceInclVat) }}</p></div>
-    </div>
-    <div class="flex flex-row justify-content-between">
-      <div class="transaction-left-column"><p>{{ $t("transactions.pos") }}</p></div>
-      <div class="transaction-right-column"><p>{{ transactionInfo.pointOfSale.name }}</p></div>
-    </div>
-    <div class="flex flex-row justify-content-between">
-      <div class="transaction-left-column"><p>{{ $t("transactions.boughtBy") }}</p></div>
-      <div class="transaction-right-column">
-        <p>
-          {{ transactionInfo.from.firstName }}
-          {{ transactionInfo.from.lastName }}
-        </p>
-      </div>
-    </div>
-    <div v-if="transactionInfo.createdBy" class="flex flex-row justify-content-between" >
-      <div class="transaction-left-column">
-        <p>{{ $t("transactions.putInBy") }}
-      </p>
-      </div>
-      <div class="transaction-right-column">
-        <p>
-          {{ transactionInfo.createdBy.firstName }}
-          {{ transactionInfo.createdBy.lastName }}
-        </p>
-      </div>
-    </div>
-    <div class="flex flex-row justify-content-between">
-      <div class="transaction-left-column"><p>{{ $t("transactions.products") }}</p></div>
-      <div class="transaction-right-column">
-        <div v-for="transactionProduct in productsInfo" :key="transactionProduct.id" class="product-row">
-          <div class="product-row-left-column">
-            <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
-            <p>{{ transactionProduct.amount }} x {{ transactionProduct.product.name }}</p>
-          </div>
-          <div class="product-row-right-column">
-            <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
-            <p> ({{ formatValueEuro(transactionProduct.product.priceInclVat) }})
-              = {{ formatValueEuro(transactionProduct.totalPriceInclVat) }}
-            </p>
-          </div>
-        </div>
-        <div class="product-row-total">
-          <p><i>{{ $t("transactions.total") }}</i> {{ formatValueEuro(transactionInfo.totalPriceInclVat) }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
-<style scoped lang="scss">
-</style>

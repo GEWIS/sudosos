@@ -1,20 +1,8 @@
-<script setup lang="ts">
-import { formatValueEuro } from "../../utils/mutationUtils";
-import type { TransferResponse } from "@sudosos/sudosos-client";
-
-defineProps({
-  invoiceInfo: {
-    type: Object as () => TransferResponse,
-    required: true,
-  }
-});
-</script>
-
 <template>
   <div class="flex flex-column">
     <div class="flex flex-row justify-content-between">
       <div class="transaction-left-column"><p>{{ $t("transactions.total") }}</p></div>
-      <div class="transaction-right-column"><p>{{ formatValueEuro(invoiceInfo.amount) }}</p></div>
+      <div class="transaction-right-column"><p>{{ formatPrice(invoiceInfo.amount) }}</p></div>
     </div>
     <div v-if="invoiceInfo.invoice?.to" class="flex flex-row justify-content-between">
       <div class="transaction-left-column"><p>{{ $t("transactions.to") }}</p></div>
@@ -38,6 +26,16 @@ defineProps({
     </div>
   </div>
 </template>
+<script setup lang="ts">
+import { formatPrice } from "../../utils/formatterUtils";
+import type { TransferResponse } from "@sudosos/sudosos-client";
 
+defineProps({
+  invoiceInfo: {
+    type: Object as () => TransferResponse,
+    required: true,
+  }
+});
+</script>
 <style scoped lang="scss">
 </style>

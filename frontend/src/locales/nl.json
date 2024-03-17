@@ -64,7 +64,20 @@
     "Overview": "Overzicht"
   },
   "transactions": {
-    "Transactions": "Transacties"
+    "Transactions": "Transacties",
+    "total": "Totaal:",
+    "userBoughtAt": "Je hebt gekocht bij {pos}",
+    "otherBoughtAt": "{user} heeft gekocht bij {pos}",
+    "title": "Titel",
+    "price": "Prijs",
+    "amount": "Bedrag",
+    "when": "Wanneer",
+    "what": "Wat",
+    "description": "Omschrijving",
+    "fineDescr": "Je hebt een boete ontvangen.",
+    "fineAmount": "Boete",
+    "depositDescr": "Je hebt geld gestort op SudoSOS",
+    "depositID": "Opwaardeer ID"
   },
   "balance": {
     "Balance": "Saldo",

@@ -4,7 +4,7 @@
     :visible="visible"
     modal
     :header="t('c_transactionDetailsModal.transactionDetails')"
-    class="w-auto flex w-9 md:w-4" ref="dialog"
+    class="w-auto flex w-11 md:w-4" ref="dialog"
   >
     <TransactionDetailModal
         v-if="shouldShowTransaction"
@@ -42,10 +42,11 @@ import { useI18n } from "vue-i18n";
 import { useToast } from "primevue/usetoast";
 import type { AxiosError } from "axios";
 import { handleError } from "@/utils/errorUtils";
+import { FinancialMutationType } from "@/utils/mutationUtils";
 
 const props = defineProps({
   type: {
-    type: String,
+    type: Object as () => FinancialMutationType,
     required: true
   },
   id: {
@@ -66,22 +67,22 @@ const toast = useToast();
 
 const shouldShowInvoice = computed(() => {
   if (!transferDetails.value[props.id]) return false;
-  return props.type === 'transfer' && transferDetails.value[props.id].invoice;
+  return props.type === FinancialMutationType.INVOICE;
 });
 
 const shouldShowTransaction = computed(() => {
   if (!transactionsDetails.value[props.id]) return false;
-  return props.type === 'transaction';
+  return props.type === FinancialMutationType.TRANSACTION;
 });
 
 const shouldShowDeposit = computed(() => {
   if (!transferDetails.value[props.id]) return false;
-  return props.type === 'transfer' && transferDetails.value[props.id].deposit;
+  return props.type === FinancialMutationType.DEPOSIT;
 });
 
 const shouldShowFine = computed(() => {
   if (!transferDetails.value[props.id]) return false;
-  return props.type === 'transfer' && transferDetails.value[props.id].fine;
+  return props.type === FinancialMutationType.FINE;
 });
 
 async function fetchTransferInfo() {
@@ -115,9 +116,8 @@ function getProductsOfTransaction(transactionResponse: TransactionResponse): voi
 }
 
 async function fetchMutation(): Promise<void> {
-  if (props.type == 'transfer') {
-    await fetchTransferInfo();
-  } else if (props.type == 'transaction') await fetchTransactionInfo();
+  if (props.type == FinancialMutationType.TRANSACTION) await fetchTransactionInfo();
+  else await fetchTransferInfo();
 }
 
 watch(
