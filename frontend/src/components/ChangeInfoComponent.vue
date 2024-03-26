@@ -4,25 +4,21 @@
       <small v-if="!isLocal">{{ $t('profile.notManagedThroughSudoSOS') }}</small>
       <div class="field">
         <p>{{ $t('profile.firstName')}}</p>
-        <InputText :disabled="!isLocal"  v-bind="firstName"/>
+        <InputText :disabled="!isLocal" v-bind="firstName" />
         <small class="warning">{{errors.firstName || '&nbsp;'}}</small>
       </div>
       <div class="field">
         <p>{{ $t('profile.lastName')}}</p>
-        <InputText :disabled="!isLocal"  v-bind="lastName"/>
+        <InputText :disabled="!isLocal" v-bind="lastName" />
         <small class="warning">{{errors.lastName || '&nbsp;'}}</small>
       </div>
       <div class="field">
         <p>{{ $t('profile.emailAddress')}}</p>
-        <InputText :disabled="!isLocal" v-bind="email"/>
+        <InputText :disabled="!isLocal" v-bind="email" />
         <small class="warning">{{errors.email || '&nbsp;'}}</small>
       </div>
-      <div style="margin-top: 1rem">
-        <Button
-          :disabled="!isLocal"
-          :label="$t('profile.updateInfo')"
-          type="submit"
-        />
+      <div style="margin-top: 1rem" class="flex justify-content-end">
+        <Button :disabled="!isLocal" :label="$t('profile.updateInfo')" type="submit" />
       </div>
     </form>
   </CardComponent>

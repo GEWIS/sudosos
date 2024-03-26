@@ -11,7 +11,7 @@
         <InputText v-bind="pinConfirm" />
         <small class="warning">{{errors.pinConfirm || '&nbsp;'}}</small>
       </div>
-      <div style="margin-top: 1rem">
+      <div style="margin-top: 1rem" class="flex justify-content-end">
         <Button type="submit" :label="t('profile.pinChange')" />
       </div>
     </form>

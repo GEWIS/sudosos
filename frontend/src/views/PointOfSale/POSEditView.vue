@@ -7,60 +7,42 @@
     <div class="flex flex-column md:flex-row gap-5 my-3">
       <div class="flex flex-column">
         <h2>{{ $t('c_POSCreate.General') }}</h2>
-          <form @submit="handleEditPOS" >
-            <div class="flex flex-column">
-              <b>{{ $t('c_POSCreate.Title') }}</b>
-              <InputText
-                class="input"
-                type="text"
-                v-model="title"
-                v-bind="titleAttrs"
-                :class="{ 'p-invalid': errors.title }"
-              />
-              <small v-if="errors.title" class="p-error">
-                <i class="pi pi-exclamation-circle" />{{ ' ' + errors.title }}
-              </small>
-              <br v-else />
-            </div>
-            <div class="flex flex-column">
-              <b>{{ $t('c_POSCreate.Owner') }}</b>
-              <p>{{ posDisplayName }}</p>
-            </div>
-            <div class="flex flex-row gap-2">
-                <Checkbox
-                  v-model="useAuthentication"
-                  v-bind="useAuthenticationAttrs"
-                  inputId="useAuthentication"
-                  name="useAuthentication"
-                  value="useAuthentication"
-                  :binary="true"
-                  class="my-auto"
-                />
-                <label for="useAuthentication">{{ $t('c_POSCreate.Use authentication') }}</label>
-            </div>
-            <div class="flex flex-column">
-              <b>{{ $t('c_POSCreate.Selected containers') }}</b>
-              <ul class="selected-containers">
-                <li v-for="container in selectedContainers" :key="container.id">
-                  {{ container.name }}
-                </li>
-              </ul>
-            </div>
-            <Button
-              id="create-pos-button"
-              :label="$t('c_containerEditModal.save')"
-              type="submit"
-            />
-          </form>
-        </div>
-        <DetailedContainerCardComponent
-          @selectedChanged="handleSelectedChanged"
-          class="w-full"
-          v-if="publicContainers && ownContainers"
-          :own-containers="ownContainers"
-          :public-containers="publicContainers"
-          :selectedContainers="selectedContainers"
-        />
+        <form @submit="handleEditPOS">
+          <div class="flex flex-column">
+            <b>{{ $t('c_POSCreate.Title') }}</b>
+            <InputText class="input" type="text" v-model="title" v-bind="titleAttrs"
+              :class="{ 'p-invalid': errors.title }" />
+            <small v-if="errors.title" class="p-error">
+              <i class="pi pi-exclamation-circle" />{{ ' ' + errors.title }}
+            </small>
+            <br v-else />
+          </div>
+          <div class="flex flex-column">
+            <b>{{ $t('c_POSCreate.Owner') }}</b>
+            <p>{{ posDisplayName }}</p>
+          </div>
+          <div class="flex flex-row gap-2">
+            <Checkbox v-model="useAuthentication" v-bind="useAuthenticationAttrs" inputId="useAuthentication"
+              name="useAuthentication" value="useAuthentication" :binary="true" class="my-auto" />
+            <label for="useAuthentication">{{ $t('c_POSCreate.Use authentication') }}</label>
+          </div>
+          <div class="flex flex-column">
+            <b>{{ $t('c_POSCreate.Selected containers') + ":" }}</b>
+            <i v-if="isEmpty(selectedContainers)">{{ $t("c_POSCreate.noContainersSelected") }}</i>
+            <ul v-else class="selected-containers m-0">
+              <li v-for="container in selectedContainers" :key="container.id">
+                {{ container.name }}
+              </li>
+            </ul>
+          </div>
+          <div class="flex justify-content-end mt-2">
+            <Button id="create-pos-button" :label="$t('c_containerEditModal.save')" type="submit" />
+          </div>
+        </form>
+      </div>
+      <DetailedContainerCardComponent @selectedChanged="handleSelectedChanged" class="w-full"
+        v-if="publicContainers && ownContainers" :own-containers="ownContainers" :public-containers="publicContainers"
+        :selectedContainers="selectedContainers" />
     </div>
   </div>
 </template>
@@ -82,6 +64,7 @@ import { useToast } from 'primevue/usetoast';
 import { useI18n } from 'vue-i18n';
 import { handleError } from '@/utils/errorUtils';
 import router from "@/router";
+import { isEmpty } from "lodash";
 
 const toast = useToast();
 const { t } = useI18n();

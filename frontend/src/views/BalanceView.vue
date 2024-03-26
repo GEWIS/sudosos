@@ -1,28 +1,22 @@
 <template>
   <div class="page-container">
     <div class="page-title">{{ $t('c_currentBalance.balance') }}</div>
-    <TopupModal v-model:visible="visible" :amount="amountValue"/>
+    <TopupModal v-model:visible="visible" :amount="amountValue" />
     <div class="content-wrapper">
-      <CardComponent
-          :header="$t('balance.Increase balance')"
-          :func="showDialog"
-      >
+      <CardComponent :header="$t('balance.Increase balance')" :func="showDialog">
         <div>
           <p class="font-bold">{{ $t('balance.Balance increase amount') }}</p>
           <div class="w-3 flex-1">
-            <InputNumber
-              v-model="amountValue"
-              :placeholder="$t('balance.Price')"
-              inputId="amount"
-              mode="currency"
-              currency="EUR"
-              locale="nl-NL"
-              :min="10"
-            />
+            <InputNumber v-model="amountValue" :placeholder="$t('balance.Price')" inputId="amount" mode="currency"
+              currency="EUR" locale="nl-NL" :min="10" />
           </div>
         </div>
         <br />
-        <Button @click="showDialog">{{ $t('balance.Start payment') }}</Button>
+        <div class="flex justify-content-end">
+          <Button @click="showDialog">
+            {{ $t('balance.Start payment') }}
+          </Button>
+        </div>
       </CardComponent>
     </div>
   </div>

@@ -1,59 +1,58 @@
 <template>
-  <Dialog
-    v-model:visible="visible"
-    modal
-    :header="$t('c_productInfoModal.title')"
-    class="flex w-9">
-      <!-- Row for Name -->
-      <div class="flex flex-row justify-content-between">
-          <h4 class="my-0">{{ $t("c_productInfoModal.Name") }}</h4>
-          <p class="my-0">{{ product.name }}</p>
-      </div>
+  <Dialog v-model:visible="visible" modal :header="$t('c_productInfoModal.title')" class="flex w-9">
+    <!-- Row for Name -->
+    <div class="flex flex-row justify-content-between">
+      <h4 class="my-0">{{ $t("c_productInfoModal.Name") }}</h4>
+      <p class="my-0">{{ product.name }}</p>
+    </div>
 
-      <!-- Row for Added by -->
-      <div class="flex flex-row justify-content-between">
-          <h4 class="my-0">{{ $t("c_productInfoModal.Added by") }}</h4>
-          <p class="my-0">{{ product.owner.firstName + ' ' + product.owner.lastName }}</p>
-      </div>
+    <!-- Row for Added by -->
+    <div class="flex flex-row justify-content-between">
+      <h4 class="my-0">{{ $t("c_productInfoModal.Added by") }}</h4>
+      <p class="my-0">{{ product.owner.firstName + ' ' + product.owner.lastName }}</p>
+    </div>
 
-      <!-- Row for Added on -->
-      <div class="flex flex-row justify-content-between">
-          <h4 class="my-0">{{ $t("c_productInfoModal.Added on") }}</h4>
-          <p class="my-0">{{ formatDateTime(new Date(product.createdAt ? product.createdAt.toString() : '')) }}</p>
-      </div>
+    <!-- Row for Added on -->
+    <div class="flex flex-row justify-content-between">
+      <h4 class="my-0">{{ $t("c_productInfoModal.Added on") }}</h4>
+      <p class="my-0">{{ formatDateTime(new Date(product.createdAt ? product.createdAt.toString() : '')) }}</p>
+    </div>
 
-      <!-- Row for Updated on -->
-      <div class="flex flex-row justify-content-between">
-          <h4 class="my-0">{{ $t("c_productInfoModal.Updated on") }}</h4>
-          <p class="my-0">{{ formatDateTime(new Date(product.updatedAt ? product.updatedAt.toString() : '')) }}</p>
-      </div>
+    <!-- Row for Updated on -->
+    <div class="flex flex-row justify-content-between">
+      <h4 class="my-0">{{ $t("c_productInfoModal.Updated on") }}</h4>
+      <p class="my-0">{{ formatDateTime(new Date(product.updatedAt ? product.updatedAt.toString() : '')) }}</p>
+    </div>
 
-      <!-- Row for Price -->
-      <div class="flex flex-row justify-content-between">
-          <h4 class="my-0">{{ $t("c_productInfoModal.Price") }}</h4>
-          <p class="my-0">{{ formatPrice(product.priceInclVat) }}</p>
-      </div>
+    <!-- Row for Price -->
+    <div class="flex flex-row justify-content-between">
+      <h4 class="my-0">{{ $t("c_productInfoModal.Price") }}</h4>
+      <p class="my-0">{{ formatPrice(product.priceInclVat) }}</p>
+    </div>
 
-      <!-- Row for Category -->
-      <div class="flex flex-row justify-content-between">
-          <h4 class="my-0">{{ $t("c_productInfoModal.Category") }}</h4>
-          <p class="my-0">{{ product.category.name }}</p>
-      </div>
+    <!-- Row for Category -->
+    <div class="flex flex-row justify-content-between">
+      <h4 class="my-0">{{ $t("c_productInfoModal.Category") }}</h4>
+      <p class="my-0">{{ product.category.name }}</p>
+    </div>
 
-      <!-- Row for Alcohol percentage -->
-      <div class="flex flex-row justify-content-between">
-          <h4 class="my-0">{{ $t("c_productInfoModal.Alcohol percentage") }}</h4>
-          <p class="my-0">{{ product.alcoholPercentage + '%' }}</p>
-      </div>
+    <!-- Row for Alcohol percentage -->
+    <div class="flex flex-row justify-content-between">
+      <h4 class="my-0">{{ $t("c_productInfoModal.Alcohol percentage") }}</h4>
+      <p class="my-0">{{ product.alcoholPercentage + '%' }}</p>
+    </div>
 
-      <!-- Row for Picture -->
-      <div class="flex flex-row justify-content-between">
-          <h4 class="my-0">{{ $t("c_productInfoModal.Picture") }}</h4>
-          <img class="max-w-10rem max-h-10rem w-full h-full" :src="getProductImageSrc(product)" :alt="product.name">
-      </div>
-      <Button severity="danger" @click="handleDeleteProduct">
+    <!-- Row for Picture -->
+    <div class="flex flex-row justify-content-between">
+      <h4 class="my-0">{{ $t("c_productInfoModal.Picture") }}</h4>
+      <img class="max-w-10rem max-h-10rem w-full h-full" :src="getProductImageSrc(product)" :alt="product.name">
+    </div>
+    <br>
+    <div class="flex justify-content-end">
+      <Button @click="handleDeleteProduct">
         {{ $t("c_productInfoModal.delete") }}
       </Button>
+    </div>
   </Dialog>
 </template>
 

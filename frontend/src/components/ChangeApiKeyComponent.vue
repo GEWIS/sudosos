@@ -4,7 +4,7 @@
       <p>{{ $t('profile.keyOldRemoved') }}</p>
       <p>{{apiKeyMessage || '&nbsp;'}}</p>
     </div>
-    <div style="margin-top: 1rem">
+    <div style="margin-top: 1rem" class="flex justify-content-end">
       <Button :label="t('profile.keyGetNew')" @click="updateApiKey" />
     </div>
   </CardComponent>

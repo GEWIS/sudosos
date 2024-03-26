@@ -4,72 +4,50 @@
     <hr />
     <div class="flex flex-column md:flex-row gap-5 my-3">
       <div class="flex flex-column">
-          <h2>{{ $t('posInfo.General') }}</h2>
-          <form @submit="handleCreatePOS">
-              <div class="flex flex-column">
-                <label for="title">{{ $t("posInfo.Title") }}</label>
-                <InputText
-                  inputId="title"
-                  id="title"
-                  class="input"
-                  type="text"
-                  v-bind="title"
-                  :class="{'p-invalid': errors.title}"
-                />
-                <small id="title-help" v-if="errors.title" class="p-error">
-                  <i class="pi pi-exclamation-circle" />{{ " " + errors.title }}
-                </small>
-                <br v-else>
-              </div>
-              <div class="flex flex-column">
-                <b>{{ $t("posInfo.Owner") }}</b>
-                <Dropdown
-                  class="input"
-                  :options="organsList"
-                  optionLabel="firstName"
-                  v-bind="owner"
-                  :placeholder="$t('c_POSCreate.Select owner')"
-                  :class="{'p-invalid': errors.owner}"
-                />
-                <small v-if="errors.title" class="p-error">
-                  <i class="pi pi-exclamation-circle" />{{ " " + errors.title }}
-                </small>
-                <br v-else>
-              </div>
-              <div class="flex flex-row gap-2">
-                <Checkbox
-                  v-bind="useAuthentication"
-                  inputId="useAuthentication"
-                  name="useAuthentication"
-                  :binary="true"
-                  class="my-auto"
-                />
-                <label for="useAuthentication">{{ $t("c_POSCreate.Use authentication") }}</label>
-              </div>
-              <div class="flex flex-column">
-              <b>{{ $t("c_POSCreate.Selected containers") }}</b>
-              <i v-if="isEmpty(value)">{{ $t("c_POSCreate.noContainersSelected") }}</i>
-              <ul v-else class="selected-containers">
-                <li v-for="container in value" :key="container.id">
-                  {{ container.name }}
-                </li>
-              </ul>
-            </div>
-              <Button
-                id="create-pos-button"
-                :label="$t('c_POSCreate.Create')"
-                type="submit"
-              />
-          </form>
-        </div>
-        <DetailedContainerCardComponent class="w-full"
-          @selectedChanged="handleSelectedChanged"
-          v-if="publicContainers && ownContainers"
-          :own-containers="ownContainers"
-          :public-containers="publicContainers"
-        />
+        <h2>{{ $t('posInfo.General') }}</h2>
+        <form @submit="handleCreatePOS">
+          <div class="flex flex-column">
+            <label for="title">{{ $t("posInfo.Title") }}</label>
+            <InputText inputId="title" id="title" class="input" type="text" v-bind="title"
+              :class="{'p-invalid': errors.title}" />
+            <small id="title-help" v-if="errors.title" class="p-error">
+              <i class="pi pi-exclamation-circle" />{{ " " + errors.title }}
+            </small>
+            <br v-else>
+          </div>
+          <div class="flex flex-column">
+            <b>{{ $t("posInfo.Owner") }}</b>
+            <Dropdown class="input" :options="organsList" optionLabel="firstName" v-bind="owner"
+              :placeholder="$t('c_POSCreate.Select owner')" :class="{'p-invalid': errors.owner}" />
+            <small v-if="errors.title" class="p-error">
+              <i class="pi pi-exclamation-circle" />{{ " " + errors.title }}
+            </small>
+            <br v-else>
+          </div>
+          <div class="flex flex-row gap-2">
+            <Checkbox v-bind="useAuthentication" inputId="useAuthentication" name="useAuthentication" :binary="true"
+              class="my-auto" />
+            <label for="useAuthentication">{{ $t("c_POSCreate.Use authentication") }}</label>
+          </div>
+          <div class="flex flex-column">
+            <b>{{ $t("c_POSCreate.Selected containers") }}</b>
+            <i v-if="isEmpty(value)">{{ $t("c_POSCreate.noContainersSelected") }}</i>
+            <ul v-else class="selected-containers">
+              <li v-for="container in value" :key="container.id">
+                {{ container.name }}
+              </li>
+            </ul>
+          </div>
+          <div class="flex justify-content-end mt-2">
+            <Button id="create-pos-button" :label="$t('c_POSCreate.Create')" type="submit" />
+          </div>
+        </form>
       </div>
+      <DetailedContainerCardComponent class="w-full" @selectedChanged="handleSelectedChanged"
+        v-if="publicContainers && ownContainers" :own-containers="ownContainers"
+        :public-containers="publicContainers" />
     </div>
+  </div>
 </template>
 
 <script setup lang="ts">
