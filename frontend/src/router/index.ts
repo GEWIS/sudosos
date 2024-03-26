@@ -20,6 +20,8 @@ import 'vue-router';
 import ErrorView from "@/views/ErrorView.vue";
 import ProfileView from "@/views/ProfileView.vue";
 import FineView from "@/views/FineView.vue";
+import LocalLoginView from "@/views/LocalLoginView.vue";
+import LoginLayout from "@/layout/LoginLayout.vue";
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -46,14 +48,26 @@ const router = createRouter({
       children: [
         {
           path: '',
-          component: LoginView,
-          name: 'login',
-          alias: ['/login'],
-        },
-        {
-          path: '/passwordreset',
-          component: PasswordResetView,
-          name: 'passwordreset'
+          component: LoginLayout,
+          children: [
+            {
+              path: '',
+              component: LoginView,
+              name: 'login',
+              alias: ['/login'],
+            },
+            {
+              path: '/local',
+              component: LocalLoginView,
+              name: 'local',
+              alias: ['/local'],
+            },
+            {
+              path: '/passwordreset',
+              component: PasswordResetView,
+              name: 'passwordreset'
+            },
+          ],
         },
         {
           path: '/error',

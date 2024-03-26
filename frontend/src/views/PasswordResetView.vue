@@ -1,9 +1,8 @@
 <template>
   <div>
-    <main class="flex flex-column text-center mx-auto my-7 max-w-21rem">
-      <img class="max-h-9rem block mx-auto my-0" src="@/assets/img/bier.png" alt="logo"/>
-      <div class="text-900 text-5xl mt-0 mx-auto mb-2 w-full">{{ $t('login.Reset') }}</div>
-      <form v-if="passwordResetMode === 0" class="flex flex-column" @submit="resetPasswordRequest">
+    <img class="max-h-9rem block mx-auto my-0" src="@/assets/img/bier.png" alt="logo"/>
+    <div class="text-900 text-5xl mt-0 mx-auto mb-2 w-full">{{ $t('login.Reset') }}</div>
+    <form v-if="passwordResetMode === 0" class="flex flex-column" @submit="resetPasswordRequest">
         <span class="p-float-label with-error">
           <InputText
               v-bind="email"
@@ -15,22 +14,22 @@
           />
           <label :class="{'contains-text': email.modelValue }" for="email">{{ $t('login.Enter email') }}</label>
         </span>
-        <small
-            v-if="emailForm.errors.value.email"
-            class="p-error"
-        >
-          <i class="pi pi-exclamation-circle"/>
-          {{ emailForm.errors.value.email }}
-        </small>
-        <Button type="submit" id="reset-button">{{ $t('login.Reset') }}</Button>
-        <div class="text-900 underline" @click="backToLogin">{{ $t('login.Back to login') }}</div>
+      <small
+          v-if="emailForm.errors.value.email"
+          class="p-error"
+      >
+        <i class="pi pi-exclamation-circle"/>
+        {{ emailForm.errors.value.email }}
+      </small>
+      <Button type="submit" id="reset-button">{{ $t('login.Reset') }}</Button>
+      <div class="text-900 underline cursor-pointer" @click="backToLogin">{{ $t('login.Back to login') }}</div>
 
-      </form>
-      <div v-else-if="passwordResetMode === 1" class="login-form">
-        <div class="text-900">{{ $t('login.Email sent') }}</div>
-        <div class="text-900 underline" @click="backToLogin">{{ $t('login.Back to login') }}</div>
-      </div>
-      <form v-else class="login-form" @submit="setNewPassword">
+    </form>
+    <div v-else-if="passwordResetMode === 1" class="login-form">
+      <div class="text-900">{{ $t('login.Email sent') }}</div>
+      <div class="text-900 underline cursor-pointer" @click="backToLogin">{{ $t('login.Back to login') }}</div>
+    </div>
+    <form v-else class="login-form" @submit="setNewPassword">
         <span class="p-float-label with-error">
           <InputText
               v-bind="password"
@@ -43,14 +42,14 @@
           />
           <label :class="{'contains-text': password.modelValue }" for="password">{{ $t('login.New password') }}</label>
         </span>
-        <small
-            v-if="passwordForm.errors.value.password"
-            class="p-error"
-        >
-          <i class="pi pi-exclamation-circle"/>
-          {{ passwordForm.errors.value.password }}
-        </small>
-        <span class="p-float-label with-error">
+      <small
+          v-if="passwordForm.errors.value.password"
+          class="p-error"
+      >
+        <i class="pi pi-exclamation-circle"/>
+        {{ passwordForm.errors.value.password }}
+      </small>
+      <span class="p-float-label with-error">
           <InputText
               v-bind="passwordConfirm"
               id="passwordConfirm"
@@ -64,18 +63,16 @@
             {{ $t('login.Confirm password') }}
           </label>
         </span>
-        <small
-            v-if="passwordForm.errors.value.passwordConfirm"
-            class="p-error"
-        >
-          <i class="pi pi-exclamation-circle"/>
-          {{ passwordForm.errors.value.passwordConfirm }}
-        </small>
-        <Button type="submit" id="reset-button">{{ $t('login.Reset') }}</Button>
-        <div class="backtologin" @click="backToLogin">{{ $t('login.Back to login') }}</div>
-      </form>
-    </main>
-    <CopyrightBanner/>
+      <small
+          v-if="passwordForm.errors.value.passwordConfirm"
+          class="p-error"
+      >
+        <i class="pi pi-exclamation-circle"/>
+        {{ passwordForm.errors.value.passwordConfirm }}
+      </small>
+      <Button type="submit" id="reset-button">{{ $t('login.Reset') }}</Button>
+      <div class="backtologin" @click="backToLogin">{{ $t('login.Back to login') }}</div>
+    </form>
   </div>
 </template>
 
@@ -160,7 +157,7 @@ const setNewPassword = passwordForm.handleSubmit(async (values) => {
 });
 
 const backToLogin = () => {
-  router.push({ name: 'login' });
+  router.push({ name: 'local' });
 };
 
 </script>

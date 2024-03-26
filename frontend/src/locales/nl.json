@@ -3,12 +3,14 @@
     "SudoSOS Login": "SudoSOS Login",
     "Login via GEWIS": "Login via GEWIS",
     "Login": "Login",
+    "Returning": "Welkom terug",
     "Username": "Gebruikersnaam",
     "Enter username": "Voer je gebruikersnaam in",
     "Password": "Wachtwoord",
     "Enter password": "Voer je wachtwoord in",
     "Password reset": "Reset wachtwoord (alleen externe accounts)",
     "Back to login": "Terug gaan naar login",
+    "Back": "Ga terug",
     "Email": "Email",
     "Enter email": "Voer email in",
     "Reset": "Reset wachtwoord",
@@ -19,7 +21,8 @@
     "Enter password again": "Voer wachtwoord opnieuw in",
     "Reset the password for": "Reset the password for {email}",
     "Passwords not equal": "Wachtwoorden zijn niet gelijk",
-    "Password not strong": "Wachtwoord moet langer zijn dan 8 tekens, en moet een kleine letter, hoofdletter, cijfer en speciaal teken bevatten"
+    "Password not strong": "Wachtwoord moet langer zijn dan 8 tekens, en moet een kleine letter, hoofdletter, cijfer en speciaal teken bevatten",
+    "Required field": "Dit is een vereist veld."
   },
   "app": {
     "Transactions": "Transacties",

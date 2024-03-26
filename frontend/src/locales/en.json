@@ -3,6 +3,7 @@
     "SudoSOS": "SudoSOS",
     "SudoSOS Login": "SudoSOS Login",
     "Login via GEWIS": "Login via GEWIS",
+    "Returning": "Welcome back",
     "Login": "Login",
     "Username": "Username",
     "Enter username": "Enter username",
@@ -10,6 +11,7 @@
     "Enter password": "Enter password",
     "Password reset": "Reset password (External accounts only)",
     "Back to login": "Go back to login",
+    "Back": "Back to home",
     "Email": "Email",
     "Enter email": "Enter email",
     "Reset": "Reset password",
@@ -22,7 +24,8 @@
     "Passwords not equal": "Passwords are not equal",
     "Password not strong": "Password needs to be longer than 8 characters and needs a lower- and uppercase letter, number and a special character",
     "copyright": "© 2023 GEWIS",
-    "separator": " | "
+    "separator": " | ",
+    "Required field": "This is a required field."
   },
   "app": {
     "Transactions": "Transactions",
