@@ -87,14 +87,20 @@
     "fineDescr": "You have received a fine.",
     "fineAmount": "Fine",
     "depositDescr": "You have deposited money on SudoSOS",
-    "depositID": "Deposit ID"
+    "depositID": "Deposit ID",
+    "waivedFineDescr": "Your fines were waived.",
+    "invoiceStatus": "Status",
+    "transferType": "Type",
+    "invoiceDescr": "You have paid an invoice to GEWIS",
+    "invoice": "Invoice"
   },
   "balance": {
     "Balance": "Balance",
     "Balance increase amount": "Balance increase amount",
     "Start payment": "Start payment",
     "Increase balance": "Increase balance",
-    "Price": "Price"
+    "Price": "Price",
+    "minPayment": "Note: minimum topup is €10 or needs to pay off debt."
   },
   "payment": {
     "pay": "pay",

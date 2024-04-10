@@ -1,3 +1,61 @@
-// Configuration for the font-face of the theme, defaults to the system font so left as blank
-@import url('https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Raleway:500,500i,700,700i&display=swap');
+/**
+ * Currently used fonts:
+ * Lato: 400, 400i, 700, 700i
+ * Raleway: 500, 500i, 700, 700i
+ */
+
+@font-face {
+  font-family: 'Lato';
+  src: url('@/assets/fonts/Lato/Lato-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lato';
+  src: url('@/assets/fonts/Lato/Lato-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Lato';
+  src: url('@/assets/fonts/Lato/Lato-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lato';
+  src: url('@/assets/fonts/Lato/Lato-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('@/assets/fonts/Raleway/Raleway-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('@/assets/fonts/Raleway/Raleway-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('@/assets/fonts/Raleway/Raleway-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('@/assets/fonts/Raleway/Raleway-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}

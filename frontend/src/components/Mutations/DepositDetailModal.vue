@@ -51,8 +51,8 @@ const dateString = computed(() => {
   return new Date(depositInfo.createdAt!!).toLocaleString('nl-NL', {
     dateStyle: 'short',
     timeStyle: 'short'
-  })
-})
+  });
+});
 
 
 </script>

@@ -80,14 +80,20 @@
     "fineDescr": "Je hebt een boete ontvangen.",
     "fineAmount": "Boete",
     "depositDescr": "Je hebt geld gestort op SudoSOS",
-    "depositID": "Opwaardeer ID"
+    "depositID": "Opwaardeer ID",
+    "waivedFineDescr": "Je boetes zijn kwijtgescholden.",
+    "invoiceStatus": "Status",
+    "transferType": "Type",
+    "invoiceDescr": "Je hebt een factuur aan GEWIS betaald",
+    "invoice": "Factuur"
   },
   "balance": {
     "Balance": "Saldo",
     "Balance increase amount": "Saldo verhogen met:",
     "Start payment": "Betaal",
     "Increase balance": "Verhoog saldo",
-    "Price": "Prijs"
+    "Price": "Prijs",
+    "minPayment": "Let op: minimum bedrag is €10 of moet schulden afbetalen."
   },
   "pointOfSaleOverview": {
     "Point of sale overview": "Verkooppunt overzicht"

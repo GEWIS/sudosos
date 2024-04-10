@@ -213,6 +213,7 @@ const rightItems = ref([
 const mobileItems = ref([
   {
     label: t('app.Transactions'),
+    route: '/transactions'
   },
   {
     label: t('app.Balance'),

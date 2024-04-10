@@ -1,12 +1,13 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import * as yup from "yup";
+import { ref } from "vue";
 
 export const userDetailsSchema = toTypedSchema(
     yup.object({
         firstName: yup.string().required(),
         lastName: yup.string().required(),
         email: yup.string().email(),
-        userType: yup.string().required(),
+        userType: yup.mixed().required(),
         isActive: yup.boolean().required().default(true),
         ofAge: yup.boolean().required().default(false),
         canGoIntoDebt: yup.boolean().required().default(false),
@@ -37,3 +38,13 @@ export const editPinSchema = toTypedSchema(
     pinConfirm: yup.string().required().oneOf([yup.ref('pin')], 'PINs must match'),
   })
 );
+
+export const userTypes = ref([
+  { name: 'MEMBER', value: 1 },
+  { name: 'ORGAN', value: 2 },
+  { name: 'VOUCHER', value: 3 },
+  { name: 'LOCAL_USER', value: 4 },
+  { name: 'LOCAL_ADMIN', value: 5 },
+  { name: 'INVOICE', value: 6 },
+  { name: 'AUTOMATIC_INVOICE', value: 7 },
+]);

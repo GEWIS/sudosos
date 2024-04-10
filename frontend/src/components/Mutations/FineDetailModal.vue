@@ -18,8 +18,8 @@
       >
         <Column field="description" :header="$t('transactions.description')" class="p-1">
         </Column>
-        <Column 
-          field="totalPriceInclVat" 
+        <Column
+          field="totalPriceInclVat"
           :header="$t('transactions.fineAmount')"
           class="p-1"
           footerClass="font-bold"
@@ -49,7 +49,7 @@ const { t } = useI18n();
 const firstName: Ref<string> = ref('');
 const lastName: Ref<string> = ref('');
 const description: Ref<string> = ref('');
-const amount: Ref<DineroObjectResponse> = ref({amount: 0, currency: 'EUR', precision: 2});
+const amount: Ref<DineroObjectResponse> = ref({ amount: 0, currency: 'EUR', precision: 2 });
 
 const props = defineProps({
   fine: {
@@ -73,8 +73,8 @@ const dateString = computed(() => {
   return new Date(props.fine.createdAt!!).toLocaleString('nl-NL', {
     dateStyle: 'short',
     timeStyle: 'short'
-  })
-})
+  });
+});
 
 </script>
 

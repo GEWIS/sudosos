@@ -64,10 +64,6 @@ watch(current, () => {
   updateUserBalance();
 });
 
-watch(current, () => {
-  updateUserBalance();
-});
-
 const isAllFine = computed(() => {
   if (!userBalance.value?.fine) return false;
   return userBalance.value.fine.amount >= -1*userBalance.value?.amount.amount;
@@ -79,8 +75,7 @@ const displayFine = computed(() => {
 });
 
 const displayBalance = computed(() => {
-  if (!userBalance.value?.amount.amount) return undefined;
-  return formatPrice(userBalance.value.amount);
+  return formatPrice(userBalance.value?.amount || { amount: 0, currency: 'EUR', precision: 2 });
 });
 </script>
 

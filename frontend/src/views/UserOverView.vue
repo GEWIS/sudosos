@@ -2,20 +2,28 @@
   <div class="page-container">
     <div class="page-title">{{ $t('app.User overview') }}</div>
     <CardComponent :header="$t('app.User overview')" class="full-width">
-      <DataTable v-model:filters="filters" :value="sortedUsers.length > 0 ? sortedUsers : allUsersWithFullName"
-        paginator :rows="10" :rowsPerPageOptions="[5, 10, 25, 50, 100]" filterDisplay="menu"
-        :globalFilterFields="['type', 'firstName', 'lastName', 'fullName']" lazy
-        :totalRecords="sortedUsers.length > 0 ? sortedUsers.length : totalRecords" :loading="loading"
-        @page="onPage($event)" @sort="onSort()" @filter="onFilter()">
+      <DataTable
+        v-model:filters="filters"
+        :value="sortedUsers.length > 0 ? sortedUsers : allUsersWithFullName"
+        paginator
+        :rows="10"
+        :rowsPerPageOptions="[5, 10, 25, 50, 100]"
+        filterDisplay="menu"
+        :globalFilterFields="['type', 'firstName', 'lastName', 'fullName']"
+        lazy
+        :totalRecords="sortedUsers.length > 0 ? sortedUsers.length : totalRecords"
+        :loading="loading"
+        @page="onPage($event)"
+        @sort="onSort"
+        @filter="onFilter"
+      >
         <template #header>
-          <div class="flex flex-row gap-2">
-            <span class="p-input-icon-left search-box">
+          <div class="flex flex-row align-items-center justify-content-between">
+            <span class="p-input-icon-left">
               <i class="pi pi-search" />
-              <InputText v-model="searchQuery" :placeholder="$t('app.Search')" />
+              <InputText v-model="searchQuery" placeholder="Search..." />
             </span>
-            <span>
-              <Button @click="visible = true">{{ $t('app.Create') }}</Button>
-            </span>
+            <Button label="Create" icon="pi pi-plus" @click="visible = true" />
           </div>
         </template>
         <Column field="gewisId" header="GEWIS ID" />
@@ -23,15 +31,23 @@
         <Column field="lastName" :header="$t('c_userTable.lastName')" />
         <Column field="type" :header="$t('c_userTable.Type')" :showFilterMatchModes="false">
           <template #filter="{ filterModel, filterCallback }">
-            <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="userTypes"
-              :placeholder="$t('c_userTable.Select Type')" />
+            <Dropdown
+              v-model="filterModel.value"
+              @change="filterCallback()"
+              :options="userTypes"
+              :placeholder="$t('c_userTable.Select Type')"
+            />
           </template>
         </Column>
         <Column field="active" :showFilterMatchModes="false">
           <template #header>
             <div class="flex flex-row gap-2 align-items-center">
               {{ $t("userDetails.Active") }}
-              <Checkbox v-model="isActiveFilter" @change="onFilter()" binary />
+              <Checkbox
+                v-model="isActiveFilter"
+                @change="onFilter()"
+                binary
+              />
             </div>
           </template>
         </Column>
@@ -40,65 +56,71 @@
           <template #header>
             <div class="flex flex-row gap-2 align-items-center">
               {{ $t('c_userTable.ofAge') }}
-              <Checkbox v-model="ofAgeFilter" @change="onFilter()" binary />
+              <Checkbox
+                v-model="ofAgeFilter"
+                @change="onFilter()"
+                binary
+              />
             </div>
           </template>
         </Column>
-        <Column headerStyle="width: 3rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+        <Column
+          headerStyle="width: 3rem; text-align: center"
+          bodyStyle="text-align: center; overflow: visible"
+        >
           <template #body="slotProps">
-            <Button @click="handleInfoPush(slotProps.data.id)" type="button" icon="pi pi-info-circle" outlined />
+            <Button
+              @click="handleInfoPush(slotProps.data.id)"
+              type="button"
+              icon="pi pi-info-circle"
+              outlined
+            />
           </template>
         </Column>
       </DataTable>
-      <Dialog class="w-auto flex w-9" v-model:visible="visible" modal :header="$t('c_userTable.Create User')"
-        @after-hide="resetForm">
-        <form @submit="handleCreateUser">
-          <div class="field grid">
-            <label for="first-name" class="col-12 mb-2 md:col-2 md:mb-0">{{ $t('c_userTable.firstName') }}</label>
-            <div class="col-12 md:col-10">
-              <InputText v-bind="firstName" id="first-name" />
-              <span class="error-text">{{ errors.firstName }}</span>
-            </div>
+      <Dialog v-model:visible="visible" modal header="Create User" :style="{ width: '50vw' }" @hide="resetForm">
+        <form @submit.prevent="handleCreateUser" class="p-fluid">
+          <div class="field">
+            <label for="firstName">First Name</label>
+            <InputText id="firstName" v-model="firstName" v-bind="firstNameAttrs" />
+            <small class="p-error">{{ errors.firstName }}</small>
           </div>
-          <div class="field grid">
-            <label for="last-name" class="col-12 mb-2 md:col-2 md:mb-0">{{ $t('c_userTable.lastName') }}</label>
-            <div class="col-12 md:col-10">
-              <InputText v-bind="lastName" id="last-name" />
-              <span class="error-text">{{ errors.lastName }}</span>
-            </div>
+          <div class="field">
+            <label for="lastName">Last Name</label>
+            <InputText id="lastName" v-model="lastName" v-bind="lastNameAttrs" />
+            <small class="p-error">{{ errors.lastName }}</small>
           </div>
-          <div class="field grid">
-            <label for="user-type" class="col-12 mb-2 md:col-2 md:mb-0">{{ $t('c_userTable.User Type') }}</label>
-            <div class="col-12 md:col-10">
-              <Dropdown v-bind="userType" :options="userTypes" :placeholder="$t('c_userTable.Select User Type')"
-                id="user-type" />
-              <span class="error-text">{{ errors.userType }}</span>
-            </div>
+          <div class="field">
+            <label for="userType">User Type</label>
+            <Dropdown
+              id="userType"
+              v-model="userType"
+              v-bind="userTypeAttrs"
+              :options="userTypes"
+              optionLabel="name"
+              placeholder="Select a type"
+              optionValue="value"
+            />
+            <small class="p-error">{{ errors.userType }}</small>
           </div>
-          <div class="field grid">
-            <label for="email" class="col-12 mb-2 md:col-2 md:mb-0">{{ $t('profile.emailAddress') }}</label>
-            <div class="col-12 md:col-10">
-              <InputText v-bind="email" id="email" />
-              <span class="error-text">{{ errors.email }}</span>
-            </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <InputText id="email" v-model="email" v-bind="emailAttrs" />
+            <small class="p-error">{{ errors.email }}</small>
           </div>
-          <div class="field grid">
-            <label for="ofAge" class="col-12 mb-2 md:col-2 md:mb-0">{{ $t('profile.ofAge') }}</label>
-            <div class="col-12 md:col-10">
-              <Checkbox v-bind="ofAge" id="ofAge" />
-              <span class="error-text">{{ errors.ofAge }}</span>
-            </div>
+          <div class="field">
+            <label for="ofAge">Of Age</label>
+            <Checkbox id="ofAge" v-model="ofAge" v-bind="ofAgeAttrs" binary />
+            <small class="p-error">{{ errors.ofAge }}</small>
           </div>
-          <div class="field grid">
-            <label for="canGoIntoDebt" class="col-12 mb-2 md:col-2 md:mb-0">{{ $t('profile.canGoIntoDebt') }}</label>
-            <div class="col-12 md:col-10">
-              <Checkbox v-bind="canGoIntoDebt" id="canGoIntoDebt" />
-              <span class="error-text">{{ errors.canGoIntoDebt }}</span>
-            </div>
+          <div class="field">
+            <label for="canGoIntoDebt">Can Go Into Debt</label>
+            <Checkbox id="canGoIntoDebt" v-model="canGoIntoDebt" v-bind="canGoIntoDebtAttrs" binary />
+            <small class="p-error">{{ errors.canGoIntoDebt }}</small>
           </div>
-          <div class="form-row flex justify-content-end gap-2" id="actions">
-            <Button outlined @click="visible = false">{{ $t('c_confirmationModal.Cancel' )}}</Button>
-            <Button type="submit">{{ $t('c_confirmationModal.Save' )}}</Button>
+          <div class="flex justify-content-end">
+            <Button label="Cancel" class="p-button-text" @click="visible = false" />
+            <Button label="Save" class="p-button-outlined" type="submit" />
           </div>
         </form>
       </Dialog>
@@ -118,14 +140,14 @@ import Checkbox from "primevue/checkbox";
 import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
 import router from '@/router';
-import { userDetailsSchema } from '@/utils/validation-schema';
+import { userDetailsSchema, userTypes } from "@/utils/validation-schema";
 import { useForm } from 'vee-validate';
 import Fuse from 'fuse.js';
 import CardComponent from '@/components/CardComponent.vue';
 
 const userStore = useUserStore();
 const searchQuery: Ref<string> = ref('');
-const { defineComponentBinds, handleSubmit, errors, resetForm } = useForm({
+const { defineField, handleSubmit, errors, resetForm } = useForm({
   validationSchema: userDetailsSchema,
 });
 
@@ -134,12 +156,12 @@ const filters = ref({
   type: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
-const firstName = defineComponentBinds('firstName');
-const lastName = defineComponentBinds('lastName');
-const userType = defineComponentBinds('userType');
-const email = defineComponentBinds('email');
-const ofAge = defineComponentBinds('ofAge');
-const canGoIntoDebt = defineComponentBinds('canGoIntoDebt');
+const [firstName, firstNameAttrs] = defineField('firstName', {});
+const [lastName, lastNameAttrs] = defineField('lastName', {});
+const [userType, userTypeAttrs] = defineField('userType', {});
+const [email, emailAttrs] = defineField('email', {});
+const [ofAge, ofAgeAttrs] = defineField('ofAge', {});
+const [canGoIntoDebt, canGoIntoDebtAttrs] = defineField('canGoIntoDebt', {});
 
 
 const isActiveFilter: Ref<boolean> = ref(true);
@@ -157,19 +179,8 @@ const allUsersWithFullName: Ref<GewisUserResponse[]> = computed(() => {
   });
 });
 
-const userTypes = [
-  'MEMBER',
-  'ORGAN',
-  'VOUCHER',
-  'LOCAL_USER',
-  'LOCAL_ADMIN',
-  'INVOICE',
-  'AUTOMATIC_INVOICE'
-];
-
 onMounted(() => {
   delayedAPICall(0);
-
 });
 
 function debounce(func: (skip: number) => Promise<void>, delay: number): (skip: number) => Promise<void> {
@@ -225,10 +236,20 @@ watch(searchQuery, () => {
 });
 
 const handleCreateUser = handleSubmit(async (values) => {
+  // Ensure userType is a number. You might need a more complex check depending on your data.
+  const userTypeAsNumber = Number(values.userType);
+
+  // Check if conversion was successful or if the value was already a number
+  if (isNaN(userTypeAsNumber)) {
+    console.error('User type is not a valid number:', values.userType);
+    // Handle error appropriately, possibly aborting the submit or setting a default
+    return;
+  }
+
   const createUserRequest: CreateUserRequest = {
     firstName: values.firstName,
     lastName: values.lastName,
-    type: userTypes.indexOf(values.userType),
+    type: userTypeAsNumber, // Use the converted/validated number here
     email: values.email || '',
     ofAge: values.ofAge,
     canGoIntoDebt: values.canGoIntoDebt,

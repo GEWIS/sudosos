@@ -89,11 +89,11 @@ import { formatPrice } from "../../utils/formatterUtils";
 import type { SubTransactionRowResponse } from "@sudosos/sudosos-client/src/api";
 import type { TransactionResponse } from "@sudosos/sudosos-client";
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
-import { Translation } from "vue-i18n"
+import { Translation } from "vue-i18n";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 
 defineProps({
   transactionInfo: {

@@ -35,18 +35,20 @@ export function parseTransaction(transaction: BaseTransactionResponse): Financia
 }
 
 export function parseTransfer(transfer: TransferResponse): FinancialMutation {
-    let type = FinancialMutationType.DEPOSIT
-    
+    let type = FinancialMutationType.DEPOSIT;
+
     if(transfer.invoice) {
-        type = FinancialMutationType.INVOICE
+        type = FinancialMutationType.INVOICE;
     } else if(transfer.deposit) {
-        type = FinancialMutationType.DEPOSIT
+        type = FinancialMutationType.DEPOSIT;
     } else if(transfer.payoutRequest) {
-        type = FinancialMutationType.PAYOUT_REQUEST
+        type = FinancialMutationType.PAYOUT_REQUEST;
     } else if(transfer.fine) {
-        type = FinancialMutationType.FINE
+        type = FinancialMutationType.FINE;
+    } else if(transfer.waivedFines) {
+        type = FinancialMutationType.WAIVED_FINE;
     }
-    
+
     return {
         amount: transfer.amount,
         to: transfer.to,

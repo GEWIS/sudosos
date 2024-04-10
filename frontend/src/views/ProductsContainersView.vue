@@ -252,12 +252,9 @@ const updateRow = async (event: DataTableRowEditSaveEvent) => {
 const onImgUpload = async (event: Event, productId: number) => {
   const el = (event.target as HTMLInputElement);
   if(el == null || el.files == null) return;
-  console.log('uploading')
-  console.log(el.files[0])
-  console.log(productId)
   await apiService.products.updateProductImage(productId, el.files[0]);
   handleNewProduct();
-}
+};
 </script>
 
 <style scoped lang="scss">
