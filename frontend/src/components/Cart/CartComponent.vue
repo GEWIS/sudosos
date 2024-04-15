@@ -3,23 +3,29 @@
     <div class="flex-container flex-row flex-wrap justify-content-between">
       <p class="fw-bolder font-size-lg accent-text mb-0">Current order for</p>
       <div class="c-btn active square fs-4 px-3 py-1" @click="selectUser">
-        <font-awesome-icon v-if="current" icon="fa-solid fa-user" class="pe-2" />
+        <font-awesome-icon v-if="current" icon="fa-solid fa-user" class="pe-2"/>
         {{ displayName() }}
       </div>
+      <button v-if="showLock()" :class="{ disabled: disabledLock, active: lockedIn}"
+              class="c-btn lock active square fs-2 px-3 py-2 min-w-70" @click="lockUser">
+        <font-awesome-icon :icon="lockIcon"/>
+      </button>
     </div>
     <div class="overflow-y-auto flex-grow-1 my-2" v-if="!shouldShowTransactions || !showHistory">
       <div v-for="item in cartItems" :key="item.product.id">
-        <CartItemComponent :cart-product="item" />
+        <CartItemComponent :cart-product="item"/>
       </div>
     </div>
-    <TransactionHistoryComponent v-else-if="shouldShowTransactions" :transactions="transactions" />
+    <TransactionHistoryComponent v-else-if="shouldShowTransactions" :transactions="transactions"/>
     <div class="content-body px-3 py-2 font-size-lg mt-3">
       <div class="flex-between w-100">
         <div class="fw-bold">Total</div>
         <div class="fw-bolder font-size-lg">€{{ formatPrice(totalPrice) }}</div>
       </div>
-      <div class="font-size-md pt-2 align-items-end flex-container justify-content-between" v-if="balance">
-        <span><font-awesome-icon icon="fa-solid fa-exclamation-triangle" /> Debit after purchase: </span>
+      <div class="font-size-md pt-2 align-items-end flex-container justify-content-between"
+           v-if="balance">
+        <span><font-awesome-icon
+          icon="fa-solid fa-exclamation-triangle"/> Debit after purchase: </span>
         €{{ formattedBalanceAfter }}
       </div>
     </div>
@@ -58,6 +64,7 @@ const showHistory = ref(true);
 const balance = ref<number | null>(null);
 
 const { pointOfSale } = storeToRefs(posStore);
+const { lockedIn } = storeToRefs(cartStore);
 const transactions = ref<BaseTransactionResponse[]>([]);
 
 const getUserRecentTransactions = () => {
@@ -65,20 +72,20 @@ const getUserRecentTransactions = () => {
   if (cartStore.getBuyer) {
     // todo clean up
     apiService.user
-        .getUsersTransactions(
-            cartStore.getBuyer?.id,
-            cartStore.getBuyer?.id,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            5
-        )
-        .then((res) => {
-          transactions.value.push(...res.data.records);
-        });
+      .getUsersTransactions(
+        cartStore.getBuyer?.id,
+        cartStore.getBuyer?.id,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        5
+      )
+      .then((res) => {
+        transactions.value.push(...res.data.records);
+      });
   }
 };
 
@@ -111,6 +118,31 @@ const displayName = () => {
   } else {
     return `${current.value?.firstName} ${current.value?.lastName}`;
   }
+};
+
+const lockUser = () => {
+  if (lockedIn.value) {
+    if (current.value?.id === lockedIn.value.id) {
+      cartStore.setLockedIn(null);
+      return;
+    }
+  }
+
+  if (current.value) cartStore.setLockedIn(current.value);
+};
+
+const lockIcon = computed(() => {
+  return cartStore.lockedIn ? 'fa-solid fa-lock' : 'fa-solid fa-lock-open';
+});
+
+const disabledLock = computed(() => {
+  if (!lockedIn) return true;
+  return current.value?.id !== lockedIn.value?.id;
+});
+
+const showLock = () => {
+  if (cartStore.lockedIn) return true;
+  return current.value && settings.isBorrelmode;
 };
 
 onMounted(async () => {
@@ -149,8 +181,7 @@ watch(pointOfSale, async (target) => {
   if (target.useAuthentication) {
     clearIfExists();
     await getUserRecentTransactions();
-  }
-  else  {
+  } else {
     await getPointOfSaleRecentTransactions();
     refreshRecentPosTransactions = getRefreshInterval();
   }
@@ -175,4 +206,11 @@ const formattedBalanceAfter = computed(() => {
 </script>
 
 <style scoped lang="scss">
+.lock {
+  &.disabled {
+    background-color: grey;
+    opacity: 0.5;
+    color: white;
+  }
+}
 </style>

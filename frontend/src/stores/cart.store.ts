@@ -21,12 +21,14 @@ interface CartState {
   products: CartProduct[]
   buyer: UserResponse | null
   createdBy: UserResponse | null
+  lockedIn: UserResponse | null
 }
 export const useCartStore = defineStore('cart', {
   state: (): CartState => ({
     products: [] as CartProduct[],
     buyer: null,
     createdBy: null,
+    lockedIn: null,
   }),
   getters: {
     cartTotalCount(): number {
@@ -46,6 +48,9 @@ export const useCartStore = defineStore('cart', {
     }
   },
   actions: {
+    setLockedIn(lockedIn: UserResponse | null) {
+      this.lockedIn = lockedIn;
+    },
     setBuyer(buyer: UserResponse | null) {
       this.buyer = buyer;
     },
@@ -151,7 +156,7 @@ export const useCartStore = defineStore('cart', {
 
       await apiService.transaction.createTransaction(request).then(() => {
         this.products.length = 0;
-        this.buyer = null;
+        this.buyer = this.lockedIn;
         this.createdBy = null;
       });
     }

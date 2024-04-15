@@ -27,6 +27,7 @@
             Force logout and exit POS
           </button>
         </div>
+      <!-- eslint-disable-next-line -->
       </p>
     </div>
   </Dialog>

@@ -24,7 +24,9 @@ export class PointOfSaleSwitchService {
       posStore.fetchPointOfSale(target.id);
 
       // Switch buyer back to user if authentication
-      useCartStore().setBuyer(target.useAuthentication ? useAuthStore().getUser : null);
+      const cartStore = useCartStore();
+      cartStore.setBuyer(target.useAuthentication ? useAuthStore().getUser : null);
+      cartStore.setLockedIn(null);
 
       target.useAuthentication ? activityStore.resetTimer() : activityStore.disableTimer();
 
