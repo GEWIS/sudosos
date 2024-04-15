@@ -83,7 +83,8 @@ const props = defineProps({
 const visible = ref(false);
 const { t } = useI18n();
 const handleDeleteProduct = async () => {
-  const newProducts = props.container.products.filter(product => product.id !== props.product.id).map(product => product.id);
+  const newProducts = props.container.products.filter(product => product.id !== props.product.id)
+    .map(product => product.id);
   await apiService.container.updateContainer(props.container.id, {
     name: props.container.name,
     products: newProducts,

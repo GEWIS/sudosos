@@ -129,7 +129,6 @@ import { type DineroObject } from 'dinero.js';
 import { floor, min } from "lodash";
 import type { FineHandoutEventResponse } from "@sudosos/sudosos-client";
 import { fetchAllPages } from "@sudosos/sudosos-frontend-common";
-import { date } from "yup";
 import { useToast } from "primevue/usetoast";
 import type { AxiosError } from "axios";
 import { handleError } from "@/utils/errorUtils";

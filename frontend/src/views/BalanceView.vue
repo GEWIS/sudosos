@@ -16,7 +16,8 @@
               locale="nl-NL"
             />
           </div>
-          <p v-if="!isUndefined(amountValue) && amountValue < 10 && amountValue != -1 * userBalance" class="font-bold text-red-500">
+          <p v-if="!isUndefined(amountValue) && amountValue < 10 && amountValue != -1 * userBalance"
+             class="font-bold text-red-500">
             {{ $t('balance.minPayment') }}
           </p>
           <br v-else />

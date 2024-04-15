@@ -30,7 +30,7 @@
       <Column field="change" style="width: 30%" :header="$t('transactions.amount')">
         <template #body="mutation">
           <div
-            v-if="mutation.data.type == FinancialMutationType.DEPOSIT 
+            v-if="mutation.data.type == FinancialMutationType.DEPOSIT
             || mutation.data.type == FinancialMutationType.INVOICE
             || mutation.data.type == FinancialMutationType.WAIVED_FINE"
             style="color: #198754" class="font-bold">
@@ -88,7 +88,6 @@ import {
   parseTransfer
 } from "@/utils/mutationUtils";
 import { formatPrice } from "@/utils/formatterUtils";
-import { useUserStore } from "@sudosos/sudosos-frontend-common";
 import "primeicons/primeicons.css";
 
 const props = defineProps({
@@ -137,7 +136,8 @@ function isPaginatedBaseTransactionResponse(obj: any): obj is PaginatedBaseTrans
   return obj.records && obj.records.length > 0 && 'id' in obj.records[0];
 }
 
-function parseFinancialMutations(mutations: PaginatedFinancialMutationResponse | PaginatedBaseTransactionResponse): FinancialMutation[] {
+function parseFinancialMutations(mutations: PaginatedFinancialMutationResponse | PaginatedBaseTransactionResponse)
+  : FinancialMutation[] {
   let result: FinancialMutation[] = [];
   if(isPaginatedBaseTransactionResponse(mutations)) {
     mutations.records.forEach((mutation: BaseTransactionResponse) => {

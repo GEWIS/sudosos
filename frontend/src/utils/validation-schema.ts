@@ -1,6 +1,7 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import * as yup from "yup";
 import { ref } from "vue";
+import type { Ref } from "vue";
 
 export const userDetailsSchema = toTypedSchema(
     yup.object({
@@ -39,7 +40,7 @@ export const editPinSchema = toTypedSchema(
   })
 );
 
-export const userTypes = ref([
+export const userTypes : Ref<Array<{name: string, value: number}>> = ref([
   { name: 'MEMBER', value: 1 },
   { name: 'ORGAN', value: 2 },
   { name: 'VOUCHER', value: 3 },

@@ -77,7 +77,6 @@
 </template>
 
 <script setup lang="ts">
-import CopyrightBanner from "@/components/CopyrightBanner.vue";
 import apiService from "@/services/ApiService";
 import router from "@/router";
 import { useForm } from "vee-validate";

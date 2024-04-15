@@ -9,12 +9,12 @@
           tfoot: 'font-bold'
         }">
       <Column field="description" :header="$t('transactions.depositID')" class="p-1">
-        <template #body="invoice">
+        <template #body="">
           <span class="text-sm xl:text-base">{{ invoiceInfo.description }}</span>
         </template>
       </Column>
       <Column field="totalPriceInclVat" :header="$t('transactions.amount')" class="p-1" footerClass="font-bold">
-        <template #body="invoice">
+        <template #body="">
           {{ formatPrice(invoiceInfo.amount) }}
         </template>
       </Column>
@@ -24,8 +24,8 @@
 <script setup lang="ts">
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import { computed, onMounted } from "vue";
-import { formatPrice } from "../../utils/formatterUtils";
+import { computed } from "vue";
+import { formatPrice } from "@/utils/formatterUtils";
 import type { TransferResponse } from "@sudosos/sudosos-client";
 
 const { invoiceInfo } = defineProps({

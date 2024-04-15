@@ -33,8 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import { formatPrice } from "../../utils/formatterUtils";
+import { formatPrice } from "@/utils/formatterUtils";
 import { onMounted, type Ref, ref, computed } from "vue";
 import Column from "primevue/column";
 import DataTable from "primevue/datatable";
@@ -43,8 +42,6 @@ import type {
   TransferResponse
 } from "@sudosos/sudosos-client";
 import router from "@/router";
-
-const { t } = useI18n();
 
 const firstName: Ref<string> = ref('');
 const lastName: Ref<string> = ref('');

@@ -35,6 +35,8 @@
               v-model="filterModel.value"
               @change="filterCallback()"
               :options="userTypes"
+              optionLabel="name"
+              optionValue="name"
               :placeholder="$t('c_userTable.Select Type')"
             />
           </template>
@@ -81,17 +83,17 @@
       <Dialog v-model:visible="visible" modal header="Create User" :style="{ width: '50vw' }" @hide="resetForm">
         <form @submit.prevent="handleCreateUser" class="p-fluid">
           <div class="field">
-            <label for="firstName">First Name</label>
+            <label for="firstName">{{ $t('c_userTable.firstName')}}</label>
             <InputText id="firstName" v-model="firstName" v-bind="firstNameAttrs" />
             <small class="p-error">{{ errors.firstName }}</small>
           </div>
           <div class="field">
-            <label for="lastName">Last Name</label>
+            <label for="lastName">{{ $t('c_userTable.lastName')}}</label>
             <InputText id="lastName" v-model="lastName" v-bind="lastNameAttrs" />
             <small class="p-error">{{ errors.lastName }}</small>
           </div>
           <div class="field">
-            <label for="userType">User Type</label>
+            <label for="userType">{{ $t('c_userTable.User Type')}}</label>
             <Dropdown
               id="userType"
               v-model="userType"
@@ -99,22 +101,22 @@
               :options="userTypes"
               optionLabel="name"
               placeholder="Select a type"
-              optionValue="value"
+              optionValue="name"
             />
             <small class="p-error">{{ errors.userType }}</small>
           </div>
           <div class="field">
-            <label for="email">Email</label>
+            <label for="email">{{ $t('userDetails.Email address')}}</label>
             <InputText id="email" v-model="email" v-bind="emailAttrs" />
             <small class="p-error">{{ errors.email }}</small>
           </div>
           <div class="field">
-            <label for="ofAge">Of Age</label>
+            <label for="ofAge">{{ $t('c_userTable.ofAge')}}</label>
             <Checkbox id="ofAge" v-model="ofAge" v-bind="ofAgeAttrs" binary />
             <small class="p-error">{{ errors.ofAge }}</small>
           </div>
           <div class="field">
-            <label for="canGoIntoDebt">Can Go Into Debt</label>
+            <label for="canGoIntoDebt">{{ $t('profile.canGoIntoDebt') }}</label>
             <Checkbox id="canGoIntoDebt" v-model="canGoIntoDebt" v-bind="canGoIntoDebtAttrs" binary />
             <small class="p-error">{{ errors.canGoIntoDebt }}</small>
           </div>
@@ -282,6 +284,7 @@ const sortedUsers = computed(() => {
     .map((r) => r.item);
   return fuzzed;
 });
+
 </script>
 
 <style scoped>
