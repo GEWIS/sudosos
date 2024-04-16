@@ -10,7 +10,7 @@ on:
 
 jobs:
   dockerize:
-    runs-on: [self-hosted, linux, docker]
+    runs-on: ubuntu-latest
     container:
       image: docker:dind
     steps:
@@ -74,7 +74,7 @@ jobs:
         run: |
           apk add --update
           apk add git
-          git --version  
+          git --version
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
