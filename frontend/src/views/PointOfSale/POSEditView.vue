@@ -42,7 +42,7 @@
       </div>
       <DetailedContainerCardComponent @selectedChanged="handleSelectedChanged" class="w-full"
         v-if="publicContainers && ownContainers" :own-containers="ownContainers" :public-containers="publicContainers"
-        :selectedContainers="selectedContainers" />
+        :selectedContainers="selectedContainers" :isLoading="isLoading" />
     </div>
   </div>
 </template>
@@ -91,7 +91,7 @@ const id = ref();
 const route = useRoute();
 const pos: Ref<PointOfSaleWithContainersResponse | null | undefined> = ref();
 const selectedOwner: Ref<BaseUserResponse | undefined> = ref();
-
+const isLoading: Ref<boolean> = ref(true);
 const posDisplayName = computed(() => {
   if (!pos.value || !pos.value.owner) return '';
   return pos.value.owner.firstName + pos.value.owner.lastName;
@@ -134,6 +134,7 @@ onBeforeMount(async () => {
     selectedContainers.value = pos.value.containers;
     selectedOwner.value = pos.value.owner;
   }
+  isLoading.value = false;
 });
 
 const handleSelectedChanged = (selected: any) => {

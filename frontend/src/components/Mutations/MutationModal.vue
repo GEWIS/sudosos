@@ -7,8 +7,16 @@
     class="w-auto flex w-11 md:w-4"
     ref="dialog"
   >
+    <div v-if="isLoading">
+      <Skeleton class="surface-300 my-1 w-5 h-2rem"/>
+      <Skeleton class="surface-300 my-1 w-10 h-2rem"/>
+      <br>
+      <Skeleton class="surface-300 my-1 w-11 h-2rem"/>\
+      <Skeleton class="surface-300 my-1 w-11 h-2rem"/>
+    </div>
+
     <TransactionDetailModal
-      v-if="shouldShowTransaction"
+      v-else-if="shouldShowTransaction"
       :transactionInfo="transactionsDetails[props.id]"
       :productsInfo="transactionProducts[props.id]"
     />
@@ -17,8 +25,8 @@
     <FineDetailModal v-else-if="shouldShowFine" :fine="transferDetails[props.id]" />
     <WaivedFineDetailModal v-else-if="shouldShowWaivedFine" :waivedFines="transferDetails[props.id]" />
     <template #footer v-if="
-      !shouldShowDeposit && 
-      !shouldShowInvoice && 
+      !shouldShowDeposit &&
+      !shouldShowInvoice &&
       shouldShowDeleteButton">
       <div class="flex flex-column align-items-end">
         <Button @click="deleteMutation" severity="danger">
@@ -54,6 +62,7 @@ import { FinancialMutationType } from '@/utils/mutationUtils';
 import { UserRole } from '@/utils/rbacUtils';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import WaivedFineDetailModal from "@/components/Mutations/WaivedFineDetailModal.vue";
+import Skeleton from "primevue/skeleton";
 
 const props = defineProps({
   type: {
@@ -76,6 +85,7 @@ const transferDetails: Ref<{ [id: number]: TransferResponse }> = ref({});
 const dialog: Ref<null | any> = ref(null);
 const toast = useToast();
 const authStore = useAuthStore();
+const isLoading: Ref<boolean> = ref(false);
 
 const shouldShowDeleteButton = computed(() => {
   // If the transfer is not loaded yet, do not show the delete button.
@@ -148,7 +158,9 @@ async function fetchMutation(): Promise<void> {
 watch(
   () => props.id || props.type,
   async () => {
+    isLoading.value = true;
     await fetchMutation();
+    isLoading.value = false;
   }
 );
 

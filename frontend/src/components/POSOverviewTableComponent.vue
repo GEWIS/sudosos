@@ -1,10 +1,21 @@
 <template>
   <CardComponent :header="$t('app.Points of Sale')" class="w-full">
     <DataTable :value="listOfPOS">
-      <Column field="name" header="Title"/>
-      <Column field="owner.firstName" header="Owner"/>
+      <Column field="name" header="Title">
+        <template #body v-if="isLoading">
+          <Skeleton class="w-6 mr-8 my-1 h-2rem surface-300"/>
+        </template>
+      </Column>
+      <Column field="owner.firstName" header="Owner">
+        <template #body v-if="isLoading">
+          <Skeleton class="w-6 my-1 h-2rem surface-300"/>
+        </template>
+      </Column>
       <Column headerStyle="width: 3rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
-        <template #body="slotProps">
+        <template #body v-if="isLoading">
+          <Skeleton class="w-6 my-1 h-2rem surface-300"/>
+        </template>
+        <template #body="slotProps" v-else>
           <Button
               @click="$router.push({name: 'pointOfSaleInfo', params: {id: slotProps.data.id}})"
               type="button"
@@ -20,22 +31,24 @@
 import CardComponent from "@/components/CardComponent.vue";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import { onMounted, ref } from "vue";
+import { onMounted, type Ref, ref } from "vue";
 import { useUserStore } from "@sudosos/sudosos-frontend-common";
 import { usePointOfSaleStore } from "@/stores/pos.store";
+import type { PointOfSaleResponse } from "@sudosos/sudosos-client";
+import Skeleton from "primevue/skeleton";
 const userStore = useUserStore();
 const pointOfSaleStore = usePointOfSaleStore();
-
+const listOfPOS: Ref<Array<PointOfSaleResponse>> = ref(new Array(10));
+const isLoading: Ref<boolean> = ref(true);
 
 onMounted(async () => {
-
   const userId = userStore.getCurrentUser.user !== null ? userStore.getCurrentUser.user.id : undefined;
   if (userId){
     listOfPOS.value = await pointOfSaleStore.getUserPointsOfSale(userId).then((resp)=> {return resp.data.records;});
   }
-
+  isLoading.value = false;
 });
-const listOfPOS = ref();
+
 </script>
 
 <style scoped lang="scss">

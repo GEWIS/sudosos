@@ -10,7 +10,10 @@
       :totalRecords="totalRecords"
     >
       <Column field="moment" style="width: 30%" :header="$t('transactions.when')">
-        <template #body="mutation">
+        <template #body v-if="isLoading">
+          <Skeleton class="w-6 my-1 h-1rem surface-300"/>
+        </template>
+        <template #body="mutation" v-else>
           <span class="hidden sm:block">{{ mutation.data.moment.toDateString() }}</span>
           <span class="sm:hidden">{{
             mutation.data.moment.toLocaleDateString('nl-NL', {
@@ -22,13 +25,19 @@
       </Column>
 
       <Column field="mutationDescription" style="width: 30%" :header="$t('transactions.what')">
-        <template #body="mutation">
+        <template #body v-if="isLoading">
+          <Skeleton class="w-6 my-1 h-1rem surface-300"/>
+        </template>
+        <template #body="mutation" v-else>
           {{ getDescription(mutation.data) }}
         </template>
       </Column>
 
       <Column field="change" style="width: 30%" :header="$t('transactions.amount')">
-        <template #body="mutation">
+        <template #body v-if="isLoading">
+          <Skeleton class="w-3 my-1 h-1rem surface-300"/>
+        </template>
+        <template #body="mutation" v-else>
           <div
             v-if="mutation.data.type == FinancialMutationType.DEPOSIT
             || mutation.data.type == FinancialMutationType.INVOICE
@@ -48,7 +57,10 @@
       </Column>
 
       <Column field="" style="width: 10%">
-        <template #body="mutation">
+        <template #body v-if="isLoading">
+          <Skeleton class="w-3 my-1 h-1rem surface-300"/>
+        </template>
+        <template #body="mutation" v-else>
           <i
             class="pi pi-info-circle cursor-pointer"
             @click="() => openModal(mutation.data.id, mutation.data.type)"
@@ -70,6 +82,7 @@ import type { DataTablePageEvent } from "primevue/datatable";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import CardComponent from "@/components/CardComponent.vue";
+import Skeleton from "primevue/skeleton";
 import type {
   BaseTransactionResponse,
   FinancialMutationResponse,
@@ -77,7 +90,7 @@ import type {
   PaginatedFinancialMutationResponse,
   TransferResponse
 } from "@sudosos/sudosos-client";
-import type { Ref } from "vue";
+import { onBeforeMount, type Ref } from "vue";
 import { onMounted, ref } from "vue";
 import MutationModal from "@/components/Mutations/MutationModal.vue";
 import {
@@ -118,18 +131,19 @@ const props = defineProps({
 
 });
 
-const mutations = ref<FinancialMutation[]>();
+const mutations = ref<FinancialMutation[]>(new Array(10));
 const selectedMutationId = ref<number>(-1);
 const selectedMutationType = ref<FinancialMutationType>(FinancialMutationType.TRANSACTION);
 const mutationShow = ref<boolean>(false);
 const totalRecords = ref<number>(0);
-
-
+const isLoading: Ref<boolean> = ref(true);
+const skeleton = ref(new Array(10));
 const rows: Ref<number> = ref(10);
-onMounted( async () => {
+onBeforeMount( async () => {
   const initialMutations = await getMutations(rows.value, 0);
   mutations.value = parseFinancialMutations(initialMutations);
   totalRecords.value = initialMutations._pagination.count || 0;
+  isLoading.value = false;
 });
 
 function isPaginatedBaseTransactionResponse(obj: any): obj is PaginatedBaseTransactionResponse {

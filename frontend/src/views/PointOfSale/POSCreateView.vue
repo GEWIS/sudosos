@@ -45,7 +45,7 @@
       </div>
       <DetailedContainerCardComponent class="w-full" @selectedChanged="handleSelectedChanged"
         v-if="publicContainers && ownContainers" :own-containers="ownContainers"
-        :public-containers="publicContainers" />
+        :public-containers="publicContainers" :isLoading="isLoading"/>
     </div>
   </div>
 </template>
@@ -66,10 +66,11 @@ import { handleError } from "@/utils/errorUtils";
 import { useToast } from "primevue/usetoast";
 import { isEmpty } from "lodash";
 
+const isLoading: Ref<boolean> = ref(true);
 const containerStore = useContainerStore();
 const userStore = useUserStore();
-const publicContainers: Ref<Array<ContainerResponse> | null | undefined> = ref();
-const ownContainers: Ref<Array<ContainerResponse> | null | undefined> = ref();
+const publicContainers: Ref<Array<ContainerResponse> | null | undefined> = ref(new Array(10));
+const ownContainers: Ref<Array<ContainerResponse> | null | undefined> = ref(new Array(10));
 const organsList: Ref<Array<UserResponse>> = ref([]);
 const authStore = useAuthStore();
 const pointOfSaleStore = usePointOfSaleStore();
@@ -111,6 +112,7 @@ onMounted(async () => {
         (container) => container.public == false
       );
     });
+    isLoading.value = false;
     organsList.value = authStore.organs;
   } else {
     await router.replace({ path: '/error' });

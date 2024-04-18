@@ -7,24 +7,44 @@
       >{{ $t("c_POSCreate.add container") }}</Button>
       <AddContainerDialogComponent v-model:visible="visible"/>
     </template>
-    <DataTable
+    <div class="flex flex-row">
+      <DataTable
         v-model:selection="selectedPublicContainers"
         v-model:expandedRows="expandedContainers"
         :value="publicContainers"
         dataKey="id"
-    >
-      <Column selectionMode="multiple" headerStyle="visibility: hidden;" />
-      <Column field="name" :header="$t('c_POSCreate.Public containers')" />
-    </DataTable>
-    <DataTable
+        class="w-6"
+      >
+        <Column selectionMode="multiple">
+          <template #body v-if="isLoading">
+            <Skeleton class="w-6 my-1 h-1rem surface-300"/>
+          </template>
+        </Column>
+        <Column field="name" :header="$t('c_POSCreate.Public containers')">
+          <template #body v-if="isLoading">
+            <Skeleton class="w-6 my-1 h-1rem surface-300"/>
+          </template>
+        </Column>
+      </DataTable>
+      <DataTable
         v-model:selection="selectedOwnContainers"
         v-model:expandedRows="expandedContainers"
         :value="ownContainers"
         dataKey="id"
-    >
-      <Column selectionMode="multiple" headerStyle="visibility: hidden;" />
-      <Column field="name" :header="$t('c_POSCreate.Own containers')" />
-    </DataTable>
+        class="w-6"
+      >
+        <Column selectionMode="multiple">
+          <template #body v-if="isLoading">
+            <Skeleton class="w-6 my-1 h-1rem surface-300"/>
+          </template>
+        </Column>
+        <Column field="name" :header="$t('c_POSCreate.Own containers')">
+          <template #body v-if="isLoading">
+            <Skeleton class="w-6 my-1 h-1rem surface-300"/>
+          </template>
+        </Column>
+      </DataTable>
+    </div>
   </CardComponent>
 </template>
 <script setup lang="ts">
@@ -34,6 +54,7 @@ import CardComponent from "@/components/CardComponent.vue";
 import type { ContainerResponse } from "@sudosos/sudosos-client";
 import { onMounted, ref, watch } from "vue";
 import AddContainerDialogComponent from "@/components/AddContainerDialogComponent.vue";
+import Skeleton from "primevue/skeleton";
 
 const visible = ref(false);
 const selectedOwnContainers = ref<Array<ContainerResponse>>([]);
@@ -50,6 +71,10 @@ const props = defineProps({
   selectedContainers: {
     type: Array<ContainerResponse>,
     required: false,
+  },
+  isLoading: {
+    type: Boolean,
+    required: true,
   }
 });
 

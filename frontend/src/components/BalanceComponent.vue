@@ -5,7 +5,10 @@
       routerLink="balance"
   >
     <div class="flex flex-column justify-content-center">
-      <h1 class="text-center font-medium text-6xl">{{ displayBalance }}</h1>
+      <div v-if="isLoading">
+        <Skeleton class="h-4rem w-10rem mx-1rem my-6"/>
+      </div>
+      <h1 v-else class="text-center font-medium text-6xl">{{ displayBalance }}</h1>
       <p class="text-center text-base font-semibold text-red-500" v-if="userBalance && userBalance.fine">
         {{ isAllFine ? $t('c_currentBalance.allIsFines') : $t('c_currentBalance.someIsFines', { fine: displayFine }) }}
       </p>
@@ -38,6 +41,7 @@ const userStore = useUserStore();
 const userBalance: Ref<BalanceResponse | null> = ref(null);
 const { current } = storeToRefs(userStore);
 const router = useRouter();
+const isLoading: Ref<boolean> = ref(true);
 const updateUserBalance = async () => {
   if (props.user) {
     const response = await apiService.balance.getBalanceId(props.user.id);
@@ -52,6 +56,7 @@ const updateUserBalance = async () => {
     await userStore.fetchCurrentUserBalance(auth.getUser.id, apiService);
     userBalance.value = userStore.getCurrentUser.balance;
   }
+  isLoading.value = false;
 };
 
 onMounted(updateUserBalance);

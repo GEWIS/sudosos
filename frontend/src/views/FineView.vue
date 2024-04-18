@@ -73,15 +73,28 @@
           :value="fineHandoutEvents"
           @row-click="(e: any) => openHandoutEvent(e.data.id)"
         >
-          <Column field="id" id="id" :header="t('fine.id')" />
+          <Column field="id" id="id" :header="t('fine.id')">
+            <template #body v-if="isLoading">
+              <Skeleton class="w-4 my-1 h-1rem surface-300"/>
+            </template>
+          </Column>
           <Column field="createdAt" id="date" :header="t('fine.date')">
-            <template #body="slotProps">{{ formatDateTime(new Date(slotProps.data.createdAt)) }}</template>
+            <template #body v-if="isLoading">
+              <Skeleton class="w-7 my-1 h-1rem surface-300"/>
+            </template>
+            <template #body="slotProps" v-else>{{ formatDateTime(new Date(slotProps.data.createdAt)) }}</template>
           </Column>
           <Column field="referenceDate" id="referenceDate" :header="t('fine.referenceDate')">
-            <template #body="slotProps">{{ formatDateTime(new Date(slotProps.data.referenceDate)) }}</template>
+            <template #body v-if="isLoading">
+              <Skeleton class="w-4 my-1 h-1rem surface-300"/>
+            </template>
+            <template #body="slotProps" v-else>{{ formatDateTime(new Date(slotProps.data.referenceDate)) }}</template>
           </Column>
           <Column id="info" :header="t('fine.info')" >
-            <template #body>
+            <template #body v-if="isLoading">
+              <Skeleton class="w-2 my-1 h-1rem surface-300"/>
+            </template>
+            <template #body v-else>
               <i class="pi pi-info-circle"/>
             </template>
           </Column>
@@ -132,6 +145,7 @@ import { fetchAllPages } from "@sudosos/sudosos-frontend-common";
 import { useToast } from "primevue/usetoast";
 import type { AxiosError } from "axios";
 import { handleError } from "@/utils/errorUtils";
+import Skeleton from "primevue/skeleton";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -151,6 +165,7 @@ const [firstDate, firstDateAttrs] = defineField('firstDate');
 const [secondDate, secondDateAttrs] = defineField('secondDate');
 const showModal: Ref<boolean> = ref(false);
 const selectedHandoutEvent: Ref<FineHandoutEventResponse | undefined> = ref();
+const isLoading: Ref<boolean> = ref(true);
 const totalFines: Ref<DineroObject> = ref({
   amount: 0,
   currency: 'EUR',
@@ -167,7 +182,7 @@ const modalTotalFines: Ref<DineroObject> = ref({
   precision: 2
 });
 const showMessage: Ref<boolean>  = ref(false);
-const fineHandoutEvents: Ref<Array<FineHandoutEventResponse>> = ref([]);
+const fineHandoutEvents: Ref<Array<FineHandoutEventResponse>> = ref(new Array(10));
 const handlePickedDates = handleSubmit(async (values) => {
   const result = await apiService.debtor.calculateFines(
     [values.firstDate.toISOString(), values.secondDate.toISOString()],
@@ -217,7 +232,7 @@ onMounted(async () => {
     // @ts-ignore
     (take, skip) => apiService.debtor.returnAllFineHandoutEvents(take, skip)
   );
-  console.log(fineHandoutEvents.value);
+  isLoading.value = false;
 });
 const openHandoutEvent = async (eventId: number) => {
   selectedHandoutEvent.value = await apiService.debtor.returnSingleFineHandoutEvent(eventId).then((res) => {

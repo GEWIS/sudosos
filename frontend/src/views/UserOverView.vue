@@ -12,23 +12,35 @@
         :globalFilterFields="['type', 'firstName', 'lastName', 'fullName']"
         lazy
         :totalRecords="sortedUsers.length > 0 ? sortedUsers.length : totalRecords"
-        :loading="loading"
+        :loading="isLoading"
         @page="onPage($event)"
         @sort="onSort"
         @filter="onFilter"
       >
         <template #header>
           <div class="flex flex-row align-items-center justify-content-between">
-            <span class="p-input-icon-left">
-              <i class="pi pi-search" />
+            <IconField iconPosition="left">
+              <InputIcon class="pi pi-search"> </InputIcon>
               <InputText v-model="searchQuery" placeholder="Search..." />
-            </span>
+            </IconField>
             <Button label="Create" icon="pi pi-plus" @click="visible = true" />
           </div>
         </template>
-        <Column field="gewisId" header="GEWIS ID" />
-        <Column field="firstName" :header="$t('c_userTable.firstName')" />
-        <Column field="lastName" :header="$t('c_userTable.lastName')" />
+        <Column field="gewisId" header="GEWIS ID">
+          <template #body v-if="isLoading">
+            <Skeleton class="w-6 my-1 h-1rem surface-300"/>
+          </template>
+        </Column>
+        <Column field="firstName" :header="$t('c_userTable.firstName')">
+          <template #body v-if="isLoading">
+            <Skeleton class="w-8 my-1 h-1rem surface-300"/>
+          </template>
+        </Column>
+        <Column field="lastName" :header="$t('c_userTable.lastName')">
+          <template #body v-if="isLoading">
+            <Skeleton class="w-8 my-1 h-1rem surface-300"/>
+          </template>
+        </Column>
         <Column field="type" :header="$t('c_userTable.Type')" :showFilterMatchModes="false">
           <template #filter="{ filterModel, filterCallback }">
             <Dropdown
@@ -39,6 +51,9 @@
               optionValue="name"
               :placeholder="$t('c_userTable.Select Type')"
             />
+          </template>
+          <template #body v-if="isLoading">
+            <Skeleton class="w-5 my-1 h-1rem surface-300"/>
           </template>
         </Column>
         <Column field="active" :showFilterMatchModes="false">
@@ -51,6 +66,9 @@
                 binary
               />
             </div>
+          </template>
+          <template #body v-if="isLoading">
+            <Skeleton class="w-2 my-1 h-1rem surface-300"/>
           </template>
         </Column>
 
@@ -65,12 +83,18 @@
               />
             </div>
           </template>
+          <template #body v-if="isLoading">
+            <Skeleton class="w-3 my-1 h-1rem surface-300"/>
+          </template>
         </Column>
         <Column
           headerStyle="width: 3rem; text-align: center"
           bodyStyle="text-align: center; overflow: visible"
         >
-          <template #body="slotProps">
+          <template #body v-if="isLoading">
+            <Skeleton class="w-4 my-1 h-1rem surface-300"/>
+          </template>
+          <template #body="slotProps" v-else>
             <Button
               @click="handleInfoPush(slotProps.data.id)"
               type="button"
@@ -78,6 +102,7 @@
               outlined
             />
           </template>
+
         </Column>
       </DataTable>
       <Dialog v-model:visible="visible" modal header="Create User" :style="{ width: '50vw' }" @hide="resetForm">
@@ -146,6 +171,9 @@ import { userDetailsSchema, userTypes } from "@/utils/validation-schema";
 import { useForm } from 'vee-validate';
 import Fuse from 'fuse.js';
 import CardComponent from '@/components/CardComponent.vue';
+import Skeleton from "primevue/skeleton";
+import IconField from "primevue/iconfield";
+import InputIcon from "primevue/inputicon";
 
 const userStore = useUserStore();
 const searchQuery: Ref<string> = ref('');
@@ -169,9 +197,9 @@ const [canGoIntoDebt, canGoIntoDebtAttrs] = defineField('canGoIntoDebt', {});
 const isActiveFilter: Ref<boolean> = ref(true);
 const ofAgeFilter: Ref<boolean> = ref(true);
 const visible: Ref<boolean> = ref(false);
-const loading = ref(false);
+const isLoading = ref(true);
 const totalRecords = ref(0);
-const allUsers: Ref<GewisUserResponse[]> = ref([]);
+const allUsers: Ref<GewisUserResponse[]> = ref(new Array(10));
 const allUsersWithFullName: Ref<GewisUserResponse[]> = computed(() => {
   return allUsers.value.map((user) => {
     return {
@@ -182,7 +210,9 @@ const allUsersWithFullName: Ref<GewisUserResponse[]> = computed(() => {
 });
 
 onMounted(() => {
+  isLoading.value = true;
   delayedAPICall(0);
+  isLoading.value = false;
 });
 
 function debounce(func: (skip: number) => Promise<void>, delay: number): (skip: number) => Promise<void> {
