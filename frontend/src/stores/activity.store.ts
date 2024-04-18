@@ -10,7 +10,7 @@ interface ActivityState {
 }
 
 let timerId: null | number = null;
-const TIME_OUT = 30;
+const TIME_OUT = 300000;
 
 export const useActivityStore = defineStore('activity', {
   state: (): ActivityState => ({

@@ -87,12 +87,23 @@ const sortedProducts = computed(() => {
   const products = [...filteredProducts.value];
 
   products.sort((a, b) => {
-    const nameA = a.product.name.toLowerCase();
-    const nameB = b.product.name.toLowerCase();
-    if (nameA < nameB) return -1;
-    if (nameA > nameB) return 1;
-    return 0;
+    // Prioritize 'preferred+featured' then 'preferred', then sort alphabetically
+    if (a.product.preferred && !b.product.preferred) {
+      return -1;
+    } else if (!a.product.preferred && b.product.preferred) {
+      return 1;
+    } else if (a.product.preferred && b.product.preferred) {
+      if (a.product.featured && !b.product.featured) {
+        return -1;
+      } else if (!a.product.featured && b.product.featured) {
+        return 1;
+      }
+    }
+      const nameA = a.product.name.toLowerCase();
+      const nameB = b.product.name.toLowerCase();
+      return nameA.localeCompare(nameB);
   });
+
   return products;
 });
 </script>

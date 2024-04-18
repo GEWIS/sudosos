@@ -1,7 +1,8 @@
 <template>
-  <div class="text-center product-card" :class="{pulsing}">
+  <div class="text-center product-card">
     <div class="product">
-      <img ref="productImage" class="product-card-image" :src="image" :alt="product.name" @click="addToCart"/>
+      <img ref="productImage" class="product-card-image" :class="{pulsing, featured: product.featured}" :src="image" :alt="product.name"
+           @click="addToCart"/>
       <p class="product-name text-overflow font-size-md fw-bold">{{ product.name }}</p>
       <p class="product-price font-size-sm">€{{ productPrice }}</p>
     </div>
@@ -113,7 +114,7 @@ const startFlyingAnimation = async () => {
 }
 
 .product-card {
-  padding: 0 0 8px 0;
+  padding: 1rem 0 8px 0;
   height: fit-content;
   border-radius: $border-radius;
   overflow: hidden;
@@ -127,6 +128,11 @@ const startFlyingAnimation = async () => {
 
 .product-name {
   margin-bottom: -5px;
+}
+
+.featured {
+  outline: none;
+  box-shadow: 0 0 10px 6px #107300;
 }
 
 .product-price {
