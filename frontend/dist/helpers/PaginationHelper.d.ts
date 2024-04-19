@@ -1,4 +1,5 @@
 import { AxiosResponse } from 'axios';
+
 interface PaginationResult<T> {
     _pagination: {
         count: number;

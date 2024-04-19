@@ -1,5 +1,6 @@
-import { BalanceResponse, PaginatedFinancialMutationResponse, UserResponse } from "@sudosos/sudosos-client";
-import { ApiService } from "../services/ApiService";
+import { ApiService } from '../services/ApiService';
+import { BalanceResponse, PaginatedFinancialMutationResponse, UserResponse } from '@sudosos/sudosos-client';
+
 interface CurrentState {
     balance: BalanceResponse | null;
     user: UserResponse | null;
@@ -9,7 +10,7 @@ interface UserModuleState {
     users: UserResponse[];
     current: CurrentState;
 }
-export declare const useUserStore: import("pinia").StoreDefinition<"user", UserModuleState, {
+export declare const useUserStore: import('pinia').StoreDefinition<"user", UserModuleState, {
     getUserById: (state: UserModuleState) => (userId: number) => UserResponse | undefined;
     getActiveUsers(): UserResponse[];
     getDeletedUsers(): UserResponse[];

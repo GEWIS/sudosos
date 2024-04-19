@@ -1,5 +1,6 @@
-import { AxiosResponse } from "axios/index";
-import { ApiService } from "../services/ApiService";
+import { ApiService } from '../services/ApiService';
+import { AxiosResponse } from 'axios/index';
+
 type Token = {
     token: string;
     expires: string;

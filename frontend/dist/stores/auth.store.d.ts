@@ -1,5 +1,6 @@
-import { AuthenticationResponse, UserResponse } from "@sudosos/sudosos-client";
-import { ApiService } from "../services/ApiService";
+import { ApiService } from '../services/ApiService';
+import { AuthenticationResponse, UserResponse } from '@sudosos/sudosos-client';
+
 interface AuthStoreState {
     user: UserResponse | null;
     roles: string[];
@@ -7,7 +8,7 @@ interface AuthStoreState {
     token: string | null;
     acceptedToS: string | null;
 }
-export declare const useAuthStore: import("pinia").StoreDefinition<"auth", AuthStoreState, {
+export declare const useAuthStore: import('pinia').StoreDefinition<"auth", AuthStoreState, {
     getToken(): string | null;
     getToS(): string | null;
     getUser(): UserResponse | null;
@@ -23,7 +24,7 @@ export declare const useAuthStore: import("pinia").StoreDefinition<"auth", AuthS
     updateUserPin(pin: string, service: ApiService): Promise<void>;
     updateUserLocalPassword(password: string, service: ApiService): Promise<void>;
     updateUserNfc(nfcCode: string, service: ApiService): Promise<void>;
-    updateUserKey(service: ApiService): Promise<import("@sudosos/sudosos-client").UpdateKeyResponse | undefined>;
+    updateUserKey(service: ApiService): Promise<import('@sudosos/sudosos-client').UpdateKeyResponse | undefined>;
     updateUserToSAccepted(extensiveDataProcessing: boolean, service: ApiService): Promise<void>;
     extractStateFromToken(): void;
     logout(): void;

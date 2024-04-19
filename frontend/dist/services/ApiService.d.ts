@@ -1,4 +1,5 @@
 import { AuthenticateApi, BalanceApi, BannersApi, VouchergroupsApi, ContainersApi, FilesApi, InvoicesApi, PayoutRequestsApi, PointofsaleApi, ProductCategoriesApi, ProductsApi, RbacApi, RootApi, StripeApi, TransactionsApi, TransfersApi, UsersApi, VatGroupsApi, DebtorsApi } from '@sudosos/sudosos-client';
+
 export declare class ApiService {
     private readonly _authenticateApi;
     private readonly _balanceApi;
