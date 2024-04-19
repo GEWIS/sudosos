@@ -1,10 +1,12 @@
 <template>
-  <div class="text-center product-card" :class="{pulsing}">
-    <div class="product">
-      <img ref="productImage" class="product-card-image" :src="image" :alt="product.name" @click="addToCart"/>
-      <p class="product-name text-overflow font-size-md fw-bold">{{ product.name }}</p>
-      <p class="product-price font-size-sm">€{{ productPrice }}</p>
+  <div class="text-center product-card">
+    <div class="image-container">
+      <img ref="productImage" :class="{ pulsing, featured: product.featured }"
+           class="product-card-image" :src="image" :alt="product.name" @click="addToCart"/>
+      <div v-if="product.featured" class="promo-tag">PROMO</div>
     </div>
+    <p class="product-name text-overflow font-size-md fw-bold">{{ product.name }}</p>
+    <p class="product-price font-size-sm">€{{ productPrice }}</p>
   </div>
 </template>
 
@@ -112,8 +114,15 @@ const startFlyingAnimation = async () => {
   box-sizing: border-box;
 }
 
+.image-container {
+  position: relative; /* Establish this div as the positioning context for absolute elements within */
+  width: $product-card-size; /* Adjust to match the image size */
+  height: $product-card-size; /* Adjust to match the image size */
+  margin: auto; /* Center the container */
+}
+
 .product-card {
-  padding: 0 0 8px 0;
+  padding: 1rem 0 8px 0;
   height: fit-content;
   border-radius: $border-radius;
   overflow: hidden;
@@ -125,8 +134,22 @@ const startFlyingAnimation = async () => {
   }
 }
 
-.product-name {
-  margin-bottom: -5px;
+.product-name, .product-price {
+  position: relative; /* Ensure text is positioned relative to its container for proper layering */
+  z-index: 2; /* Higher z-index ensures it's on top if needed */
+}
+
+.promo-tag {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  right: 0;
+  color: #fff;
+  font-weight: bolder;
+  background-color: $gewis-red-shadow;
+  text-align: center;
+  font-size: 1.2em;
+  padding: 5px 0;
 }
 
 .product-price {
