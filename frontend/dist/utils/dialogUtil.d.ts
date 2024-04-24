@@ -11,4 +11,4 @@
  * </Dialog>
  * ```
  */
-export declare function addLsitenerOnDialogueOverlay(ref: any): void;
+export declare function addListenerOnDialogueOverlay(ref: any): void;
