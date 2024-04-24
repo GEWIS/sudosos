@@ -9832,8 +9832,14 @@ class tn {
     return this._openBannerApi;
   }
 }
+function sn(o) {
+  o.mask.addEventListener("click", function(h) {
+    h.target === o.mask && o.close();
+  });
+}
 export {
   tn as ApiService,
+  sn as addListenerOnDialogueOverlay,
   Zs as clearTokenInStorage,
   Ks as fetchAllPages,
   Le as getTokenFromStorage,
