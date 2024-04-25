@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import { useRouter } from "vue-router";
 import { UserRole } from "@/utils/rbacUtils";
@@ -104,7 +104,7 @@ const isSeller = () => {
   return authStore.roles.includes(UserRole.SELLER);
 };
 
-const leftItems = ref([
+const leftItems = computed(() => [
   {
     label: t('app.Transactions'),
     route: '/transactions'
@@ -168,9 +168,9 @@ const leftItems = ref([
   },
     ]);
 
-const rightItems = ref([
+const rightItems = computed(() =>[
   {
-    label: firstName,
+    label: firstName.value,
     items: [
       {
         label: t('app.Profile'),
@@ -183,7 +183,7 @@ const rightItems = ref([
     ]
   },
   {
-    label: balance,
+    label: balance.value,
     route: '/balance',
   },
   {
@@ -210,7 +210,7 @@ const rightItems = ref([
   },
 ]);
 
-const mobileItems = ref([
+const mobileItems = computed(() => [
   {
     label: t('app.Transactions'),
     route: '/transactions'
@@ -273,7 +273,7 @@ const mobileItems = ref([
     ]
   },
   {
-    label: firstName,
+    label: firstName.value,
     items: [
       {
         label: t('app.Profile'),
@@ -286,7 +286,7 @@ const mobileItems = ref([
     ]
   },
   {
-    label: balance,
+    label: balance.value,
     route: '/balance',
   },
   {

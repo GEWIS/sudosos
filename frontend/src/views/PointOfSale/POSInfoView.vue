@@ -4,7 +4,7 @@
       <div class="flex flex-column">
         <span>{{ `${$t("posInfo.POS")}: ${pos ? pos.name : ""}` }}</span>
         <small class="font-italic text-base">
-          {{`Owned by ${pos ? (pos.owner ? pos.owner.firstName + pos.owner.lastName : '') : ''}`}}
+          {{`${ $t('posInfo.ownedBy') } ${pos ? (pos.owner ? pos.owner.firstName + pos.owner.lastName : '') : ''}`}}
         </small>
       </div>
         <Button

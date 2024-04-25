@@ -21,9 +21,9 @@
           <div class="flex flex-row align-items-center justify-content-between">
             <IconField iconPosition="left">
               <InputIcon class="pi pi-search"> </InputIcon>
-              <InputText v-model="searchQuery" placeholder="Search..." />
+              <InputText v-model="searchQuery" :placeholder="$t('app.Search')" />
             </IconField>
-            <Button label="Create" icon="pi pi-plus" @click="visible = true" />
+            <Button :label="$t('app.Create')" icon="pi pi-plus" @click="visible = true" />
           </div>
         </template>
         <Column field="gewisId" header="GEWIS ID">
@@ -125,7 +125,7 @@
               v-bind="userTypeAttrs"
               :options="userTypes"
               optionLabel="name"
-              placeholder="Select a type"
+              :placeholder="$t('c_userTable.Select Type')"
               optionValue="name"
             />
             <small class="p-error">{{ errors.userType }}</small>
@@ -146,8 +146,8 @@
             <small class="p-error">{{ errors.canGoIntoDebt }}</small>
           </div>
           <div class="flex justify-content-end">
-            <Button label="Cancel" class="p-button-text" @click="visible = false" />
-            <Button label="Save" class="p-button-outlined" type="submit" />
+            <Button :label="$t('c_containerEditModal.cancel')" class="p-button-text" @click="visible = false" />
+            <Button :label="$t('c_confirmationModal.Save')" class="p-button-outlined" type="submit" />
           </div>
         </form>
       </Dialog>

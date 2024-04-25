@@ -1,12 +1,12 @@
 <template>
   <CardComponent :header="$t('app.Points of Sale')" class="w-full">
     <DataTable :value="listOfPOS">
-      <Column field="name" header="Title">
+      <Column field="name" :header="$t('c_POSCreate.Title')">
         <template #body v-if="isLoading">
           <Skeleton class="w-6 mr-8 my-1 h-2rem surface-300"/>
         </template>
       </Column>
-      <Column field="owner.firstName" header="Owner">
+      <Column field="owner.firstName" :header="$t('c_POSCreate.Owner')">
         <template #body v-if="isLoading">
           <Skeleton class="w-6 my-1 h-2rem surface-300"/>
         </template>

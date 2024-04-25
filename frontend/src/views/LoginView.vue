@@ -15,7 +15,7 @@
             @click="navigateToLocal"
             class="my-3 mx-auto w-full flex justify-content-center align-items-center"
         >
-          Login using local account
+          {{ $t('login.localAccount') }}
         </Button>
       </div>
 </template>

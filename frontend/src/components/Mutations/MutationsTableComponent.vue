@@ -102,6 +102,7 @@ import {
 } from "@/utils/mutationUtils";
 import { formatPrice } from "@/utils/formatterUtils";
 import "primeicons/primeicons.css";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps({
   action: {
@@ -138,6 +139,7 @@ const mutationShow = ref<boolean>(false);
 const totalRecords = ref<number>(0);
 const isLoading: Ref<boolean> = ref(true);
 const skeleton = ref(new Array(10));
+const { t } = useI18n();
 const rows: Ref<number> = ref(10);
 onBeforeMount( async () => {
   const initialMutations = await getMutations(rows.value, 0);
@@ -191,22 +193,22 @@ async function getMutations(take: number, skip: number):
 function getDescription(mutation: FinancialMutation) {
   switch (mutation.type) {
     case FinancialMutationType.TRANSACTION: {
-      return "Payment";
+      return t('c_recentTransactionsTable.payment');
     }
     case FinancialMutationType.DEPOSIT: {
-      return "Top up";
+      return t('c_recentTransactionsTable.topUp');
     }
     case FinancialMutationType.FINE: {
-      return "Fine";
+      return t('c_recentTransactionsTable.fine');
     }
     case FinancialMutationType.WAIVED_FINE: {
-      return "Waived Fine";
+      return t('c_recentTransactionsTable.waivedFine');
     }
     case FinancialMutationType.INVOICE: {
-      return "Invoice";
+      return t('c_recentTransactionsTable.invoice');
     }
     default: {
-      return "Could not find";
+      return t('c_recentTransactionsTable.unknown');
     }
   }
 }

@@ -70,7 +70,7 @@ const changeUserInfo = handleSubmit(async (values) => {
       toast.add({
         severity: "success",
         summary: "Success",
-        detail: `${t('userInfoUpdated')}`,
+        detail: `${t('userDetails.userInfoUpdated')}`,
         life: 3000,
       });
     }).catch((err) => {

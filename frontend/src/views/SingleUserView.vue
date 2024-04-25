@@ -90,7 +90,7 @@ const [firstName, firstNameAttrs] = defineField('firstName', {});
 const [lastName, lastNameAttrs] = defineField('lastName', {});
 const [email, emailAttrs] = defineField('email', {});
 const [isActive, isActiveAttrs] = defineField('isActive', {});
-const [userType, userTypeAttrs] = defineField('userType', {});
+const [userTypeAttrs] = defineField('userType', {});
 const [canGoIntoDebt, canGoIntoDebtAttrs] = defineField('canGoIntoDebt', {});
 const [ofAge, ofAgeAttrs] = defineField('ofAge', {});
 

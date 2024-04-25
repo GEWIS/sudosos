@@ -9,11 +9,15 @@ module.exports = {
     'eslint:recommended',
     '@vue/eslint-config-typescript',
     '@vue/eslint-config-prettier/skip-formatting',
-    'plugin:@intlify/vue-i18n/recommended'
+    'plugin:@intlify/vue-i18n/recommended',
   ],
 
-  ignorePatterns: ["/src/components/icons/*.vue"],
+  ignorePatterns: ["/src/components/icons/*.vue", "package-lock.json"],
   rules: {
+    "@intlify/vue-i18n/no-missing-keys": 'error',
+    "@intlify/vue-i18n/no-missing-keys-in-other-locales": "error",
+    "@intlify/vue-i18n/no-unused-keys": ['error', { 'enableFix': true }],
+    "@intlify/vue-i18n/no-duplicate-keys-in-locale": 'error',
     'max-len': ['warn', { "code": 120 } ],
     'semi': ['error', 'always'],
     'object-curly-spacing': ['error', 'always'],
@@ -27,13 +31,23 @@ module.exports = {
         }
       }
     ],
+
   },
   parserOptions: {
     ecmaVersion: 'latest',
   },
   settings: {
-    "vue-i18n": {
-      "localeDir": "/src/locales",
+    'vue-i18n': {
+      localeDir: './src/locales/*.{json,json5,yaml,yml}',
+      messageSyntaxVersion: '^9.2.2' // Ensure this version matches your vue-i18n version
+    }
+  },
+  overrides: [
+  {
+    files: ["src/locales/*.json"],
+    rules: {
+      'max-len': 'off'  // Turn off max-len rule for locale JSON files
     }
   }
+]
 };

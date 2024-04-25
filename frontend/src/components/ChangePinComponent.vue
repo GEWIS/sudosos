@@ -47,7 +47,7 @@ const changeUserPin = handleSubmit(async (values) => {
         toast.add({
           severity: "success",
           summary: "Success",
-          detail: `${t('passwordUpdated')}`,
+          detail: `${t('userDetails.passwordUpdated')}`,
           life: 3000,
         });
       })

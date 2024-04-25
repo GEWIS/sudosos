@@ -50,7 +50,7 @@ const changeUserPassword = handleSubmit(async (values) => {
       toast.add({
         severity: "success",
         summary: "Success",
-        detail: `${t('passwordUpdated')}`,
+        detail: `${t('userDetails.passwordUpdated')}`,
         life: 3000,
       });}).catch((err) => handleError(err, toast));}});
 
