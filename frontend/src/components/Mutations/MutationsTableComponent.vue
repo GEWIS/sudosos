@@ -83,6 +83,7 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import CardComponent from "@/components/CardComponent.vue";
 import Skeleton from "primevue/skeleton";
+import { formatPrice } from "@/utils/formatterUtils";
 import type {
   BaseTransactionResponse,
   FinancialMutationResponse,
@@ -91,7 +92,7 @@ import type {
   TransferResponse
 } from "@sudosos/sudosos-client";
 import { onBeforeMount, type Ref } from "vue";
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import MutationModal from "@/components/Mutations/MutationModal.vue";
 import {
   type FinancialMutation,
@@ -100,7 +101,6 @@ import {
   parseTransaction,
   parseTransfer
 } from "@/utils/mutationUtils";
-import { formatPrice } from "@/utils/formatterUtils";
 import "primeicons/primeicons.css";
 import { useI18n } from "vue-i18n";
 
@@ -138,7 +138,6 @@ const selectedMutationType = ref<FinancialMutationType>(FinancialMutationType.TR
 const mutationShow = ref<boolean>(false);
 const totalRecords = ref<number>(0);
 const isLoading: Ref<boolean> = ref(true);
-const skeleton = ref(new Array(10));
 const { t } = useI18n();
 const rows: Ref<number> = ref(10);
 onBeforeMount( async () => {

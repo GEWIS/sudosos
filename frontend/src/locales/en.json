@@ -192,7 +192,7 @@
     "Owner": "Owner",
     "POS": "POS",
     "Title": "Title",
-    "ownedBy": "Owned by "
+    "ownedBy": "Owned by"
   },
   "profile": {
     "canGoIntoDebt": "User can go into debt",
@@ -227,6 +227,7 @@
     "editPOS": "Succesfully edited POS.",
     "fineDeleted": "Successfully deleted fine.",
     "finesHandedOut": "Successfully handed out fines",
+    "finesNotified": "Succesfully notified users.",
     "productCreated": "Successfully created product.",
     "success": "Success",
     "transactionDeleted": "Successfully deleted transaction."

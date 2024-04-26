@@ -11,7 +11,7 @@
       <Skeleton class="surface-300 my-1 w-5 h-2rem"/>
       <Skeleton class="surface-300 my-1 w-10 h-2rem"/>
       <br>
-      <Skeleton class="surface-300 my-1 w-11 h-2rem"/>\
+      <Skeleton class="surface-300 my-1 w-11 h-2rem"/>
       <Skeleton class="surface-300 my-1 w-11 h-2rem"/>
     </div>
 

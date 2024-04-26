@@ -36,8 +36,9 @@
                     <label for="secondDate">{{ t('fine.secondDate') }}</label>
                   </span>
                   <Button type="submit">{{ t('fine.apply') }}</Button>
+                  <Button @click="notifyUsers" severity="info">{{ t('fine.notify') }}</Button>
+                  <ProgressSpinner class="h-2rem ml-0" v-if="isNotifying"/>
                 </form>
-                <Button @click="notifyUsers" severity="info">{{ t('fine.notify') }}</Button>
                 <Button @click="handoutFines">{{ t('fine.handout') }}</Button>
               </div>
               <p class="text-red-500">
@@ -51,7 +52,7 @@
             </div>
           </template>
           <Column selectionMode="multiple" />
-          <Column field="id" :header="t('fine.gewisId')" />
+          <Column field="gewisId" :header="t('fine.gewisId')" />
           <Column field="fullName" :header="t('fine.name')" />
           <Column field="firstBalance" :header="t('fine.firstBalance')">
             <template #body="slotProps">
@@ -140,12 +141,13 @@ import { formatDateTime, formatPrice } from "@/utils/formatterUtils";
 import { useRouter } from "vue-router";
 import { type DineroObject } from 'dinero.js';
 import { floor, min } from "lodash";
-import type { FineHandoutEventResponse } from "@sudosos/sudosos-client";
+import type { FineHandoutEventResponse, UserResponse } from "@sudosos/sudosos-client";
 import { fetchAllPages } from "@sudosos/sudosos-frontend-common";
 import { useToast } from "primevue/usetoast";
 import type { AxiosError } from "axios";
 import { handleError } from "@/utils/errorUtils";
 import Skeleton from "primevue/skeleton";
+import ProgressSpinner from "primevue/progressspinner";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -161,6 +163,7 @@ const { defineField, handleSubmit } = useForm({
 });
 const toast = useToast();
 const selection = ref();
+const isNotifying: Ref<boolean> = ref(false);
 const [firstDate, firstDateAttrs] = defineField('firstDate');
 const [secondDate, secondDateAttrs] = defineField('secondDate');
 const showModal: Ref<boolean> = ref(false);
@@ -191,7 +194,10 @@ const handlePickedDates = handleSubmit(async (values) => {
   userStore.users.forEach((user: any) => {
     userFullNameMap[user.id] = `${user.firstName} ${user.lastName}`;
   });
+  const deletedUsers = userStore.getDeletedUsers.map((u: UserResponse) => u.id);
+  const activeUsers = userStore.getActiveUsers.map((u: UserResponse) => u.id);
   eligibleUsers.value = result.data.map((item: any) => {
+
     const fullName = userFullNameMap[item.id];
 
     // Extract balances from the item
@@ -199,12 +205,14 @@ const handlePickedDates = handleSubmit(async (values) => {
 
     return {
       ...item,
+      // @ts-ignore
+      gewisId: (userStore.users.find((u: UserResponse) => u.id === item.id) as UserResponse).gewisId || undefined,
       fullName,
       // Assign first and last balance based on the first and second items in the balances array
       firstBalance,
       lastBalance: secondBalance,
     };
-  });
+  }).filter((u: any) => !deletedUsers.includes(u.id) && activeUsers.includes(u.id));
   const totalDebtAmount = eligibleUsers.value.reduce((accumulator: number, current: any) => {
     return accumulator + current.firstBalance.amount.amount; // Use getAmount() to access the value
   }, 0);
@@ -254,10 +262,21 @@ const openHandoutEvent = async (eventId: number) => {
 };
 
 const notifyUsers = async () => {
-  await apiService.debtor.notifyAboutFutureFines({
+  isNotifying.value = true;
+  apiService.debtor.notifyAboutFutureFines({
     userIds: selection.value.map((item: any) => item.id),
     referenceDate: secondDate.value?.toISOString() || new Date().toISOString()
-  });
+  })
+    .then(() => {
+      toast.add({
+        summary: t('successMessages.success'),
+        detail: t('successMessages.finesNotified'),
+        life: 3000,
+        severity: 'success',
+      });
+      isNotifying.value = false;
+      selection.value = [];
+    });
 };
 
 const handoutFines = async () => {
@@ -268,14 +287,17 @@ const handoutFines = async () => {
   await apiService.debtor.handoutFines({
     userIds: selection.value.map((item: any) => item.id),
     referenceDate: firstDate.value.toISOString(),
-  }).then(() => {
-    toast.add({
-      summary: t('successMessages.success'),
-      detail: t('successMessages.finesHandedOut'),
-      life: 3000,
-      severity: 'success',
-    });
-  }).catch((err: AxiosError) => handleError(err, toast));
+  })
+    .then(() => {
+      toast.add({
+        summary: t('successMessages.success'),
+        detail: t('successMessages.finesHandedOut'),
+        life: 3000,
+        severity: 'success',
+      });
+    })
+    .catch((err: AxiosError) => handleError(err, toast))
+    .finally(() => selection.value = []);
 };
 </script>
 

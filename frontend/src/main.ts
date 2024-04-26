@@ -37,6 +37,7 @@ import Accordion from "primevue/accordion";
 import Skeleton from "primevue/skeleton";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
+import ProgressSpinner from "primevue/progressspinner";
 const app = createApp(App);
 
 
@@ -73,6 +74,7 @@ app.component('Accordion', Accordion);
 app.component('Skeleton', Skeleton);
 app.component('InputIcon', InputIcon);
 app.component('IconField', IconField);
+app.component('ProgressSpinner', ProgressSpinner);
 
 populateStoresFromToken(apiService);
 app.mount('#app');

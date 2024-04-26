@@ -138,7 +138,7 @@
     "firstBalance": "Eerste saldo",
     "firstDate": "Eerste datum",
     "gewisId": "GEWIS ID",
-    "handout": "Deel boetes uit",
+    "handout": "Handout Fines",
     "handoutEventDetails": "Boete-evenement details",
     "id": "ID",
     "info": "Informatie",
@@ -178,7 +178,7 @@
   "manageProducts": {
     "Add product": "Product toevoegen",
     "Containers": "Containers",
-    "Manage all products and containers": "Beheer alle producten en containers."
+    "Manage all products and containers": "Beheer alle producten en containers"
   },
   "payment": {
     "pay": "betaal"
@@ -227,6 +227,7 @@
     "editPOS": "Verkooppunt is succesvol",
     "fineDeleted": "Boete is succesvol verwijderd.",
     "finesHandedOut": "Boetes zijn succesvol uitgedeeld.",
+    "finesNotified": "Gebruikers succesvol ingelicht.",
     "productCreated": "Het product is aangemaakt!",
     "success": "Gelukt!",
     "transactionDeleted": "Transactie is succesvol verwijderd."
