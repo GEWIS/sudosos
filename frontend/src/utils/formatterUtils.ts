@@ -1,3 +1,4 @@
+
 import type { Dinero } from "@sudosos/sudosos-client";
 
 export function formatDateTime(date: Date): string {

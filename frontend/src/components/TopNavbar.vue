@@ -92,7 +92,7 @@ const handleLogout = () => {
   router.push('/');
 };
 
-const isAdmin = () => {
+const isBoard = () => {
   return authStore.roles.includes(UserRole.BOARD);
 };
 
@@ -124,17 +124,16 @@ const leftItems = computed(() => [
     ]
   },
   {
-    label: t('app.Admin'),
-    visible: isAdmin(),
+    label: t('app.Board'),
+    visible: isBoard(),
     items: [
       {
-        label: t('app.Manage POS'),
-      },
-      {
-        label: t('app.Screens'),
+        label: t('app.User overview'),
+        route: '/user-overview'
       },
       {
         label: t('app.Banners'),
+        route: '/banners'
       },
     ],
   },
@@ -222,17 +221,16 @@ const mobileItems = computed(() => [
     ]
   },
   {
-    label: t('app.Admin'),
-    visible: isAdmin(),
+    label: t('app.Board'),
+    visible: isBoard(),
     items: [
       {
-        label: t('app.Manage POS'),
-      },
-      {
-        label: t('app.Screens'),
+        label: t('app.User overview'),
+        route: '/user-overview'
       },
       {
         label: t('app.Banners'),
+        route: '/banner'
       },
     ],
   },
