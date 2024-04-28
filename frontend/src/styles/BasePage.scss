@@ -16,7 +16,8 @@
   width: 100%;
   padding-left: 15px;
   padding-right: 15px;
-  margin: 4rem auto 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .content-wrapper {
@@ -39,15 +40,10 @@
   width: 100%;
 }
 
-@media (min-width: 992px) {
-  .page-container {
-    max-width: 960px;
-  }
-}
 
-@media (min-width: 1200px) {
+@media (min-width: 60rem) {
   .page-container {
-    max-width: 1140px;
+    max-width: 60rem;
   }
 }
 

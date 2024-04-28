@@ -110,10 +110,6 @@ const leftItems = computed(() => [
     route: '/transactions'
   },
   {
-    label: t('app.Balance'),
-    route: '/balance',
-  },
-  {
     label: t('app.Points of Sale'),
     visible: isSeller(),
     items: [
@@ -183,10 +179,6 @@ const rightItems = computed(() =>[
     ]
   },
   {
-    label: balance.value,
-    route: '/balance',
-  },
-  {
     label: '',
     icon: 'pi pi-globe',
     items: [
@@ -214,10 +206,6 @@ const mobileItems = computed(() => [
   {
     label: t('app.Transactions'),
     route: '/transactions'
-  },
-  {
-    label: t('app.Balance'),
-    route: '/balance',
   },
   {
     label: t('app.Points of Sale'),

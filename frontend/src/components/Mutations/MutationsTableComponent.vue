@@ -91,7 +91,7 @@ import type {
   PaginatedFinancialMutationResponse,
   TransferResponse
 } from "@sudosos/sudosos-client";
-import { onBeforeMount, type Ref } from "vue";
+import { onBeforeMount, onMounted, type Ref } from "vue";
 import { ref } from "vue";
 import MutationModal from "@/components/Mutations/MutationModal.vue";
 import {
@@ -129,7 +129,10 @@ const props = defineProps({
     type: Function,
     required: true,
   },
-
+  rowsAmount: {
+    type: Number,
+    required: false
+  }
 });
 
 const mutations = ref<FinancialMutation[]>(new Array(10));
@@ -139,8 +142,9 @@ const mutationShow = ref<boolean>(false);
 const totalRecords = ref<number>(0);
 const isLoading: Ref<boolean> = ref(true);
 const { t } = useI18n();
-const rows: Ref<number> = ref(10);
-onBeforeMount( async () => {
+
+const rows: Ref<number> = ref(props.rowsAmount || 10);
+onMounted( async () => {
   const initialMutations = await getMutations(rows.value, 0);
   mutations.value = parseFinancialMutations(initialMutations);
   totalRecords.value = initialMutations._pagination.count || 0;

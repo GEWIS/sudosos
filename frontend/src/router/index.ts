@@ -7,7 +7,6 @@ import PublicLayout from "@/layout/PublicLayout.vue";
 import DashboardLayout from "@/layout/DashboardLayout.vue";
 import HomeView from '../views/HomeView.vue';
 import LoginView from "@/views/LoginView.vue";
-import BalanceView from "@/views/BalanceView.vue";
 import UserOverView from '../views/UserOverView.vue';
 import SingleUserView from "@/views/SingleUserView.vue";
 import ProductsContainersView from "@/views/ProductsContainersView.vue";
@@ -95,11 +94,6 @@ const router = createRouter({
           path: '/',
           component: HomeView,
           name: 'home'
-        },
-        {
-          path: '/balance',
-          component: BalanceView,
-          name: 'balance'
         },
         {
           path: '/point-of-sale/overview',

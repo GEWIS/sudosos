@@ -6,7 +6,6 @@
   "app": {
     "Admin": "Admin",
     "BAC": "BAC",
-    "Balance": "Balance",
     "Banners": "Banners",
     "Create": "Create",
     "Create POS": "Create POS",
@@ -25,11 +24,13 @@
     "User overview": "User overview"
   },
   "balance": {
-    "Balance increase amount": "Balance increase amount",
+    "Balance increase amount": "Increase balance:",
+    "Payment button": "Top up",
     "Increase balance": "Increase balance",
     "Price": "Price",
-    "Start payment": "Start payment",
-    "minPayment": "Note: minimum topup is €10 or needs to pay off debt."
+    "minPayment": "Note: minimum topup is €10 or needs to pay off debt.",
+    "Balance after": "Balance after:",
+    "Start payment": "Start payment"
   },
   "c_ContainerAssign": {
     "Assign product": "Assign product",

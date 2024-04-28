@@ -6,7 +6,6 @@
   "app": {
     "Admin": "Beheer",
     "BAC": "BAC",
-    "Balance": "Saldo",
     "Banners": "Banners",
     "Create": "Aanmaken",
     "Create POS": "Creeër Verkooppunt",
@@ -25,11 +24,13 @@
     "User overview": "Gebruikers overzicht"
   },
   "balance": {
-    "Balance increase amount": "Saldo verhogen met:",
+    "Balance increase amount": "Verhoog saldo:",
+    "Payment button": "Betaal",
     "Increase balance": "Verhoog saldo",
     "Price": "Prijs",
     "Start payment": "Betaal",
-    "minPayment": "Let op: minimum bedrag is €10 of moet schulden afbetalen."
+    "minPayment": "Let op: minimum bedrag is €10 of moet schulden afbetalen.",
+    "Balance after": "Balans na opwaarderen:"
   },
   "c_ContainerAssign": {
     "Assign product": "Product toewijzen",

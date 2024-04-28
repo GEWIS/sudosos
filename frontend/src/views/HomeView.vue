@@ -1,12 +1,12 @@
 <template>
   <div class="page-container flex flex-column">
     <div class="page-title">{{ $t('home.Overview') }}</div>
-    <div class="content-wrapper gap-5 flex md:flex-row flex-column">
+    <div class="content-wrapper gap-5 flex md:flex-column flex-column">
       <UserInfoComponent
         :user="current.user as UserResponse"
-        class="xl:hidden lg:hidden"
+        class="hidden"
       />
-      <BalanceComponent :showOption="true"/>
+      <BalanceWithTopupComponent />
       <MutationsTableComponent
           :callback-function="getUserMutations"
           :header="$t('c_recentTransactionsTable.recent transactions')"
@@ -14,6 +14,7 @@
           :paginator="false"
           :modal="false"
           routerLink="transaction-view"
+          :rows-amount=6
       />
     </div>
   </div>
@@ -21,6 +22,7 @@
 
 <script setup lang="ts">
 import BalanceComponent from '@/components/BalanceComponent.vue';
+import BalanceWithTopupComponent from '@/components/BalanceWithTopupComponent.vue';
 import MutationsTableComponent from '@/components/Mutations/MutationsTableComponent.vue';
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
 import apiService from '@/services/ApiService';
