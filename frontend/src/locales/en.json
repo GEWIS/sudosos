@@ -285,5 +285,12 @@
     "passwordUpdated": "Password successfully updated",
     "updatedUserInfo": "Succesfully updated user info.",
     "userInfoUpdated": "User information successfully updated"
+  },
+  "contact": {
+    "Contact": "Contact",
+    "Main contact": "Main contact",
+    "Incorrect transactions": "Incorrect transactions",
+    "Security": "Security",
+    "Feature requests": "Feature requests"
   }
 }

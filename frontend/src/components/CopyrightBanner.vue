@@ -1,16 +1,19 @@
 <template>
   <footer>
-  <span class="copyright">
-    <b>{{ $t('login.copyright') }}</b>
-  </span>
-<!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
-  <span class="separator"> | </span>
-  <TermsOfServiceModal />
-</footer>
+    <span class="copyright">
+      <b>{{ $t('login.copyright') }}</b>
+    </span>
+    <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
+    <span class="separator"> | </span>
+    <TermsOfServiceModal />
+    <span class="mx-2"></span>
+    <ContactModal />
+  </footer>
 </template>
 
 <script setup lang="ts">
-import TermsOfServiceModal from './TermsOfServiceModal.vue';
+import TermsOfServiceModal from '@/components/TermsOfServiceModal.vue';
+import ContactModal from '@/components/ContactModal.vue';
 
 </script>
 
