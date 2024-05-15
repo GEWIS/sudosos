@@ -15,8 +15,6 @@ $colors: (
 
 //reused color variables
 $shade000:#ffffff !default;              //surface
-// $shade100:#efefef !default;              //header background
-// $shade000:#f8f8f8 !default;              //surface
 $shade100:#f8f8f8 !default;              //header background
 $shade200:#efefef !default;              //hover background
 $shade300:#d9d9d9 !default;              //border, divider
@@ -378,8 +376,9 @@ $panelContentTextColor:$shade900 !default;
 $panelContentPadding: 1rem !default;
 
 $panelFooterBorder:1px solid $shade300 !default;
-$panelFooterBg:$shade100 !default;
-$panelFooterTextColor:$shade900 !default;
+$panelFooterBg:#f2f2f2 !default;
+$panelFooterTextColor:#969696 !default;
+$panelFooterTextHoverColor: #636363 !default;
 $panelFooterPadding:0 !default;
 
 

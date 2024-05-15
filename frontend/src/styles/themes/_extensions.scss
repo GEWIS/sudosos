@@ -1,4 +1,5 @@
 /* Customizations to the primevue base theme should be defined here */
+
 body {
   min-height: 100vh;
   transition: color 0.5s, background-color 0.5s;
@@ -422,3 +423,41 @@ body {
     }
   }
 }
+
+
+/**
+ * Style cards more like the GEWIS website
+ */
+.p-panel  {
+  .p-panel-header {
+    border-radius: 0;
+    border: 0;
+
+
+    .p-panel-title {
+      font-weight: 600;
+    }
+  }
+
+  .p-panel-content {
+    border-radius: 0;
+    border: 0;
+    padding: 1.25rem;
+  }
+
+  .p-panel-footer {
+    border-radius: 0;
+    border: 0;
+
+    background-color: $panelFooterBg;
+    button {
+      background-color: rgba(0,0,0,0); /* transparent */
+      padding: 1.25rem;
+      color: $panelFooterTextColor;
+    }
+    button:hover {
+      color: $panelFooterTextHoverColor;
+    }
+  }
+}
+

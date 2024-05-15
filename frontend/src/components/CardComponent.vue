@@ -1,15 +1,14 @@
 <template>
-  <Panel :header="header.toUpperCase()" class="text-primary">
+  <Panel :header="header.toUpperCase()">
     <template #icons>
       <slot name="topAction" />
     </template>
     <slot />
     <template v-if="action" #footer>
       <Button
-        severity="secondary"
         id="bottom-left-button"
         @click="handleClick"
-        class="w-full text-primary surface-100 border-none px-3 py-3 font-normal"
+        class="w-full border-none border-noround font-normal"
       >
         {{ action.toUpperCase() }}
       </Button>
