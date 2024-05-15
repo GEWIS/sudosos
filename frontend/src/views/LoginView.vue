@@ -45,7 +45,11 @@ const hasToken = () => {
 onBeforeMount(() => {
   if (route.query.token !== undefined) {
     const token = route.query.token as string;
-    authStore.gewisWebLogin(uuid(), token, apiService).catch(() => {
+    authStore.gewisWebLogin(uuid(), token, apiService)
+    .then(() => {
+      router.push('/')
+    })
+    .catch(() => {
       router.replace({ path: "/error" });
     });
   }

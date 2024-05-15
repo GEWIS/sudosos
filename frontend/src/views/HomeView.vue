@@ -2,10 +2,6 @@
   <div class="page-container flex flex-column">
     <div class="page-title">{{ $t('home.Overview') }}</div>
     <div class="content-wrapper gap-5 flex md:flex-column flex-column">
-      <UserInfoComponent
-        :user="current.user as UserResponse"
-        class="hidden"
-      />
       <BalanceWithTopupComponent />
       <MutationsTableComponent
           :callback-function="getUserMutations"
@@ -21,7 +17,6 @@
 </template>
 
 <script setup lang="ts">
-import BalanceComponent from '@/components/BalanceComponent.vue';
 import BalanceWithTopupComponent from '@/components/BalanceWithTopupComponent.vue';
 import MutationsTableComponent from '@/components/Mutations/MutationsTableComponent.vue';
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
@@ -30,7 +25,6 @@ import type { PaginatedFinancialMutationResponse, UserResponse } from "@sudosos/
 import router from "@/router";
 import { handleError } from "@/utils/errorUtils";
 import { useToast } from "primevue/usetoast";
-import UserInfoComponent from "@/components/UserInfoComponent.vue";
 import { storeToRefs } from "pinia";
 
 const authStore = useAuthStore();
