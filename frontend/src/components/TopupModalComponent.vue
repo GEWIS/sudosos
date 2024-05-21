@@ -35,7 +35,7 @@ const loading = ref(false);
 const visible = ref(false);
 const dinero = computed((): Dinero => {
   return {
-    amount: props.amount * 100,
+    amount: Math.round(props.amount * 100),
     precision: 2,
     currency: 'EUR'
   };
@@ -54,6 +54,7 @@ const paymentElement = ref();
 const elements = ref();
 onBeforeMount(async () => {
   stripe.value = await loadStripe(`${import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY}`);
+
 });
 
 const pay = async () => {
