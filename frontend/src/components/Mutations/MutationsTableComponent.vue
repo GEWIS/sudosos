@@ -8,17 +8,19 @@
       lazy
       @page="onPage($event)"
       :totalRecords="totalRecords"
+      :rowClass="isSomeoneElsesTransaction"
     >
       <Column field="moment" style="width: 30%" :header="$t('transactions.when')">
         <template #body v-if="isLoading">
-          <Skeleton class="w-6 my-1 h-1rem surface-300"/>
+          <Skeleton class="w-6 my-1 h-1rem surface-300" />
         </template>
         <template #body="mutation" v-else>
           <span class="hidden sm:block">{{ mutation.data.moment.toDateString() }}</span>
-          <span class="sm:hidden">{{
-            mutation.data.moment.toLocaleDateString('nl-NL', {
-              dateStyle: 'short'
-            })
+          <span class="sm:hidden"
+            >{{
+              mutation.data.moment.toLocaleDateString('nl-NL', {
+                dateStyle: 'short'
+              })
             }}
           </span>
         </template>
@@ -26,7 +28,7 @@
 
       <Column field="mutationDescription" style="width: 30%" :header="$t('transactions.what')">
         <template #body v-if="isLoading">
-          <Skeleton class="w-6 my-1 h-1rem surface-300"/>
+          <Skeleton class="w-6 my-1 h-1rem surface-300" />
         </template>
         <template #body="mutation" v-else>
           {{ getDescription(mutation.data) }}
@@ -35,18 +37,26 @@
 
       <Column field="change" style="width: 30%" :header="$t('transactions.amount')">
         <template #body v-if="isLoading">
-          <Skeleton class="w-3 my-1 h-1rem surface-300"/>
+          <Skeleton class="w-3 my-1 h-1rem surface-300" />
         </template>
         <template #body="mutation" v-else>
           <div
-            v-if="mutation.data.type == FinancialMutationType.DEPOSIT
-            || mutation.data.type == FinancialMutationType.INVOICE
-            || mutation.data.type == FinancialMutationType.WAIVED_FINE"
-            style="color: #198754" class="font-bold">
+            v-if="
+              mutation.data.type == FinancialMutationType.DEPOSIT ||
+              mutation.data.type == FinancialMutationType.INVOICE ||
+              mutation.data.type == FinancialMutationType.WAIVED_FINE
+            "
+            style="color: #198754"
+            class="font-bold"
+          >
             {{ formatPrice((mutation.data as FinancialMutation).amount) }}
           </div>
 
-          <div v-else-if="mutation.data.type == FinancialMutationType.FINE" style="color: #d40000" class="font-bold">
+          <div
+            v-else-if="mutation.data.type == FinancialMutationType.FINE"
+            style="color: #d40000"
+            class="font-bold"
+          >
             {{ formatPrice((mutation.data as FinancialMutation).amount, true) }}
           </div>
 
@@ -58,7 +68,7 @@
 
       <Column field="" style="width: 10%">
         <template #body v-if="isLoading">
-          <Skeleton class="w-3 my-1 h-1rem surface-300"/>
+          <Skeleton class="w-3 my-1 h-1rem surface-300" />
         </template>
         <template #body="mutation" v-else>
           <i
@@ -78,56 +88,56 @@
 </template>
 
 <script lang="ts" setup>
-import type { DataTablePageEvent } from "primevue/datatable";
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
-import CardComponent from "@/components/CardComponent.vue";
-import Skeleton from "primevue/skeleton";
-import { formatPrice } from "@/utils/formatterUtils";
+import type { DataTablePageEvent } from 'primevue/datatable';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import CardComponent from '@/components/CardComponent.vue';
+import Skeleton from 'primevue/skeleton';
+import { formatPrice } from '@/utils/formatterUtils';
 import type {
   BaseTransactionResponse,
   FinancialMutationResponse,
   PaginatedBaseTransactionResponse,
   PaginatedFinancialMutationResponse,
   TransferResponse
-} from "@sudosos/sudosos-client";
-import { onBeforeMount, onMounted, type Ref } from "vue";
-import { ref } from "vue";
-import MutationModal from "@/components/Mutations/MutationModal.vue";
+} from '@sudosos/sudosos-client';
+import { onMounted, type Ref, ref } from 'vue';
+import MutationModal from '@/components/Mutations/MutationModal.vue';
 import {
   type FinancialMutation,
   FinancialMutationType,
   parseFinancialTransactions,
   parseTransaction,
   parseTransfer
-} from "@/utils/mutationUtils";
-import "primeicons/primeicons.css";
-import { useI18n } from "vue-i18n";
+} from '@/utils/mutationUtils';
+import 'primeicons/primeicons.css';
+import { useI18n } from 'vue-i18n';
+import { useUserStore } from '@sudosos/sudosos-frontend-common';
 
 const props = defineProps({
   action: {
     type: String,
-    required: false,
+    required: false
   },
   header: {
     type: String,
-    required: true,
+    required: true
   },
   routerLink: {
     type: String,
-    required: false,
+    required: false
   },
   paginator: {
     type: Boolean,
-    required: true,
+    required: true
   },
   modal: {
     type: Boolean,
-    required: true,
+    required: true
   },
   callbackFunction: {
     type: Function,
-    required: true,
+    required: true
   },
   rowsAmount: {
     type: Number,
@@ -142,9 +152,10 @@ const mutationShow = ref<boolean>(false);
 const totalRecords = ref<number>(0);
 const isLoading: Ref<boolean> = ref(true);
 const { t } = useI18n();
+const userStore = useUserStore();
 
 const rows: Ref<number> = ref(props.rowsAmount || 10);
-onMounted( async () => {
+onMounted(async () => {
   const initialMutations = await getMutations(rows.value, 0);
   mutations.value = parseFinancialMutations(initialMutations);
   totalRecords.value = initialMutations._pagination.count || 0;
@@ -155,19 +166,20 @@ function isPaginatedBaseTransactionResponse(obj: any): obj is PaginatedBaseTrans
   return obj.records && obj.records.length > 0 && 'id' in obj.records[0];
 }
 
-function parseFinancialMutations(mutations: PaginatedFinancialMutationResponse | PaginatedBaseTransactionResponse)
-  : FinancialMutation[] {
+function parseFinancialMutations(
+  mutations: PaginatedFinancialMutationResponse | PaginatedBaseTransactionResponse
+): FinancialMutation[] {
   let result: FinancialMutation[] = [];
-  if(isPaginatedBaseTransactionResponse(mutations)) {
+  if (isPaginatedBaseTransactionResponse(mutations)) {
     mutations.records.forEach((mutation: BaseTransactionResponse) => {
       result.push(parseTransaction(mutation));
     });
   } else {
     mutations.records.forEach((mutation: FinancialMutationResponse) => {
-      if (mutation.type === "transaction") {
+      if (mutation.type === 'transaction') {
         const transaction = mutation.mutation as BaseTransactionResponse;
         result.push(parseTransaction(transaction));
-      } else if (mutation.type === "transfer") {
+      } else if (mutation.type === 'transfer') {
         const transfer = mutation.mutation as TransferResponse;
         result.push(parseTransfer(transfer));
       }
@@ -184,12 +196,15 @@ function openModal(id: number, type: FinancialMutationType) {
 
 async function onPage(event: DataTablePageEvent) {
   const newTransactions = await getMutations(event.rows, event.first);
-  mutations.value = isPaginatedBaseTransactionResponse(newTransactions) ?
-    parseFinancialTransactions(newTransactions) : parseFinancialMutations(newTransactions);
+  mutations.value = isPaginatedBaseTransactionResponse(newTransactions)
+    ? parseFinancialTransactions(newTransactions)
+    : parseFinancialMutations(newTransactions);
 }
 
-async function getMutations(take: number, skip: number):
-  Promise<PaginatedBaseTransactionResponse | PaginatedFinancialMutationResponse> {
+async function getMutations(
+  take: number,
+  skip: number
+): Promise<PaginatedBaseTransactionResponse | PaginatedFinancialMutationResponse> {
   return await props.callbackFunction(take, skip);
 }
 
@@ -215,6 +230,12 @@ function getDescription(mutation: FinancialMutation) {
     }
   }
 }
+
+const isSomeoneElsesTransaction = (data: FinancialMutation) => {
+  if (isLoading.value) return;
+  const isOtherTransaction = data.type === FinancialMutationType.TRANSACTION && data.from?.id != userStore.current.user!!.id;
+  return [{ 'font-italic': isOtherTransaction, 'text-500': isOtherTransaction }];
+};
 </script>
 
 <style lang="scss" scoped></style>
