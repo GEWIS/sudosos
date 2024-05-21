@@ -45,7 +45,8 @@
     <!-- Row for Picture -->
     <div class="flex flex-row justify-content-between">
       <h4 class="my-0">{{ $t("c_productInfoModal.Picture") }}</h4>
-      <img class="max-w-10rem max-h-10rem w-full h-full" :src="getProductImageSrc(product)" :alt="product.name">
+      <img class="max-w-10rem max-h-10rem h-full" :src="getProductImageSrc(product)" :alt="product.name">
+
     </div>
     <br>
     <div class="flex justify-content-end">

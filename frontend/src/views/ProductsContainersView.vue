@@ -20,7 +20,6 @@
                 style: 'table-layout: fixed; width: 100%;'
               }
           }"
-          lazy
         >
           <template #header>
             <div class="flex flex-row justify-content-between">
