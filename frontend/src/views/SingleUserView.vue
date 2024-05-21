@@ -6,7 +6,7 @@
     <div class="flex flex-column md:flex-row flex-wrap justify-content-between gap-5">
       <!--      TODO: Refactor to extract this component-->
       <!--      See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/21-->
-      <CardComponent :header="$t('userDetails.Personal Info')" class="">
+      <CardComponent :header="$t('userDetails.Personal Info')">
         <form @submit="handleEditUser">
           <small v-if="!isLocal">{{ $t('profile.notManagedThroughSudoSOS') }}</small>
           <div class="field">
@@ -26,7 +26,7 @@
           <div class="field">
             <label for="type">{{ $t("userDetails.Usertype") }}</label>
             <InputText id="userType" disabled :placeholder="userTypeDisplay"
-              v-bind="userTypeAttrs" class="w-full" />
+                       v-bind="userTypeAttrs" class="w-full" />
             <span class="error-text">{{ errors.userType }}</span>
           </div>
           <div class="field">
@@ -90,7 +90,7 @@ const [firstName, firstNameAttrs] = defineField('firstName', {});
 const [lastName, lastNameAttrs] = defineField('lastName', {});
 const [email, emailAttrs] = defineField('email', {});
 const [isActive, isActiveAttrs] = defineField('isActive', {});
-const [userTypeAttrs] = defineField('userType', {});
+const [userType, userTypeAttrs] = defineField('userType', {});
 const [canGoIntoDebt, canGoIntoDebtAttrs] = defineField('canGoIntoDebt', {});
 const [ofAge, ofAgeAttrs] = defineField('ofAge', {});
 
