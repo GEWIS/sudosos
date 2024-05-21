@@ -10,6 +10,7 @@
     "Create": "Create",
     "Create POS": "Create POS",
     "English": "English",
+    "Manage POS": "Manage POS",
     "Manage products": "Manage products",
     "Netherlands": "Nederlands",
     "Overview": "POS Overview",
@@ -73,6 +74,49 @@
   "c_confirmationModal": {
     "Save": "Save"
   },
+  "c_recentTransactionsTable": {
+    "fine": "Fine",
+    "invoice": "Invoice",
+    "payment": "Payment",
+    "topUp": "Top up",
+    "unknown": "Could not find",
+    "waivedFine": "Waived Fine",
+    "all transactions": "all transactions",
+    "recent transactions": "recent transactions"
+  },
+  "c_userInfo": {
+    "quick": "Quick Overview"
+  },
+  "login": {
+    "Back": "Back to home",
+    "Back to login": "Go back to login",
+    "Confirm password": "Confirm new password",
+    "Email sent": "If there exists an external account on this email address, an email has been sent to {email} with instructions on how to reset your password.",
+    "Enter email": "Enter email",
+    "Login": "Login",
+    "Login via GEWIS": "Login via GEWIS",
+    "New password": "New password",
+    "Password": "Password",
+    "Password reset": "Reset password (External accounts only)",
+    "Required field": "This is a required field.",
+    "Reset": "Reset password",
+    "SudoSOS": "SudoSOS",
+    "SudoSOS Login": "SudoSOS Login",
+    "Username": "Username",
+    "copyright": "© 2023 GEWIS",
+    "localAccount": "Login using local account"
+  },
+  "manageProducts": {
+    "Add product": "Add product",
+    "Containers": "Containers",
+    "Manage all products and containers": "Manage all products and containers"
+  },
+  "payment": {
+    "pay": "pay"
+  },
+  "pointOfSaleOverview": {
+    "Point of sale overview": "Point of sale overview"
+  },
   "c_containerEditModal": {
     "Name": "Name",
     "Public": "Public",
@@ -111,22 +155,9 @@
     "delete": "Delete Product from container",
     "title": "Product information"
   },
-  "c_recentTransactionsTable": {
-    "all transactions": "all transactions",
-    "fine": "Fine",
-    "invoice": "Invoice",
-    "payment": "Payment",
-    "recent transactions": "recent transactions",
-    "topUp": "Top up",
-    "unknown": "Could not find",
-    "waivedFine": "Waived Fine"
-  },
   "c_transactionDetailsModal": {
     "delete": "Delete",
     "transactionDetails": "Transaction Details"
-  },
-  "c_userInfo": {
-    "quick": "Quick Overview"
   },
   "c_userTable": {
     "Select Type": "Select Type",
@@ -174,36 +205,6 @@
   "home": {
     "Overview": "Overview"
   },
-  "login": {
-    "Back": "Back to home",
-    "Back to login": "Go back to login",
-    "Confirm password": "Confirm new password",
-    "Email sent": "If there exists an external account on this email address, an email has been sent to {email} with instructions on how to reset your password.",
-    "Enter email": "Enter email",
-    "Login": "Login",
-    "Login via GEWIS": "Login via GEWIS",
-    "New password": "New password",
-    "Password": "Password",
-    "Password reset": "Reset password (External accounts only)",
-    "Required field": "This is a required field.",
-    "Reset": "Reset password",
-    "SudoSOS": "SudoSOS",
-    "SudoSOS Login": "SudoSOS Login",
-    "Username": "Username",
-    "copyright": "© 2023 GEWIS",
-    "localAccount": "Login using local account"
-  },
-  "manageProducts": {
-    "Add product": "Add product",
-    "Containers": "Containers",
-    "Manage all products and containers": "Manage all products and containers"
-  },
-  "payment": {
-    "pay": "pay"
-  },
-  "pointOfSaleOverview": {
-    "Point of sale overview": "Point of sale overview"
-  },
   "posInfo": {
     "Edit": "Edit",
     "General": "General",
@@ -218,6 +219,7 @@
     "changeUserInfo": "Change user info",
     "emailAddress": "Email address",
     "firstName": "First name",
+    "individualDataAnalysis": "Individual Data Analysis:",
     "keyGet": "Get API key",
     "keyGetNew": "Get new API key",
     "keyNotSaved": "NOTE: your API key is not saved so copy it now",

@@ -3,12 +3,12 @@
     <form id="update-pin-form" @submit="changeUserPin">
       <div class="field">
         <p>{{ $t('profile.pinNew')}}</p>
-        <InputText v-bind="pin" />
+        <InputText type="password" v-bind="pin" />
         <small class="warning">{{errors.pin || '&nbsp;'}}</small>
       </div>
       <div class="field">
         <p>{{ $t('profile.pinConfirm')}}</p>
-        <InputText v-bind="pinConfirm" />
+        <InputText type="password" v-bind="pinConfirm" />
         <small class="warning">{{errors.pinConfirm || '&nbsp;'}}</small>
       </div>
       <div style="margin-top: 1rem" class="flex justify-content-end">
@@ -27,7 +27,6 @@ import { useToast } from "primevue/usetoast";
 import { useI18n } from "vue-i18n";
 import { editPinSchema } from "@/utils/validation-schema";
 import { handleError } from "@/utils/errorUtils";
-
 const userStore = useUserStore();
 const toast = useToast();
 const { t } = useI18n();

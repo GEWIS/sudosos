@@ -41,6 +41,7 @@ import Skeleton from "primevue/skeleton";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import ProgressSpinner from "primevue/progressspinner";
+import ToggleButton from "primevue/togglebutton";
 const app = createApp(App);
 
 
@@ -81,6 +82,7 @@ app.component('IconField', IconField);
 app.component('ProgressSpinner', ProgressSpinner);
 app.component('SelectButton', SelectButton);
 app.directive('tooltip', Tooltip);
+app.component('ToggleButton', ToggleButton);
 
 populateStoresFromToken(apiService);
 app.mount('#app');

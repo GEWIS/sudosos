@@ -1,7 +1,7 @@
 {
   "apiError": {
-    "500": "Iets gaat fout, open alstublieft een probleem op {link} waarin u het probleem beschrijft.",
-    "error": "Fout"
+    "error": "Fout",
+    "500": "Iets gaat fout, open alstublieft een probleem op {link} waarin u het probleem beschrijft."
   },
   "app": {
     "BAC": "BAC",
@@ -193,16 +193,16 @@
     "copyright": "© 2023 GEWIS",
     "localAccount": "Login met een lokaal account"
   },
-  "manageProducts": {
-    "Add product": "Product toevoegen",
-    "Containers": "Containers",
-    "Manage all products and containers": "Beheer alle producten en containers"
-  },
   "payment": {
     "pay": "betaal"
   },
   "pointOfSaleOverview": {
     "Point of sale overview": "Verkooppunt overzicht"
+  },
+  "manageProducts": {
+    "Add product": "Product toevoegen",
+    "Containers": "Containers",
+    "Manage all products and containers": "Beheer alle producten en containers"
   },
   "posInfo": {
     "Edit": "Bewerken",
@@ -213,6 +213,7 @@
     "ownedBy": "Eigendom van "
   },
   "profile": {
+    "individualDataAnalysis": "Individuele Data Analyse:",
     "canGoIntoDebt": "Gebruiker mag in de schuld",
     "changePassword": "Verander wachtwoord",
     "changeUserInfo": "Verander gebruikersinformatie",
