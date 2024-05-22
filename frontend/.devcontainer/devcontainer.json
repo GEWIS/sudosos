@@ -12,9 +12,12 @@
             ]
         }
     },
+    // Inject env variables
+    "runArgs": [
+        "--env-file",
+        ".env-example"
+    ],
     // Copy the env command
-    "postCreateCommand": [
-        "cp .env-example .env",
-        "npm install"
-    ]
+    "postCreateCommand": "npm install"
+    
 }
