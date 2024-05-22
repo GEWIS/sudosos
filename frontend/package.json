@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
-    "lint": "eslint . --ext .vue,.js,.jsx,.mjs,.ts,.tsx,.cts,.mts,.json --fix --ignore-path .gitignore",
+    "lint": "eslint . --ext .vue,.js,.jsx,.mjs,.ts,.tsx,.cts,.mts,.json --ignore-path .gitignore",
     "lint-fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts,.json --fix --ignore-path .gitignore --fix",
     "format": "prettier --write src/"
   },
@@ -18,6 +18,7 @@
     "@sudosos/sudosos-client": "github:GEWIS/sudosos-client",
     "@sudosos/sudosos-frontend-common": "github:GEWIS/sudosos-frontend-common",
     "@types/dinero.js": "^1.9.4",
+    "@vee-validate/rules": "^4.12.8",
     "@vee-validate/yup": "^4.11.1",
     "dinero.js": "^1.9.1",
     "fuse.js": "^7.0.0",

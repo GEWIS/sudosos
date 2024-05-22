@@ -70,7 +70,7 @@ const options = [
 const displayedBanners = computed(() => {
     return props.banners
         .filter(b => {
-            const appliedFilters = filters.value?.map(f => f.type) || []
+            const appliedFilters = filters.value?.map(f => f.type) || [];
 
             // Filters active banners
             if (appliedFilters.includes(Filter.ACTIVE) && !b.active) return false;

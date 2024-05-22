@@ -1,6 +1,3 @@
-/* eslint vue/multi-word-component-names: 0 */
-/* eslint vue/no-reserved-component-names: 0 */
-
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import { createI18n } from 'vue-i18n';
@@ -42,23 +39,18 @@ import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import ProgressSpinner from "primevue/progressspinner";
 import ToggleButton from "primevue/togglebutton";
+import { setLocale as yupSetLocale } from 'yup';
+import i18n from './utils/i18nUtils';
+
 const app = createApp(App);
 
 
-const i18n = createI18n({
-    locale: localStorage.getItem('locale') || 'en',
-    fallbackLocale: 'en',
-    legacy: false,
-    globalInjection: true,
-    messages: {
-        en,
-        nl
-    },
-});
+
+app.use(i18n);
 app.use(createPinia());
 app.use(router);
 app.use(PrimeVue);
-app.use(i18n);
+
 app.use(ToastService);
 
 app.component('Button', Button);

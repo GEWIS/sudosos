@@ -2,6 +2,9 @@ import { toTypedSchema } from "@vee-validate/yup";
 import * as yup from "yup";
 import { ref } from "vue";
 import type { Ref } from "vue";
+import i18n from './i18nUtils';
+
+const t = i18n.global.t;
 
 export const userDetailsSchema = toTypedSchema(
     yup.object({
@@ -26,17 +29,17 @@ export const simpleUserDetailsSchema = toTypedSchema(
 export const editPasswordSchema = toTypedSchema(
   yup.object({
     password: yup.string().required(),
-    passwordConfirm: yup.string().required().oneOf([yup.ref('password')], 'Passwords must match'),
+    passwordConfirm: yup.string().required().oneOf([yup.ref('password')], t('validation.password.match')),
   })
 );
 
 export const editPinSchema = toTypedSchema(
   yup.object({
     pin: yup.string().required()
-      .matches(/^[0-9]+$/, "Must be only digits")
-      .min(4, 'Must be exactly 4 digits')
-      .max(4, 'Must be exactly 4 digits'),
-    pinConfirm: yup.string().required().oneOf([yup.ref('pin')], 'PINs must match'),
+      .matches(/^[0-9]+$/, t('validation.pin.onlyDigits'))
+      .min(4, t('validation.string.exact', { len: '4' } ))
+      .max(4, t('validation.string.exact', { len: '4' } )),
+    pinConfirm: yup.string().required().oneOf([yup.ref('pin')], t('validation.pin.match')),
   })
 );
 
