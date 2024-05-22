@@ -253,7 +253,8 @@
     "finesNotified": "Gebruikers succesvol ingelicht.",
     "productCreated": "Het product is aangemaakt!",
     "success": "Gelukt!",
-    "transactionDeleted": "Transactie is succesvol verwijderd."
+    "transactionDeleted": "Transactie is succesvol verwijderd.",
+    "resetPassword": "Wachtwoord is succesvol gewijzigd."
   },
   "termsOfService": {
     "acceptFirst": "Accepteer de Voorwaarden",

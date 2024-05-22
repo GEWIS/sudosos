@@ -338,7 +338,8 @@
     "finesNotified": "Succesfully notified users.",
     "productCreated": "Successfully created product.",
     "success": "Success",
-    "transactionDeleted": "Successfully deleted transaction."
+    "transactionDeleted": "Successfully deleted transaction.",
+    "resetPassword": "Successfully reset password."
   },
   "termsOfService": {
     "acceptFirst": "Accept the Terms of Service",
