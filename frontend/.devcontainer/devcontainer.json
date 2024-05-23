@@ -1,0 +1,23 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/javascript-node
+{
+    "name": "SudoSOS",
+    // Configure tool-specific properties.
+    "customizations": {
+        // Configure properties specific to VS Code.
+        "vscode": {
+            "settings": {},
+            "extensions": [
+                "Vue.volar"
+            ]
+        }
+    },
+    // Inject env variables
+    "runArgs": [
+        "--env-file",
+        ".env-example"
+    ],
+    // Copy the env command
+    "postCreateCommand": "npm install"
+    
+}
