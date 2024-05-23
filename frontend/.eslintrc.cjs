@@ -17,7 +17,13 @@ module.exports = {
     "@intlify/vue-i18n/no-raw-text": 'error',
     "@intlify/vue-i18n/no-missing-keys": 'error',
     "@intlify/vue-i18n/no-missing-keys-in-other-locales": "error",
-    "@intlify/vue-i18n/no-unused-keys": ['error', { 'enableFix': true }],
+    "@intlify/vue-i18n/no-unused-keys": [
+      'error',
+      { 'enableFix': true ,
+      "extensions": [".js", ".vue", ".ts"]
+
+      }
+    ],
     "@intlify/vue-i18n/no-duplicate-keys-in-locale": 'error',
     'max-len': ['warn', { "code": 120 } ],
     'semi': ['error', 'always'],

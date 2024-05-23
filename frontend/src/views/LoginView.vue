@@ -47,7 +47,7 @@ onBeforeMount(() => {
     const token = route.query.token as string;
     authStore.gewisWebLogin(uuid(), token, apiService)
     .then(() => {
-      router.push('/')
+      router.push('/');
     })
     .catch(() => {
       router.replace({ path: "/error" });

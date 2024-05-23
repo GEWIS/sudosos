@@ -1,7 +1,7 @@
 {
   "apiError": {
-    "error": "Fout",
-    "500": "Iets gaat fout, open alstublieft een probleem op {link} waarin u het probleem beschrijft."
+    "500": "Iets gaat fout, open alstublieft een probleem op {link} waarin u het probleem beschrijft.",
+    "error": "Fout"
   },
   "app": {
     "BAC": "BAC",
@@ -22,16 +22,20 @@
     "User overview": "Gebruikers overzicht"
   },
   "balance": {
+    "Balance after": "Balans na opwaarderen:",
     "Balance increase amount": "Verhoog saldo:",
     "Payment button": "Betaal",
-    "Increase balance": "Verhoog saldo",
-    "Price": "Prijs",
-    "Start payment": "Betaal",
-    "minPayment": "Let op: minimum bedrag is €10 of moet schulden afbetalen.",
-    "Balance after": "Balans na opwaarderen:"
+    "Price": "Prijs"
   },
   "banner": {
+    "Active": "Actief",
+    "Banner overview": "Banner overzicht",
     "Banners": "Banners",
+    "Create banner": "Maak nieuwe banner",
+    "Edit banner": "Pas banner aan",
+    "Filter active": "Filter actief",
+    "Filter not expired": "Filter niet verlopen",
+    "Not active": "Niet actief",
     "active": "Actief: ",
     "duration": "Tijdsduur: ",
     "name": "Naam: ",
@@ -40,14 +44,7 @@
     "seconds": "Seconden",
     "submit": "Toepassen",
     "till": "tot",
-    "timespan": "Tijdspan: ",
-    "Banner overview": "Banner overzicht",
-    "Filter active": "Filter actief",
-    "Filter not expired": "Filter niet verlopen",
-    "Active": "Actief",
-    "Not active": "Niet actief",
-    "Edit banner": "Pas banner aan",
-    "Create banner": "Maak nieuwe banner"
+    "timespan": "Tijdspan: "
   },
   "c_ContainerAssign": {
     "Assign product": "Product toewijzen",
@@ -136,6 +133,13 @@
     "lastName": "Achternaam",
     "ofAge": "18+"
   },
+  "contact": {
+    "Contact": "Contact",
+    "Feature requests": "Verzoekjes",
+    "Incorrect transactions": "Foute transacties",
+    "Main contact": "Algemeen contact",
+    "Security": "Beveiliging"
+  },
   "containersOverview": {
     "Containers": "Containers",
     "newContainer": "Nieuwe container"
@@ -193,16 +197,16 @@
     "copyright": "© 2023 GEWIS",
     "localAccount": "Login met een lokaal account"
   },
+  "manageProducts": {
+    "Add product": "Product toevoegen",
+    "Containers": "Containers",
+    "Manage all products and containers": "Beheer alle producten en containers"
+  },
   "payment": {
     "pay": "betaal"
   },
   "pointOfSaleOverview": {
     "Point of sale overview": "Verkooppunt overzicht"
-  },
-  "manageProducts": {
-    "Add product": "Product toevoegen",
-    "Containers": "Containers",
-    "Manage all products and containers": "Beheer alle producten en containers"
   },
   "posInfo": {
     "Edit": "Bewerken",
@@ -213,12 +217,12 @@
     "ownedBy": "Eigendom van "
   },
   "profile": {
-    "individualDataAnalysis": "Individuele Data Analyse:",
     "canGoIntoDebt": "Gebruiker mag in de schuld",
     "changePassword": "Verander wachtwoord",
     "changeUserInfo": "Verander gebruikersinformatie",
     "emailAddress": "Emailadres",
     "firstName": "Voornaam",
+    "individualDataAnalysis": "Individuele Data Analyse:",
     "keyGet": "Verkrijg API sleutel",
     "keyGetNew": "Verkrijg een nieuwe API sleutel",
     "keyNotSaved": "LET OP: je API sleutel wordt niet opgeslagen, dus kopieer deze nu",
@@ -249,7 +253,8 @@
     "finesNotified": "Gebruikers succesvol ingelicht.",
     "productCreated": "Het product is aangemaakt!",
     "success": "Gelukt!",
-    "transactionDeleted": "Transactie is succesvol verwijderd."
+    "transactionDeleted": "Transactie is succesvol verwijderd.",
+    "resetPassword": "Wachtwoord is succesvol gewijzigd."
   },
   "termsOfService": {
     "acceptFirst": "Accepteer de Voorwaarden",
@@ -267,9 +272,12 @@
     "fineAmount": "Boete",
     "fineDescr": "Je hebt een boete ontvangen.",
     "invoiceDescr": "Je hebt een factuur aan GEWIS betaald",
+    "otherBoughtAt": "{user} heeft gekocht bij {pos}",
     "price": "Prijs",
+    "putInBy": "Transactie aangemaakt door {createdBy}",
     "title": "Titel",
     "total": "Totaal:",
+    "userBoughtAt": "Je hebt gekocht bij {pos}",
     "waivedFineDescr": "Je boetes zijn kwijtgescholden.",
     "what": "Wat",
     "when": "Wanneer"
@@ -287,11 +295,22 @@
     "updatedUserInfo": "Profiel is succesvol geüpdatet.",
     "userInfoUpdated": "Profiel is succesvol aangepast"
   },
-  "contact": {
-    "Contact": "Contact",
-    "Main contact": "Algemeen contact",
-    "Incorrect transactions": "Foute transacties",
-    "Security": "Beveiliging",
-    "Feature requests": "Verzoekjes"
+  "validation": {
+    "number": {
+      "min": "Dit veld moet groter zijn dan ${min}"
+    },
+    "password": {
+      "match": "Wachtwoorden moeten overeenkomen."
+    },
+    "pin": {
+      "match": "PIN codes moeten overeenkomen.",
+      "onlyDigits": "PIN mag alleen cijfers bevatten."
+    },
+    "required": "Dit veld is verplicht",
+    "string": {
+      "exact": "Dit veld moet precies ${len} tekens bevatten.",
+      "max": "Dit veld mag maximaal ${max} tekens bevatten.",
+      "min": "Dit veld moet minimaal ${min} tekens bevatten."
+    }
   }
 }

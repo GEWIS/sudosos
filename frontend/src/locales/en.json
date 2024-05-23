@@ -84,9 +84,6 @@
     "all transactions": "all transactions",
     "recent transactions": "recent transactions"
   },
-  "c_userInfo": {
-    "quick": "Quick Overview"
-  },
   "login": {
     "Back": "Back to home",
     "Back to login": "Go back to login",
@@ -159,6 +156,94 @@
     "delete": "Delete",
     "transactionDetails": "Transaction Details"
   },
+  "c_userInfo": {
+    "quick": "Quick Overview",
+    "End date": "Point of sale start date",
+    "End invalid": "Please pick an end date later than the end date and later than now",
+    "General": "General",
+    "Management": "Management",
+    "Managers": "Managers",
+    "No containers": "No containers selected",
+    "Own containers": "Own containers",
+    "Owner": "Owner",
+    "Pick date": "Pick a date",
+    "Public containers": "Public containers",
+    "Select owner": "Select Owner",
+    "Selected containers": "Selected containers",
+    "Start date": "Point of sale start date",
+    "Start invalid": "Please pick a start date earlier than the end date",
+    "Title": "POS Name",
+    "Use authentication": "Use Authentication",
+    "add container": "Add container",
+    "are you sure": "Are you sure you want to delete this container?",
+    "confirm": "Confirm deletion",
+    "name invalid": "Please provide a valid name that is longer than 0 characters",
+    "noContainersSelected": "There are no containers selected."
+  },
+  "c_POSOverview": {
+    "ACCEPTED": "Accepted",
+    "OPEN": "Open",
+    "POS Name": "Name",
+    "POS Owner": "Owner",
+    "Page": "Page",
+    "REJECTED": "Rejected",
+    "all points of sale": "All points of sale",
+    "requested points of sale": "Requested points of sale"
+  },
+  "c_bannerTable": {
+    "Active": "Active",
+    "Add": "Add",
+    "Are you sure": "Are you sure you want to delete this advertisement?",
+    "Banner": "Banner",
+    "Confirm deletion": "Confirm deletion",
+    "Duration": "Duration (in ms)",
+    "Duration (ms)": "Duration (ms)",
+    "Edit": "Edit",
+    "Empty": "No banners found",
+    "End date": "End date",
+    "End date should": "End date should be set and later than today",
+    "Name": "Name",
+    "Page": "Page",
+    "Please enter dur": "Please enter a number larger than 0",
+    "Please enter name": "Please enter a name",
+    "Start date": "Start date",
+    "Starts on": "Starts on",
+    "Stops on": "Stops on",
+    "Thumbnail": "Thumbnail",
+    "cancel": "cancel",
+    "new banner": "new banner",
+    "save": "save"
+  },
+  "c_borrelkaartGroupTable": {
+    "Activated amount": "Activated amount",
+    "Active": "Active",
+    "Add social drink cards": "Add social drink cards",
+    "Amount of cards": "Amount of cards",
+    "Amount of cards needs to be larger than 0": "Amount of cards needs to be larger than 0",
+    "Barcode": "Barcode",
+    "Current value": "Current value",
+    "Fill in a name": "Fill in a name",
+    "Filter by name": "Filter by name",
+    "Forever": "Forever",
+    "From": "From",
+    "From date needs a date earlier than till date": "From date needs a date earlier than till date",
+    "Info": "Info",
+    "Initial value": "Initial value",
+    "Initial value needs to be 0 or larger": "Initial value needs to be 0 or larger",
+    "Name": "Name",
+    "Name need to be larger than 0 characters": "Name need to be larger than 0 characters",
+    "Page": "Page",
+    "Social drink cards per page": "Social drink cards per page",
+    "Till": "Till",
+    "Till date needs a date later than from date": "Till date needs a date later than from date",
+    "Total amount": "Total amount",
+    "Valid from": "Valid from",
+    "Valid till": "Valid till",
+    "Validity": "Validity",
+    "cancel": "cancel",
+    "new social drink cards": "new social drink cards",
+    "save": "save"
+  },
   "c_userTable": {
     "Select Type": "Select Type",
     "Type": "Type",
@@ -167,9 +252,12 @@
     "lastName": "Last Name",
     "ofAge": "18+"
   },
-  "containersOverview": {
-    "Containers": "Containers",
-    "newContainer": "New container"
+  "c_containerComponent": {
+    "Add product": "Add product",
+    "Public": "Public",
+    "Table view": "Table view",
+    "new": "New",
+    "no products": "This container contains no products"
   },
   "errorMessages": {
     "posNotFound": "The requested POS was not found.",
@@ -250,7 +338,8 @@
     "finesNotified": "Succesfully notified users.",
     "productCreated": "Successfully created product.",
     "success": "Success",
-    "transactionDeleted": "Successfully deleted transaction."
+    "transactionDeleted": "Successfully deleted transaction.",
+    "resetPassword": "Successfully reset password."
   },
   "termsOfService": {
     "acceptFirst": "Accept the Terms of Service",
@@ -273,7 +362,10 @@
     "total": "Total:",
     "waivedFineDescr": "Your fines were waived.",
     "what": "What",
-    "when": "When"
+    "when": "When",
+    "userBoughtAt": "You bought at {pos}",
+    "otherBoughtAt": "{user} bought at {pos}",
+    "putInBy": "Transaction created by {createdBy}"
   },
   "userDetails": {
     "Active": "Active",
@@ -294,5 +386,23 @@
     "Incorrect transactions": "Incorrect transactions",
     "Security": "Security",
     "Feature requests": "Feature requests"
+  },
+  "validation": {
+    "number": {
+      "min": "This field must be greater than ${min}"
+    },
+    "password": {
+      "match": "Passwords must match."
+    },
+    "pin": {
+      "match": "PINs must match.",
+      "onlyDigits": "PIN must be only digits."
+    },
+    "required": "This field is required",
+    "string": {
+      "exact": "This field must be exactly ${len} characters",
+      "max": "This field can't be greater than ${max} characters",
+      "min": "This field must be at least ${min} characters"
+    }
   }
 }

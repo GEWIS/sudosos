@@ -15,12 +15,13 @@
           <Skeleton class="w-6 my-1 h-1rem surface-300" />
         </template>
         <template #body="mutation" v-else>
-          <span class="hidden sm:block">{{ mutation.data.moment.toDateString() }}</span>
-          <span class="sm:hidden"
-            >{{
-              mutation.data.moment.toLocaleDateString('nl-NL', {
-                dateStyle: 'short'
-              })
+          <span class="hidden sm:block">{{ mutation.data.moment.toLocaleDateString($i18n.locale, {
+            dateStyle: 'full'
+          }) }}</span>
+          <span class="sm:hidden">{{
+            mutation.data.moment.toLocaleDateString('nl-NL', {
+              dateStyle: 'short'
+            })
             }}
           </span>
         </template>
