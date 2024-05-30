@@ -137,6 +137,8 @@ function Le() {
   };
 }
 function ta(o) {
+  if (o > 1e12)
+    return !0;
   const h = o * 1e3;
   return (/* @__PURE__ */ new Date()).getTime() > h;
 }
