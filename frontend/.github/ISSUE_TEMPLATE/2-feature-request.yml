@@ -1,5 +1,5 @@
 name: "✨ Feature Request"
-description: Suggest a feature or enhancement to improve SudoSOS frontend. Please make sure that this a feature for the frontend and not the [backend](https://github.com/GEWIS/sudosos-backend).
+description: Suggest a feature or enhancement to improve SudoSOS frontend. Please make sure that this a feature for the frontend and not the backend.
 labels: ["Type: Idea"]
 body:
     -   type: textarea
