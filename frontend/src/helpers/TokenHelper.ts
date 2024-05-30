@@ -37,9 +37,12 @@ export function getTokenFromStorage(): Token {
 }
 
 export function isTokenExpired(tokenEpochTimestamp: number): boolean {
-    const tokenExpirationTime = tokenEpochTimestamp * 1000;
-    const currentTimestamp = new Date().getTime();
-    return currentTimestamp > tokenExpirationTime;
+  // If the expiry is somewhere around the year 33658 assume migration from old frontend and always set expired to force re-login.
+  if (tokenEpochTimestamp > 1000000000000) return true;
+
+  const tokenExpirationTime = tokenEpochTimestamp * 1000;
+  const currentTimestamp = new Date().getTime();
+  return currentTimestamp > tokenExpirationTime;
 }
 
 /**
