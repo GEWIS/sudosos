@@ -3,27 +3,24 @@
   <CardComponent :header="$t('c_currentBalance.balance')" class="w-full sm:w-full">
     <div class="flex flex-row justify-content-center">
       <div class="flex flex-column justify-content-center w-6">
-        <Skeleton v-if="loading" class="h-4rem w-5 mx-auto"/>
+        <Skeleton v-if="loading" class="h-4rem w-5 mx-auto" />
         <h1 v-else class="text-center font-medium text-5xl sm:text-7xl my-0">{{ displayBalance }}</h1>
-        <p
-          class="text-center text-base font-semibold text-red-500"
-          v-if="userBalance && userBalance.fine"
-        >
+        <p class="text-center text-base font-semibold text-red-500" v-if="userBalance && userBalance.fine">
           {{
-            isAllFine
-              ? $t('c_currentBalance.allIsFines')
-              : $t('c_currentBalance.someIsFines', { fine: displayFine })
+          isAllFine
+          ? $t('c_currentBalance.allIsFines')
+          : $t('c_currentBalance.someIsFines', { fine: displayFine })
           }}
         </p>
         <div v-show="displayBalanceAfterTopup" class="text-center text-600 font-italic">
           {{ $t('balance.Balance after') }}
           <span v-if="displayBalanceAfterTopup">{{
             formatPrice(
-              Dinero(userBalance?.amount!! as Dinero.Options)
-                .add(Dinero({ amount: Math.round(topupAmount!! * 100), currency: 'EUR' }))
-                .toObject()
+            Dinero(userBalance?.amount!! as Dinero.Options)
+            .add(Dinero({ amount: Math.round(topupAmount!! * 100), currency: 'EUR' }))
+            .toObject()
             )
-          }}</span>
+            }}</span>
         </div>
       </div>
       <Divider layout="vertical" />
@@ -32,17 +29,8 @@
         <div>
           <p class="font-bold">{{ $t('balance.Balance increase amount') }}</p>
           <div class="w-full flex-1">
-            <InputNumber
-              mode="currency"
-              currency="EUR"
-              locale="nl-NL"
-              :placeholder="$t('balance.Price')"
-              :min="0.0"
-              :min-fraction-digits="0"
-              :max-fraction-digits="2"
-              v-model="topupAmount"
-              inputId="amount"
-              @input="
+            <InputNumber mode="currency" currency="EUR" locale="nl-NL" :placeholder="$t('balance.Price')" :min="0.0"
+              :min-fraction-digits="0" :max-fraction-digits="2" v-model="topupAmount" inputId="amount" @input="
                 (data) => {
                   setFieldValue(
                     'Top up amount',
@@ -51,8 +39,11 @@
                   );
                   setTouched(true);
                 }
-              "
-            />
+              " 
+              :inputProps="{
+                inputmode: 'numeric',
+                class: 'w-full'
+              }" />
           </div>
           <span class="font-bold text-red-500">{{ errors['Top up amount'] }}</span>
         </div>
