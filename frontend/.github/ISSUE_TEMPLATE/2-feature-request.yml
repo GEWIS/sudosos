@@ -2,6 +2,17 @@ name: "✨ Feature Request"
 description: Suggest a feature or enhancement to improve SudoSOS frontend. Please make sure that this a feature for the frontend and not the backend.
 labels: ["Type: Idea"]
 body:
+    -   type: dropdown
+        id: browsers
+        attributes:
+            label: Is this a feature for the SudoSOS point of sale or for the SudoSOS dashboard?
+            multiple: true
+            options:
+                - Point of sale
+                - Dashboard
+                - Both
+        validations:
+            required: true
     -   type: textarea
         id: feature
         attributes:

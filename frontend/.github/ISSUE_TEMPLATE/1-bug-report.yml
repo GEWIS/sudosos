@@ -3,6 +3,29 @@ description: Report a bug found while using the SudoSOS frontend.
 title: "[Bug]: "
 labels: ["Type: Bug", "Status: Triage"]
 body:
+    -   type: dropdown
+        id: browsers
+        attributes:
+            label: What browsers are you seeing the problem on?
+            multiple: true
+            options:
+                - Brave
+                - Chrome
+                - Firefox
+                - Microsoft Edge
+                - Safari
+                - Other
+    -   type: dropdown
+        id: browsers
+        attributes:
+            label: Is this happening on the SudoSOS point of sale or on the SudoSOS dashboard?
+            multiple: true
+            options:
+                - Point of sale
+                - Dashboard
+                - Both
+        validations:
+            required: true
     -   type: textarea
         id: current-behavior
         attributes:
@@ -25,18 +48,6 @@ body:
             placeholder: I did X, then Y, before arriving at Z, when ERROR ...
         validations:
             required: true
-    -   type: dropdown
-        id: browsers
-        attributes:
-            label: What browsers are you seeing the problem on?
-            multiple: true
-            options:
-                - Brave
-                - Chrome
-                - Firefox
-                - Microsoft Edge
-                - Safari
-                - Other
     -   type: textarea
         id: other
         attributes:
