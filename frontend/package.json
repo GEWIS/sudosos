@@ -1,5 +1,5 @@
 {
-    "name": "SudoSOS-frontend",
+    "name": "sudodos-frontend",
     "workspaces": [
         "apps/point-of-sale",
         "apps/dashboard",

@@ -1,4 +1,4 @@
-# SudoSOS POS Vue 3
+# sudosos-point-of-sale
 
 Frontend application for the SudoSOS point of sale (POS) system
 
