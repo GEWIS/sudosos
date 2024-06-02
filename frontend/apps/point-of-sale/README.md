@@ -13,7 +13,7 @@ Before you begin, ensure you have met the following requirements:
 ## Installation
 To install and use this application, follow these steps:
 
-1. Clone the repository: `git clone https://github.com/your_username_/sudosos-pos-vue-3.git`
+1. Clone the repository: `git clone https://github.com/GEWIS/sudosos-frontend.git`
 2. Navigate to the cloned repository: `cd sudosos-pos-vue-3`
 3. Install dependencies: `npm install`
 
@@ -37,4 +37,4 @@ npm run preview
 ```
 
 ## Contributing
-Contributions are welcome! If you encounter any issues or have suggestions for improvements, please open an issue on the [issue tracker](https://github.com/your_username_/sudosos-pos-vue-3/issues).
+Contributions are welcome! If you encounter any issues or have suggestions for improvements, please open an issue on the [issue tracker](https://github.com/GEWIS/sudosos-frontend/issues).
