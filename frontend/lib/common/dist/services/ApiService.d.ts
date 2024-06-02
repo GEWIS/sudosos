@@ -1,0 +1,45 @@
+import { AuthenticateApi, BalanceApi, BannersApi, VouchergroupsApi, ContainersApi, FilesApi, InvoicesApi, PayoutRequestsApi, PointofsaleApi, ProductCategoriesApi, ProductsApi, RbacApi, RootApi, StripeApi, TransactionsApi, TransfersApi, UsersApi, VatGroupsApi, DebtorsApi } from '@sudosos/sudosos-client';
+
+export declare class ApiService {
+    private readonly _authenticateApi;
+    private readonly _balanceApi;
+    private readonly _debtorsApi;
+    private readonly _usersApi;
+    private readonly _posApi;
+    private readonly _categoryApi;
+    private readonly _transactionApi;
+    private readonly _bannerApi;
+    private readonly _rootApi;
+    private readonly _voucherGroupApi;
+    private readonly _containerApi;
+    private readonly _filesApi;
+    private readonly _invoicesApi;
+    private readonly _payoutsApi;
+    private readonly _productsApi;
+    private readonly _transfersApi;
+    private readonly _vatGroupsApi;
+    private readonly _stripeApi;
+    private readonly _rbacApi;
+    private readonly _openBannerApi;
+    constructor(basePath: string);
+    get authenticate(): AuthenticateApi;
+    get balance(): BalanceApi;
+    get debtor(): DebtorsApi;
+    get pos(): PointofsaleApi;
+    get category(): ProductCategoriesApi;
+    get transaction(): TransactionsApi;
+    get banner(): BannersApi;
+    get rootApi(): RootApi;
+    get borrelkaart(): VouchergroupsApi;
+    get container(): ContainersApi;
+    get files(): FilesApi;
+    get invoices(): InvoicesApi;
+    get payouts(): PayoutRequestsApi;
+    get products(): ProductsApi;
+    get transfers(): TransfersApi;
+    get vatGroups(): VatGroupsApi;
+    get stripe(): StripeApi;
+    get rbac(): RbacApi;
+    get user(): UsersApi;
+    get openBanner(): BannersApi;
+}

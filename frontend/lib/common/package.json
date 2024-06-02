@@ -1,0 +1,63 @@
+{
+  "name": "sudosos-frontend-common",
+  "version": "1.0.0",
+  "description": "Common code components, helper functions, and shared resources for the frontend of the SudoSOS application.",
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "test": "echo \"No tests specified\" && exit 0",
+    "build": "vite build",
+    "type-check": "vue-tsc --noEmit -p tsconfig.json --composite false",
+    "lint": "eslint ./src/**/* --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+  },
+  "main": "./dist/sudosos-frontend-common.umd.cjs",
+  "module": "./dist/sudosos-frontend-common.js",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "typings": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/sudosos-frontend-common.js",
+      "require": "./dist/sudosos-frontend-common.umd.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "src/",
+    "dist/",
+    ".eslintrc.cjs"
+  ],
+  "author": "SudoSOS WG",
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/sudosos/sudosos-frontend-common.git"
+  },
+  "private": false,
+  "bugs": {
+    "url": "https://gitlab.com/sudosos/sudosos-frontend-common/issues"
+  },
+  "homepage": "https://gitlab.com/sudosos/sudosos-frontend-common#readme",
+  "dependencies": {
+    "@babel/types": "^7.23.6",
+    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client",
+    "axios": "^1.6.8",
+    "jwt-decode": "^4.0.0",
+    "pinia": "^2.1.7",
+    "vue": "^3.3.13"
+  },
+  "devDependencies": {
+    "@rushstack/eslint-patch": "^1.10.2",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "@vue/eslint-config-prettier": "^9.0.0",
+    "@vue/eslint-config-typescript": "^13.0.0",
+    "babel": "^6.23.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-vue": "^9.25.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.9",
+    "vite-plugin-dts": "^3.4.23",
+    "vue-tsc": "^2.0.13"
+  }
+}
