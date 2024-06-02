@@ -1,4 +1,4 @@
-# sudosos-frontend-vue3
+# sudosos-dashboard
 
 This is the repository for the all-new sudosos-frontend, rewritten in Vue3. It is the website that you see when you go to sudosos.gewis.nl. 
 
