@@ -130,7 +130,7 @@ const setNewPassword = passwordForm.handleSubmit(async (values) => {
     token: route.query.token as string,
     password: values.password as string,
   }).then(() => {
-    backToLogin()
+    backToLogin();
     toast.add({
       severity: 'success',
       summary: t('successMessages.success'),

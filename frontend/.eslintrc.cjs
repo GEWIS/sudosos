@@ -23,6 +23,7 @@ module.exports = {
         '@intlify/vue-i18n/no-unused-keys': ['error', { 'enableFix': true, 'extensions': ['.js', '.vue', '.ts'] }],
         '@intlify/vue-i18n/no-duplicate-keys-in-locale': 'error'
     },
+    ignorePatterns: ["/src/components/icons/*.vue", "package-lock.json"],
     parserOptions: {
         ecmaVersion: 'latest'
     },
