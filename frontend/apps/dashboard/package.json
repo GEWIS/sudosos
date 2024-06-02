@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@stripe/stripe-js": "^2.1.7",
-    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client",
-    "@sudosos/sudosos-frontend-common": "github:GEWIS/sudosos-frontend-common",
+    "@sudosos/sudosos-frontend-common": "*",
+    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#e99915d437e9643833b655614648bca809bf6542",
     "@types/dinero.js": "^1.9.4",
     "@vee-validate/rules": "^4.12.8",
     "@vee-validate/yup": "^4.11.1",

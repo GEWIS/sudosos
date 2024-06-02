@@ -1,5 +1,5 @@
 {
-  "name": "sudosos-frontend-common",
+  "name": "@sudosos/sudosos-frontend-common",
   "version": "1.0.0",
   "description": "Common code components, helper functions, and shared resources for the frontend of the SudoSOS application.",
   "license": "AGPL-3.0-or-later",
