@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Raleway:500,500i,700,700i&display=swap');
+
+body {
+  min-height: 100vh;
+  background: #edece7;
+  transition: color 0.5s, background-color 0.5s;
+  line-height: 1.6;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+  Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+#app {
+  margin: 0 auto;
+  font-weight: normal;
+  overflow: hidden;
+}
+
+.main-content {
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 25px;
+  font-family: Lato, Arial, sans-serif;
+  height: calc(100vh - 100px);
+  margin-bottom: 40px;
+  width: calc(100vw - 68px);
+  position: relative;
+}
+
+@media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+}
