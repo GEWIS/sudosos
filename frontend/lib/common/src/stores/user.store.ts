@@ -6,7 +6,7 @@ import {
 import { ApiService } from "../services/ApiService";
 import { fetchAllPages } from "../helpers/PaginationHelper";
 
-const pinia = createPinia();
+createPinia();
 
 interface CurrentState {
   balance: BalanceResponse | null,
@@ -36,7 +36,7 @@ export const useUserStore = defineStore('user', {
   }),
   getters: {
     getUserById: (state: UserModuleState) => {
-      return (userId: number) => state.users.find((user) => user.id === userId)
+      return (userId: number) => state.users.find((user) => user.id === userId);
     },
     getActiveUsers(): UserResponse[] {
       return this.users.filter((user) => user.active);
@@ -54,7 +54,7 @@ export const useUserStore = defineStore('user', {
       this.users = await fetchAllPages<UserResponse>(0, 500, (take, skip) => service.user.getAllUsers(take, skip));
     },
     async fetchCurrentUserBalance(id: number, service: ApiService) {
-      this.current.balance = (await service.balance.getBalanceId(id)).data
+      this.current.balance = (await service.balance.getBalanceId(id)).data;
     },
     async fetchUsersFinancialMutations(id: number, service: ApiService, take?: number, skip?: number) {
       this.current.financialMutations = (await service.user.getUsersFinancialMutations(id, take, skip)).data;

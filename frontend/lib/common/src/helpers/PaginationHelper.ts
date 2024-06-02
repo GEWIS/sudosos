@@ -14,7 +14,8 @@ interface PaginationResult<T> {
  * @template T - The type of data returned by the API endpoint.
  * @param {number} take - The number of items to fetch per page.
  * @param {number} initialSkip - The number of items to skip.
- * @param {(take: number, skip: number) => Promise<T[]>} fetchPage - A function that returns a promise with the data for a specific page.
+ * @param {(take: number, skip: number) => Promise<T[]>} fetchPage -
+ *    A function that returns a promise with the data for a specific page.
  * @returns {Promise<T[]>} - A promise that resolves to an array of all the fetched data.
  *
  * @example
@@ -31,6 +32,7 @@ export async function fetchAllPages<T>(
 ): Promise<T[]> {
   let skip = initialSkip;
   let allData: T[] = [];
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     const response = await fetchPage(take, skip);
     const { records } = response.data;

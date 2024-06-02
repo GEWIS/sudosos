@@ -38,7 +38,7 @@ export class ApiService {
 
     private readonly _balanceApi: BalanceApi;
 
-    private readonly _debtorsApi: DebtorsApi
+    private readonly _debtorsApi: DebtorsApi;
 
     private readonly _usersApi: UsersApi;
 
