@@ -7,5 +7,5 @@ export function getProductImageSrc(product: ProductResponse): string {
   return `${import.meta.env.VITE_APP_IMAGE_BASE}products/${product.image}`;
 }
 export function getBannerImageSrc(banner: BannerResponse): string {
-  return `${import.meta.env.VITE_LIVE_IMAGE_BASE}banners/${banner.image}`;
+  return `${import.meta.env.VITE_APP_IMAGE_BASE}banners/${banner.image}`;
 }
