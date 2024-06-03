@@ -39,7 +39,7 @@ jobs:
         with:
           # list of Docker images to use as base name for tags
           images: |
-            ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_TAG }}
+            ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_TAG_DASHBOARD }}
           # generate Docker tags based on the following events/attributes
           tags: |
             type=ref,event=branch
