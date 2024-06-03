@@ -1,4 +1,4 @@
-name: Dockerize & deployment
+name: Dashboard - Dockerize & deployment
 
 on:
   push:
@@ -42,8 +42,8 @@ jobs:
             ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_TAG }}
           # generate Docker tags based on the following events/attributes
           tags: |
-            type=ref,suffix=-test,event=branch
-            type=semver,suffix=-test,pattern={{version}}
+            type=ref,event=branch
+            type=semver,pattern={{version}}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
