@@ -16,13 +16,14 @@ body:
                 - Safari
                 - Other
     -   type: dropdown
-        id: browsers
+        id: application
         attributes:
             label: Is this happening on the SudoSOS point of sale or on the SudoSOS dashboard?
             multiple: true
             options:
                 - Point of sale
                 - Dashboard
+                - Common library
                 - Both
         validations:
             required: true
