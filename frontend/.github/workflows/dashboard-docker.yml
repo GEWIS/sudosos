@@ -1,7 +1,9 @@
-name: Dashboard - Dockerize & deployment
+name: Dashboard - Dockerize
 
 on:
   push:
+    branches: [ main, develop ]
+  pull_request:
     branches: [ main, develop ]
 
 concurrency:
@@ -57,14 +59,13 @@ jobs:
           registry: ${{ vars.DOCKER_REGISTRY }}
           username: ${{ secrets.SVC_GH_SUDOSOS_USERNAME }}
           password: ${{ secrets.SVC_GH_SUDOSOS_PWD }}
-
-      # Build and push Docker image with Buildx
+      # Build and push Docker image with Buildx (only push on push to main/develop)
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
           context: "apps/dashboard"
           platforms: linux/amd64 #SudoSOS does not run on linux/arm64
-          push: true
+          push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
