@@ -1,6 +1,6 @@
 <template>
-  <div class="banner-content rounded-bottom-5 position-absolute bottom-0 w-100">
-    <img class="w-100 h-100 rounded-bottom-5" :src="getBannerImageSrc(banner)" :alt="banner.name" />
+  <div class="banner-content position-absolute bottom-0 d-flex flex-row justify-content-center">
+    <img style="object-fit: contain;" class="w-100 h-100" :src="getBannerImageSrc(banner)" :alt="banner.name" />
   </div>
 </template>
 
@@ -18,6 +18,8 @@ defineProps({
 <style scoped lang="scss">
 .banner-content {
   height: 165px;
-  background-color: rgba(141, 141, 141, 0.53);
+  background: url('@/assets/poster-background.png');
+  margin: 1.5rem;
+  width: calc(100% - 3rem);
 }
 </style>

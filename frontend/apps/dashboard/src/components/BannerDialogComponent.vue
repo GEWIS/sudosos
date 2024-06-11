@@ -28,7 +28,7 @@
         </div>
         <div class="py-2">
             {{ $t('banner.duration') }}<br>
-            <InputNumber v-model="duration" :suffix="' ' + $t('banner.seconds')" :maxFractionDigits="3" /><br>
+            <InputNumber v-model="duration" :suffix="' ' + $t('banner.seconds', duration || 0)" :maxFractionDigits="3" /><br>
             <span class="font-bold text-red-500">{{ errors['Duration'] }}</span>
         </div>
         <div class="py-2">
@@ -130,7 +130,7 @@ watch(visible, () => {
 function resetValues() {
     resetForm();
     setFieldValue('Name', banner.value?.name, false);
-    setFieldValue('Duration', banner.value && banner.value?.duration / 1000, false);
+    setFieldValue('Duration', banner.value && banner.value?.duration, false);
     setFieldValue('Start date', banner.value && new Date(banner.value?.startDate), false);
     setFieldValue('End date', banner.value && new Date(banner.value?.endDate), false);
     setFieldValue('Active', banner.value?.active);
@@ -142,7 +142,7 @@ const bannersStore = useBannersStore();
 const onSubmit = handleSubmit(async (values) => {
     const bannerRequest: BannerRequest = {
         name: values['Name'],
-        duration: values['Duration'] * 1000,
+        duration: values['Duration'],
         active: values['Active'],
         startDate: values['Start date'].toISOString(),
         endDate: values['End date'].toISOString()

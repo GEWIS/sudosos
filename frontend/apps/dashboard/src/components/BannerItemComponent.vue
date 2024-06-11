@@ -64,8 +64,8 @@ defineProps<{
 const { t } = useI18n();
 
 const displaySeconds = computed(() => {
-  return `${(banner.value.duration / 1000).toLocaleString()}
-   ${banner.value.duration / 1000 != 1 ? t('banner.seconds') : t('banner.second')}`;
+  return `${(banner.value.duration).toLocaleString()}
+   ${t('banner.seconds', banner.value.duration)}`;
 });
 
 const banner = defineModel<BannerResponse>('banner', { required: true });

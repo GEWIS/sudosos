@@ -14,6 +14,8 @@
             :wrong-pin="wrongPin"
             :isActive="enteringUserId"
             :external="external"
+            @focus-passcode="focusPasscode"
+            @focus-user-id="focusUserId"
           />
         </div>
         <KeypadComponent
@@ -93,6 +95,14 @@ const switchInput = () => {
     animateSwitch.value = false;
   }, 500);
 };
+
+const focusPasscode = () => {
+  if (enteringUserId.value) switchInput();
+}
+
+const focusUserId = () => {
+  if (!enteringUserId.value) switchInput();
+}
 
 const handleExternal = () => {
   external.value = !external.value;

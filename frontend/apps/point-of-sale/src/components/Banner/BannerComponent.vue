@@ -30,22 +30,27 @@ const switchToNextBanner = () => {
   currentBanner.value = activeBanners.value[bannerIndex];
 };
 
-let intervalId: number;
-if (currentBanner.value) setInterval(switchToNextBanner, currentBanner.value.duration * 1000);
+let timeoutId: number;
+watch(currentBanner, () => {
+  if (currentBanner.value) {
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(switchToNextBanner, currentBanner.value.duration * 1000);
+  }
+})
 
 // If new banners are fetched we reinitialize the carousel
 watch(activeBanners, (newBanners) => {
   if (newBanners.length > 0) {
     currentBanner.value = newBanners[bannerIndex];
     // Clear the existing interval and start a new one with the updated duration
-    clearInterval(intervalId);
-    intervalId = setInterval(switchToNextBanner, currentBanner.value.duration * 1000);
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(switchToNextBanner, currentBanner.value.duration * 1000);
   }
 });
 
 // Cleanup the interval when the component is unmounted
 onUnmounted(() => {
-  clearInterval(intervalId);
+  clearTimeout(timeoutId);
 });
 </script>
 

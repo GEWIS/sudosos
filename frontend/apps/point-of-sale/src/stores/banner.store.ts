@@ -19,10 +19,10 @@ export const useBannerStore = defineStore('banner', {
   },
   getters: {
     activeBanners(): BannerResponse[] {
-      // Filter banners that are currently active based on their start and end dates
+      // Filter banners that are currently active based on their start and end dates and have an image attached.
       const now = new Date().toISOString();
       return this.banners.filter(
-        (banner) => banner.active || (banner.startDate <= now && banner.endDate >= now)
+        (banner) => banner.image && banner.active && (banner.startDate <= now && banner.endDate >= now) 
       );
     }
   }
