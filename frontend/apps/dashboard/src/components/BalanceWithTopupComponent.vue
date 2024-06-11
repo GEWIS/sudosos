@@ -87,6 +87,13 @@ const productSchema = toTypedSchema(
           return value >= 10 || Math.round(value * -100) == userBalance.value?.amount.amount;
         }
       )
+      .test(
+        'is-total-less-than-150',
+        `Your new balance cannot surpass €150.`,
+        (value) => {
+          return userBalance.value!!.amount.amount + value*100 <= 15000
+        }
+      )
   })
 );
 
