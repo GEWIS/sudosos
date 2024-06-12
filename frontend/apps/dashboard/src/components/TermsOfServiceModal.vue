@@ -13,7 +13,7 @@
           <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
              <p>SudoSOS Terms of Service - version 1.0 (14/08/2022)</p>
           <!-- TOS is also english so we can leave this untranslated -->
-            <div v-html="tos"></div>
+            <div class="tosText" v-html="tos"></div>
         </div>
         <template #footer>
             <Button label="Ok" @click="visible = false" autofocus />
@@ -44,6 +44,10 @@ const visible = ref(false);
 
 .tosModal {
     max-width: 75vw
+}
+
+.tosText * {
+  color: var(--text-color);
 }
 
 </style>
