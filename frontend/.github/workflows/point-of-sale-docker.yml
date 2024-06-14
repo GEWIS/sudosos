@@ -1,6 +1,7 @@
 name: Point of Sale - Dockerize
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main, develop ]
   pull_request:
