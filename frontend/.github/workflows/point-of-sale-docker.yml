@@ -67,7 +67,7 @@ jobs:
         with:
           context: "apps/point-of-sale"
           platforms: linux/amd64 #SudoSOS does not run on linux/arm64
-          push: ${{ github.event_name == 'push' }}
+          push: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
