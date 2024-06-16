@@ -196,13 +196,14 @@ const handlePickedDates = handleSubmit(async (values) => {
   });
   const deletedUsers = userStore.getDeletedUsers.map((u: UserResponse) => u.id);
   const activeUsers = userStore.getActiveUsers.map((u: UserResponse) => u.id);
-  eligibleUsers.value = result.data.map((item: any) => {
+  eligibleUsers.value = result.data
+      .filter((u: any) => !deletedUsers.includes(u.id) && activeUsers.includes(u.id))
+      .map((item: any) => {
 
     const fullName = userFullNameMap[item.id];
 
     // Extract balances from the item
     const [firstBalance, secondBalance] = item.balances || [null, null];
-
     return {
       ...item,
       // @ts-ignore
@@ -212,7 +213,7 @@ const handlePickedDates = handleSubmit(async (values) => {
       firstBalance,
       lastBalance: secondBalance,
     };
-  }).filter((u: any) => !deletedUsers.includes(u.id) && activeUsers.includes(u.id));
+  });
   const totalDebtAmount = eligibleUsers.value.reduce((accumulator: number, current: any) => {
     return accumulator + current.firstBalance.amount.amount; // Use getAmount() to access the value
   }, 0);
