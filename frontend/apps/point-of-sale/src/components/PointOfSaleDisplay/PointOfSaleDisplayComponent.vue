@@ -6,7 +6,13 @@
           <div class="c-btn square active icon-large search-close" @click="closeSearchView">
             <font-awesome-icon icon="fa-solid fa-xmark"/>
           </div>
-          <input type="text" ref="searchInput" id="searchInput" v-model="searchQuery" placeholder="Search..."/>
+          <input
+            type="text"
+            ref="searchInput"
+            id="searchInput"
+            v-model="searchQuery"
+            placeholder="Search..."
+            autocomplete="off"/>
         </div>
       </div>
       <div v-show="!isSearchViewVisible">

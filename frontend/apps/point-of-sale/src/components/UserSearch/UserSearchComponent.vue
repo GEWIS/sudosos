@@ -5,9 +5,14 @@
         <div class="c-btn active square search-close icon-large" @click="cancelSearch()">
           <font-awesome-icon icon="fa-solid fa-xmark"/>
         </div>
-        <input type="text" ref="searchInput" class="flex-sm-grow-1" v-model="searchQuery"
-               placeholder="Search user to charge..."
-               @input="updateSearchQuery($event as InputEvent)"/>
+        <input
+          type="text"
+          ref="searchInput"
+          class="flex-sm-grow-1"
+          v-model="searchQuery"
+          placeholder="Search user to charge..."
+          autocomplete="off"
+          @input="updateSearchQuery($event as InputEvent)"/>
         <div class="c-btn active rounder fs-5" @click="selectSelf()" v-if="!settings.isBorrelmode">
           Charge yourself
         </div>
