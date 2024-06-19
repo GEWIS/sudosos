@@ -64,10 +64,10 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: "apps/dashboard"
           platforms: linux/amd64 #SudoSOS does not run on linux/arm64
           push: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          file: "apps/dashboard/Dockerfile"
