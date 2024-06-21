@@ -62,17 +62,16 @@ import CardComponent from '@/components/CardComponent.vue';
 import TopupModal from '@/components/TopupModalComponent.vue';
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
 import { computed, ref, onMounted, type Ref, watch } from 'vue';
-import type { BalanceResponse, UserResponse } from '@sudosos/sudosos-client';
+import type { BalanceResponse } from '@sudosos/sudosos-client';
 import apiService from '@/services/ApiService';
 import { formatPrice } from '@/utils/formatterUtils';
-import { storeToRefs } from 'pinia';
-import { useRouter } from 'vue-router';
-import { useForm, useField } from 'vee-validate';
+import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { toTypedSchema } from '@vee-validate/yup';
 import Divider from 'primevue/divider';
 import Dinero from 'dinero.js';
 import InputNumber from 'primevue/inputnumber';
+import { useRouter } from "vue-router";
 
 const loading: Ref<boolean> = ref(true);
 const productSchema = toTypedSchema(
@@ -91,25 +90,26 @@ const productSchema = toTypedSchema(
         'is-total-less-than-150',
         `Your new balance cannot surpass €150.`,
         (value) => {
-          return userBalance.value!!.amount.amount + value*100 <= 15000
+          return userBalance.value!!.amount.amount + value*100 <= 15000;
         }
       )
   })
 );
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { values, errors, defineField, meta, setFieldValue, setTouched, handleSubmit, validate } =
   useForm({
     validationSchema: productSchema
   });
 
-const [topupAmount, topupAmountAttrs] = defineField('Top up amount', {
+const [topupAmount] = defineField('Top up amount', {
   validateOnChange: false,
   validateOnInput: false,
   validateOnModelUpdate: false,
   validateOnBlur: false
 });
 
-const onSubmit = handleSubmit((values) => {
+const onSubmit = handleSubmit(() => {
   visible.value = true;
 });
 

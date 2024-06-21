@@ -19,7 +19,7 @@
     <ContainerCardComponent
       class="container-card"
       v-if="pos && pos.containers"
-      :containers="pos.containers"
+      :containers="posContainers"
     />
     <MutationsTableComponent
       :header="$t('app.Transactions')"
@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Ref } from 'vue';
+import { computed, type Ref } from 'vue';
 import { onBeforeMount, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { usePointOfSaleStore } from '@/stores/pos.store';
@@ -48,6 +48,7 @@ import { useToast } from 'primevue/usetoast';
 import { useI18n } from 'vue-i18n';
 import { handleError } from '@/utils/errorUtils';
 import apiService from '@/services/ApiService';
+import { useContainerStore } from "@/stores/container.store";
 
 const route = useRoute(); // Use the useRoute function to access the current route
 const toast = useToast();
@@ -56,8 +57,14 @@ const id = ref();
 const pointOfSaleStore = usePointOfSaleStore();
 const pos: Ref<PointOfSaleWithContainersResponse | null | undefined> = ref();
 
+const containerStore = useContainerStore();
+const posContainerIds = computed(() => pos.value?.containers.map((container) => container.id));
+const posContainers = computed(() => Object.values(containerStore.getAllContainers)
+    .filter((container) => posContainerIds.value?.includes(container.id)));
+
 onBeforeMount(async () => {
   id.value = route.params.id;
+  await containerStore.fetchAllIfEmpty();
   await pointOfSaleStore.fetchPointOfSale(id.value).catch((error) => {
     handleError(error, toast);
   });

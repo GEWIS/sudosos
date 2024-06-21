@@ -1,3 +1,4 @@
+<!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
 <template>
     <span class="tosLink" @click="visible = true">{{ $t('contact.Contact') }}</span>
     <Dialog modal v-model:visible="visible" :draggable="false" class="tosModal">

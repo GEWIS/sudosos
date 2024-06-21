@@ -28,7 +28,9 @@
         </div>
         <div class="py-2">
             {{ $t('banner.duration') }}<br>
-            <InputNumber v-model="duration" :suffix="' ' + $t('banner.seconds', duration || 0)" :maxFractionDigits="3" /><br>
+            <InputNumber v-model="duration"
+                         :suffix="' ' + $t('banner.seconds', duration || 0)" :maxFractionDigits="3" />
+          <br>
             <span class="font-bold text-red-500">{{ errors['Duration'] }}</span>
         </div>
         <div class="py-2">

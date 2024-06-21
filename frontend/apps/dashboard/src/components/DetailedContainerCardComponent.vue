@@ -5,7 +5,7 @@
       <Button
               @click="visible = true"
       >{{ $t("c_POSCreate.add container") }}</Button>
-      <AddContainerDialogComponent v-model:visible="visible"/>
+      <ContainerActionsDialog v-model:visible="visible"/>
     </template>
     <div class="flex flex-row">
       <DataTable
@@ -53,12 +53,13 @@ import Column from 'primevue/column';
 import CardComponent from "@/components/CardComponent.vue";
 import type { ContainerResponse } from "@sudosos/sudosos-client";
 import { onMounted, ref, watch } from "vue";
-import AddContainerDialogComponent from "@/components/AddContainerDialogComponent.vue";
 import Skeleton from "primevue/skeleton";
+import ContainerActionsDialog from "@/components/ContainerActionsDialog.vue";
 
 const visible = ref(false);
 const selectedOwnContainers = ref<Array<ContainerResponse>>([]);
 const selectedPublicContainers = ref<Array<ContainerResponse>>([]);
+
 const props = defineProps({
   publicContainers: {
     type: Array<ContainerResponse>,

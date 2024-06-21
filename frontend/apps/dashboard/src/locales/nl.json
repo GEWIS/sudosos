@@ -19,7 +19,8 @@
     "Sign out": "Uitloggen",
     "Social drink cards": "Borrelkaarten",
     "Transactions": "Transacties",
-    "User overview": "Gebruikers overzicht"
+    "User overview": "Gebruikers overzicht",
+    "Promo": "Promo"
   },
   "balance": {
     "Balance after": "Balans na opwaarderen:",
@@ -40,16 +41,12 @@
     "duration": "Tijdsduur: ",
     "name": "Naam: ",
     "noBannersFound": "Geen banners gevonden, upload er snel één!",
-    "second": "Seconde | Secondes",
     "seconds": "Seconden",
     "submit": "Toepassen",
     "till": "tot",
     "timespan": "Tijdspan: "
   },
   "c_ContainerAssign": {
-    "Assign product": "Product toewijzen",
-    "Product": "Kies product:",
-    "Product selection error": " is een vereist veld.",
     "Select product": "Selecteer product"
   },
   "c_POSCreate": {
@@ -71,12 +68,13 @@
     "Save": "Opslaan"
   },
   "c_containerEditModal": {
-    "Name": "Naam",
     "Public": "Publiek",
     "cancel": "Annuleren",
-    "owner": "Eigenaar",
     "save": "Opslaan",
-    "select owner": "Selecteer Eigenaar"
+    "header": {
+      "edit": "Edit container",
+      "create": "Container aanmaken"
+    }
   },
   "c_currentBalance": {
     "Increase balance": "Saldo opwaarderen",
@@ -85,28 +83,35 @@
     "someIsFines": "Waarvan {fine} boetes zijn",
     "topup": "Je gaat opwaarderen met "
   },
-  "c_productEditModal": {
+  "c_productContainerOperations": {
+    "Manage Products": "Beheer Producten",
+    "Existing Product": "Bestaand product toevoegen",
     "Alcohol Percentage": "Alcohol percentage",
     "Category": "Categorie",
     "Image": "Plaatje",
     "Name": "Naam",
+    "Owner": "Eigenaar",
     "Please select": "Selecteer een product categorie",
     "Please select VAT": "Selecteer BTW groep",
     "Price": "Prijs (in €)",
     "VAT": "BTW (in %)",
-    "save": "opslaan"
-  },
-  "c_productInfoModal": {
-    "Added by": "Toegevoegd door",
     "Added on": "Toegevoegd op",
-    "Alcohol percentage": "Alc. %",
-    "Category": "Categorie",
-    "Name": "Naam",
-    "Picture": "Plaatje",
-    "Price": "Prijs",
     "Updated on": "Geupdated op",
-    "delete": "Verwijder product uit container",
-    "title": "Product informatie"
+    "Already In": "Zit al in container",
+    "Add To Container": "Voeg toe aan container",
+    "Delete From Container": "Verwijder uit container",
+    "Save": "Opslaan",
+    "Create": "Aanmaken",
+    "Close To": "Naam lijkt op: {name} (klik om te kiezen)",
+    "header": {
+      "addProductToContainer": "Product aan container toevoegen",
+      "createProduct": "Product aanmaken",
+      "productDetails": "Productdetails"
+    },
+    "Preferred": "Voorkeur",
+    "Featured": "Promo",
+    "Pricelist": "Prijslijst",
+    "AllProducts": "Alle producten"
   },
   "c_recentTransactionsTable": {
     "all transactions": "alle transacties",
@@ -141,12 +146,10 @@
     "Security": "Beveiliging"
   },
   "containersOverview": {
-    "Containers": "Containers",
-    "newContainer": "Nieuwe container"
+    "Containers": "Containers"
   },
   "errorMessages": {
-    "posNotFound": "Het gevraagde verkooppunt is niet gevonden.",
-    "userNotFound": "De gevraagde gebruiker is niet gevonden."
+    "posNotFound": "Het gevraagde verkooppunt is niet gevonden."
   },
   "fine": {
     "apply": "Toepassen",
@@ -198,9 +201,7 @@
     "localAccount": "Login met een lokaal account"
   },
   "manageProducts": {
-    "Add product": "Product toevoegen",
-    "Containers": "Containers",
-    "Manage all products and containers": "Beheer alle producten en containers"
+    "Containers": "Containers"
   },
   "payment": {
     "pay": "betaal"
@@ -246,15 +247,18 @@
   },
   "successMessages": {
     "createContainer": "Container is succesvol aangemaakt.",
-    "deleteProductContainer": "Product is succesvol verwijderd van de container.",
     "editPOS": "Verkooppunt is succesvol",
     "fineDeleted": "Boete is succesvol verwijderd.",
     "finesHandedOut": "Boetes zijn succesvol uitgedeeld.",
     "finesNotified": "Gebruikers succesvol ingelicht.",
-    "productCreated": "Het product is aangemaakt!",
     "success": "Gelukt!",
     "transactionDeleted": "Transactie is succesvol verwijderd.",
-    "resetPassword": "Wachtwoord is succesvol gewijzigd."
+    "resetPassword": "Wachtwoord is succesvol gewijzigd.",
+    "productUpdate": "Product is succesvol geüpdatet.",
+    "productContainerAdd": "Product is succesvol toegevoegd aan container.",
+    "productContainerDelete": "Product is succesvol verwijderd van container.",
+    "productCreate": "Product is succesvol aangemaakt.",
+    "updateContainer": "Container is succesvol geüpdatet."
   },
   "termsOfService": {
     "acceptFirst": "Accepteer de Voorwaarden",
@@ -272,12 +276,9 @@
     "fineAmount": "Boete",
     "fineDescr": "Je hebt een boete ontvangen.",
     "invoiceDescr": "Je hebt een factuur aan GEWIS betaald",
-    "otherBoughtAt": "{user} heeft gekocht bij {pos}",
     "price": "Prijs",
-    "putInBy": "Transactie aangemaakt door {createdBy}",
     "title": "Titel",
     "total": "Totaal:",
-    "userBoughtAt": "Je hebt gekocht bij {pos}",
     "waivedFineDescr": "Je boetes zijn kwijtgescholden.",
     "what": "Wat",
     "when": "Wanneer"
@@ -312,5 +313,8 @@
       "max": "Dit veld mag maximaal ${max} tekens bevatten.",
       "min": "Dit veld moet minimaal ${min} tekens bevatten."
     }
+  },
+  "tooltip": {
+    "owner_revenue": "NB: De containereigenaar krijgt de opbrengst, niet de producteigenaar"
   }
 }

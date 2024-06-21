@@ -51,12 +51,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
 import { useContainerStore } from '@/stores/container.store';
 import DetailedContainerCardComponent from '@/components/DetailedContainerCardComponent.vue';
-import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
-import type { ContainerResponse, UserResponse } from '@sudosos/sudosos-client';
+import { useAuthStore } from '@sudosos/sudosos-frontend-common';
+import type { BaseUserResponse, ContainerResponse, UserResponse } from '@sudosos/sudosos-client';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import { useRouter } from 'vue-router';
 import { toTypedSchema } from '@vee-validate/yup';
@@ -68,11 +68,10 @@ import { isEmpty } from "lodash";
 
 const isLoading: Ref<boolean> = ref(true);
 const containerStore = useContainerStore();
-const userStore = useUserStore();
-const publicContainers: Ref<Array<ContainerResponse> | null | undefined> = ref(new Array(10));
-const ownContainers: Ref<Array<ContainerResponse> | null | undefined> = ref(new Array(10));
-const organsList: Ref<Array<UserResponse>> = ref([]);
+const publicContainers = computed(() => Object.values(containerStore.getPublicContainers));
+const ownContainers = computed(() => Object.values(containerStore.getUsersContainers));
 const authStore = useAuthStore();
+const organsList: Ref<BaseUserResponse[]> = ref(authStore.organs);
 const pointOfSaleStore = usePointOfSaleStore();
 const router = useRouter();
 
@@ -101,22 +100,8 @@ const { value } = useField<ContainerResponse[]>(
 const toast = useToast();
 
 onMounted(async () => {
-  if (userStore.getCurrentUser.user) {
-    await containerStore.getPublicContainers().then((response) => {
-      publicContainers.value = response.records;
-    });
-    await containerStore.getUsersContainers(
-      userStore.getCurrentUser.user.id
-    ).then((response) => {
-      ownContainers.value = response.records.filter(
-        (container) => container.public == false
-      );
-    });
-    isLoading.value = false;
-    organsList.value = authStore.organs;
-  } else {
-    await router.replace({ path: '/error' });
-  }
+  await containerStore.fetchAllIfEmpty();
+  isLoading.value = false;
 });
 
 const handleCreatePOS = handleSubmit(async (values) => {

@@ -10,7 +10,6 @@
     "Create": "Create",
     "Create POS": "Create POS",
     "English": "English",
-    "Manage POS": "Manage POS",
     "Manage products": "Manage products",
     "Netherlands": "Nederlands",
     "Overview": "POS Overview",
@@ -20,16 +19,14 @@
     "Sign out": "Sign out",
     "Social drink cards": "Social drink cards",
     "Transactions": "Transactions",
-    "User overview": "User overview"
+    "User overview": "User overview",
+    "Promo": "Promo"
   },
   "balance": {
     "Balance increase amount": "Increase balance:",
     "Payment button": "Top up",
-    "Increase balance": "Increase balance",
     "Price": "Price",
-    "minPayment": "Note: minimum topup is €10 or needs to pay off debt.",
-    "Balance after": "Balance after:",
-    "Start payment": "Start payment"
+    "Balance after": "Balance after:"
   },
   "banner": {
     "Banners": "Banners",
@@ -50,9 +47,6 @@
     "Create banner": "Create banner"
   },
   "c_ContainerAssign": {
-    "Assign product": "Assign product",
-    "Product": "Choose product:",
-    "Product selection error": " is een vereist veld.",
     "Select product": "Select product"
   },
   "c_POSCreate": {
@@ -103,9 +97,7 @@
     "localAccount": "Login using local account"
   },
   "manageProducts": {
-    "Add product": "Add product",
-    "Containers": "Containers",
-    "Manage all products and containers": "Manage all products and containers"
+    "Containers": "Containers"
   },
   "payment": {
     "pay": "pay"
@@ -114,12 +106,13 @@
     "Point of sale overview": "Point of sale overview"
   },
   "c_containerEditModal": {
-    "Name": "Name",
     "Public": "Public",
     "cancel": "Cancel",
-    "owner": "Owner",
     "save": "Save",
-    "select owner": "Please Select Owner"
+    "header": {
+      "edit": "Edit container",
+      "create": "Create container"
+    }
   },
   "c_currentBalance": {
     "Increase balance": "Increase balance",
@@ -128,120 +121,48 @@
     "someIsFines": "Of which {fine} is fines",
     "topup": "You will be topping up with"
   },
-  "c_productEditModal": {
+  "c_productContainerOperations": {
+    "Manage Products": "Manage Products",
+    "Existing Product": "Add existing product",
     "Alcohol Percentage": "Alc. %",
     "Category": "Category",
     "Image": "Image",
     "Name": "Name",
+    "Owner": "Owner",
     "Please select": "Please select a product category",
     "Please select VAT": "Please select a VAT group",
     "Price": "Price (in €)",
     "VAT": "VAT (in %)",
-    "save": "Save"
-  },
-  "c_productInfoModal": {
-    "Added by": "Added by",
     "Added on": "Added on",
-    "Alcohol percentage": "Alcohol percentage",
-    "Category": "Category",
-    "Name": "Name",
-    "Picture": "Picture",
-    "Price": "Price",
     "Updated on": "Updated on",
-    "delete": "Delete Product from container",
-    "title": "Product information"
+    "Already In": "Product already in container",
+    "Add To Container": "Add to container",
+    "Delete From Container": "Delete from container",
+    "Save": "Save",
+    "Create": "Create",
+    "Close To": "Name is close to: {name} (click to pick)",
+    "header": {
+      "addProductToContainer": "Add product to container",
+      "createProduct": "Create product",
+      "productDetails": "Product details"
+    },
+    "Preferred": "Preferred",
+    "Featured": "Featured",
+    "Pricelist": "Price list",
+    "AllProducts": "All Products"
   },
   "c_transactionDetailsModal": {
     "delete": "Delete",
     "transactionDetails": "Transaction Details"
   },
   "c_userInfo": {
-    "quick": "Quick Overview",
-    "End date": "Point of sale start date",
-    "End invalid": "Please pick an end date later than the end date and later than now",
-    "General": "General",
-    "Management": "Management",
-    "Managers": "Managers",
-    "No containers": "No containers selected",
-    "Own containers": "Own containers",
-    "Owner": "Owner",
-    "Pick date": "Pick a date",
-    "Public containers": "Public containers",
-    "Select owner": "Select Owner",
-    "Selected containers": "Selected containers",
-    "Start date": "Point of sale start date",
-    "Start invalid": "Please pick a start date earlier than the end date",
-    "Title": "POS Name",
-    "Use authentication": "Use Authentication",
-    "add container": "Add container",
-    "are you sure": "Are you sure you want to delete this container?",
-    "confirm": "Confirm deletion",
-    "name invalid": "Please provide a valid name that is longer than 0 characters",
-    "noContainersSelected": "There are no containers selected."
+    "quick": "Quick Overview"
   },
   "c_POSOverview": {
-    "ACCEPTED": "Accepted",
-    "OPEN": "Open",
-    "POS Name": "Name",
-    "POS Owner": "Owner",
-    "Page": "Page",
-    "REJECTED": "Rejected",
-    "all points of sale": "All points of sale",
-    "requested points of sale": "Requested points of sale"
   },
   "c_bannerTable": {
-    "Active": "Active",
-    "Add": "Add",
-    "Are you sure": "Are you sure you want to delete this advertisement?",
-    "Banner": "Banner",
-    "Confirm deletion": "Confirm deletion",
-    "Duration": "Duration (in ms)",
-    "Duration (ms)": "Duration (ms)",
-    "Edit": "Edit",
-    "Empty": "No banners found",
-    "End date": "End date",
-    "End date should": "End date should be set and later than today",
-    "Name": "Name",
-    "Page": "Page",
-    "Please enter dur": "Please enter a number larger than 0",
-    "Please enter name": "Please enter a name",
-    "Start date": "Start date",
-    "Starts on": "Starts on",
-    "Stops on": "Stops on",
-    "Thumbnail": "Thumbnail",
-    "cancel": "cancel",
-    "new banner": "new banner",
-    "save": "save"
   },
   "c_borrelkaartGroupTable": {
-    "Activated amount": "Activated amount",
-    "Active": "Active",
-    "Add social drink cards": "Add social drink cards",
-    "Amount of cards": "Amount of cards",
-    "Amount of cards needs to be larger than 0": "Amount of cards needs to be larger than 0",
-    "Barcode": "Barcode",
-    "Current value": "Current value",
-    "Fill in a name": "Fill in a name",
-    "Filter by name": "Filter by name",
-    "Forever": "Forever",
-    "From": "From",
-    "From date needs a date earlier than till date": "From date needs a date earlier than till date",
-    "Info": "Info",
-    "Initial value": "Initial value",
-    "Initial value needs to be 0 or larger": "Initial value needs to be 0 or larger",
-    "Name": "Name",
-    "Name need to be larger than 0 characters": "Name need to be larger than 0 characters",
-    "Page": "Page",
-    "Social drink cards per page": "Social drink cards per page",
-    "Till": "Till",
-    "Till date needs a date later than from date": "Till date needs a date later than from date",
-    "Total amount": "Total amount",
-    "Valid from": "Valid from",
-    "Valid till": "Valid till",
-    "Validity": "Validity",
-    "cancel": "cancel",
-    "new social drink cards": "new social drink cards",
-    "save": "save"
   },
   "c_userTable": {
     "Select Type": "Select Type",
@@ -251,16 +172,8 @@
     "lastName": "Last Name",
     "ofAge": "18+"
   },
-  "c_containerComponent": {
-    "Add product": "Add product",
-    "Public": "Public",
-    "Table view": "Table view",
-    "new": "New",
-    "no products": "This container contains no products"
-  },
   "errorMessages": {
-    "posNotFound": "The requested POS was not found.",
-    "userNotFound": "The requested user was not found."
+    "posNotFound": "The requested POS was not found."
   },
   "fine": {
     "apply": "Apply",
@@ -330,15 +243,18 @@
   },
   "successMessages": {
     "createContainer": "Successfully created container.",
-    "deleteProductContainer": "Successfully deleted product from container.",
     "editPOS": "Succesfully edited POS.",
     "fineDeleted": "Successfully deleted fine.",
     "finesHandedOut": "Successfully handed out fines",
     "finesNotified": "Succesfully notified users.",
-    "productCreated": "Successfully created product.",
     "success": "Success",
     "transactionDeleted": "Successfully deleted transaction.",
-    "resetPassword": "Successfully reset password."
+    "resetPassword": "Successfully reset password.",
+    "productUpdate": "Successfully updated product.",
+    "productContainerAdd": "Successfully added product to container.",
+    "productContainerDelete": "Successfully deleted product from container.",
+    "productCreate": "Successfully created product.",
+    "updateContainer": "Successfully updated container."
   },
   "termsOfService": {
     "acceptFirst": "Accept the Terms of Service",
@@ -361,10 +277,7 @@
     "total": "Total:",
     "waivedFineDescr": "Your fines were waived.",
     "what": "What",
-    "when": "When",
-    "userBoughtAt": "You bought at {pos}",
-    "otherBoughtAt": "{user} bought at {pos}",
-    "putInBy": "Transaction created by {createdBy}"
+    "when": "When"
   },
   "userDetails": {
     "Active": "Active",
@@ -386,6 +299,9 @@
     "Security": "Security",
     "Feature requests": "Feature requests"
   },
+  "containersOverview": {
+    "Containers": "Containers"
+  },
   "validation": {
     "number": {
       "min": "This field must be greater than ${min}"
@@ -403,5 +319,8 @@
       "max": "This field can't be greater than ${max} characters",
       "min": "This field must be at least ${min} characters"
     }
+  },
+  "tooltip": {
+    "owner_revenue": "Note: Container owner gets the revenue, not the product owner"
   }
 }

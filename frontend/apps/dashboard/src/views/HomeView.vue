@@ -21,17 +21,14 @@ import BalanceWithTopupComponent from '@/components/BalanceWithTopupComponent.vu
 import MutationsTableComponent from '@/components/Mutations/MutationsTableComponent.vue';
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
 import apiService from '@/services/ApiService';
-import type { PaginatedFinancialMutationResponse, UserResponse } from "@sudosos/sudosos-client";
+import type { PaginatedFinancialMutationResponse } from "@sudosos/sudosos-client";
 import router from "@/router";
 import { handleError } from "@/utils/errorUtils";
 import { useToast } from "primevue/usetoast";
-import { storeToRefs } from "pinia";
 
 const authStore = useAuthStore();
 const userStore = useUserStore();
 const toast = useToast();
-
-const { current } = storeToRefs(userStore);
 
 const getUserMutations = async (take: number, skip: number):
     Promise<PaginatedFinancialMutationResponse | undefined> => {

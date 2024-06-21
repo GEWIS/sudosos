@@ -90,6 +90,7 @@ const [firstName, firstNameAttrs] = defineField('firstName', {});
 const [lastName, lastNameAttrs] = defineField('lastName', {});
 const [email, emailAttrs] = defineField('email', {});
 const [isActive, isActiveAttrs] = defineField('isActive', {});
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const [userType, userTypeAttrs] = defineField('userType', {});
 const [canGoIntoDebt, canGoIntoDebtAttrs] = defineField('canGoIntoDebt', {});
 const [ofAge, ofAgeAttrs] = defineField('ofAge', {});

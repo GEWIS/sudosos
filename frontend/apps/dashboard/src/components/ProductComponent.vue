@@ -1,25 +1,27 @@
 <template>
   <div
-    class="flex flex-column h-10rem w-8rem border-300 border-1 border-round-sm overflow-hidden"
+    class="flex flex-column h-12rem w-8rem border-300 border-1 border-round-sm overflow-hidden cursor-pointer relative"
     @click="visible = true"
   >
-    <div class="flex align-items-center justify-content-center h-8rem w-full bg-white overflow-hidden">
-      <img :src="getProductImageSrc(product)" :alt="product.name" class="max-w-full max-h-full object-contain" />
-    </div>
-    <p class="text-center m-0 text-base text-overflow-ellipsis font-bold">{{ product.name }}</p>
+      <div class="h-8rem flex justify-content-center align-items-center background-white">
+        <img :src="imageSrc" :alt="product.name" class="p-1 h-8rem"/>
+      </div>
+      <div v-if="product.featured" class="promo-tag uppercase">{{ $t('app.Promo') }}</div>
+      <p class="text-center m-2 text-base text-overflow-ellipsis font-bold">{{ product.name }}</p>
   </div>
-  <ProductDialogComponent :container="container" v-model:visible="visible" :product="product" />
+  <ProductContainerOperationsComponent :container="container" v-model:visible="visible" :product="product"/>
 </template>
 
 <script setup lang="ts">
 import type { ContainerWithProductsResponse, ProductResponse } from "@sudosos/sudosos-client";
 import { getProductImageSrc } from "@/utils/imageUtils";
-import { ref } from "vue";
-import ProductDialogComponent from "@/components/ProductDialogComponent.vue";
+import { computed, ref } from "vue";
+import ProductContainerOperationsComponent from "@/components/ProductContainerOperationsComponent.vue";
 
 const visible = ref(false);
+const imageSrc = computed(() => getProductImageSrc(props.product));
 
-defineProps({
+const props = defineProps({
   product: {
     type: Object as () => ProductResponse,
     required: true,
@@ -32,4 +34,20 @@ defineProps({
 </script>
 
 <style scoped lang="scss">
+.background-white {
+  background-color: #fff; /* Ensuring background is white */
+}
+
+.promo-tag {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  right: 0;
+  color: #fff;
+  font-weight: bolder;
+  background-color: rgba(212, 0, 0, 0.5);
+  text-align: center;
+  font-size: 1.2em;
+  padding: 5px 0;
+}
 </style>
