@@ -1,15 +1,14 @@
 <template>
-  <div class="user-row flex-container font-size-lg fw-bold text-center my-1 py-3"
+  <div class="user-row flex-container font-size-lg font-semibold text-center border-round-xl my-1 py-3 my-3 bg-red-100"
        :class="{inactive: !active}" @click="selectUser">
     {{ displayName() }}
-    <font-awesome-icon v-if="shouldShowAge()" icon="fa-solid fa-baby"/>
+    <i class="pi pi-user-minus" v-if="shouldShowAge()"/>
   </div>
 </template>
 
 <script setup lang="ts">
 import { GewisUserResponse, UserResponse } from "@sudosos/sudosos-client";
 import { useCartStore } from "@/stores/cart.store";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 const props = defineProps({
   user: {

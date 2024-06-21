@@ -1,16 +1,16 @@
 <template>
-  <div class="point-of-sale me-3">
+  <div class="point-of-sale mr-3">
     <div class="header">
       <div class="header-row">
         <div class="c-btn active square search-close icon-large" @click="cancelSelect()">
-          <font-awesome-icon icon="fa-solid fa-xmark"/>
+          <i class="pi pi-times text-4xl"/>
         </div>
-        <div class="w-100 text-center fs-4">
+        <div class="w-full text-center text-2xl">
           Select member of {{ organName }} to charge as:
         </div>
       </div>
     </div>
-    <div class="flex-container align-content-center justify-content-center flex-wrap w-100 h-100 gap-3">
+    <div class="flex-container align-content-center justify-content-center flex-wrap w-full h-full gap-3">
       <BuyerSelectButtonComponent v-for="member in organMembers"  :key="member.id" :member="member"
                                   @cancel-select-creator="cancelSelect()"/>
     </div>
@@ -21,7 +21,6 @@
 import { computed, onMounted } from "vue";
 import { usePointOfSaleStore } from "@/stores/pos.store";
 import BuyerSelectButtonComponent from "@/components/BuyerSelect/BuyerSelectButtonComponent.vue";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { UserResponse } from "@sudosos/sudosos-client";
 
 const emit = defineEmits(['cancelSelectCreator']);

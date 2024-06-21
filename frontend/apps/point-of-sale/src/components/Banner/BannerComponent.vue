@@ -33,10 +33,10 @@ const switchToNextBanner = () => {
 let timeoutId: number;
 watch(currentBanner, () => {
   if (currentBanner.value) {
-    clearTimeout(timeoutId)
+    clearTimeout(timeoutId);
     timeoutId = setTimeout(switchToNextBanner, currentBanner.value.duration * 1000);
   }
-})
+});
 
 // If new banners are fetched we reinitialize the carousel
 watch(activeBanners, (newBanners) => {

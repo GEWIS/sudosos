@@ -4,7 +4,7 @@
       <div v-show="isSearchViewVisible">
         <div class="header-row">
           <div class="c-btn square active icon-large search-close" @click="closeSearchView">
-            <font-awesome-icon icon="fa-solid fa-xmark"/>
+            <i class="pi pi-times text-4xl"/>
           </div>
           <input
             type="text"
@@ -16,10 +16,10 @@
         </div>
       </div>
       <div v-show="!isSearchViewVisible">
-        <div class="d-flex w-100 justify-content-between">
-          <div class="d-flex flex-wrap gap-2">
+        <div class="flex w-full justify-content-between">
+          <div class="flex flex-wrap gap-2">
             <label for="searchInput" class="c-btn icon-md search-close" @click="openSearchView">
-              <font-awesome-icon icon="fa-solid fa-search"/>
+              <i class="pi pi-search text-4xl"/>
             </label>
             <div
                 class="c-btn rounder font-size-lg"
@@ -47,7 +47,6 @@ import { computed, ref, watch } from 'vue';
 import {
   PointOfSaleWithContainersResponse
 } from '@sudosos/sudosos-client';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { useCartStore } from "@/stores/cart.store";
 import PointOfSaleProductsComponent from "@/components/PointOfSaleDisplay/PointOfSaleProductsComponent.vue";
 import { usePointOfSaleStore } from "@/stores/pos.store";

@@ -5,7 +5,7 @@
            class="product-card-image" :src="image" :alt="product.name" @click="addToCart"/>
       <div v-if="product.featured" class="promo-tag">PROMO</div>
     </div>
-    <p class="product-name text-overflow font-size-md fw-bold">{{ product.name }}</p>
+    <p class="product-name text-overflow font-size-md font-semibold">{{ product.name }}</p>
     <p class="product-price font-size-sm">€{{ productPrice }}</p>
   </div>
 </template>

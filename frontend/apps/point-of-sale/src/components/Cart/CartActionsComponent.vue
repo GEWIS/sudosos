@@ -1,21 +1,20 @@
 <template>
-  <div class="d-flex justify-content-between w-100">
+  <div class="flex justify-content-between w-full">
     <button
-        class="c-btn rounder fw-medium checkout fs-3"
+        class="c-btn rounder font-medium checkout text-3xl"
         :class="{ countdown: checkingOut, disabled: !enabled, borrelMode }"
         @click="checkout"
     >
       {{ checkoutText }}
     </button>
-    <button class="c-btn clear icon-larger rounded-circle" @click="logout" v-if="!borrelMode">
-      <font-awesome-icon icon="fa-solid fa-xmark" />
+    <button class="c-btn clear icon-larger border-circle" @click="logout" v-if="!borrelMode">
+      <i class="pi pi-times text-4xl"/>
     </button>
     <audio ref="sound"/>
   </div>
 </template>
 
 <script setup lang="ts">
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { computed, ref, watch } from "vue";
 import { logoutService } from "@/services/logoutService";
 import { useCartStore } from "@/stores/cart.store";

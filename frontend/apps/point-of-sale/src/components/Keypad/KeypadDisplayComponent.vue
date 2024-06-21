@@ -1,8 +1,8 @@
 <template>
   <LoginInfoComponent/>
   <div class="wrapper user accent-text" :class="{ inactive: !isActive }">
-    <font-awesome-icon icon="fa-solid fa-user" class="fs-3 w-100" />
-    <div class="display-value user-id" @click="() => { emits('focusUserId') }">
+    <i class="pi pi-user text-6xl text-center w-full"/>
+    <div class="display-value pl-3" @click="() => { emits('focus:userid') }">
       {{ external ? 'E' : '' }}
       <span v-for="char in userId" :key="char">
         {{ char }}
@@ -10,13 +10,13 @@
     </div>
   </div>
   <div class="wrapper pincode accent-text" :class="{ inactive: isActive }">
-    <font-awesome-icon icon="fa-solid fa-key" class="fs-3 w-100" />
+    <i class="pi pi-key text-6xl text-center w-full"/>
     <div class="passcode-wrapper" :class="{ wrong: wrongPin }">
-      <div class="fs-1" v-if="wrongPin">
+      <div class="text-5xl" v-if="wrongPin">
         WRONG PIN
       </div>
-      <div class="d-flex w-100 h-100 justify-content-between align-items-center" v-else
-        @click="() => { emits('focusPasscode') }">
+      <div class="flex w-full h-full justify-content-between align-items-center" v-else
+        @click="() => { emits('focus:passcode') }">
         <span class="passcode-span" v-for="char in displayCode" :key="char">{{ char }}</span>
       </div>
     </div>
@@ -28,7 +28,7 @@
 import { computed } from "vue";
 import LoginInfoComponent from "@/components/LoginInfoComponent.vue";
 
-const emits = defineEmits(['focusPasscode', 'focusUserId']);
+const emits = defineEmits(['focus:passcode', 'focus:userid']);
 
 const props = defineProps({
   userId: {

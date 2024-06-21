@@ -1,5 +1,5 @@
 <template>
-  <div v-if="posNotLoaded" class="home-loader">
+  <div v-if="posNotLoaded" class="flex justify-content-center align-items-center h-full">
     <div>
       <ProgressSpinner aria-label="Loading" />
     </div>
@@ -98,13 +98,5 @@ watch(
 
 .cart-wrapper {
   width: 350px;
-}
-
-/* Your existing styles */
-.home-loader {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
 }
 </style>

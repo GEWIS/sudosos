@@ -1,6 +1,6 @@
 <template>
   <div class="settings-icon" @click="openSettings">
-    <font-awesome-icon icon="fa-solid fa-cog" />
+    <div class="pi pi-cog text-6xl"/>
   </div>
   <Dialog v-model:visible="visible" ref="settings" modal header="Settings" :style="{ width: '50vw' }"
           @show="addListenerOnDialogueOverlay(settings)"
@@ -21,7 +21,7 @@
         </Dropdown>
         <div class="mt-2">
           <button
-            class="c-btn rounded active p-2 fw-medium fs-6"
+            class="c-btn border-round-md active p-2 font-medium text-base"
             @click="forceExit"
           >
             Force logout and exit POS
@@ -41,7 +41,6 @@ import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import { storeToRefs } from "pinia";
 import { PointOfSaleResponse } from "@sudosos/sudosos-client";
 import { PointOfSaleSwitchService } from "@/services/PointOfSaleSwitchService";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { logoutService } from "@/services/logoutService";
 
 const visible = ref(false);
@@ -94,7 +93,6 @@ const openSettings = () => {
 .settings-icon {
   height: 100px;
   position: fixed;
-  bottom: -40px;
   left: 60px;
   font-size: 70px;
   cursor: pointer;

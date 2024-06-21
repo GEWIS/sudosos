@@ -1,6 +1,6 @@
 <template>
-  <div class="banner-content position-absolute bottom-0 d-flex flex-row justify-content-center">
-    <img style="object-fit: contain;" class="w-100 h-100" :src="getBannerImageSrc(banner)" :alt="banner.name" />
+  <div class="banner-content absolute bottom-0 flex flex-row justify-content-center">
+    <img style="object-fit: contain;" class="w-full h-full" :src="getBannerImageSrc(banner)" :alt="banner.name" />
   </div>
 </template>
 

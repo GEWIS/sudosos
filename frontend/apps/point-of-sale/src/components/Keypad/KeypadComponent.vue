@@ -1,9 +1,9 @@
 <template>
   <div class="keypad flex-column">
-    <div class="key-row d-flex justify-content-center" v-for="row in keypadLayout" :key="row[0]">
+    <div class="key-row flex justify-content-center" v-for="row in keypadLayout" :key="row[0]">
       <div :class="['key c-btn active square', { outlined: key === keypadBackspace || key === keypadExternal }]"
         v-for="key in row" :key="key" @click="handleKeyClick(key)">
-        <font-awesome-icon icon="fa-solid fa-backspace" v-if="key === keypadBackspace" />
+        <i class="pi pi-delete-left text-6xl" v-if="key === keypadBackspace" />
         {{ key !== keypadBackspace ? key : '' }}
       </div>
     </div>
@@ -27,7 +27,7 @@ const handleKeyClick = (key: string) => {
   if (key === keypadBackspace) {
     emits('backspace');
   } else if (key === keypadExternal) {
-    emits('external')
+    emits('external');
   } else {
     emits('input', key);
   }

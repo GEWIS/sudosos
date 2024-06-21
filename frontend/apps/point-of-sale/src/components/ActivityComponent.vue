@@ -1,6 +1,6 @@
 <template>
   <div v-if="activityStore.getActive">
-    Automatic checkout in <b>{{ activityStore.getDuration }}</b> seconds
+    Automatic checkout in <b class="font-bold">{{ activityStore.getDuration }}</b> seconds
   </div>
 </template>
 

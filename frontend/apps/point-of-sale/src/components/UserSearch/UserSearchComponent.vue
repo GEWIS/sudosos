@@ -3,35 +3,38 @@
     <div class="header">
       <div class="header-row">
         <div class="c-btn active square search-close icon-large" @click="cancelSearch()">
-          <font-awesome-icon icon="fa-solid fa-xmark"/>
+          <i class="pi pi-times text-4xl"/>
         </div>
-        <input
-          type="text"
-          ref="searchInput"
-          class="flex-sm-grow-1"
-          v-model="searchQuery"
-          placeholder="Search user to charge..."
-          autocomplete="off"
-          @input="updateSearchQuery($event as InputEvent)"/>
-        <div class="c-btn active rounder fs-5" @click="selectSelf()" v-if="!settings.isBorrelmode">
+        <input type="text" ref="searchInput" class="flex-sm-grow-1" v-model="searchQuery"
+               placeholder="Search user to charge..."
+               autocomplete="off"
+               @input="updateSearchQuery($event as InputEvent)"/>
+        <div class="c-btn active rounder text-xl" @click="selectSelf()" v-if="!settings.isBorrelmode">
           Charge yourself
+        </div>
+        <div class="c-btn active rounder text-xl" @click="selectNone()" v-else-if="settings.isBorrelmode">
+          Select no one
         </div>
       </div>
     </div>
     <div>
       <ScrollPanel class="custombar" style="width: 100%; height: 25rem;">
-        <UserSearchRowComponent v-for="user in sortedUsers" :user="user" :key="user.id"
-                                @click="selectUser(user)"/>
+        <UserSearchRowComponent v-for="user in getUsers" :user="user as UserResponse" :key="user.id"
+                                @click="selectUser(user as UserResponse)"/>
       </ScrollPanel>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, Ref, ref, watch } from "vue";
 import apiService from "@/services/ApiService";
-import { PaginatedUserResponse, UserResponse } from "@sudosos/sudosos-client";
+import {
+  BaseUserResponse,
+  PaginatedBaseTransactionResponse,
+  PaginatedUserResponse,
+  UserResponse
+} from "@sudosos/sudosos-client";
 import UserSearchRowComponent from "@/components/UserSearch/UserSearchRowComponent.vue";
 import { useCartStore } from "@/stores/cart.store";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
@@ -40,6 +43,7 @@ import type { AxiosResponse } from 'axios';
 import { useSettingStore } from "@/stores/settings.store";
 import ScrollPanel from "primevue/scrollpanel";
 import Fuse from "fuse.js";
+import { usePointOfSaleStore } from "@/stores/pos.store";
 
 const searchQuery = ref<string>('');
 
@@ -47,20 +51,24 @@ const users = ref<UserResponse[]>([]);
 const cartStore = useCartStore();
 const authStore = useAuthStore();
 const settings = useSettingStore();
-// const posStore = usePointOfSaleStore();
+const posStore = usePointOfSaleStore();
 
-
-// TODO Idea to show recent users when searching?
-// apiService.pos.getTransactions(posStore.getPos?.id).then((res) => {
-//   const data = res.data as PaginatedBaseTransactionResponse;
-//   const ids = new Set<number>([]);
-//   data.records.map((u) => {
-//     if (!ids.has(u.from.id)) {
-//       users.value.push(u.from);
-//       ids.add(u.from.id);
-//     };
-//   });
-// });
+const getRecentUsers = async () => {
+  if (!posStore.getPos?.id) return;
+  const recentUsers: BaseUserResponse[] = [];
+  await  apiService.pos.getTransactions(posStore.getPos?.id, 100).then((res) => {
+    const data = res.data as PaginatedBaseTransactionResponse;
+    const ids = new Set<number>([]);
+    data.records.map((u) => {
+      if (!ids.has(u.from.id)) {
+        recentUsers.push(u.from);
+        ids.add(u.from.id);
+      }
+    });
+    return ids;
+  });
+  return recentUsers;
+};
 
 const updateSearchQuery = (event: InputEvent) => {
   if (event.target) {
@@ -77,6 +85,13 @@ const delayedAPICall = debounce(() => {
 
 watch(searchQuery, () => {
   delayedAPICall();
+});
+
+const recent: Ref<BaseUserResponse[]> = ref([]);
+
+const getUsers = computed(() => {
+  if (searchQuery.value) return sortedUsers.value;
+  return recent.value;
 });
 
 const sortedUsers = computed(() => {
@@ -110,6 +125,9 @@ const searchInput = ref<null | HTMLInputElement>(null);
 
 onMounted(() => {
   if (searchInput.value) searchInput.value.focus();
+  getRecentUsers().then((rec) => {
+    if (rec) recent.value = rec;
+  });
 });
 
 const emit = defineEmits(['cancelSearch']);
@@ -118,6 +136,10 @@ const selectSelf = () => {
     selectUser(authStore.user);
     return;
   }
+};
+
+const selectNone = () => {
+  selectUser(null);
 };
 
 const selectUser = (user: UserResponse | null) => {

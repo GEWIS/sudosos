@@ -1,17 +1,22 @@
 <template>
   <div class="mt-1">
     <div class="flex-container mb-2">
-      <img :id="product.name" :src="getProductImageSrc(product)" :alt="product.name" class="product-image image me-2" />
+      <div>
+        <img :id="product.name" :src="getProductImageSrc(product)" :alt="product.name"
+             class="product-image image mr-2"/>
+      </div>
       <div class>
-        <h4 class="fs-6 text-overflow fw-bolder" style="max-width: 100px;">{{ product.name }}</h4>
+        <h4 class="text-base text-overflow font-bold" style="max-width: 100px;">{{
+            product.name
+          }}</h4>
         <p class="font-size-sm">{{ product.category.name }}</p>
       </div>
-      <div class="ms-auto gap-2 flex-container">
+      <div class="ml-auto gap-2 flex-container">
         <button class="c-btn active squarer min-w-34" @click="decreaseQuantity">-</button>
-        <span class="min-w-24 text-center fw-bolder">{{ cartProduct.count }}</span>
+        <span class="min-w-24 text-center font-bold">{{ cartProduct.count }}</span>
         <button class="c-btn active squarer min-w-34" @click="increaseQuantity">+</button>
       </div>
-      <p class="min-w-70 fw-bolder ps-3 text-end fs-6">€{{ totalPrice }}</p>
+      <p class="min-w-70 font-bold ps-3 text-right fs-6">€{{ totalPrice }}</p>
     </div>
   </div>
 </template>

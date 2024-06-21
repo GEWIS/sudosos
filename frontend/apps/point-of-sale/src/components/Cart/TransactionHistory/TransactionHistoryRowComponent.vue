@@ -1,12 +1,12 @@
 <template>
   <div v-if="transaction">
     <div class="flex-column content-body px-3 py-1" @click="toggleOpen" >
-    <div class="d-flex justify-content-between w-100 font-size-lg fw-medium">
+    <div class="flex justify-content-between w-full font-size-lg font-medium">
       <div>{{ formattedDate }}</div>
       <div>{{ formattedTime }}</div>
-      <div class="d-inline-flex justify-content-between">
+      <div class="inline-flex justify-content-between">
         €
-        <div class="text-end min-w-65">{{ formattedValue }}</div>
+        <div class="text-right min-w-65">{{ formattedValue }}</div>
       </div>
     </div>
       <div v-if="settings.isBorrelmode">
@@ -24,14 +24,14 @@
     >
       <!-- The 'bottom' div will only be rendered when 'products' is truthy and 'open' is true -->
       <div v-if="products && open" class="bottom" ref="bottomDiv">
-        <hr />
+        <hr class="border-1 opacity-30"/>
         <div v-for="subTransaction in products.subTransactions" :key="subTransaction.id">
           <div
-            class="d-flex justify-content-between"
+            class="flex justify-content-between"
             v-for="row in subTransaction.subTransactionRows"
             :key="row.product.id"
           >
-            <div class="d-flex gap-2">
+            <div class="flex gap-2">
               {{ row.amount }}x
               <div class="product-name text-overflow" style="max-width: 150px;">{{ row.product.name }}</div>
             </div>
@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue';
+import  { nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue';
 import { BaseTransactionResponse, TransactionResponse } from '@sudosos/sudosos-client';
 import {
   formatDateFromString,

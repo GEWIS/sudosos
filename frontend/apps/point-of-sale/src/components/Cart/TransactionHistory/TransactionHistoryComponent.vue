@@ -7,8 +7,8 @@
 * option to show more information when clicked.
 */
 <template>
-  <div class="flex-column h-100 gap-2 mt-2 overflow-y-auto">
-    <h5 class="fw-medium">Recent Purchases:</h5>
+  <div class="flex-column h-full gap-2 mt-2 overflow-y-auto">
+    <h class="font-medium text-xl">Recent Purchases:</h>
     <TransactionHistoryRowComponent
       v-for="transaction in transactions"
       :key="transaction.id"

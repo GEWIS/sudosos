@@ -1,14 +1,14 @@
 <template>
-  <div class="flex-column h-100">
+  <div class="flex flex-column h-full">
     <div class="flex-container flex-row flex-wrap justify-content-between">
-      <p class="fw-bolder font-size-lg accent-text mb-0">Current order for</p>
-      <div class="c-btn active square fs-4 px-3 py-1" @click="selectUser">
-        <font-awesome-icon v-if="current" icon="fa-solid fa-user" class="pe-2"/>
+      <p class="font-bold font-size-lg accent-text mb-0">Current order for</p>
+      <div class="c-btn active square text-2xl px-3 py-1" @click="selectUser">
+        <i class="pi pi-user text-2xl pr-2"/>
         {{ displayName() }}
       </div>
       <button v-if="showLock()" :class="{ disabled: disabledLock, active: lockedIn}"
-              class="c-btn lock active square fs-2 px-3 py-2 min-w-70" @click="lockUser">
-        <font-awesome-icon :icon="lockIcon"/>
+              class="c-btn lock active square text-4xl px-3 py-2 min-w-70" @click="lockUser">
+        <i :class="lockIcon" class="text-4xl"/>
       </button>
     </div>
     <div class="overflow-y-auto flex-grow-1 my-2" v-if="!shouldShowTransactions || !showHistory">
@@ -18,14 +18,14 @@
     </div>
     <TransactionHistoryComponent v-else-if="shouldShowTransactions" :transactions="transactions"/>
     <div class="content-body px-3 py-2 font-size-lg mt-3">
-      <div class="flex-between w-100">
-        <div class="fw-bold">Total</div>
-        <div class="fw-bolder font-size-lg">€{{ formatPrice(totalPrice) }}</div>
+      <div class="flex-between w-full">
+        <div class="font-semibold">Total</div>
+        <div class="font-bold font-size-lg">€{{ formatPrice(totalPrice) }}</div>
       </div>
       <div class="font-size-md pt-2 align-items-end flex-container justify-content-between"
            v-if="balance">
-        <span><font-awesome-icon
-          icon="fa-solid fa-exclamation-triangle"/> Debit after purchase: </span>
+        <span><i
+          class="pi pi-exclamation-triangle"/> Debit after purchase: </span>
         €{{ formattedBalanceAfter }}
       </div>
     </div>
@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+// import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { useCartStore } from '@/stores/cart.store';
 import CartItemComponent from '@/components/Cart/CartItemComponent.vue';
 import apiService from '@/services/ApiService';
@@ -132,7 +132,7 @@ const lockUser = () => {
 };
 
 const lockIcon = computed(() => {
-  return cartStore.lockedIn ? 'fa-solid fa-lock' : 'fa-solid fa-lock-open';
+  return cartStore.lockedIn ? 'pi pi-lock' : 'pi pi-unlock';
 });
 
 const disabledLock = computed(() => {

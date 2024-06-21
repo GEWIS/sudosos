@@ -137,6 +137,7 @@
 
 
 .product-image {
+  object-fit: contain;
   width: $cart-product-image-size;
   height: $cart-product-image-size;
   border-radius: $border-radius-sm;

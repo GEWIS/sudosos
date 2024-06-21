@@ -1,6 +1,6 @@
 <template>
-  <div class="container-grid-wrapper flex-1 h-100 mb-3 me-3">
-    <div class="container d-grid gap-2 pe-5 pb-3">
+  <div class="container-grid-wrapper flex-1 h-full mb-3 mr-3">
+    <div class="container grid gap-2 pr-5 pb-3">
       <ProductComponent
           v-for="product in sortedProducts"
           :key="`${product.product.id}-${product.container.id}`"
