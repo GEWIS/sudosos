@@ -96,6 +96,7 @@ const openSettings = () => {
   left: 60px;
   font-size: 70px;
   cursor: pointer;
+  bottom: 0;
   color: var(--accent-color);
 }
 </style>
