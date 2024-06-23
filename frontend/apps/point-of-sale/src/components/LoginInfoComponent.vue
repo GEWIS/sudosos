@@ -1,6 +1,6 @@
 <template>
     <div class="text-decoration-underline text-right h-full"
-        style="color: #d40000; margin-left: -60px; font-size: 35px; margin-top: 80px; margin-right: 25px;"
+        style="color: #d40000; margin-left: -60px; font-size: 35px; margin-top: 80px; margin-right: 28px;"
         @click="() => howToModalVisible = true">
       <i class="pi pi-question-circle text-4xl"/>
     </div>

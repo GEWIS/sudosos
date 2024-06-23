@@ -14,8 +14,8 @@
             :wrong-pin="wrongPin"
             :isActive="enteringUserId"
             :external="external"
-            @focus-passcode="focusPasscode"
-            @focus-user-id="focusUserId"
+            @focus:passcode="focusPasscode"
+            @focus:userid="focusUserId"
           />
         </div>
         <KeypadComponent
