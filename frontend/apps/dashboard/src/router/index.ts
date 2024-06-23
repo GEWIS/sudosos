@@ -31,6 +31,12 @@ declare module 'vue-router' {
 const router = createRouter({
   history: createWebHistory(),
   routes: [
+    ...authRoutes(),
+    ...posRoutes(),
+    ...adminRoutes(),
+    ...financialRoutes(),
+    ...sellerRoutes(),
+    ...userRoutes(),
     {
       path: '',
       component: PublicLayout,
@@ -42,12 +48,6 @@ const router = createRouter({
         },
       ]
     },
-    ...authRoutes(),
-    ...posRoutes(),
-    ...adminRoutes(),
-    ...financialRoutes(),
-    ...sellerRoutes(),
-    ...userRoutes(),
     {
       path: '',
       component: DashboardLayout,
