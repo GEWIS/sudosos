@@ -5,8 +5,11 @@
   },
   "app": {
     "BAC": "BAC",
+    "Seller": "Verkoper",
+    "Financial": "Financieel",
     "Banners": "Banners",
     "Board": "Bestuur",
+    "Admin": "Admin",
     "Create": "Aanmaken",
     "Create POS": "Creeër Verkooppunt",
     "English": "English",

@@ -5,8 +5,11 @@
   },
   "app": {
     "BAC": "BAC",
+    "Seller": "Seller",
+    "Financial": "Financial",
     "Banners": "Banners",
     "Board": "Board",
+    "Admin": "Admin",
     "Create": "Create",
     "Create POS": "Create POS",
     "English": "English",

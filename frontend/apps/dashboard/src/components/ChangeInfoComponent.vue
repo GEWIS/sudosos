@@ -1,3 +1,5 @@
+<!-- TODO unused? -->
+<!-- https://github.com/GEWIS/sudosos-frontend/issues/228 -->
 <template>
   <CardComponent :header="$t('profile.changeUserInfo')" :class="{ 'opacity-30': !isLocal}">
     <form @submit="changeUserInfo">

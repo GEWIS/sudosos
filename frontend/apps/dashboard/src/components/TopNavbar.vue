@@ -124,7 +124,7 @@ const leftItems = computed(() => [
     ]
   },
   {
-    label: t('app.Board'),
+    label: t('app.Admin'),
     visible: isBoard(),
     items: [
       {
@@ -138,7 +138,9 @@ const leftItems = computed(() => [
     ],
   },
   {
-    label: t('app.BAC'),
+    label: t('app.Financial'),
+    // TODO isFinancial()
+    // https://github.com/GEWIS/sudosos-frontend/issues/229
     visible: isBAC(),
     items: [
       {
@@ -149,15 +151,23 @@ const leftItems = computed(() => [
         label: t('flagged.Flagged transactions'),
       },
       {
-        label: t('app.Manage products'),
-        route: '/manage-products',
-      },
-      {
         label: t('app.Social drink cards'),
       },
       {
         label: t('fine.fineOverview'),
         route: '/fine',
+      },
+    ]
+  },
+  {
+    label: t('app.Seller'),
+    // TODO: isSeller()
+    // https://github.com/GEWIS/sudosos-frontend/issues/229
+    visible: isBAC(),
+    items: [
+      {
+        label: t('app.Manage products'),
+        route: '/manage-products',
       },
     ]
   },
