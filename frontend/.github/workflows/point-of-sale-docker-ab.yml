@@ -36,17 +36,17 @@ jobs:
         run: |
           echo "${ENV_FILE}" > ./apps/point-of-sale/.env
 
+      - name: Set branch name with AB suffix
+        id: branch_name
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/}-AB)" >> $GITHUB_ENV
+
       - name: Get Docker meta (for tags)
         id: meta
         uses: docker/metadata-action@v4
         with:
-          # list of Docker images to use as base name for tags
           images: |
             ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_TAG_POS }}
-          # generate Docker tags based on the following events/attributes
-          tags: |
-            type=ref,event=branch,pattern={{branch}}-AB
-            type=semver,pattern={{version}}
+          tags: ${{ env.BRANCH_NAME }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
