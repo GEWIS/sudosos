@@ -122,7 +122,7 @@ const startFlyingAnimation = async () => {
 }
 
 .product-card {
-  padding: 1rem 0 8px 0;
+  padding: 0 0 8px 0;
   height: fit-content;
   border-radius: $border-radius;
   overflow: hidden;
