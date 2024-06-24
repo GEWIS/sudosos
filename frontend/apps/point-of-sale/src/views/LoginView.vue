@@ -29,6 +29,7 @@
     </div>
   </div>
   <SettingsIconComponent />
+  <GitInfo/>
   <EanLoginComponent :handle-login="eanLogin"/>
 </template>
 
@@ -43,6 +44,7 @@ import { useCartStore } from '@/stores/cart.store';
 import apiService from '@/services/ApiService';
 import BannerComponent from '@/components/Banner/BannerComponent.vue';
 import EanLoginComponent from "@/components/EanLoginComponent.vue";
+import GitInfo from "@/components/GitInfo.vue";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();

@@ -4,6 +4,7 @@ WORKDIR /app
 COPY lib/common/ lib/common/
 COPY apps/point-of-sale/package.json apps/point-of-sale/
 COPY ./package.json ./package-lock.json ./
+COPY ./.git ./
 RUN npm install
 COPY apps/point-of-sale/ apps/point-of-sale/
 RUN npm run build --workspace=sudosos-point-of-sale
