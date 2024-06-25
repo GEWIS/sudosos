@@ -3,7 +3,7 @@ name: Docker Image CI
 on:
   workflow_dispatch:
   push:
-    branches: [ main, develop, feature/semver ]
+    branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
 
@@ -30,6 +30,11 @@ jobs:
             env_file_develop: ${{ vars.ENV_FILE_DEVELOPMENT }}
             docker_tag: ${{ vars.DOCKER_TAG_POS }}
             dockerfile_path: "apps/point-of-sale/Dockerfile"
+          - app: point-of-sale-ab
+            env_file_main: ${{ vars.ENV_FILE_PRODUCTION }}
+            env_file_develop: ${{ vars.ENV_FILE_PRODUCTION }}
+            docker_tag: ${{ vars.DOCKER_TAG_POS }}-ab
+            dockerfile_path: "apps/point-of-sale/Dockerfile"
 
     steps:
       - name: Checkout repository
@@ -47,7 +52,7 @@ jobs:
       - name: Set up environment - develop
         env:
           ENV_FILE: ${{ matrix.env_file_develop }}
-        if: github.ref == 'refs/heads/develop'
+        if: github.ref != 'refs/heads/main'
         run: |
           echo "${ENV_FILE}" > apps/${{ matrix.app }}/.env
 
@@ -80,7 +85,7 @@ jobs:
         with:
           context: .
           platforms: linux/amd64 #SudoSOS does not run on linux/arm64
-#          push: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+          push: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
