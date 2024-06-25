@@ -1,4 +1,4 @@
-name: Point of Sale - Dockerize
+name: Docker Image CI
 
 on:
   workflow_dispatch:
@@ -16,39 +16,49 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker:dind
+    strategy:
+      matrix:
+        app: [ dashboard, point-of-sale ]
+        include:
+          - app: dashboard
+            env_file_main: ${{ vars.ENV_FILE_PRODUCTION }}
+            env_file_develop: ${{ vars.ENV_FILE_DEVELOPMENT }}
+            docker_tag: ${{ vars.DOCKER_TAG_DASHBOARD }}
+            dockerfile_path: "apps/dashboard/Dockerfile"
+          - app: point-of-sale
+            env_file_main: ${{ vars.ENV_FILE_PRODUCTION }}
+            env_file_develop: ${{ vars.ENV_FILE_DEVELOPMENT }}
+            docker_tag: ${{ vars.DOCKER_TAG_POS }}
+            dockerfile_path: "apps/point-of-sale/Dockerfile"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           path: .
-          fetch-depth: 0
-          fetch-tags: true
 
       - name: Set up environment - main
         env:
-          ENV_FILE: ${{ vars.ENV_FILE_PRODUCTION }}
+          ENV_FILE: ${{ matrix.env_file_main }}
         if: github.ref == 'refs/heads/main'
         run: |
-          echo "${ENV_FILE}" > ./apps/point-of-sale/.env
+          echo "${ENV_FILE}" > ./apps/${{ matrix.app }}/.env
 
       - name: Set up environment - develop
         env:
-          ENV_FILE: ${{ vars.ENV_FILE_DEVELOPMENT }}
+          ENV_FILE: ${{ matrix.env_file_develop }}
         if: github.ref == 'refs/heads/develop'
         run: |
-          echo "${ENV_FILE}" > apps/point-of-sale/.env
+          echo "${ENV_FILE}" > apps/${{ matrix.app }}/.env
 
       - name: Get Docker meta (for tags)
         id: meta
         uses: docker/metadata-action@v4
         with:
-          # list of Docker images to use as base name for tags
           images: |
-            ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_TAG_POS }}
-          # generate Docker tags based on the following events/attributes
+            ${{ vars.DOCKER_REGISTRY }}/${{ matrix.docker_tag }}
           tags: |
             type=ref,event=branch
-            type=semver,pattern={{version}}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -70,9 +80,9 @@ jobs:
         with:
           context: .
           platforms: linux/amd64 #SudoSOS does not run on linux/arm64
-          push: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+#          push: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          file: "apps/point-of-sale/Dockerfile"
+          file: ${{ matrix.dockerfile_path }}
