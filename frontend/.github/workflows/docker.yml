@@ -66,7 +66,7 @@ jobs:
           images: |
             ${{ vars.DOCKER_REGISTRY }}/${{ matrix.docker_tag }}
           tags: |
-            type=ref
+            type=ref,enable=true,priority=600,prefix=,suffix=,event=branch
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
