@@ -25,16 +25,19 @@ jobs:
             env_file_develop: ${{ vars.ENV_FILE_DEVELOPMENT }}
             docker_tag: ${{ vars.DOCKER_TAG_DASHBOARD }}
             dockerfile_path: "apps/dashboard/Dockerfile"
+            dir: "dashboard"
           - app: point-of-sale
             env_file_main: ${{ vars.ENV_FILE_PRODUCTION }}
             env_file_develop: ${{ vars.ENV_FILE_DEVELOPMENT }}
             docker_tag: ${{ vars.DOCKER_TAG_POS }}
             dockerfile_path: "apps/point-of-sale/Dockerfile"
+            dir: "point-of-sale"
           - app: point-of-sale-ab
             env_file_main: ${{ vars.ENV_FILE_PRODUCTION }}
             env_file_develop: ${{ vars.ENV_FILE_PRODUCTION }}
             docker_tag: ${{ vars.DOCKER_TAG_POS }}-ab
             dockerfile_path: "apps/point-of-sale/Dockerfile"
+            dir: "point-of-sale"
 
     steps:
       - name: Checkout repository
@@ -47,14 +50,14 @@ jobs:
           ENV_FILE: ${{ matrix.env_file_main }}
         if: github.ref == 'refs/heads/main'
         run: |
-          echo "${ENV_FILE}" > ./apps/${{ matrix.app }}/.env
+          echo "${ENV_FILE}" > ./apps/${{ matrix.dir }}/.env
 
       - name: Set up environment - develop
         env:
           ENV_FILE: ${{ matrix.env_file_develop }}
         if: github.ref != 'refs/heads/main'
         run: |
-          echo "${ENV_FILE}" > apps/${{ matrix.app }}/.env
+          echo "${ENV_FILE}" > apps/${{ matrix.dir }}/.env
 
       - name: Get Docker meta (for tags)
         id: meta
