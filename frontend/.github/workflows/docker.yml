@@ -18,7 +18,7 @@ jobs:
       image: docker:dind
     strategy:
       matrix:
-        app: [ dashboard, point-of-sale ]
+        app: [ dashboard, point-of-sale, point-of-sale-ab]
         include:
           - app: dashboard
             env_file_main: ${{ vars.ENV_FILE_PRODUCTION }}
@@ -30,7 +30,6 @@ jobs:
             env_file_develop: ${{ vars.ENV_FILE_DEVELOPMENT }}
             docker_tag: ${{ vars.DOCKER_TAG_POS }}
             dockerfile_path: "apps/point-of-sale/Dockerfile"
-          # AB testing is the same as the normal, just always with production env.
           - app: point-of-sale-ab
             env_file_main: ${{ vars.ENV_FILE_PRODUCTION }}
             env_file_develop: ${{ vars.ENV_FILE_PRODUCTION }}

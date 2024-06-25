@@ -6,6 +6,7 @@ on:
       - 'v*'
     branches:
       - main
+      - develop
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
