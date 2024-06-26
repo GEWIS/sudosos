@@ -4,16 +4,13 @@ on:
   push:
     tags:
       - 'v*'
-    branches:
-      - main
-      - feature/semver
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  dockerize:
+  release:
     runs-on: ubuntu-latest
     container:
       image: docker:dind
