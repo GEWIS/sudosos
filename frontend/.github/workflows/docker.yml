@@ -1,4 +1,4 @@
-name: Point of Sale - Dockerize
+name: Docker Image CI
 
 on:
   workflow_dispatch:
@@ -16,39 +16,57 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker:dind
+    strategy:
+      matrix:
+        app: [ dashboard, point-of-sale, point-of-sale-ab]
+        include:
+          - app: dashboard
+            env_file_main: ${{ vars.ENV_FILE_PRODUCTION }}
+            env_file_develop: ${{ vars.ENV_FILE_DEVELOPMENT }}
+            docker_tag: ${{ vars.DOCKER_TAG_DASHBOARD }}
+            dockerfile_path: "apps/dashboard/Dockerfile"
+            dir: "dashboard"
+          - app: point-of-sale
+            env_file_main: ${{ vars.ENV_FILE_PRODUCTION }}
+            env_file_develop: ${{ vars.ENV_FILE_DEVELOPMENT }}
+            docker_tag: ${{ vars.DOCKER_TAG_POS }}
+            dockerfile_path: "apps/point-of-sale/Dockerfile"
+            dir: "point-of-sale"
+          - app: point-of-sale-ab
+            env_file_main: ${{ vars.ENV_FILE_PRODUCTION }}
+            env_file_develop: ${{ vars.ENV_FILE_PRODUCTION }}
+            docker_tag: ${{ vars.DOCKER_TAG_POS }}-ab
+            dockerfile_path: "apps/point-of-sale/Dockerfile"
+            dir: "point-of-sale"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           path: .
-          fetch-depth: 0
-          fetch-tags: true
 
       - name: Set up environment - main
         env:
-          ENV_FILE: ${{ vars.ENV_FILE_PRODUCTION }}
+          ENV_FILE: ${{ matrix.env_file_main }}
         if: github.ref == 'refs/heads/main'
         run: |
-          echo "${ENV_FILE}" > ./apps/point-of-sale/.env
+          echo "${ENV_FILE}" > ./apps/${{ matrix.dir }}/.env
 
       - name: Set up environment - develop
         env:
-          ENV_FILE: ${{ vars.ENV_FILE_DEVELOPMENT }}
-        if: github.ref == 'refs/heads/develop'
+          ENV_FILE: ${{ matrix.env_file_develop }}
+        if: github.ref != 'refs/heads/main'
         run: |
-          echo "${ENV_FILE}" > apps/point-of-sale/.env
+          echo "${ENV_FILE}" > apps/${{ matrix.dir }}/.env
 
       - name: Get Docker meta (for tags)
         id: meta
         uses: docker/metadata-action@v4
         with:
-          # list of Docker images to use as base name for tags
           images: |
-            ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_TAG_POS }}
-          # generate Docker tags based on the following events/attributes
+            ${{ vars.DOCKER_REGISTRY }}/${{ matrix.docker_tag }}
           tags: |
-            type=ref,event=branch
-            type=semver,pattern={{version}}
+            type=ref,enable=true,priority=600,prefix=,suffix=,event=branch
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -75,4 +93,4 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          file: "apps/point-of-sale/Dockerfile"
+          file: ${{ matrix.dockerfile_path }}
