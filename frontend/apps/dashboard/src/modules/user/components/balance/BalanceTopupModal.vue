@@ -26,7 +26,7 @@
 // TODO: Clean-up code
 
 import { computed, onBeforeMount, ref } from 'vue';
-import { loadStripe } from '@stripe/stripe-js';
+import { loadStripe } from '@stripe/stripe-js/pure';
 import apiService from '@/services/ApiService';
 import type { Dinero } from "@sudosos/sudosos-client";
 import { formatPrice } from "@/utils/formatterUtils";
@@ -53,6 +53,7 @@ const stripe = ref();
 const paymentElement = ref();
 const elements = ref();
 onBeforeMount(async () => {
+  loadStripe.setLoadParameters({advancedFraudSignals: false})
   stripe.value = await loadStripe(`${import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY}`);
 
 });
