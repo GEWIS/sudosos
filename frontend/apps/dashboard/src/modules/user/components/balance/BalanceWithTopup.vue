@@ -41,7 +41,7 @@
                 }
               "
               :inputProps="{
-                inputmode: 'numeric',
+                inputmode: 'decimal',
                 class: 'w-full'
               }" />
           </div>
