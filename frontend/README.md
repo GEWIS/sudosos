@@ -1,3 +1,13 @@
+<div align="center">
+
+[![Build](https://img.shields.io/github/actions/workflow/status/GEWIS/sudosos-frontend/semver.yml?branch=main&label=Build)](https://github.com/GEWIS/sudosos-frontend/actions/workflows/semver.yml)
+[![Latest Release](https://img.shields.io/github/v/tag/GEWIS/sudosos-frontend?label=Latest)](https://github.com/GEWIS/sudosos-frontend/releases)
+[![Issues](https://img.shields.io/github/issues/GEWIS/sudosos-frontend)](https://github.com/GEWIS/sudosos-frontend/issues)
+[![Commit Activity](https://img.shields.io/github/commit-activity/m/GEWIS/sudosos-frontend)](https://github.com/GEWIS/sudosos-frontend/commits/main)
+[![Code Size](https://img.shields.io/github/languages/code-size/GEWIS/sudosos-frontend)](https://github.com/GEWIS/sudosos-frontend)
+
+</div>
+
 # SudoSOS Frontend Monorepo
 
 This monorepo contains all the frontend projects and common code for the SudoSOS.
