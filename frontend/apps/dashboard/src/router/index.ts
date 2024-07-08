@@ -17,14 +17,7 @@ declare module 'vue-router' {
     // must be declared by every route
     requiresAuth: boolean
 
-    // Board
-    isBoard?: boolean,
-
-    // Seller
-    isSeller?: boolean,
-
-    // BAC
-    isBAC?: boolean,
+    rolesAllowed?: string[]
   }
 }
 
@@ -66,18 +59,6 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
 
-  const isBoard = () => {
-    return authStore.roles.includes(UserRole.BOARD);
-  };
-
-  const isBAC = () => {
-    return authStore.roles.includes(UserRole.BAC);
-  };
-
-  const isSeller = () => {
-    return authStore.roles.includes(UserRole.SELLER);
-  };
-
   const hasTOSAccepted = () => {
     return authStore.acceptedToS || authStore.user?.acceptedToS;
   };
@@ -94,11 +75,13 @@ router.beforeEach((to, from, next) => {
     // If the route doesn't require authentication and the user is authenticated, redirect to home
     next({ name: 'home' });
   } else {
-    if(to.meta?.isBoard && !isBoard()) next({ name: 'home' });
+    if(to.meta?.rolesAllowed) {
+      // Test overlapping roles between the allowed roles and the roles the user has
+      const rolesUnion = [...new Set([...to.meta.rolesAllowed, ...authStore.roles])];
 
-    if(to.meta?.isSeller && !isSeller()) next({ name: 'home' });
-
-    if(to.meta?.isBAC && !isBAC()) next({ name: 'home' });
+      // No overlapping roles -> No correct permissions -> Back to home
+      if(rolesUnion.length == 0) ({ name: 'home' });
+    }
 
     next();
   }

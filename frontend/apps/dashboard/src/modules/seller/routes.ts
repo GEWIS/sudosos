@@ -1,6 +1,7 @@
 import type { RouteRecordRaw } from "vue-router";
 import DashboardLayout from "@/layout/DashboardLayout.vue";
 import ProductsContainersView from "@/modules/seller/views/ProductsContainersView.vue";
+import { UserRole } from "@/utils/rbacUtils";
 
 export function sellerRoutes(): RouteRecordRaw[] {
   return [
@@ -13,8 +14,10 @@ export function sellerRoutes(): RouteRecordRaw[] {
           path: '/manage-products',
           component: ProductsContainersView,
           name: 'products-containers-overview',
-          // TODO isSeller
-          meta: { requiresAuth: true, isBAC: true }
+          meta: {
+            requiresAuth: true,
+            rolesAllowed: [UserRole.SELLER]
+          }
         },
       ]
     }

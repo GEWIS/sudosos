@@ -3,6 +3,7 @@ import DashboardLayout from "@/layout/DashboardLayout.vue";
 import AdminUserOverView from "@/modules/admin/views/AdminUserOverView.vue";
 import AdminBannersView from "@/modules/admin/views/AdminBannersView.vue";
 import AdminSingleUserView from "@/modules/admin/views/AdminSingleUserView.vue";
+import { UserRole } from "@/utils/rbacUtils";
 
 export function adminRoutes(): RouteRecordRaw[] {
   return [
@@ -15,13 +16,19 @@ export function adminRoutes(): RouteRecordRaw[] {
           path: '/user-overview',
           name: 'userOverview',
           component: AdminUserOverView,
-          meta: { requiresAuth: true, isBAC: true, isBoard: true }
+          meta: {
+            requiresAuth: true,
+            rolesAllowed: [UserRole.BAC_PM, UserRole.BAC, UserRole.BOARD]
+          }
         },
         {
           path: '/banners',
           component: AdminBannersView,
           name: 'banners',
-          meta: { requiresAuth: true, isBoard: true }
+          meta: {
+            requiresAuth: true,
+            rolesAllowed: [UserRole.BOARD]
+          }
         },
         {
           path: '/user/:userId',
