@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Ref } from 'vue';
+import { onMounted, type Ref } from 'vue';
 import { computed, ref, watch } from 'vue';
 import { useTransactionStore } from '@/stores/transaction.store';
 import type { TransactionResponse, TransferResponse } from '@sudosos/sudosos-client';
@@ -48,12 +48,13 @@ import type {
 } from '@sudosos/sudosos-client/src/api';
 import { useTransferStore } from '@/stores/transfer.store';
 import apiService from '@/services/ApiService';
-import TransactionDetailModal from '@/components/mutations/TransactionDetailModal.vue';
-import DepositDetailModal from '@/components/mutations/DepositDetailModal.vue';
-import InvoiceDetailModal from '@/components/mutations/InvoiceDetailModal.vue';
+import TransactionDetailModal from '@/components/mutations/mutationmodal/ModalDetailTransaction.vue';
+import DepositDetailModal from '@/components/mutations/mutationmodal/ModalDetailDeposit.vue';
+import InvoiceDetailModal from '@/components/mutations/mutationmodal/ModalDetailInvoice.vue';
+import FineDetailModal from '@/components/mutations/mutationmodal/ModalDetailFine.vue';
+import WaivedFineDetailModal from "@/components/mutations/mutationmodal/ModalDetailWaivedFine.vue";
 import router from '@/router';
 import { addListenerOnDialogueOverlay } from '@/utils/dialogUtil';
-import FineDetailModal from '@/components/mutations/FineDetailModal.vue';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import type { AxiosError } from 'axios';
@@ -61,19 +62,13 @@ import { handleError } from '@/utils/errorUtils';
 import { FinancialMutationType } from '@/utils/mutationUtils';
 import { UserRole } from '@/utils/rbacUtils';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
-import WaivedFineDetailModal from "@/components/mutations/WaivedFineDetailModal.vue";
 import Skeleton from "primevue/skeleton";
 
-const props = defineProps({
-  type: {
-    type: Object as () => FinancialMutationType,
-    required: true
-  },
-  id: {
-    type: Number,
-    required: true
-  }
-});
+const props = defineProps<{
+    type: FinancialMutationType,
+    id: number
+}>();
+
 const { t } = useI18n();
 
 const visible = ref<boolean>(false);
@@ -155,14 +150,25 @@ async function fetchMutation(): Promise<void> {
   else await fetchTransferInfo();
 }
 
-watch(
-  () => props.id || props.type,
+// Load on first mount
+onMounted(
   async () => {
     isLoading.value = true;
     await fetchMutation();
     isLoading.value = false;
   }
 );
+
+// Reload when closing and opening another
+watch(
+    () => props.id || props.type,
+    async () => {
+        isLoading.value = true;
+        await fetchMutation();
+        isLoading.value = false;
+    }
+);
+
 
 const deleteMutation = async () => {
   if (shouldShowFine.value) {

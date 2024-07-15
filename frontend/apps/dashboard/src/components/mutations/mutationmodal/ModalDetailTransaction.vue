@@ -85,7 +85,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { formatPrice } from "../../utils/formatterUtils";
+import { formatPrice } from "@/utils/formatterUtils";
 import type { SubTransactionRowResponse } from "@sudosos/sudosos-client/src/api";
 import type { TransactionResponse } from "@sudosos/sudosos-client";
 import { useUserStore } from '@sudosos/sudosos-frontend-common';

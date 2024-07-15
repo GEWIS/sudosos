@@ -1,5 +1,5 @@
-import { ApiService } from '../services/ApiService';
 import { AxiosResponse } from 'axios/index';
+import { ApiService } from '../services/ApiService';
 
 type Token = {
     token: string;

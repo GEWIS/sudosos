@@ -1,6 +1,6 @@
 import { createPinia, defineStore } from 'pinia';
 import {
-  BalanceResponse, PaginatedFinancialMutationResponse,
+  BalanceResponse, PaginatedBaseTransactionResponse, PaginatedFinancialMutationResponse,
   UserResponse
 } from "@sudosos/sudosos-client";
 import { ApiService } from "../services/ApiService";
@@ -11,7 +11,8 @@ createPinia();
 interface CurrentState {
   balance: BalanceResponse | null,
   user: UserResponse | null,
-  financialMutations: PaginatedFinancialMutationResponse
+  financialMutations: PaginatedFinancialMutationResponse,
+  createdTransactions: PaginatedBaseTransactionResponse
 }
 interface UserModuleState {
   users: UserResponse[];
@@ -31,7 +32,15 @@ export const useUserStore = defineStore('user', {
           count: -1,
         },
         records: [],
-      }
+      },
+      createdTransactions: {
+        _pagination: {
+          take: -1,
+          skip: -1,
+          count: -1,
+        },
+        records: [],
+      },
     },
   }),
   getters: {
@@ -51,13 +60,32 @@ export const useUserStore = defineStore('user', {
   actions: {
     async fetchUsers(service: ApiService) {
       // @ts-ignore TODO Fix Swagger
-      this.users = await fetchAllPages<UserResponse>(0, 500, (take, skip) => service.user.getAllUsers(take, skip));
+      this.users = await fetchAllPages<UserResponse>(0, 500, (take, skip) =>
+        service.user.getAllUsers(take, skip)
+      );
     },
     async fetchCurrentUserBalance(id: number, service: ApiService) {
       this.current.balance = (await service.balance.getBalanceId(id)).data;
     },
-    async fetchUsersFinancialMutations(id: number, service: ApiService, take?: number, skip?: number) {
-      this.current.financialMutations = (await service.user.getUsersFinancialMutations(id, take, skip)).data;
+    async fetchUsersFinancialMutations(
+      id: number,
+      service: ApiService,
+      take?: number,
+      skip?: number
+    ) {
+      this.current.financialMutations = (
+        await service.user.getUsersFinancialMutations(id, take, skip)
+      ).data;
+    },
+    async fetchUserCreatedTransactions(
+      id: number,
+      service: ApiService,
+      take?: number,
+      skip?: number
+    ) {
+      this.current.createdTransactions = (
+        await service.transaction.getAllTransactions(undefined, id, undefined, undefined,undefined,undefined,undefined,undefined,take, skip)
+      ).data;
     },
     setCurrentUser(user: UserResponse) {
       this.current.user = user;

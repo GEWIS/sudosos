@@ -1,18 +1,18 @@
-var Ys = Object.defineProperty;
-var $s = (o, h, v) => h in o ? Ys(o, h, { enumerable: !0, configurable: !0, writable: !0, value: v }) : o[h] = v;
-var k = (o, h, v) => ($s(o, typeof h != "symbol" ? h + "" : h, v), v);
-import { createPinia as zs, defineStore as at } from "pinia";
-async function Ks(o, h, v) {
+var Zs = Object.defineProperty;
+var ea = (o, c, v) => c in o ? Zs(o, c, { enumerable: !0, configurable: !0, writable: !0, value: v }) : o[c] = v;
+var $ = (o, c, v) => ea(o, typeof c != "symbol" ? c + "" : c, v);
+import { createPinia as ta, defineStore as ht } from "pinia";
+async function sa(o, c, v) {
   let e = o, O = [];
   for (; ; ) {
-    const m = await v(h, e), { records: S } = m.data;
-    if (O = O.concat(S), e += h, m.data._pagination.count <= e + h)
+    const m = await v(c, e), { records: f } = m.data;
+    if (O = O.concat(f), e += c, m.data._pagination.count <= e + c)
       break;
   }
   return O;
 }
-zs();
-const rt = at("user", {
+ta();
+const pt = ht("user", {
   state: () => ({
     users: [],
     current: {
@@ -25,11 +25,19 @@ const rt = at("user", {
           count: -1
         },
         records: []
+      },
+      createdTransactions: {
+        _pagination: {
+          take: -1,
+          skip: -1,
+          count: -1
+        },
+        records: []
       }
     }
   }),
   getters: {
-    getUserById: (o) => (h) => o.users.find((v) => v.id === h),
+    getUserById: (o) => (c) => o.users.find((v) => v.id === c),
     getActiveUsers() {
       return this.users.filter((o) => o.active);
     },
@@ -42,13 +50,20 @@ const rt = at("user", {
   },
   actions: {
     async fetchUsers(o) {
-      this.users = await Ks(0, 500, (h, v) => o.user.getAllUsers(h, v));
+      this.users = await sa(
+        0,
+        500,
+        (c, v) => o.user.getAllUsers(c, v)
+      );
     },
-    async fetchCurrentUserBalance(o, h) {
-      this.current.balance = (await h.balance.getBalanceId(o)).data;
+    async fetchCurrentUserBalance(o, c) {
+      this.current.balance = (await c.balance.getBalanceId(o)).data;
     },
-    async fetchUsersFinancialMutations(o, h, v, e) {
-      this.current.financialMutations = (await h.user.getUsersFinancialMutations(o, v, e)).data;
+    async fetchUsersFinancialMutations(o, c, v, e) {
+      this.current.financialMutations = (await c.user.getUsersFinancialMutations(o, v, e)).data;
+    },
+    async fetchUserCreatedTransactions(o, c, v, e) {
+      this.current.createdTransactions = (await c.transaction.getAllTransactions(void 0, o, void 0, void 0, void 0, void 0, void 0, void 0, v, e)).data;
     },
     setCurrentUser(o) {
       this.current.user = o;
@@ -60,104 +75,103 @@ const rt = at("user", {
       this.current.balance = null, this.current.user = null;
     },
     deleteUser(o) {
-      const h = this.users.findIndex((v) => v.id === o);
-      h !== -1 && this.users.splice(h, 1);
+      const c = this.users.findIndex((v) => v.id === o);
+      c !== -1 && this.users.splice(c, 1);
     }
   }
 });
-class pe extends Error {
+class be extends Error {
 }
-pe.prototype.name = "InvalidTokenError";
-function Ws(o) {
-  return decodeURIComponent(atob(o).replace(/(.)/g, (h, v) => {
+be.prototype.name = "InvalidTokenError";
+function aa(o) {
+  return decodeURIComponent(atob(o).replace(/(.)/g, (c, v) => {
     let e = v.charCodeAt(0).toString(16).toUpperCase();
     return e.length < 2 && (e = "0" + e), "%" + e;
   }));
 }
-function Js(o) {
-  let h = o.replace(/-/g, "+").replace(/_/g, "/");
-  switch (h.length % 4) {
+function ra(o) {
+  let c = o.replace(/-/g, "+").replace(/_/g, "/");
+  switch (c.length % 4) {
     case 0:
       break;
     case 2:
-      h += "==";
+      c += "==";
       break;
     case 3:
-      h += "=";
+      c += "=";
       break;
     default:
       throw new Error("base64 string is not of the correct length");
   }
   try {
-    return Ws(h);
+    return aa(c);
   } catch {
-    return atob(h);
+    return atob(c);
   }
 }
-function nt(o, h) {
+function At(o, c) {
   if (typeof o != "string")
-    throw new pe("Invalid token specified: must be a string");
-  h || (h = {});
-  const v = h.header === !0 ? 0 : 1, e = o.split(".")[v];
+    throw new be("Invalid token specified: must be a string");
+  c || (c = {});
+  const v = c.header === !0 ? 0 : 1, e = o.split(".")[v];
   if (typeof e != "string")
-    throw new pe(`Invalid token specified: missing part #${v + 1}`);
+    throw new be(`Invalid token specified: missing part #${v + 1}`);
   let O;
   try {
-    O = Js(e);
+    O = ra(e);
   } catch (m) {
-    throw new pe(`Invalid token specified: invalid base64 for part #${v + 1} (${m.message})`);
+    throw new be(`Invalid token specified: invalid base64 for part #${v + 1} (${m.message})`);
   }
   try {
     return JSON.parse(O);
   } catch (m) {
-    throw new pe(`Invalid token specified: invalid json for part #${v + 1} (${m.message})`);
+    throw new be(`Invalid token specified: invalid json for part #${v + 1} (${m.message})`);
   }
 }
-function Xs(o) {
+function na(o) {
   if (o.headers.has("Set-Authorization")) {
-    const h = o.headers.get("Set-Authorization");
-    h && it(h);
+    const c = o.headers.get("Set-Authorization");
+    c && vt(c);
   }
 }
-function Zs() {
+function ia() {
   localStorage.clear();
 }
-function ea(o) {
-  const h = String(nt(o).exp);
-  return { token: o, expires: h };
+function oa(o) {
+  const c = String(At(o).exp);
+  return { token: o, expires: c };
 }
-function it(o) {
-  localStorage.setItem("jwt_token", JSON.stringify(ea(o)));
+function vt(o) {
+  localStorage.setItem("jwt_token", JSON.stringify(oa(o)));
 }
-function Le() {
+function Ye() {
   const o = localStorage.getItem("jwt_token");
-  let h = {};
-  return o !== null && (h = JSON.parse(o)), {
-    ...h
+  let c = {};
+  return o !== null && (c = JSON.parse(o)), {
+    ...c
   };
 }
-function ta(o) {
-  if (o > 1e12)
-    return !0;
-  const h = o * 1e3;
-  return (/* @__PURE__ */ new Date()).getTime() > h;
+function la(o) {
+  if (o > 1e12) return !0;
+  const c = o * 1e3;
+  return (/* @__PURE__ */ new Date()).getTime() > c;
 }
-function sa() {
-  const o = Le();
-  return !o.token || !o.expires ? !1 : !ta(Number(o.expires));
+function ca() {
+  const o = Ye();
+  return !o.token || !o.expires ? !1 : !la(Number(o.expires));
 }
-function Xr(o) {
-  if (sa()) {
-    const v = aa();
+function On(o) {
+  if (ca()) {
+    const v = da();
     v.extractStateFromToken();
     const e = v.getUser;
     if (e) {
-      const O = rt();
+      const O = pt();
       O.setCurrentUser(e), O.fetchCurrentUserBalance(e.id, o);
     }
   }
 }
-const aa = at({
+const da = ht({
   id: "auth",
   state: () => ({
     user: null,
@@ -178,136 +192,129 @@ const aa = at({
     }
   },
   actions: {
-    handleResponse(o, h) {
-      const { user: v, token: e, roles: O, organs: m, acceptedToS: S } = o;
-      !v || !e || !O || !m || !S || (this.user = v, this.token = e, it(this.token), this.roles = O, this.organs = m, this.acceptedToS = S, this.acceptedToS === "ACCEPTED" && h.user.getIndividualUser(this.user.id).then((j) => {
-        rt().setCurrentUser(j.data);
+    handleResponse(o, c) {
+      const { user: v, token: e, roles: O, organs: m, acceptedToS: f } = o;
+      !v || !e || !O || !m || !f || (this.user = v, this.token = e, vt(this.token), this.roles = O, this.organs = m, this.acceptedToS = f, this.acceptedToS === "ACCEPTED" && c.user.getIndividualUser(this.user.id).then((j) => {
+        pt().setCurrentUser(j.data);
       }));
     },
-    async gewisPinlogin(o, h, v) {
+    async gewisPinlogin(o, c, v) {
       const e = {
         gewisId: parseInt(o, 10),
-        pin: h
+        pin: c
       };
       await v.authenticate.gewisPinAuthentication(e).then((O) => {
         this.handleResponse(O.data, v);
       });
     },
-    async ldapLogin(o, h, v) {
+    async ldapLogin(o, c, v) {
       const e = {
         accountName: o,
-        password: h
+        password: c
       };
       await v.authenticate.ldapAuthentication(e).then((O) => {
         this.handleResponse(O.data, v);
       });
     },
-    async gewisWebLogin(o, h, v) {
+    async gewisWebLogin(o, c, v) {
       const e = {
         nonce: o,
-        token: h
+        token: c
       };
       await v.authenticate.gewisWebAuthentication(e).then((O) => {
         this.handleResponse(O.data, v);
       });
     },
-    async externalPinLogin(o, h, v) {
+    async externalPinLogin(o, c, v) {
       const e = {
-        pin: h,
+        pin: c,
         userId: o
       };
       await v.authenticate.pinAuthentication(e).then((O) => {
         this.handleResponse(O.data, v);
       });
     },
-    async eanLogin(o, h) {
+    async eanLogin(o, c) {
       const v = {
         eanCode: o
       };
-      await h.authenticate.eanAuthentication(v).then((e) => {
-        this.handleResponse(e.data, h);
+      await c.authenticate.eanAuthentication(v).then((e) => {
+        this.handleResponse(e.data, c);
       });
     },
-    async apiKeyLogin(o, h, v) {
+    async apiKeyLogin(o, c, v) {
       const e = {
         key: o,
-        userId: h
+        userId: c
       };
       await v.authenticate.keyAuthentication(e).then((O) => {
         this.handleResponse(O.data, v);
       });
     },
-    async gewisLdapLogin(o, h, v) {
+    async gewisLdapLogin(o, c, v) {
       const e = {
         accountName: o,
-        password: h
+        password: c
       };
       await v.authenticate.gewisLDAPAuthentication(e).then((O) => {
         this.handleResponse(O.data, v);
       });
     },
-    async updateUserPin(o, h) {
-      if (!this.user)
-        return;
+    async updateUserPin(o, c) {
+      if (!this.user) return;
       const v = {
         pin: o
       };
-      await h.user.updateUserPin(this.user.id, v);
+      await c.user.updateUserPin(this.user.id, v);
     },
-    async updateUserLocalPassword(o, h) {
-      if (!this.user)
-        return;
+    async updateUserLocalPassword(o, c) {
+      if (!this.user) return;
       const v = {
         password: o
       };
-      await h.user.updateUserLocalPassword(this.user.id, v);
+      await c.user.updateUserLocalPassword(this.user.id, v);
     },
-    async updateUserNfc(o, h) {
-      if (!this.user)
-        return;
+    async updateUserNfc(o, c) {
+      if (!this.user) return;
       const v = {
         nfcCode: o
       };
-      await h.user.updateUserNfc(this.user.id, v);
+      await c.user.updateUserNfc(this.user.id, v);
     },
     async updateUserKey(o) {
       if (this.user)
         return (await o.user.updateUserKey(this.user.id)).data;
     },
-    async updateUserToSAccepted(o, h) {
-      if (!this.user)
-        return;
+    async updateUserToSAccepted(o, c) {
+      if (!this.user) return;
       const v = {
         extensiveDataProcessing: o
       };
-      await h.user.acceptTos(v);
-      const e = await h.authenticate.refreshToken();
-      this.handleResponse(e.data, h);
+      await c.user.acceptTos(v);
+      const e = await c.authenticate.refreshToken();
+      this.handleResponse(e.data, c);
     },
     extractStateFromToken() {
-      const o = Le();
-      if (!o.token)
-        return;
-      const h = nt(o.token);
-      this.user = h.user, this.roles = h.roles, this.token = o.token, this.organs = h.organs, this.acceptedToS = h.acceptedToS;
+      const o = Ye();
+      if (!o.token) return;
+      const c = At(o.token);
+      this.user = c.user, this.roles = c.roles, this.token = o.token, this.organs = c.organs, this.acceptedToS = c.acceptedToS;
     },
     logout() {
-      this.user = null, this.roles = [], this.token = null, this.organs = [], this.acceptedToS = null, Zs();
+      this.user = null, this.roles = [], this.token = null, this.organs = [], this.acceptedToS = null, ia();
     }
   }
 });
-var le = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
-function ra(o) {
-  if (o.__esModule)
-    return o;
-  var h = o.default;
-  if (typeof h == "function") {
+var de = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
+function ua(o) {
+  if (o.__esModule) return o;
+  var c = o.default;
+  if (typeof c == "function") {
     var v = function e() {
-      return this instanceof e ? Reflect.construct(h, arguments, this.constructor) : h.apply(this, arguments);
+      return this instanceof e ? Reflect.construct(c, arguments, this.constructor) : c.apply(this, arguments);
     };
-    v.prototype = h.prototype;
-  } else
-    v = {};
+    v.prototype = c.prototype;
+  } else v = {};
   return Object.defineProperty(v, "__esModule", { value: !0 }), Object.keys(o).forEach(function(e) {
     var O = Object.getOwnPropertyDescriptor(o, e);
     Object.defineProperty(v, e, O.get ? O : {
@@ -318,236 +325,236 @@ function ra(o) {
     });
   }), v;
 }
-var H = {}, ot = {};
-function lt(o, h) {
+var G = {}, Ot = {};
+function Pt(o, c) {
   return function() {
-    return o.apply(h, arguments);
+    return o.apply(c, arguments);
   };
 }
-const { toString: na } = Object.prototype, { getPrototypeOf: qe } = Object, fe = /* @__PURE__ */ ((o) => (h) => {
-  const v = na.call(h);
+const { toString: ha } = Object.prototype, { getPrototypeOf: $e } = Object, Ve = /* @__PURE__ */ ((o) => (c) => {
+  const v = ha.call(c);
   return o[v] || (o[v] = v.slice(8, -1).toLowerCase());
-})(/* @__PURE__ */ Object.create(null)), re = (o) => (o = o.toLowerCase(), (h) => fe(h) === o), ge = (o) => (h) => typeof h === o, { isArray: ue } = Array, Ae = ge("undefined");
-function ia(o) {
-  return o !== null && !Ae(o) && o.constructor !== null && !Ae(o.constructor) && Z(o.constructor.isBuffer) && o.constructor.isBuffer(o);
+})(/* @__PURE__ */ Object.create(null)), ne = (o) => (o = o.toLowerCase(), (c) => Ve(c) === o), Re = (o) => (c) => typeof c === o, { isArray: ve } = Array, me = Re("undefined");
+function pa(o) {
+  return o !== null && !me(o) && o.constructor !== null && !me(o.constructor) && te(o.constructor.isBuffer) && o.constructor.isBuffer(o);
 }
-const ct = re("ArrayBuffer");
-function oa(o) {
-  let h;
-  return typeof ArrayBuffer < "u" && ArrayBuffer.isView ? h = ArrayBuffer.isView(o) : h = o && o.buffer && ct(o.buffer), h;
+const bt = ne("ArrayBuffer");
+function Aa(o) {
+  let c;
+  return typeof ArrayBuffer < "u" && ArrayBuffer.isView ? c = ArrayBuffer.isView(o) : c = o && o.buffer && bt(o.buffer), c;
 }
-const la = ge("string"), Z = ge("function"), dt = ge("number"), je = (o) => o !== null && typeof o == "object", ca = (o) => o === !0 || o === !1, Pe = (o) => {
-  if (fe(o) !== "object")
+const va = Re("string"), te = Re("function"), mt = Re("number"), Ee = (o) => o !== null && typeof o == "object", Oa = (o) => o === !0 || o === !1, je = (o) => {
+  if (Ve(o) !== "object")
     return !1;
-  const h = qe(o);
-  return (h === null || h === Object.prototype || Object.getPrototypeOf(h) === null) && !(Symbol.toStringTag in o) && !(Symbol.iterator in o);
-}, da = re("Date"), ua = re("File"), ha = re("Blob"), pa = re("FileList"), Aa = (o) => je(o) && Z(o.pipe), va = (o) => {
-  let h;
-  return o && (typeof FormData == "function" && o instanceof FormData || Z(o.append) && ((h = fe(o)) === "formdata" || // detect form-data instance
-  h === "object" && Z(o.toString) && o.toString() === "[object FormData]"));
-}, Oa = re("URLSearchParams"), Pa = (o) => o.trim ? o.trim() : o.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
-function ve(o, h, { allOwnKeys: v = !1 } = {}) {
+  const c = $e(o);
+  return (c === null || c === Object.prototype || Object.getPrototypeOf(c) === null) && !(Symbol.toStringTag in o) && !(Symbol.iterator in o);
+}, Pa = ne("Date"), ba = ne("File"), ma = ne("Blob"), fa = ne("FileList"), Sa = (o) => Ee(o) && te(o.pipe), ga = (o) => {
+  let c;
+  return o && (typeof FormData == "function" && o instanceof FormData || te(o.append) && ((c = Ve(o)) === "formdata" || // detect form-data instance
+  c === "object" && te(o.toString) && o.toString() === "[object FormData]"));
+}, ja = ne("URLSearchParams"), [Ua, ya, _a, Va] = ["ReadableStream", "Request", "Response", "Headers"].map(ne), Ra = (o) => o.trim ? o.trim() : o.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
+function fe(o, c, { allOwnKeys: v = !1 } = {}) {
   if (o === null || typeof o > "u")
     return;
   let e, O;
-  if (typeof o != "object" && (o = [o]), ue(o))
+  if (typeof o != "object" && (o = [o]), ve(o))
     for (e = 0, O = o.length; e < O; e++)
-      h.call(null, o[e], e, o);
+      c.call(null, o[e], e, o);
   else {
-    const m = v ? Object.getOwnPropertyNames(o) : Object.keys(o), S = m.length;
+    const m = v ? Object.getOwnPropertyNames(o) : Object.keys(o), f = m.length;
     let j;
-    for (e = 0; e < S; e++)
-      j = m[e], h.call(null, o[j], j, o);
+    for (e = 0; e < f; e++)
+      j = m[e], c.call(null, o[j], j, o);
   }
 }
-function ut(o, h) {
-  h = h.toLowerCase();
+function ft(o, c) {
+  c = c.toLowerCase();
   const v = Object.keys(o);
   let e = v.length, O;
   for (; e-- > 0; )
-    if (O = v[e], h === O.toLowerCase())
+    if (O = v[e], c === O.toLowerCase())
       return O;
   return null;
 }
-const ht = typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : typeof window < "u" ? window : global, pt = (o) => !Ae(o) && o !== ht;
-function Fe() {
-  const { caseless: o } = pt(this) && this || {}, h = {}, v = (e, O) => {
-    const m = o && ut(h, O) || O;
-    Pe(h[m]) && Pe(e) ? h[m] = Fe(h[m], e) : Pe(e) ? h[m] = Fe({}, e) : ue(e) ? h[m] = e.slice() : h[m] = e;
+const St = typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : typeof window < "u" ? window : global, gt = (o) => !me(o) && o !== St;
+function Le() {
+  const { caseless: o } = gt(this) && this || {}, c = {}, v = (e, O) => {
+    const m = o && ft(c, O) || O;
+    je(c[m]) && je(e) ? c[m] = Le(c[m], e) : je(e) ? c[m] = Le({}, e) : ve(e) ? c[m] = e.slice() : c[m] = e;
   };
   for (let e = 0, O = arguments.length; e < O; e++)
-    arguments[e] && ve(arguments[e], v);
-  return h;
+    arguments[e] && fe(arguments[e], v);
+  return c;
 }
-const ba = (o, h, v, { allOwnKeys: e } = {}) => (ve(h, (O, m) => {
-  v && Z(O) ? o[m] = lt(O, v) : o[m] = O;
-}, { allOwnKeys: e }), o), ma = (o) => (o.charCodeAt(0) === 65279 && (o = o.slice(1)), o), Sa = (o, h, v, e) => {
-  o.prototype = Object.create(h.prototype, e), o.prototype.constructor = o, Object.defineProperty(o, "super", {
-    value: h.prototype
+const Ea = (o, c, v, { allOwnKeys: e } = {}) => (fe(c, (O, m) => {
+  v && te(O) ? o[m] = Pt(O, v) : o[m] = O;
+}, { allOwnKeys: e }), o), Ta = (o) => (o.charCodeAt(0) === 65279 && (o = o.slice(1)), o), Ba = (o, c, v, e) => {
+  o.prototype = Object.create(c.prototype, e), o.prototype.constructor = o, Object.defineProperty(o, "super", {
+    value: c.prototype
   }), v && Object.assign(o.prototype, v);
-}, fa = (o, h, v, e) => {
-  let O, m, S;
+}, Fa = (o, c, v, e) => {
+  let O, m, f;
   const j = {};
-  if (h = h || {}, o == null)
-    return h;
+  if (c = c || {}, o == null) return c;
   do {
     for (O = Object.getOwnPropertyNames(o), m = O.length; m-- > 0; )
-      S = O[m], (!e || e(S, o, h)) && !j[S] && (h[S] = o[S], j[S] = !0);
-    o = v !== !1 && qe(o);
-  } while (o && (!v || v(o, h)) && o !== Object.prototype);
-  return h;
-}, ga = (o, h, v) => {
-  o = String(o), (v === void 0 || v > o.length) && (v = o.length), v -= h.length;
-  const e = o.indexOf(h, v);
+      f = O[m], (!e || e(f, o, c)) && !j[f] && (c[f] = o[f], j[f] = !0);
+    o = v !== !1 && $e(o);
+  } while (o && (!v || v(o, c)) && o !== Object.prototype);
+  return c;
+}, Ca = (o, c, v) => {
+  o = String(o), (v === void 0 || v > o.length) && (v = o.length), v -= c.length;
+  const e = o.indexOf(c, v);
   return e !== -1 && e === v;
-}, ja = (o) => {
-  if (!o)
-    return null;
-  if (ue(o))
-    return o;
-  let h = o.length;
-  if (!dt(h))
-    return null;
-  const v = new Array(h);
-  for (; h-- > 0; )
-    v[h] = o[h];
+}, wa = (o) => {
+  if (!o) return null;
+  if (ve(o)) return o;
+  let c = o.length;
+  if (!mt(c)) return null;
+  const v = new Array(c);
+  for (; c-- > 0; )
+    v[c] = o[c];
   return v;
-}, Ua = /* @__PURE__ */ ((o) => (h) => o && h instanceof o)(typeof Uint8Array < "u" && qe(Uint8Array)), _a = (o, h) => {
+}, Ia = /* @__PURE__ */ ((o) => (c) => o && c instanceof o)(typeof Uint8Array < "u" && $e(Uint8Array)), Ma = (o, c) => {
   const e = (o && o[Symbol.iterator]).call(o);
   let O;
   for (; (O = e.next()) && !O.done; ) {
     const m = O.value;
-    h.call(o, m[0], m[1]);
+    c.call(o, m[0], m[1]);
   }
-}, Va = (o, h) => {
+}, xa = (o, c) => {
   let v;
   const e = [];
-  for (; (v = o.exec(h)) !== null; )
+  for (; (v = o.exec(c)) !== null; )
     e.push(v);
   return e;
-}, ya = re("HTMLFormElement"), Ea = (o) => o.toLowerCase().replace(
+}, La = ne("HTMLFormElement"), qa = (o) => o.toLowerCase().replace(
   /[-_\s]([a-z\d])(\w*)/g,
   function(v, e, O) {
     return e.toUpperCase() + O;
   }
-), Ye = (({ hasOwnProperty: o }) => (h, v) => o.call(h, v))(Object.prototype), Ra = re("RegExp"), At = (o, h) => {
+), Ze = (({ hasOwnProperty: o }) => (c, v) => o.call(c, v))(Object.prototype), Da = ne("RegExp"), jt = (o, c) => {
   const v = Object.getOwnPropertyDescriptors(o), e = {};
-  ve(v, (O, m) => {
-    let S;
-    (S = h(O, m, o)) !== !1 && (e[m] = S || O);
+  fe(v, (O, m) => {
+    let f;
+    (f = c(O, m, o)) !== !1 && (e[m] = f || O);
   }), Object.defineProperties(o, e);
-}, Ta = (o) => {
-  At(o, (h, v) => {
-    if (Z(o) && ["arguments", "caller", "callee"].indexOf(v) !== -1)
+}, Ha = (o) => {
+  jt(o, (c, v) => {
+    if (te(o) && ["arguments", "caller", "callee"].indexOf(v) !== -1)
       return !1;
     const e = o[v];
-    if (Z(e)) {
-      if (h.enumerable = !1, "writable" in h) {
-        h.writable = !1;
+    if (te(e)) {
+      if (c.enumerable = !1, "writable" in c) {
+        c.writable = !1;
         return;
       }
-      h.set || (h.set = () => {
+      c.set || (c.set = () => {
         throw Error("Can not rewrite read-only method '" + v + "'");
       });
     }
   });
-}, Ba = (o, h) => {
+}, Na = (o, c) => {
   const v = {}, e = (O) => {
     O.forEach((m) => {
       v[m] = !0;
     });
   };
-  return ue(o) ? e(o) : e(String(o).split(h)), v;
-}, Fa = () => {
-}, Ca = (o, h) => (o = +o, Number.isFinite(o) ? o : h), Ee = "abcdefghijklmnopqrstuvwxyz", $e = "0123456789", vt = {
-  DIGIT: $e,
-  ALPHA: Ee,
-  ALPHA_DIGIT: Ee + Ee.toUpperCase() + $e
-}, Ia = (o = 16, h = vt.ALPHA_DIGIT) => {
+  return ve(o) ? e(o) : e(String(o).split(c)), v;
+}, ka = () => {
+}, Ga = (o, c) => o != null && Number.isFinite(o = +o) ? o : c, we = "abcdefghijklmnopqrstuvwxyz", et = "0123456789", Ut = {
+  DIGIT: et,
+  ALPHA: we,
+  ALPHA_DIGIT: we + we.toUpperCase() + et
+}, Qa = (o = 16, c = Ut.ALPHA_DIGIT) => {
   let v = "";
-  const { length: e } = h;
+  const { length: e } = c;
   for (; o--; )
-    v += h[Math.random() * e | 0];
+    v += c[Math.random() * e | 0];
   return v;
 };
-function Ma(o) {
-  return !!(o && Z(o.append) && o[Symbol.toStringTag] === "FormData" && o[Symbol.iterator]);
+function Ya(o) {
+  return !!(o && te(o.append) && o[Symbol.toStringTag] === "FormData" && o[Symbol.iterator]);
 }
-const wa = (o) => {
-  const h = new Array(10), v = (e, O) => {
-    if (je(e)) {
-      if (h.indexOf(e) >= 0)
+const $a = (o) => {
+  const c = new Array(10), v = (e, O) => {
+    if (Ee(e)) {
+      if (c.indexOf(e) >= 0)
         return;
       if (!("toJSON" in e)) {
-        h[O] = e;
-        const m = ue(e) ? [] : {};
-        return ve(e, (S, j) => {
-          const R = v(S, O + 1);
-          !Ae(R) && (m[j] = R);
-        }), h[O] = void 0, m;
+        c[O] = e;
+        const m = ve(e) ? [] : {};
+        return fe(e, (f, j) => {
+          const V = v(f, O + 1);
+          !me(V) && (m[j] = V);
+        }), c[O] = void 0, m;
       }
     }
     return e;
   };
   return v(o, 0);
-}, xa = re("AsyncFunction"), La = (o) => o && (je(o) || Z(o)) && Z(o.then) && Z(o.catch), g = {
-  isArray: ue,
-  isArrayBuffer: ct,
-  isBuffer: ia,
-  isFormData: va,
-  isArrayBufferView: oa,
-  isString: la,
-  isNumber: dt,
-  isBoolean: ca,
-  isObject: je,
-  isPlainObject: Pe,
-  isUndefined: Ae,
-  isDate: da,
-  isFile: ua,
-  isBlob: ha,
-  isRegExp: Ra,
-  isFunction: Z,
-  isStream: Aa,
-  isURLSearchParams: Oa,
-  isTypedArray: Ua,
-  isFileList: pa,
-  forEach: ve,
-  merge: Fe,
-  extend: ba,
-  trim: Pa,
-  stripBOM: ma,
-  inherits: Sa,
-  toFlatObject: fa,
-  kindOf: fe,
-  kindOfTest: re,
-  endsWith: ga,
-  toArray: ja,
-  forEachEntry: _a,
-  matchAll: Va,
-  isHTMLForm: ya,
-  hasOwnProperty: Ye,
-  hasOwnProp: Ye,
+}, za = ne("AsyncFunction"), Ka = (o) => o && (Ee(o) || te(o)) && te(o.then) && te(o.catch), S = {
+  isArray: ve,
+  isArrayBuffer: bt,
+  isBuffer: pa,
+  isFormData: ga,
+  isArrayBufferView: Aa,
+  isString: va,
+  isNumber: mt,
+  isBoolean: Oa,
+  isObject: Ee,
+  isPlainObject: je,
+  isReadableStream: Ua,
+  isRequest: ya,
+  isResponse: _a,
+  isHeaders: Va,
+  isUndefined: me,
+  isDate: Pa,
+  isFile: ba,
+  isBlob: ma,
+  isRegExp: Da,
+  isFunction: te,
+  isStream: Sa,
+  isURLSearchParams: ja,
+  isTypedArray: Ia,
+  isFileList: fa,
+  forEach: fe,
+  merge: Le,
+  extend: Ea,
+  trim: Ra,
+  stripBOM: Ta,
+  inherits: Ba,
+  toFlatObject: Fa,
+  kindOf: Ve,
+  kindOfTest: ne,
+  endsWith: Ca,
+  toArray: wa,
+  forEachEntry: Ma,
+  matchAll: xa,
+  isHTMLForm: La,
+  hasOwnProperty: Ze,
+  hasOwnProp: Ze,
   // an alias to avoid ESLint no-prototype-builtins detection
-  reduceDescriptors: At,
-  freezeMethods: Ta,
-  toObjectSet: Ba,
-  toCamelCase: Ea,
-  noop: Fa,
-  toFiniteNumber: Ca,
-  findKey: ut,
-  global: ht,
-  isContextDefined: pt,
-  ALPHABET: vt,
-  generateString: Ia,
-  isSpecCompliantForm: Ma,
-  toJSONObject: wa,
-  isAsyncFn: xa,
-  isThenable: La
+  reduceDescriptors: jt,
+  freezeMethods: Ha,
+  toObjectSet: Na,
+  toCamelCase: qa,
+  noop: ka,
+  toFiniteNumber: Ga,
+  findKey: ft,
+  global: St,
+  isContextDefined: gt,
+  ALPHABET: Ut,
+  generateString: Qa,
+  isSpecCompliantForm: Ya,
+  toJSONObject: $a,
+  isAsyncFn: za,
+  isThenable: Ka
 };
-function x(o, h, v, e, O) {
-  Error.call(this), Error.captureStackTrace ? Error.captureStackTrace(this, this.constructor) : this.stack = new Error().stack, this.message = o, this.name = "AxiosError", h && (this.code = h), v && (this.config = v), e && (this.request = e), O && (this.response = O);
+function w(o, c, v, e, O) {
+  Error.call(this), Error.captureStackTrace ? Error.captureStackTrace(this, this.constructor) : this.stack = new Error().stack, this.message = o, this.name = "AxiosError", c && (this.code = c), v && (this.config = v), e && (this.request = e), O && (this.response = O);
 }
-g.inherits(x, Error, {
+S.inherits(w, Error, {
   toJSON: function() {
     return {
       // Standard
@@ -562,13 +569,13 @@ g.inherits(x, Error, {
       columnNumber: this.columnNumber,
       stack: this.stack,
       // Axios
-      config: g.toJSONObject(this.config),
+      config: S.toJSONObject(this.config),
       code: this.code,
       status: this.response && this.response.status ? this.response.status : null
     };
   }
 });
-const Ot = x.prototype, Pt = {};
+const yt = w.prototype, _t = {};
 [
   "ERR_BAD_OPTION_VALUE",
   "ERR_BAD_OPTION",
@@ -584,98 +591,97 @@ const Ot = x.prototype, Pt = {};
   "ERR_INVALID_URL"
   // eslint-disable-next-line func-names
 ].forEach((o) => {
-  Pt[o] = { value: o };
+  _t[o] = { value: o };
 });
-Object.defineProperties(x, Pt);
-Object.defineProperty(Ot, "isAxiosError", { value: !0 });
-x.from = (o, h, v, e, O, m) => {
-  const S = Object.create(Ot);
-  return g.toFlatObject(o, S, function(R) {
-    return R !== Error.prototype;
-  }, (j) => j !== "isAxiosError"), x.call(S, o.message, h, v, e, O), S.cause = o, S.name = o.name, m && Object.assign(S, m), S;
+Object.defineProperties(w, _t);
+Object.defineProperty(yt, "isAxiosError", { value: !0 });
+w.from = (o, c, v, e, O, m) => {
+  const f = Object.create(yt);
+  return S.toFlatObject(o, f, function(V) {
+    return V !== Error.prototype;
+  }, (j) => j !== "isAxiosError"), w.call(f, o.message, c, v, e, O), f.cause = o, f.name = o.name, m && Object.assign(f, m), f;
 };
-const qa = null;
-function Ce(o) {
-  return g.isPlainObject(o) || g.isArray(o);
+const Wa = null;
+function qe(o) {
+  return S.isPlainObject(o) || S.isArray(o);
 }
-function bt(o) {
-  return g.endsWith(o, "[]") ? o.slice(0, -2) : o;
+function Vt(o) {
+  return S.endsWith(o, "[]") ? o.slice(0, -2) : o;
 }
-function ze(o, h, v) {
-  return o ? o.concat(h).map(function(O, m) {
-    return O = bt(O), !v && m ? "[" + O + "]" : O;
-  }).join(v ? "." : "") : h;
+function tt(o, c, v) {
+  return o ? o.concat(c).map(function(O, m) {
+    return O = Vt(O), !v && m ? "[" + O + "]" : O;
+  }).join(v ? "." : "") : c;
 }
-function Da(o) {
-  return g.isArray(o) && !o.some(Ce);
+function Ja(o) {
+  return S.isArray(o) && !o.some(qe);
 }
-const Ha = g.toFlatObject(g, {}, null, function(h) {
-  return /^is[A-Z]/.test(h);
+const Xa = S.toFlatObject(S, {}, null, function(c) {
+  return /^is[A-Z]/.test(c);
 });
-function Ue(o, h, v) {
-  if (!g.isObject(o))
+function Te(o, c, v) {
+  if (!S.isObject(o))
     throw new TypeError("target must be an object");
-  h = h || new FormData(), v = g.toFlatObject(v, {
+  c = c || new FormData(), v = S.toFlatObject(v, {
     metaTokens: !0,
     dots: !1,
     indexes: !1
-  }, !1, function(B, $) {
-    return !g.isUndefined($[B]);
+  }, !1, function(I, W) {
+    return !S.isUndefined(W[I]);
   });
-  const e = v.metaTokens, O = v.visitor || V, m = v.dots, S = v.indexes, R = (v.Blob || typeof Blob < "u" && Blob) && g.isSpecCompliantForm(h);
-  if (!g.isFunction(O))
+  const e = v.metaTokens, O = v.visitor || U, m = v.dots, f = v.indexes, V = (v.Blob || typeof Blob < "u" && Blob) && S.isSpecCompliantForm(c);
+  if (!S.isFunction(O))
     throw new TypeError("visitor must be a function");
-  function F(T) {
-    if (T === null)
-      return "";
-    if (g.isDate(T))
-      return T.toISOString();
-    if (!R && g.isBlob(T))
-      throw new x("Blob is not supported. Use a Buffer instead.");
-    return g.isArrayBuffer(T) || g.isTypedArray(T) ? R && typeof Blob == "function" ? new Blob([T]) : Buffer.from(T) : T;
+  function _(B) {
+    if (B === null) return "";
+    if (S.isDate(B))
+      return B.toISOString();
+    if (!V && S.isBlob(B))
+      throw new w("Blob is not supported. Use a Buffer instead.");
+    return S.isArrayBuffer(B) || S.isTypedArray(B) ? V && typeof Blob == "function" ? new Blob([B]) : Buffer.from(B) : B;
   }
-  function V(T, B, $) {
-    let K = T;
-    if (T && !$ && typeof T == "object") {
-      if (g.endsWith(B, "{}"))
-        B = e ? B : B.slice(0, -2), T = JSON.stringify(T);
-      else if (g.isArray(T) && Da(T) || (g.isFileList(T) || g.endsWith(B, "[]")) && (K = g.toArray(T)))
-        return B = bt(B), K.forEach(function(se, ye) {
-          !(g.isUndefined(se) || se === null) && h.append(
+  function U(B, I, W) {
+    let J = B;
+    if (B && !W && typeof B == "object") {
+      if (S.endsWith(I, "{}"))
+        I = e ? I : I.slice(0, -2), B = JSON.stringify(B);
+      else if (S.isArray(B) && Ja(B) || (S.isFileList(B) || S.endsWith(I, "[]")) && (J = S.toArray(B)))
+        return I = Vt(I), J.forEach(function(H, ue) {
+          !(S.isUndefined(H) || H === null) && c.append(
             // eslint-disable-next-line no-nested-ternary
-            S === !0 ? ze([B], ye, m) : S === null ? B : B + "[]",
-            F(se)
+            f === !0 ? tt([I], ue, m) : f === null ? I : I + "[]",
+            _(H)
           );
         }), !1;
     }
-    return Ce(T) ? !0 : (h.append(ze($, B, m), F(T)), !1);
+    return qe(B) ? !0 : (c.append(tt(W, I, m), _(B)), !1);
   }
-  const _ = [], Q = Object.assign(Ha, {
-    defaultVisitor: V,
-    convertValue: F,
-    isVisitable: Ce
+  const E = [], N = Object.assign(Xa, {
+    defaultVisitor: U,
+    convertValue: _,
+    isVisitable: qe
   });
-  function J(T, B) {
-    if (!g.isUndefined(T)) {
-      if (_.indexOf(T) !== -1)
-        throw Error("Circular reference detected in " + B.join("."));
-      _.push(T), g.forEach(T, function(K, te) {
-        (!(g.isUndefined(K) || K === null) && O.call(
-          h,
-          K,
-          g.isString(te) ? te.trim() : te,
-          B,
-          Q
-        )) === !0 && J(K, B ? B.concat(te) : [te]);
-      }), _.pop();
+  function q(B, I) {
+    if (!S.isUndefined(B)) {
+      if (E.indexOf(B) !== -1)
+        throw Error("Circular reference detected in " + I.join("."));
+      E.push(B), S.forEach(B, function(J, se) {
+        (!(S.isUndefined(J) || J === null) && O.call(
+          c,
+          J,
+          S.isString(se) ? se.trim() : se,
+          I,
+          N
+        )) === !0 && q(J, I ? I.concat(se) : [se]);
+      }), E.pop();
     }
   }
-  if (!g.isObject(o))
+  if (!S.isObject(o))
     throw new TypeError("data must be an object");
-  return J(o), h;
+  return q(o), c;
 }
-function Ke(o) {
-  const h = {
+function st(o) {
+  const c = {
     "!": "%21",
     "'": "%27",
     "(": "%28",
@@ -685,39 +691,39 @@ function Ke(o) {
     "%00": "\0"
   };
   return encodeURIComponent(o).replace(/[!'()~]|%20|%00/g, function(e) {
-    return h[e];
+    return c[e];
   });
 }
-function De(o, h) {
-  this._pairs = [], o && Ue(o, this, h);
+function ze(o, c) {
+  this._pairs = [], o && Te(o, this, c);
 }
-const mt = De.prototype;
-mt.append = function(h, v) {
-  this._pairs.push([h, v]);
+const Rt = ze.prototype;
+Rt.append = function(c, v) {
+  this._pairs.push([c, v]);
 };
-mt.toString = function(h) {
-  const v = h ? function(e) {
-    return h.call(this, e, Ke);
-  } : Ke;
+Rt.toString = function(c) {
+  const v = c ? function(e) {
+    return c.call(this, e, st);
+  } : st;
   return this._pairs.map(function(O) {
     return v(O[0]) + "=" + v(O[1]);
   }, "").join("&");
 };
-function Na(o) {
+function Za(o) {
   return encodeURIComponent(o).replace(/%3A/gi, ":").replace(/%24/g, "$").replace(/%2C/gi, ",").replace(/%20/g, "+").replace(/%5B/gi, "[").replace(/%5D/gi, "]");
 }
-function St(o, h, v) {
-  if (!h)
+function Et(o, c, v) {
+  if (!c)
     return o;
-  const e = v && v.encode || Na, O = v && v.serialize;
+  const e = v && v.encode || Za, O = v && v.serialize;
   let m;
-  if (O ? m = O(h, v) : m = g.isURLSearchParams(h) ? h.toString() : new De(h, v).toString(e), m) {
-    const S = o.indexOf("#");
-    S !== -1 && (o = o.slice(0, S)), o += (o.indexOf("?") === -1 ? "?" : "&") + m;
+  if (O ? m = O(c, v) : m = S.isURLSearchParams(c) ? c.toString() : new ze(c, v).toString(e), m) {
+    const f = o.indexOf("#");
+    f !== -1 && (o = o.slice(0, f)), o += (o.indexOf("?") === -1 ? "?" : "&") + m;
   }
   return o;
 }
-class We {
+class at {
   constructor() {
     this.handlers = [];
   }
@@ -729,9 +735,9 @@ class We {
    *
    * @return {Number} An ID used to remove interceptor later
    */
-  use(h, v, e) {
+  use(c, v, e) {
     return this.handlers.push({
-      fulfilled: h,
+      fulfilled: c,
       rejected: v,
       synchronous: e ? e.synchronous : !1,
       runWhen: e ? e.runWhen : null
@@ -744,8 +750,8 @@ class We {
    *
    * @returns {Boolean} `true` if the interceptor was removed, `false` otherwise
    */
-  eject(h) {
-    this.handlers[h] && (this.handlers[h] = null);
+  eject(c) {
+    this.handlers[c] && (this.handlers[c] = null);
   }
   /**
    * Clear all interceptors from the stack
@@ -765,119 +771,121 @@ class We {
    *
    * @returns {void}
    */
-  forEach(h) {
-    g.forEach(this.handlers, function(e) {
-      e !== null && h(e);
+  forEach(c) {
+    S.forEach(this.handlers, function(e) {
+      e !== null && c(e);
     });
   }
 }
-const ft = {
+const Tt = {
   silentJSONParsing: !0,
   forcedJSONParsing: !0,
   clarifyTimeoutError: !1
-}, Ga = typeof URLSearchParams < "u" ? URLSearchParams : De, ka = typeof FormData < "u" ? FormData : null, Qa = typeof Blob < "u" ? Blob : null, Ya = {
+}, er = typeof URLSearchParams < "u" ? URLSearchParams : ze, tr = typeof FormData < "u" ? FormData : null, sr = typeof Blob < "u" ? Blob : null, ar = {
   isBrowser: !0,
   classes: {
-    URLSearchParams: Ga,
-    FormData: ka,
-    Blob: Qa
+    URLSearchParams: er,
+    FormData: tr,
+    Blob: sr
   },
   protocols: ["http", "https", "file", "blob", "url", "data"]
-}, gt = typeof window < "u" && typeof document < "u", $a = ((o) => gt && ["ReactNative", "NativeScript", "NS"].indexOf(o) < 0)(typeof navigator < "u" && navigator.product), za = typeof WorkerGlobalScope < "u" && // eslint-disable-next-line no-undef
-self instanceof WorkerGlobalScope && typeof self.importScripts == "function", Ka = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+}, Ke = typeof window < "u" && typeof document < "u", rr = ((o) => Ke && ["ReactNative", "NativeScript", "NS"].indexOf(o) < 0)(typeof navigator < "u" && navigator.product), nr = typeof WorkerGlobalScope < "u" && // eslint-disable-next-line no-undef
+self instanceof WorkerGlobalScope && typeof self.importScripts == "function", ir = Ke && window.location.href || "http://localhost", or = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  hasBrowserEnv: gt,
-  hasStandardBrowserEnv: $a,
-  hasStandardBrowserWebWorkerEnv: za
-}, Symbol.toStringTag, { value: "Module" })), ae = {
-  ...Ka,
-  ...Ya
+  hasBrowserEnv: Ke,
+  hasStandardBrowserEnv: rr,
+  hasStandardBrowserWebWorkerEnv: nr,
+  origin: ir
+}, Symbol.toStringTag, { value: "Module" })), re = {
+  ...or,
+  ...ar
 };
-function Wa(o, h) {
-  return Ue(o, new ae.classes.URLSearchParams(), Object.assign({
+function lr(o, c) {
+  return Te(o, new re.classes.URLSearchParams(), Object.assign({
     visitor: function(v, e, O, m) {
-      return ae.isNode && g.isBuffer(v) ? (this.append(e, v.toString("base64")), !1) : m.defaultVisitor.apply(this, arguments);
+      return re.isNode && S.isBuffer(v) ? (this.append(e, v.toString("base64")), !1) : m.defaultVisitor.apply(this, arguments);
     }
-  }, h));
+  }, c));
 }
-function Ja(o) {
-  return g.matchAll(/\w+|\[(\w*)]/g, o).map((h) => h[0] === "[]" ? "" : h[1] || h[0]);
+function cr(o) {
+  return S.matchAll(/\w+|\[(\w*)]/g, o).map((c) => c[0] === "[]" ? "" : c[1] || c[0]);
 }
-function Xa(o) {
-  const h = {}, v = Object.keys(o);
+function dr(o) {
+  const c = {}, v = Object.keys(o);
   let e;
   const O = v.length;
   let m;
   for (e = 0; e < O; e++)
-    m = v[e], h[m] = o[m];
-  return h;
+    m = v[e], c[m] = o[m];
+  return c;
 }
-function jt(o) {
-  function h(v, e, O, m) {
-    let S = v[m++];
-    if (S === "__proto__")
-      return !0;
-    const j = Number.isFinite(+S), R = m >= v.length;
-    return S = !S && g.isArray(O) ? O.length : S, R ? (g.hasOwnProp(O, S) ? O[S] = [O[S], e] : O[S] = e, !j) : ((!O[S] || !g.isObject(O[S])) && (O[S] = []), h(v, e, O[S], m) && g.isArray(O[S]) && (O[S] = Xa(O[S])), !j);
+function Bt(o) {
+  function c(v, e, O, m) {
+    let f = v[m++];
+    if (f === "__proto__") return !0;
+    const j = Number.isFinite(+f), V = m >= v.length;
+    return f = !f && S.isArray(O) ? O.length : f, V ? (S.hasOwnProp(O, f) ? O[f] = [O[f], e] : O[f] = e, !j) : ((!O[f] || !S.isObject(O[f])) && (O[f] = []), c(v, e, O[f], m) && S.isArray(O[f]) && (O[f] = dr(O[f])), !j);
   }
-  if (g.isFormData(o) && g.isFunction(o.entries)) {
+  if (S.isFormData(o) && S.isFunction(o.entries)) {
     const v = {};
-    return g.forEachEntry(o, (e, O) => {
-      h(Ja(e), O, v, 0);
+    return S.forEachEntry(o, (e, O) => {
+      c(cr(e), O, v, 0);
     }), v;
   }
   return null;
 }
-function Za(o, h, v) {
-  if (g.isString(o))
+function ur(o, c, v) {
+  if (S.isString(o))
     try {
-      return (h || JSON.parse)(o), g.trim(o);
+      return (c || JSON.parse)(o), S.trim(o);
     } catch (e) {
       if (e.name !== "SyntaxError")
         throw e;
     }
   return (v || JSON.stringify)(o);
 }
-const He = {
-  transitional: ft,
-  adapter: ["xhr", "http"],
-  transformRequest: [function(h, v) {
-    const e = v.getContentType() || "", O = e.indexOf("application/json") > -1, m = g.isObject(h);
-    if (m && g.isHTMLForm(h) && (h = new FormData(h)), g.isFormData(h))
-      return O ? JSON.stringify(jt(h)) : h;
-    if (g.isArrayBuffer(h) || g.isBuffer(h) || g.isStream(h) || g.isFile(h) || g.isBlob(h))
-      return h;
-    if (g.isArrayBufferView(h))
-      return h.buffer;
-    if (g.isURLSearchParams(h))
-      return v.setContentType("application/x-www-form-urlencoded;charset=utf-8", !1), h.toString();
+const Se = {
+  transitional: Tt,
+  adapter: ["xhr", "http", "fetch"],
+  transformRequest: [function(c, v) {
+    const e = v.getContentType() || "", O = e.indexOf("application/json") > -1, m = S.isObject(c);
+    if (m && S.isHTMLForm(c) && (c = new FormData(c)), S.isFormData(c))
+      return O ? JSON.stringify(Bt(c)) : c;
+    if (S.isArrayBuffer(c) || S.isBuffer(c) || S.isStream(c) || S.isFile(c) || S.isBlob(c) || S.isReadableStream(c))
+      return c;
+    if (S.isArrayBufferView(c))
+      return c.buffer;
+    if (S.isURLSearchParams(c))
+      return v.setContentType("application/x-www-form-urlencoded;charset=utf-8", !1), c.toString();
     let j;
     if (m) {
       if (e.indexOf("application/x-www-form-urlencoded") > -1)
-        return Wa(h, this.formSerializer).toString();
-      if ((j = g.isFileList(h)) || e.indexOf("multipart/form-data") > -1) {
-        const R = this.env && this.env.FormData;
-        return Ue(
-          j ? { "files[]": h } : h,
-          R && new R(),
+        return lr(c, this.formSerializer).toString();
+      if ((j = S.isFileList(c)) || e.indexOf("multipart/form-data") > -1) {
+        const V = this.env && this.env.FormData;
+        return Te(
+          j ? { "files[]": c } : c,
+          V && new V(),
           this.formSerializer
         );
       }
     }
-    return m || O ? (v.setContentType("application/json", !1), Za(h)) : h;
+    return m || O ? (v.setContentType("application/json", !1), ur(c)) : c;
   }],
-  transformResponse: [function(h) {
-    const v = this.transitional || He.transitional, e = v && v.forcedJSONParsing, O = this.responseType === "json";
-    if (h && g.isString(h) && (e && !this.responseType || O)) {
-      const S = !(v && v.silentJSONParsing) && O;
+  transformResponse: [function(c) {
+    const v = this.transitional || Se.transitional, e = v && v.forcedJSONParsing, O = this.responseType === "json";
+    if (S.isResponse(c) || S.isReadableStream(c))
+      return c;
+    if (c && S.isString(c) && (e && !this.responseType || O)) {
+      const f = !(v && v.silentJSONParsing) && O;
       try {
-        return JSON.parse(h);
+        return JSON.parse(c);
       } catch (j) {
-        if (S)
-          throw j.name === "SyntaxError" ? x.from(j, x.ERR_BAD_RESPONSE, this, null, this.response) : j;
+        if (f)
+          throw j.name === "SyntaxError" ? w.from(j, w.ERR_BAD_RESPONSE, this, null, this.response) : j;
       }
     }
-    return h;
+    return c;
   }],
   /**
    * A timeout in milliseconds to abort a request. If set to 0 (default) a
@@ -889,11 +897,11 @@ const He = {
   maxContentLength: -1,
   maxBodyLength: -1,
   env: {
-    FormData: ae.classes.FormData,
-    Blob: ae.classes.Blob
+    FormData: re.classes.FormData,
+    Blob: re.classes.Blob
   },
-  validateStatus: function(h) {
-    return h >= 200 && h < 300;
+  validateStatus: function(c) {
+    return c >= 200 && c < 300;
   },
   headers: {
     common: {
@@ -902,10 +910,10 @@ const He = {
     }
   }
 };
-g.forEach(["delete", "get", "head", "post", "put", "patch"], (o) => {
-  He.headers[o] = {};
+S.forEach(["delete", "get", "head", "post", "put", "patch"], (o) => {
+  Se.headers[o] = {};
 });
-const Ne = He, er = g.toObjectSet([
+const hr = S.toObjectSet([
   "age",
   "authorization",
   "content-length",
@@ -923,164 +931,173 @@ const Ne = He, er = g.toObjectSet([
   "referer",
   "retry-after",
   "user-agent"
-]), tr = (o) => {
-  const h = {};
+]), pr = (o) => {
+  const c = {};
   let v, e, O;
   return o && o.split(`
-`).forEach(function(S) {
-    O = S.indexOf(":"), v = S.substring(0, O).trim().toLowerCase(), e = S.substring(O + 1).trim(), !(!v || h[v] && er[v]) && (v === "set-cookie" ? h[v] ? h[v].push(e) : h[v] = [e] : h[v] = h[v] ? h[v] + ", " + e : e);
-  }), h;
-}, Je = Symbol("internals");
-function he(o) {
+`).forEach(function(f) {
+    O = f.indexOf(":"), v = f.substring(0, O).trim().toLowerCase(), e = f.substring(O + 1).trim(), !(!v || c[v] && hr[v]) && (v === "set-cookie" ? c[v] ? c[v].push(e) : c[v] = [e] : c[v] = c[v] ? c[v] + ", " + e : e);
+  }), c;
+}, rt = Symbol("internals");
+function Pe(o) {
   return o && String(o).trim().toLowerCase();
 }
-function be(o) {
-  return o === !1 || o == null ? o : g.isArray(o) ? o.map(be) : String(o);
+function Ue(o) {
+  return o === !1 || o == null ? o : S.isArray(o) ? o.map(Ue) : String(o);
 }
-function sr(o) {
-  const h = /* @__PURE__ */ Object.create(null), v = /([^\s,;=]+)\s*(?:=\s*([^,;]+))?/g;
+function Ar(o) {
+  const c = /* @__PURE__ */ Object.create(null), v = /([^\s,;=]+)\s*(?:=\s*([^,;]+))?/g;
   let e;
   for (; e = v.exec(o); )
-    h[e[1]] = e[2];
-  return h;
+    c[e[1]] = e[2];
+  return c;
 }
-const ar = (o) => /^[-_a-zA-Z0-9^`|~,!#$%&'*+.]+$/.test(o.trim());
-function Re(o, h, v, e, O) {
-  if (g.isFunction(e))
-    return e.call(this, h, v);
-  if (O && (h = v), !!g.isString(h)) {
-    if (g.isString(e))
-      return h.indexOf(e) !== -1;
-    if (g.isRegExp(e))
-      return e.test(h);
+const vr = (o) => /^[-_a-zA-Z0-9^`|~,!#$%&'*+.]+$/.test(o.trim());
+function Ie(o, c, v, e, O) {
+  if (S.isFunction(e))
+    return e.call(this, c, v);
+  if (O && (c = v), !!S.isString(c)) {
+    if (S.isString(e))
+      return c.indexOf(e) !== -1;
+    if (S.isRegExp(e))
+      return e.test(c);
   }
 }
-function rr(o) {
-  return o.trim().toLowerCase().replace(/([a-z\d])(\w*)/g, (h, v, e) => v.toUpperCase() + e);
+function Or(o) {
+  return o.trim().toLowerCase().replace(/([a-z\d])(\w*)/g, (c, v, e) => v.toUpperCase() + e);
 }
-function nr(o, h) {
-  const v = g.toCamelCase(" " + h);
+function Pr(o, c) {
+  const v = S.toCamelCase(" " + c);
   ["get", "set", "has"].forEach((e) => {
     Object.defineProperty(o, e + v, {
-      value: function(O, m, S) {
-        return this[e].call(this, h, O, m, S);
+      value: function(O, m, f) {
+        return this[e].call(this, c, O, m, f);
       },
       configurable: !0
     });
   });
 }
-let _e = class {
-  constructor(h) {
-    h && this.set(h);
+let Z = class {
+  constructor(c) {
+    c && this.set(c);
   }
-  set(h, v, e) {
+  set(c, v, e) {
     const O = this;
-    function m(j, R, F) {
-      const V = he(R);
-      if (!V)
+    function m(j, V, _) {
+      const U = Pe(V);
+      if (!U)
         throw new Error("header name must be a non-empty string");
-      const _ = g.findKey(O, V);
-      (!_ || O[_] === void 0 || F === !0 || F === void 0 && O[_] !== !1) && (O[_ || R] = be(j));
+      const E = S.findKey(O, U);
+      (!E || O[E] === void 0 || _ === !0 || _ === void 0 && O[E] !== !1) && (O[E || V] = Ue(j));
     }
-    const S = (j, R) => g.forEach(j, (F, V) => m(F, V, R));
-    return g.isPlainObject(h) || h instanceof this.constructor ? S(h, v) : g.isString(h) && (h = h.trim()) && !ar(h) ? S(tr(h), v) : h != null && m(v, h, e), this;
+    const f = (j, V) => S.forEach(j, (_, U) => m(_, U, V));
+    if (S.isPlainObject(c) || c instanceof this.constructor)
+      f(c, v);
+    else if (S.isString(c) && (c = c.trim()) && !vr(c))
+      f(pr(c), v);
+    else if (S.isHeaders(c))
+      for (const [j, V] of c.entries())
+        m(V, j, e);
+    else
+      c != null && m(v, c, e);
+    return this;
   }
-  get(h, v) {
-    if (h = he(h), h) {
-      const e = g.findKey(this, h);
+  get(c, v) {
+    if (c = Pe(c), c) {
+      const e = S.findKey(this, c);
       if (e) {
         const O = this[e];
         if (!v)
           return O;
         if (v === !0)
-          return sr(O);
-        if (g.isFunction(v))
+          return Ar(O);
+        if (S.isFunction(v))
           return v.call(this, O, e);
-        if (g.isRegExp(v))
+        if (S.isRegExp(v))
           return v.exec(O);
         throw new TypeError("parser must be boolean|regexp|function");
       }
     }
   }
-  has(h, v) {
-    if (h = he(h), h) {
-      const e = g.findKey(this, h);
-      return !!(e && this[e] !== void 0 && (!v || Re(this, this[e], e, v)));
+  has(c, v) {
+    if (c = Pe(c), c) {
+      const e = S.findKey(this, c);
+      return !!(e && this[e] !== void 0 && (!v || Ie(this, this[e], e, v)));
     }
     return !1;
   }
-  delete(h, v) {
+  delete(c, v) {
     const e = this;
     let O = !1;
-    function m(S) {
-      if (S = he(S), S) {
-        const j = g.findKey(e, S);
-        j && (!v || Re(e, e[j], j, v)) && (delete e[j], O = !0);
+    function m(f) {
+      if (f = Pe(f), f) {
+        const j = S.findKey(e, f);
+        j && (!v || Ie(e, e[j], j, v)) && (delete e[j], O = !0);
       }
     }
-    return g.isArray(h) ? h.forEach(m) : m(h), O;
+    return S.isArray(c) ? c.forEach(m) : m(c), O;
   }
-  clear(h) {
+  clear(c) {
     const v = Object.keys(this);
     let e = v.length, O = !1;
     for (; e--; ) {
       const m = v[e];
-      (!h || Re(this, this[m], m, h, !0)) && (delete this[m], O = !0);
+      (!c || Ie(this, this[m], m, c, !0)) && (delete this[m], O = !0);
     }
     return O;
   }
-  normalize(h) {
+  normalize(c) {
     const v = this, e = {};
-    return g.forEach(this, (O, m) => {
-      const S = g.findKey(e, m);
-      if (S) {
-        v[S] = be(O), delete v[m];
+    return S.forEach(this, (O, m) => {
+      const f = S.findKey(e, m);
+      if (f) {
+        v[f] = Ue(O), delete v[m];
         return;
       }
-      const j = h ? rr(m) : String(m).trim();
-      j !== m && delete v[m], v[j] = be(O), e[j] = !0;
+      const j = c ? Or(m) : String(m).trim();
+      j !== m && delete v[m], v[j] = Ue(O), e[j] = !0;
     }), this;
   }
-  concat(...h) {
-    return this.constructor.concat(this, ...h);
+  concat(...c) {
+    return this.constructor.concat(this, ...c);
   }
-  toJSON(h) {
+  toJSON(c) {
     const v = /* @__PURE__ */ Object.create(null);
-    return g.forEach(this, (e, O) => {
-      e != null && e !== !1 && (v[O] = h && g.isArray(e) ? e.join(", ") : e);
+    return S.forEach(this, (e, O) => {
+      e != null && e !== !1 && (v[O] = c && S.isArray(e) ? e.join(", ") : e);
     }), v;
   }
   [Symbol.iterator]() {
     return Object.entries(this.toJSON())[Symbol.iterator]();
   }
   toString() {
-    return Object.entries(this.toJSON()).map(([h, v]) => h + ": " + v).join(`
+    return Object.entries(this.toJSON()).map(([c, v]) => c + ": " + v).join(`
 `);
   }
   get [Symbol.toStringTag]() {
     return "AxiosHeaders";
   }
-  static from(h) {
-    return h instanceof this ? h : new this(h);
+  static from(c) {
+    return c instanceof this ? c : new this(c);
   }
-  static concat(h, ...v) {
-    const e = new this(h);
+  static concat(c, ...v) {
+    const e = new this(c);
     return v.forEach((O) => e.set(O)), e;
   }
-  static accessor(h) {
-    const e = (this[Je] = this[Je] = {
+  static accessor(c) {
+    const e = (this[rt] = this[rt] = {
       accessors: {}
     }).accessors, O = this.prototype;
-    function m(S) {
-      const j = he(S);
-      e[j] || (nr(O, S), e[j] = !0);
+    function m(f) {
+      const j = Pe(f);
+      e[j] || (Pr(O, f), e[j] = !0);
     }
-    return g.isArray(h) ? h.forEach(m) : m(h), this;
+    return S.isArray(c) ? c.forEach(m) : m(c), this;
   }
 };
-_e.accessor(["Content-Type", "Content-Length", "Accept", "Accept-Encoding", "User-Agent", "Authorization"]);
-g.reduceDescriptors(_e.prototype, ({ value: o }, h) => {
-  let v = h[0].toUpperCase() + h.slice(1);
+Z.accessor(["Content-Type", "Content-Length", "Accept", "Accept-Encoding", "User-Agent", "Authorization"]);
+S.reduceDescriptors(Z.prototype, ({ value: o }, c) => {
+  let v = c[0].toUpperCase() + c.slice(1);
   return {
     get: () => o,
     set(e) {
@@ -1088,44 +1105,123 @@ g.reduceDescriptors(_e.prototype, ({ value: o }, h) => {
     }
   };
 });
-g.freezeMethods(_e);
-const ne = _e;
-function Te(o, h) {
-  const v = this || Ne, e = h || v, O = ne.from(e.headers);
+S.freezeMethods(Z);
+function Me(o, c) {
+  const v = this || Se, e = c || v, O = Z.from(e.headers);
   let m = e.data;
-  return g.forEach(o, function(j) {
-    m = j.call(v, m, O.normalize(), h ? h.status : void 0);
+  return S.forEach(o, function(j) {
+    m = j.call(v, m, O.normalize(), c ? c.status : void 0);
   }), O.normalize(), m;
 }
-function Ut(o) {
+function Ft(o) {
   return !!(o && o.__CANCEL__);
 }
-function Oe(o, h, v) {
-  x.call(this, o ?? "canceled", x.ERR_CANCELED, h, v), this.name = "CanceledError";
+function Oe(o, c, v) {
+  w.call(this, o ?? "canceled", w.ERR_CANCELED, c, v), this.name = "CanceledError";
 }
-g.inherits(Oe, x, {
+S.inherits(Oe, w, {
   __CANCEL__: !0
 });
-function ir(o, h, v) {
+function Ct(o, c, v) {
   const e = v.config.validateStatus;
-  !v.status || !e || e(v.status) ? o(v) : h(new x(
+  !v.status || !e || e(v.status) ? o(v) : c(new w(
     "Request failed with status code " + v.status,
-    [x.ERR_BAD_REQUEST, x.ERR_BAD_RESPONSE][Math.floor(v.status / 100) - 4],
+    [w.ERR_BAD_REQUEST, w.ERR_BAD_RESPONSE][Math.floor(v.status / 100) - 4],
     v.config,
     v.request,
     v
   ));
 }
-const or = ae.hasStandardBrowserEnv ? (
+function br(o) {
+  const c = /^([-+\w]{1,25})(:?\/\/|:)/.exec(o);
+  return c && c[1] || "";
+}
+function mr(o, c) {
+  o = o || 10;
+  const v = new Array(o), e = new Array(o);
+  let O = 0, m = 0, f;
+  return c = c !== void 0 ? c : 1e3, function(V) {
+    const _ = Date.now(), U = e[m];
+    f || (f = _), v[O] = V, e[O] = _;
+    let E = m, N = 0;
+    for (; E !== O; )
+      N += v[E++], E = E % o;
+    if (O = (O + 1) % o, O === m && (m = (m + 1) % o), _ - f < c)
+      return;
+    const q = U && _ - U;
+    return q ? Math.round(N * 1e3 / q) : void 0;
+  };
+}
+function fr(o, c) {
+  let v = 0;
+  const e = 1e3 / c;
+  let O = null;
+  return function() {
+    const f = this === !0, j = Date.now();
+    if (f || j - v > e)
+      return O && (clearTimeout(O), O = null), v = j, o.apply(null, arguments);
+    O || (O = setTimeout(() => (O = null, v = Date.now(), o.apply(null, arguments)), e - (j - v)));
+  };
+}
+const ye = (o, c, v = 3) => {
+  let e = 0;
+  const O = mr(50, 250);
+  return fr((m) => {
+    const f = m.loaded, j = m.lengthComputable ? m.total : void 0, V = f - e, _ = O(V), U = f <= j;
+    e = f;
+    const E = {
+      loaded: f,
+      total: j,
+      progress: j ? f / j : void 0,
+      bytes: V,
+      rate: _ || void 0,
+      estimated: _ && j && U ? (j - f) / _ : void 0,
+      event: m,
+      lengthComputable: j != null
+    };
+    E[c ? "download" : "upload"] = !0, o(E);
+  }, v);
+}, Sr = re.hasStandardBrowserEnv ? (
+  // Standard browser envs have full support of the APIs needed to test
+  // whether the request URL is of the same origin as current location.
+  function() {
+    const c = /(msie|trident)/i.test(navigator.userAgent), v = document.createElement("a");
+    let e;
+    function O(m) {
+      let f = m;
+      return c && (v.setAttribute("href", f), f = v.href), v.setAttribute("href", f), {
+        href: v.href,
+        protocol: v.protocol ? v.protocol.replace(/:$/, "") : "",
+        host: v.host,
+        search: v.search ? v.search.replace(/^\?/, "") : "",
+        hash: v.hash ? v.hash.replace(/^#/, "") : "",
+        hostname: v.hostname,
+        port: v.port,
+        pathname: v.pathname.charAt(0) === "/" ? v.pathname : "/" + v.pathname
+      };
+    }
+    return e = O(window.location.href), function(f) {
+      const j = S.isString(f) ? O(f) : f;
+      return j.protocol === e.protocol && j.host === e.host;
+    };
+  }()
+) : (
+  // Non standard browser envs (web workers, react-native) lack needed support.
+  /* @__PURE__ */ function() {
+    return function() {
+      return !0;
+    };
+  }()
+), gr = re.hasStandardBrowserEnv ? (
   // Standard browser envs support document.cookie
   {
-    write(o, h, v, e, O, m) {
-      const S = [o + "=" + encodeURIComponent(h)];
-      g.isNumber(v) && S.push("expires=" + new Date(v).toGMTString()), g.isString(e) && S.push("path=" + e), g.isString(O) && S.push("domain=" + O), m === !0 && S.push("secure"), document.cookie = S.join("; ");
+    write(o, c, v, e, O, m) {
+      const f = [o + "=" + encodeURIComponent(c)];
+      S.isNumber(v) && f.push("expires=" + new Date(v).toGMTString()), S.isString(e) && f.push("path=" + e), S.isString(O) && f.push("domain=" + O), m === !0 && f.push("secure"), document.cookie = f.join("; ");
     },
     read(o) {
-      const h = document.cookie.match(new RegExp("(^|;\\s*)(" + o + ")=([^;]*)"));
-      return h ? decodeURIComponent(h[3]) : null;
+      const c = document.cookie.match(new RegExp("(^|;\\s*)(" + o + ")=([^;]*)"));
+      return c ? decodeURIComponent(c[3]) : null;
     },
     remove(o) {
       this.write(o, "", Date.now() - 864e5);
@@ -1143,343 +1239,456 @@ const or = ae.hasStandardBrowserEnv ? (
     }
   }
 );
-function lr(o) {
+function jr(o) {
   return /^([a-z][a-z\d+\-.]*:)?\/\//i.test(o);
 }
-function cr(o, h) {
-  return h ? o.replace(/\/?\/$/, "") + "/" + h.replace(/^\/+/, "") : o;
+function Ur(o, c) {
+  return c ? o.replace(/\/?\/$/, "") + "/" + c.replace(/^\/+/, "") : o;
 }
-function _t(o, h) {
-  return o && !lr(h) ? cr(o, h) : h;
+function wt(o, c) {
+  return o && !jr(c) ? Ur(o, c) : c;
 }
-const dr = ae.hasStandardBrowserEnv ? (
-  // Standard browser envs have full support of the APIs needed to test
-  // whether the request URL is of the same origin as current location.
-  function() {
-    const h = /(msie|trident)/i.test(navigator.userAgent), v = document.createElement("a");
-    let e;
-    function O(m) {
-      let S = m;
-      return h && (v.setAttribute("href", S), S = v.href), v.setAttribute("href", S), {
-        href: v.href,
-        protocol: v.protocol ? v.protocol.replace(/:$/, "") : "",
-        host: v.host,
-        search: v.search ? v.search.replace(/^\?/, "") : "",
-        hash: v.hash ? v.hash.replace(/^#/, "") : "",
-        hostname: v.hostname,
-        port: v.port,
-        pathname: v.pathname.charAt(0) === "/" ? v.pathname : "/" + v.pathname
-      };
+const nt = (o) => o instanceof Z ? { ...o } : o;
+function pe(o, c) {
+  c = c || {};
+  const v = {};
+  function e(_, U, E) {
+    return S.isPlainObject(_) && S.isPlainObject(U) ? S.merge.call({ caseless: E }, _, U) : S.isPlainObject(U) ? S.merge({}, U) : S.isArray(U) ? U.slice() : U;
+  }
+  function O(_, U, E) {
+    if (S.isUndefined(U)) {
+      if (!S.isUndefined(_))
+        return e(void 0, _, E);
+    } else return e(_, U, E);
+  }
+  function m(_, U) {
+    if (!S.isUndefined(U))
+      return e(void 0, U);
+  }
+  function f(_, U) {
+    if (S.isUndefined(U)) {
+      if (!S.isUndefined(_))
+        return e(void 0, _);
+    } else return e(void 0, U);
+  }
+  function j(_, U, E) {
+    if (E in c)
+      return e(_, U);
+    if (E in o)
+      return e(void 0, _);
+  }
+  const V = {
+    url: m,
+    method: m,
+    data: m,
+    baseURL: f,
+    transformRequest: f,
+    transformResponse: f,
+    paramsSerializer: f,
+    timeout: f,
+    timeoutMessage: f,
+    withCredentials: f,
+    withXSRFToken: f,
+    adapter: f,
+    responseType: f,
+    xsrfCookieName: f,
+    xsrfHeaderName: f,
+    onUploadProgress: f,
+    onDownloadProgress: f,
+    decompress: f,
+    maxContentLength: f,
+    maxBodyLength: f,
+    beforeRedirect: f,
+    transport: f,
+    httpAgent: f,
+    httpsAgent: f,
+    cancelToken: f,
+    socketPath: f,
+    responseEncoding: f,
+    validateStatus: j,
+    headers: (_, U) => O(nt(_), nt(U), !0)
+  };
+  return S.forEach(Object.keys(Object.assign({}, o, c)), function(U) {
+    const E = V[U] || O, N = E(o[U], c[U], U);
+    S.isUndefined(N) && E !== j || (v[U] = N);
+  }), v;
+}
+const It = (o) => {
+  const c = pe({}, o);
+  let { data: v, withXSRFToken: e, xsrfHeaderName: O, xsrfCookieName: m, headers: f, auth: j } = c;
+  c.headers = f = Z.from(f), c.url = Et(wt(c.baseURL, c.url), o.params, o.paramsSerializer), j && f.set(
+    "Authorization",
+    "Basic " + btoa((j.username || "") + ":" + (j.password ? unescape(encodeURIComponent(j.password)) : ""))
+  );
+  let V;
+  if (S.isFormData(v)) {
+    if (re.hasStandardBrowserEnv || re.hasStandardBrowserWebWorkerEnv)
+      f.setContentType(void 0);
+    else if ((V = f.getContentType()) !== !1) {
+      const [_, ...U] = V ? V.split(";").map((E) => E.trim()).filter(Boolean) : [];
+      f.setContentType([_ || "multipart/form-data", ...U].join("; "));
     }
-    return e = O(window.location.href), function(S) {
-      const j = g.isString(S) ? O(S) : S;
-      return j.protocol === e.protocol && j.host === e.host;
-    };
-  }()
-) : (
-  // Non standard browser envs (web workers, react-native) lack needed support.
-  /* @__PURE__ */ function() {
-    return function() {
-      return !0;
-    };
-  }()
-);
-function ur(o) {
-  const h = /^([-+\w]{1,25})(:?\/\/|:)/.exec(o);
-  return h && h[1] || "";
-}
-function hr(o, h) {
-  o = o || 10;
-  const v = new Array(o), e = new Array(o);
-  let O = 0, m = 0, S;
-  return h = h !== void 0 ? h : 1e3, function(R) {
-    const F = Date.now(), V = e[m];
-    S || (S = F), v[O] = R, e[O] = F;
-    let _ = m, Q = 0;
-    for (; _ !== O; )
-      Q += v[_++], _ = _ % o;
-    if (O = (O + 1) % o, O === m && (m = (m + 1) % o), F - S < h)
-      return;
-    const J = V && F - V;
-    return J ? Math.round(Q * 1e3 / J) : void 0;
-  };
-}
-function Xe(o, h) {
-  let v = 0;
-  const e = hr(50, 250);
-  return (O) => {
-    const m = O.loaded, S = O.lengthComputable ? O.total : void 0, j = m - v, R = e(j), F = m <= S;
-    v = m;
-    const V = {
-      loaded: m,
-      total: S,
-      progress: S ? m / S : void 0,
-      bytes: j,
-      rate: R || void 0,
-      estimated: R && S && F ? (S - m) / R : void 0,
-      event: O
-    };
-    V[h ? "download" : "upload"] = !0, o(V);
-  };
-}
-const pr = typeof XMLHttpRequest < "u", Ar = pr && function(o) {
+  }
+  if (re.hasStandardBrowserEnv && (e && S.isFunction(e) && (e = e(c)), e || e !== !1 && Sr(c.url))) {
+    const _ = O && m && gr.read(m);
+    _ && f.set(O, _);
+  }
+  return c;
+}, yr = typeof XMLHttpRequest < "u", _r = yr && function(o) {
   return new Promise(function(v, e) {
-    let O = o.data;
-    const m = ne.from(o.headers).normalize();
-    let { responseType: S, withXSRFToken: j } = o, R;
-    function F() {
-      o.cancelToken && o.cancelToken.unsubscribe(R), o.signal && o.signal.removeEventListener("abort", R);
+    const O = It(o);
+    let m = O.data;
+    const f = Z.from(O.headers).normalize();
+    let { responseType: j } = O, V;
+    function _() {
+      O.cancelToken && O.cancelToken.unsubscribe(V), O.signal && O.signal.removeEventListener("abort", V);
     }
-    let V;
-    if (g.isFormData(O)) {
-      if (ae.hasStandardBrowserEnv || ae.hasStandardBrowserWebWorkerEnv)
-        m.setContentType(!1);
-      else if ((V = m.getContentType()) !== !1) {
-        const [B, ...$] = V ? V.split(";").map((K) => K.trim()).filter(Boolean) : [];
-        m.setContentType([B || "multipart/form-data", ...$].join("; "));
-      }
-    }
-    let _ = new XMLHttpRequest();
-    if (o.auth) {
-      const B = o.auth.username || "", $ = o.auth.password ? unescape(encodeURIComponent(o.auth.password)) : "";
-      m.set("Authorization", "Basic " + btoa(B + ":" + $));
-    }
-    const Q = _t(o.baseURL, o.url);
-    _.open(o.method.toUpperCase(), St(Q, o.params, o.paramsSerializer), !0), _.timeout = o.timeout;
-    function J() {
-      if (!_)
+    let U = new XMLHttpRequest();
+    U.open(O.method.toUpperCase(), O.url, !0), U.timeout = O.timeout;
+    function E() {
+      if (!U)
         return;
-      const B = ne.from(
-        "getAllResponseHeaders" in _ && _.getAllResponseHeaders()
-      ), K = {
-        data: !S || S === "text" || S === "json" ? _.responseText : _.response,
-        status: _.status,
-        statusText: _.statusText,
-        headers: B,
+      const q = Z.from(
+        "getAllResponseHeaders" in U && U.getAllResponseHeaders()
+      ), I = {
+        data: !j || j === "text" || j === "json" ? U.responseText : U.response,
+        status: U.status,
+        statusText: U.statusText,
+        headers: q,
         config: o,
-        request: _
+        request: U
       };
-      ir(function(se) {
-        v(se), F();
-      }, function(se) {
-        e(se), F();
-      }, K), _ = null;
+      Ct(function(J) {
+        v(J), _();
+      }, function(J) {
+        e(J), _();
+      }, I), U = null;
     }
-    if ("onloadend" in _ ? _.onloadend = J : _.onreadystatechange = function() {
-      !_ || _.readyState !== 4 || _.status === 0 && !(_.responseURL && _.responseURL.indexOf("file:") === 0) || setTimeout(J);
-    }, _.onabort = function() {
-      _ && (e(new x("Request aborted", x.ECONNABORTED, o, _)), _ = null);
-    }, _.onerror = function() {
-      e(new x("Network Error", x.ERR_NETWORK, o, _)), _ = null;
-    }, _.ontimeout = function() {
-      let $ = o.timeout ? "timeout of " + o.timeout + "ms exceeded" : "timeout exceeded";
-      const K = o.transitional || ft;
-      o.timeoutErrorMessage && ($ = o.timeoutErrorMessage), e(new x(
-        $,
-        K.clarifyTimeoutError ? x.ETIMEDOUT : x.ECONNABORTED,
-        o,
-        _
-      )), _ = null;
-    }, ae.hasStandardBrowserEnv && (j && g.isFunction(j) && (j = j(o)), j || j !== !1 && dr(Q))) {
-      const B = o.xsrfHeaderName && o.xsrfCookieName && or.read(o.xsrfCookieName);
-      B && m.set(o.xsrfHeaderName, B);
-    }
-    O === void 0 && m.setContentType(null), "setRequestHeader" in _ && g.forEach(m.toJSON(), function($, K) {
-      _.setRequestHeader(K, $);
-    }), g.isUndefined(o.withCredentials) || (_.withCredentials = !!o.withCredentials), S && S !== "json" && (_.responseType = o.responseType), typeof o.onDownloadProgress == "function" && _.addEventListener("progress", Xe(o.onDownloadProgress, !0)), typeof o.onUploadProgress == "function" && _.upload && _.upload.addEventListener("progress", Xe(o.onUploadProgress)), (o.cancelToken || o.signal) && (R = (B) => {
-      _ && (e(!B || B.type ? new Oe(null, o, _) : B), _.abort(), _ = null);
-    }, o.cancelToken && o.cancelToken.subscribe(R), o.signal && (o.signal.aborted ? R() : o.signal.addEventListener("abort", R)));
-    const T = ur(Q);
-    if (T && ae.protocols.indexOf(T) === -1) {
-      e(new x("Unsupported protocol " + T + ":", x.ERR_BAD_REQUEST, o));
+    "onloadend" in U ? U.onloadend = E : U.onreadystatechange = function() {
+      !U || U.readyState !== 4 || U.status === 0 && !(U.responseURL && U.responseURL.indexOf("file:") === 0) || setTimeout(E);
+    }, U.onabort = function() {
+      U && (e(new w("Request aborted", w.ECONNABORTED, O, U)), U = null);
+    }, U.onerror = function() {
+      e(new w("Network Error", w.ERR_NETWORK, O, U)), U = null;
+    }, U.ontimeout = function() {
+      let B = O.timeout ? "timeout of " + O.timeout + "ms exceeded" : "timeout exceeded";
+      const I = O.transitional || Tt;
+      O.timeoutErrorMessage && (B = O.timeoutErrorMessage), e(new w(
+        B,
+        I.clarifyTimeoutError ? w.ETIMEDOUT : w.ECONNABORTED,
+        O,
+        U
+      )), U = null;
+    }, m === void 0 && f.setContentType(null), "setRequestHeader" in U && S.forEach(f.toJSON(), function(B, I) {
+      U.setRequestHeader(I, B);
+    }), S.isUndefined(O.withCredentials) || (U.withCredentials = !!O.withCredentials), j && j !== "json" && (U.responseType = O.responseType), typeof O.onDownloadProgress == "function" && U.addEventListener("progress", ye(O.onDownloadProgress, !0)), typeof O.onUploadProgress == "function" && U.upload && U.upload.addEventListener("progress", ye(O.onUploadProgress)), (O.cancelToken || O.signal) && (V = (q) => {
+      U && (e(!q || q.type ? new Oe(null, o, U) : q), U.abort(), U = null);
+    }, O.cancelToken && O.cancelToken.subscribe(V), O.signal && (O.signal.aborted ? V() : O.signal.addEventListener("abort", V)));
+    const N = br(O.url);
+    if (N && re.protocols.indexOf(N) === -1) {
+      e(new w("Unsupported protocol " + N + ":", w.ERR_BAD_REQUEST, o));
       return;
     }
-    _.send(O || null);
+    U.send(m || null);
   });
-}, Ie = {
-  http: qa,
-  xhr: Ar
+}, Vr = (o, c) => {
+  let v = new AbortController(), e;
+  const O = function(V) {
+    if (!e) {
+      e = !0, f();
+      const _ = V instanceof Error ? V : this.reason;
+      v.abort(_ instanceof w ? _ : new Oe(_ instanceof Error ? _.message : _));
+    }
+  };
+  let m = c && setTimeout(() => {
+    O(new w(`timeout ${c} of ms exceeded`, w.ETIMEDOUT));
+  }, c);
+  const f = () => {
+    o && (m && clearTimeout(m), m = null, o.forEach((V) => {
+      V && (V.removeEventListener ? V.removeEventListener("abort", O) : V.unsubscribe(O));
+    }), o = null);
+  };
+  o.forEach((V) => V && V.addEventListener && V.addEventListener("abort", O));
+  const { signal: j } = v;
+  return j.unsubscribe = f, [j, () => {
+    m && clearTimeout(m), m = null;
+  }];
+}, Rr = function* (o, c) {
+  let v = o.byteLength;
+  if (!c || v < c) {
+    yield o;
+    return;
+  }
+  let e = 0, O;
+  for (; e < v; )
+    O = e + c, yield o.slice(e, O), e = O;
+}, Er = async function* (o, c, v) {
+  for await (const e of o)
+    yield* Rr(ArrayBuffer.isView(e) ? e : await v(String(e)), c);
+}, it = (o, c, v, e, O) => {
+  const m = Er(o, c, O);
+  let f = 0;
+  return new ReadableStream({
+    type: "bytes",
+    async pull(j) {
+      const { done: V, value: _ } = await m.next();
+      if (V) {
+        j.close(), e();
+        return;
+      }
+      let U = _.byteLength;
+      v && v(f += U), j.enqueue(new Uint8Array(_));
+    },
+    cancel(j) {
+      return e(j), m.return();
+    }
+  }, {
+    highWaterMark: 2
+  });
+}, ot = (o, c) => {
+  const v = o != null;
+  return (e) => setTimeout(() => c({
+    lengthComputable: v,
+    total: o,
+    loaded: e
+  }));
+}, Be = typeof fetch == "function" && typeof Request == "function" && typeof Response == "function", Mt = Be && typeof ReadableStream == "function", De = Be && (typeof TextEncoder == "function" ? /* @__PURE__ */ ((o) => (c) => o.encode(c))(new TextEncoder()) : async (o) => new Uint8Array(await new Response(o).arrayBuffer())), Tr = Mt && (() => {
+  let o = !1;
+  const c = new Request(re.origin, {
+    body: new ReadableStream(),
+    method: "POST",
+    get duplex() {
+      return o = !0, "half";
+    }
+  }).headers.has("Content-Type");
+  return o && !c;
+})(), lt = 64 * 1024, He = Mt && !!(() => {
+  try {
+    return S.isReadableStream(new Response("").body);
+  } catch {
+  }
+})(), _e = {
+  stream: He && ((o) => o.body)
 };
-g.forEach(Ie, (o, h) => {
+Be && ((o) => {
+  ["text", "arrayBuffer", "blob", "formData", "stream"].forEach((c) => {
+    !_e[c] && (_e[c] = S.isFunction(o[c]) ? (v) => v[c]() : (v, e) => {
+      throw new w(`Response type '${c}' is not supported`, w.ERR_NOT_SUPPORT, e);
+    });
+  });
+})(new Response());
+const Br = async (o) => {
+  if (o == null)
+    return 0;
+  if (S.isBlob(o))
+    return o.size;
+  if (S.isSpecCompliantForm(o))
+    return (await new Request(o).arrayBuffer()).byteLength;
+  if (S.isArrayBufferView(o))
+    return o.byteLength;
+  if (S.isURLSearchParams(o) && (o = o + ""), S.isString(o))
+    return (await De(o)).byteLength;
+}, Fr = async (o, c) => {
+  const v = S.toFiniteNumber(o.getContentLength());
+  return v ?? Br(c);
+}, Cr = Be && (async (o) => {
+  let {
+    url: c,
+    method: v,
+    data: e,
+    signal: O,
+    cancelToken: m,
+    timeout: f,
+    onDownloadProgress: j,
+    onUploadProgress: V,
+    responseType: _,
+    headers: U,
+    withCredentials: E = "same-origin",
+    fetchOptions: N
+  } = It(o);
+  _ = _ ? (_ + "").toLowerCase() : "text";
+  let [q, B] = O || m || f ? Vr([O, m], f) : [], I, W;
+  const J = () => {
+    !I && setTimeout(() => {
+      q && q.unsubscribe();
+    }), I = !0;
+  };
+  let se;
+  try {
+    if (V && Tr && v !== "get" && v !== "head" && (se = await Fr(U, e)) !== 0) {
+      let ie = new Request(c, {
+        method: "POST",
+        body: e,
+        duplex: "half"
+      }), oe;
+      S.isFormData(e) && (oe = ie.headers.get("content-type")) && U.setContentType(oe), ie.body && (e = it(ie.body, lt, ot(
+        se,
+        ye(V)
+      ), null, De));
+    }
+    S.isString(E) || (E = E ? "cors" : "omit"), W = new Request(c, {
+      ...N,
+      signal: q,
+      method: v.toUpperCase(),
+      headers: U.normalize().toJSON(),
+      body: e,
+      duplex: "half",
+      withCredentials: E
+    });
+    let H = await fetch(W);
+    const ue = He && (_ === "stream" || _ === "response");
+    if (He && (j || ue)) {
+      const ie = {};
+      ["status", "statusText", "headers"].forEach((ge) => {
+        ie[ge] = H[ge];
+      });
+      const oe = S.toFiniteNumber(H.headers.get("content-length"));
+      H = new Response(
+        it(H.body, lt, j && ot(
+          oe,
+          ye(j, !0)
+        ), ue && J, De),
+        ie
+      );
+    }
+    _ = _ || "text";
+    let Ce = await _e[S.findKey(_e, _) || "text"](H, o);
+    return !ue && J(), B && B(), await new Promise((ie, oe) => {
+      Ct(ie, oe, {
+        data: Ce,
+        headers: Z.from(H.headers),
+        status: H.status,
+        statusText: H.statusText,
+        config: o,
+        request: W
+      });
+    });
+  } catch (H) {
+    throw J(), H && H.name === "TypeError" && /fetch/i.test(H.message) ? Object.assign(
+      new w("Network Error", w.ERR_NETWORK, o, W),
+      {
+        cause: H.cause || H
+      }
+    ) : w.from(H, H && H.code, o, W);
+  }
+}), Ne = {
+  http: Wa,
+  xhr: _r,
+  fetch: Cr
+};
+S.forEach(Ne, (o, c) => {
   if (o) {
     try {
-      Object.defineProperty(o, "name", { value: h });
+      Object.defineProperty(o, "name", { value: c });
     } catch {
     }
-    Object.defineProperty(o, "adapterName", { value: h });
+    Object.defineProperty(o, "adapterName", { value: c });
   }
 });
-const Ze = (o) => `- ${o}`, vr = (o) => g.isFunction(o) || o === null || o === !1, Vt = {
+const ct = (o) => `- ${o}`, wr = (o) => S.isFunction(o) || o === null || o === !1, xt = {
   getAdapter: (o) => {
-    o = g.isArray(o) ? o : [o];
-    const { length: h } = o;
+    o = S.isArray(o) ? o : [o];
+    const { length: c } = o;
     let v, e;
     const O = {};
-    for (let m = 0; m < h; m++) {
+    for (let m = 0; m < c; m++) {
       v = o[m];
-      let S;
-      if (e = v, !vr(v) && (e = Ie[(S = String(v)).toLowerCase()], e === void 0))
-        throw new x(`Unknown adapter '${S}'`);
+      let f;
+      if (e = v, !wr(v) && (e = Ne[(f = String(v)).toLowerCase()], e === void 0))
+        throw new w(`Unknown adapter '${f}'`);
       if (e)
         break;
-      O[S || "#" + m] = e;
+      O[f || "#" + m] = e;
     }
     if (!e) {
       const m = Object.entries(O).map(
-        ([j, R]) => `adapter ${j} ` + (R === !1 ? "is not supported by the environment" : "is not available in the build")
+        ([j, V]) => `adapter ${j} ` + (V === !1 ? "is not supported by the environment" : "is not available in the build")
       );
-      let S = h ? m.length > 1 ? `since :
-` + m.map(Ze).join(`
-`) : " " + Ze(m[0]) : "as no adapter specified";
-      throw new x(
-        "There is no suitable adapter to dispatch the request " + S,
+      let f = c ? m.length > 1 ? `since :
+` + m.map(ct).join(`
+`) : " " + ct(m[0]) : "as no adapter specified";
+      throw new w(
+        "There is no suitable adapter to dispatch the request " + f,
         "ERR_NOT_SUPPORT"
       );
     }
     return e;
   },
-  adapters: Ie
+  adapters: Ne
 };
-function Be(o) {
+function xe(o) {
   if (o.cancelToken && o.cancelToken.throwIfRequested(), o.signal && o.signal.aborted)
     throw new Oe(null, o);
 }
-function et(o) {
-  return Be(o), o.headers = ne.from(o.headers), o.data = Te.call(
+function dt(o) {
+  return xe(o), o.headers = Z.from(o.headers), o.data = Me.call(
     o,
     o.transformRequest
-  ), ["post", "put", "patch"].indexOf(o.method) !== -1 && o.headers.setContentType("application/x-www-form-urlencoded", !1), Vt.getAdapter(o.adapter || Ne.adapter)(o).then(function(e) {
-    return Be(o), e.data = Te.call(
+  ), ["post", "put", "patch"].indexOf(o.method) !== -1 && o.headers.setContentType("application/x-www-form-urlencoded", !1), xt.getAdapter(o.adapter || Se.adapter)(o).then(function(e) {
+    return xe(o), e.data = Me.call(
       o,
       o.transformResponse,
       e
-    ), e.headers = ne.from(e.headers), e;
+    ), e.headers = Z.from(e.headers), e;
   }, function(e) {
-    return Ut(e) || (Be(o), e && e.response && (e.response.data = Te.call(
+    return Ft(e) || (xe(o), e && e.response && (e.response.data = Me.call(
       o,
       o.transformResponse,
       e.response
-    ), e.response.headers = ne.from(e.response.headers))), Promise.reject(e);
+    ), e.response.headers = Z.from(e.response.headers))), Promise.reject(e);
   });
 }
-const tt = (o) => o instanceof ne ? { ...o } : o;
-function de(o, h) {
-  h = h || {};
-  const v = {};
-  function e(F, V, _) {
-    return g.isPlainObject(F) && g.isPlainObject(V) ? g.merge.call({ caseless: _ }, F, V) : g.isPlainObject(V) ? g.merge({}, V) : g.isArray(V) ? V.slice() : V;
-  }
-  function O(F, V, _) {
-    if (g.isUndefined(V)) {
-      if (!g.isUndefined(F))
-        return e(void 0, F, _);
-    } else
-      return e(F, V, _);
-  }
-  function m(F, V) {
-    if (!g.isUndefined(V))
-      return e(void 0, V);
-  }
-  function S(F, V) {
-    if (g.isUndefined(V)) {
-      if (!g.isUndefined(F))
-        return e(void 0, F);
-    } else
-      return e(void 0, V);
-  }
-  function j(F, V, _) {
-    if (_ in h)
-      return e(F, V);
-    if (_ in o)
-      return e(void 0, F);
-  }
-  const R = {
-    url: m,
-    method: m,
-    data: m,
-    baseURL: S,
-    transformRequest: S,
-    transformResponse: S,
-    paramsSerializer: S,
-    timeout: S,
-    timeoutMessage: S,
-    withCredentials: S,
-    withXSRFToken: S,
-    adapter: S,
-    responseType: S,
-    xsrfCookieName: S,
-    xsrfHeaderName: S,
-    onUploadProgress: S,
-    onDownloadProgress: S,
-    decompress: S,
-    maxContentLength: S,
-    maxBodyLength: S,
-    beforeRedirect: S,
-    transport: S,
-    httpAgent: S,
-    httpsAgent: S,
-    cancelToken: S,
-    socketPath: S,
-    responseEncoding: S,
-    validateStatus: j,
-    headers: (F, V) => O(tt(F), tt(V), !0)
-  };
-  return g.forEach(Object.keys(Object.assign({}, o, h)), function(V) {
-    const _ = R[V] || O, Q = _(o[V], h[V], V);
-    g.isUndefined(Q) && _ !== j || (v[V] = Q);
-  }), v;
-}
-const yt = "1.6.8", Ge = {};
-["object", "boolean", "number", "function", "string", "symbol"].forEach((o, h) => {
-  Ge[o] = function(e) {
-    return typeof e === o || "a" + (h < 1 ? "n " : " ") + o;
+const Lt = "1.7.2", We = {};
+["object", "boolean", "number", "function", "string", "symbol"].forEach((o, c) => {
+  We[o] = function(e) {
+    return typeof e === o || "a" + (c < 1 ? "n " : " ") + o;
   };
 });
-const st = {};
-Ge.transitional = function(h, v, e) {
-  function O(m, S) {
-    return "[Axios v" + yt + "] Transitional option '" + m + "'" + S + (e ? ". " + e : "");
+const ut = {};
+We.transitional = function(c, v, e) {
+  function O(m, f) {
+    return "[Axios v" + Lt + "] Transitional option '" + m + "'" + f + (e ? ". " + e : "");
   }
-  return (m, S, j) => {
-    if (h === !1)
-      throw new x(
-        O(S, " has been removed" + (v ? " in " + v : "")),
-        x.ERR_DEPRECATED
+  return (m, f, j) => {
+    if (c === !1)
+      throw new w(
+        O(f, " has been removed" + (v ? " in " + v : "")),
+        w.ERR_DEPRECATED
       );
-    return v && !st[S] && (st[S] = !0, console.warn(
+    return v && !ut[f] && (ut[f] = !0, console.warn(
       O(
-        S,
+        f,
         " has been deprecated since v" + v + " and will be removed in the near future"
       )
-    )), h ? h(m, S, j) : !0;
+    )), c ? c(m, f, j) : !0;
   };
 };
-function Or(o, h, v) {
+function Ir(o, c, v) {
   if (typeof o != "object")
-    throw new x("options must be an object", x.ERR_BAD_OPTION_VALUE);
+    throw new w("options must be an object", w.ERR_BAD_OPTION_VALUE);
   const e = Object.keys(o);
   let O = e.length;
   for (; O-- > 0; ) {
-    const m = e[O], S = h[m];
-    if (S) {
-      const j = o[m], R = j === void 0 || S(j, m, o);
-      if (R !== !0)
-        throw new x("option " + m + " must be " + R, x.ERR_BAD_OPTION_VALUE);
+    const m = e[O], f = c[m];
+    if (f) {
+      const j = o[m], V = j === void 0 || f(j, m, o);
+      if (V !== !0)
+        throw new w("option " + m + " must be " + V, w.ERR_BAD_OPTION_VALUE);
       continue;
     }
     if (v !== !0)
-      throw new x("Unknown option " + m, x.ERR_BAD_OPTION);
+      throw new w("Unknown option " + m, w.ERR_BAD_OPTION);
   }
 }
-const Me = {
-  assertOptions: Or,
-  validators: Ge
-}, oe = Me.validators;
-let Se = class {
-  constructor(h) {
-    this.defaults = h, this.interceptors = {
-      request: new We(),
-      response: new We()
+const ke = {
+  assertOptions: Ir,
+  validators: We
+}, ce = ke.validators;
+let he = class {
+  constructor(c) {
+    this.defaults = c, this.interceptors = {
+      request: new at(),
+      response: new at()
     };
   }
   /**
@@ -1490,113 +1699,115 @@ let Se = class {
    *
    * @returns {Promise} The Promise to be fulfilled
    */
-  async request(h, v) {
+  async request(c, v) {
     try {
-      return await this._request(h, v);
+      return await this._request(c, v);
     } catch (e) {
       if (e instanceof Error) {
         let O;
         Error.captureStackTrace ? Error.captureStackTrace(O = {}) : O = new Error();
         const m = O.stack ? O.stack.replace(/^.+\n/, "") : "";
-        e.stack ? m && !String(e.stack).endsWith(m.replace(/^.+\n.+\n/, "")) && (e.stack += `
+        try {
+          e.stack ? m && !String(e.stack).endsWith(m.replace(/^.+\n.+\n/, "")) && (e.stack += `
 ` + m) : e.stack = m;
+        } catch {
+        }
       }
       throw e;
     }
   }
-  _request(h, v) {
-    typeof h == "string" ? (v = v || {}, v.url = h) : v = h || {}, v = de(this.defaults, v);
+  _request(c, v) {
+    typeof c == "string" ? (v = v || {}, v.url = c) : v = c || {}, v = pe(this.defaults, v);
     const { transitional: e, paramsSerializer: O, headers: m } = v;
-    e !== void 0 && Me.assertOptions(e, {
-      silentJSONParsing: oe.transitional(oe.boolean),
-      forcedJSONParsing: oe.transitional(oe.boolean),
-      clarifyTimeoutError: oe.transitional(oe.boolean)
-    }, !1), O != null && (g.isFunction(O) ? v.paramsSerializer = {
+    e !== void 0 && ke.assertOptions(e, {
+      silentJSONParsing: ce.transitional(ce.boolean),
+      forcedJSONParsing: ce.transitional(ce.boolean),
+      clarifyTimeoutError: ce.transitional(ce.boolean)
+    }, !1), O != null && (S.isFunction(O) ? v.paramsSerializer = {
       serialize: O
-    } : Me.assertOptions(O, {
-      encode: oe.function,
-      serialize: oe.function
+    } : ke.assertOptions(O, {
+      encode: ce.function,
+      serialize: ce.function
     }, !0)), v.method = (v.method || this.defaults.method || "get").toLowerCase();
-    let S = m && g.merge(
+    let f = m && S.merge(
       m.common,
       m[v.method]
     );
-    m && g.forEach(
+    m && S.forEach(
       ["delete", "get", "head", "post", "put", "patch", "common"],
-      (T) => {
-        delete m[T];
+      (B) => {
+        delete m[B];
       }
-    ), v.headers = ne.concat(S, m);
+    ), v.headers = Z.concat(f, m);
     const j = [];
-    let R = !0;
-    this.interceptors.request.forEach(function(B) {
-      typeof B.runWhen == "function" && B.runWhen(v) === !1 || (R = R && B.synchronous, j.unshift(B.fulfilled, B.rejected));
+    let V = !0;
+    this.interceptors.request.forEach(function(I) {
+      typeof I.runWhen == "function" && I.runWhen(v) === !1 || (V = V && I.synchronous, j.unshift(I.fulfilled, I.rejected));
     });
-    const F = [];
-    this.interceptors.response.forEach(function(B) {
-      F.push(B.fulfilled, B.rejected);
+    const _ = [];
+    this.interceptors.response.forEach(function(I) {
+      _.push(I.fulfilled, I.rejected);
     });
-    let V, _ = 0, Q;
-    if (!R) {
-      const T = [et.bind(this), void 0];
-      for (T.unshift.apply(T, j), T.push.apply(T, F), Q = T.length, V = Promise.resolve(v); _ < Q; )
-        V = V.then(T[_++], T[_++]);
-      return V;
+    let U, E = 0, N;
+    if (!V) {
+      const B = [dt.bind(this), void 0];
+      for (B.unshift.apply(B, j), B.push.apply(B, _), N = B.length, U = Promise.resolve(v); E < N; )
+        U = U.then(B[E++], B[E++]);
+      return U;
     }
-    Q = j.length;
-    let J = v;
-    for (_ = 0; _ < Q; ) {
-      const T = j[_++], B = j[_++];
+    N = j.length;
+    let q = v;
+    for (E = 0; E < N; ) {
+      const B = j[E++], I = j[E++];
       try {
-        J = T(J);
-      } catch ($) {
-        B.call(this, $);
+        q = B(q);
+      } catch (W) {
+        I.call(this, W);
         break;
       }
     }
     try {
-      V = et.call(this, J);
-    } catch (T) {
-      return Promise.reject(T);
+      U = dt.call(this, q);
+    } catch (B) {
+      return Promise.reject(B);
     }
-    for (_ = 0, Q = F.length; _ < Q; )
-      V = V.then(F[_++], F[_++]);
-    return V;
+    for (E = 0, N = _.length; E < N; )
+      U = U.then(_[E++], _[E++]);
+    return U;
   }
-  getUri(h) {
-    h = de(this.defaults, h);
-    const v = _t(h.baseURL, h.url);
-    return St(v, h.params, h.paramsSerializer);
+  getUri(c) {
+    c = pe(this.defaults, c);
+    const v = wt(c.baseURL, c.url);
+    return Et(v, c.params, c.paramsSerializer);
   }
 };
-g.forEach(["delete", "get", "head", "options"], function(h) {
-  Se.prototype[h] = function(v, e) {
-    return this.request(de(e || {}, {
-      method: h,
+S.forEach(["delete", "get", "head", "options"], function(c) {
+  he.prototype[c] = function(v, e) {
+    return this.request(pe(e || {}, {
+      method: c,
       url: v,
       data: (e || {}).data
     }));
   };
 });
-g.forEach(["post", "put", "patch"], function(h) {
+S.forEach(["post", "put", "patch"], function(c) {
   function v(e) {
-    return function(m, S, j) {
-      return this.request(de(j || {}, {
-        method: h,
+    return function(m, f, j) {
+      return this.request(pe(j || {}, {
+        method: c,
         headers: e ? {
           "Content-Type": "multipart/form-data"
         } : {},
         url: m,
-        data: S
+        data: f
       }));
     };
   }
-  Se.prototype[h] = v(), Se.prototype[h + "Form"] = v(!0);
+  he.prototype[c] = v(), he.prototype[c + "Form"] = v(!0);
 });
-const me = Se;
-let Pr = class Et {
-  constructor(h) {
-    if (typeof h != "function")
+let Mr = class qt {
+  constructor(c) {
+    if (typeof c != "function")
       throw new TypeError("executor must be a function.");
     let v;
     this.promise = new Promise(function(m) {
@@ -1604,22 +1815,21 @@ let Pr = class Et {
     });
     const e = this;
     this.promise.then((O) => {
-      if (!e._listeners)
-        return;
+      if (!e._listeners) return;
       let m = e._listeners.length;
       for (; m-- > 0; )
         e._listeners[m](O);
       e._listeners = null;
     }), this.promise.then = (O) => {
       let m;
-      const S = new Promise((j) => {
+      const f = new Promise((j) => {
         e.subscribe(j), m = j;
       }).then(O);
-      return S.cancel = function() {
+      return f.cancel = function() {
         e.unsubscribe(m);
-      }, S;
-    }, h(function(m, S, j) {
-      e.reason || (e.reason = new Oe(m, S, j), v(e.reason));
+      }, f;
+    }, c(function(m, f, j) {
+      e.reason || (e.reason = new Oe(m, f, j), v(e.reason));
     });
   }
   /**
@@ -1632,20 +1842,20 @@ let Pr = class Et {
   /**
    * Subscribe to the cancel signal
    */
-  subscribe(h) {
+  subscribe(c) {
     if (this.reason) {
-      h(this.reason);
+      c(this.reason);
       return;
     }
-    this._listeners ? this._listeners.push(h) : this._listeners = [h];
+    this._listeners ? this._listeners.push(c) : this._listeners = [c];
   }
   /**
    * Unsubscribe from the cancel signal
    */
-  unsubscribe(h) {
+  unsubscribe(c) {
     if (!this._listeners)
       return;
-    const v = this._listeners.indexOf(h);
+    const v = this._listeners.indexOf(c);
     v !== -1 && this._listeners.splice(v, 1);
   }
   /**
@@ -1653,25 +1863,24 @@ let Pr = class Et {
    * cancels the `CancelToken`.
    */
   static source() {
-    let h;
+    let c;
     return {
-      token: new Et(function(O) {
-        h = O;
+      token: new qt(function(O) {
+        c = O;
       }),
-      cancel: h
+      cancel: c
     };
   }
 };
-const br = Pr;
-function mr(o) {
+function xr(o) {
   return function(v) {
     return o.apply(null, v);
   };
 }
-function Sr(o) {
-  return g.isObject(o) && o.isAxiosError === !0;
+function Lr(o) {
+  return S.isObject(o) && o.isAxiosError === !0;
 }
-const we = {
+const Ge = {
   Continue: 100,
   SwitchingProtocols: 101,
   Processing: 102,
@@ -1736,77 +1945,76 @@ const we = {
   NotExtended: 510,
   NetworkAuthenticationRequired: 511
 };
-Object.entries(we).forEach(([o, h]) => {
-  we[h] = o;
+Object.entries(Ge).forEach(([o, c]) => {
+  Ge[c] = o;
 });
-const fr = we;
-function Rt(o) {
-  const h = new me(o), v = lt(me.prototype.request, h);
-  return g.extend(v, me.prototype, h, { allOwnKeys: !0 }), g.extend(v, h, null, { allOwnKeys: !0 }), v.create = function(O) {
-    return Rt(de(o, O));
+function Dt(o) {
+  const c = new he(o), v = Pt(he.prototype.request, c);
+  return S.extend(v, he.prototype, c, { allOwnKeys: !0 }), S.extend(v, c, null, { allOwnKeys: !0 }), v.create = function(O) {
+    return Dt(pe(o, O));
   }, v;
 }
-const G = Rt(Ne);
-G.Axios = me;
-G.CanceledError = Oe;
-G.CancelToken = br;
-G.isCancel = Ut;
-G.VERSION = yt;
-G.toFormData = Ue;
-G.AxiosError = x;
-G.Cancel = G.CanceledError;
-G.all = function(h) {
-  return Promise.all(h);
+const Y = Dt(Se);
+Y.Axios = he;
+Y.CanceledError = Oe;
+Y.CancelToken = Mr;
+Y.isCancel = Ft;
+Y.VERSION = Lt;
+Y.toFormData = Te;
+Y.AxiosError = w;
+Y.Cancel = Y.CanceledError;
+Y.all = function(c) {
+  return Promise.all(c);
 };
-G.spread = mr;
-G.isAxiosError = Sr;
-G.mergeConfig = de;
-G.AxiosHeaders = ne;
-G.formToJSON = (o) => jt(g.isHTMLForm(o) ? new FormData(o) : o);
-G.getAdapter = Vt.getAdapter;
-G.HttpStatusCode = fr;
-G.default = G;
+Y.spread = xr;
+Y.isAxiosError = Lr;
+Y.mergeConfig = pe;
+Y.AxiosHeaders = Z;
+Y.formToJSON = (o) => Bt(S.isHTMLForm(o) ? new FormData(o) : o);
+Y.getAdapter = xt.getAdapter;
+Y.HttpStatusCode = Ge;
+Y.default = Y;
 const {
-  Axios: gr,
-  AxiosError: jr,
-  CanceledError: Ur,
-  isCancel: _r,
-  CancelToken: Vr,
-  VERSION: yr,
-  all: Er,
-  Cancel: Rr,
-  isAxiosError: Tr,
-  spread: Br,
-  toFormData: Fr,
-  AxiosHeaders: Cr,
-  HttpStatusCode: Ir,
-  formToJSON: Mr,
-  getAdapter: wr,
-  mergeConfig: xr
-} = G, Lr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  Axios: qr,
+  AxiosError: Dr,
+  CanceledError: Hr,
+  isCancel: Nr,
+  CancelToken: kr,
+  VERSION: Gr,
+  all: Qr,
+  Cancel: Yr,
+  isAxiosError: $r,
+  spread: zr,
+  toFormData: Kr,
+  AxiosHeaders: Wr,
+  HttpStatusCode: Jr,
+  formToJSON: Xr,
+  getAdapter: Zr,
+  mergeConfig: en
+} = Y, tn = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  Axios: gr,
-  AxiosError: jr,
-  AxiosHeaders: Cr,
-  Cancel: Rr,
-  CancelToken: Vr,
-  CanceledError: Ur,
-  HttpStatusCode: Ir,
-  VERSION: yr,
-  all: Er,
-  default: G,
-  formToJSON: Mr,
-  getAdapter: wr,
-  isAxiosError: Tr,
-  isCancel: _r,
-  mergeConfig: xr,
-  spread: Br,
-  toFormData: Fr
-}, Symbol.toStringTag, { value: "Module" })), Tt = /* @__PURE__ */ ra(Lr);
-var N = {}, ke = {};
+  Axios: qr,
+  AxiosError: Dr,
+  AxiosHeaders: Wr,
+  Cancel: Yr,
+  CancelToken: kr,
+  CanceledError: Hr,
+  HttpStatusCode: Jr,
+  VERSION: Gr,
+  all: Qr,
+  default: Y,
+  formToJSON: Xr,
+  getAdapter: Zr,
+  isAxiosError: $r,
+  isCancel: Nr,
+  mergeConfig: en,
+  spread: zr,
+  toFormData: Kr
+}, Symbol.toStringTag, { value: "Module" })), Ht = /* @__PURE__ */ ua(tn);
+var Q = {}, Je = {};
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.operationServerMap = o.RequiredError = o.BaseAPI = o.COLLECTION_FORMATS = o.BASE_PATH = void 0;
-  const h = Tt;
+  const c = Ht;
   o.BASE_PATH = "http://undefinedundefined".replace(/\/+$/, ""), o.COLLECTION_FORMATS = {
     csv: ",",
     ssv: " ",
@@ -1814,113 +2022,113 @@ var N = {}, ke = {};
     pipes: "|"
   };
   class v {
-    constructor(m, S = o.BASE_PATH, j = h.default) {
-      var R;
-      this.basePath = S, this.axios = j, m && (this.configuration = m, this.basePath = (R = m.basePath) !== null && R !== void 0 ? R : S);
+    constructor(m, f = o.BASE_PATH, j = c.default) {
+      var V;
+      this.basePath = f, this.axios = j, m && (this.configuration = m, this.basePath = (V = m.basePath) !== null && V !== void 0 ? V : f);
     }
   }
   o.BaseAPI = v;
   class e extends Error {
-    constructor(m, S) {
-      super(S), this.field = m, this.name = "RequiredError";
+    constructor(m, f) {
+      super(f), this.field = m, this.name = "RequiredError";
     }
   }
   o.RequiredError = e, o.operationServerMap = {};
-})(ke);
-var Qe = le && le.__awaiter || function(o, h, v, e) {
+})(Je);
+var Xe = de && de.__awaiter || function(o, c, v, e) {
   function O(m) {
-    return m instanceof v ? m : new v(function(S) {
-      S(m);
+    return m instanceof v ? m : new v(function(f) {
+      f(m);
     });
   }
-  return new (v || (v = Promise))(function(m, S) {
-    function j(V) {
+  return new (v || (v = Promise))(function(m, f) {
+    function j(U) {
       try {
-        F(e.next(V));
-      } catch (_) {
-        S(_);
+        _(e.next(U));
+      } catch (E) {
+        f(E);
       }
     }
-    function R(V) {
+    function V(U) {
       try {
-        F(e.throw(V));
-      } catch (_) {
-        S(_);
+        _(e.throw(U));
+      } catch (E) {
+        f(E);
       }
     }
-    function F(V) {
-      V.done ? m(V.value) : O(V.value).then(j, R);
+    function _(U) {
+      U.done ? m(U.value) : O(U.value).then(j, V);
     }
-    F((e = e.apply(o, h || [])).next());
+    _((e = e.apply(o, c || [])).next());
   });
 };
-Object.defineProperty(N, "__esModule", { value: !0 });
-N.createRequestFunction = N.toPathString = N.serializeDataIfNeeded = N.setSearchParams = N.setOAuthToObject = N.setBearerAuthToObject = N.setBasicAuthToObject = N.setApiKeyToObject = N.assertParamExists = N.DUMMY_BASE_URL = void 0;
-const qr = ke;
-N.DUMMY_BASE_URL = "https://example.com";
-const Dr = function(o, h, v) {
+Object.defineProperty(Q, "__esModule", { value: !0 });
+Q.createRequestFunction = Q.toPathString = Q.serializeDataIfNeeded = Q.setSearchParams = Q.setOAuthToObject = Q.setBearerAuthToObject = Q.setBasicAuthToObject = Q.setApiKeyToObject = Q.assertParamExists = Q.DUMMY_BASE_URL = void 0;
+const sn = Je;
+Q.DUMMY_BASE_URL = "https://example.com";
+const an = function(o, c, v) {
   if (v == null)
-    throw new qr.RequiredError(h, `Required parameter ${h} was null or undefined when calling ${o}.`);
+    throw new sn.RequiredError(c, `Required parameter ${c} was null or undefined when calling ${o}.`);
 };
-N.assertParamExists = Dr;
-const Hr = function(o, h, v) {
-  return Qe(this, void 0, void 0, function* () {
+Q.assertParamExists = an;
+const rn = function(o, c, v) {
+  return Xe(this, void 0, void 0, function* () {
     if (v && v.apiKey) {
-      const e = typeof v.apiKey == "function" ? yield v.apiKey(h) : yield v.apiKey;
-      o[h] = e;
+      const e = typeof v.apiKey == "function" ? yield v.apiKey(c) : yield v.apiKey;
+      o[c] = e;
     }
   });
 };
-N.setApiKeyToObject = Hr;
-const Nr = function(o, h) {
-  h && (h.username || h.password) && (o.auth = { username: h.username, password: h.password });
+Q.setApiKeyToObject = rn;
+const nn = function(o, c) {
+  c && (c.username || c.password) && (o.auth = { username: c.username, password: c.password });
 };
-N.setBasicAuthToObject = Nr;
-const Gr = function(o, h) {
-  return Qe(this, void 0, void 0, function* () {
-    if (h && h.accessToken) {
-      const v = typeof h.accessToken == "function" ? yield h.accessToken() : yield h.accessToken;
+Q.setBasicAuthToObject = nn;
+const on = function(o, c) {
+  return Xe(this, void 0, void 0, function* () {
+    if (c && c.accessToken) {
+      const v = typeof c.accessToken == "function" ? yield c.accessToken() : yield c.accessToken;
       o.Authorization = "Bearer " + v;
     }
   });
 };
-N.setBearerAuthToObject = Gr;
-const kr = function(o, h, v, e) {
-  return Qe(this, void 0, void 0, function* () {
+Q.setBearerAuthToObject = on;
+const ln = function(o, c, v, e) {
+  return Xe(this, void 0, void 0, function* () {
     if (e && e.accessToken) {
-      const O = typeof e.accessToken == "function" ? yield e.accessToken(h, v) : yield e.accessToken;
+      const O = typeof e.accessToken == "function" ? yield e.accessToken(c, v) : yield e.accessToken;
       o.Authorization = "Bearer " + O;
     }
   });
 };
-N.setOAuthToObject = kr;
-function xe(o, h, v = "") {
-  h != null && (typeof h == "object" ? Array.isArray(h) ? h.forEach((e) => xe(o, e, v)) : Object.keys(h).forEach((e) => xe(o, h[e], `${v}${v !== "" ? "." : ""}${e}`)) : o.has(v) ? o.append(v, h) : o.set(v, h));
+Q.setOAuthToObject = ln;
+function Qe(o, c, v = "") {
+  c != null && (typeof c == "object" ? Array.isArray(c) ? c.forEach((e) => Qe(o, e, v)) : Object.keys(c).forEach((e) => Qe(o, c[e], `${v}${v !== "" ? "." : ""}${e}`)) : o.has(v) ? o.append(v, c) : o.set(v, c));
 }
-const Qr = function(o, ...h) {
+const cn = function(o, ...c) {
   const v = new URLSearchParams(o.search);
-  xe(v, h), o.search = v.toString();
+  Qe(v, c), o.search = v.toString();
 };
-N.setSearchParams = Qr;
-const Yr = function(o, h, v) {
+Q.setSearchParams = cn;
+const dn = function(o, c, v) {
   const e = typeof o != "string";
-  return (e && v && v.isJsonMime ? v.isJsonMime(h.headers["Content-Type"]) : e) ? JSON.stringify(o !== void 0 ? o : {}) : o || "";
+  return (e && v && v.isJsonMime ? v.isJsonMime(c.headers["Content-Type"]) : e) ? JSON.stringify(o !== void 0 ? o : {}) : o || "";
 };
-N.serializeDataIfNeeded = Yr;
-const $r = function(o) {
+Q.serializeDataIfNeeded = dn;
+const un = function(o) {
   return o.pathname + o.search + o.hash;
 };
-N.toPathString = $r;
-const zr = function(o, h, v, e) {
-  return (O = h, m = v) => {
-    var S;
-    const j = Object.assign(Object.assign({}, o.options), { url: (O.defaults.baseURL ? "" : (S = e == null ? void 0 : e.basePath) !== null && S !== void 0 ? S : m) + o.url });
+Q.toPathString = un;
+const hn = function(o, c, v, e) {
+  return (O = c, m = v) => {
+    var f;
+    const j = Object.assign(Object.assign({}, o.options), { url: (O.defaults.baseURL ? "" : (f = e == null ? void 0 : e.basePath) !== null && f !== void 0 ? f : m) + o.url });
     return O.request(j);
   };
 };
-N.createRequestFunction = zr;
+Q.createRequestFunction = hn;
 (function(o) {
-  var h = le && le.__awaiter || function(r, c, l, i) {
+  var c = de && de.__awaiter || function(r, d, l, i) {
     function t(a) {
       return a instanceof l ? a : new l(function(s) {
         s(a);
@@ -1929,26 +2137,26 @@ N.createRequestFunction = zr;
     return new (l || (l = Promise))(function(a, s) {
       function n(p) {
         try {
-          d(i.next(p));
+          u(i.next(p));
+        } catch (A) {
+          s(A);
+        }
+      }
+      function h(p) {
+        try {
+          u(i.throw(p));
         } catch (A) {
           s(A);
         }
       }
       function u(p) {
-        try {
-          d(i.throw(p));
-        } catch (A) {
-          s(A);
-        }
+        p.done ? a(p.value) : t(p.value).then(n, h);
       }
-      function d(p) {
-        p.done ? a(p.value) : t(p.value).then(n, u);
-      }
-      d((i = i.apply(r, c || [])).next());
+      u((i = i.apply(r, d || [])).next());
     });
   };
   Object.defineProperty(o, "__esModule", { value: !0 }), o.ProductCategoriesApiFactory = o.ProductCategoriesApiFp = o.ProductCategoriesApiAxiosParamCreator = o.PointofsaleApi = o.PointofsaleApiFactory = o.PointofsaleApiFp = o.PointofsaleApiAxiosParamCreator = o.PayoutRequestsApi = o.PayoutRequestsApiFactory = o.PayoutRequestsApiFp = o.PayoutRequestsApiAxiosParamCreator = o.GetAllInvoicesCurrentStateEnum = o.InvoicesApi = o.InvoicesApiFactory = o.InvoicesApiFp = o.InvoicesApiAxiosParamCreator = o.FilesApi = o.FilesApiFactory = o.FilesApiFp = o.FilesApiAxiosParamCreator = o.EventsApi = o.EventsApiFactory = o.EventsApiFp = o.EventsApiAxiosParamCreator = o.DebtorsApi = o.DebtorsApiFactory = o.DebtorsApiFp = o.DebtorsApiAxiosParamCreator = o.ContainersApi = o.ContainersApiFactory = o.ContainersApiFp = o.ContainersApiAxiosParamCreator = o.BannersApi = o.BannersApiFactory = o.BannersApiFp = o.BannersApiAxiosParamCreator = o.GetAllBalanceOrderDirectionEnum = o.GetAllBalanceUserTypesEnum = o.BalanceApi = o.BalanceApiFactory = o.BalanceApiFp = o.BalanceApiAxiosParamCreator = o.AuthenticateApi = o.AuthenticateApiFactory = o.AuthenticateApiFp = o.AuthenticateApiAxiosParamCreator = o.UpdateInvoiceRequestStateEnum = o.PayoutRequestStatusRequestStateEnum = o.InvoiceStatusResponseStateEnum = o.FinancialMutationResponseTypeEnum = void 0, o.VouchergroupsApi = o.VouchergroupsApiFactory = o.VouchergroupsApiFp = o.VouchergroupsApiAxiosParamCreator = o.VatGroupsApi = o.VatGroupsApiFactory = o.VatGroupsApiFp = o.VatGroupsApiAxiosParamCreator = o.GetAllUsersTypeEnum = o.UsersApi = o.UsersApiFactory = o.UsersApiFp = o.UsersApiAxiosParamCreator = o.TransfersApi = o.TransfersApiFactory = o.TransfersApiFp = o.TransfersApiAxiosParamCreator = o.TransactionsApi = o.TransactionsApiFactory = o.TransactionsApiFp = o.TransactionsApiAxiosParamCreator = o.TestOperationsOfTheTestControllerApi = o.TestOperationsOfTheTestControllerApiFactory = o.TestOperationsOfTheTestControllerApiFp = o.TestOperationsOfTheTestControllerApiAxiosParamCreator = o.StripeApi = o.StripeApiFactory = o.StripeApiFp = o.StripeApiAxiosParamCreator = o.RootApi = o.RootApiFactory = o.RootApiFp = o.RootApiAxiosParamCreator = o.RbacApi = o.RbacApiFactory = o.RbacApiFp = o.RbacApiAxiosParamCreator = o.ProductsApi = o.ProductsApiFactory = o.ProductsApiFp = o.ProductsApiAxiosParamCreator = o.ProductCategoriesApi = void 0;
-  const v = Tt, e = N, O = ke;
+  const v = Ht, e = Q, O = Je;
   o.FinancialMutationResponseTypeEnum = {
     Transfer: "transfer",
     Transaction: "transaction"
@@ -1977,17 +2185,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      eanAuthentication: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      eanAuthentication: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("eanAuthentication", "authenticationEanRequest", i);
         const a = "/authentication/ean", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -1997,17 +2205,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      gewisLDAPAuthentication: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      gewisLDAPAuthentication: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("gewisLDAPAuthentication", "authenticationLDAPRequest", i);
         const a = "/authentication/GEWIS/LDAP", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -2017,17 +2225,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      gewisPinAuthentication: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      gewisPinAuthentication: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("gewisPinAuthentication", "gEWISAuthenticationPinRequest", i);
         const a = "/authentication/GEWIS/pin", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -2037,17 +2245,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      gewisWebAuthentication: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      gewisWebAuthentication: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("gewisWebAuthentication", "gewiswebAuthenticationRequest", i);
         const a = "/authentication/gewisweb", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -2057,17 +2265,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      keyAuthentication: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      keyAuthentication: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("keyAuthentication", "authenticationKeyRequest", i);
         const a = "/authentication/key", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -2077,17 +2285,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      ldapAuthentication: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      ldapAuthentication: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("ldapAuthentication", "authenticationLDAPRequest", i);
         const a = "/authentication/LDAP", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -2097,17 +2305,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      localAuthentication: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      localAuthentication: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("localAuthentication", "authenticationLocalRequest", i);
         const a = "/authentication/local", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -2117,17 +2325,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      mockAuthentication: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      mockAuthentication: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("mockAuthentication", "authenticationMockRequest", i);
         const a = "/authentication/mock", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -2137,17 +2345,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      nfcAuthentication: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      nfcAuthentication: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("nfcAuthentication", "authenticationNfcRequest", i);
         const a = "/authentication/nfc", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -2157,17 +2365,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      pinAuthentication: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      pinAuthentication: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("pinAuthentication", "authenticationPinRequest", i);
         const a = "/authentication/pin", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -2176,14 +2384,14 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      refreshToken: (...c) => h(this, [...c], void 0, function* (l = {}) {
+      refreshToken: (...d) => c(this, [...d], void 0, function* (l = {}) {
         const i = "/authentication/refreshToken", t = new URL(i, e.DUMMY_BASE_URL);
         let a;
         r && (a = r.baseOptions);
-        const s = Object.assign(Object.assign({ method: "GET" }, a), l), n = {}, u = {};
-        yield (0, e.setBearerAuthToObject)(n, r), (0, e.setSearchParams)(t, u);
-        let d = a && a.headers ? a.headers : {};
-        return s.headers = Object.assign(Object.assign(Object.assign({}, n), d), l.headers), {
+        const s = Object.assign(Object.assign({ method: "GET" }, a), l), n = {}, h = {};
+        yield (0, e.setBearerAuthToObject)(n, r), (0, e.setSearchParams)(t, h);
+        let u = a && a.headers ? a.headers : {};
+        return s.headers = Object.assign(Object.assign(Object.assign({}, n), u), l.headers), {
           url: (0, e.toPathString)(t),
           options: s
         };
@@ -2195,17 +2403,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      resetLocal: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      resetLocal: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("resetLocal", "resetLocalRequest", i);
         const a = "/authentication/local/reset", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -2215,24 +2423,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      resetLocalWithToken: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      resetLocalWithToken: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("resetLocalWithToken", "authenticationResetTokenRequest", i);
         const a = "/authentication/local", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "PUT" }, n), t), d = {}, p = {};
-        d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "PUT" }, n), t), u = {}, p = {};
+        u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       })
     };
   };
   o.AuthenticateApiAxiosParamCreator = m;
-  const S = function(r) {
-    const c = (0, o.AuthenticateApiAxiosParamCreator)(r);
+  const f = function(r) {
+    const d = (0, o.AuthenticateApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -2242,10 +2450,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       eanAuthentication(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.eanAuthentication(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["AuthenticateApi.eanAuthentication"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.eanAuthentication(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["AuthenticateApi.eanAuthentication"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -2256,10 +2464,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       gewisLDAPAuthentication(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.gewisLDAPAuthentication(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["AuthenticateApi.gewisLDAPAuthentication"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.gewisLDAPAuthentication(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["AuthenticateApi.gewisLDAPAuthentication"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -2270,10 +2478,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       gewisPinAuthentication(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.gewisPinAuthentication(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["AuthenticateApi.gewisPinAuthentication"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.gewisPinAuthentication(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["AuthenticateApi.gewisPinAuthentication"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -2284,10 +2492,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       gewisWebAuthentication(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.gewisWebAuthentication(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["AuthenticateApi.gewisWebAuthentication"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.gewisWebAuthentication(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["AuthenticateApi.gewisWebAuthentication"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -2298,10 +2506,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       keyAuthentication(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.keyAuthentication(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["AuthenticateApi.keyAuthentication"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.keyAuthentication(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["AuthenticateApi.keyAuthentication"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -2312,10 +2520,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       ldapAuthentication(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.ldapAuthentication(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["AuthenticateApi.ldapAuthentication"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.ldapAuthentication(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["AuthenticateApi.ldapAuthentication"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -2326,10 +2534,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       localAuthentication(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.localAuthentication(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["AuthenticateApi.localAuthentication"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.localAuthentication(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["AuthenticateApi.localAuthentication"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -2340,10 +2548,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       mockAuthentication(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.mockAuthentication(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["AuthenticateApi.mockAuthentication"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.mockAuthentication(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["AuthenticateApi.mockAuthentication"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -2354,10 +2562,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       nfcAuthentication(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.nfcAuthentication(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["AuthenticateApi.nfcAuthentication"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.nfcAuthentication(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["AuthenticateApi.nfcAuthentication"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -2368,10 +2576,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       pinAuthentication(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.pinAuthentication(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["AuthenticateApi.pinAuthentication"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.pinAuthentication(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["AuthenticateApi.pinAuthentication"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -2381,10 +2589,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       refreshToken(l) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var i, t, a;
-          const s = yield c.refreshToken(l), n = (i = r == null ? void 0 : r.serverIndex) !== null && i !== void 0 ? i : 0, u = (a = (t = O.operationServerMap["AuthenticateApi.refreshToken"]) === null || t === void 0 ? void 0 : t[n]) === null || a === void 0 ? void 0 : a.url;
-          return (d, p) => (0, e.createRequestFunction)(s, v.default, O.BASE_PATH, r)(d, u || p);
+          const s = yield d.refreshToken(l), n = (i = r == null ? void 0 : r.serverIndex) !== null && i !== void 0 ? i : 0, h = (a = (t = O.operationServerMap["AuthenticateApi.refreshToken"]) === null || t === void 0 ? void 0 : t[n]) === null || a === void 0 ? void 0 : a.url;
+          return (u, p) => (0, e.createRequestFunction)(s, v.default, O.BASE_PATH, r)(u, h || p);
         });
       },
       /**
@@ -2395,10 +2603,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       resetLocal(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.resetLocal(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["AuthenticateApi.resetLocal"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.resetLocal(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["AuthenticateApi.resetLocal"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -2409,16 +2617,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       resetLocalWithToken(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.resetLocalWithToken(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["AuthenticateApi.resetLocalWithToken"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.resetLocalWithToken(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["AuthenticateApi.resetLocalWithToken"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       }
     };
   };
-  o.AuthenticateApiFp = S;
-  const j = function(r, c, l) {
+  o.AuthenticateApiFp = f;
+  const j = function(r, d, l) {
     const i = (0, o.AuthenticateApiFp)(r);
     return {
       /**
@@ -2429,7 +2637,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       eanAuthentication(t, a) {
-        return i.eanAuthentication(t, a).then((s) => s(l, c));
+        return i.eanAuthentication(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -2439,7 +2647,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       gewisLDAPAuthentication(t, a) {
-        return i.gewisLDAPAuthentication(t, a).then((s) => s(l, c));
+        return i.gewisLDAPAuthentication(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -2449,7 +2657,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       gewisPinAuthentication(t, a) {
-        return i.gewisPinAuthentication(t, a).then((s) => s(l, c));
+        return i.gewisPinAuthentication(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -2459,7 +2667,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       gewisWebAuthentication(t, a) {
-        return i.gewisWebAuthentication(t, a).then((s) => s(l, c));
+        return i.gewisWebAuthentication(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -2469,7 +2677,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       keyAuthentication(t, a) {
-        return i.keyAuthentication(t, a).then((s) => s(l, c));
+        return i.keyAuthentication(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -2479,7 +2687,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       ldapAuthentication(t, a) {
-        return i.ldapAuthentication(t, a).then((s) => s(l, c));
+        return i.ldapAuthentication(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -2489,7 +2697,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       localAuthentication(t, a) {
-        return i.localAuthentication(t, a).then((s) => s(l, c));
+        return i.localAuthentication(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -2499,7 +2707,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       mockAuthentication(t, a) {
-        return i.mockAuthentication(t, a).then((s) => s(l, c));
+        return i.mockAuthentication(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -2509,7 +2717,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       nfcAuthentication(t, a) {
-        return i.nfcAuthentication(t, a).then((s) => s(l, c));
+        return i.nfcAuthentication(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -2519,7 +2727,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       pinAuthentication(t, a) {
-        return i.pinAuthentication(t, a).then((s) => s(l, c));
+        return i.pinAuthentication(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -2528,7 +2736,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       refreshToken(t) {
-        return i.refreshToken(t).then((a) => a(l, c));
+        return i.refreshToken(t).then((a) => a(l, d));
       },
       /**
        *
@@ -2538,7 +2746,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       resetLocal(t, a) {
-        return i.resetLocal(t, a).then((s) => s(l, c));
+        return i.resetLocal(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -2548,12 +2756,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       resetLocalWithToken(t, a) {
-        return i.resetLocalWithToken(t, a).then((s) => s(l, c));
+        return i.resetLocalWithToken(t, a).then((s) => s(l, d));
       }
     };
   };
   o.AuthenticateApiFactory = j;
-  class R extends O.BaseAPI {
+  class V extends O.BaseAPI {
     /**
      *
      * @summary EAN login and hand out token
@@ -2562,8 +2770,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    eanAuthentication(c, l) {
-      return (0, o.AuthenticateApiFp)(this.configuration).eanAuthentication(c, l).then((i) => i(this.axios, this.basePath));
+    eanAuthentication(d, l) {
+      return (0, o.AuthenticateApiFp)(this.configuration).eanAuthentication(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -2573,8 +2781,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    gewisLDAPAuthentication(c, l) {
-      return (0, o.AuthenticateApiFp)(this.configuration).gewisLDAPAuthentication(c, l).then((i) => i(this.axios, this.basePath));
+    gewisLDAPAuthentication(d, l) {
+      return (0, o.AuthenticateApiFp)(this.configuration).gewisLDAPAuthentication(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -2584,8 +2792,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    gewisPinAuthentication(c, l) {
-      return (0, o.AuthenticateApiFp)(this.configuration).gewisPinAuthentication(c, l).then((i) => i(this.axios, this.basePath));
+    gewisPinAuthentication(d, l) {
+      return (0, o.AuthenticateApiFp)(this.configuration).gewisPinAuthentication(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -2595,8 +2803,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    gewisWebAuthentication(c, l) {
-      return (0, o.AuthenticateApiFp)(this.configuration).gewisWebAuthentication(c, l).then((i) => i(this.axios, this.basePath));
+    gewisWebAuthentication(d, l) {
+      return (0, o.AuthenticateApiFp)(this.configuration).gewisWebAuthentication(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -2606,8 +2814,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    keyAuthentication(c, l) {
-      return (0, o.AuthenticateApiFp)(this.configuration).keyAuthentication(c, l).then((i) => i(this.axios, this.basePath));
+    keyAuthentication(d, l) {
+      return (0, o.AuthenticateApiFp)(this.configuration).keyAuthentication(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -2617,8 +2825,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    ldapAuthentication(c, l) {
-      return (0, o.AuthenticateApiFp)(this.configuration).ldapAuthentication(c, l).then((i) => i(this.axios, this.basePath));
+    ldapAuthentication(d, l) {
+      return (0, o.AuthenticateApiFp)(this.configuration).ldapAuthentication(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -2628,8 +2836,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    localAuthentication(c, l) {
-      return (0, o.AuthenticateApiFp)(this.configuration).localAuthentication(c, l).then((i) => i(this.axios, this.basePath));
+    localAuthentication(d, l) {
+      return (0, o.AuthenticateApiFp)(this.configuration).localAuthentication(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -2639,8 +2847,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    mockAuthentication(c, l) {
-      return (0, o.AuthenticateApiFp)(this.configuration).mockAuthentication(c, l).then((i) => i(this.axios, this.basePath));
+    mockAuthentication(d, l) {
+      return (0, o.AuthenticateApiFp)(this.configuration).mockAuthentication(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -2650,8 +2858,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    nfcAuthentication(c, l) {
-      return (0, o.AuthenticateApiFp)(this.configuration).nfcAuthentication(c, l).then((i) => i(this.axios, this.basePath));
+    nfcAuthentication(d, l) {
+      return (0, o.AuthenticateApiFp)(this.configuration).nfcAuthentication(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -2661,8 +2869,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    pinAuthentication(c, l) {
-      return (0, o.AuthenticateApiFp)(this.configuration).pinAuthentication(c, l).then((i) => i(this.axios, this.basePath));
+    pinAuthentication(d, l) {
+      return (0, o.AuthenticateApiFp)(this.configuration).pinAuthentication(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -2671,8 +2879,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    refreshToken(c) {
-      return (0, o.AuthenticateApiFp)(this.configuration).refreshToken(c).then((l) => l(this.axios, this.basePath));
+    refreshToken(d) {
+      return (0, o.AuthenticateApiFp)(this.configuration).refreshToken(d).then((l) => l(this.axios, this.basePath));
     }
     /**
      *
@@ -2682,8 +2890,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    resetLocal(c, l) {
-      return (0, o.AuthenticateApiFp)(this.configuration).resetLocal(c, l).then((i) => i(this.axios, this.basePath));
+    resetLocal(d, l) {
+      return (0, o.AuthenticateApiFp)(this.configuration).resetLocal(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -2693,12 +2901,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    resetLocalWithToken(c, l) {
-      return (0, o.AuthenticateApiFp)(this.configuration).resetLocalWithToken(c, l).then((i) => i(this.axios, this.basePath));
+    resetLocalWithToken(d, l) {
+      return (0, o.AuthenticateApiFp)(this.configuration).resetLocalWithToken(d, l).then((i) => i(this.axios, this.basePath));
     }
   }
-  o.AuthenticateApi = R;
-  const F = function(r) {
+  o.AuthenticateApi = V;
+  const _ = function(r) {
     return {
       /**
        *
@@ -2717,16 +2925,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllBalance: (c, l, i, t, a, s, n, u, d, p, A, ...P) => h(this, [c, l, i, t, a, s, n, u, d, p, A, ...P], void 0, function* (b, f, U, y, E, w, I, C, L, M, W, D = {}) {
-        const z = "/balances/all", ie = new URL(z, e.DUMMY_BASE_URL);
-        let ee;
-        r && (ee = r.baseOptions);
-        const q = Object.assign(Object.assign({ method: "GET" }, ee), D), ce = {}, X = {};
-        yield (0, e.setBearerAuthToObject)(ce, r), b !== void 0 && (X.date = b), f !== void 0 && (X.minBalance = f), U !== void 0 && (X.maxBalance = U), y !== void 0 && (X.hasFine = y), E !== void 0 && (X.minFine = E), w !== void 0 && (X.maxFine = w), I && (X.userTypes = I), C !== void 0 && (X.orderBy = C), L !== void 0 && (X.orderDirection = L), M !== void 0 && (X.take = M), W !== void 0 && (X.skip = W), (0, e.setSearchParams)(ie, X);
-        let Qs = ee && ee.headers ? ee.headers : {};
-        return q.headers = Object.assign(Object.assign(Object.assign({}, ce), Qs), D.headers), {
-          url: (0, e.toPathString)(ie),
-          options: q
+      getAllBalance: (d, l, i, t, a, s, n, h, u, p, A, ...P) => c(this, [d, l, i, t, a, s, n, h, u, p, A, ...P], void 0, function* (b, g, y, R, T, x, C, F, L, M, X, k = {}) {
+        const K = "/balances/all", le = new URL(K, e.DUMMY_BASE_URL);
+        let ae;
+        r && (ae = r.baseOptions);
+        const D = Object.assign(Object.assign({ method: "GET" }, ae), k), Ae = {}, ee = {};
+        yield (0, e.setBearerAuthToObject)(Ae, r), b !== void 0 && (ee.date = b), g !== void 0 && (ee.minBalance = g), y !== void 0 && (ee.maxBalance = y), R !== void 0 && (ee.hasFine = R), T !== void 0 && (ee.minFine = T), x !== void 0 && (ee.maxFine = x), C && (ee.userTypes = C), F !== void 0 && (ee.orderBy = F), L !== void 0 && (ee.orderDirection = L), M !== void 0 && (ee.take = M), X !== void 0 && (ee.skip = X), (0, e.setSearchParams)(le, ee);
+        let Xs = ae && ae.headers ? ae.headers : {};
+        return D.headers = Object.assign(Object.assign(Object.assign({}, Ae), Xs), k.headers), {
+          url: (0, e.toPathString)(le),
+          options: D
         };
       }),
       /**
@@ -2736,17 +2944,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getBalanceId: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getBalanceId: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getBalanceId", "id", i);
         const a = "/balances/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -2755,23 +2963,23 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getBalances: (...c) => h(this, [...c], void 0, function* (l = {}) {
+      getBalances: (...d) => c(this, [...d], void 0, function* (l = {}) {
         const i = "/balances", t = new URL(i, e.DUMMY_BASE_URL);
         let a;
         r && (a = r.baseOptions);
-        const s = Object.assign(Object.assign({ method: "GET" }, a), l), n = {}, u = {};
-        yield (0, e.setBearerAuthToObject)(n, r), (0, e.setSearchParams)(t, u);
-        let d = a && a.headers ? a.headers : {};
-        return s.headers = Object.assign(Object.assign(Object.assign({}, n), d), l.headers), {
+        const s = Object.assign(Object.assign({ method: "GET" }, a), l), n = {}, h = {};
+        yield (0, e.setBearerAuthToObject)(n, r), (0, e.setSearchParams)(t, h);
+        let u = a && a.headers ? a.headers : {};
+        return s.headers = Object.assign(Object.assign(Object.assign({}, n), u), l.headers), {
           url: (0, e.toPathString)(t),
           options: s
         };
       })
     };
   };
-  o.BalanceApiAxiosParamCreator = F;
-  const V = function(r) {
-    const c = (0, o.BalanceApiAxiosParamCreator)(r);
+  o.BalanceApiAxiosParamCreator = _;
+  const U = function(r) {
+    const d = (0, o.BalanceApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -2790,11 +2998,11 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllBalance(l, i, t, a, s, n, u, d, p, A, P, b) {
-        return h(this, void 0, void 0, function* () {
-          var f, U, y;
-          const E = yield c.getAllBalance(l, i, t, a, s, n, u, d, p, A, P, b), w = (f = r == null ? void 0 : r.serverIndex) !== null && f !== void 0 ? f : 0, I = (y = (U = O.operationServerMap["BalanceApi.getAllBalance"]) === null || U === void 0 ? void 0 : U[w]) === null || y === void 0 ? void 0 : y.url;
-          return (C, L) => (0, e.createRequestFunction)(E, v.default, O.BASE_PATH, r)(C, I || L);
+      getAllBalance(l, i, t, a, s, n, h, u, p, A, P, b) {
+        return c(this, void 0, void 0, function* () {
+          var g, y, R;
+          const T = yield d.getAllBalance(l, i, t, a, s, n, h, u, p, A, P, b), x = (g = r == null ? void 0 : r.serverIndex) !== null && g !== void 0 ? g : 0, C = (R = (y = O.operationServerMap["BalanceApi.getAllBalance"]) === null || y === void 0 ? void 0 : y[x]) === null || R === void 0 ? void 0 : R.url;
+          return (F, L) => (0, e.createRequestFunction)(T, v.default, O.BASE_PATH, r)(F, C || L);
         });
       },
       /**
@@ -2805,10 +3013,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getBalanceId(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getBalanceId(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["BalanceApi.getBalanceId"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getBalanceId(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["BalanceApi.getBalanceId"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -2818,16 +3026,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getBalances(l) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var i, t, a;
-          const s = yield c.getBalances(l), n = (i = r == null ? void 0 : r.serverIndex) !== null && i !== void 0 ? i : 0, u = (a = (t = O.operationServerMap["BalanceApi.getBalances"]) === null || t === void 0 ? void 0 : t[n]) === null || a === void 0 ? void 0 : a.url;
-          return (d, p) => (0, e.createRequestFunction)(s, v.default, O.BASE_PATH, r)(d, u || p);
+          const s = yield d.getBalances(l), n = (i = r == null ? void 0 : r.serverIndex) !== null && i !== void 0 ? i : 0, h = (a = (t = O.operationServerMap["BalanceApi.getBalances"]) === null || t === void 0 ? void 0 : t[n]) === null || a === void 0 ? void 0 : a.url;
+          return (u, p) => (0, e.createRequestFunction)(s, v.default, O.BASE_PATH, r)(u, h || p);
         });
       }
     };
   };
-  o.BalanceApiFp = V;
-  const _ = function(r, c, l) {
+  o.BalanceApiFp = U;
+  const E = function(r, d, l) {
     const i = (0, o.BalanceApiFp)(r);
     return {
       /**
@@ -2847,8 +3055,8 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllBalance(t, a, s, n, u, d, p, A, P, b, f, U) {
-        return i.getAllBalance(t, a, s, n, u, d, p, A, P, b, f, U).then((y) => y(l, c));
+      getAllBalance(t, a, s, n, h, u, p, A, P, b, g, y) {
+        return i.getAllBalance(t, a, s, n, h, u, p, A, P, b, g, y).then((R) => R(l, d));
       },
       /**
        *
@@ -2858,7 +3066,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getBalanceId(t, a) {
-        return i.getBalanceId(t, a).then((s) => s(l, c));
+        return i.getBalanceId(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -2867,12 +3075,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getBalances(t) {
-        return i.getBalances(t).then((a) => a(l, c));
+        return i.getBalances(t).then((a) => a(l, d));
       }
     };
   };
-  o.BalanceApiFactory = _;
-  class Q extends O.BaseAPI {
+  o.BalanceApiFactory = E;
+  class N extends O.BaseAPI {
     /**
      *
      * @summary Get balance of the current user
@@ -2891,8 +3099,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof BalanceApi
      */
-    getAllBalance(c, l, i, t, a, s, n, u, d, p, A, P) {
-      return (0, o.BalanceApiFp)(this.configuration).getAllBalance(c, l, i, t, a, s, n, u, d, p, A, P).then((b) => b(this.axios, this.basePath));
+    getAllBalance(d, l, i, t, a, s, n, h, u, p, A, P) {
+      return (0, o.BalanceApiFp)(this.configuration).getAllBalance(d, l, i, t, a, s, n, h, u, p, A, P).then((b) => b(this.axios, this.basePath));
     }
     /**
      *
@@ -2902,8 +3110,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof BalanceApi
      */
-    getBalanceId(c, l) {
-      return (0, o.BalanceApiFp)(this.configuration).getBalanceId(c, l).then((i) => i(this.axios, this.basePath));
+    getBalanceId(d, l) {
+      return (0, o.BalanceApiFp)(this.configuration).getBalanceId(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -2912,15 +3120,15 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof BalanceApi
      */
-    getBalances(c) {
-      return (0, o.BalanceApiFp)(this.configuration).getBalances(c).then((l) => l(this.axios, this.basePath));
+    getBalances(d) {
+      return (0, o.BalanceApiFp)(this.configuration).getBalances(d).then((l) => l(this.axios, this.basePath));
     }
   }
-  o.BalanceApi = Q, o.GetAllBalanceUserTypesEnum = {}, o.GetAllBalanceOrderDirectionEnum = {
+  o.BalanceApi = N, o.GetAllBalanceUserTypesEnum = {}, o.GetAllBalanceOrderDirectionEnum = {
     Asc: "ASC",
     Desc: "DESC"
   };
-  const J = function(r) {
+  const q = function(r) {
     return {
       /**
        *
@@ -2929,17 +3137,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      _delete: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      _delete: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("_delete", "id", i);
         const a = "/banners/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "DELETE" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "DELETE" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -2949,17 +3157,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      create: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      create: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("create", "bannerRequest", i);
         const a = "/banners", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -2970,15 +3178,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getActive: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
-        const n = "/banners/active", u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "GET" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+      getActive: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
+        const n = "/banners/active", h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "GET" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -2990,15 +3198,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllBanners: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
-        const n = "/banners", u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "GET" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+      getAllBanners: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
+        const n = "/banners", h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "GET" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -3010,15 +3218,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllOpenBanners: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
-        const n = "/open/banners", u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "GET" }, d), s), A = {}, P = {};
-        t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+      getAllOpenBanners: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
+        const n = "/open/banners", h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "GET" }, u), s), A = {}, P = {};
+        t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -3029,17 +3237,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getBanner: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getBanner: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getBanner", "id", i);
         const a = "/banners/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -3050,16 +3258,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      update: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      update: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("update", "id", t), (0, e.assertParamExists)("update", "bannerRequest", a);
-        const n = "/banners/{id}".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "PATCH" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/banners/{id}".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "PATCH" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), p.data = (0, e.serializeDataIfNeeded)(a, p, r), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -3071,24 +3279,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateImage: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      updateImage: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("updateImage", "id", t);
-        const n = "/banners/{id}/image".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "POST" }, d), s), A = {}, P = {}, b = new (r && r.formDataCtor || FormData)();
-        yield (0, e.setBearerAuthToObject)(A, r), a !== void 0 && b.append("file", a), A["Content-Type"] = "multipart/form-data", (0, e.setSearchParams)(u, P);
-        let f = d && d.headers ? d.headers : {};
-        return p.headers = Object.assign(Object.assign(Object.assign({}, A), f), s.headers), p.data = b, {
-          url: (0, e.toPathString)(u),
+        const n = "/banners/{id}/image".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "POST" }, u), s), A = {}, P = {}, b = new (r && r.formDataCtor || FormData)();
+        yield (0, e.setBearerAuthToObject)(A, r), a !== void 0 && b.append("file", a), A["Content-Type"] = "multipart/form-data", (0, e.setSearchParams)(h, P);
+        let g = u && u.headers ? u.headers : {};
+        return p.headers = Object.assign(Object.assign(Object.assign({}, A), g), s.headers), p.data = b, {
+          url: (0, e.toPathString)(h),
           options: p
         };
       })
     };
   };
-  o.BannersApiAxiosParamCreator = J;
-  const T = function(r) {
-    const c = (0, o.BannersApiAxiosParamCreator)(r);
+  o.BannersApiAxiosParamCreator = q;
+  const B = function(r) {
+    const d = (0, o.BannersApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -3098,10 +3306,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       _delete(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c._delete(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["BannersApi._delete"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d._delete(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["BannersApi._delete"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -3112,10 +3320,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       create(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.create(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["BannersApi.create"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.create(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["BannersApi.create"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -3127,10 +3335,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getActive(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.getActive(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["BannersApi.getActive"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.getActive(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["BannersApi.getActive"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -3142,10 +3350,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllBanners(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.getAllBanners(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["BannersApi.getAllBanners"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.getAllBanners(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["BannersApi.getAllBanners"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -3157,10 +3365,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllOpenBanners(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.getAllOpenBanners(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["BannersApi.getAllOpenBanners"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.getAllOpenBanners(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["BannersApi.getAllOpenBanners"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -3171,10 +3379,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getBanner(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getBanner(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["BannersApi.getBanner"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getBanner(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["BannersApi.getBanner"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -3186,10 +3394,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       update(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.update(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["BannersApi.update"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.update(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["BannersApi.update"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -3201,16 +3409,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateImage(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.updateImage(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["BannersApi.updateImage"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.updateImage(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["BannersApi.updateImage"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       }
     };
   };
-  o.BannersApiFp = T;
-  const B = function(r, c, l) {
+  o.BannersApiFp = B;
+  const I = function(r, d, l) {
     const i = (0, o.BannersApiFp)(r);
     return {
       /**
@@ -3221,7 +3429,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       _delete(t, a) {
-        return i._delete(t, a).then((s) => s(l, c));
+        return i._delete(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -3231,7 +3439,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       create(t, a) {
-        return i.create(t, a).then((s) => s(l, c));
+        return i.create(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -3242,7 +3450,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getActive(t, a, s) {
-        return i.getActive(t, a, s).then((n) => n(l, c));
+        return i.getActive(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -3253,7 +3461,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllBanners(t, a, s) {
-        return i.getAllBanners(t, a, s).then((n) => n(l, c));
+        return i.getAllBanners(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -3264,7 +3472,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllOpenBanners(t, a, s) {
-        return i.getAllOpenBanners(t, a, s).then((n) => n(l, c));
+        return i.getAllOpenBanners(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -3274,7 +3482,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getBanner(t, a) {
-        return i.getBanner(t, a).then((s) => s(l, c));
+        return i.getBanner(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -3285,7 +3493,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       update(t, a, s) {
-        return i.update(t, a, s).then((n) => n(l, c));
+        return i.update(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -3296,12 +3504,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateImage(t, a, s) {
-        return i.updateImage(t, a, s).then((n) => n(l, c));
+        return i.updateImage(t, a, s).then((n) => n(l, d));
       }
     };
   };
-  o.BannersApiFactory = B;
-  class $ extends O.BaseAPI {
+  o.BannersApiFactory = I;
+  class W extends O.BaseAPI {
     /**
      *
      * @summary Deletes the requested banner
@@ -3310,8 +3518,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof BannersApi
      */
-    _delete(c, l) {
-      return (0, o.BannersApiFp)(this.configuration)._delete(c, l).then((i) => i(this.axios, this.basePath));
+    _delete(d, l) {
+      return (0, o.BannersApiFp)(this.configuration)._delete(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -3321,8 +3529,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof BannersApi
      */
-    create(c, l) {
-      return (0, o.BannersApiFp)(this.configuration).create(c, l).then((i) => i(this.axios, this.basePath));
+    create(d, l) {
+      return (0, o.BannersApiFp)(this.configuration).create(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -3333,8 +3541,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof BannersApi
      */
-    getActive(c, l, i) {
-      return (0, o.BannersApiFp)(this.configuration).getActive(c, l, i).then((t) => t(this.axios, this.basePath));
+    getActive(d, l, i) {
+      return (0, o.BannersApiFp)(this.configuration).getActive(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -3345,8 +3553,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof BannersApi
      */
-    getAllBanners(c, l, i) {
-      return (0, o.BannersApiFp)(this.configuration).getAllBanners(c, l, i).then((t) => t(this.axios, this.basePath));
+    getAllBanners(d, l, i) {
+      return (0, o.BannersApiFp)(this.configuration).getAllBanners(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -3357,8 +3565,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof BannersApi
      */
-    getAllOpenBanners(c, l, i) {
-      return (0, o.BannersApiFp)(this.configuration).getAllOpenBanners(c, l, i).then((t) => t(this.axios, this.basePath));
+    getAllOpenBanners(d, l, i) {
+      return (0, o.BannersApiFp)(this.configuration).getAllOpenBanners(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -3368,8 +3576,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof BannersApi
      */
-    getBanner(c, l) {
-      return (0, o.BannersApiFp)(this.configuration).getBanner(c, l).then((i) => i(this.axios, this.basePath));
+    getBanner(d, l) {
+      return (0, o.BannersApiFp)(this.configuration).getBanner(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -3380,8 +3588,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof BannersApi
      */
-    update(c, l, i) {
-      return (0, o.BannersApiFp)(this.configuration).update(c, l, i).then((t) => t(this.axios, this.basePath));
+    update(d, l, i) {
+      return (0, o.BannersApiFp)(this.configuration).update(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -3392,12 +3600,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof BannersApi
      */
-    updateImage(c, l, i) {
-      return (0, o.BannersApiFp)(this.configuration).updateImage(c, l, i).then((t) => t(this.axios, this.basePath));
+    updateImage(d, l, i) {
+      return (0, o.BannersApiFp)(this.configuration).updateImage(d, l, i).then((t) => t(this.axios, this.basePath));
     }
   }
-  o.BannersApi = $;
-  const K = function(r) {
+  o.BannersApi = W;
+  const J = function(r) {
     return {
       /**
        *
@@ -3406,17 +3614,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createContainer: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      createContainer: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("createContainer", "createContainerRequest", i);
         const a = "/containers", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -3427,15 +3635,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllContainers: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
-        const n = "/containers", u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "GET" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+      getAllContainers: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
+        const n = "/containers", h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "GET" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -3448,15 +3656,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getProductsContainer: (c, l, i, ...t) => h(this, [c, l, i, ...t], void 0, function* (a, s, n, u = {}) {
+      getProductsContainer: (d, l, i, ...t) => c(this, [d, l, i, ...t], void 0, function* (a, s, n, h = {}) {
         (0, e.assertParamExists)("getProductsContainer", "id", a);
-        const d = "/containers/{id}/products".replace("{id}", encodeURIComponent(String(a))), p = new URL(d, e.DUMMY_BASE_URL);
+        const u = "/containers/{id}/products".replace("{id}", encodeURIComponent(String(a))), p = new URL(u, e.DUMMY_BASE_URL);
         let A;
         r && (A = r.baseOptions);
-        const P = Object.assign(Object.assign({ method: "GET" }, A), u), b = {}, f = {};
-        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (f.take = s), n !== void 0 && (f.skip = n), (0, e.setSearchParams)(p, f);
-        let U = A && A.headers ? A.headers : {};
-        return P.headers = Object.assign(Object.assign(Object.assign({}, b), U), u.headers), {
+        const P = Object.assign(Object.assign({ method: "GET" }, A), h), b = {}, g = {};
+        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (g.take = s), n !== void 0 && (g.skip = n), (0, e.setSearchParams)(p, g);
+        let y = A && A.headers ? A.headers : {};
+        return P.headers = Object.assign(Object.assign(Object.assign({}, b), y), h.headers), {
           url: (0, e.toPathString)(p),
           options: P
         };
@@ -3469,15 +3677,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getPublicContainers: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
-        const n = "/containers/public", u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "GET" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+      getPublicContainers: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
+        const n = "/containers/public", h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "GET" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -3488,17 +3696,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleContainer: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getSingleContainer: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getSingleContainer", "id", i);
         const a = "/containers/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -3509,24 +3717,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateContainer: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      updateContainer: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("updateContainer", "id", t), (0, e.assertParamExists)("updateContainer", "updateContainerRequest", a);
-        const n = "/containers/{id}".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "PATCH" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/containers/{id}".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "PATCH" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), p.data = (0, e.serializeDataIfNeeded)(a, p, r), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       })
     };
   };
-  o.ContainersApiAxiosParamCreator = K;
-  const te = function(r) {
-    const c = (0, o.ContainersApiAxiosParamCreator)(r);
+  o.ContainersApiAxiosParamCreator = J;
+  const se = function(r) {
+    const d = (0, o.ContainersApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -3536,10 +3744,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createContainer(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.createContainer(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["ContainersApi.createContainer"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.createContainer(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["ContainersApi.createContainer"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -3551,10 +3759,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllContainers(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.getAllContainers(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["ContainersApi.getAllContainers"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.getAllContainers(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["ContainersApi.getAllContainers"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -3567,10 +3775,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getProductsContainer(l, i, t, a) {
-        return h(this, void 0, void 0, function* () {
-          var s, n, u;
-          const d = yield c.getProductsContainer(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (u = (n = O.operationServerMap["ContainersApi.getProductsContainer"]) === null || n === void 0 ? void 0 : n[p]) === null || u === void 0 ? void 0 : u.url;
-          return (P, b) => (0, e.createRequestFunction)(d, v.default, O.BASE_PATH, r)(P, A || b);
+        return c(this, void 0, void 0, function* () {
+          var s, n, h;
+          const u = yield d.getProductsContainer(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (h = (n = O.operationServerMap["ContainersApi.getProductsContainer"]) === null || n === void 0 ? void 0 : n[p]) === null || h === void 0 ? void 0 : h.url;
+          return (P, b) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(P, A || b);
         });
       },
       /**
@@ -3582,10 +3790,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getPublicContainers(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.getPublicContainers(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["ContainersApi.getPublicContainers"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.getPublicContainers(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["ContainersApi.getPublicContainers"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -3596,10 +3804,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSingleContainer(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getSingleContainer(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["ContainersApi.getSingleContainer"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getSingleContainer(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["ContainersApi.getSingleContainer"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -3611,16 +3819,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateContainer(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.updateContainer(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["ContainersApi.updateContainer"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.updateContainer(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["ContainersApi.updateContainer"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       }
     };
   };
-  o.ContainersApiFp = te;
-  const se = function(r, c, l) {
+  o.ContainersApiFp = se;
+  const H = function(r, d, l) {
     const i = (0, o.ContainersApiFp)(r);
     return {
       /**
@@ -3631,7 +3839,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createContainer(t, a) {
-        return i.createContainer(t, a).then((s) => s(l, c));
+        return i.createContainer(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -3642,7 +3850,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllContainers(t, a, s) {
-        return i.getAllContainers(t, a, s).then((n) => n(l, c));
+        return i.getAllContainers(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -3654,7 +3862,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getProductsContainer(t, a, s, n) {
-        return i.getProductsContainer(t, a, s, n).then((u) => u(l, c));
+        return i.getProductsContainer(t, a, s, n).then((h) => h(l, d));
       },
       /**
        *
@@ -3665,7 +3873,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getPublicContainers(t, a, s) {
-        return i.getPublicContainers(t, a, s).then((n) => n(l, c));
+        return i.getPublicContainers(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -3675,7 +3883,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSingleContainer(t, a) {
-        return i.getSingleContainer(t, a).then((s) => s(l, c));
+        return i.getSingleContainer(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -3686,12 +3894,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateContainer(t, a, s) {
-        return i.updateContainer(t, a, s).then((n) => n(l, c));
+        return i.updateContainer(t, a, s).then((n) => n(l, d));
       }
     };
   };
-  o.ContainersApiFactory = se;
-  class ye extends O.BaseAPI {
+  o.ContainersApiFactory = H;
+  class ue extends O.BaseAPI {
     /**
      *
      * @summary Create a new container.
@@ -3700,8 +3908,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof ContainersApi
      */
-    createContainer(c, l) {
-      return (0, o.ContainersApiFp)(this.configuration).createContainer(c, l).then((i) => i(this.axios, this.basePath));
+    createContainer(d, l) {
+      return (0, o.ContainersApiFp)(this.configuration).createContainer(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -3712,8 +3920,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof ContainersApi
      */
-    getAllContainers(c, l, i) {
-      return (0, o.ContainersApiFp)(this.configuration).getAllContainers(c, l, i).then((t) => t(this.axios, this.basePath));
+    getAllContainers(d, l, i) {
+      return (0, o.ContainersApiFp)(this.configuration).getAllContainers(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -3725,8 +3933,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof ContainersApi
      */
-    getProductsContainer(c, l, i, t) {
-      return (0, o.ContainersApiFp)(this.configuration).getProductsContainer(c, l, i, t).then((a) => a(this.axios, this.basePath));
+    getProductsContainer(d, l, i, t) {
+      return (0, o.ContainersApiFp)(this.configuration).getProductsContainer(d, l, i, t).then((a) => a(this.axios, this.basePath));
     }
     /**
      *
@@ -3737,8 +3945,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof ContainersApi
      */
-    getPublicContainers(c, l, i) {
-      return (0, o.ContainersApiFp)(this.configuration).getPublicContainers(c, l, i).then((t) => t(this.axios, this.basePath));
+    getPublicContainers(d, l, i) {
+      return (0, o.ContainersApiFp)(this.configuration).getPublicContainers(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -3748,8 +3956,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof ContainersApi
      */
-    getSingleContainer(c, l) {
-      return (0, o.ContainersApiFp)(this.configuration).getSingleContainer(c, l).then((i) => i(this.axios, this.basePath));
+    getSingleContainer(d, l) {
+      return (0, o.ContainersApiFp)(this.configuration).getSingleContainer(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -3760,12 +3968,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof ContainersApi
      */
-    updateContainer(c, l, i) {
-      return (0, o.ContainersApiFp)(this.configuration).updateContainer(c, l, i).then((t) => t(this.axios, this.basePath));
+    updateContainer(d, l, i) {
+      return (0, o.ContainersApiFp)(this.configuration).updateContainer(d, l, i).then((t) => t(this.axios, this.basePath));
     }
   }
-  o.ContainersApi = ye;
-  const Bt = function(r) {
+  o.ContainersApi = ue;
+  const Ce = function(r) {
     return {
       /**
        *
@@ -3775,16 +3983,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      calculateFines: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      calculateFines: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("calculateFines", "referenceDates", t);
-        const n = "/fines/eligible", u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "GET" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), a && (P.userTypes = a), t && (P.referenceDates = t), (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/fines/eligible", h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "GET" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), a && (P.userTypes = a), t && (P.referenceDates = t), (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -3795,17 +4003,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteFine: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      deleteFine: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("deleteFine", "id", i);
         const a = "/fines/single/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "DELETE" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "DELETE" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -3815,17 +4023,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      handoutFines: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      handoutFines: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("handoutFines", "handoutFinesRequest", i);
         const a = "/fines/handout", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -3835,17 +4043,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      notifyAboutFutureFines: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      notifyAboutFutureFines: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("notifyAboutFutureFines", "handoutFinesRequest", i);
         const a = "/fines/notify", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -3856,15 +4064,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      returnAllFineHandoutEvents: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
-        const n = "/fines", u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "GET" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+      returnAllFineHandoutEvents: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
+        const n = "/fines", h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "GET" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -3875,24 +4083,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      returnSingleFineHandoutEvent: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      returnSingleFineHandoutEvent: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("returnSingleFineHandoutEvent", "id", i);
         const a = "/fines/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       })
     };
   };
-  o.DebtorsApiAxiosParamCreator = Bt;
-  const Ft = function(r) {
-    const c = (0, o.DebtorsApiAxiosParamCreator)(r);
+  o.DebtorsApiAxiosParamCreator = Ce;
+  const ie = function(r) {
+    const d = (0, o.DebtorsApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -3903,10 +4111,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       calculateFines(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.calculateFines(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["DebtorsApi.calculateFines"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.calculateFines(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["DebtorsApi.calculateFines"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -3917,10 +4125,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteFine(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.deleteFine(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["DebtorsApi.deleteFine"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.deleteFine(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["DebtorsApi.deleteFine"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -3931,10 +4139,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       handoutFines(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.handoutFines(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["DebtorsApi.handoutFines"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.handoutFines(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["DebtorsApi.handoutFines"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -3945,10 +4153,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       notifyAboutFutureFines(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.notifyAboutFutureFines(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["DebtorsApi.notifyAboutFutureFines"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.notifyAboutFutureFines(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["DebtorsApi.notifyAboutFutureFines"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -3960,10 +4168,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       returnAllFineHandoutEvents(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.returnAllFineHandoutEvents(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["DebtorsApi.returnAllFineHandoutEvents"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.returnAllFineHandoutEvents(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["DebtorsApi.returnAllFineHandoutEvents"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -3974,16 +4182,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       returnSingleFineHandoutEvent(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.returnSingleFineHandoutEvent(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["DebtorsApi.returnSingleFineHandoutEvent"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.returnSingleFineHandoutEvent(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["DebtorsApi.returnSingleFineHandoutEvent"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       }
     };
   };
-  o.DebtorsApiFp = Ft;
-  const Ct = function(r, c, l) {
+  o.DebtorsApiFp = ie;
+  const oe = function(r, d, l) {
     const i = (0, o.DebtorsApiFp)(r);
     return {
       /**
@@ -3995,7 +4203,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       calculateFines(t, a, s) {
-        return i.calculateFines(t, a, s).then((n) => n(l, c));
+        return i.calculateFines(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -4005,7 +4213,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteFine(t, a) {
-        return i.deleteFine(t, a).then((s) => s(l, c));
+        return i.deleteFine(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -4015,7 +4223,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       handoutFines(t, a) {
-        return i.handoutFines(t, a).then((s) => s(l, c));
+        return i.handoutFines(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -4025,7 +4233,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       notifyAboutFutureFines(t, a) {
-        return i.notifyAboutFutureFines(t, a).then((s) => s(l, c));
+        return i.notifyAboutFutureFines(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -4036,7 +4244,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       returnAllFineHandoutEvents(t, a, s) {
-        return i.returnAllFineHandoutEvents(t, a, s).then((n) => n(l, c));
+        return i.returnAllFineHandoutEvents(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -4046,12 +4254,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       returnSingleFineHandoutEvent(t, a) {
-        return i.returnSingleFineHandoutEvent(t, a).then((s) => s(l, c));
+        return i.returnSingleFineHandoutEvent(t, a).then((s) => s(l, d));
       }
     };
   };
-  o.DebtorsApiFactory = Ct;
-  class It extends O.BaseAPI {
+  o.DebtorsApiFactory = oe;
+  class ge extends O.BaseAPI {
     /**
      *
      * @summary Return all users that had at most -5 euros balance both now and on the reference date.    For all these users, also return their fine based on the reference date.
@@ -4061,8 +4269,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof DebtorsApi
      */
-    calculateFines(c, l, i) {
-      return (0, o.DebtorsApiFp)(this.configuration).calculateFines(c, l, i).then((t) => t(this.axios, this.basePath));
+    calculateFines(d, l, i) {
+      return (0, o.DebtorsApiFp)(this.configuration).calculateFines(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -4072,8 +4280,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof DebtorsApi
      */
-    deleteFine(c, l) {
-      return (0, o.DebtorsApiFp)(this.configuration).deleteFine(c, l).then((i) => i(this.axios, this.basePath));
+    deleteFine(d, l) {
+      return (0, o.DebtorsApiFp)(this.configuration).deleteFine(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -4083,8 +4291,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof DebtorsApi
      */
-    handoutFines(c, l) {
-      return (0, o.DebtorsApiFp)(this.configuration).handoutFines(c, l).then((i) => i(this.axios, this.basePath));
+    handoutFines(d, l) {
+      return (0, o.DebtorsApiFp)(this.configuration).handoutFines(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -4094,8 +4302,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof DebtorsApi
      */
-    notifyAboutFutureFines(c, l) {
-      return (0, o.DebtorsApiFp)(this.configuration).notifyAboutFutureFines(c, l).then((i) => i(this.axios, this.basePath));
+    notifyAboutFutureFines(d, l) {
+      return (0, o.DebtorsApiFp)(this.configuration).notifyAboutFutureFines(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -4106,8 +4314,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof DebtorsApi
      */
-    returnAllFineHandoutEvents(c, l, i) {
-      return (0, o.DebtorsApiFp)(this.configuration).returnAllFineHandoutEvents(c, l, i).then((t) => t(this.axios, this.basePath));
+    returnAllFineHandoutEvents(d, l, i) {
+      return (0, o.DebtorsApiFp)(this.configuration).returnAllFineHandoutEvents(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -4117,12 +4325,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof DebtorsApi
      */
-    returnSingleFineHandoutEvent(c, l) {
-      return (0, o.DebtorsApiFp)(this.configuration).returnSingleFineHandoutEvent(c, l).then((i) => i(this.axios, this.basePath));
+    returnSingleFineHandoutEvent(d, l) {
+      return (0, o.DebtorsApiFp)(this.configuration).returnSingleFineHandoutEvent(d, l).then((i) => i(this.axios, this.basePath));
     }
   }
-  o.DebtorsApi = It;
-  const Mt = function(r) {
+  o.DebtorsApi = ge;
+  const Nt = function(r) {
     return {
       /**
        *
@@ -4134,17 +4342,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      assignEventShift: (c, l, i, t, ...a) => h(this, [c, l, i, t, ...a], void 0, function* (s, n, u, d, p = {}) {
-        (0, e.assertParamExists)("assignEventShift", "eventId", s), (0, e.assertParamExists)("assignEventShift", "shiftId", n), (0, e.assertParamExists)("assignEventShift", "userId", u), (0, e.assertParamExists)("assignEventShift", "eventAnswerAssignmentRequest", d);
-        const A = "/events/{eventId}/shift/{shiftId}/user/{userId}/assign".replace("{eventId}", encodeURIComponent(String(s))).replace("{shiftId}", encodeURIComponent(String(n))).replace("{userId}", encodeURIComponent(String(u))), P = new URL(A, e.DUMMY_BASE_URL);
+      assignEventShift: (d, l, i, t, ...a) => c(this, [d, l, i, t, ...a], void 0, function* (s, n, h, u, p = {}) {
+        (0, e.assertParamExists)("assignEventShift", "eventId", s), (0, e.assertParamExists)("assignEventShift", "shiftId", n), (0, e.assertParamExists)("assignEventShift", "userId", h), (0, e.assertParamExists)("assignEventShift", "eventAnswerAssignmentRequest", u);
+        const A = "/events/{eventId}/shift/{shiftId}/user/{userId}/assign".replace("{eventId}", encodeURIComponent(String(s))).replace("{shiftId}", encodeURIComponent(String(n))).replace("{userId}", encodeURIComponent(String(h))), P = new URL(A, e.DUMMY_BASE_URL);
         let b;
         r && (b = r.baseOptions);
-        const f = Object.assign(Object.assign({ method: "PUT" }, b), p), U = {}, y = {};
-        yield (0, e.setBearerAuthToObject)(U, r), U["Content-Type"] = "application/json", (0, e.setSearchParams)(P, y);
-        let E = b && b.headers ? b.headers : {};
-        return f.headers = Object.assign(Object.assign(Object.assign({}, U), E), p.headers), f.data = (0, e.serializeDataIfNeeded)(d, f, r), {
+        const g = Object.assign(Object.assign({ method: "PUT" }, b), p), y = {}, R = {};
+        yield (0, e.setBearerAuthToObject)(y, r), y["Content-Type"] = "application/json", (0, e.setSearchParams)(P, R);
+        let T = b && b.headers ? b.headers : {};
+        return g.headers = Object.assign(Object.assign(Object.assign({}, y), T), p.headers), g.data = (0, e.serializeDataIfNeeded)(u, g, r), {
           url: (0, e.toPathString)(P),
-          options: f
+          options: g
         };
       }),
       /**
@@ -4154,17 +4362,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createEvent: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      createEvent: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("createEvent", "createEventRequest", i);
         const a = "/events", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -4174,17 +4382,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createEventShift: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      createEventShift: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("createEventShift", "createShiftRequest", i);
         const a = "/eventshifts", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -4194,17 +4402,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteEvent: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      deleteEvent: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("deleteEvent", "id", i);
         const a = "/events/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "DELETE" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "DELETE" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -4214,17 +4422,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteEventShift: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      deleteEventShift: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("deleteEventShift", "id", i);
         const a = "/eventshifts/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "DELETE" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "DELETE" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -4235,15 +4443,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllEventShifts: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
-        const n = "/eventshifts", u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "GET" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+      getAllEventShifts: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
+        const n = "/eventshifts", h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "GET" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -4260,16 +4468,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllEvents: (c, l, i, t, a, s, n, ...u) => h(this, [c, l, i, t, a, s, n, ...u], void 0, function* (d, p, A, P, b, f, U, y = {}) {
-        const E = "/events", w = new URL(E, e.DUMMY_BASE_URL);
-        let I;
-        r && (I = r.baseOptions);
-        const C = Object.assign(Object.assign({ method: "GET" }, I), y), L = {}, M = {};
-        yield (0, e.setBearerAuthToObject)(L, r), d !== void 0 && (M.name = d), p !== void 0 && (M.createdById = p), A !== void 0 && (M.beforeDate = A), P !== void 0 && (M.afterDate = P), b !== void 0 && (M.type = b), f !== void 0 && (M.take = f), U !== void 0 && (M.skip = U), (0, e.setSearchParams)(w, M);
-        let W = I && I.headers ? I.headers : {};
-        return C.headers = Object.assign(Object.assign(Object.assign({}, L), W), y.headers), {
-          url: (0, e.toPathString)(w),
-          options: C
+      getAllEvents: (d, l, i, t, a, s, n, ...h) => c(this, [d, l, i, t, a, s, n, ...h], void 0, function* (u, p, A, P, b, g, y, R = {}) {
+        const T = "/events", x = new URL(T, e.DUMMY_BASE_URL);
+        let C;
+        r && (C = r.baseOptions);
+        const F = Object.assign(Object.assign({ method: "GET" }, C), R), L = {}, M = {};
+        yield (0, e.setBearerAuthToObject)(L, r), u !== void 0 && (M.name = u), p !== void 0 && (M.createdById = p), A !== void 0 && (M.beforeDate = A), P !== void 0 && (M.afterDate = P), b !== void 0 && (M.type = b), g !== void 0 && (M.take = g), y !== void 0 && (M.skip = y), (0, e.setSearchParams)(x, M);
+        let X = C && C.headers ? C.headers : {};
+        return F.headers = Object.assign(Object.assign(Object.assign({}, L), X), R.headers), {
+          url: (0, e.toPathString)(x),
+          options: F
         };
       }),
       /**
@@ -4282,17 +4490,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getEventShiftCount: (c, l, i, t, ...a) => h(this, [c, l, i, t, ...a], void 0, function* (s, n, u, d, p = {}) {
+      getEventShiftCount: (d, l, i, t, ...a) => c(this, [d, l, i, t, ...a], void 0, function* (s, n, h, u, p = {}) {
         (0, e.assertParamExists)("getEventShiftCount", "id", s);
         const A = "/eventshifts/{id}/counts".replace("{id}", encodeURIComponent(String(s))), P = new URL(A, e.DUMMY_BASE_URL);
         let b;
         r && (b = r.baseOptions);
-        const f = Object.assign(Object.assign({ method: "GET" }, b), p), U = {}, y = {};
-        yield (0, e.setBearerAuthToObject)(U, r), n !== void 0 && (y.eventType = n), u !== void 0 && (y.afterDate = u), d !== void 0 && (y.beforeDate = d), (0, e.setSearchParams)(P, y);
-        let E = b && b.headers ? b.headers : {};
-        return f.headers = Object.assign(Object.assign(Object.assign({}, U), E), p.headers), {
+        const g = Object.assign(Object.assign({ method: "GET" }, b), p), y = {}, R = {};
+        yield (0, e.setBearerAuthToObject)(y, r), n !== void 0 && (R.eventType = n), h !== void 0 && (R.afterDate = h), u !== void 0 && (R.beforeDate = u), (0, e.setSearchParams)(P, R);
+        let T = b && b.headers ? b.headers : {};
+        return g.headers = Object.assign(Object.assign(Object.assign({}, y), T), p.headers), {
           url: (0, e.toPathString)(P),
-          options: f
+          options: g
         };
       }),
       /**
@@ -4302,17 +4510,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleEvent: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getSingleEvent: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getSingleEvent", "id", i);
         const a = "/events/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -4323,16 +4531,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateEvent: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      updateEvent: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("updateEvent", "id", t), (0, e.assertParamExists)("updateEvent", "updateEventRequest", a);
-        const n = "/events/{id}".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "PATCH" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/events/{id}".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "PATCH" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), p.data = (0, e.serializeDataIfNeeded)(a, p, r), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -4344,16 +4552,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateEventShift: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      updateEventShift: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("updateEventShift", "id", t), (0, e.assertParamExists)("updateEventShift", "updateShiftRequest", a);
-        const n = "/eventshifts/{id}".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "PATCH" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/eventshifts/{id}".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "PATCH" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), p.data = (0, e.serializeDataIfNeeded)(a, p, r), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -4367,24 +4575,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateEventShiftAvailability: (c, l, i, t, ...a) => h(this, [c, l, i, t, ...a], void 0, function* (s, n, u, d, p = {}) {
-        (0, e.assertParamExists)("updateEventShiftAvailability", "eventId", s), (0, e.assertParamExists)("updateEventShiftAvailability", "shiftId", n), (0, e.assertParamExists)("updateEventShiftAvailability", "userId", u), (0, e.assertParamExists)("updateEventShiftAvailability", "eventAnswerAvailabilityRequest", d);
-        const A = "/events/{eventId}/shift/{shiftId}/user/{userId}/availability".replace("{eventId}", encodeURIComponent(String(s))).replace("{shiftId}", encodeURIComponent(String(n))).replace("{userId}", encodeURIComponent(String(u))), P = new URL(A, e.DUMMY_BASE_URL);
+      updateEventShiftAvailability: (d, l, i, t, ...a) => c(this, [d, l, i, t, ...a], void 0, function* (s, n, h, u, p = {}) {
+        (0, e.assertParamExists)("updateEventShiftAvailability", "eventId", s), (0, e.assertParamExists)("updateEventShiftAvailability", "shiftId", n), (0, e.assertParamExists)("updateEventShiftAvailability", "userId", h), (0, e.assertParamExists)("updateEventShiftAvailability", "eventAnswerAvailabilityRequest", u);
+        const A = "/events/{eventId}/shift/{shiftId}/user/{userId}/availability".replace("{eventId}", encodeURIComponent(String(s))).replace("{shiftId}", encodeURIComponent(String(n))).replace("{userId}", encodeURIComponent(String(h))), P = new URL(A, e.DUMMY_BASE_URL);
         let b;
         r && (b = r.baseOptions);
-        const f = Object.assign(Object.assign({ method: "POST" }, b), p), U = {}, y = {};
-        yield (0, e.setBearerAuthToObject)(U, r), U["Content-Type"] = "application/json", (0, e.setSearchParams)(P, y);
-        let E = b && b.headers ? b.headers : {};
-        return f.headers = Object.assign(Object.assign(Object.assign({}, U), E), p.headers), f.data = (0, e.serializeDataIfNeeded)(d, f, r), {
+        const g = Object.assign(Object.assign({ method: "POST" }, b), p), y = {}, R = {};
+        yield (0, e.setBearerAuthToObject)(y, r), y["Content-Type"] = "application/json", (0, e.setSearchParams)(P, R);
+        let T = b && b.headers ? b.headers : {};
+        return g.headers = Object.assign(Object.assign(Object.assign({}, y), T), p.headers), g.data = (0, e.serializeDataIfNeeded)(u, g, r), {
           url: (0, e.toPathString)(P),
-          options: f
+          options: g
         };
       })
     };
   };
-  o.EventsApiAxiosParamCreator = Mt;
-  const wt = function(r) {
-    const c = (0, o.EventsApiAxiosParamCreator)(r);
+  o.EventsApiAxiosParamCreator = Nt;
+  const kt = function(r) {
+    const d = (0, o.EventsApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -4397,10 +4605,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       assignEventShift(l, i, t, a, s) {
-        return h(this, void 0, void 0, function* () {
-          var n, u, d;
-          const p = yield c.assignEventShift(l, i, t, a, s), A = (n = r == null ? void 0 : r.serverIndex) !== null && n !== void 0 ? n : 0, P = (d = (u = O.operationServerMap["EventsApi.assignEventShift"]) === null || u === void 0 ? void 0 : u[A]) === null || d === void 0 ? void 0 : d.url;
-          return (b, f) => (0, e.createRequestFunction)(p, v.default, O.BASE_PATH, r)(b, P || f);
+        return c(this, void 0, void 0, function* () {
+          var n, h, u;
+          const p = yield d.assignEventShift(l, i, t, a, s), A = (n = r == null ? void 0 : r.serverIndex) !== null && n !== void 0 ? n : 0, P = (u = (h = O.operationServerMap["EventsApi.assignEventShift"]) === null || h === void 0 ? void 0 : h[A]) === null || u === void 0 ? void 0 : u.url;
+          return (b, g) => (0, e.createRequestFunction)(p, v.default, O.BASE_PATH, r)(b, P || g);
         });
       },
       /**
@@ -4411,10 +4619,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createEvent(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.createEvent(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["EventsApi.createEvent"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.createEvent(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["EventsApi.createEvent"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -4425,10 +4633,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createEventShift(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.createEventShift(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["EventsApi.createEventShift"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.createEventShift(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["EventsApi.createEventShift"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -4439,10 +4647,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteEvent(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.deleteEvent(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["EventsApi.deleteEvent"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.deleteEvent(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["EventsApi.deleteEvent"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -4453,10 +4661,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteEventShift(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.deleteEventShift(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["EventsApi.deleteEventShift"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.deleteEventShift(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["EventsApi.deleteEventShift"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -4468,10 +4676,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllEventShifts(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.getAllEventShifts(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["EventsApi.getAllEventShifts"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.getAllEventShifts(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["EventsApi.getAllEventShifts"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -4487,11 +4695,11 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllEvents(l, i, t, a, s, n, u, d) {
-        return h(this, void 0, void 0, function* () {
+      getAllEvents(l, i, t, a, s, n, h, u) {
+        return c(this, void 0, void 0, function* () {
           var p, A, P;
-          const b = yield c.getAllEvents(l, i, t, a, s, n, u, d), f = (p = r == null ? void 0 : r.serverIndex) !== null && p !== void 0 ? p : 0, U = (P = (A = O.operationServerMap["EventsApi.getAllEvents"]) === null || A === void 0 ? void 0 : A[f]) === null || P === void 0 ? void 0 : P.url;
-          return (y, E) => (0, e.createRequestFunction)(b, v.default, O.BASE_PATH, r)(y, U || E);
+          const b = yield d.getAllEvents(l, i, t, a, s, n, h, u), g = (p = r == null ? void 0 : r.serverIndex) !== null && p !== void 0 ? p : 0, y = (P = (A = O.operationServerMap["EventsApi.getAllEvents"]) === null || A === void 0 ? void 0 : A[g]) === null || P === void 0 ? void 0 : P.url;
+          return (R, T) => (0, e.createRequestFunction)(b, v.default, O.BASE_PATH, r)(R, y || T);
         });
       },
       /**
@@ -4505,10 +4713,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getEventShiftCount(l, i, t, a, s) {
-        return h(this, void 0, void 0, function* () {
-          var n, u, d;
-          const p = yield c.getEventShiftCount(l, i, t, a, s), A = (n = r == null ? void 0 : r.serverIndex) !== null && n !== void 0 ? n : 0, P = (d = (u = O.operationServerMap["EventsApi.getEventShiftCount"]) === null || u === void 0 ? void 0 : u[A]) === null || d === void 0 ? void 0 : d.url;
-          return (b, f) => (0, e.createRequestFunction)(p, v.default, O.BASE_PATH, r)(b, P || f);
+        return c(this, void 0, void 0, function* () {
+          var n, h, u;
+          const p = yield d.getEventShiftCount(l, i, t, a, s), A = (n = r == null ? void 0 : r.serverIndex) !== null && n !== void 0 ? n : 0, P = (u = (h = O.operationServerMap["EventsApi.getEventShiftCount"]) === null || h === void 0 ? void 0 : h[A]) === null || u === void 0 ? void 0 : u.url;
+          return (b, g) => (0, e.createRequestFunction)(p, v.default, O.BASE_PATH, r)(b, P || g);
         });
       },
       /**
@@ -4519,10 +4727,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSingleEvent(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getSingleEvent(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["EventsApi.getSingleEvent"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getSingleEvent(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["EventsApi.getSingleEvent"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -4534,10 +4742,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateEvent(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.updateEvent(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["EventsApi.updateEvent"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.updateEvent(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["EventsApi.updateEvent"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -4549,10 +4757,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateEventShift(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.updateEventShift(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["EventsApi.updateEventShift"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.updateEventShift(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["EventsApi.updateEventShift"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -4566,16 +4774,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateEventShiftAvailability(l, i, t, a, s) {
-        return h(this, void 0, void 0, function* () {
-          var n, u, d;
-          const p = yield c.updateEventShiftAvailability(l, i, t, a, s), A = (n = r == null ? void 0 : r.serverIndex) !== null && n !== void 0 ? n : 0, P = (d = (u = O.operationServerMap["EventsApi.updateEventShiftAvailability"]) === null || u === void 0 ? void 0 : u[A]) === null || d === void 0 ? void 0 : d.url;
-          return (b, f) => (0, e.createRequestFunction)(p, v.default, O.BASE_PATH, r)(b, P || f);
+        return c(this, void 0, void 0, function* () {
+          var n, h, u;
+          const p = yield d.updateEventShiftAvailability(l, i, t, a, s), A = (n = r == null ? void 0 : r.serverIndex) !== null && n !== void 0 ? n : 0, P = (u = (h = O.operationServerMap["EventsApi.updateEventShiftAvailability"]) === null || h === void 0 ? void 0 : h[A]) === null || u === void 0 ? void 0 : u.url;
+          return (b, g) => (0, e.createRequestFunction)(p, v.default, O.BASE_PATH, r)(b, P || g);
         });
       }
     };
   };
-  o.EventsApiFp = wt;
-  const xt = function(r, c, l) {
+  o.EventsApiFp = kt;
+  const Gt = function(r, d, l) {
     const i = (0, o.EventsApiFp)(r);
     return {
       /**
@@ -4588,8 +4796,8 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      assignEventShift(t, a, s, n, u) {
-        return i.assignEventShift(t, a, s, n, u).then((d) => d(l, c));
+      assignEventShift(t, a, s, n, h) {
+        return i.assignEventShift(t, a, s, n, h).then((u) => u(l, d));
       },
       /**
        *
@@ -4599,7 +4807,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createEvent(t, a) {
-        return i.createEvent(t, a).then((s) => s(l, c));
+        return i.createEvent(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -4609,7 +4817,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createEventShift(t, a) {
-        return i.createEventShift(t, a).then((s) => s(l, c));
+        return i.createEventShift(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -4619,7 +4827,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteEvent(t, a) {
-        return i.deleteEvent(t, a).then((s) => s(l, c));
+        return i.deleteEvent(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -4629,7 +4837,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteEventShift(t, a) {
-        return i.deleteEventShift(t, a).then((s) => s(l, c));
+        return i.deleteEventShift(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -4640,7 +4848,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllEventShifts(t, a, s) {
-        return i.getAllEventShifts(t, a, s).then((n) => n(l, c));
+        return i.getAllEventShifts(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -4655,8 +4863,8 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllEvents(t, a, s, n, u, d, p, A) {
-        return i.getAllEvents(t, a, s, n, u, d, p, A).then((P) => P(l, c));
+      getAllEvents(t, a, s, n, h, u, p, A) {
+        return i.getAllEvents(t, a, s, n, h, u, p, A).then((P) => P(l, d));
       },
       /**
        *
@@ -4668,8 +4876,8 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getEventShiftCount(t, a, s, n, u) {
-        return i.getEventShiftCount(t, a, s, n, u).then((d) => d(l, c));
+      getEventShiftCount(t, a, s, n, h) {
+        return i.getEventShiftCount(t, a, s, n, h).then((u) => u(l, d));
       },
       /**
        *
@@ -4679,7 +4887,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSingleEvent(t, a) {
-        return i.getSingleEvent(t, a).then((s) => s(l, c));
+        return i.getSingleEvent(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -4690,7 +4898,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateEvent(t, a, s) {
-        return i.updateEvent(t, a, s).then((n) => n(l, c));
+        return i.updateEvent(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -4701,7 +4909,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateEventShift(t, a, s) {
-        return i.updateEventShift(t, a, s).then((n) => n(l, c));
+        return i.updateEventShift(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -4713,13 +4921,13 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateEventShiftAvailability(t, a, s, n, u) {
-        return i.updateEventShiftAvailability(t, a, s, n, u).then((d) => d(l, c));
+      updateEventShiftAvailability(t, a, s, n, h) {
+        return i.updateEventShiftAvailability(t, a, s, n, h).then((u) => u(l, d));
       }
     };
   };
-  o.EventsApiFactory = xt;
-  class Lt extends O.BaseAPI {
+  o.EventsApiFactory = Gt;
+  class Qt extends O.BaseAPI {
     /**
      *
      * @summary Change the assignment of users to shifts on an event
@@ -4731,8 +4939,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof EventsApi
      */
-    assignEventShift(c, l, i, t, a) {
-      return (0, o.EventsApiFp)(this.configuration).assignEventShift(c, l, i, t, a).then((s) => s(this.axios, this.basePath));
+    assignEventShift(d, l, i, t, a) {
+      return (0, o.EventsApiFp)(this.configuration).assignEventShift(d, l, i, t, a).then((s) => s(this.axios, this.basePath));
     }
     /**
      *
@@ -4742,8 +4950,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof EventsApi
      */
-    createEvent(c, l) {
-      return (0, o.EventsApiFp)(this.configuration).createEvent(c, l).then((i) => i(this.axios, this.basePath));
+    createEvent(d, l) {
+      return (0, o.EventsApiFp)(this.configuration).createEvent(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -4753,8 +4961,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof EventsApi
      */
-    createEventShift(c, l) {
-      return (0, o.EventsApiFp)(this.configuration).createEventShift(c, l).then((i) => i(this.axios, this.basePath));
+    createEventShift(d, l) {
+      return (0, o.EventsApiFp)(this.configuration).createEventShift(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -4764,8 +4972,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof EventsApi
      */
-    deleteEvent(c, l) {
-      return (0, o.EventsApiFp)(this.configuration).deleteEvent(c, l).then((i) => i(this.axios, this.basePath));
+    deleteEvent(d, l) {
+      return (0, o.EventsApiFp)(this.configuration).deleteEvent(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -4775,8 +4983,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof EventsApi
      */
-    deleteEventShift(c, l) {
-      return (0, o.EventsApiFp)(this.configuration).deleteEventShift(c, l).then((i) => i(this.axios, this.basePath));
+    deleteEventShift(d, l) {
+      return (0, o.EventsApiFp)(this.configuration).deleteEventShift(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -4787,8 +4995,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof EventsApi
      */
-    getAllEventShifts(c, l, i) {
-      return (0, o.EventsApiFp)(this.configuration).getAllEventShifts(c, l, i).then((t) => t(this.axios, this.basePath));
+    getAllEventShifts(d, l, i) {
+      return (0, o.EventsApiFp)(this.configuration).getAllEventShifts(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -4804,8 +5012,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof EventsApi
      */
-    getAllEvents(c, l, i, t, a, s, n, u) {
-      return (0, o.EventsApiFp)(this.configuration).getAllEvents(c, l, i, t, a, s, n, u).then((d) => d(this.axios, this.basePath));
+    getAllEvents(d, l, i, t, a, s, n, h) {
+      return (0, o.EventsApiFp)(this.configuration).getAllEvents(d, l, i, t, a, s, n, h).then((u) => u(this.axios, this.basePath));
     }
     /**
      *
@@ -4818,8 +5026,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof EventsApi
      */
-    getEventShiftCount(c, l, i, t, a) {
-      return (0, o.EventsApiFp)(this.configuration).getEventShiftCount(c, l, i, t, a).then((s) => s(this.axios, this.basePath));
+    getEventShiftCount(d, l, i, t, a) {
+      return (0, o.EventsApiFp)(this.configuration).getEventShiftCount(d, l, i, t, a).then((s) => s(this.axios, this.basePath));
     }
     /**
      *
@@ -4829,8 +5037,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof EventsApi
      */
-    getSingleEvent(c, l) {
-      return (0, o.EventsApiFp)(this.configuration).getSingleEvent(c, l).then((i) => i(this.axios, this.basePath));
+    getSingleEvent(d, l) {
+      return (0, o.EventsApiFp)(this.configuration).getSingleEvent(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -4841,8 +5049,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof EventsApi
      */
-    updateEvent(c, l, i) {
-      return (0, o.EventsApiFp)(this.configuration).updateEvent(c, l, i).then((t) => t(this.axios, this.basePath));
+    updateEvent(d, l, i) {
+      return (0, o.EventsApiFp)(this.configuration).updateEvent(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -4853,8 +5061,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof EventsApi
      */
-    updateEventShift(c, l, i) {
-      return (0, o.EventsApiFp)(this.configuration).updateEventShift(c, l, i).then((t) => t(this.axios, this.basePath));
+    updateEventShift(d, l, i) {
+      return (0, o.EventsApiFp)(this.configuration).updateEventShift(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -4867,12 +5075,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof EventsApi
      */
-    updateEventShiftAvailability(c, l, i, t, a) {
-      return (0, o.EventsApiFp)(this.configuration).updateEventShiftAvailability(c, l, i, t, a).then((s) => s(this.axios, this.basePath));
+    updateEventShiftAvailability(d, l, i, t, a) {
+      return (0, o.EventsApiFp)(this.configuration).updateEventShiftAvailability(d, l, i, t, a).then((s) => s(this.axios, this.basePath));
     }
   }
-  o.EventsApi = Lt;
-  const qt = function(r) {
+  o.EventsApi = Qt;
+  const Yt = function(r) {
     return {
       /**
        *
@@ -4882,16 +5090,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createFile: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      createFile: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("createFile", "name", t);
-        const n = "/files", u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "POST" }, d), s), A = {}, P = {}, b = new (r && r.formDataCtor || FormData)();
-        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && b.append("name", t), a !== void 0 && b.append("file", a), A["Content-Type"] = "multipart/form-data", (0, e.setSearchParams)(u, P);
-        let f = d && d.headers ? d.headers : {};
-        return p.headers = Object.assign(Object.assign(Object.assign({}, A), f), s.headers), p.data = b, {
-          url: (0, e.toPathString)(u),
+        const n = "/files", h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "POST" }, u), s), A = {}, P = {}, b = new (r && r.formDataCtor || FormData)();
+        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && b.append("name", t), a !== void 0 && b.append("file", a), A["Content-Type"] = "multipart/form-data", (0, e.setSearchParams)(h, P);
+        let g = u && u.headers ? u.headers : {};
+        return p.headers = Object.assign(Object.assign(Object.assign({}, A), g), s.headers), p.data = b, {
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -4902,17 +5110,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteFile: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      deleteFile: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("deleteFile", "id", i);
         const a = "/files/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "DELETE" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "DELETE" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -4922,24 +5130,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getFile: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getFile: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getFile", "id", i);
         const a = "/files/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       })
     };
   };
-  o.FilesApiAxiosParamCreator = qt;
-  const Dt = function(r) {
-    const c = (0, o.FilesApiAxiosParamCreator)(r);
+  o.FilesApiAxiosParamCreator = Yt;
+  const $t = function(r) {
+    const d = (0, o.FilesApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -4950,10 +5158,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createFile(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.createFile(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["FilesApi.createFile"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.createFile(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["FilesApi.createFile"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -4964,10 +5172,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteFile(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.deleteFile(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["FilesApi.deleteFile"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.deleteFile(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["FilesApi.deleteFile"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -4978,16 +5186,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getFile(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getFile(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["FilesApi.getFile"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getFile(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["FilesApi.getFile"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       }
     };
   };
-  o.FilesApiFp = Dt;
-  const Ht = function(r, c, l) {
+  o.FilesApiFp = $t;
+  const zt = function(r, d, l) {
     const i = (0, o.FilesApiFp)(r);
     return {
       /**
@@ -4999,7 +5207,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createFile(t, a, s) {
-        return i.createFile(t, a, s).then((n) => n(l, c));
+        return i.createFile(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -5009,7 +5217,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteFile(t, a) {
-        return i.deleteFile(t, a).then((s) => s(l, c));
+        return i.deleteFile(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -5019,12 +5227,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getFile(t, a) {
-        return i.getFile(t, a).then((s) => s(l, c));
+        return i.getFile(t, a).then((s) => s(l, d));
       }
     };
   };
-  o.FilesApiFactory = Ht;
-  class Nt extends O.BaseAPI {
+  o.FilesApiFactory = zt;
+  class Kt extends O.BaseAPI {
     /**
      *
      * @summary Upload a file with the given name.
@@ -5034,8 +5242,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof FilesApi
      */
-    createFile(c, l, i) {
-      return (0, o.FilesApiFp)(this.configuration).createFile(c, l, i).then((t) => t(this.axios, this.basePath));
+    createFile(d, l, i) {
+      return (0, o.FilesApiFp)(this.configuration).createFile(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -5045,8 +5253,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof FilesApi
      */
-    deleteFile(c, l) {
-      return (0, o.FilesApiFp)(this.configuration).deleteFile(c, l).then((i) => i(this.axios, this.basePath));
+    deleteFile(d, l) {
+      return (0, o.FilesApiFp)(this.configuration).deleteFile(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -5056,12 +5264,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof FilesApi
      */
-    getFile(c, l) {
-      return (0, o.FilesApiFp)(this.configuration).getFile(c, l).then((i) => i(this.axios, this.basePath));
+    getFile(d, l) {
+      return (0, o.FilesApiFp)(this.configuration).getFile(d, l).then((i) => i(this.axios, this.basePath));
     }
   }
-  o.FilesApi = Nt;
-  const Gt = function(r) {
+  o.FilesApi = Kt;
+  const Wt = function(r) {
     return {
       /**
        *
@@ -5070,17 +5278,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createInvoice: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      createInvoice: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("createInvoice", "createInvoiceRequest", i);
         const a = "/invoices", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -5090,17 +5298,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteInvoice: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      deleteInvoice: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("deleteInvoice", "id", i);
         const a = "/invoices/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "DELETE" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "DELETE" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -5117,15 +5325,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllInvoices: (c, l, i, t, a, s, n, u, ...d) => h(this, [c, l, i, t, a, s, n, u, ...d], void 0, function* (p, A, P, b, f, U, y, E, w = {}) {
-        const I = "/invoices", C = new URL(I, e.DUMMY_BASE_URL);
+      getAllInvoices: (d, l, i, t, a, s, n, h, ...u) => c(this, [d, l, i, t, a, s, n, h, ...u], void 0, function* (p, A, P, b, g, y, R, T, x = {}) {
+        const C = "/invoices", F = new URL(C, e.DUMMY_BASE_URL);
         let L;
         r && (L = r.baseOptions);
-        const M = Object.assign(Object.assign({ method: "GET" }, L), w), W = {}, D = {};
-        yield (0, e.setBearerAuthToObject)(W, r), p !== void 0 && (D.toId = p), A !== void 0 && (D.invoiceId = A), P && (D.currentState = P), b !== void 0 && (D.returnEntries = b), f !== void 0 && (D.fromDate = f), U !== void 0 && (D.tillDate = U), y !== void 0 && (D.take = y), E !== void 0 && (D.skip = E), (0, e.setSearchParams)(C, D);
-        let z = L && L.headers ? L.headers : {};
-        return M.headers = Object.assign(Object.assign(Object.assign({}, W), z), w.headers), {
-          url: (0, e.toPathString)(C),
+        const M = Object.assign(Object.assign({ method: "GET" }, L), x), X = {}, k = {};
+        yield (0, e.setBearerAuthToObject)(X, r), p !== void 0 && (k.toId = p), A !== void 0 && (k.invoiceId = A), P && (k.currentState = P), b !== void 0 && (k.returnEntries = b), g !== void 0 && (k.fromDate = g), y !== void 0 && (k.tillDate = y), R !== void 0 && (k.take = R), T !== void 0 && (k.skip = T), (0, e.setSearchParams)(F, k);
+        let K = L && L.headers ? L.headers : {};
+        return M.headers = Object.assign(Object.assign(Object.assign({}, X), K), x.headers), {
+          url: (0, e.toPathString)(F),
           options: M
         };
       }),
@@ -5137,16 +5345,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleInvoice: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      getSingleInvoice: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("getSingleInvoice", "id", t);
-        const n = "/invoices/{id}".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "GET" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), a !== void 0 && (P.returnEntries = a), (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/invoices/{id}".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "GET" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), a !== void 0 && (P.returnEntries = a), (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -5158,24 +5366,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateInvoice: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      updateInvoice: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("updateInvoice", "id", t), (0, e.assertParamExists)("updateInvoice", "updateInvoiceRequest", a);
-        const n = "/invoices/{id}".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "PATCH" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/invoices/{id}".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "PATCH" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), p.data = (0, e.serializeDataIfNeeded)(a, p, r), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       })
     };
   };
-  o.InvoicesApiAxiosParamCreator = Gt;
-  const kt = function(r) {
-    const c = (0, o.InvoicesApiAxiosParamCreator)(r);
+  o.InvoicesApiAxiosParamCreator = Wt;
+  const Jt = function(r) {
+    const d = (0, o.InvoicesApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -5185,10 +5393,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createInvoice(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.createInvoice(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["InvoicesApi.createInvoice"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.createInvoice(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["InvoicesApi.createInvoice"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -5199,10 +5407,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteInvoice(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.deleteInvoice(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["InvoicesApi.deleteInvoice"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.deleteInvoice(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["InvoicesApi.deleteInvoice"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -5219,11 +5427,11 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllInvoices(l, i, t, a, s, n, u, d, p) {
-        return h(this, void 0, void 0, function* () {
+      getAllInvoices(l, i, t, a, s, n, h, u, p) {
+        return c(this, void 0, void 0, function* () {
           var A, P, b;
-          const f = yield c.getAllInvoices(l, i, t, a, s, n, u, d, p), U = (A = r == null ? void 0 : r.serverIndex) !== null && A !== void 0 ? A : 0, y = (b = (P = O.operationServerMap["InvoicesApi.getAllInvoices"]) === null || P === void 0 ? void 0 : P[U]) === null || b === void 0 ? void 0 : b.url;
-          return (E, w) => (0, e.createRequestFunction)(f, v.default, O.BASE_PATH, r)(E, y || w);
+          const g = yield d.getAllInvoices(l, i, t, a, s, n, h, u, p), y = (A = r == null ? void 0 : r.serverIndex) !== null && A !== void 0 ? A : 0, R = (b = (P = O.operationServerMap["InvoicesApi.getAllInvoices"]) === null || P === void 0 ? void 0 : P[y]) === null || b === void 0 ? void 0 : b.url;
+          return (T, x) => (0, e.createRequestFunction)(g, v.default, O.BASE_PATH, r)(T, R || x);
         });
       },
       /**
@@ -5235,10 +5443,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSingleInvoice(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.getSingleInvoice(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["InvoicesApi.getSingleInvoice"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.getSingleInvoice(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["InvoicesApi.getSingleInvoice"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -5250,16 +5458,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateInvoice(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.updateInvoice(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["InvoicesApi.updateInvoice"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.updateInvoice(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["InvoicesApi.updateInvoice"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       }
     };
   };
-  o.InvoicesApiFp = kt;
-  const Qt = function(r, c, l) {
+  o.InvoicesApiFp = Jt;
+  const Xt = function(r, d, l) {
     const i = (0, o.InvoicesApiFp)(r);
     return {
       /**
@@ -5270,7 +5478,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createInvoice(t, a) {
-        return i.createInvoice(t, a).then((s) => s(l, c));
+        return i.createInvoice(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -5280,7 +5488,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteInvoice(t, a) {
-        return i.deleteInvoice(t, a).then((s) => s(l, c));
+        return i.deleteInvoice(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -5296,8 +5504,8 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllInvoices(t, a, s, n, u, d, p, A, P) {
-        return i.getAllInvoices(t, a, s, n, u, d, p, A, P).then((b) => b(l, c));
+      getAllInvoices(t, a, s, n, h, u, p, A, P) {
+        return i.getAllInvoices(t, a, s, n, h, u, p, A, P).then((b) => b(l, d));
       },
       /**
        *
@@ -5308,7 +5516,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSingleInvoice(t, a, s) {
-        return i.getSingleInvoice(t, a, s).then((n) => n(l, c));
+        return i.getSingleInvoice(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -5319,12 +5527,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateInvoice(t, a, s) {
-        return i.updateInvoice(t, a, s).then((n) => n(l, c));
+        return i.updateInvoice(t, a, s).then((n) => n(l, d));
       }
     };
   };
-  o.InvoicesApiFactory = Qt;
-  class Yt extends O.BaseAPI {
+  o.InvoicesApiFactory = Xt;
+  class Zt extends O.BaseAPI {
     /**
      *
      * @summary Adds an invoice to the system.
@@ -5333,8 +5541,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof InvoicesApi
      */
-    createInvoice(c, l) {
-      return (0, o.InvoicesApiFp)(this.configuration).createInvoice(c, l).then((i) => i(this.axios, this.basePath));
+    createInvoice(d, l) {
+      return (0, o.InvoicesApiFp)(this.configuration).createInvoice(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -5344,8 +5552,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof InvoicesApi
      */
-    deleteInvoice(c, l) {
-      return (0, o.InvoicesApiFp)(this.configuration).deleteInvoice(c, l).then((i) => i(this.axios, this.basePath));
+    deleteInvoice(d, l) {
+      return (0, o.InvoicesApiFp)(this.configuration).deleteInvoice(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -5362,8 +5570,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof InvoicesApi
      */
-    getAllInvoices(c, l, i, t, a, s, n, u, d) {
-      return (0, o.InvoicesApiFp)(this.configuration).getAllInvoices(c, l, i, t, a, s, n, u, d).then((p) => p(this.axios, this.basePath));
+    getAllInvoices(d, l, i, t, a, s, n, h, u) {
+      return (0, o.InvoicesApiFp)(this.configuration).getAllInvoices(d, l, i, t, a, s, n, h, u).then((p) => p(this.axios, this.basePath));
     }
     /**
      *
@@ -5374,8 +5582,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof InvoicesApi
      */
-    getSingleInvoice(c, l, i) {
-      return (0, o.InvoicesApiFp)(this.configuration).getSingleInvoice(c, l, i).then((t) => t(this.axios, this.basePath));
+    getSingleInvoice(d, l, i) {
+      return (0, o.InvoicesApiFp)(this.configuration).getSingleInvoice(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -5386,12 +5594,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof InvoicesApi
      */
-    updateInvoice(c, l, i) {
-      return (0, o.InvoicesApiFp)(this.configuration).updateInvoice(c, l, i).then((t) => t(this.axios, this.basePath));
+    updateInvoice(d, l, i) {
+      return (0, o.InvoicesApiFp)(this.configuration).updateInvoice(d, l, i).then((t) => t(this.axios, this.basePath));
     }
   }
-  o.InvoicesApi = Yt, o.GetAllInvoicesCurrentStateEnum = {};
-  const $t = function(r) {
+  o.InvoicesApi = Zt, o.GetAllInvoicesCurrentStateEnum = {};
+  const es = function(r) {
     return {
       /**
        *
@@ -5400,17 +5608,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createPayoutRequest: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      createPayoutRequest: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("createPayoutRequest", "payoutRequestRequest", i);
         const a = "/payoutrequests", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -5426,22 +5634,22 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPayoutRequests: (c, l, i, t, a, s, n, ...u) => h(this, [c, l, i, t, a, s, n, ...u], void 0, function* (d, p, A, P, b, f, U, y = {}) {
-        const E = "/payoutrequests", w = new URL(E, e.DUMMY_BASE_URL);
-        let I;
-        r && (I = r.baseOptions);
-        const C = Object.assign(Object.assign({ method: "GET" }, I), y), L = {}, M = {};
-        if (yield (0, e.setBearerAuthToObject)(L, r), d !== void 0)
-          for (const [D, z] of Object.entries(d))
-            M[D] = z;
+      getAllPayoutRequests: (d, l, i, t, a, s, n, ...h) => c(this, [d, l, i, t, a, s, n, ...h], void 0, function* (u, p, A, P, b, g, y, R = {}) {
+        const T = "/payoutrequests", x = new URL(T, e.DUMMY_BASE_URL);
+        let C;
+        r && (C = r.baseOptions);
+        const F = Object.assign(Object.assign({ method: "GET" }, C), R), L = {}, M = {};
+        if (yield (0, e.setBearerAuthToObject)(L, r), u !== void 0)
+          for (const [k, K] of Object.entries(u))
+            M[k] = K;
         if (p !== void 0)
-          for (const [D, z] of Object.entries(p))
-            M[D] = z;
-        A !== void 0 && (M.fromDate = A), P !== void 0 && (M.tillDate = P), b !== void 0 && (M.status = b), f !== void 0 && (M.take = f), U !== void 0 && (M.skip = U), (0, e.setSearchParams)(w, M);
-        let W = I && I.headers ? I.headers : {};
-        return C.headers = Object.assign(Object.assign(Object.assign({}, L), W), y.headers), {
-          url: (0, e.toPathString)(w),
-          options: C
+          for (const [k, K] of Object.entries(p))
+            M[k] = K;
+        A !== void 0 && (M.fromDate = A), P !== void 0 && (M.tillDate = P), b !== void 0 && (M.status = b), g !== void 0 && (M.take = g), y !== void 0 && (M.skip = y), (0, e.setSearchParams)(x, M);
+        let X = C && C.headers ? C.headers : {};
+        return F.headers = Object.assign(Object.assign(Object.assign({}, L), X), R.headers), {
+          url: (0, e.toPathString)(x),
+          options: F
         };
       }),
       /**
@@ -5451,17 +5659,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSinglePayoutRequest: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getSinglePayoutRequest: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getSinglePayoutRequest", "id", i);
         const a = "/payoutrequests/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -5472,24 +5680,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      setPayoutRequestStatus: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      setPayoutRequestStatus: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("setPayoutRequestStatus", "id", t), (0, e.assertParamExists)("setPayoutRequestStatus", "payoutRequestStatusRequest", a);
-        const n = "/payoutrequests/{id}/status".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "POST" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/payoutrequests/{id}/status".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "POST" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), p.data = (0, e.serializeDataIfNeeded)(a, p, r), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       })
     };
   };
-  o.PayoutRequestsApiAxiosParamCreator = $t;
-  const zt = function(r) {
-    const c = (0, o.PayoutRequestsApiAxiosParamCreator)(r);
+  o.PayoutRequestsApiAxiosParamCreator = es;
+  const ts = function(r) {
+    const d = (0, o.PayoutRequestsApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -5499,10 +5707,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createPayoutRequest(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.createPayoutRequest(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["PayoutRequestsApi.createPayoutRequest"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.createPayoutRequest(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["PayoutRequestsApi.createPayoutRequest"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -5518,11 +5726,11 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPayoutRequests(l, i, t, a, s, n, u, d) {
-        return h(this, void 0, void 0, function* () {
+      getAllPayoutRequests(l, i, t, a, s, n, h, u) {
+        return c(this, void 0, void 0, function* () {
           var p, A, P;
-          const b = yield c.getAllPayoutRequests(l, i, t, a, s, n, u, d), f = (p = r == null ? void 0 : r.serverIndex) !== null && p !== void 0 ? p : 0, U = (P = (A = O.operationServerMap["PayoutRequestsApi.getAllPayoutRequests"]) === null || A === void 0 ? void 0 : A[f]) === null || P === void 0 ? void 0 : P.url;
-          return (y, E) => (0, e.createRequestFunction)(b, v.default, O.BASE_PATH, r)(y, U || E);
+          const b = yield d.getAllPayoutRequests(l, i, t, a, s, n, h, u), g = (p = r == null ? void 0 : r.serverIndex) !== null && p !== void 0 ? p : 0, y = (P = (A = O.operationServerMap["PayoutRequestsApi.getAllPayoutRequests"]) === null || A === void 0 ? void 0 : A[g]) === null || P === void 0 ? void 0 : P.url;
+          return (R, T) => (0, e.createRequestFunction)(b, v.default, O.BASE_PATH, r)(R, y || T);
         });
       },
       /**
@@ -5533,10 +5741,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSinglePayoutRequest(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getSinglePayoutRequest(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["PayoutRequestsApi.getSinglePayoutRequest"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getSinglePayoutRequest(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["PayoutRequestsApi.getSinglePayoutRequest"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -5548,16 +5756,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       setPayoutRequestStatus(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.setPayoutRequestStatus(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["PayoutRequestsApi.setPayoutRequestStatus"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.setPayoutRequestStatus(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["PayoutRequestsApi.setPayoutRequestStatus"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       }
     };
   };
-  o.PayoutRequestsApiFp = zt;
-  const Kt = function(r, c, l) {
+  o.PayoutRequestsApiFp = ts;
+  const ss = function(r, d, l) {
     const i = (0, o.PayoutRequestsApiFp)(r);
     return {
       /**
@@ -5568,7 +5776,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createPayoutRequest(t, a) {
-        return i.createPayoutRequest(t, a).then((s) => s(l, c));
+        return i.createPayoutRequest(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -5583,8 +5791,8 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPayoutRequests(t, a, s, n, u, d, p, A) {
-        return i.getAllPayoutRequests(t, a, s, n, u, d, p, A).then((P) => P(l, c));
+      getAllPayoutRequests(t, a, s, n, h, u, p, A) {
+        return i.getAllPayoutRequests(t, a, s, n, h, u, p, A).then((P) => P(l, d));
       },
       /**
        *
@@ -5594,7 +5802,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSinglePayoutRequest(t, a) {
-        return i.getSinglePayoutRequest(t, a).then((s) => s(l, c));
+        return i.getSinglePayoutRequest(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -5605,12 +5813,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       setPayoutRequestStatus(t, a, s) {
-        return i.setPayoutRequestStatus(t, a, s).then((n) => n(l, c));
+        return i.setPayoutRequestStatus(t, a, s).then((n) => n(l, d));
       }
     };
   };
-  o.PayoutRequestsApiFactory = Kt;
-  class Wt extends O.BaseAPI {
+  o.PayoutRequestsApiFactory = ss;
+  class as extends O.BaseAPI {
     /**
      *
      * @summary Create a new payout request
@@ -5619,8 +5827,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof PayoutRequestsApi
      */
-    createPayoutRequest(c, l) {
-      return (0, o.PayoutRequestsApiFp)(this.configuration).createPayoutRequest(c, l).then((i) => i(this.axios, this.basePath));
+    createPayoutRequest(d, l) {
+      return (0, o.PayoutRequestsApiFp)(this.configuration).createPayoutRequest(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -5636,8 +5844,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof PayoutRequestsApi
      */
-    getAllPayoutRequests(c, l, i, t, a, s, n, u) {
-      return (0, o.PayoutRequestsApiFp)(this.configuration).getAllPayoutRequests(c, l, i, t, a, s, n, u).then((d) => d(this.axios, this.basePath));
+    getAllPayoutRequests(d, l, i, t, a, s, n, h) {
+      return (0, o.PayoutRequestsApiFp)(this.configuration).getAllPayoutRequests(d, l, i, t, a, s, n, h).then((u) => u(this.axios, this.basePath));
     }
     /**
      *
@@ -5647,8 +5855,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof PayoutRequestsApi
      */
-    getSinglePayoutRequest(c, l) {
-      return (0, o.PayoutRequestsApiFp)(this.configuration).getSinglePayoutRequest(c, l).then((i) => i(this.axios, this.basePath));
+    getSinglePayoutRequest(d, l) {
+      return (0, o.PayoutRequestsApiFp)(this.configuration).getSinglePayoutRequest(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -5659,12 +5867,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof PayoutRequestsApi
      */
-    setPayoutRequestStatus(c, l, i) {
-      return (0, o.PayoutRequestsApiFp)(this.configuration).setPayoutRequestStatus(c, l, i).then((t) => t(this.axios, this.basePath));
+    setPayoutRequestStatus(d, l, i) {
+      return (0, o.PayoutRequestsApiFp)(this.configuration).setPayoutRequestStatus(d, l, i).then((t) => t(this.axios, this.basePath));
     }
   }
-  o.PayoutRequestsApi = Wt;
-  const Jt = function(r) {
+  o.PayoutRequestsApi = as;
+  const rs = function(r) {
     return {
       /**
        *
@@ -5673,17 +5881,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createPointOfSale: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      createPointOfSale: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("createPointOfSale", "createPointOfSaleRequest", i);
         const a = "/pointsofsale", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -5695,15 +5903,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPointOfSaleContainers: (c, l, i, ...t) => h(this, [c, l, i, ...t], void 0, function* (a, s, n, u = {}) {
+      getAllPointOfSaleContainers: (d, l, i, ...t) => c(this, [d, l, i, ...t], void 0, function* (a, s, n, h = {}) {
         (0, e.assertParamExists)("getAllPointOfSaleContainers", "id", a);
-        const d = "/pointsofsale/{id}/containers".replace("{id}", encodeURIComponent(String(a))), p = new URL(d, e.DUMMY_BASE_URL);
+        const u = "/pointsofsale/{id}/containers".replace("{id}", encodeURIComponent(String(a))), p = new URL(u, e.DUMMY_BASE_URL);
         let A;
         r && (A = r.baseOptions);
-        const P = Object.assign(Object.assign({ method: "GET" }, A), u), b = {}, f = {};
-        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (f.take = s), n !== void 0 && (f.skip = n), (0, e.setSearchParams)(p, f);
-        let U = A && A.headers ? A.headers : {};
-        return P.headers = Object.assign(Object.assign(Object.assign({}, b), U), u.headers), {
+        const P = Object.assign(Object.assign({ method: "GET" }, A), h), b = {}, g = {};
+        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (g.take = s), n !== void 0 && (g.skip = n), (0, e.setSearchParams)(p, g);
+        let y = A && A.headers ? A.headers : {};
+        return P.headers = Object.assign(Object.assign(Object.assign({}, b), y), h.headers), {
           url: (0, e.toPathString)(p),
           options: P
         };
@@ -5717,15 +5925,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPointOfSaleProducts: (c, l, i, ...t) => h(this, [c, l, i, ...t], void 0, function* (a, s, n, u = {}) {
+      getAllPointOfSaleProducts: (d, l, i, ...t) => c(this, [d, l, i, ...t], void 0, function* (a, s, n, h = {}) {
         (0, e.assertParamExists)("getAllPointOfSaleProducts", "id", a);
-        const d = "/pointsofsale/{id}/products".replace("{id}", encodeURIComponent(String(a))), p = new URL(d, e.DUMMY_BASE_URL);
+        const u = "/pointsofsale/{id}/products".replace("{id}", encodeURIComponent(String(a))), p = new URL(u, e.DUMMY_BASE_URL);
         let A;
         r && (A = r.baseOptions);
-        const P = Object.assign(Object.assign({ method: "GET" }, A), u), b = {}, f = {};
-        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (f.take = s), n !== void 0 && (f.skip = n), (0, e.setSearchParams)(p, f);
-        let U = A && A.headers ? A.headers : {};
-        return P.headers = Object.assign(Object.assign(Object.assign({}, b), U), u.headers), {
+        const P = Object.assign(Object.assign({ method: "GET" }, A), h), b = {}, g = {};
+        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (g.take = s), n !== void 0 && (g.skip = n), (0, e.setSearchParams)(p, g);
+        let y = A && A.headers ? A.headers : {};
+        return P.headers = Object.assign(Object.assign(Object.assign({}, b), y), h.headers), {
           url: (0, e.toPathString)(p),
           options: P
         };
@@ -5738,15 +5946,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllPointsOfSale: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
-        const n = "/pointsofsale", u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "GET" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+      getAllPointsOfSale: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
+        const n = "/pointsofsale", h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "GET" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -5757,17 +5965,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSinglePointOfSale: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getSinglePointOfSale: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getSinglePointOfSale", "id", i);
         const a = "/pointsofsale/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -5779,15 +5987,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getTransactions: (c, l, i, ...t) => h(this, [c, l, i, ...t], void 0, function* (a, s, n, u = {}) {
+      getTransactions: (d, l, i, ...t) => c(this, [d, l, i, ...t], void 0, function* (a, s, n, h = {}) {
         (0, e.assertParamExists)("getTransactions", "id", a);
-        const d = "/pointsofsale/{id}/transactions".replace("{id}", encodeURIComponent(String(a))), p = new URL(d, e.DUMMY_BASE_URL);
+        const u = "/pointsofsale/{id}/transactions".replace("{id}", encodeURIComponent(String(a))), p = new URL(u, e.DUMMY_BASE_URL);
         let A;
         r && (A = r.baseOptions);
-        const P = Object.assign(Object.assign({ method: "GET" }, A), u), b = {}, f = {};
-        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (f.take = s), n !== void 0 && (f.skip = n), (0, e.setSearchParams)(p, f);
-        let U = A && A.headers ? A.headers : {};
-        return P.headers = Object.assign(Object.assign(Object.assign({}, b), U), u.headers), {
+        const P = Object.assign(Object.assign({ method: "GET" }, A), h), b = {}, g = {};
+        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (g.take = s), n !== void 0 && (g.skip = n), (0, e.setSearchParams)(p, g);
+        let y = A && A.headers ? A.headers : {};
+        return P.headers = Object.assign(Object.assign(Object.assign({}, b), y), h.headers), {
           url: (0, e.toPathString)(p),
           options: P
         };
@@ -5800,24 +6008,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updatePointOfSale: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      updatePointOfSale: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("updatePointOfSale", "id", t), (0, e.assertParamExists)("updatePointOfSale", "updatePointOfSaleRequest", a);
-        const n = "/pointsofsale/{id}".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "PATCH" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/pointsofsale/{id}".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "PATCH" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), p.data = (0, e.serializeDataIfNeeded)(a, p, r), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       })
     };
   };
-  o.PointofsaleApiAxiosParamCreator = Jt;
-  const Xt = function(r) {
-    const c = (0, o.PointofsaleApiAxiosParamCreator)(r);
+  o.PointofsaleApiAxiosParamCreator = rs;
+  const ns = function(r) {
+    const d = (0, o.PointofsaleApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -5827,10 +6035,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createPointOfSale(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.createPointOfSale(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["PointofsaleApi.createPointOfSale"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.createPointOfSale(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["PointofsaleApi.createPointOfSale"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -5843,10 +6051,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllPointOfSaleContainers(l, i, t, a) {
-        return h(this, void 0, void 0, function* () {
-          var s, n, u;
-          const d = yield c.getAllPointOfSaleContainers(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (u = (n = O.operationServerMap["PointofsaleApi.getAllPointOfSaleContainers"]) === null || n === void 0 ? void 0 : n[p]) === null || u === void 0 ? void 0 : u.url;
-          return (P, b) => (0, e.createRequestFunction)(d, v.default, O.BASE_PATH, r)(P, A || b);
+        return c(this, void 0, void 0, function* () {
+          var s, n, h;
+          const u = yield d.getAllPointOfSaleContainers(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (h = (n = O.operationServerMap["PointofsaleApi.getAllPointOfSaleContainers"]) === null || n === void 0 ? void 0 : n[p]) === null || h === void 0 ? void 0 : h.url;
+          return (P, b) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(P, A || b);
         });
       },
       /**
@@ -5859,10 +6067,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllPointOfSaleProducts(l, i, t, a) {
-        return h(this, void 0, void 0, function* () {
-          var s, n, u;
-          const d = yield c.getAllPointOfSaleProducts(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (u = (n = O.operationServerMap["PointofsaleApi.getAllPointOfSaleProducts"]) === null || n === void 0 ? void 0 : n[p]) === null || u === void 0 ? void 0 : u.url;
-          return (P, b) => (0, e.createRequestFunction)(d, v.default, O.BASE_PATH, r)(P, A || b);
+        return c(this, void 0, void 0, function* () {
+          var s, n, h;
+          const u = yield d.getAllPointOfSaleProducts(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (h = (n = O.operationServerMap["PointofsaleApi.getAllPointOfSaleProducts"]) === null || n === void 0 ? void 0 : n[p]) === null || h === void 0 ? void 0 : h.url;
+          return (P, b) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(P, A || b);
         });
       },
       /**
@@ -5874,10 +6082,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllPointsOfSale(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.getAllPointsOfSale(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["PointofsaleApi.getAllPointsOfSale"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.getAllPointsOfSale(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["PointofsaleApi.getAllPointsOfSale"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -5888,10 +6096,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSinglePointOfSale(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getSinglePointOfSale(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["PointofsaleApi.getSinglePointOfSale"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getSinglePointOfSale(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["PointofsaleApi.getSinglePointOfSale"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -5904,10 +6112,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getTransactions(l, i, t, a) {
-        return h(this, void 0, void 0, function* () {
-          var s, n, u;
-          const d = yield c.getTransactions(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (u = (n = O.operationServerMap["PointofsaleApi.getTransactions"]) === null || n === void 0 ? void 0 : n[p]) === null || u === void 0 ? void 0 : u.url;
-          return (P, b) => (0, e.createRequestFunction)(d, v.default, O.BASE_PATH, r)(P, A || b);
+        return c(this, void 0, void 0, function* () {
+          var s, n, h;
+          const u = yield d.getTransactions(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (h = (n = O.operationServerMap["PointofsaleApi.getTransactions"]) === null || n === void 0 ? void 0 : n[p]) === null || h === void 0 ? void 0 : h.url;
+          return (P, b) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(P, A || b);
         });
       },
       /**
@@ -5919,16 +6127,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updatePointOfSale(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.updatePointOfSale(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["PointofsaleApi.updatePointOfSale"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.updatePointOfSale(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["PointofsaleApi.updatePointOfSale"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       }
     };
   };
-  o.PointofsaleApiFp = Xt;
-  const Zt = function(r, c, l) {
+  o.PointofsaleApiFp = ns;
+  const is = function(r, d, l) {
     const i = (0, o.PointofsaleApiFp)(r);
     return {
       /**
@@ -5939,7 +6147,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createPointOfSale(t, a) {
-        return i.createPointOfSale(t, a).then((s) => s(l, c));
+        return i.createPointOfSale(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -5951,7 +6159,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllPointOfSaleContainers(t, a, s, n) {
-        return i.getAllPointOfSaleContainers(t, a, s, n).then((u) => u(l, c));
+        return i.getAllPointOfSaleContainers(t, a, s, n).then((h) => h(l, d));
       },
       /**
        *
@@ -5963,7 +6171,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllPointOfSaleProducts(t, a, s, n) {
-        return i.getAllPointOfSaleProducts(t, a, s, n).then((u) => u(l, c));
+        return i.getAllPointOfSaleProducts(t, a, s, n).then((h) => h(l, d));
       },
       /**
        *
@@ -5974,7 +6182,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllPointsOfSale(t, a, s) {
-        return i.getAllPointsOfSale(t, a, s).then((n) => n(l, c));
+        return i.getAllPointsOfSale(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -5984,7 +6192,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSinglePointOfSale(t, a) {
-        return i.getSinglePointOfSale(t, a).then((s) => s(l, c));
+        return i.getSinglePointOfSale(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -5996,7 +6204,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getTransactions(t, a, s, n) {
-        return i.getTransactions(t, a, s, n).then((u) => u(l, c));
+        return i.getTransactions(t, a, s, n).then((h) => h(l, d));
       },
       /**
        *
@@ -6007,12 +6215,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updatePointOfSale(t, a, s) {
-        return i.updatePointOfSale(t, a, s).then((n) => n(l, c));
+        return i.updatePointOfSale(t, a, s).then((n) => n(l, d));
       }
     };
   };
-  o.PointofsaleApiFactory = Zt;
-  class es extends O.BaseAPI {
+  o.PointofsaleApiFactory = is;
+  class os extends O.BaseAPI {
     /**
      *
      * @summary Create a new Point of Sale.
@@ -6021,8 +6229,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof PointofsaleApi
      */
-    createPointOfSale(c, l) {
-      return (0, o.PointofsaleApiFp)(this.configuration).createPointOfSale(c, l).then((i) => i(this.axios, this.basePath));
+    createPointOfSale(d, l) {
+      return (0, o.PointofsaleApiFp)(this.configuration).createPointOfSale(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -6034,8 +6242,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof PointofsaleApi
      */
-    getAllPointOfSaleContainers(c, l, i, t) {
-      return (0, o.PointofsaleApiFp)(this.configuration).getAllPointOfSaleContainers(c, l, i, t).then((a) => a(this.axios, this.basePath));
+    getAllPointOfSaleContainers(d, l, i, t) {
+      return (0, o.PointofsaleApiFp)(this.configuration).getAllPointOfSaleContainers(d, l, i, t).then((a) => a(this.axios, this.basePath));
     }
     /**
      *
@@ -6047,8 +6255,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof PointofsaleApi
      */
-    getAllPointOfSaleProducts(c, l, i, t) {
-      return (0, o.PointofsaleApiFp)(this.configuration).getAllPointOfSaleProducts(c, l, i, t).then((a) => a(this.axios, this.basePath));
+    getAllPointOfSaleProducts(d, l, i, t) {
+      return (0, o.PointofsaleApiFp)(this.configuration).getAllPointOfSaleProducts(d, l, i, t).then((a) => a(this.axios, this.basePath));
     }
     /**
      *
@@ -6059,8 +6267,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof PointofsaleApi
      */
-    getAllPointsOfSale(c, l, i) {
-      return (0, o.PointofsaleApiFp)(this.configuration).getAllPointsOfSale(c, l, i).then((t) => t(this.axios, this.basePath));
+    getAllPointsOfSale(d, l, i) {
+      return (0, o.PointofsaleApiFp)(this.configuration).getAllPointsOfSale(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -6070,8 +6278,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof PointofsaleApi
      */
-    getSinglePointOfSale(c, l) {
-      return (0, o.PointofsaleApiFp)(this.configuration).getSinglePointOfSale(c, l).then((i) => i(this.axios, this.basePath));
+    getSinglePointOfSale(d, l) {
+      return (0, o.PointofsaleApiFp)(this.configuration).getSinglePointOfSale(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -6083,8 +6291,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof PointofsaleApi
      */
-    getTransactions(c, l, i, t) {
-      return (0, o.PointofsaleApiFp)(this.configuration).getTransactions(c, l, i, t).then((a) => a(this.axios, this.basePath));
+    getTransactions(d, l, i, t) {
+      return (0, o.PointofsaleApiFp)(this.configuration).getTransactions(d, l, i, t).then((a) => a(this.axios, this.basePath));
     }
     /**
      *
@@ -6095,12 +6303,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof PointofsaleApi
      */
-    updatePointOfSale(c, l, i) {
-      return (0, o.PointofsaleApiFp)(this.configuration).updatePointOfSale(c, l, i).then((t) => t(this.axios, this.basePath));
+    updatePointOfSale(d, l, i) {
+      return (0, o.PointofsaleApiFp)(this.configuration).updatePointOfSale(d, l, i).then((t) => t(this.axios, this.basePath));
     }
   }
-  o.PointofsaleApi = es;
-  const ts = function(r) {
+  o.PointofsaleApi = os;
+  const ls = function(r) {
     return {
       /**
        *
@@ -6109,17 +6317,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createProductCategory: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      createProductCategory: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("createProductCategory", "productCategoryRequest", i);
         const a = "/productcategories", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -6130,15 +6338,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllProductCategories: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
-        const n = "/productcategories", u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "GET" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+      getAllProductCategories: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
+        const n = "/productcategories", h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "GET" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -6149,17 +6357,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleProductCategory: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getSingleProductCategory: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getSingleProductCategory", "id", i);
         const a = "/productcategories/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -6170,24 +6378,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateProductCategory: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      updateProductCategory: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("updateProductCategory", "id", t), (0, e.assertParamExists)("updateProductCategory", "productCategoryRequest", a);
-        const n = "/productcategories/{id}".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "PATCH" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/productcategories/{id}".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "PATCH" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), p.data = (0, e.serializeDataIfNeeded)(a, p, r), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       })
     };
   };
-  o.ProductCategoriesApiAxiosParamCreator = ts;
-  const ss = function(r) {
-    const c = (0, o.ProductCategoriesApiAxiosParamCreator)(r);
+  o.ProductCategoriesApiAxiosParamCreator = ls;
+  const cs = function(r) {
+    const d = (0, o.ProductCategoriesApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -6197,10 +6405,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createProductCategory(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.createProductCategory(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["ProductCategoriesApi.createProductCategory"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.createProductCategory(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["ProductCategoriesApi.createProductCategory"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -6212,10 +6420,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllProductCategories(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.getAllProductCategories(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["ProductCategoriesApi.getAllProductCategories"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.getAllProductCategories(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["ProductCategoriesApi.getAllProductCategories"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -6226,10 +6434,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSingleProductCategory(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getSingleProductCategory(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["ProductCategoriesApi.getSingleProductCategory"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getSingleProductCategory(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["ProductCategoriesApi.getSingleProductCategory"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -6241,16 +6449,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateProductCategory(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.updateProductCategory(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["ProductCategoriesApi.updateProductCategory"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.updateProductCategory(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["ProductCategoriesApi.updateProductCategory"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       }
     };
   };
-  o.ProductCategoriesApiFp = ss;
-  const as = function(r, c, l) {
+  o.ProductCategoriesApiFp = cs;
+  const ds = function(r, d, l) {
     const i = (0, o.ProductCategoriesApiFp)(r);
     return {
       /**
@@ -6261,7 +6469,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createProductCategory(t, a) {
-        return i.createProductCategory(t, a).then((s) => s(l, c));
+        return i.createProductCategory(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -6272,7 +6480,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllProductCategories(t, a, s) {
-        return i.getAllProductCategories(t, a, s).then((n) => n(l, c));
+        return i.getAllProductCategories(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -6282,7 +6490,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSingleProductCategory(t, a) {
-        return i.getSingleProductCategory(t, a).then((s) => s(l, c));
+        return i.getSingleProductCategory(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -6293,12 +6501,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateProductCategory(t, a, s) {
-        return i.updateProductCategory(t, a, s).then((n) => n(l, c));
+        return i.updateProductCategory(t, a, s).then((n) => n(l, d));
       }
     };
   };
-  o.ProductCategoriesApiFactory = as;
-  class rs extends O.BaseAPI {
+  o.ProductCategoriesApiFactory = ds;
+  class us extends O.BaseAPI {
     /**
      *
      * @summary Post a new productCategory.
@@ -6307,8 +6515,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof ProductCategoriesApi
      */
-    createProductCategory(c, l) {
-      return (0, o.ProductCategoriesApiFp)(this.configuration).createProductCategory(c, l).then((i) => i(this.axios, this.basePath));
+    createProductCategory(d, l) {
+      return (0, o.ProductCategoriesApiFp)(this.configuration).createProductCategory(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -6319,8 +6527,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof ProductCategoriesApi
      */
-    getAllProductCategories(c, l, i) {
-      return (0, o.ProductCategoriesApiFp)(this.configuration).getAllProductCategories(c, l, i).then((t) => t(this.axios, this.basePath));
+    getAllProductCategories(d, l, i) {
+      return (0, o.ProductCategoriesApiFp)(this.configuration).getAllProductCategories(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -6330,8 +6538,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof ProductCategoriesApi
      */
-    getSingleProductCategory(c, l) {
-      return (0, o.ProductCategoriesApiFp)(this.configuration).getSingleProductCategory(c, l).then((i) => i(this.axios, this.basePath));
+    getSingleProductCategory(d, l) {
+      return (0, o.ProductCategoriesApiFp)(this.configuration).getSingleProductCategory(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -6342,12 +6550,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof ProductCategoriesApi
      */
-    updateProductCategory(c, l, i) {
-      return (0, o.ProductCategoriesApiFp)(this.configuration).updateProductCategory(c, l, i).then((t) => t(this.axios, this.basePath));
+    updateProductCategory(d, l, i) {
+      return (0, o.ProductCategoriesApiFp)(this.configuration).updateProductCategory(d, l, i).then((t) => t(this.axios, this.basePath));
     }
   }
-  o.ProductCategoriesApi = rs;
-  const ns = function(r) {
+  o.ProductCategoriesApi = us;
+  const hs = function(r) {
     return {
       /**
        *
@@ -6356,17 +6564,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createProduct: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      createProduct: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("createProduct", "createProductRequest", i);
         const a = "/products", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -6377,15 +6585,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllProducts: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
-        const n = "/products", u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "GET" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+      getAllProducts: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
+        const n = "/products", h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "GET" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -6396,17 +6604,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleProduct: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getSingleProduct: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getSingleProduct", "id", i);
         const a = "/products/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -6417,16 +6625,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateProduct: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      updateProduct: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("updateProduct", "id", t), (0, e.assertParamExists)("updateProduct", "updateProductRequest", a);
-        const n = "/products/{id}".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "PATCH" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/products/{id}".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "PATCH" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), p.data = (0, e.serializeDataIfNeeded)(a, p, r), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -6438,24 +6646,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateProductImage: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      updateProductImage: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("updateProductImage", "id", t);
-        const n = "/products/{id}/image".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "POST" }, d), s), A = {}, P = {}, b = new (r && r.formDataCtor || FormData)();
-        yield (0, e.setBearerAuthToObject)(A, r), a !== void 0 && b.append("file", a), A["Content-Type"] = "multipart/form-data", (0, e.setSearchParams)(u, P);
-        let f = d && d.headers ? d.headers : {};
-        return p.headers = Object.assign(Object.assign(Object.assign({}, A), f), s.headers), p.data = b, {
-          url: (0, e.toPathString)(u),
+        const n = "/products/{id}/image".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "POST" }, u), s), A = {}, P = {}, b = new (r && r.formDataCtor || FormData)();
+        yield (0, e.setBearerAuthToObject)(A, r), a !== void 0 && b.append("file", a), A["Content-Type"] = "multipart/form-data", (0, e.setSearchParams)(h, P);
+        let g = u && u.headers ? u.headers : {};
+        return p.headers = Object.assign(Object.assign(Object.assign({}, A), g), s.headers), p.data = b, {
+          url: (0, e.toPathString)(h),
           options: p
         };
       })
     };
   };
-  o.ProductsApiAxiosParamCreator = ns;
-  const is = function(r) {
-    const c = (0, o.ProductsApiAxiosParamCreator)(r);
+  o.ProductsApiAxiosParamCreator = hs;
+  const ps = function(r) {
+    const d = (0, o.ProductsApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -6465,10 +6673,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createProduct(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.createProduct(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["ProductsApi.createProduct"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.createProduct(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["ProductsApi.createProduct"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -6480,10 +6688,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllProducts(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.getAllProducts(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["ProductsApi.getAllProducts"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.getAllProducts(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["ProductsApi.getAllProducts"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -6494,10 +6702,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSingleProduct(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getSingleProduct(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["ProductsApi.getSingleProduct"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getSingleProduct(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["ProductsApi.getSingleProduct"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -6509,10 +6717,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateProduct(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.updateProduct(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["ProductsApi.updateProduct"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.updateProduct(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["ProductsApi.updateProduct"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -6524,16 +6732,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateProductImage(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.updateProductImage(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["ProductsApi.updateProductImage"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.updateProductImage(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["ProductsApi.updateProductImage"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       }
     };
   };
-  o.ProductsApiFp = is;
-  const os = function(r, c, l) {
+  o.ProductsApiFp = ps;
+  const As = function(r, d, l) {
     const i = (0, o.ProductsApiFp)(r);
     return {
       /**
@@ -6544,7 +6752,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createProduct(t, a) {
-        return i.createProduct(t, a).then((s) => s(l, c));
+        return i.createProduct(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -6555,7 +6763,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllProducts(t, a, s) {
-        return i.getAllProducts(t, a, s).then((n) => n(l, c));
+        return i.getAllProducts(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -6565,7 +6773,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSingleProduct(t, a) {
-        return i.getSingleProduct(t, a).then((s) => s(l, c));
+        return i.getSingleProduct(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -6576,7 +6784,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateProduct(t, a, s) {
-        return i.updateProduct(t, a, s).then((n) => n(l, c));
+        return i.updateProduct(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -6587,12 +6795,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateProductImage(t, a, s) {
-        return i.updateProductImage(t, a, s).then((n) => n(l, c));
+        return i.updateProductImage(t, a, s).then((n) => n(l, d));
       }
     };
   };
-  o.ProductsApiFactory = os;
-  class ls extends O.BaseAPI {
+  o.ProductsApiFactory = As;
+  class vs extends O.BaseAPI {
     /**
      *
      * @summary Create a new product.
@@ -6601,8 +6809,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof ProductsApi
      */
-    createProduct(c, l) {
-      return (0, o.ProductsApiFp)(this.configuration).createProduct(c, l).then((i) => i(this.axios, this.basePath));
+    createProduct(d, l) {
+      return (0, o.ProductsApiFp)(this.configuration).createProduct(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -6613,8 +6821,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof ProductsApi
      */
-    getAllProducts(c, l, i) {
-      return (0, o.ProductsApiFp)(this.configuration).getAllProducts(c, l, i).then((t) => t(this.axios, this.basePath));
+    getAllProducts(d, l, i) {
+      return (0, o.ProductsApiFp)(this.configuration).getAllProducts(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -6624,8 +6832,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof ProductsApi
      */
-    getSingleProduct(c, l) {
-      return (0, o.ProductsApiFp)(this.configuration).getSingleProduct(c, l).then((i) => i(this.axios, this.basePath));
+    getSingleProduct(d, l) {
+      return (0, o.ProductsApiFp)(this.configuration).getSingleProduct(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -6636,8 +6844,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof ProductsApi
      */
-    updateProduct(c, l, i) {
-      return (0, o.ProductsApiFp)(this.configuration).updateProduct(c, l, i).then((t) => t(this.axios, this.basePath));
+    updateProduct(d, l, i) {
+      return (0, o.ProductsApiFp)(this.configuration).updateProduct(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -6648,12 +6856,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof ProductsApi
      */
-    updateProductImage(c, l, i) {
-      return (0, o.ProductsApiFp)(this.configuration).updateProductImage(c, l, i).then((t) => t(this.axios, this.basePath));
+    updateProductImage(d, l, i) {
+      return (0, o.ProductsApiFp)(this.configuration).updateProductImage(d, l, i).then((t) => t(this.axios, this.basePath));
     }
   }
-  o.ProductsApi = ls;
-  const cs = function(r) {
+  o.ProductsApi = vs;
+  const Os = function(r) {
     return {
       /**
        *
@@ -6661,23 +6869,23 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllRoles: (...c) => h(this, [...c], void 0, function* (l = {}) {
+      getAllRoles: (...d) => c(this, [...d], void 0, function* (l = {}) {
         const i = "/rbac/roles", t = new URL(i, e.DUMMY_BASE_URL);
         let a;
         r && (a = r.baseOptions);
-        const s = Object.assign(Object.assign({ method: "GET" }, a), l), n = {}, u = {};
-        yield (0, e.setBearerAuthToObject)(n, r), (0, e.setSearchParams)(t, u);
-        let d = a && a.headers ? a.headers : {};
-        return s.headers = Object.assign(Object.assign(Object.assign({}, n), d), l.headers), {
+        const s = Object.assign(Object.assign({ method: "GET" }, a), l), n = {}, h = {};
+        yield (0, e.setBearerAuthToObject)(n, r), (0, e.setSearchParams)(t, h);
+        let u = a && a.headers ? a.headers : {};
+        return s.headers = Object.assign(Object.assign(Object.assign({}, n), u), l.headers), {
           url: (0, e.toPathString)(t),
           options: s
         };
       })
     };
   };
-  o.RbacApiAxiosParamCreator = cs;
-  const ds = function(r) {
-    const c = (0, o.RbacApiAxiosParamCreator)(r);
+  o.RbacApiAxiosParamCreator = Os;
+  const Ps = function(r) {
+    const d = (0, o.RbacApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -6686,16 +6894,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllRoles(l) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var i, t, a;
-          const s = yield c.getAllRoles(l), n = (i = r == null ? void 0 : r.serverIndex) !== null && i !== void 0 ? i : 0, u = (a = (t = O.operationServerMap["RbacApi.getAllRoles"]) === null || t === void 0 ? void 0 : t[n]) === null || a === void 0 ? void 0 : a.url;
-          return (d, p) => (0, e.createRequestFunction)(s, v.default, O.BASE_PATH, r)(d, u || p);
+          const s = yield d.getAllRoles(l), n = (i = r == null ? void 0 : r.serverIndex) !== null && i !== void 0 ? i : 0, h = (a = (t = O.operationServerMap["RbacApi.getAllRoles"]) === null || t === void 0 ? void 0 : t[n]) === null || a === void 0 ? void 0 : a.url;
+          return (u, p) => (0, e.createRequestFunction)(s, v.default, O.BASE_PATH, r)(u, h || p);
         });
       }
     };
   };
-  o.RbacApiFp = ds;
-  const us = function(r, c, l) {
+  o.RbacApiFp = Ps;
+  const bs = function(r, d, l) {
     const i = (0, o.RbacApiFp)(r);
     return {
       /**
@@ -6705,12 +6913,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllRoles(t) {
-        return i.getAllRoles(t).then((a) => a(l, c));
+        return i.getAllRoles(t).then((a) => a(l, d));
       }
     };
   };
-  o.RbacApiFactory = us;
-  class hs extends O.BaseAPI {
+  o.RbacApiFactory = bs;
+  class ms extends O.BaseAPI {
     /**
      *
      * @summary Returns all existing roles
@@ -6718,12 +6926,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof RbacApi
      */
-    getAllRoles(c) {
-      return (0, o.RbacApiFp)(this.configuration).getAllRoles(c).then((l) => l(this.axios, this.basePath));
+    getAllRoles(d) {
+      return (0, o.RbacApiFp)(this.configuration).getAllRoles(d).then((l) => l(this.axios, this.basePath));
     }
   }
-  o.RbacApi = hs;
-  const ps = function(r) {
+  o.RbacApi = ms;
+  const fs = function(r) {
     return {
       /**
        *
@@ -6731,23 +6939,23 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      ping: (...c) => h(this, [...c], void 0, function* (l = {}) {
+      ping: (...d) => c(this, [...d], void 0, function* (l = {}) {
         const i = "/ping", t = new URL(i, e.DUMMY_BASE_URL);
         let a;
         r && (a = r.baseOptions);
-        const s = Object.assign(Object.assign({ method: "GET" }, a), l), n = {}, u = {};
-        (0, e.setSearchParams)(t, u);
-        let d = a && a.headers ? a.headers : {};
-        return s.headers = Object.assign(Object.assign(Object.assign({}, n), d), l.headers), {
+        const s = Object.assign(Object.assign({ method: "GET" }, a), l), n = {}, h = {};
+        (0, e.setSearchParams)(t, h);
+        let u = a && a.headers ? a.headers : {};
+        return s.headers = Object.assign(Object.assign(Object.assign({}, n), u), l.headers), {
           url: (0, e.toPathString)(t),
           options: s
         };
       })
     };
   };
-  o.RootApiAxiosParamCreator = ps;
-  const As = function(r) {
-    const c = (0, o.RootApiAxiosParamCreator)(r);
+  o.RootApiAxiosParamCreator = fs;
+  const Ss = function(r) {
+    const d = (0, o.RootApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -6756,16 +6964,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       ping(l) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var i, t, a;
-          const s = yield c.ping(l), n = (i = r == null ? void 0 : r.serverIndex) !== null && i !== void 0 ? i : 0, u = (a = (t = O.operationServerMap["RootApi.ping"]) === null || t === void 0 ? void 0 : t[n]) === null || a === void 0 ? void 0 : a.url;
-          return (d, p) => (0, e.createRequestFunction)(s, v.default, O.BASE_PATH, r)(d, u || p);
+          const s = yield d.ping(l), n = (i = r == null ? void 0 : r.serverIndex) !== null && i !== void 0 ? i : 0, h = (a = (t = O.operationServerMap["RootApi.ping"]) === null || t === void 0 ? void 0 : t[n]) === null || a === void 0 ? void 0 : a.url;
+          return (u, p) => (0, e.createRequestFunction)(s, v.default, O.BASE_PATH, r)(u, h || p);
         });
       }
     };
   };
-  o.RootApiFp = As;
-  const vs = function(r, c, l) {
+  o.RootApiFp = Ss;
+  const gs = function(r, d, l) {
     const i = (0, o.RootApiFp)(r);
     return {
       /**
@@ -6775,12 +6983,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       ping(t) {
-        return i.ping(t).then((a) => a(l, c));
+        return i.ping(t).then((a) => a(l, d));
       }
     };
   };
-  o.RootApiFactory = vs;
-  class Os extends O.BaseAPI {
+  o.RootApiFactory = gs;
+  class js extends O.BaseAPI {
     /**
      *
      * @summary Ping the backend to check whether everything is working correctly
@@ -6788,12 +6996,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof RootApi
      */
-    ping(c) {
-      return (0, o.RootApiFp)(this.configuration).ping(c).then((l) => l(this.axios, this.basePath));
+    ping(d) {
+      return (0, o.RootApiFp)(this.configuration).ping(d).then((l) => l(this.axios, this.basePath));
     }
   }
-  o.RootApi = Os;
-  const Ps = function(r) {
+  o.RootApi = js;
+  const Us = function(r) {
     return {
       /**
        *
@@ -6802,24 +7010,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deposit: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      deposit: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("deposit", "stripeRequest", i);
         const a = "/stripe/deposit", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       })
     };
   };
-  o.StripeApiAxiosParamCreator = Ps;
-  const bs = function(r) {
-    const c = (0, o.StripeApiAxiosParamCreator)(r);
+  o.StripeApiAxiosParamCreator = Us;
+  const ys = function(r) {
+    const d = (0, o.StripeApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -6829,16 +7037,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deposit(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.deposit(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["StripeApi.deposit"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.deposit(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["StripeApi.deposit"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       }
     };
   };
-  o.StripeApiFp = bs;
-  const ms = function(r, c, l) {
+  o.StripeApiFp = ys;
+  const _s = function(r, d, l) {
     const i = (0, o.StripeApiFp)(r);
     return {
       /**
@@ -6849,12 +7057,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deposit(t, a) {
-        return i.deposit(t, a).then((s) => s(l, c));
+        return i.deposit(t, a).then((s) => s(l, d));
       }
     };
   };
-  o.StripeApiFactory = ms;
-  class Ss extends O.BaseAPI {
+  o.StripeApiFactory = _s;
+  class Vs extends O.BaseAPI {
     /**
      *
      * @summary Start the stripe deposit flow
@@ -6863,12 +7071,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof StripeApi
      */
-    deposit(c, l) {
-      return (0, o.StripeApiFp)(this.configuration).deposit(c, l).then((i) => i(this.axios, this.basePath));
+    deposit(d, l) {
+      return (0, o.StripeApiFp)(this.configuration).deposit(d, l).then((i) => i(this.axios, this.basePath));
     }
   }
-  o.StripeApi = Ss;
-  const fs = function(r) {
+  o.StripeApi = Vs;
+  const Rs = function(r) {
     return {
       /**
        *
@@ -6876,23 +7084,23 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      helloworld: (...c) => h(this, [...c], void 0, function* (l = {}) {
+      helloworld: (...d) => c(this, [...d], void 0, function* (l = {}) {
         const i = "/test/helloworld", t = new URL(i, e.DUMMY_BASE_URL);
         let a;
         r && (a = r.baseOptions);
-        const s = Object.assign(Object.assign({ method: "POST" }, a), l), n = {}, u = {};
-        yield (0, e.setBearerAuthToObject)(n, r), (0, e.setSearchParams)(t, u);
-        let d = a && a.headers ? a.headers : {};
-        return s.headers = Object.assign(Object.assign(Object.assign({}, n), d), l.headers), {
+        const s = Object.assign(Object.assign({ method: "POST" }, a), l), n = {}, h = {};
+        yield (0, e.setBearerAuthToObject)(n, r), (0, e.setSearchParams)(t, h);
+        let u = a && a.headers ? a.headers : {};
+        return s.headers = Object.assign(Object.assign(Object.assign({}, n), u), l.headers), {
           url: (0, e.toPathString)(t),
           options: s
         };
       })
     };
   };
-  o.TestOperationsOfTheTestControllerApiAxiosParamCreator = fs;
-  const gs = function(r) {
-    const c = (0, o.TestOperationsOfTheTestControllerApiAxiosParamCreator)(r);
+  o.TestOperationsOfTheTestControllerApiAxiosParamCreator = Rs;
+  const Es = function(r) {
+    const d = (0, o.TestOperationsOfTheTestControllerApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -6901,16 +7109,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       helloworld(l) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var i, t, a;
-          const s = yield c.helloworld(l), n = (i = r == null ? void 0 : r.serverIndex) !== null && i !== void 0 ? i : 0, u = (a = (t = O.operationServerMap["TestOperationsOfTheTestControllerApi.helloworld"]) === null || t === void 0 ? void 0 : t[n]) === null || a === void 0 ? void 0 : a.url;
-          return (d, p) => (0, e.createRequestFunction)(s, v.default, O.BASE_PATH, r)(d, u || p);
+          const s = yield d.helloworld(l), n = (i = r == null ? void 0 : r.serverIndex) !== null && i !== void 0 ? i : 0, h = (a = (t = O.operationServerMap["TestOperationsOfTheTestControllerApi.helloworld"]) === null || t === void 0 ? void 0 : t[n]) === null || a === void 0 ? void 0 : a.url;
+          return (u, p) => (0, e.createRequestFunction)(s, v.default, O.BASE_PATH, r)(u, h || p);
         });
       }
     };
   };
-  o.TestOperationsOfTheTestControllerApiFp = gs;
-  const js = function(r, c, l) {
+  o.TestOperationsOfTheTestControllerApiFp = Es;
+  const Ts = function(r, d, l) {
     const i = (0, o.TestOperationsOfTheTestControllerApiFp)(r);
     return {
       /**
@@ -6920,12 +7128,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       helloworld(t) {
-        return i.helloworld(t).then((a) => a(l, c));
+        return i.helloworld(t).then((a) => a(l, d));
       }
     };
   };
-  o.TestOperationsOfTheTestControllerApiFactory = js;
-  class Us extends O.BaseAPI {
+  o.TestOperationsOfTheTestControllerApiFactory = Ts;
+  class Bs extends O.BaseAPI {
     /**
      *
      * @summary Get a beautiful Hello World email to your inbox
@@ -6933,12 +7141,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof TestOperationsOfTheTestControllerApi
      */
-    helloworld(c) {
-      return (0, o.TestOperationsOfTheTestControllerApiFp)(this.configuration).helloworld(c).then((l) => l(this.axios, this.basePath));
+    helloworld(d) {
+      return (0, o.TestOperationsOfTheTestControllerApiFp)(this.configuration).helloworld(d).then((l) => l(this.axios, this.basePath));
     }
   }
-  o.TestOperationsOfTheTestControllerApi = Us;
-  const _s = function(r) {
+  o.TestOperationsOfTheTestControllerApi = Bs;
+  const Fs = function(r) {
     return {
       /**
        *
@@ -6947,17 +7155,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createTransaction: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      createTransaction: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("createTransaction", "transactionRequest", i);
         const a = "/transactions", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -6967,17 +7175,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteTransaction: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      deleteTransaction: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("deleteTransaction", "id", i);
         const a = "/transactions/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "DELETE" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "DELETE" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -6996,16 +7204,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllTransactions: (c, l, i, t, a, s, n, u, d, p, ...A) => h(this, [c, l, i, t, a, s, n, u, d, p, ...A], void 0, function* (P, b, f, U, y, E, w, I, C, L, M = {}) {
-        const W = "/transactions", D = new URL(W, e.DUMMY_BASE_URL);
-        let z;
-        r && (z = r.baseOptions);
-        const ie = Object.assign(Object.assign({ method: "GET" }, z), M), ee = {}, q = {};
-        yield (0, e.setBearerAuthToObject)(ee, r), P !== void 0 && (q.fromId = P), b !== void 0 && (q.createdById = b), f !== void 0 && (q.toId = f), U !== void 0 && (q.pointOfSaleId = U), y !== void 0 && (q.productId = y), E !== void 0 && (q.productRevision = E), w !== void 0 && (q.fromDate = w), I !== void 0 && (q.tillDate = I), C !== void 0 && (q.take = C), L !== void 0 && (q.skip = L), (0, e.setSearchParams)(D, q);
-        let ce = z && z.headers ? z.headers : {};
-        return ie.headers = Object.assign(Object.assign(Object.assign({}, ee), ce), M.headers), {
-          url: (0, e.toPathString)(D),
-          options: ie
+      getAllTransactions: (d, l, i, t, a, s, n, h, u, p, ...A) => c(this, [d, l, i, t, a, s, n, h, u, p, ...A], void 0, function* (P, b, g, y, R, T, x, C, F, L, M = {}) {
+        const X = "/transactions", k = new URL(X, e.DUMMY_BASE_URL);
+        let K;
+        r && (K = r.baseOptions);
+        const le = Object.assign(Object.assign({ method: "GET" }, K), M), ae = {}, D = {};
+        yield (0, e.setBearerAuthToObject)(ae, r), P !== void 0 && (D.fromId = P), b !== void 0 && (D.createdById = b), g !== void 0 && (D.toId = g), y !== void 0 && (D.pointOfSaleId = y), R !== void 0 && (D.productId = R), T !== void 0 && (D.productRevision = T), x !== void 0 && (D.fromDate = x), C !== void 0 && (D.tillDate = C), F !== void 0 && (D.take = F), L !== void 0 && (D.skip = L), (0, e.setSearchParams)(k, D);
+        let Ae = K && K.headers ? K.headers : {};
+        return le.headers = Object.assign(Object.assign(Object.assign({}, ae), Ae), M.headers), {
+          url: (0, e.toPathString)(k),
+          options: le
         };
       }),
       /**
@@ -7015,17 +7223,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleTransaction: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getSingleTransaction: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getSingleTransaction", "id", i);
         const a = "/transactions/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -7036,16 +7244,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateTransaction: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      updateTransaction: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("updateTransaction", "id", t), (0, e.assertParamExists)("updateTransaction", "transactionRequest", a);
-        const n = "/transactions/{id}".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "PATCH" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/transactions/{id}".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "PATCH" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), p.data = (0, e.serializeDataIfNeeded)(a, p, r), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -7056,24 +7264,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      validateTransaction: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      validateTransaction: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("validateTransaction", "transactionRequest", i);
         const a = "/transactions/validate", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       })
     };
   };
-  o.TransactionsApiAxiosParamCreator = _s;
-  const Vs = function(r) {
-    const c = (0, o.TransactionsApiAxiosParamCreator)(r);
+  o.TransactionsApiAxiosParamCreator = Fs;
+  const Cs = function(r) {
+    const d = (0, o.TransactionsApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -7083,10 +7291,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createTransaction(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.createTransaction(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["TransactionsApi.createTransaction"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.createTransaction(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["TransactionsApi.createTransaction"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -7097,10 +7305,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteTransaction(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.deleteTransaction(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["TransactionsApi.deleteTransaction"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.deleteTransaction(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["TransactionsApi.deleteTransaction"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -7119,11 +7327,11 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllTransactions(l, i, t, a, s, n, u, d, p, A, P) {
-        return h(this, void 0, void 0, function* () {
-          var b, f, U;
-          const y = yield c.getAllTransactions(l, i, t, a, s, n, u, d, p, A, P), E = (b = r == null ? void 0 : r.serverIndex) !== null && b !== void 0 ? b : 0, w = (U = (f = O.operationServerMap["TransactionsApi.getAllTransactions"]) === null || f === void 0 ? void 0 : f[E]) === null || U === void 0 ? void 0 : U.url;
-          return (I, C) => (0, e.createRequestFunction)(y, v.default, O.BASE_PATH, r)(I, w || C);
+      getAllTransactions(l, i, t, a, s, n, h, u, p, A, P) {
+        return c(this, void 0, void 0, function* () {
+          var b, g, y;
+          const R = yield d.getAllTransactions(l, i, t, a, s, n, h, u, p, A, P), T = (b = r == null ? void 0 : r.serverIndex) !== null && b !== void 0 ? b : 0, x = (y = (g = O.operationServerMap["TransactionsApi.getAllTransactions"]) === null || g === void 0 ? void 0 : g[T]) === null || y === void 0 ? void 0 : y.url;
+          return (C, F) => (0, e.createRequestFunction)(R, v.default, O.BASE_PATH, r)(C, x || F);
         });
       },
       /**
@@ -7134,10 +7342,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSingleTransaction(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getSingleTransaction(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["TransactionsApi.getSingleTransaction"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getSingleTransaction(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["TransactionsApi.getSingleTransaction"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -7149,10 +7357,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateTransaction(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.updateTransaction(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["TransactionsApi.updateTransaction"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.updateTransaction(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["TransactionsApi.updateTransaction"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -7163,16 +7371,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       validateTransaction(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.validateTransaction(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["TransactionsApi.validateTransaction"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.validateTransaction(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["TransactionsApi.validateTransaction"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       }
     };
   };
-  o.TransactionsApiFp = Vs;
-  const ys = function(r, c, l) {
+  o.TransactionsApiFp = Cs;
+  const ws = function(r, d, l) {
     const i = (0, o.TransactionsApiFp)(r);
     return {
       /**
@@ -7183,7 +7391,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createTransaction(t, a) {
-        return i.createTransaction(t, a).then((s) => s(l, c));
+        return i.createTransaction(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -7193,7 +7401,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteTransaction(t, a) {
-        return i.deleteTransaction(t, a).then((s) => s(l, c));
+        return i.deleteTransaction(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -7211,8 +7419,8 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllTransactions(t, a, s, n, u, d, p, A, P, b, f) {
-        return i.getAllTransactions(t, a, s, n, u, d, p, A, P, b, f).then((U) => U(l, c));
+      getAllTransactions(t, a, s, n, h, u, p, A, P, b, g) {
+        return i.getAllTransactions(t, a, s, n, h, u, p, A, P, b, g).then((y) => y(l, d));
       },
       /**
        *
@@ -7222,7 +7430,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSingleTransaction(t, a) {
-        return i.getSingleTransaction(t, a).then((s) => s(l, c));
+        return i.getSingleTransaction(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -7233,7 +7441,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateTransaction(t, a, s) {
-        return i.updateTransaction(t, a, s).then((n) => n(l, c));
+        return i.updateTransaction(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -7243,12 +7451,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       validateTransaction(t, a) {
-        return i.validateTransaction(t, a).then((s) => s(l, c));
+        return i.validateTransaction(t, a).then((s) => s(l, d));
       }
     };
   };
-  o.TransactionsApiFactory = ys;
-  class Es extends O.BaseAPI {
+  o.TransactionsApiFactory = ws;
+  class Is extends O.BaseAPI {
     /**
      *
      * @summary Creates a new transaction
@@ -7257,8 +7465,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof TransactionsApi
      */
-    createTransaction(c, l) {
-      return (0, o.TransactionsApiFp)(this.configuration).createTransaction(c, l).then((i) => i(this.axios, this.basePath));
+    createTransaction(d, l) {
+      return (0, o.TransactionsApiFp)(this.configuration).createTransaction(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -7268,8 +7476,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof TransactionsApi
      */
-    deleteTransaction(c, l) {
-      return (0, o.TransactionsApiFp)(this.configuration).deleteTransaction(c, l).then((i) => i(this.axios, this.basePath));
+    deleteTransaction(d, l) {
+      return (0, o.TransactionsApiFp)(this.configuration).deleteTransaction(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -7288,8 +7496,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof TransactionsApi
      */
-    getAllTransactions(c, l, i, t, a, s, n, u, d, p, A) {
-      return (0, o.TransactionsApiFp)(this.configuration).getAllTransactions(c, l, i, t, a, s, n, u, d, p, A).then((P) => P(this.axios, this.basePath));
+    getAllTransactions(d, l, i, t, a, s, n, h, u, p, A) {
+      return (0, o.TransactionsApiFp)(this.configuration).getAllTransactions(d, l, i, t, a, s, n, h, u, p, A).then((P) => P(this.axios, this.basePath));
     }
     /**
      *
@@ -7299,8 +7507,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof TransactionsApi
      */
-    getSingleTransaction(c, l) {
-      return (0, o.TransactionsApiFp)(this.configuration).getSingleTransaction(c, l).then((i) => i(this.axios, this.basePath));
+    getSingleTransaction(d, l) {
+      return (0, o.TransactionsApiFp)(this.configuration).getSingleTransaction(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -7311,8 +7519,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof TransactionsApi
      */
-    updateTransaction(c, l, i) {
-      return (0, o.TransactionsApiFp)(this.configuration).updateTransaction(c, l, i).then((t) => t(this.axios, this.basePath));
+    updateTransaction(d, l, i) {
+      return (0, o.TransactionsApiFp)(this.configuration).updateTransaction(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -7322,12 +7530,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof TransactionsApi
      */
-    validateTransaction(c, l) {
-      return (0, o.TransactionsApiFp)(this.configuration).validateTransaction(c, l).then((i) => i(this.axios, this.basePath));
+    validateTransaction(d, l) {
+      return (0, o.TransactionsApiFp)(this.configuration).validateTransaction(d, l).then((i) => i(this.axios, this.basePath));
     }
   }
-  o.TransactionsApi = Es;
-  const Rs = function(r) {
+  o.TransactionsApi = Is;
+  const Ms = function(r) {
     return {
       /**
        *
@@ -7336,17 +7544,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createTransfer: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      createTransfer: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("createTransfer", "transferRequest", i);
         const a = "/transfers", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -7357,15 +7565,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllTransfers: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
-        const n = "/transfers", u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "GET" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+      getAllTransfers: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
+        const n = "/transfers", h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "GET" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -7376,24 +7584,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleTransfer: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getSingleTransfer: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getSingleTransfer", "id", i);
         const a = "/transfers/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       })
     };
   };
-  o.TransfersApiAxiosParamCreator = Rs;
-  const Ts = function(r) {
-    const c = (0, o.TransfersApiAxiosParamCreator)(r);
+  o.TransfersApiAxiosParamCreator = Ms;
+  const xs = function(r) {
+    const d = (0, o.TransfersApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -7403,10 +7611,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createTransfer(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.createTransfer(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["TransfersApi.createTransfer"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.createTransfer(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["TransfersApi.createTransfer"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -7418,10 +7626,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllTransfers(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.getAllTransfers(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["TransfersApi.getAllTransfers"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.getAllTransfers(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["TransfersApi.getAllTransfers"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -7432,16 +7640,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSingleTransfer(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getSingleTransfer(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["TransfersApi.getSingleTransfer"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getSingleTransfer(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["TransfersApi.getSingleTransfer"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       }
     };
   };
-  o.TransfersApiFp = Ts;
-  const Bs = function(r, c, l) {
+  o.TransfersApiFp = xs;
+  const Ls = function(r, d, l) {
     const i = (0, o.TransfersApiFp)(r);
     return {
       /**
@@ -7452,7 +7660,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createTransfer(t, a) {
-        return i.createTransfer(t, a).then((s) => s(l, c));
+        return i.createTransfer(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -7463,7 +7671,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllTransfers(t, a, s) {
-        return i.getAllTransfers(t, a, s).then((n) => n(l, c));
+        return i.getAllTransfers(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -7473,12 +7681,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSingleTransfer(t, a) {
-        return i.getSingleTransfer(t, a).then((s) => s(l, c));
+        return i.getSingleTransfer(t, a).then((s) => s(l, d));
       }
     };
   };
-  o.TransfersApiFactory = Bs;
-  class Fs extends O.BaseAPI {
+  o.TransfersApiFactory = Ls;
+  class qs extends O.BaseAPI {
     /**
      *
      * @summary Post a new transfer.
@@ -7487,8 +7695,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof TransfersApi
      */
-    createTransfer(c, l) {
-      return (0, o.TransfersApiFp)(this.configuration).createTransfer(c, l).then((i) => i(this.axios, this.basePath));
+    createTransfer(d, l) {
+      return (0, o.TransfersApiFp)(this.configuration).createTransfer(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -7499,8 +7707,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof TransfersApi
      */
-    getAllTransfers(c, l, i) {
-      return (0, o.TransfersApiFp)(this.configuration).getAllTransfers(c, l, i).then((t) => t(this.axios, this.basePath));
+    getAllTransfers(d, l, i) {
+      return (0, o.TransfersApiFp)(this.configuration).getAllTransfers(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -7510,12 +7718,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof TransfersApi
      */
-    getSingleTransfer(c, l) {
-      return (0, o.TransfersApiFp)(this.configuration).getSingleTransfer(c, l).then((i) => i(this.axios, this.basePath));
+    getSingleTransfer(d, l) {
+      return (0, o.TransfersApiFp)(this.configuration).getSingleTransfer(d, l).then((i) => i(this.axios, this.basePath));
     }
   }
-  o.TransfersApi = Fs;
-  const Cs = function(r) {
+  o.TransfersApi = qs;
+  const Ds = function(r) {
     return {
       /**
        *
@@ -7524,17 +7732,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      acceptTos: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      acceptTos: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("acceptTos", "acceptTosRequest", i);
         const a = "/users/acceptTos", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -7544,17 +7752,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      authenticateAs: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      authenticateAs: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("authenticateAs", "id", i);
         const a = "/users/{id}/authenticate".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -7564,17 +7772,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createUser: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      createUser: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("createUser", "createUserRequest", i);
         const a = "/users", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -7584,17 +7792,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteUser: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      deleteUser: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("deleteUser", "id", i);
         const a = "/users/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "DELETE" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "DELETE" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -7604,17 +7812,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteUserKey: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      deleteUserKey: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("deleteUserKey", "id", i);
         const a = "/users/{id}/authenticator/key".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "DELETE" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "DELETE" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -7624,17 +7832,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      deleteUserNfc: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      deleteUserNfc: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("deleteUserNfc", "id", i);
         const a = "/users/{id}/authenticator/nfc".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "DELETE" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "DELETE" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -7650,16 +7858,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllUsers: (c, l, i, t, a, s, n, ...u) => h(this, [c, l, i, t, a, s, n, ...u], void 0, function* (d, p, A, P, b, f, U, y = {}) {
-        const E = "/users", w = new URL(E, e.DUMMY_BASE_URL);
-        let I;
-        r && (I = r.baseOptions);
-        const C = Object.assign(Object.assign({ method: "GET" }, I), y), L = {}, M = {};
-        yield (0, e.setBearerAuthToObject)(L, r), d !== void 0 && (M.take = d), p !== void 0 && (M.skip = p), A !== void 0 && (M.search = A), P !== void 0 && (M.active = P), b !== void 0 && (M.ofAge = b), f !== void 0 && (M.id = f), U !== void 0 && (M.type = U), (0, e.setSearchParams)(w, M);
-        let W = I && I.headers ? I.headers : {};
-        return C.headers = Object.assign(Object.assign(Object.assign({}, L), W), y.headers), {
-          url: (0, e.toPathString)(w),
-          options: C
+      getAllUsers: (d, l, i, t, a, s, n, ...h) => c(this, [d, l, i, t, a, s, n, ...h], void 0, function* (u, p, A, P, b, g, y, R = {}) {
+        const T = "/users", x = new URL(T, e.DUMMY_BASE_URL);
+        let C;
+        r && (C = r.baseOptions);
+        const F = Object.assign(Object.assign({ method: "GET" }, C), R), L = {}, M = {};
+        yield (0, e.setBearerAuthToObject)(L, r), u !== void 0 && (M.take = u), p !== void 0 && (M.skip = p), A !== void 0 && (M.search = A), P !== void 0 && (M.active = P), b !== void 0 && (M.ofAge = b), g !== void 0 && (M.id = g), y !== void 0 && (M.type = y), (0, e.setSearchParams)(x, M);
+        let X = C && C.headers ? C.headers : {};
+        return F.headers = Object.assign(Object.assign(Object.assign({}, L), X), R.headers), {
+          url: (0, e.toPathString)(x),
+          options: F
         };
       }),
       /**
@@ -7671,15 +7879,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllUsersOfUserType: (c, l, i, ...t) => h(this, [c, l, i, ...t], void 0, function* (a, s, n, u = {}) {
+      getAllUsersOfUserType: (d, l, i, ...t) => c(this, [d, l, i, ...t], void 0, function* (a, s, n, h = {}) {
         (0, e.assertParamExists)("getAllUsersOfUserType", "userType", a);
-        const d = "/users/usertype/{userType}".replace("{userType}", encodeURIComponent(String(a))), p = new URL(d, e.DUMMY_BASE_URL);
+        const u = "/users/usertype/{userType}".replace("{userType}", encodeURIComponent(String(a))), p = new URL(u, e.DUMMY_BASE_URL);
         let A;
         r && (A = r.baseOptions);
-        const P = Object.assign(Object.assign({ method: "GET" }, A), u), b = {}, f = {};
-        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (f.take = s), n !== void 0 && (f.skip = n), (0, e.setSearchParams)(p, f);
-        let U = A && A.headers ? A.headers : {};
-        return P.headers = Object.assign(Object.assign(Object.assign({}, b), U), u.headers), {
+        const P = Object.assign(Object.assign({ method: "GET" }, A), h), b = {}, g = {};
+        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (g.take = s), n !== void 0 && (g.skip = n), (0, e.setSearchParams)(p, g);
+        let y = A && A.headers ? A.headers : {};
+        return P.headers = Object.assign(Object.assign(Object.assign({}, b), y), h.headers), {
           url: (0, e.toPathString)(p),
           options: P
         };
@@ -7691,17 +7899,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getIndividualUser: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getIndividualUser: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getIndividualUser", "id", i);
         const a = "/users/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -7713,15 +7921,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getOrganMembers: (c, l, i, ...t) => h(this, [c, l, i, ...t], void 0, function* (a, s, n, u = {}) {
+      getOrganMembers: (d, l, i, ...t) => c(this, [d, l, i, ...t], void 0, function* (a, s, n, h = {}) {
         (0, e.assertParamExists)("getOrganMembers", "id", a);
-        const d = "/users/{id}/members".replace("{id}", encodeURIComponent(String(a))), p = new URL(d, e.DUMMY_BASE_URL);
+        const u = "/users/{id}/members".replace("{id}", encodeURIComponent(String(a))), p = new URL(u, e.DUMMY_BASE_URL);
         let A;
         r && (A = r.baseOptions);
-        const P = Object.assign(Object.assign({ method: "GET" }, A), u), b = {}, f = {};
-        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (f.take = s), n !== void 0 && (f.skip = n), (0, e.setSearchParams)(p, f);
-        let U = A && A.headers ? A.headers : {};
-        return P.headers = Object.assign(Object.assign(Object.assign({}, b), U), u.headers), {
+        const P = Object.assign(Object.assign({ method: "GET" }, A), h), b = {}, g = {};
+        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (g.take = s), n !== void 0 && (g.skip = n), (0, e.setSearchParams)(p, g);
+        let y = A && A.headers ? A.headers : {};
+        return P.headers = Object.assign(Object.assign(Object.assign({}, b), y), h.headers), {
           url: (0, e.toPathString)(p),
           options: P
         };
@@ -7733,17 +7941,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUserAuthenticatable: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getUserAuthenticatable: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getUserAuthenticatable", "id", i);
         const a = "/users/{id}/authenticate".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -7753,17 +7961,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUserRoles: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getUserRoles: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getUserRoles", "id", i);
         const a = "/users/{id}/roles".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -7775,15 +7983,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersContainers: (c, l, i, ...t) => h(this, [c, l, i, ...t], void 0, function* (a, s, n, u = {}) {
+      getUsersContainers: (d, l, i, ...t) => c(this, [d, l, i, ...t], void 0, function* (a, s, n, h = {}) {
         (0, e.assertParamExists)("getUsersContainers", "id", a);
-        const d = "/users/{id}/containers".replace("{id}", encodeURIComponent(String(a))), p = new URL(d, e.DUMMY_BASE_URL);
+        const u = "/users/{id}/containers".replace("{id}", encodeURIComponent(String(a))), p = new URL(u, e.DUMMY_BASE_URL);
         let A;
         r && (A = r.baseOptions);
-        const P = Object.assign(Object.assign({ method: "GET" }, A), u), b = {}, f = {};
-        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (f.take = s), n !== void 0 && (f.skip = n), (0, e.setSearchParams)(p, f);
-        let U = A && A.headers ? A.headers : {};
-        return P.headers = Object.assign(Object.assign(Object.assign({}, b), U), u.headers), {
+        const P = Object.assign(Object.assign({ method: "GET" }, A), h), b = {}, g = {};
+        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (g.take = s), n !== void 0 && (g.skip = n), (0, e.setSearchParams)(p, g);
+        let y = A && A.headers ? A.headers : {};
+        return P.headers = Object.assign(Object.assign(Object.assign({}, b), y), h.headers), {
           url: (0, e.toPathString)(p),
           options: P
         };
@@ -7797,15 +8005,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersFinancialMutations: (c, l, i, ...t) => h(this, [c, l, i, ...t], void 0, function* (a, s, n, u = {}) {
+      getUsersFinancialMutations: (d, l, i, ...t) => c(this, [d, l, i, ...t], void 0, function* (a, s, n, h = {}) {
         (0, e.assertParamExists)("getUsersFinancialMutations", "id", a);
-        const d = "/users/{id}/financialmutations".replace("{id}", encodeURIComponent(String(a))), p = new URL(d, e.DUMMY_BASE_URL);
+        const u = "/users/{id}/financialmutations".replace("{id}", encodeURIComponent(String(a))), p = new URL(u, e.DUMMY_BASE_URL);
         let A;
         r && (A = r.baseOptions);
-        const P = Object.assign(Object.assign({ method: "GET" }, A), u), b = {}, f = {};
-        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (f.take = s), n !== void 0 && (f.skip = n), (0, e.setSearchParams)(p, f);
-        let U = A && A.headers ? A.headers : {};
-        return P.headers = Object.assign(Object.assign(Object.assign({}, b), U), u.headers), {
+        const P = Object.assign(Object.assign({ method: "GET" }, A), h), b = {}, g = {};
+        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (g.take = s), n !== void 0 && (g.skip = n), (0, e.setSearchParams)(p, g);
+        let y = A && A.headers ? A.headers : {};
+        return P.headers = Object.assign(Object.assign(Object.assign({}, b), y), h.headers), {
           url: (0, e.toPathString)(p),
           options: P
         };
@@ -7819,15 +8027,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersPointsOfSale: (c, l, i, ...t) => h(this, [c, l, i, ...t], void 0, function* (a, s, n, u = {}) {
+      getUsersPointsOfSale: (d, l, i, ...t) => c(this, [d, l, i, ...t], void 0, function* (a, s, n, h = {}) {
         (0, e.assertParamExists)("getUsersPointsOfSale", "id", a);
-        const d = "/users/{id}/pointsofsale".replace("{id}", encodeURIComponent(String(a))), p = new URL(d, e.DUMMY_BASE_URL);
+        const u = "/users/{id}/pointsofsale".replace("{id}", encodeURIComponent(String(a))), p = new URL(u, e.DUMMY_BASE_URL);
         let A;
         r && (A = r.baseOptions);
-        const P = Object.assign(Object.assign({ method: "GET" }, A), u), b = {}, f = {};
-        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (f.take = s), n !== void 0 && (f.skip = n), (0, e.setSearchParams)(p, f);
-        let U = A && A.headers ? A.headers : {};
-        return P.headers = Object.assign(Object.assign(Object.assign({}, b), U), u.headers), {
+        const P = Object.assign(Object.assign({ method: "GET" }, A), h), b = {}, g = {};
+        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (g.take = s), n !== void 0 && (g.skip = n), (0, e.setSearchParams)(p, g);
+        let y = A && A.headers ? A.headers : {};
+        return P.headers = Object.assign(Object.assign(Object.assign({}, b), y), h.headers), {
           url: (0, e.toPathString)(p),
           options: P
         };
@@ -7839,17 +8047,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersProcessingDeposits: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getUsersProcessingDeposits: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getUsersProcessingDeposits", "id", i);
         const a = "/users/{id}/deposits".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -7861,15 +8069,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersProducts: (c, l, i, ...t) => h(this, [c, l, i, ...t], void 0, function* (a, s, n, u = {}) {
+      getUsersProducts: (d, l, i, ...t) => c(this, [d, l, i, ...t], void 0, function* (a, s, n, h = {}) {
         (0, e.assertParamExists)("getUsersProducts", "id", a);
-        const d = "/users/{id}/products".replace("{id}", encodeURIComponent(String(a))), p = new URL(d, e.DUMMY_BASE_URL);
+        const u = "/users/{id}/products".replace("{id}", encodeURIComponent(String(a))), p = new URL(u, e.DUMMY_BASE_URL);
         let A;
         r && (A = r.baseOptions);
-        const P = Object.assign(Object.assign({ method: "GET" }, A), u), b = {}, f = {};
-        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (f.take = s), n !== void 0 && (f.skip = n), (0, e.setSearchParams)(p, f);
-        let U = A && A.headers ? A.headers : {};
-        return P.headers = Object.assign(Object.assign(Object.assign({}, b), U), u.headers), {
+        const P = Object.assign(Object.assign({ method: "GET" }, A), h), b = {}, g = {};
+        yield (0, e.setBearerAuthToObject)(b, r), s !== void 0 && (g.take = s), n !== void 0 && (g.skip = n), (0, e.setSearchParams)(p, g);
+        let y = A && A.headers ? A.headers : {};
+        return P.headers = Object.assign(Object.assign(Object.assign({}, b), y), h.headers), {
           url: (0, e.toPathString)(p),
           options: P
         };
@@ -7890,17 +8098,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactions: (c, l, i, t, a, s, n, u, d, p, ...A) => h(this, [c, l, i, t, a, s, n, u, d, p, ...A], void 0, function* (P, b, f, U, y, E, w, I, C, L, M = {}) {
+      getUsersTransactions: (d, l, i, t, a, s, n, h, u, p, ...A) => c(this, [d, l, i, t, a, s, n, h, u, p, ...A], void 0, function* (P, b, g, y, R, T, x, C, F, L, M = {}) {
         (0, e.assertParamExists)("getUsersTransactions", "id", P);
-        const W = "/users/{id}/transactions".replace("{id}", encodeURIComponent(String(P))), D = new URL(W, e.DUMMY_BASE_URL);
-        let z;
-        r && (z = r.baseOptions);
-        const ie = Object.assign(Object.assign({ method: "GET" }, z), M), ee = {}, q = {};
-        yield (0, e.setBearerAuthToObject)(ee, r), b !== void 0 && (q.fromId = b), f !== void 0 && (q.createdById = f), U !== void 0 && (q.toId = U), y !== void 0 && (q.productId = y), E !== void 0 && (q.productRevision = E), w !== void 0 && (q.fromDate = w), I !== void 0 && (q.tillDate = I), C !== void 0 && (q.take = C), L !== void 0 && (q.skip = L), (0, e.setSearchParams)(D, q);
-        let ce = z && z.headers ? z.headers : {};
-        return ie.headers = Object.assign(Object.assign(Object.assign({}, ee), ce), M.headers), {
-          url: (0, e.toPathString)(D),
-          options: ie
+        const X = "/users/{id}/transactions".replace("{id}", encodeURIComponent(String(P))), k = new URL(X, e.DUMMY_BASE_URL);
+        let K;
+        r && (K = r.baseOptions);
+        const le = Object.assign(Object.assign({ method: "GET" }, K), M), ae = {}, D = {};
+        yield (0, e.setBearerAuthToObject)(ae, r), b !== void 0 && (D.fromId = b), g !== void 0 && (D.createdById = g), y !== void 0 && (D.toId = y), R !== void 0 && (D.productId = R), T !== void 0 && (D.productRevision = T), x !== void 0 && (D.fromDate = x), C !== void 0 && (D.tillDate = C), F !== void 0 && (D.take = F), L !== void 0 && (D.skip = L), (0, e.setSearchParams)(k, D);
+        let Ae = K && K.headers ? K.headers : {};
+        return le.headers = Object.assign(Object.assign(Object.assign({}, ae), Ae), M.headers), {
+          url: (0, e.toPathString)(k),
+          options: le
         };
       }),
       /**
@@ -7915,17 +8123,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactionsReport: (c, l, i, t, a, s, ...n) => h(this, [c, l, i, t, a, s, ...n], void 0, function* (u, d, p, A, P, b, f = {}) {
-        (0, e.assertParamExists)("getUsersTransactionsReport", "id", u);
-        const U = "/users/{id}/transactions/report".replace("{id}", encodeURIComponent(String(u))), y = new URL(U, e.DUMMY_BASE_URL);
-        let E;
-        r && (E = r.baseOptions);
-        const w = Object.assign(Object.assign({ method: "GET" }, E), f), I = {}, C = {};
-        yield (0, e.setBearerAuthToObject)(I, r), d !== void 0 && (C.fromDate = d), p !== void 0 && (C.tillDate = p), A !== void 0 && (C.fromId = A), P !== void 0 && (C.toId = P), b !== void 0 && (C.exclusiveToId = b), (0, e.setSearchParams)(y, C);
-        let L = E && E.headers ? E.headers : {};
-        return w.headers = Object.assign(Object.assign(Object.assign({}, I), L), f.headers), {
-          url: (0, e.toPathString)(y),
-          options: w
+      getUsersTransactionsReport: (d, l, i, t, a, s, ...n) => c(this, [d, l, i, t, a, s, ...n], void 0, function* (h, u, p, A, P, b, g = {}) {
+        (0, e.assertParamExists)("getUsersTransactionsReport", "id", h);
+        const y = "/users/{id}/transactions/report".replace("{id}", encodeURIComponent(String(h))), R = new URL(y, e.DUMMY_BASE_URL);
+        let T;
+        r && (T = r.baseOptions);
+        const x = Object.assign(Object.assign({ method: "GET" }, T), g), C = {}, F = {};
+        yield (0, e.setBearerAuthToObject)(C, r), u !== void 0 && (F.fromDate = u), p !== void 0 && (F.tillDate = p), A !== void 0 && (F.fromId = A), P !== void 0 && (F.toId = P), b !== void 0 && (F.exclusiveToId = b), (0, e.setSearchParams)(R, F);
+        let L = T && T.headers ? T.headers : {};
+        return x.headers = Object.assign(Object.assign(Object.assign({}, C), L), g.headers), {
+          url: (0, e.toPathString)(R),
+          options: x
         };
       }),
       /**
@@ -7940,17 +8148,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransfers: (c, l, i, t, a, s, ...n) => h(this, [c, l, i, t, a, s, ...n], void 0, function* (u, d, p, A, P, b, f = {}) {
-        (0, e.assertParamExists)("getUsersTransfers", "id", u);
-        const U = "/users/{id}/transfers".replace("{id}", encodeURIComponent(String(u))), y = new URL(U, e.DUMMY_BASE_URL);
-        let E;
-        r && (E = r.baseOptions);
-        const w = Object.assign(Object.assign({ method: "GET" }, E), f), I = {}, C = {};
-        yield (0, e.setBearerAuthToObject)(I, r), d !== void 0 && (C.take = d), p !== void 0 && (C.skip = p), A !== void 0 && (C.fromId = A), P !== void 0 && (C.toId = P), b !== void 0 && (C.id = b), (0, e.setSearchParams)(y, C);
-        let L = E && E.headers ? E.headers : {};
-        return w.headers = Object.assign(Object.assign(Object.assign({}, I), L), f.headers), {
-          url: (0, e.toPathString)(y),
-          options: w
+      getUsersTransfers: (d, l, i, t, a, s, ...n) => c(this, [d, l, i, t, a, s, ...n], void 0, function* (h, u, p, A, P, b, g = {}) {
+        (0, e.assertParamExists)("getUsersTransfers", "id", h);
+        const y = "/users/{id}/transfers".replace("{id}", encodeURIComponent(String(h))), R = new URL(y, e.DUMMY_BASE_URL);
+        let T;
+        r && (T = r.baseOptions);
+        const x = Object.assign(Object.assign({ method: "GET" }, T), g), C = {}, F = {};
+        yield (0, e.setBearerAuthToObject)(C, r), u !== void 0 && (F.take = u), p !== void 0 && (F.skip = p), A !== void 0 && (F.fromId = A), P !== void 0 && (F.toId = P), b !== void 0 && (F.id = b), (0, e.setSearchParams)(R, F);
+        let L = T && T.headers ? T.headers : {};
+        return x.headers = Object.assign(Object.assign(Object.assign({}, C), L), g.headers), {
+          url: (0, e.toPathString)(R),
+          options: x
         };
       }),
       /**
@@ -7961,16 +8169,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateUser: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      updateUser: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("updateUser", "id", t), (0, e.assertParamExists)("updateUser", "updateUserRequest", a);
-        const n = "/users/{id}".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "PATCH" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/users/{id}".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "PATCH" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), p.data = (0, e.serializeDataIfNeeded)(a, p, r), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -7981,17 +8189,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateUserKey: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      updateUserKey: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("updateUserKey", "id", i);
         const a = "/users/{id}/authenticator/key".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -8002,16 +8210,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateUserLocalPassword: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      updateUserLocalPassword: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("updateUserLocalPassword", "id", t), (0, e.assertParamExists)("updateUserLocalPassword", "updateLocalRequest", a);
-        const n = "/users/{id}/authenticator/local".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "PUT" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/users/{id}/authenticator/local".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "PUT" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), p.data = (0, e.serializeDataIfNeeded)(a, p, r), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -8023,16 +8231,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateUserNfc: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      updateUserNfc: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("updateUserNfc", "id", t), (0, e.assertParamExists)("updateUserNfc", "updateNfcRequest", a);
-        const n = "/users/{id}/authenticator/nfc".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "PUT" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/users/{id}/authenticator/nfc".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "PUT" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), p.data = (0, e.serializeDataIfNeeded)(a, p, r), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -8044,16 +8252,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateUserPin: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      updateUserPin: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("updateUserPin", "id", t), (0, e.assertParamExists)("updateUserPin", "updatePinRequest", a);
-        const n = "/users/{id}/authenticator/pin".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "PUT" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/users/{id}/authenticator/pin".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "PUT" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), p.data = (0, e.serializeDataIfNeeded)(a, p, r), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -8064,24 +8272,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      waiveUserFines: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      waiveUserFines: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("waiveUserFines", "id", i);
         const a = "/users/{id}/fines/waive".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       })
     };
   };
-  o.UsersApiAxiosParamCreator = Cs;
-  const Is = function(r) {
-    const c = (0, o.UsersApiAxiosParamCreator)(r);
+  o.UsersApiAxiosParamCreator = Ds;
+  const Hs = function(r) {
+    const d = (0, o.UsersApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -8091,10 +8299,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       acceptTos(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.acceptTos(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["UsersApi.acceptTos"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.acceptTos(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["UsersApi.acceptTos"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -8105,10 +8313,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       authenticateAs(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.authenticateAs(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["UsersApi.authenticateAs"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.authenticateAs(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["UsersApi.authenticateAs"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -8119,10 +8327,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createUser(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.createUser(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["UsersApi.createUser"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.createUser(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["UsersApi.createUser"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -8133,10 +8341,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteUser(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.deleteUser(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["UsersApi.deleteUser"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.deleteUser(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["UsersApi.deleteUser"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -8147,10 +8355,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteUserKey(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.deleteUserKey(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["UsersApi.deleteUserKey"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.deleteUserKey(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["UsersApi.deleteUserKey"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -8161,10 +8369,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteUserNfc(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.deleteUserNfc(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["UsersApi.deleteUserNfc"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.deleteUserNfc(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["UsersApi.deleteUserNfc"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -8180,11 +8388,11 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllUsers(l, i, t, a, s, n, u, d) {
-        return h(this, void 0, void 0, function* () {
+      getAllUsers(l, i, t, a, s, n, h, u) {
+        return c(this, void 0, void 0, function* () {
           var p, A, P;
-          const b = yield c.getAllUsers(l, i, t, a, s, n, u, d), f = (p = r == null ? void 0 : r.serverIndex) !== null && p !== void 0 ? p : 0, U = (P = (A = O.operationServerMap["UsersApi.getAllUsers"]) === null || A === void 0 ? void 0 : A[f]) === null || P === void 0 ? void 0 : P.url;
-          return (y, E) => (0, e.createRequestFunction)(b, v.default, O.BASE_PATH, r)(y, U || E);
+          const b = yield d.getAllUsers(l, i, t, a, s, n, h, u), g = (p = r == null ? void 0 : r.serverIndex) !== null && p !== void 0 ? p : 0, y = (P = (A = O.operationServerMap["UsersApi.getAllUsers"]) === null || A === void 0 ? void 0 : A[g]) === null || P === void 0 ? void 0 : P.url;
+          return (R, T) => (0, e.createRequestFunction)(b, v.default, O.BASE_PATH, r)(R, y || T);
         });
       },
       /**
@@ -8197,10 +8405,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllUsersOfUserType(l, i, t, a) {
-        return h(this, void 0, void 0, function* () {
-          var s, n, u;
-          const d = yield c.getAllUsersOfUserType(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (u = (n = O.operationServerMap["UsersApi.getAllUsersOfUserType"]) === null || n === void 0 ? void 0 : n[p]) === null || u === void 0 ? void 0 : u.url;
-          return (P, b) => (0, e.createRequestFunction)(d, v.default, O.BASE_PATH, r)(P, A || b);
+        return c(this, void 0, void 0, function* () {
+          var s, n, h;
+          const u = yield d.getAllUsersOfUserType(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (h = (n = O.operationServerMap["UsersApi.getAllUsersOfUserType"]) === null || n === void 0 ? void 0 : n[p]) === null || h === void 0 ? void 0 : h.url;
+          return (P, b) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(P, A || b);
         });
       },
       /**
@@ -8211,10 +8419,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getIndividualUser(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getIndividualUser(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["UsersApi.getIndividualUser"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getIndividualUser(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["UsersApi.getIndividualUser"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -8227,10 +8435,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getOrganMembers(l, i, t, a) {
-        return h(this, void 0, void 0, function* () {
-          var s, n, u;
-          const d = yield c.getOrganMembers(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (u = (n = O.operationServerMap["UsersApi.getOrganMembers"]) === null || n === void 0 ? void 0 : n[p]) === null || u === void 0 ? void 0 : u.url;
-          return (P, b) => (0, e.createRequestFunction)(d, v.default, O.BASE_PATH, r)(P, A || b);
+        return c(this, void 0, void 0, function* () {
+          var s, n, h;
+          const u = yield d.getOrganMembers(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (h = (n = O.operationServerMap["UsersApi.getOrganMembers"]) === null || n === void 0 ? void 0 : n[p]) === null || h === void 0 ? void 0 : h.url;
+          return (P, b) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(P, A || b);
         });
       },
       /**
@@ -8241,10 +8449,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getUserAuthenticatable(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getUserAuthenticatable(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["UsersApi.getUserAuthenticatable"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getUserAuthenticatable(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["UsersApi.getUserAuthenticatable"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -8255,10 +8463,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getUserRoles(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getUserRoles(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["UsersApi.getUserRoles"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getUserRoles(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["UsersApi.getUserRoles"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -8271,10 +8479,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getUsersContainers(l, i, t, a) {
-        return h(this, void 0, void 0, function* () {
-          var s, n, u;
-          const d = yield c.getUsersContainers(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (u = (n = O.operationServerMap["UsersApi.getUsersContainers"]) === null || n === void 0 ? void 0 : n[p]) === null || u === void 0 ? void 0 : u.url;
-          return (P, b) => (0, e.createRequestFunction)(d, v.default, O.BASE_PATH, r)(P, A || b);
+        return c(this, void 0, void 0, function* () {
+          var s, n, h;
+          const u = yield d.getUsersContainers(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (h = (n = O.operationServerMap["UsersApi.getUsersContainers"]) === null || n === void 0 ? void 0 : n[p]) === null || h === void 0 ? void 0 : h.url;
+          return (P, b) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(P, A || b);
         });
       },
       /**
@@ -8287,10 +8495,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getUsersFinancialMutations(l, i, t, a) {
-        return h(this, void 0, void 0, function* () {
-          var s, n, u;
-          const d = yield c.getUsersFinancialMutations(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (u = (n = O.operationServerMap["UsersApi.getUsersFinancialMutations"]) === null || n === void 0 ? void 0 : n[p]) === null || u === void 0 ? void 0 : u.url;
-          return (P, b) => (0, e.createRequestFunction)(d, v.default, O.BASE_PATH, r)(P, A || b);
+        return c(this, void 0, void 0, function* () {
+          var s, n, h;
+          const u = yield d.getUsersFinancialMutations(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (h = (n = O.operationServerMap["UsersApi.getUsersFinancialMutations"]) === null || n === void 0 ? void 0 : n[p]) === null || h === void 0 ? void 0 : h.url;
+          return (P, b) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(P, A || b);
         });
       },
       /**
@@ -8303,10 +8511,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getUsersPointsOfSale(l, i, t, a) {
-        return h(this, void 0, void 0, function* () {
-          var s, n, u;
-          const d = yield c.getUsersPointsOfSale(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (u = (n = O.operationServerMap["UsersApi.getUsersPointsOfSale"]) === null || n === void 0 ? void 0 : n[p]) === null || u === void 0 ? void 0 : u.url;
-          return (P, b) => (0, e.createRequestFunction)(d, v.default, O.BASE_PATH, r)(P, A || b);
+        return c(this, void 0, void 0, function* () {
+          var s, n, h;
+          const u = yield d.getUsersPointsOfSale(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (h = (n = O.operationServerMap["UsersApi.getUsersPointsOfSale"]) === null || n === void 0 ? void 0 : n[p]) === null || h === void 0 ? void 0 : h.url;
+          return (P, b) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(P, A || b);
         });
       },
       /**
@@ -8317,10 +8525,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getUsersProcessingDeposits(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getUsersProcessingDeposits(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["UsersApi.getUsersProcessingDeposits"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getUsersProcessingDeposits(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["UsersApi.getUsersProcessingDeposits"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -8333,10 +8541,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getUsersProducts(l, i, t, a) {
-        return h(this, void 0, void 0, function* () {
-          var s, n, u;
-          const d = yield c.getUsersProducts(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (u = (n = O.operationServerMap["UsersApi.getUsersProducts"]) === null || n === void 0 ? void 0 : n[p]) === null || u === void 0 ? void 0 : u.url;
-          return (P, b) => (0, e.createRequestFunction)(d, v.default, O.BASE_PATH, r)(P, A || b);
+        return c(this, void 0, void 0, function* () {
+          var s, n, h;
+          const u = yield d.getUsersProducts(l, i, t, a), p = (s = r == null ? void 0 : r.serverIndex) !== null && s !== void 0 ? s : 0, A = (h = (n = O.operationServerMap["UsersApi.getUsersProducts"]) === null || n === void 0 ? void 0 : n[p]) === null || h === void 0 ? void 0 : h.url;
+          return (P, b) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(P, A || b);
         });
       },
       /**
@@ -8355,11 +8563,11 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactions(l, i, t, a, s, n, u, d, p, A, P) {
-        return h(this, void 0, void 0, function* () {
-          var b, f, U;
-          const y = yield c.getUsersTransactions(l, i, t, a, s, n, u, d, p, A, P), E = (b = r == null ? void 0 : r.serverIndex) !== null && b !== void 0 ? b : 0, w = (U = (f = O.operationServerMap["UsersApi.getUsersTransactions"]) === null || f === void 0 ? void 0 : f[E]) === null || U === void 0 ? void 0 : U.url;
-          return (I, C) => (0, e.createRequestFunction)(y, v.default, O.BASE_PATH, r)(I, w || C);
+      getUsersTransactions(l, i, t, a, s, n, h, u, p, A, P) {
+        return c(this, void 0, void 0, function* () {
+          var b, g, y;
+          const R = yield d.getUsersTransactions(l, i, t, a, s, n, h, u, p, A, P), T = (b = r == null ? void 0 : r.serverIndex) !== null && b !== void 0 ? b : 0, x = (y = (g = O.operationServerMap["UsersApi.getUsersTransactions"]) === null || g === void 0 ? void 0 : g[T]) === null || y === void 0 ? void 0 : y.url;
+          return (C, F) => (0, e.createRequestFunction)(R, v.default, O.BASE_PATH, r)(C, x || F);
         });
       },
       /**
@@ -8374,11 +8582,11 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactionsReport(l, i, t, a, s, n, u) {
-        return h(this, void 0, void 0, function* () {
-          var d, p, A;
-          const P = yield c.getUsersTransactionsReport(l, i, t, a, s, n, u), b = (d = r == null ? void 0 : r.serverIndex) !== null && d !== void 0 ? d : 0, f = (A = (p = O.operationServerMap["UsersApi.getUsersTransactionsReport"]) === null || p === void 0 ? void 0 : p[b]) === null || A === void 0 ? void 0 : A.url;
-          return (U, y) => (0, e.createRequestFunction)(P, v.default, O.BASE_PATH, r)(U, f || y);
+      getUsersTransactionsReport(l, i, t, a, s, n, h) {
+        return c(this, void 0, void 0, function* () {
+          var u, p, A;
+          const P = yield d.getUsersTransactionsReport(l, i, t, a, s, n, h), b = (u = r == null ? void 0 : r.serverIndex) !== null && u !== void 0 ? u : 0, g = (A = (p = O.operationServerMap["UsersApi.getUsersTransactionsReport"]) === null || p === void 0 ? void 0 : p[b]) === null || A === void 0 ? void 0 : A.url;
+          return (y, R) => (0, e.createRequestFunction)(P, v.default, O.BASE_PATH, r)(y, g || R);
         });
       },
       /**
@@ -8393,11 +8601,11 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransfers(l, i, t, a, s, n, u) {
-        return h(this, void 0, void 0, function* () {
-          var d, p, A;
-          const P = yield c.getUsersTransfers(l, i, t, a, s, n, u), b = (d = r == null ? void 0 : r.serverIndex) !== null && d !== void 0 ? d : 0, f = (A = (p = O.operationServerMap["UsersApi.getUsersTransfers"]) === null || p === void 0 ? void 0 : p[b]) === null || A === void 0 ? void 0 : A.url;
-          return (U, y) => (0, e.createRequestFunction)(P, v.default, O.BASE_PATH, r)(U, f || y);
+      getUsersTransfers(l, i, t, a, s, n, h) {
+        return c(this, void 0, void 0, function* () {
+          var u, p, A;
+          const P = yield d.getUsersTransfers(l, i, t, a, s, n, h), b = (u = r == null ? void 0 : r.serverIndex) !== null && u !== void 0 ? u : 0, g = (A = (p = O.operationServerMap["UsersApi.getUsersTransfers"]) === null || p === void 0 ? void 0 : p[b]) === null || A === void 0 ? void 0 : A.url;
+          return (y, R) => (0, e.createRequestFunction)(P, v.default, O.BASE_PATH, r)(y, g || R);
         });
       },
       /**
@@ -8409,10 +8617,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateUser(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.updateUser(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["UsersApi.updateUser"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.updateUser(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["UsersApi.updateUser"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -8423,10 +8631,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateUserKey(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.updateUserKey(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["UsersApi.updateUserKey"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.updateUserKey(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["UsersApi.updateUserKey"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -8438,10 +8646,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateUserLocalPassword(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.updateUserLocalPassword(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["UsersApi.updateUserLocalPassword"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.updateUserLocalPassword(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["UsersApi.updateUserLocalPassword"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -8453,10 +8661,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateUserNfc(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.updateUserNfc(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["UsersApi.updateUserNfc"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.updateUserNfc(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["UsersApi.updateUserNfc"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -8468,10 +8676,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateUserPin(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.updateUserPin(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["UsersApi.updateUserPin"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.updateUserPin(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["UsersApi.updateUserPin"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -8482,16 +8690,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       waiveUserFines(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.waiveUserFines(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["UsersApi.waiveUserFines"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.waiveUserFines(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["UsersApi.waiveUserFines"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       }
     };
   };
-  o.UsersApiFp = Is;
-  const Ms = function(r, c, l) {
+  o.UsersApiFp = Hs;
+  const Ns = function(r, d, l) {
     const i = (0, o.UsersApiFp)(r);
     return {
       /**
@@ -8502,7 +8710,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       acceptTos(t, a) {
-        return i.acceptTos(t, a).then((s) => s(l, c));
+        return i.acceptTos(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -8512,7 +8720,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       authenticateAs(t, a) {
-        return i.authenticateAs(t, a).then((s) => s(l, c));
+        return i.authenticateAs(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -8522,7 +8730,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createUser(t, a) {
-        return i.createUser(t, a).then((s) => s(l, c));
+        return i.createUser(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -8532,7 +8740,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteUser(t, a) {
-        return i.deleteUser(t, a).then((s) => s(l, c));
+        return i.deleteUser(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -8542,7 +8750,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteUserKey(t, a) {
-        return i.deleteUserKey(t, a).then((s) => s(l, c));
+        return i.deleteUserKey(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -8552,7 +8760,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       deleteUserNfc(t, a) {
-        return i.deleteUserNfc(t, a).then((s) => s(l, c));
+        return i.deleteUserNfc(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -8567,8 +8775,8 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllUsers(t, a, s, n, u, d, p, A) {
-        return i.getAllUsers(t, a, s, n, u, d, p, A).then((P) => P(l, c));
+      getAllUsers(t, a, s, n, h, u, p, A) {
+        return i.getAllUsers(t, a, s, n, h, u, p, A).then((P) => P(l, d));
       },
       /**
        *
@@ -8580,7 +8788,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllUsersOfUserType(t, a, s, n) {
-        return i.getAllUsersOfUserType(t, a, s, n).then((u) => u(l, c));
+        return i.getAllUsersOfUserType(t, a, s, n).then((h) => h(l, d));
       },
       /**
        *
@@ -8590,7 +8798,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getIndividualUser(t, a) {
-        return i.getIndividualUser(t, a).then((s) => s(l, c));
+        return i.getIndividualUser(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -8602,7 +8810,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getOrganMembers(t, a, s, n) {
-        return i.getOrganMembers(t, a, s, n).then((u) => u(l, c));
+        return i.getOrganMembers(t, a, s, n).then((h) => h(l, d));
       },
       /**
        *
@@ -8612,7 +8820,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getUserAuthenticatable(t, a) {
-        return i.getUserAuthenticatable(t, a).then((s) => s(l, c));
+        return i.getUserAuthenticatable(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -8622,7 +8830,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getUserRoles(t, a) {
-        return i.getUserRoles(t, a).then((s) => s(l, c));
+        return i.getUserRoles(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -8634,7 +8842,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getUsersContainers(t, a, s, n) {
-        return i.getUsersContainers(t, a, s, n).then((u) => u(l, c));
+        return i.getUsersContainers(t, a, s, n).then((h) => h(l, d));
       },
       /**
        *
@@ -8646,7 +8854,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getUsersFinancialMutations(t, a, s, n) {
-        return i.getUsersFinancialMutations(t, a, s, n).then((u) => u(l, c));
+        return i.getUsersFinancialMutations(t, a, s, n).then((h) => h(l, d));
       },
       /**
        *
@@ -8658,7 +8866,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getUsersPointsOfSale(t, a, s, n) {
-        return i.getUsersPointsOfSale(t, a, s, n).then((u) => u(l, c));
+        return i.getUsersPointsOfSale(t, a, s, n).then((h) => h(l, d));
       },
       /**
        *
@@ -8668,7 +8876,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getUsersProcessingDeposits(t, a) {
-        return i.getUsersProcessingDeposits(t, a).then((s) => s(l, c));
+        return i.getUsersProcessingDeposits(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -8680,7 +8888,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getUsersProducts(t, a, s, n) {
-        return i.getUsersProducts(t, a, s, n).then((u) => u(l, c));
+        return i.getUsersProducts(t, a, s, n).then((h) => h(l, d));
       },
       /**
        *
@@ -8698,8 +8906,8 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactions(t, a, s, n, u, d, p, A, P, b, f) {
-        return i.getUsersTransactions(t, a, s, n, u, d, p, A, P, b, f).then((U) => U(l, c));
+      getUsersTransactions(t, a, s, n, h, u, p, A, P, b, g) {
+        return i.getUsersTransactions(t, a, s, n, h, u, p, A, P, b, g).then((y) => y(l, d));
       },
       /**
        *
@@ -8713,8 +8921,8 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransactionsReport(t, a, s, n, u, d, p) {
-        return i.getUsersTransactionsReport(t, a, s, n, u, d, p).then((A) => A(l, c));
+      getUsersTransactionsReport(t, a, s, n, h, u, p) {
+        return i.getUsersTransactionsReport(t, a, s, n, h, u, p).then((A) => A(l, d));
       },
       /**
        *
@@ -8728,8 +8936,8 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getUsersTransfers(t, a, s, n, u, d, p) {
-        return i.getUsersTransfers(t, a, s, n, u, d, p).then((A) => A(l, c));
+      getUsersTransfers(t, a, s, n, h, u, p) {
+        return i.getUsersTransfers(t, a, s, n, h, u, p).then((A) => A(l, d));
       },
       /**
        *
@@ -8740,7 +8948,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateUser(t, a, s) {
-        return i.updateUser(t, a, s).then((n) => n(l, c));
+        return i.updateUser(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -8750,7 +8958,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateUserKey(t, a) {
-        return i.updateUserKey(t, a).then((s) => s(l, c));
+        return i.updateUserKey(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -8761,7 +8969,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateUserLocalPassword(t, a, s) {
-        return i.updateUserLocalPassword(t, a, s).then((n) => n(l, c));
+        return i.updateUserLocalPassword(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -8772,7 +8980,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateUserNfc(t, a, s) {
-        return i.updateUserNfc(t, a, s).then((n) => n(l, c));
+        return i.updateUserNfc(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -8783,7 +8991,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateUserPin(t, a, s) {
-        return i.updateUserPin(t, a, s).then((n) => n(l, c));
+        return i.updateUserPin(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -8793,12 +9001,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       waiveUserFines(t, a) {
-        return i.waiveUserFines(t, a).then((s) => s(l, c));
+        return i.waiveUserFines(t, a).then((s) => s(l, d));
       }
     };
   };
-  o.UsersApiFactory = Ms;
-  class ws extends O.BaseAPI {
+  o.UsersApiFactory = Ns;
+  class ks extends O.BaseAPI {
     /**
      *
      * @summary Accept the Terms of Service if you have not accepted it yet
@@ -8807,8 +9015,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    acceptTos(c, l) {
-      return (0, o.UsersApiFp)(this.configuration).acceptTos(c, l).then((i) => i(this.axios, this.basePath));
+    acceptTos(d, l) {
+      return (0, o.UsersApiFp)(this.configuration).acceptTos(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -8818,8 +9026,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    authenticateAs(c, l) {
-      return (0, o.UsersApiFp)(this.configuration).authenticateAs(c, l).then((i) => i(this.axios, this.basePath));
+    authenticateAs(d, l) {
+      return (0, o.UsersApiFp)(this.configuration).authenticateAs(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -8829,8 +9037,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    createUser(c, l) {
-      return (0, o.UsersApiFp)(this.configuration).createUser(c, l).then((i) => i(this.axios, this.basePath));
+    createUser(d, l) {
+      return (0, o.UsersApiFp)(this.configuration).createUser(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -8840,8 +9048,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    deleteUser(c, l) {
-      return (0, o.UsersApiFp)(this.configuration).deleteUser(c, l).then((i) => i(this.axios, this.basePath));
+    deleteUser(d, l) {
+      return (0, o.UsersApiFp)(this.configuration).deleteUser(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -8851,8 +9059,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    deleteUserKey(c, l) {
-      return (0, o.UsersApiFp)(this.configuration).deleteUserKey(c, l).then((i) => i(this.axios, this.basePath));
+    deleteUserKey(d, l) {
+      return (0, o.UsersApiFp)(this.configuration).deleteUserKey(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -8862,8 +9070,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    deleteUserNfc(c, l) {
-      return (0, o.UsersApiFp)(this.configuration).deleteUserNfc(c, l).then((i) => i(this.axios, this.basePath));
+    deleteUserNfc(d, l) {
+      return (0, o.UsersApiFp)(this.configuration).deleteUserNfc(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -8879,8 +9087,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getAllUsers(c, l, i, t, a, s, n, u) {
-      return (0, o.UsersApiFp)(this.configuration).getAllUsers(c, l, i, t, a, s, n, u).then((d) => d(this.axios, this.basePath));
+    getAllUsers(d, l, i, t, a, s, n, h) {
+      return (0, o.UsersApiFp)(this.configuration).getAllUsers(d, l, i, t, a, s, n, h).then((u) => u(this.axios, this.basePath));
     }
     /**
      *
@@ -8892,8 +9100,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getAllUsersOfUserType(c, l, i, t) {
-      return (0, o.UsersApiFp)(this.configuration).getAllUsersOfUserType(c, l, i, t).then((a) => a(this.axios, this.basePath));
+    getAllUsersOfUserType(d, l, i, t) {
+      return (0, o.UsersApiFp)(this.configuration).getAllUsersOfUserType(d, l, i, t).then((a) => a(this.axios, this.basePath));
     }
     /**
      *
@@ -8903,8 +9111,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getIndividualUser(c, l) {
-      return (0, o.UsersApiFp)(this.configuration).getIndividualUser(c, l).then((i) => i(this.axios, this.basePath));
+    getIndividualUser(d, l) {
+      return (0, o.UsersApiFp)(this.configuration).getIndividualUser(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -8916,8 +9124,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getOrganMembers(c, l, i, t) {
-      return (0, o.UsersApiFp)(this.configuration).getOrganMembers(c, l, i, t).then((a) => a(this.axios, this.basePath));
+    getOrganMembers(d, l, i, t) {
+      return (0, o.UsersApiFp)(this.configuration).getOrganMembers(d, l, i, t).then((a) => a(this.axios, this.basePath));
     }
     /**
      *
@@ -8927,8 +9135,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUserAuthenticatable(c, l) {
-      return (0, o.UsersApiFp)(this.configuration).getUserAuthenticatable(c, l).then((i) => i(this.axios, this.basePath));
+    getUserAuthenticatable(d, l) {
+      return (0, o.UsersApiFp)(this.configuration).getUserAuthenticatable(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -8938,8 +9146,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUserRoles(c, l) {
-      return (0, o.UsersApiFp)(this.configuration).getUserRoles(c, l).then((i) => i(this.axios, this.basePath));
+    getUserRoles(d, l) {
+      return (0, o.UsersApiFp)(this.configuration).getUserRoles(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -8951,8 +9159,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersContainers(c, l, i, t) {
-      return (0, o.UsersApiFp)(this.configuration).getUsersContainers(c, l, i, t).then((a) => a(this.axios, this.basePath));
+    getUsersContainers(d, l, i, t) {
+      return (0, o.UsersApiFp)(this.configuration).getUsersContainers(d, l, i, t).then((a) => a(this.axios, this.basePath));
     }
     /**
      *
@@ -8964,8 +9172,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersFinancialMutations(c, l, i, t) {
-      return (0, o.UsersApiFp)(this.configuration).getUsersFinancialMutations(c, l, i, t).then((a) => a(this.axios, this.basePath));
+    getUsersFinancialMutations(d, l, i, t) {
+      return (0, o.UsersApiFp)(this.configuration).getUsersFinancialMutations(d, l, i, t).then((a) => a(this.axios, this.basePath));
     }
     /**
      *
@@ -8977,8 +9185,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersPointsOfSale(c, l, i, t) {
-      return (0, o.UsersApiFp)(this.configuration).getUsersPointsOfSale(c, l, i, t).then((a) => a(this.axios, this.basePath));
+    getUsersPointsOfSale(d, l, i, t) {
+      return (0, o.UsersApiFp)(this.configuration).getUsersPointsOfSale(d, l, i, t).then((a) => a(this.axios, this.basePath));
     }
     /**
      *
@@ -8988,8 +9196,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersProcessingDeposits(c, l) {
-      return (0, o.UsersApiFp)(this.configuration).getUsersProcessingDeposits(c, l).then((i) => i(this.axios, this.basePath));
+    getUsersProcessingDeposits(d, l) {
+      return (0, o.UsersApiFp)(this.configuration).getUsersProcessingDeposits(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -9001,8 +9209,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersProducts(c, l, i, t) {
-      return (0, o.UsersApiFp)(this.configuration).getUsersProducts(c, l, i, t).then((a) => a(this.axios, this.basePath));
+    getUsersProducts(d, l, i, t) {
+      return (0, o.UsersApiFp)(this.configuration).getUsersProducts(d, l, i, t).then((a) => a(this.axios, this.basePath));
     }
     /**
      *
@@ -9021,8 +9229,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersTransactions(c, l, i, t, a, s, n, u, d, p, A) {
-      return (0, o.UsersApiFp)(this.configuration).getUsersTransactions(c, l, i, t, a, s, n, u, d, p, A).then((P) => P(this.axios, this.basePath));
+    getUsersTransactions(d, l, i, t, a, s, n, h, u, p, A) {
+      return (0, o.UsersApiFp)(this.configuration).getUsersTransactions(d, l, i, t, a, s, n, h, u, p, A).then((P) => P(this.axios, this.basePath));
     }
     /**
      *
@@ -9037,8 +9245,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersTransactionsReport(c, l, i, t, a, s, n) {
-      return (0, o.UsersApiFp)(this.configuration).getUsersTransactionsReport(c, l, i, t, a, s, n).then((u) => u(this.axios, this.basePath));
+    getUsersTransactionsReport(d, l, i, t, a, s, n) {
+      return (0, o.UsersApiFp)(this.configuration).getUsersTransactionsReport(d, l, i, t, a, s, n).then((h) => h(this.axios, this.basePath));
     }
     /**
      *
@@ -9053,8 +9261,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    getUsersTransfers(c, l, i, t, a, s, n) {
-      return (0, o.UsersApiFp)(this.configuration).getUsersTransfers(c, l, i, t, a, s, n).then((u) => u(this.axios, this.basePath));
+    getUsersTransfers(d, l, i, t, a, s, n) {
+      return (0, o.UsersApiFp)(this.configuration).getUsersTransfers(d, l, i, t, a, s, n).then((h) => h(this.axios, this.basePath));
     }
     /**
      *
@@ -9065,8 +9273,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    updateUser(c, l, i) {
-      return (0, o.UsersApiFp)(this.configuration).updateUser(c, l, i).then((t) => t(this.axios, this.basePath));
+    updateUser(d, l, i) {
+      return (0, o.UsersApiFp)(this.configuration).updateUser(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -9076,8 +9284,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    updateUserKey(c, l) {
-      return (0, o.UsersApiFp)(this.configuration).updateUserKey(c, l).then((i) => i(this.axios, this.basePath));
+    updateUserKey(d, l) {
+      return (0, o.UsersApiFp)(this.configuration).updateUserKey(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -9088,8 +9296,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    updateUserLocalPassword(c, l, i) {
-      return (0, o.UsersApiFp)(this.configuration).updateUserLocalPassword(c, l, i).then((t) => t(this.axios, this.basePath));
+    updateUserLocalPassword(d, l, i) {
+      return (0, o.UsersApiFp)(this.configuration).updateUserLocalPassword(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -9100,8 +9308,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    updateUserNfc(c, l, i) {
-      return (0, o.UsersApiFp)(this.configuration).updateUserNfc(c, l, i).then((t) => t(this.axios, this.basePath));
+    updateUserNfc(d, l, i) {
+      return (0, o.UsersApiFp)(this.configuration).updateUserNfc(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -9112,8 +9320,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    updateUserPin(c, l, i) {
-      return (0, o.UsersApiFp)(this.configuration).updateUserPin(c, l, i).then((t) => t(this.axios, this.basePath));
+    updateUserPin(d, l, i) {
+      return (0, o.UsersApiFp)(this.configuration).updateUserPin(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -9123,11 +9331,11 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    waiveUserFines(c, l) {
-      return (0, o.UsersApiFp)(this.configuration).waiveUserFines(c, l).then((i) => i(this.axios, this.basePath));
+    waiveUserFines(d, l) {
+      return (0, o.UsersApiFp)(this.configuration).waiveUserFines(d, l).then((i) => i(this.axios, this.basePath));
     }
   }
-  o.UsersApi = ws, o.GetAllUsersTypeEnum = {
+  o.UsersApi = ks, o.GetAllUsersTypeEnum = {
     Member: "MEMBER",
     Organ: "ORGAN",
     Voucher: "VOUCHER",
@@ -9136,7 +9344,7 @@ N.createRequestFunction = zr;
     Invoice: "INVOICE",
     AutomaticInvoice: "AUTOMATIC_INVOICE"
   };
-  const xs = function(r) {
+  const Gs = function(r) {
     return {
       /**
        *
@@ -9145,17 +9353,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createVatGroup: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      createVatGroup: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("createVatGroup", "vatGroupRequest", i);
         const a = "/vatgroups", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -9170,16 +9378,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllVatGroups: (c, l, i, t, a, s, ...n) => h(this, [c, l, i, t, a, s, ...n], void 0, function* (u, d, p, A, P, b, f = {}) {
-        const U = "/vatgroups", y = new URL(U, e.DUMMY_BASE_URL);
-        let E;
-        r && (E = r.baseOptions);
-        const w = Object.assign(Object.assign({ method: "GET" }, E), f), I = {}, C = {};
-        yield (0, e.setBearerAuthToObject)(I, r), u !== void 0 && (C.vatGroupId = u), d !== void 0 && (C.name = d), p !== void 0 && (C.percentage = p), A !== void 0 && (C.deleted = A), P !== void 0 && (C.take = P), b !== void 0 && (C.skip = b), (0, e.setSearchParams)(y, C);
-        let L = E && E.headers ? E.headers : {};
-        return w.headers = Object.assign(Object.assign(Object.assign({}, I), L), f.headers), {
-          url: (0, e.toPathString)(y),
-          options: w
+      getAllVatGroups: (d, l, i, t, a, s, ...n) => c(this, [d, l, i, t, a, s, ...n], void 0, function* (h, u, p, A, P, b, g = {}) {
+        const y = "/vatgroups", R = new URL(y, e.DUMMY_BASE_URL);
+        let T;
+        r && (T = r.baseOptions);
+        const x = Object.assign(Object.assign({ method: "GET" }, T), g), C = {}, F = {};
+        yield (0, e.setBearerAuthToObject)(C, r), h !== void 0 && (F.vatGroupId = h), u !== void 0 && (F.name = u), p !== void 0 && (F.percentage = p), A !== void 0 && (F.deleted = A), P !== void 0 && (F.take = P), b !== void 0 && (F.skip = b), (0, e.setSearchParams)(R, F);
+        let L = T && T.headers ? T.headers : {};
+        return x.headers = Object.assign(Object.assign(Object.assign({}, C), L), g.headers), {
+          url: (0, e.toPathString)(R),
+          options: x
         };
       }),
       /**
@@ -9189,17 +9397,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getSingleVatGroup: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getSingleVatGroup: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getSingleVatGroup", "id", i);
         const a = "/vatgroups/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -9210,16 +9418,16 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getVatDeclarationAmounts: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      getVatDeclarationAmounts: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("getVatDeclarationAmounts", "year", t), (0, e.assertParamExists)("getVatDeclarationAmounts", "period", a);
-        const n = "/vatgroups/declaration", u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "GET" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.year = t), a !== void 0 && (P.period = a), (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/vatgroups/declaration", h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "GET" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.year = t), a !== void 0 && (P.period = a), (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -9231,24 +9439,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateVatGroup: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      updateVatGroup: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("updateVatGroup", "id", t), (0, e.assertParamExists)("updateVatGroup", "updateVatGroupRequest", a);
-        const n = "/vatgroups/{id}".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "PATCH" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/vatgroups/{id}".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "PATCH" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), p.data = (0, e.serializeDataIfNeeded)(a, p, r), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       })
     };
   };
-  o.VatGroupsApiAxiosParamCreator = xs;
-  const Ls = function(r) {
-    const c = (0, o.VatGroupsApiAxiosParamCreator)(r);
+  o.VatGroupsApiAxiosParamCreator = Gs;
+  const Qs = function(r) {
+    const d = (0, o.VatGroupsApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -9258,10 +9466,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createVatGroup(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.createVatGroup(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["VatGroupsApi.createVatGroup"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.createVatGroup(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["VatGroupsApi.createVatGroup"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -9276,11 +9484,11 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllVatGroups(l, i, t, a, s, n, u) {
-        return h(this, void 0, void 0, function* () {
-          var d, p, A;
-          const P = yield c.getAllVatGroups(l, i, t, a, s, n, u), b = (d = r == null ? void 0 : r.serverIndex) !== null && d !== void 0 ? d : 0, f = (A = (p = O.operationServerMap["VatGroupsApi.getAllVatGroups"]) === null || p === void 0 ? void 0 : p[b]) === null || A === void 0 ? void 0 : A.url;
-          return (U, y) => (0, e.createRequestFunction)(P, v.default, O.BASE_PATH, r)(U, f || y);
+      getAllVatGroups(l, i, t, a, s, n, h) {
+        return c(this, void 0, void 0, function* () {
+          var u, p, A;
+          const P = yield d.getAllVatGroups(l, i, t, a, s, n, h), b = (u = r == null ? void 0 : r.serverIndex) !== null && u !== void 0 ? u : 0, g = (A = (p = O.operationServerMap["VatGroupsApi.getAllVatGroups"]) === null || p === void 0 ? void 0 : p[b]) === null || A === void 0 ? void 0 : A.url;
+          return (y, R) => (0, e.createRequestFunction)(P, v.default, O.BASE_PATH, r)(y, g || R);
         });
       },
       /**
@@ -9291,10 +9499,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSingleVatGroup(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getSingleVatGroup(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["VatGroupsApi.getSingleVatGroup"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getSingleVatGroup(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["VatGroupsApi.getSingleVatGroup"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -9306,10 +9514,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getVatDeclarationAmounts(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.getVatDeclarationAmounts(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["VatGroupsApi.getVatDeclarationAmounts"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.getVatDeclarationAmounts(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["VatGroupsApi.getVatDeclarationAmounts"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -9321,16 +9529,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateVatGroup(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.updateVatGroup(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["VatGroupsApi.updateVatGroup"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.updateVatGroup(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["VatGroupsApi.updateVatGroup"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       }
     };
   };
-  o.VatGroupsApiFp = Ls;
-  const qs = function(r, c, l) {
+  o.VatGroupsApiFp = Qs;
+  const Ys = function(r, d, l) {
     const i = (0, o.VatGroupsApiFp)(r);
     return {
       /**
@@ -9341,7 +9549,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createVatGroup(t, a) {
-        return i.createVatGroup(t, a).then((s) => s(l, c));
+        return i.createVatGroup(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -9355,8 +9563,8 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllVatGroups(t, a, s, n, u, d, p) {
-        return i.getAllVatGroups(t, a, s, n, u, d, p).then((A) => A(l, c));
+      getAllVatGroups(t, a, s, n, h, u, p) {
+        return i.getAllVatGroups(t, a, s, n, h, u, p).then((A) => A(l, d));
       },
       /**
        *
@@ -9366,7 +9574,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getSingleVatGroup(t, a) {
-        return i.getSingleVatGroup(t, a).then((s) => s(l, c));
+        return i.getSingleVatGroup(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -9377,7 +9585,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getVatDeclarationAmounts(t, a, s) {
-        return i.getVatDeclarationAmounts(t, a, s).then((n) => n(l, c));
+        return i.getVatDeclarationAmounts(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -9388,12 +9596,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateVatGroup(t, a, s) {
-        return i.updateVatGroup(t, a, s).then((n) => n(l, c));
+        return i.updateVatGroup(t, a, s).then((n) => n(l, d));
       }
     };
   };
-  o.VatGroupsApiFactory = qs;
-  class Ds extends O.BaseAPI {
+  o.VatGroupsApiFactory = Ys;
+  class $s extends O.BaseAPI {
     /**
      *
      * @summary Create a new VAT group
@@ -9402,8 +9610,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof VatGroupsApi
      */
-    createVatGroup(c, l) {
-      return (0, o.VatGroupsApiFp)(this.configuration).createVatGroup(c, l).then((i) => i(this.axios, this.basePath));
+    createVatGroup(d, l) {
+      return (0, o.VatGroupsApiFp)(this.configuration).createVatGroup(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -9418,8 +9626,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof VatGroupsApi
      */
-    getAllVatGroups(c, l, i, t, a, s, n) {
-      return (0, o.VatGroupsApiFp)(this.configuration).getAllVatGroups(c, l, i, t, a, s, n).then((u) => u(this.axios, this.basePath));
+    getAllVatGroups(d, l, i, t, a, s, n) {
+      return (0, o.VatGroupsApiFp)(this.configuration).getAllVatGroups(d, l, i, t, a, s, n).then((h) => h(this.axios, this.basePath));
     }
     /**
      *
@@ -9429,8 +9637,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof VatGroupsApi
      */
-    getSingleVatGroup(c, l) {
-      return (0, o.VatGroupsApiFp)(this.configuration).getSingleVatGroup(c, l).then((i) => i(this.axios, this.basePath));
+    getSingleVatGroup(d, l) {
+      return (0, o.VatGroupsApiFp)(this.configuration).getSingleVatGroup(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -9441,8 +9649,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof VatGroupsApi
      */
-    getVatDeclarationAmounts(c, l, i) {
-      return (0, o.VatGroupsApiFp)(this.configuration).getVatDeclarationAmounts(c, l, i).then((t) => t(this.axios, this.basePath));
+    getVatDeclarationAmounts(d, l, i) {
+      return (0, o.VatGroupsApiFp)(this.configuration).getVatDeclarationAmounts(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -9453,12 +9661,12 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof VatGroupsApi
      */
-    updateVatGroup(c, l, i) {
-      return (0, o.VatGroupsApiFp)(this.configuration).updateVatGroup(c, l, i).then((t) => t(this.axios, this.basePath));
+    updateVatGroup(d, l, i) {
+      return (0, o.VatGroupsApiFp)(this.configuration).updateVatGroup(d, l, i).then((t) => t(this.axios, this.basePath));
     }
   }
-  o.VatGroupsApi = Ds;
-  const Hs = function(r) {
+  o.VatGroupsApi = $s;
+  const zs = function(r) {
     return {
       /**
        *
@@ -9467,17 +9675,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      createVouchergroup: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      createVouchergroup: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("createVouchergroup", "voucherGroupRequest", i);
         const a = "/vouchergroups", s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "POST" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), d["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "POST" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), u["Content-Type"] = "application/json", (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), u.data = (0, e.serializeDataIfNeeded)(i, u, r), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), h.data = (0, e.serializeDataIfNeeded)(i, h, r), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -9488,15 +9696,15 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getAllVouchergroups: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
-        const n = "/vouchergroups", u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "GET" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+      getAllVouchergroups: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
+        const n = "/vouchergroups", h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "GET" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), t !== void 0 && (P.take = t), a !== void 0 && (P.skip = a), (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       }),
@@ -9507,17 +9715,17 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      getVouchergroupId: (c, ...l) => h(this, [c, ...l], void 0, function* (i, t = {}) {
+      getVouchergroupId: (d, ...l) => c(this, [d, ...l], void 0, function* (i, t = {}) {
         (0, e.assertParamExists)("getVouchergroupId", "id", i);
         const a = "/vouchergroups/{id}".replace("{id}", encodeURIComponent(String(i))), s = new URL(a, e.DUMMY_BASE_URL);
         let n;
         r && (n = r.baseOptions);
-        const u = Object.assign(Object.assign({ method: "GET" }, n), t), d = {}, p = {};
-        yield (0, e.setBearerAuthToObject)(d, r), (0, e.setSearchParams)(s, p);
+        const h = Object.assign(Object.assign({ method: "GET" }, n), t), u = {}, p = {};
+        yield (0, e.setBearerAuthToObject)(u, r), (0, e.setSearchParams)(s, p);
         let A = n && n.headers ? n.headers : {};
-        return u.headers = Object.assign(Object.assign(Object.assign({}, d), A), t.headers), {
+        return h.headers = Object.assign(Object.assign(Object.assign({}, u), A), t.headers), {
           url: (0, e.toPathString)(s),
-          options: u
+          options: h
         };
       }),
       /**
@@ -9528,24 +9736,24 @@ N.createRequestFunction = zr;
        * @param {*} [options] Override http request option.
        * @throws {RequiredError}
        */
-      updateVoucherGroup: (c, l, ...i) => h(this, [c, l, ...i], void 0, function* (t, a, s = {}) {
+      updateVoucherGroup: (d, l, ...i) => c(this, [d, l, ...i], void 0, function* (t, a, s = {}) {
         (0, e.assertParamExists)("updateVoucherGroup", "id", t), (0, e.assertParamExists)("updateVoucherGroup", "voucherGroupRequest", a);
-        const n = "/vouchergroups/{id}".replace("{id}", encodeURIComponent(String(t))), u = new URL(n, e.DUMMY_BASE_URL);
-        let d;
-        r && (d = r.baseOptions);
-        const p = Object.assign(Object.assign({ method: "PATCH" }, d), s), A = {}, P = {};
-        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(u, P);
-        let b = d && d.headers ? d.headers : {};
+        const n = "/vouchergroups/{id}".replace("{id}", encodeURIComponent(String(t))), h = new URL(n, e.DUMMY_BASE_URL);
+        let u;
+        r && (u = r.baseOptions);
+        const p = Object.assign(Object.assign({ method: "PATCH" }, u), s), A = {}, P = {};
+        yield (0, e.setBearerAuthToObject)(A, r), A["Content-Type"] = "application/json", (0, e.setSearchParams)(h, P);
+        let b = u && u.headers ? u.headers : {};
         return p.headers = Object.assign(Object.assign(Object.assign({}, A), b), s.headers), p.data = (0, e.serializeDataIfNeeded)(a, p, r), {
-          url: (0, e.toPathString)(u),
+          url: (0, e.toPathString)(h),
           options: p
         };
       })
     };
   };
-  o.VouchergroupsApiAxiosParamCreator = Hs;
-  const Ns = function(r) {
-    const c = (0, o.VouchergroupsApiAxiosParamCreator)(r);
+  o.VouchergroupsApiAxiosParamCreator = zs;
+  const Ks = function(r) {
+    const d = (0, o.VouchergroupsApiAxiosParamCreator)(r);
     return {
       /**
        *
@@ -9555,10 +9763,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createVouchergroup(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.createVouchergroup(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["VouchergroupsApi.createVouchergroup"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.createVouchergroup(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["VouchergroupsApi.createVouchergroup"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -9570,10 +9778,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllVouchergroups(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.getAllVouchergroups(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["VouchergroupsApi.getAllVouchergroups"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.getAllVouchergroups(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["VouchergroupsApi.getAllVouchergroups"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       },
       /**
@@ -9584,10 +9792,10 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getVouchergroupId(l, i) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var t, a, s;
-          const n = yield c.getVouchergroupId(l, i), u = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, d = (s = (a = O.operationServerMap["VouchergroupsApi.getVouchergroupId"]) === null || a === void 0 ? void 0 : a[u]) === null || s === void 0 ? void 0 : s.url;
-          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, d || A);
+          const n = yield d.getVouchergroupId(l, i), h = (t = r == null ? void 0 : r.serverIndex) !== null && t !== void 0 ? t : 0, u = (s = (a = O.operationServerMap["VouchergroupsApi.getVouchergroupId"]) === null || a === void 0 ? void 0 : a[h]) === null || s === void 0 ? void 0 : s.url;
+          return (p, A) => (0, e.createRequestFunction)(n, v.default, O.BASE_PATH, r)(p, u || A);
         });
       },
       /**
@@ -9599,16 +9807,16 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateVoucherGroup(l, i, t) {
-        return h(this, void 0, void 0, function* () {
+        return c(this, void 0, void 0, function* () {
           var a, s, n;
-          const u = yield c.updateVoucherGroup(l, i, t), d = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["VouchergroupsApi.updateVoucherGroup"]) === null || s === void 0 ? void 0 : s[d]) === null || n === void 0 ? void 0 : n.url;
-          return (A, P) => (0, e.createRequestFunction)(u, v.default, O.BASE_PATH, r)(A, p || P);
+          const h = yield d.updateVoucherGroup(l, i, t), u = (a = r == null ? void 0 : r.serverIndex) !== null && a !== void 0 ? a : 0, p = (n = (s = O.operationServerMap["VouchergroupsApi.updateVoucherGroup"]) === null || s === void 0 ? void 0 : s[u]) === null || n === void 0 ? void 0 : n.url;
+          return (A, P) => (0, e.createRequestFunction)(h, v.default, O.BASE_PATH, r)(A, p || P);
         });
       }
     };
   };
-  o.VouchergroupsApiFp = Ns;
-  const Gs = function(r, c, l) {
+  o.VouchergroupsApiFp = Ks;
+  const Ws = function(r, d, l) {
     const i = (0, o.VouchergroupsApiFp)(r);
     return {
       /**
@@ -9619,7 +9827,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       createVouchergroup(t, a) {
-        return i.createVouchergroup(t, a).then((s) => s(l, c));
+        return i.createVouchergroup(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -9630,7 +9838,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getAllVouchergroups(t, a, s) {
-        return i.getAllVouchergroups(t, a, s).then((n) => n(l, c));
+        return i.getAllVouchergroups(t, a, s).then((n) => n(l, d));
       },
       /**
        *
@@ -9640,7 +9848,7 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       getVouchergroupId(t, a) {
-        return i.getVouchergroupId(t, a).then((s) => s(l, c));
+        return i.getVouchergroupId(t, a).then((s) => s(l, d));
       },
       /**
        *
@@ -9651,12 +9859,12 @@ N.createRequestFunction = zr;
        * @throws {RequiredError}
        */
       updateVoucherGroup(t, a, s) {
-        return i.updateVoucherGroup(t, a, s).then((n) => n(l, c));
+        return i.updateVoucherGroup(t, a, s).then((n) => n(l, d));
       }
     };
   };
-  o.VouchergroupsApiFactory = Gs;
-  class ks extends O.BaseAPI {
+  o.VouchergroupsApiFactory = Ws;
+  class Js extends O.BaseAPI {
     /**
      *
      * @summary Creates a new voucher group
@@ -9665,8 +9873,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof VouchergroupsApi
      */
-    createVouchergroup(c, l) {
-      return (0, o.VouchergroupsApiFp)(this.configuration).createVouchergroup(c, l).then((i) => i(this.axios, this.basePath));
+    createVouchergroup(d, l) {
+      return (0, o.VouchergroupsApiFp)(this.configuration).createVouchergroup(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -9677,8 +9885,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof VouchergroupsApi
      */
-    getAllVouchergroups(c, l, i) {
-      return (0, o.VouchergroupsApiFp)(this.configuration).getAllVouchergroups(c, l, i).then((t) => t(this.axios, this.basePath));
+    getAllVouchergroups(d, l, i) {
+      return (0, o.VouchergroupsApiFp)(this.configuration).getAllVouchergroups(d, l, i).then((t) => t(this.axios, this.basePath));
     }
     /**
      *
@@ -9688,8 +9896,8 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof VouchergroupsApi
      */
-    getVouchergroupId(c, l) {
-      return (0, o.VouchergroupsApiFp)(this.configuration).getVouchergroupId(c, l).then((i) => i(this.axios, this.basePath));
+    getVouchergroupId(d, l) {
+      return (0, o.VouchergroupsApiFp)(this.configuration).getVouchergroupId(d, l).then((i) => i(this.axios, this.basePath));
     }
     /**
      *
@@ -9700,18 +9908,18 @@ N.createRequestFunction = zr;
      * @throws {RequiredError}
      * @memberof VouchergroupsApi
      */
-    updateVoucherGroup(c, l, i) {
-      return (0, o.VouchergroupsApiFp)(this.configuration).updateVoucherGroup(c, l, i).then((t) => t(this.axios, this.basePath));
+    updateVoucherGroup(d, l, i) {
+      return (0, o.VouchergroupsApiFp)(this.configuration).updateVoucherGroup(d, l, i).then((t) => t(this.axios, this.basePath));
     }
   }
-  o.VouchergroupsApi = ks;
-})(ot);
-var Ve = {};
-Object.defineProperty(Ve, "__esModule", { value: !0 });
-Ve.Configuration = void 0;
-class Kr {
-  constructor(h = {}) {
-    this.apiKey = h.apiKey, this.username = h.username, this.password = h.password, this.accessToken = h.accessToken, this.basePath = h.basePath, this.serverIndex = h.serverIndex, this.baseOptions = h.baseOptions, this.formDataCtor = h.formDataCtor;
+  o.VouchergroupsApi = Js;
+})(Ot);
+var Fe = {};
+Object.defineProperty(Fe, "__esModule", { value: !0 });
+Fe.Configuration = void 0;
+class pn {
+  constructor(c = {}) {
+    this.apiKey = c.apiKey, this.username = c.username, this.password = c.password, this.accessToken = c.accessToken, this.basePath = c.basePath, this.serverIndex = c.serverIndex, this.baseOptions = c.baseOptions, this.formDataCtor = c.formDataCtor;
   }
   /**
    * Check if the given MIME is a JSON MIME.
@@ -9723,55 +9931,54 @@ class Kr {
    * @param mime - MIME (Multipurpose Internet Mail Extensions)
    * @return True if the given MIME is JSON, false otherwise.
    */
-  isJsonMime(h) {
+  isJsonMime(c) {
     const v = new RegExp("^(application/json|[^;/ 	]+/[^;/ 	]+[+]json)[ 	]*(;.*)?$", "i");
-    return h !== null && (v.test(h) || h.toLowerCase() === "application/json-patch+json");
+    return c !== null && (v.test(c) || c.toLowerCase() === "application/json-patch+json");
   }
 }
-Ve.Configuration = Kr;
+Fe.Configuration = pn;
 (function(o) {
-  var h = le && le.__createBinding || (Object.create ? function(e, O, m, S) {
-    S === void 0 && (S = m);
+  var c = de && de.__createBinding || (Object.create ? function(e, O, m, f) {
+    f === void 0 && (f = m);
     var j = Object.getOwnPropertyDescriptor(O, m);
     (!j || ("get" in j ? !O.__esModule : j.writable || j.configurable)) && (j = { enumerable: !0, get: function() {
       return O[m];
-    } }), Object.defineProperty(e, S, j);
-  } : function(e, O, m, S) {
-    S === void 0 && (S = m), e[S] = O[m];
-  }), v = le && le.__exportStar || function(e, O) {
-    for (var m in e)
-      m !== "default" && !Object.prototype.hasOwnProperty.call(O, m) && h(O, e, m);
+    } }), Object.defineProperty(e, f, j);
+  } : function(e, O, m, f) {
+    f === void 0 && (f = m), e[f] = O[m];
+  }), v = de && de.__exportStar || function(e, O) {
+    for (var m in e) m !== "default" && !Object.prototype.hasOwnProperty.call(O, m) && c(O, e, m);
   };
-  Object.defineProperty(o, "__esModule", { value: !0 }), v(ot, o), v(Ve, o);
-})(H);
-const Y = G.create();
-Y.interceptors.response.use((o) => (Xs(o), o));
-class tn {
-  constructor(h) {
-    k(this, "_authenticateApi");
-    k(this, "_balanceApi");
-    k(this, "_debtorsApi");
-    k(this, "_usersApi");
-    k(this, "_posApi");
-    k(this, "_categoryApi");
-    k(this, "_transactionApi");
-    k(this, "_bannerApi");
-    k(this, "_rootApi");
-    k(this, "_voucherGroupApi");
-    k(this, "_containerApi");
-    k(this, "_filesApi");
-    k(this, "_invoicesApi");
-    k(this, "_payoutsApi");
-    k(this, "_productsApi");
-    k(this, "_transfersApi");
-    k(this, "_vatGroupsApi");
-    k(this, "_stripeApi");
-    k(this, "_rbacApi");
-    k(this, "_openBannerApi");
-    const v = new H.Configuration({
-      accessToken: () => Le().token
+  Object.defineProperty(o, "__esModule", { value: !0 }), v(Ot, o), v(Fe, o);
+})(G);
+const z = Y.create();
+z.interceptors.response.use((o) => (na(o), o));
+class mn {
+  constructor(c) {
+    $(this, "_authenticateApi");
+    $(this, "_balanceApi");
+    $(this, "_debtorsApi");
+    $(this, "_usersApi");
+    $(this, "_posApi");
+    $(this, "_categoryApi");
+    $(this, "_transactionApi");
+    $(this, "_bannerApi");
+    $(this, "_rootApi");
+    $(this, "_voucherGroupApi");
+    $(this, "_containerApi");
+    $(this, "_filesApi");
+    $(this, "_invoicesApi");
+    $(this, "_payoutsApi");
+    $(this, "_productsApi");
+    $(this, "_transfersApi");
+    $(this, "_vatGroupsApi");
+    $(this, "_stripeApi");
+    $(this, "_rbacApi");
+    $(this, "_openBannerApi");
+    const v = new G.Configuration({
+      accessToken: () => Ye().token
     });
-    this._authenticateApi = new H.AuthenticateApi(v, h, Y), this._balanceApi = new H.BalanceApi(v, h, Y), this._debtorsApi = new H.DebtorsApi(v, h, Y), this._usersApi = new H.UsersApi(v, h, Y), this._posApi = new H.PointofsaleApi(v, h, Y), this._categoryApi = new H.ProductCategoriesApi(v, h, Y), this._transactionApi = new H.TransactionsApi(v, h, Y), this._bannerApi = new H.BannersApi(v, h, Y), this._openBannerApi = new H.BannersApi(void 0, h, Y), this._rootApi = new H.RootApi(), this._voucherGroupApi = new H.VouchergroupsApi(v, h, Y), this._containerApi = new H.ContainersApi(v, h, Y), this._filesApi = new H.FilesApi(v, h, Y), this._invoicesApi = new H.InvoicesApi(v, h, Y), this._payoutsApi = new H.PayoutRequestsApi(v, h, Y), this._productsApi = new H.ProductsApi(v, h, Y), this._transfersApi = new H.TransfersApi(v, h, Y), this._vatGroupsApi = new H.VatGroupsApi(v, h, Y), this._stripeApi = new H.StripeApi(v, h, Y), this._rbacApi = new H.RbacApi(v, h, Y);
+    this._authenticateApi = new G.AuthenticateApi(v, c, z), this._balanceApi = new G.BalanceApi(v, c, z), this._debtorsApi = new G.DebtorsApi(v, c, z), this._usersApi = new G.UsersApi(v, c, z), this._posApi = new G.PointofsaleApi(v, c, z), this._categoryApi = new G.ProductCategoriesApi(v, c, z), this._transactionApi = new G.TransactionsApi(v, c, z), this._bannerApi = new G.BannersApi(v, c, z), this._openBannerApi = new G.BannersApi(void 0, c, z), this._rootApi = new G.RootApi(), this._voucherGroupApi = new G.VouchergroupsApi(v, c, z), this._containerApi = new G.ContainersApi(v, c, z), this._filesApi = new G.FilesApi(v, c, z), this._invoicesApi = new G.InvoicesApi(v, c, z), this._payoutsApi = new G.PayoutRequestsApi(v, c, z), this._productsApi = new G.ProductsApi(v, c, z), this._transfersApi = new G.TransfersApi(v, c, z), this._vatGroupsApi = new G.VatGroupsApi(v, c, z), this._stripeApi = new G.StripeApi(v, c, z), this._rbacApi = new G.RbacApi(v, c, z);
   }
   get authenticate() {
     return this._authenticateApi;
@@ -9834,23 +10041,23 @@ class tn {
     return this._openBannerApi;
   }
 }
-function sn(o) {
-  o.mask.addEventListener("click", function(h) {
-    h.target === o.mask && o.close();
+function fn(o) {
+  o.mask.addEventListener("click", function(c) {
+    c.target === o.mask && o.close();
   });
 }
 export {
-  tn as ApiService,
-  sn as addListenerOnDialogueOverlay,
-  Zs as clearTokenInStorage,
-  Ks as fetchAllPages,
-  Le as getTokenFromStorage,
-  sa as isAuthenticated,
-  ta as isTokenExpired,
-  ea as parseToken,
-  Xr as populateStoresFromToken,
-  it as setTokenInStorage,
-  Xs as updateTokenIfNecessary,
-  aa as useAuthStore,
-  rt as useUserStore
+  mn as ApiService,
+  fn as addListenerOnDialogueOverlay,
+  ia as clearTokenInStorage,
+  sa as fetchAllPages,
+  Ye as getTokenFromStorage,
+  ca as isAuthenticated,
+  la as isTokenExpired,
+  oa as parseToken,
+  On as populateStoresFromToken,
+  vt as setTokenInStorage,
+  na as updateTokenIfNecessary,
+  da as useAuthStore,
+  pt as useUserStore
 };

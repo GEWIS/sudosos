@@ -408,27 +408,27 @@ $accordionContentTextColor:$panelContentTextColor !default;
 $accordionContentPadding:$panelContentPadding !default;
 
 //tabview
-$tabviewNavBorder:1px solid #dee2e6 !default;
+$tabviewNavBorder:none;
 $tabviewNavBorderWidth:0 0 1px 0 !default;
 $tabviewNavBg:transparent !default;
 
 $tabviewHeaderSpacing:0 !default;
 $tabviewHeaderBorder:solid !default;
 $tabviewHeaderBorderWidth:1px !default;
-$tabviewHeaderBorderColor:$shade100 $shade100 #dee2e6 $shade100 !default;
-$tabviewHeaderBg:$shade100 !default;
+$tabviewHeaderBorderColor:$shade100 $shade100 $shade100 $shade100 !default;
+$tabviewHeaderBg:$shade200 !default;
 $tabviewHeaderTextColor:$shade600 !default;
 $tabviewHeaderFontWeight:$panelHeaderFontWeight !default;
 $tabviewHeaderPadding:.75rem 1rem !default;
 $tabviewHeaderMargin:0 0 -1px 0 !default;
 
-$tabviewHeaderHoverBg:$shade100 !default;
-$tabviewHeaderHoverBorderColor:#dee2e6 !default;
+$tabviewHeaderHoverBg:$shade300 !default;
+$tabviewHeaderHoverBorderColor: $shade100 !default;
 $tabviewHeaderTextHoverColor:$shade600 !default;
 
 $tabviewHeaderActiveBg:$shade100 !default;
-$tabviewHeaderActiveBorderColor:#dee2e6 #dee2e6 $shade100 #dee2e6 !default;
-$tabviewHeaderTextActiveColor:$shade700 !default;
+$tabviewHeaderActiveBorderColor: $shade100 $shade100 #dee2e6 $shade100 !default;
+$tabviewHeaderTextActiveColor:$primaryColor !default;
 
 $tabviewContentBorder:0 none !default;
 $tabviewContentBg:$panelContentBg !default;

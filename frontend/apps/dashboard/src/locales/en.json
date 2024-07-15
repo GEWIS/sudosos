@@ -280,7 +280,17 @@
     "total": "Total:",
     "waivedFineDescr": "Your fines were waived.",
     "what": "What",
-    "when": "When"
+    "when": "When",
+    "pos": "Point of sale",
+    "from": "From",
+    "userBoughtAt": "You bought at {pos}",
+    "otherBoughtAt": "{user} bought at {pos}",
+    "putInBy": "Transaction put in by {createdBy}",
+    "createdBy": "Created by",
+    "createdFor": "Created for",
+    "balanceMutations": "Balance mutations",
+    "createdTransactions": "Created transactions",
+    "recentTransactions": "Recent transactions"
   },
   "userDetails": {
     "Active": "Active",
