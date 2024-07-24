@@ -25,10 +25,9 @@
                 <Skeleton class="w-6 my-1 h-1rem surface-300" />
             </template>
             <template #body="mutation" v-else>
-                {{ mutation.data.createdBy
-                && (mutation.data.createdBy?.id == userStore.current.user.id
-                    ? "You"
-                    : mutation.data.createdBy?.firstName + " " + mutation.data.createdBy?.lastName)
+                {{
+                mutation.data.createdBy && userStore.current.user.id !== mutation.data.createdBy?.id ?
+                    `${mutation.data.createdBy.firstName} ${mutation.data.createdBy.lastName}` : "You"
                 }}
             </template>
         </Column>
@@ -93,8 +92,8 @@ import {
     parseFinancialMutations,
     getDescription
 } from "@/utils/mutationUtils";
-import CardComponent from "@/components/CardComponent.vue";
 import ModalMutation from "@/components/mutations/mutationmodal/ModalMutation.vue";
+import { isIncreasingTransfer, isFine } from "@/utils/mutationUtils";
 
 import { useUserStore } from "@sudosos/sudosos-frontend-common";
 import type { PaginatedFinancialMutationResponse } from "@sudosos/sudosos-client";
