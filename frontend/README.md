@@ -67,5 +67,5 @@ You can quickly start development directly in your browser by using [Codespaces]
 - Run `npm run dev` to start the development environment.
 - You can access the dashboard and point of sale at `localhost:5173` and `localhost:5174` respectively.
 
-### Set up browser for CORS
-By default no network requests are allowed from other hosts to `sudosos.test.gewis.nl`. This will prevent critical network requests like authentication from working correctly. To allow this, CORS will need to be disabled. This can be done by using an [extension](https://addons.mozilla.org/en-US/firefox/addon/cors-everywhere/) that can disable CORS. Alternatively, if you are using chrome, [you can directly run it without CORS](https://stackoverflow.com/questions/3102819/disable-same-origin-policy-in-chrome).
+### Proxying requests to different backends
+In the respective `.env` files, you can change which backend the frontend uses in development by changing the `VITE_DEV_API_BASE`. By default, this is set to the test backend (`https://sudosos.test.gewis.nl/api/v1`), but you can also change it to `https://sudosos.gewis.nl/api/v1` for the production backend. Or you can change it to `http://localhost:3000` if you are running the backend locally.   
