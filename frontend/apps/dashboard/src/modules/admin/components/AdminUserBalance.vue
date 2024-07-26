@@ -1,8 +1,6 @@
 <template>
   <CardComponent
       :header="$t('c_currentBalance.balance')"
-      :action="showOption ? $t('c_currentBalance.Increase balance') : ''"
-      routerLink="balance"
   >
     <div class="flex flex-column justify-content-center">
       <div v-if="isLoading">
@@ -18,54 +16,28 @@
 
 <script setup lang="ts">
 import CardComponent from '@/components/CardComponent.vue';
-import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
 import { computed, ref, onMounted, type Ref, watch } from "vue";
 import type { BalanceResponse, UserResponse } from '@sudosos/sudosos-client';
 import apiService from '@/services/ApiService';
 import { formatPrice } from "@/utils/formatterUtils";
-import { storeToRefs } from "pinia";
-import { useRouter } from "vue-router";
 
-const props = defineProps({
-  user: {
-    type: Object as () => UserResponse,
-    required: false
-  },
-  showOption: {
-    type: Boolean,
-    required: true,
-  }
-});
+const props = defineProps<{
+    user: UserResponse | undefined;
+}>();
 
-const userStore = useUserStore();
 const userBalance: Ref<BalanceResponse | null> = ref(null);
-const { current } = storeToRefs(userStore);
-const router = useRouter();
 const isLoading: Ref<boolean> = ref(true);
 const updateUserBalance = async () => {
-  if (props.user) {
+  if(props.user) {
     const response = await apiService.balance.getBalanceId(props.user.id);
     userBalance.value = response.data;
-  } else {
-    // Force refresh balance, since people tend to refresh pages like this to ensure an up to date balance.
-    const auth = useAuthStore();
-    if (!auth.getUser){
-      await router.replace({ path: '/error' });
-      return;
-    }
-    await userStore.fetchCurrentUserBalance(auth.getUser.id, apiService);
-    userBalance.value = userStore.getCurrentUser.balance;
+    isLoading.value = false;
   }
-  isLoading.value = false;
 };
 
 onMounted(updateUserBalance);
 
 watch(() => props.user, () => {
-  updateUserBalance();
-});
-
-watch(current, () => {
   updateUserBalance();
 });
 

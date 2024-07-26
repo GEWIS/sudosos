@@ -49,7 +49,7 @@
           </div>
         </form>
       </CardComponent>
-      <AdminUserBalance :user="currentUser" :showOption="false" id="userBalance" />
+      <AdminUserBalance :user="currentUser" />
         <CardComponent
             :header="$t('transactions.recentTransactions')"
             class="w-full">
