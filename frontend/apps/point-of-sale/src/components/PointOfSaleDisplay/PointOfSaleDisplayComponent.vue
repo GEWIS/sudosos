@@ -52,7 +52,7 @@ import PointOfSaleProductsComponent from "@/components/PointOfSaleDisplay/PointO
 import { usePointOfSaleStore } from "@/stores/pos.store";
 import { useSettingStore } from "@/stores/settings.store";
 
-defineProps({
+const props = defineProps({
   pointOfSale: {
     type: Object as () => PointOfSaleWithContainersResponse | undefined,
     required: true
@@ -60,12 +60,34 @@ defineProps({
 });
 
 const cartStore = useCartStore();
-const selectedCategoryId = ref<string | undefined>(getDefaultCategoryId());
 const searchQuery = ref('');
 const isSearchViewVisible = ref(false);
 const searchInput = ref<null | HTMLInputElement>(null);
+const AllCategory = { name: 'All', id: 'all' };
+const productCount = computed(() => {
+  if (!props.pointOfSale) return 0;
+  const ids = new Set();
+  props.pointOfSale.containers.forEach((container) => {
+    return container.products.forEach((product) => {
+      ids.add(product.id);
+    });
+  });
+  return ids.size;
+});
+
+const shouldShowAllCategory = computed(() => {
+  return props.pointOfSale && productCount.value <= 15;
+});
+
+const shouldOnlyShowAllCategory = computed(() => {
+  return props.pointOfSale && productCount.value <= 5;
+});
+
+const selectedCategoryId = ref<string | undefined>(getDefaultCategoryId());
 
 const computedCategories = computed(() => {
+  if (shouldOnlyShowAllCategory.value) return [AllCategory];
+  if (shouldShowAllCategory.value) return [AllCategory].concat(usePointOfSaleStore().allProductCategories);
   return usePointOfSaleStore().allProductCategories;
 });
 
@@ -75,7 +97,7 @@ function getDefaultCategoryId(): string | undefined {
   const nonAlcoholicCategory = usePointOfSaleStore().allProductCategories.find(
       (category: {name: string, id: string}) => category.name.toLowerCase() === target
   );
-
+  if (shouldShowAllCategory.value) return 'all';
   return nonAlcoholicCategory ? nonAlcoholicCategory.id : undefined;
 }
 
@@ -101,6 +123,13 @@ watch(
           searchInput.value.setSelectionRange(0, len);
         }
       }
+    }
+);
+
+watch(
+    () => props.pointOfSale,
+    (newPos) => {
+      if (newPos) selectedCategoryId.value = getDefaultCategoryId();
     }
 );
 

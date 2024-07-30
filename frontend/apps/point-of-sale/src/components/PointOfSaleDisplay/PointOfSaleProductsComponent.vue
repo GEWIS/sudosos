@@ -56,7 +56,7 @@ const getFilteredProducts = () => {
     }));
   });
 
-  if (props.selectedCategoryId && !props.isProductSearch) {
+  if (props.selectedCategoryId && props.selectedCategoryId !== 'all' && !props.isProductSearch) {
     filteredProducts = filteredProducts.filter((product) => {
       return product.product.category.id === Number(props.selectedCategoryId);
     });
@@ -101,9 +101,19 @@ const sortedProducts = computed(() => {
         return 1;
       }
     }
-      const nameA = a.product.name.toLowerCase();
-      const nameB = b.product.name.toLowerCase();
-      return nameA.localeCompare(nameB);
+
+    // If category is 'all', first also sort by categoryId
+    if (props.selectedCategoryId === 'all') {
+      if (a.product.category.id < b.product.category.id) {
+        return -1;
+      } else if (a.product.category.id > b.product.category.id) {
+        return 1;
+      }
+    }
+
+    const nameA = a.product.name.toLowerCase();
+    const nameB = b.product.name.toLowerCase();
+    return nameA.localeCompare(nameB);
   });
 
   return products;
