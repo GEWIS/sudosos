@@ -1,7 +1,7 @@
 <template>
   <footer>
-    <span class="copyright">
-      <b>{{ $t('login.copyright') }}</b>
+    <span @click="showVersion = !showVersion" class="copyright">
+      <b>{{ showVersion ? `${branch}#${commit}` : $t('login.copyright') }}</b> 
     </span>
     <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
     <span class="separator"> | </span>
@@ -14,7 +14,12 @@
 <script setup lang="ts">
 import FooterTermsOfServiceModal from '@/components/footer/FooterTermsOfServiceModal.vue';
 import FooterContactModal from '@/components/footer/FooterContactModal.vue';
+import { ref } from 'vue';
 
+const branch = __GIT_BRANCH__;
+const commit = __GIT_COMMIT__;
+
+const showVersion = ref(false);
 </script>
 
 <style scoped>
