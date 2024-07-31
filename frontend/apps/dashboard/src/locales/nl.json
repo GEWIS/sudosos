@@ -226,7 +226,7 @@
     "changeUserInfo": "Verander gebruikersinformatie",
     "emailAddress": "Emailadres",
     "firstName": "Voornaam",
-    "individualDataAnalysis": "Individuele Data Analyse:",
+    "extensiveDataAnalysis": "Uitgebreide Data Analyse:",
     "keyGet": "Verkrijg API sleutel",
     "keyGetNew": "Verkrijg een nieuwe API sleutel",
     "keyNotSaved": "LET OP: je API sleutel wordt niet opgeslagen, dus kopieer deze nu",

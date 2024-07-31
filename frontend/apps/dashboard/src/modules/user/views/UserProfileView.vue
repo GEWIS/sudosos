@@ -16,7 +16,7 @@
       <div class="col-6 md:col-6">
         <ChangeApiKey v-if="isAdmin"/>
         <div class="flex flex-row mb-2 align-items-center">
-          <h3 class="mr-3">{{ $t('profile.individualDataAnalysis') }}</h3>
+          <h3 class="mr-3">{{ $t('profile.extensiveDataAnalysis') }}</h3>
           <InputSwitch v-model="dataAnalysis" @update:modelValue="handleChange" />
         </div>
       </div>
