@@ -74,7 +74,7 @@ export const useUserStore = defineStore('user', {
       skip?: number
     ) {
       this.current.financialMutations = (
-        await service.user.getUsersFinancialMutations(id, take, skip)
+        await service.user.getUsersFinancialMutations(id, undefined,undefined, take, skip)
       ).data;
     },
     async fetchUserCreatedTransactions(

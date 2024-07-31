@@ -16,7 +16,7 @@
   "dependencies": {
     "@stripe/stripe-js": "^2.1.7",
     "@sudosos/sudosos-frontend-common": "*",
-    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#e99915d437e9643833b655614648bca809bf6542",
+    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#0c0a4ed",
     "@types/dinero.js": "^1.9.4",
     "@vee-validate/rules": "^4.12.8",
     "@vee-validate/yup": "^4.11.1",
@@ -56,6 +56,6 @@
     "prettier": "^3.1.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.12",
-    "vue-tsc": "^1.6.5"
+    "vue-tsc": "^2.0.29"
   }
 }

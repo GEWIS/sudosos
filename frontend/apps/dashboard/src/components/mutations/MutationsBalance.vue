@@ -26,7 +26,7 @@
             </template>
             <template #body="mutation" v-else>
                 {{
-                mutation.data.createdBy && userStore.current.user.id !== mutation.data.createdBy?.id ?
+                mutation.data.createdBy && currentUserId !== mutation.data.createdBy?.id ?
                     `${mutation.data.createdBy.firstName} ${mutation.data.createdBy.lastName}` : "You"
                 }}
             </template>
@@ -84,7 +84,7 @@
 <script lang="ts" setup>
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
-import { onMounted, type Ref, ref } from "vue";
+import { computed, onMounted, type Ref, ref } from "vue";
 import { formatPrice } from '@/utils/formatterUtils';
 import {
     type FinancialMutation,
@@ -108,6 +108,7 @@ const props = defineProps<{
 const mutations = ref<FinancialMutation[]>(new Array(10));
 const totalRecords = ref<number>(0);
 const isLoading: Ref<boolean> = ref(true);
+const currentUserId = computed(() => userStore.current.user?.id);
 
 const rows: Ref<number> = ref(props.rowsAmount || 10);
 onMounted(async () => {

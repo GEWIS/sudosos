@@ -56,7 +56,7 @@ const props = defineProps({
 const containerStore = useContainerStore();
 
 const onTabOpen = async (event: AccordionTabOpenEvent) => {
-  await containerStore.getContainerWithProducts(props.containers[event.index]);
+  await containerStore.fetchContainer(props.containers[event.index].id);
 };
 
 const handleEditClick = async (event: Event, id: number) => {
@@ -67,7 +67,7 @@ const handleEditClick = async (event: Event, id: number) => {
 const openContainerEdit = async (id?: number) => {
   if (id) {
     const container = props.containers.find((c) => c.id === id);
-    if (container) selectedContainer.value = await containerStore.getContainerWithProducts(container, true);
+    if (container) selectedContainer.value = await containerStore.fetchContainer(container.id);
   }
   else selectedContainer.value = undefined;
   visible.value = true;

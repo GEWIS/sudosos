@@ -8,7 +8,7 @@
           ref="dialog"
           @show="openDialog"
   >
-    <div @submit="handleSubmit" class="flex flex-column gap-3">
+    <div class="flex flex-column gap-3">
       <div class="flex gap-5 justify-content-end" v-if="state.addToContainer">
         <p class="prop">{{ $t('c_productContainerOperations.Existing Product') }}</p>
         <Dropdown

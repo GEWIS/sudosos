@@ -78,23 +78,23 @@ export const useContainerStore = defineStore('container', {
          * Fetches a container by its ID and stores it in the store.
          * @param id - The ID of the container to fetch.
          */
-        async fetchContainer(id: number) {
+        async fetchContainer(id: number): Promise<ContainerWithProductsResponse> {
             return ApiService.container.getSingleContainer(id).then((resp) => {
                 this.containers[id] = resp.data;
-                return this.containers[id];
+                return this.containers[id] as ContainerWithProductsResponse;
             });
         },
         /**
          * Fetches all containers and stores them in the store.
          */
         async fetchAllContainers() {
-            return fetchAllPages<ContainerWithProductsResponse>(
+            return fetchAllPages<ContainerResponse>(
               0,
               Number.MAX_SAFE_INTEGER,
               // @ts-ignore
               (take, skip) => ApiService.container.getAllContainers(take, skip)
             ).then((containersArray) => {
-                containersArray.forEach((container: ContainerWithProductsResponse) => {
+                containersArray.forEach((container: ContainerResponse) => {
                     this.containers[container.id] = container;
                 });
                 return this.containers;
@@ -204,36 +204,6 @@ export const useContainerStore = defineStore('container', {
             this.containers[container.id] = container;
 
             return container;
-        },
-        /**
-         * Fetches a container with products and stores it in the store.
-         * @param c
-         * @param force
-         */
-        async getContainerWithProducts(c: ContainerResponse, force: boolean = false):
-          Promise<ContainerWithProductsResponse | undefined> {
-            let container = this.containers[c.id];
-
-            if (!container) {
-                // Fetch container if not already in state
-                const resp = await ApiService.container.getSingleContainer(c.id);
-                container = resp.data;
-                this.containers[c.id] = container;
-            }
-
-            if (force || (container && (!isContainerWithProductsResponse(container)))) {
-                // Fetch products for the container if not already present or if force is true
-                const products = await fetchAllPages<ProductResponse>(
-                  0,
-                  Number.MAX_SAFE_INTEGER,
-                  // @ts-ignore
-                  (take, skip) => ApiService.container.getProductsContainer(c.id, take, skip)
-                );
-                // Ensure reactivity by creating a new container object
-                this.containers[c.id] = { ...container, products };
-            }
-
-            return this.containers[c.id] as ContainerWithProductsResponse;
         }
     }
 });
