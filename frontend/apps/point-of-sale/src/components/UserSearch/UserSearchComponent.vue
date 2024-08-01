@@ -5,7 +5,7 @@
         <div class="c-btn active square search-close icon-large" @click="cancelSearch()">
           <i class="pi pi-times text-4xl"/>
         </div>
-        <input type="text" ref="searchInput" class="flex-sm-grow-1" v-model="searchQuery"
+        <input type="text" ref="searchInput" class="flex-sm-grow-1" v-model="searchValue"
                placeholder="Search user to charge..."
                autocomplete="off"
                @input="updateSearchQuery($event as InputEvent)"/>
@@ -45,7 +45,8 @@ import ScrollPanel from "primevue/scrollpanel";
 import Fuse from "fuse.js";
 import { usePointOfSaleStore } from "@/stores/pos.store";
 
-const searchQuery = ref<string>('');
+const searchValue = ref<string>('');
+const searchQuery = computed(() => searchValue.value.split(' ')[0]);
 
 const users = ref<UserResponse[]>([]);
 const cartStore = useCartStore();
@@ -72,16 +73,16 @@ const getRecentUsers = async () => {
 
 const updateSearchQuery = (event: InputEvent) => {
   if (event.target) {
-    searchQuery.value = (event.target as HTMLInputElement).value;
+    searchValue.value = (event.target as HTMLInputElement).value;
   }
 };
 
 const delayedAPICall = debounce(() => {
-  apiService.user.getAllUsers(Number.MAX_SAFE_INTEGER, 0, searchQuery.value, true)
+  apiService.user.getAllUsers(200, 0, searchQuery.value, true)
     .then((res: AxiosResponse<PaginatedUserResponse, any>) => {
       users.value = res.data.records;
     });
-}, 500);
+}, 50);
 
 watch(searchQuery, () => {
   delayedAPICall();
@@ -90,12 +91,11 @@ watch(searchQuery, () => {
 const recent: Ref<BaseUserResponse[]> = ref([]);
 
 const getUsers = computed(() => {
-  if (searchQuery.value) return sortedUsers.value;
+  if (searchValue.value) return sortedUsers.value;
   return recent.value;
 });
 
 const sortedUsers = computed(() => {
-  // TODO: fix backend searching
   // This fuzzy search allows us to effectively search in the front-end, but this should be done in the backend.
   const full = [...users.value].map((u: UserResponse) => {
     return {
@@ -106,18 +106,17 @@ const sortedUsers = computed(() => {
   const fuzzed: UserResponse[] = new Fuse(
     full,
     {
-      keys: ['fullName', 'gewisID', 'nickname'],
+      keys: [{ name: 'fullName', weight: 0.3 }, { name: 'nickname', weight: 0.7 }],
       isCaseSensitive: false,
       shouldSort: true,
       threshold: 0.2,
     },
-  ).search(searchQuery.value).map((r) => r.item);
+  ).search(searchValue.value).map((r) => r.item);
 
   const filteredUsers = [...fuzzed].filter((user) => ["MEMBER", "LOCAL_USER", "LOCAL_ADMIN",
     "INVOICE", "AUTOMATIC_INVOICE"].includes(user.type));
-  const sortedOnId = filteredUsers.sort((a, b) => b.id - a.id);
-  const validUsers = sortedOnId.filter(user => user.active && user.acceptedToS !== "NOT_ACCEPTED");
-  const invalidUsers = sortedOnId.filter(user => !user.active || user.acceptedToS === "NOT_ACCEPTED");
+  const validUsers = filteredUsers.filter(user => user.active && user.acceptedToS !== "NOT_ACCEPTED");
+  const invalidUsers = filteredUsers.filter(user => !user.active || user.acceptedToS === "NOT_ACCEPTED");
   return [...validUsers, ...invalidUsers];
 });
 
