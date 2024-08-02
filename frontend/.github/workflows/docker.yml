@@ -98,3 +98,10 @@ jobs:
             GIT_COMMIT_BRANCH=${{ github.head_ref || github.ref_name }} 
             GIT_COMMIT_SHA=${{ env.GIT_COMMIT_SHA }}
           file: ${{ matrix.dockerfile_path }}
+
+      - name: Portainer Webhook
+        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        uses: fjogeleit/http-request-action@v1
+        with:
+            url: ${{ secrets.PORTAINER_WEBHOOK_URL_DEVELOP }}
+            method: 'POST'
