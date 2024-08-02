@@ -59,12 +59,12 @@ You can quickly start development directly in your browser by using [Codespaces]
 
 #### Step 1: Installing
 - Use git to [clone](https://github.com/git-guides#how-do-i-use-git) the repository.
-- Run `npm install`
+- Run `yarn install`
 - Copy the .env.example file to .env in the `apps/dashboard` and `apps/point-of-sale` directories
 
 #### Step 2: Running the dashboard/point-of-sale
 - Run `cd apps/dashboard` or `cd apps/point-of-sale` in the terminal. 
-- Run `npm run dev` to start the development environment.
+- Run `yarn run dev` to start the development environment.
 - You can access the dashboard and point of sale at `localhost:5173` and `localhost:5174` respectively.
 
 ### Proxying requests to different backends

@@ -17,7 +17,7 @@
         </template>
         <template #body="slotProps" v-else>
           <Button
-              @click="$router.push({name: 'pointOfSaleInfo', params: {id: slotProps.data.id}})"
+              @click="router.push({name: 'pointOfSaleInfo', params: {id: slotProps.data.id}})"
               type="button"
               icon="pi pi-info-circle"
               outlined
@@ -36,6 +36,7 @@ import { useUserStore } from "@sudosos/sudosos-frontend-common";
 import { usePointOfSaleStore } from "@/stores/pos.store";
 import type { PointOfSaleResponse } from "@sudosos/sudosos-client";
 import Skeleton from "primevue/skeleton";
+import router from "@/router";
 const userStore = useUserStore();
 const pointOfSaleStore = usePointOfSaleStore();
 const listOfPOS: Ref<Array<PointOfSaleResponse>> = ref(new Array(10));

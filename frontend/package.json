@@ -4,5 +4,6 @@
         "apps/point-of-sale",
         "apps/dashboard",
         "lib/common"
-    ]
+    ],
+    "private": "true"
 }

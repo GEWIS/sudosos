@@ -3,14 +3,14 @@ FROM node:20 as build
 WORKDIR /app
 COPY lib/common/ lib/common/
 COPY apps/dashboard/package.json apps/dashboard/
-COPY ./package.json ./package-lock.json ./
+COPY ./package.json ./yarn.lock ./
+RUN yarn install
+COPY apps/dashboard/ apps/dashboard/
 ARG GIT_COMMIT_BRANCH
 ENV VITE_GIT_COMMIT_BRANCH=${GIT_COMMIT_BRANCH}
 ARG GIT_COMMIT_SHA
 ENV VITE_GIT_COMMIT_SHA=${GIT_COMMIT_SHA}
-RUN npm install
-COPY apps/dashboard/ apps/dashboard/
-RUN npm run build --workspace=sudosos-dashboard
+RUN yarn workspace sudosos-dashboard build
 
 # The target image that will be run
 FROM nginx:alpine as target
