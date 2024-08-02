@@ -1,7 +1,8 @@
 <template>
   <footer>
     <span @click="showVersion = !showVersion" class="copyright">
-      <b>{{ showVersion ? `${branch}#${commit}` : $t('login.copyright') }}</b> 
+      <b v-if="!showVersion">{{$t('login.copyright')}}</b>
+      <b v-else>{{localBuild ? $t('login.localBuild') : `${branch}#${commit}`}}</b>
     </span>
     <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
     <span class="separator"> | </span>
@@ -14,12 +15,17 @@
 <script setup lang="ts">
 import FooterTermsOfServiceModal from '@/components/footer/FooterTermsOfServiceModal.vue';
 import FooterContactModal from '@/components/footer/FooterContactModal.vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
-const branch = __GIT_BRANCH__;
-const commit = __GIT_COMMIT__;
-
+const branch: string | undefined =  import.meta.env.VITE_GIT_COMMIT_BRANCH;
+const commit: string | undefined =  import.meta.env.VITE_GIT_COMMIT_SHA;
 const showVersion = ref(false);
+
+const localBuild = computed (() => {
+  if (typeof branch !== 'string' || branch.length === 0) return true;
+  if (typeof commit !== 'string' || commit.length === 0) return true;
+  return false;
+});
 </script>
 
 <style scoped>

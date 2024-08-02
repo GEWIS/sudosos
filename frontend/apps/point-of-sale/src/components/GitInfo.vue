@@ -1,10 +1,21 @@
 <template>
-  <div class="absolute tag font-bold opacity-30"> {{branch}}#{{commit}} </div>
+  <div class="absolute tag font-bold opacity-30">
+    <b>{{localBuild ? `Local build`: `${branch}#${commit}`}}</b>
+  </div>
 </template>
 
 <script setup lang="ts">
-const branch = __GIT_BRANCH__;
-const commit = __GIT_COMMIT__;
+import { computed } from "vue";
+
+const branch: string | undefined =  import.meta.env.VITE_GIT_COMMIT_BRANCH;
+const commit: string | undefined =  import.meta.env.VITE_GIT_COMMIT_SHA;
+
+const localBuild = computed (() => {
+  if (typeof branch !== 'string' || branch.length === 0) return true;
+  if (typeof commit !== 'string' || commit.length === 0) return true;
+  return false;
+});
+
 </script>
 
 <style scoped lang="scss">

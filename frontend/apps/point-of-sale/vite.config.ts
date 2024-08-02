@@ -1,7 +1,6 @@
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
-import useGitInfo from "./vite.config.plugin-git-info";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -34,9 +33,6 @@ export default defineConfig(({ mode }) => {
           rewrite: (path) => path.replace(/^\/api/, ''),
         }
       }
-    },
-    define: {
-      ...useGitInfo(),
     }
   };
 });

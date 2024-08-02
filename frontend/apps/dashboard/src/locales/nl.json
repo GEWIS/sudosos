@@ -201,7 +201,8 @@
     "SudoSOS Login": "SudoSOS Login",
     "Username": "Gebruikersnaam",
     "copyright": "© 2024 GEWIS",
-    "localAccount": "Login met een lokaal account"
+    "localAccount": "Login met een lokaal account",
+    "localBuild": "Lokale versie"
   },
   "manageProducts": {
     "Containers": "Containers"

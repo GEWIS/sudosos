@@ -14,8 +14,6 @@ concurrency:
 jobs:
   dockerize:
     runs-on: ubuntu-latest
-    container:
-      image: docker:dind
     strategy:
       matrix:
         app: [ dashboard, point-of-sale, point-of-sale-ab]
@@ -45,6 +43,12 @@ jobs:
         with:
           path: .
 
+      - name: Safe directory
+        run: git config --global --add safe.directory '*'
+
+      - name: Get short commit SHA
+        run: echo "GIT_COMMIT_SHA=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
+
       - name: Set up environment - main
         env:
           ENV_FILE: ${{ matrix.env_file_main }}
@@ -68,9 +72,6 @@ jobs:
           tags: |
             type=ref,enable=true,priority=600,prefix=,suffix=,event=branch
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -93,4 +94,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            GIT_COMMIT_BRANCH=${{ github.head_ref || github.ref_name }} 
+            GIT_COMMIT_SHA=${{ env.GIT_COMMIT_SHA }}
           file: ${{ matrix.dockerfile_path }}

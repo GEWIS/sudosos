@@ -97,7 +97,8 @@
     "SudoSOS Login": "SudoSOS Login",
     "Username": "Username",
     "copyright": "© 2024 GEWIS",
-    "localAccount": "Login using local account"
+    "localAccount": "Login using local account",
+    "localBuild": "Local build"
   },
   "manageProducts": {
     "Containers": "Containers"
