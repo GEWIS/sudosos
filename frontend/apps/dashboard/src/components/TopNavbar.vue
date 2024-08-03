@@ -1,7 +1,7 @@
 
 <template>
     <nav class="bg-primary w-full flex justify-content-around">
-        <Menubar class="hidden md:flex" :model="leftItems">
+      <Menubar class="hidden mb:flex" :model="leftItems">
           <template #start>
             <router-link to="/" class="no-underline text-white font-bold flex align-items-center flex-row py-1">
               {{ $t("login.SudoSOS") }}
@@ -20,7 +20,7 @@
             </a>
           </template>
         </Menubar>
-      <Menubar class="hidden md:flex" :model="rightItems">
+      <Menubar class="hidden mb:flex" :model="rightItems">
         <template #start>
           <img class="h-1rem" src="../assets/img/bier.png"/>
         </template>
@@ -38,7 +38,7 @@
         </template>
       </Menubar>
       <Menubar
-        class="flex md:hidden flex-row flex-wrap justify-content-between mx-2 my-2 transition-all w-full"
+        class="flex mb:hidden flex-row flex-wrap justify-content-between mx-2 my-2 transition-all w-full"
         :model="mobileItems"
       >
         <template #start>
@@ -312,4 +312,12 @@ const mobileItems = computed(() => [
 </script>
 
 <style scoped lang="scss">
+@media screen and (min-width: 1000px) {
+  .mb\:hidden {
+    display: none !important;
+  }
+  .mb\:flex {
+    display: flex !important;
+  }
+}
 </style>
