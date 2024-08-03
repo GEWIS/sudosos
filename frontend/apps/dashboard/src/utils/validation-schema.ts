@@ -11,6 +11,7 @@ export const userDetailsSchema = toTypedSchema(
         firstName: yup.string().required(),
         lastName: yup.string().required(),
         email: yup.string().email(),
+        nickname: yup.string(),
         userType: yup.mixed().required(),
         isActive: yup.boolean().required().default(true),
         ofAge: yup.boolean().required().default(false),
