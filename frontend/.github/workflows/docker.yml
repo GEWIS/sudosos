@@ -105,3 +105,4 @@ jobs:
         with:
             url: ${{ secrets.PORTAINER_WEBHOOK_URL_DEVELOP }}
             method: 'POST'
+            ignoreStatusCodes: true
