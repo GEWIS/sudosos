@@ -3,6 +3,7 @@ import * as yup from "yup";
 import { ref } from "vue";
 import type { Ref } from "vue";
 import i18n from './i18nUtils';
+import type { BaseUserResponse } from "@sudosos/sudosos-client";
 
 const t = i18n.global.t;
 
@@ -68,3 +69,11 @@ export const userTypes : Ref<Array<{name: string, value: number}>> = ref([
   { name: 'INVOICE', value: 6 },
   { name: 'AUTOMATIC_INVOICE', value: 7 },
 ]);
+
+export const createPayoutSchema =
+  yup.object({
+    amount: yup.number().required().default(0),
+    bankAccountNumber: yup.string().required(),
+    bankAccountName: yup.string().required(),
+    user: yup.mixed<BaseUserResponse>().required(),
+  });

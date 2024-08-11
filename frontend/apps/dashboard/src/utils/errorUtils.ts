@@ -9,6 +9,9 @@ export function isErrorResponse(data: any): data is ErrorResponse {
   return data && typeof data.message === 'string';
 }
 
+function isErrorMessage(data: any): data is string {
+  return typeof data === 'string';
+}
 
 // Method to add a toast involving an AxiosError
 export function handleError(response: AxiosError, toast: ToastServiceMethods){
@@ -18,6 +21,8 @@ export function handleError(response: AxiosError, toast: ToastServiceMethods){
     let message = 'An error has occurred';
     if (isErrorResponse(data)) {
       message = data.message;
+    } else if (isErrorMessage(data)) {
+      message = data;
     }
     toast.add({
       severity: 'error',

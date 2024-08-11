@@ -371,5 +371,27 @@
     "edit": "Bewerken",
     "save": "Opslaan",
     "close": "Sluiten"
+  },
+  "payout": {
+    "Payouts": "Uitbetalingen",
+    "Payouts overview": "Uitbetalingen overzicht",
+    "Date": "Datum",
+    "Progress": "Voortgang",
+    "Requested by": "Aangevraagd door",
+    "BankAccountName": "Bank Account Name",
+    "BankAccountNumber": "Bank Account Number",
+    "AccountName": "Account Name",
+    "Actions": "Acties",
+    "Create payout": "Maak uitbetaling",
+    "Payout details": "Uitbetaling details",
+    "For": "Voor",
+    "Amount": "Bedrag",
+    "Current balance": "Gebruikers heeft een huidige balans van {balance}",
+    "CreatedAt": "Aangemaakt op",
+    "UpdatedAt": "Geüpdatet op",
+    "PayoutID":  "Uitbetaling ID",
+    "ApprovedBy": "Deze uitbetaling is goedgekeurd door {approvedBy}",
+    "AmountToHigh": "Bedrag is hoger dan de balans van de gebruiker",
+    "Download PDF": "Download PDF"
   }
 }

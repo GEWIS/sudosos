@@ -67,12 +67,17 @@
         color: $dangerButtonTextColor;
     }
 
+    &.p-badge-danger-inverse {
+        background-color: $dangerButtonTextColor;
+        color: $dangerButtonBg;
+    }
+
     @if variable-exists(secondaryMessageBg) {
         &.p-badge-secondary {
             background-color: $secondaryButtonBg;
             color: $secondaryButtonTextColor;
         }
-    
+
         &.p-badge-contrast {
             background-color: $contrastButtonBg;
             color: $contrastButtonTextColor;

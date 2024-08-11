@@ -21,6 +21,15 @@
                 v-model="internalValue"
                 v-bind="attributes"
                 :disabled="disabled"/>
+
+      <InputNumber v-if="type === 'currency'"
+                 mode="currency" currency="EUR" locale="nl-NL"
+                 :min="0.0"
+                 :min-fraction-digits="0" :max-fraction-digits="2"
+                :placeholder="placeholder"
+                v-model="internalValue as number"
+                :disabled="disabled"/>
+
     </span>
     <div class="flex justify-content-end">
       <ErrorSpan :error="errors"/>
@@ -29,12 +38,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, type PropType } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import type { PropType, Ref } from 'vue';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
-import Calendar from 'primevue/calendar';
 import ErrorSpan from "@/components/ErrorSpan.vue";
 import CalendarString from "@/components/CalendarString.vue";
+
+import type { HintedString } from "primevue/ts-helpers";
+import InputNumber from "primevue/inputnumber";
 
 const props = defineProps({
   label: {
@@ -42,10 +54,11 @@ const props = defineProps({
     required: true
   },
   value: {
-    type: String,
+    type: [String, Number],
   },
   attributes: {
     type: Object as PropType<any>,
+    required: true,
   },
   errors: {
     type: Object as PropType<any>,
@@ -57,7 +70,7 @@ const props = defineProps({
     default: ''
   },
   type: {
-    type: String,
+    type: String as PropType<HintedString<'text' | 'textarea' | 'date' | 'currency'>>,
     required: false,
     default: 'text'
   },
@@ -75,7 +88,16 @@ const props = defineProps({
 
 const emit = defineEmits(['update:value']);
 
-const internalValue = ref('');
+const stringInputs = ['text', 'textarea'];
+const numberInputs = ['currency', 'number'];
+
+const initialValue = () => {
+  if (stringInputs.includes(props.type)) return '';
+  if (numberInputs.includes(props.type)) return 0;
+  return '';
+};
+
+const internalValue: Ref<string | number | undefined> = ref(initialValue());
 
 onMounted(() => {
   internalValue.value = props.value ?? '';

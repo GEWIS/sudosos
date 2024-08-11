@@ -259,7 +259,11 @@
     "productCreate": "Successfully created product.",
     "updateContainer": "Successfully updated container.",
     "invoiceDeleted": "Successfully deleted invoice.",
-    "invoiceUpdated": "Successfully updated invoice."
+    "invoiceUpdated": "Successfully updated invoice.",
+    "payoutCreated": "Successfully created payout.",
+    "payoutDeleted": "Successfully deleted payout.",
+    "payoutApproved": "Successfully approved payout.",
+    "payoutDenied": "Successfully denied payout."
   },
   "termsOfService": {
     "acceptFirst": "Accept the Terms of Service",
@@ -337,6 +341,15 @@
   "tooltip": {
     "owner_revenue": "Note: Container owner gets the revenue, not the product owner"
   },
+  "common": {
+    "approve": "Approve",
+    "deny": "Deny",
+    "download PDF": "Download PDF",
+    "close": "Close",
+    "create": "Create",
+    "update": "Update",
+    "delete": "Delete"
+  },
   "c_invoiceInfo": {
     "Info": "Info",
     "Created on": "Created",
@@ -377,5 +390,27 @@
     "edit": "Edit",
     "save": "Save",
     "close": "Close"
+  },
+  "payout": {
+    "Payouts": "Payouts",
+    "Payouts overview": "Payouts overview",
+    "Date": "Date",
+    "Progress": "Progress",
+    "Requested by": "Requested by",
+    "BankAccountName": "Bank Account Name",
+    "BankAccountNumber": "Bank Account Number",
+    "AccountName": "Account Name",
+    "Actions": "Actions",
+    "Create payout": "Create payout",
+    "Payout details": "Payout details",
+    "For": "For",
+    "Amount": "Amount",
+    "Current balance": "User has a current balance of {balance}",
+    "CreatedAt": "Created at",
+    "UpdatedAt": "Updated at",
+    "PayoutID": "Payout ID",
+    "ApprovedBy": "This payout request has been approved by {approvedBy}",
+    "AmountToHigh": "Amount is higher than the user's balance",
+    "Download PDF": "Download PDF"
   }
 }

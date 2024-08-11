@@ -12,7 +12,6 @@ export interface Form<T extends yup.AnyObject> {
   submit: () => Promise<any>;
 }
 
-
 const schemaToFields = <T extends AnyObject>(yupSchema: yup.ObjectSchema<T, yup.AnyObject, T, "">, ctx: FormContext):
   { [K in keyof T['fields']]: { value: Ref, attr: Ref<BaseFieldProps & GenericObject> } } => {
   const fields = {} as { [K in keyof T['fields']]: { value: Ref, attr: Ref<BaseFieldProps & GenericObject> } };

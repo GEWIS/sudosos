@@ -10,16 +10,20 @@
           </template>
           <template #item="{ item, props, hasSubmenu }">
             <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-              <a :href="href" v-bind="props.action" @click="navigate">
+              <a :href="href" v-bind="props.action" @click="navigate" class="flex align-items-center justify-content-between">
                 <span class="p-menuitem-text">{{ item.label }}</span>
+                <span v-if="item.notifications" class="p-badge p-badge-danger">{{ item.notifications }}</span>
               </a>
             </router-link>
             <a v-else :href="item.url" :target="item.target" v-bind="props.action">
-              <span class="p-menuitem-text">{{ item.label }}</span>
-              <span v-if="hasSubmenu" class="pi pi-fw pi-angle-down ml-2" />
+              <div class="flex align-items-center justify-content-between">
+                <span class="p-menuitem-text">{{ item.label }}</span>
+                <span v-if="item.notifications" class="p-badge p-badge-no-gutter p-badge-danger-inverse ml-2">{{ item.notifications }}</span>
+                <span v-else-if="hasSubmenu" class="pi pi-fw pi-angle-down ml-2" />
+              </div>
             </a>
           </template>
-        </Menubar>
+      </Menubar>
       <Menubar class="hidden mb:flex" :model="rightItems">
         <template #start>
           <img class="h-1rem" src="../assets/img/bier.png"/>
@@ -65,12 +69,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, type ComputedRef } from "vue";
 import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import { useRouter } from "vue-router";
 import { UserRole } from "@/utils/rbacUtils";
 import { useI18n } from "vue-i18n";
 import { formatPrice } from "@/utils/formatterUtils";
+import { usePendingPayouts } from "@/mixins/pendingPayoutsMixin";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
@@ -103,6 +108,9 @@ const isBAC = () => {
 const isSeller = () => {
   return authStore.roles.includes(UserRole.SELLER);
 };
+
+const { pendingPayouts } = usePendingPayouts();
+const getFinancialNotifications = () => pendingPayouts?.value;
 
 const leftItems = computed(() => [
   {
@@ -142,6 +150,7 @@ const leftItems = computed(() => [
     // TODO isFinancial()
     // https://github.com/GEWIS/sudosos-frontend/issues/229
     visible: isBAC(),
+    notifications: getFinancialNotifications(),
     items: [
       {
         label: t('app.User overview'),
@@ -161,6 +170,11 @@ const leftItems = computed(() => [
         label: t('fine.fineOverview'),
         route: '/fine',
       },
+      {
+        label: t('payout.Payouts'),
+        route: '/payouts',
+        notifications: pendingPayouts?.value
+      }
     ]
   },
   {

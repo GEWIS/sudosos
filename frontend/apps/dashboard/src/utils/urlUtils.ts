@@ -23,3 +23,7 @@ export function getBannerImageSrc(banner: BannerResponse): string {
 export function getInvoicePdfSrc(pdf: string): string {
     return `${import.meta.env.VITE_APP_IMAGE_BASE}invoices/${pdf}`;
 }
+
+export function getPayoutPdfSrc(pdf: string): string {
+    return `${import.meta.env.VITE_APP_IMAGE_BASE}payouts/${pdf}`;
+}

@@ -75,5 +75,5 @@ const handleSave = () => {
 </script>
 
 <style scoped lang="scss">
-/* Your styles here */
+
 </style>

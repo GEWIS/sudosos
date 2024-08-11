@@ -1,6 +1,7 @@
 import type { RouteRecordRaw } from "vue-router";
 import DashboardLayout from "@/layout/DashboardLayout.vue";
 import FineView from "@/modules/financial/views/FineView.vue";
+import PayoutsView from "@/modules/financial/views/payouts/PayoutsView.vue";
 import { UserRole } from "@/utils/rbacUtils";
 import InvoiceOverview from "@/modules/financial/views/invoice/InvoiceOverview.vue";
 import InvoiceInfoView from "@/modules/financial/views/invoice/InvoiceInfoView.vue";
@@ -21,25 +22,34 @@ export function financialRoutes(): RouteRecordRaw[] {
           rolesAllowed: [UserRole.BAC_PM]
         }
       },
-        {
-          path: '/invoice',
-          component: InvoiceOverview,
-          name: 'invoice',
-          meta: {
-            requiresAuth: true,
-            rolesAllowed: [UserRole.BAC_PM]
-          }
-        },
-        {
-          path: '/invoice/:id/info',
-          name: 'invoiceInfo',
-          component: InvoiceInfoView,
-          props: true,
-          meta: {
-            requiresAuth: true,
-            rolesAllowed: [UserRole.BAC_PM]
-          }
-        },
+      {
+        path: '/invoice',
+        component: InvoiceOverview,
+        name: 'invoice',
+        meta: {
+          requiresAuth: true,
+          rolesAllowed: [UserRole.BAC_PM]
+        }
+      },
+      {
+        path: '/invoice/:id/info',
+        name: 'invoiceInfo',
+        component: InvoiceInfoView,
+        props: true,
+        meta: {
+          requiresAuth: true,
+          rolesAllowed: [UserRole.BAC_PM]
+        }
+      },
+      {
+        path: '/payouts',
+        component: PayoutsView,
+        name: 'payouts',
+        meta: {
+          requiresAuth: true,
+          rolesAllowed: [UserRole.BAC_PM]
+        }
+      }
       ]
     }
   ];
