@@ -183,7 +183,7 @@ import { useProductStore } from "@/stores/product.store";
 import { toTypedSchema } from "@vee-validate/yup";
 import * as yup from "yup";
 import { useForm } from "vee-validate";
-import { getProductImageSrc } from "@/utils/imageUtils";
+import { getProductImageSrc } from "@/utils/urlUtils";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import Dropdown from "primevue/dropdown";

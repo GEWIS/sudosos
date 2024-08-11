@@ -20,7 +20,6 @@ import TabPanel from 'primevue/tabpanel';
 
 import MutationsBalance from '@/components/mutations/MutationsBalance.vue';
 import MutationsSeller from '@/components/mutations/MutationsSeller.vue';
-import CardComponent from "@/components/CardComponent.vue";
 import type { PaginatedBaseTransactionResponse, PaginatedFinancialMutationResponse } from "@sudosos/sudosos-client";
 
 const props = defineProps<{

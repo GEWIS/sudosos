@@ -16,7 +16,7 @@
   "dependencies": {
     "@stripe/stripe-js": "^2.1.7",
     "@sudosos/sudosos-frontend-common": "*",
-    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#0c0a4ed",
+    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#ba8d67e",
     "@types/dinero.js": "^1.9.4",
     "@vee-validate/rules": "^4.12.8",
     "@vee-validate/yup": "^4.11.1",
@@ -34,6 +34,7 @@
     "vue": "^3.3.4",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.2.2",
+    "vue3-pdf-app": "^1.0.3",
     "yup": "^1.2.0"
   },
   "devDependencies": {

@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import type { ContainerWithProductsResponse, ProductResponse } from "@sudosos/sudosos-client";
-import { getProductImageSrc } from "@/utils/imageUtils";
+import { getProductImageSrc } from "@/utils/urlUtils";
 import { computed, ref } from "vue";
 import ProductActions from "@/components/ProductActions.vue";
 

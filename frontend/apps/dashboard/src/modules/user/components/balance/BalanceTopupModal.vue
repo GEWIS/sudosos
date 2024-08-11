@@ -53,7 +53,7 @@ const stripe = ref();
 const paymentElement = ref();
 const elements = ref();
 onBeforeMount(async () => {
-  loadStripe.setLoadParameters({advancedFraudSignals: false})
+  loadStripe.setLoadParameters({ advancedFraudSignals: false });
   stripe.value = await loadStripe(`${import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY}`);
 
 });

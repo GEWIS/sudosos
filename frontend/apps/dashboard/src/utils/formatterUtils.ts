@@ -30,5 +30,10 @@ export function formatPrice(value: Dinero, isNegative?: boolean): string {
     } else {
         return (value.amount / 100).toLocaleString('nl-NL', { style: 'currency', currency: "EUR" });
     }
-
 }
+
+export function formatDateFromString(date: string | undefined) {
+    if (!date) return '';
+    return date.split('T')[0];
+}
+

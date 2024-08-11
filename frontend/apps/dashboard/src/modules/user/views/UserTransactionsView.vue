@@ -16,7 +16,6 @@
 import MutationsUserTabs from '@/components/mutations/MutationsUserTabs.vue';
 import apiService from '@/services/ApiService';
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
-import { ref } from 'vue';
 import type { PaginatedBaseTransactionResponse, PaginatedFinancialMutationResponse } from '@sudosos/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import { handleError } from '@/utils/errorUtils';
@@ -25,15 +24,6 @@ import { useI18n } from "vue-i18n";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { t, locale } = useI18n();
-
-const financialMutationsResponse = ref<PaginatedFinancialMutationResponse>({
-  _pagination: {
-    take: 0,
-    skip: 0,
-    count: 0,
-  },
-  records: []
-});
 
 const authStore = useAuthStore();
 const userStore = useUserStore();

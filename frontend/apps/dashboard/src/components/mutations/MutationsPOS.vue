@@ -84,14 +84,12 @@ import Column from 'primevue/column';
 import { onMounted, type Ref, ref } from "vue";
 import { formatPrice } from '@/utils/formatterUtils';
 import {
-    type PaginatedBaseTransactionResponse,
-    type PaginatedFinancialMutationResponse
+    type PaginatedBaseTransactionResponse
 } from "@sudosos/sudosos-client";
 import {
     type FinancialMutation,
     FinancialMutationType,
     parseFinancialMutations,
-    getDescription,
     isIncreasingTransfer,
     isFine
 } from "@/utils/mutationUtils";

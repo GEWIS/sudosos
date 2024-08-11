@@ -19,3 +19,7 @@ export function getProductImageSrc(product: ProductResponse): string {
 export function getBannerImageSrc(banner: BannerResponse): string {
     return `${import.meta.env.VITE_APP_IMAGE_BASE}banners/${banner.image}`;
 }
+
+export function getInvoicePdfSrc(pdf: string): string {
+    return `${import.meta.env.VITE_APP_IMAGE_BASE}invoices/${pdf}`;
+}

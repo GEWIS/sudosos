@@ -12,7 +12,7 @@
   margin-bottom: 1.5rem;
 }
 
-.page-container {
+.page-container, .page-container-large {
   width: 100%;
   padding-left: 15px;
   padding-right: 15px;
@@ -46,7 +46,6 @@
     max-width: 60rem;
   }
 }
-
 
 /*TODO: Fix more for different media sizes*/
 /*See: https://github.com/sudosos-frontend-vue3/issues/29 */

@@ -154,6 +154,10 @@ const leftItems = computed(() => [
         label: t('app.Social drink cards'),
       },
       {
+        label: t('app.Invoices'),
+        route: '/invoice',
+      },
+      {
         label: t('fine.fineOverview'),
         route: '/fine',
       },

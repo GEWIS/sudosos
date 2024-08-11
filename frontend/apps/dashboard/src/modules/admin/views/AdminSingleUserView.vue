@@ -20,7 +20,7 @@
             <span class="error-text">{{ errors.lastName }}</span>
           </div>
           <div class="field">
-            <label for="nickname">{{ $t("userDetails.nickname") }}</label>
+            <label for="nickname">{{ $t("userDetails.Nickname") }}</label>
             <InputText id="nickname" v-model="nickname" v-bind="nicknameAttrs" class="w-full" />
           </div>
           <div class="field">

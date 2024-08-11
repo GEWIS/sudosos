@@ -23,7 +23,8 @@
     "Social drink cards": "Borrelkaarten",
     "Transactions": "Transacties",
     "User overview": "Gebruikers overzicht",
-    "Promo": "Promo"
+    "Promo": "Promo",
+    "Invoices": "Facturen"
   },
   "balance": {
     "Balance after": "Balans na opwaarderen:",
@@ -80,7 +81,6 @@
     }
   },
   "c_currentBalance": {
-    "Increase balance": "Saldo opwaarderen",
     "allIsFines": "Waarvan alles een boete is",
     "balance": "Saldo",
     "someIsFines": "Waarvan {fine} boetes zijn",
@@ -246,7 +246,6 @@
     "updateInfo": "Update gebruikersinformatie"
   },
   "quickOverview": {
-    "quickOverview": "Kort Overzicht",
     "quickOverviewMessage": "Laat dit aan de bar zien zodat we je sneller kunnen helpen."
   },
   "successMessages": {
@@ -262,7 +261,9 @@
     "productContainerAdd": "Product is succesvol toegevoegd aan container.",
     "productContainerDelete": "Product is succesvol verwijderd van container.",
     "productCreate": "Product is succesvol aangemaakt.",
-    "updateContainer": "Container is succesvol geüpdatet."
+    "updateContainer": "Container is succesvol geüpdatet.",
+    "invoiceDeleted": "Factuur is succesvol verwijderd.",
+    "invoiceUpdated": "Factuur {reference} is succesvol geüpdatet."
   },
   "termsOfService": {
     "acceptFirst": "Accepteer de Voorwaarden",
@@ -284,17 +285,16 @@
     "title": "Titel",
     "total": "Totaal:",
     "waivedFineDescr": "Je boetes zijn kwijtgescholden.",
-    "what": "Wat",
     "when": "Wanneer",
     "pos": "Verkooppunt",
-    "from": "Voor",
-    "userBoughtAt": "U kocht bij {pos}",
-    "otherBoughtAt": "{user} kocht bij {pos}",
-    "putInBy": "Transactie aangemaakt door {createdBy}",
     "createdBy": "Gecreëerd door",
+    "createdFor": "Gecreëerd voor",
     "balanceMutations": "Saldo mutaties",
     "createdTransactions": "Gecreëerde transacties",
-    "recentTransactions": "Recente transacties"
+    "recentTransactions": "Recente transacties",
+    "Incl": "Incl. BTW",
+    "Excl": "Excl. BTW",
+    "VAT": "BTW {vat}%"
   },
   "userDetails": {
     "Active": "Actief",
@@ -330,5 +330,46 @@
   },
   "tooltip": {
     "owner_revenue": "NB: De containereigenaar krijgt de opbrengst, niet de producteigenaar"
+  },
+  "c_invoiceInfo": {
+    "Info": "Info",
+    "Created on": "Aangemaakt op",
+    "Updated on": "Geupdated op",
+    "For": "Voor",
+    "Addressing": "Adres",
+    "Addressee": "Adres",
+    "id": "ID",
+    "Attention": "Attentie",
+    "Street": "Straat",
+    "Postal code": "Postcode",
+    "City": "Stad",
+    "Country": "Land",
+    "Reference": "Referentie",
+    "Description": "Omschrijving",
+    "Date": "Datum",
+    "Progress": "Voortgang",
+    "Settings": "Instellingen",
+    "InvoiceOverview": "Factuur Overzicht",
+    "Deleted": "Factuur is verwijderd",
+    "Actions": "Acties",
+    "Delete": "Verwijder",
+    "Cancel": "Annuleren",
+    "DeleteInvoice": "Factuur Verwijderen",
+    "AreYouSure": "Weet je zeker dat je deze factuur wilt verwijderen?",
+    "CreditNoteWarning": "Dit zal geen creditnota aanmaken.",
+    "Unrecoverable": "Dit verwijdert de factuur en kan niet ongedaan worden gemaakt.",
+    "Credit": "Credit Factuur"
+  },
+  "pdf": {
+    "Table": "Tabel",
+    "Recompile": "Hercompileer",
+    "Reload": "Herladen",
+    "Missing": "PDF is niet aanwezig of niet gegenereerd",
+    "Invoice": "Factuur"
+  },
+  "c_formCard": {
+    "edit": "Bewerken",
+    "save": "Opslaan",
+    "close": "Sluiten"
   }
 }

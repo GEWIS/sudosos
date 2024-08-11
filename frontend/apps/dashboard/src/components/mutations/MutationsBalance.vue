@@ -89,8 +89,7 @@ import { formatPrice } from '@/utils/formatterUtils';
 import {
     type FinancialMutation,
     FinancialMutationType,
-    parseFinancialMutations,
-    getDescription
+    parseFinancialMutations
 } from "@/utils/mutationUtils";
 import ModalMutation from "@/components/mutations/mutationmodal/ModalMutation.vue";
 import { isIncreasingTransfer, isFine } from "@/utils/mutationUtils";

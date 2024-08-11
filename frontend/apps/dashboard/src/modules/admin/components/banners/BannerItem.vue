@@ -53,7 +53,7 @@ import BannerDialog from '@/modules/admin/components/banners/BannerDialog.vue';
 
 import type { BannerResponse } from '@sudosos/sudosos-client';
 import { computed, ref } from 'vue';
-import { getBannerImageSrc } from '@/utils/imageUtils';
+import { getBannerImageSrc } from '@/utils/urlUtils';
 import { formatDateTime } from '@/utils/formatterUtils';
 import { useI18n } from 'vue-i18n';
 

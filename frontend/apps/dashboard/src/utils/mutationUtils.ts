@@ -1,10 +1,11 @@
-import type { BaseTransactionResponse, BaseUserResponse, FinancialMutationResponse, PaginatedFinancialMutationResponse, TransferResponse } from "@sudosos/sudosos-client";
+import type { BaseTransactionResponse, BaseUserResponse, FinancialMutationResponse,
+  PaginatedFinancialMutationResponse, TransferResponse } from "@sudosos/sudosos-client";
 import type { Dinero } from "@sudosos/sudosos-client";
 import type { PaginatedBaseTransactionResponse } from "@sudosos/sudosos-client";
 
-import i18n from '@/utils/i18nUtils'
+import i18n from '@/utils/i18nUtils';
 
-const t = i18n.global.t
+const t = i18n.global.t;
 
 export enum FinancialMutationType {
     INVOICE,
@@ -71,7 +72,7 @@ export function isPaginatedBaseTransactionResponse(obj: any): obj is PaginatedBa
 export function parseFinancialMutations(
   mutations: PaginatedFinancialMutationResponse | PaginatedBaseTransactionResponse
 ): FinancialMutation[] {
-  let result: FinancialMutation[] = [];
+  const result: FinancialMutation[] = [];
   if (isPaginatedBaseTransactionResponse(mutations)) {
     mutations.records.forEach((mutation: BaseTransactionResponse) => {
       result.push(parseTransaction(mutation));

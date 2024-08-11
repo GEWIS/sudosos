@@ -82,7 +82,7 @@ import Column from 'primevue/column';
 import { onMounted, type Ref, ref } from "vue";
 import ModalMutation from "@/components/mutations/mutationmodal/ModalMutation.vue";
 import { formatPrice } from '@/utils/formatterUtils';
-import { getDescription, FinancialMutationType, isIncreasingTransfer, isFine } from "@/utils/mutationUtils";
+import { FinancialMutationType, isIncreasingTransfer, isFine } from "@/utils/mutationUtils";
 import {
     type FinancialMutation,
     parseFinancialMutations,

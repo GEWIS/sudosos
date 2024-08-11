@@ -23,7 +23,8 @@
     "Social drink cards": "Social drink cards",
     "Transactions": "Transactions",
     "User overview": "User overview",
-    "Promo": "Promo"
+    "Promo": "Promo",
+    "Invoices": "Invoices"
   },
   "balance": {
     "Balance increase amount": "Increase balance:",
@@ -119,7 +120,6 @@
     }
   },
   "c_currentBalance": {
-    "Increase balance": "Increase balance",
     "allIsFines": "All of which is a fine",
     "balance": "Balance",
     "someIsFines": "Of which {fine} is fines",
@@ -242,7 +242,6 @@
     "updateInfo": "Update user information"
   },
   "quickOverview": {
-    "quickOverview": "Quick Overview",
     "quickOverviewMessage": "Show this at the bar so we can help you faster"
   },
   "successMessages": {
@@ -258,7 +257,9 @@
     "productContainerAdd": "Successfully added product to container.",
     "productContainerDelete": "Successfully deleted product from container.",
     "productCreate": "Successfully created product.",
-    "updateContainer": "Successfully updated container."
+    "updateContainer": "Successfully updated container.",
+    "invoiceDeleted": "Successfully deleted invoice.",
+    "invoiceUpdated": "Successfully updated invoice."
   },
   "termsOfService": {
     "acceptFirst": "Accept the Terms of Service",
@@ -280,18 +281,16 @@
     "title": "Title",
     "total": "Total:",
     "waivedFineDescr": "Your fines were waived.",
-    "what": "What",
     "when": "When",
     "pos": "Point of sale",
-    "from": "From",
-    "userBoughtAt": "You bought at {pos}",
-    "otherBoughtAt": "{user} bought at {pos}",
-    "putInBy": "Transaction put in by {createdBy}",
     "createdBy": "Created by",
     "createdFor": "Created for",
     "balanceMutations": "Balance mutations",
     "createdTransactions": "Created transactions",
-    "recentTransactions": "Recent transactions"
+    "recentTransactions": "Recent transactions",
+    "Incl": "Incl. VAT",
+    "Excl": "Excl. VAT",
+    "VAT": "VAT {vat}%"
   },
   "userDetails": {
     "Active": "Active",
@@ -337,5 +336,46 @@
   },
   "tooltip": {
     "owner_revenue": "Note: Container owner gets the revenue, not the product owner"
+  },
+  "c_invoiceInfo": {
+    "Info": "Info",
+    "Created on": "Created",
+    "Updated on": "Updated",
+    "For": "For",
+    "Addressing": "Addressing",
+    "Addressee": "Addressee",
+    "id": "ID",
+    "Attention": "Attention",
+    "Street": "Street",
+    "Postal code": "Postal code",
+    "City": "City",
+    "Country": "Country",
+    "Reference": "Reference",
+    "Description": "Description",
+    "Date": "Date",
+    "Progress": "Progress",
+    "Settings": "Settings",
+    "InvoiceOverview": "Invoice Overview",
+    "Deleted": "Invoice is deleted",
+    "Actions": "Actions",
+    "Delete": "Delete",
+    "Cancel": "Cancel",
+    "DeleteInvoice": "Delete Invoice",
+    "AreYouSure": "Are you sure you want to delete this invoice?",
+    "CreditNoteWarning": "This will not create a credit note.",
+    "Unrecoverable": "This deletes the invoice and cannot be undone.",
+    "Credit": "Credit Invoice"
+  },
+  "pdf": {
+    "Table": "Table",
+    "Recompile": "Recompile",
+    "Reload": "Reload",
+    "Missing": "PDF is missing or generation failed",
+    "Invoice": "Invoice"
+  },
+  "c_formCard": {
+    "edit": "Edit",
+    "save": "Save",
+    "close": "Close"
   }
 }

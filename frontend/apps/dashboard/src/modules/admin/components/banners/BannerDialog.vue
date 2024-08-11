@@ -59,7 +59,7 @@ import InputSwitch from 'primevue/inputswitch';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 
-import { getBannerImageSrc } from '@/utils/imageUtils';
+import { getBannerImageSrc } from '@/utils/urlUtils';
 
 import type { BannerRequest, BannerResponse } from '@sudosos/sudosos-client';
 import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';

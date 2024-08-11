@@ -118,7 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import { getProductImageSrc } from "@/utils/imageUtils";
+import { getProductImageSrc } from "@/utils/urlUtils";
 import { formatPrice } from "@/utils/formatterUtils";
 import IconField from "primevue/iconfield";
 import CardComponent from "@/components/CardComponent.vue";
