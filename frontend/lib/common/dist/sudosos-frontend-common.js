@@ -17,6 +17,7 @@ const mt = bt("user", {
     users: [],
     current: {
       balance: null,
+      rolesWithPermissions: [],
       user: null,
       financialMutations: {
         _pagination: {
@@ -59,6 +60,9 @@ const mt = bt("user", {
     async fetchCurrentUserBalance(l, h) {
       this.current.balance = (await h.balance.getBalanceId(l)).data;
     },
+    async fetchUserRolesWithPermissions(l, h) {
+      this.current.rolesWithPermissions = (await h.user.getUserRoles(l)).data;
+    },
     async fetchUsersFinancialMutations(l, h, O, t) {
       this.current.financialMutations = (await h.user.getUsersFinancialMutations(l, void 0, void 0, O, t)).data;
     },
@@ -67,6 +71,9 @@ const mt = bt("user", {
     },
     setCurrentUser(l) {
       this.current.user = l;
+    },
+    setCurrentRolesWithPermissions(l) {
+      this.current.rolesWithPermissions = l;
     },
     addUser(l) {
       this.users.push(l);
@@ -167,7 +174,7 @@ function _n(l) {
     const t = O.getUser;
     if (t) {
       const A = mt();
-      A.setCurrentUser(t), A.fetchCurrentUserBalance(t.id, l);
+      A.setCurrentUser(t), A.fetchUserRolesWithPermissions(t.id, l), A.fetchCurrentUserBalance(t.id, l);
     }
   }
 }
@@ -175,7 +182,7 @@ const ma = bt({
   id: "auth",
   state: () => ({
     user: null,
-    roles: [],
+    rolesWithPermissions: [],
     token: null,
     organs: [],
     acceptedToS: null
@@ -192,11 +199,9 @@ const ma = bt({
     }
   },
   actions: {
-    handleResponse(l, h) {
-      const { user: O, token: t, roles: A, organs: m, acceptedToS: S } = l;
-      !O || !t || !A || !m || !S || (this.user = O, this.token = t, ft(this.token), this.roles = A, this.organs = m, this.acceptedToS = S, this.acceptedToS === "ACCEPTED" && h.user.getIndividualUser(this.user.id).then((j) => {
-        mt().setCurrentUser(j.data);
-      }));
+    handleResponse(l) {
+      const { user: h, token: O, rolesWithPermissions: t, organs: A, acceptedToS: m } = l;
+      !h || !O || !t || !A || !m || (this.user = h, this.token = O, ft(this.token), this.rolesWithPermissions = t, this.organs = A, this.acceptedToS = m, this.acceptedToS === "ACCEPTED" && mt().setCurrentUser(h));
     },
     async gewisPinlogin(l, h, O) {
       const t = {
@@ -204,7 +209,7 @@ const ma = bt({
         pin: h
       };
       await O.authenticate.gewisPinAuthentication(t).then((A) => {
-        this.handleResponse(A.data, O);
+        this.handleResponse(A.data);
       });
     },
     async ldapLogin(l, h, O) {
@@ -213,7 +218,7 @@ const ma = bt({
         password: h
       };
       await O.authenticate.ldapAuthentication(t).then((A) => {
-        this.handleResponse(A.data, O);
+        this.handleResponse(A.data);
       });
     },
     async gewisWebLogin(l, h, O) {
@@ -222,7 +227,7 @@ const ma = bt({
         token: h
       };
       await O.authenticate.gewisWebAuthentication(t).then((A) => {
-        this.handleResponse(A.data, O);
+        this.handleResponse(A.data);
       });
     },
     async externalPinLogin(l, h, O) {
@@ -231,7 +236,7 @@ const ma = bt({
         userId: l
       };
       await O.authenticate.pinAuthentication(t).then((A) => {
-        this.handleResponse(A.data, O);
+        this.handleResponse(A.data);
       });
     },
     async eanLogin(l, h) {
@@ -239,7 +244,7 @@ const ma = bt({
         eanCode: l
       };
       await h.authenticate.eanAuthentication(O).then((t) => {
-        this.handleResponse(t.data, h);
+        this.handleResponse(t.data);
       });
     },
     async apiKeyLogin(l, h, O) {
@@ -248,7 +253,7 @@ const ma = bt({
         userId: h
       };
       await O.authenticate.keyAuthentication(t).then((A) => {
-        this.handleResponse(A.data, O);
+        this.handleResponse(A.data);
       });
     },
     async gewisLdapLogin(l, h, O) {
@@ -257,7 +262,7 @@ const ma = bt({
         password: h
       };
       await O.authenticate.gewisLDAPAuthentication(t).then((A) => {
-        this.handleResponse(A.data, O);
+        this.handleResponse(A.data);
       });
     },
     async updateUserPin(l, h) {
@@ -292,16 +297,16 @@ const ma = bt({
       };
       await h.user.acceptTos(O);
       const t = await h.authenticate.refreshToken();
-      this.handleResponse(t.data, h);
+      this.handleResponse(t.data);
     },
     extractStateFromToken() {
       const l = ze();
       if (!l.token) return;
       const h = St(l.token);
-      this.user = h.user, this.roles = h.roles, this.token = l.token, this.organs = h.organs, this.acceptedToS = h.acceptedToS;
+      this.user = h.user, this.token = l.token, this.organs = h.organs, this.acceptedToS = h.acceptedToS;
     },
     logout() {
-      this.user = null, this.roles = [], this.token = null, this.organs = [], this.acceptedToS = null, Aa();
+      this.user = null, this.rolesWithPermissions = [], this.token = null, this.organs = [], this.acceptedToS = null, Aa();
     }
   }
 });
@@ -2181,14 +2186,9 @@ Y.createRequestFunction = gn;
       d((i = i.apply(r, c || [])).next());
     });
   };
-  Object.defineProperty(l, "__esModule", { value: !0 }), l.ProductCategoriesApiAxiosParamCreator = l.PointofsaleApi = l.PointofsaleApiFactory = l.PointofsaleApiFp = l.PointofsaleApiAxiosParamCreator = l.PayoutRequestsApi = l.PayoutRequestsApiFactory = l.PayoutRequestsApiFp = l.PayoutRequestsApiAxiosParamCreator = l.GetAllInvoicesCurrentStateEnum = l.InvoicesApi = l.InvoicesApiFactory = l.InvoicesApiFp = l.InvoicesApiAxiosParamCreator = l.FilesApi = l.FilesApiFactory = l.FilesApiFp = l.FilesApiAxiosParamCreator = l.EventsApi = l.EventsApiFactory = l.EventsApiFp = l.EventsApiAxiosParamCreator = l.DebtorsApi = l.DebtorsApiFactory = l.DebtorsApiFp = l.DebtorsApiAxiosParamCreator = l.ContainersApi = l.ContainersApiFactory = l.ContainersApiFp = l.ContainersApiAxiosParamCreator = l.BannersApi = l.BannersApiFactory = l.BannersApiFp = l.BannersApiAxiosParamCreator = l.GetAllBalanceOrderDirectionEnum = l.GetAllBalanceUserTypesEnum = l.BalanceApi = l.BalanceApiFactory = l.BalanceApiFp = l.BalanceApiAxiosParamCreator = l.AuthenticateApi = l.AuthenticateApiFactory = l.AuthenticateApiFp = l.AuthenticateApiAxiosParamCreator = l.UpdateInvoiceRequestStateEnum = l.PayoutRequestStatusRequestStateEnum = l.PayoutRequestResponseStatusEnum = l.InvoiceStatusResponseStateEnum = l.FinancialMutationResponseTypeEnum = l.BasePayoutRequestResponseStatusEnum = void 0, l.WriteoffsApi = l.WriteoffsApiFactory = l.WriteoffsApiFp = l.WriteoffsApiAxiosParamCreator = l.VouchergroupsApi = l.VouchergroupsApiFactory = l.VouchergroupsApiFp = l.VouchergroupsApiAxiosParamCreator = l.VatGroupsApi = l.VatGroupsApiFactory = l.VatGroupsApiFp = l.VatGroupsApiAxiosParamCreator = l.GetAllUsersTypeEnum = l.UsersApi = l.UsersApiFactory = l.UsersApiFp = l.UsersApiAxiosParamCreator = l.TransfersApi = l.TransfersApiFactory = l.TransfersApiFp = l.TransfersApiAxiosParamCreator = l.TransactionsApi = l.TransactionsApiFactory = l.TransactionsApiFp = l.TransactionsApiAxiosParamCreator = l.TestOperationsOfTheTestControllerApi = l.TestOperationsOfTheTestControllerApiFactory = l.TestOperationsOfTheTestControllerApiFp = l.TestOperationsOfTheTestControllerApiAxiosParamCreator = l.StripeApi = l.StripeApiFactory = l.StripeApiFp = l.StripeApiAxiosParamCreator = l.RootApi = l.RootApiFactory = l.RootApiFp = l.RootApiAxiosParamCreator = l.RbacApi = l.RbacApiFactory = l.RbacApiFp = l.RbacApiAxiosParamCreator = l.ProductsApi = l.ProductsApiFactory = l.ProductsApiFp = l.ProductsApiAxiosParamCreator = l.ProductCategoriesApi = l.ProductCategoriesApiFactory = l.ProductCategoriesApiFp = void 0;
+  Object.defineProperty(l, "__esModule", { value: !0 }), l.ProductCategoriesApiFactory = l.ProductCategoriesApiFp = l.ProductCategoriesApiAxiosParamCreator = l.PointofsaleApi = l.PointofsaleApiFactory = l.PointofsaleApiFp = l.PointofsaleApiAxiosParamCreator = l.PayoutRequestsApi = l.PayoutRequestsApiFactory = l.PayoutRequestsApiFp = l.PayoutRequestsApiAxiosParamCreator = l.GetAllInvoicesCurrentStateEnum = l.InvoicesApi = l.InvoicesApiFactory = l.InvoicesApiFp = l.InvoicesApiAxiosParamCreator = l.FilesApi = l.FilesApiFactory = l.FilesApiFp = l.FilesApiAxiosParamCreator = l.EventsApi = l.EventsApiFactory = l.EventsApiFp = l.EventsApiAxiosParamCreator = l.DebtorsApi = l.DebtorsApiFactory = l.DebtorsApiFp = l.DebtorsApiAxiosParamCreator = l.ContainersApi = l.ContainersApiFactory = l.ContainersApiFp = l.ContainersApiAxiosParamCreator = l.BannersApi = l.BannersApiFactory = l.BannersApiFp = l.BannersApiAxiosParamCreator = l.GetAllBalanceOrderDirectionEnum = l.GetAllBalanceUserTypesEnum = l.BalanceApi = l.BalanceApiFactory = l.BalanceApiFp = l.BalanceApiAxiosParamCreator = l.AuthenticateApi = l.AuthenticateApiFactory = l.AuthenticateApiFp = l.AuthenticateApiAxiosParamCreator = l.UpdateInvoiceRequestStateEnum = l.PayoutRequestStatusRequestStateEnum = l.InvoiceStatusResponseStateEnum = l.FinancialMutationResponseTypeEnum = void 0, l.WriteoffsApi = l.WriteoffsApiFactory = l.WriteoffsApiFp = l.WriteoffsApiAxiosParamCreator = l.VouchergroupsApi = l.VouchergroupsApiFactory = l.VouchergroupsApiFp = l.VouchergroupsApiAxiosParamCreator = l.VatGroupsApi = l.VatGroupsApiFactory = l.VatGroupsApiFp = l.VatGroupsApiAxiosParamCreator = l.GetAllUsersTypeEnum = l.UsersApi = l.UsersApiFactory = l.UsersApiFp = l.UsersApiAxiosParamCreator = l.TransfersApi = l.TransfersApiFactory = l.TransfersApiFp = l.TransfersApiAxiosParamCreator = l.TransactionsApi = l.TransactionsApiFactory = l.TransactionsApiFp = l.TransactionsApiAxiosParamCreator = l.TestOperationsOfTheTestControllerApi = l.TestOperationsOfTheTestControllerApiFactory = l.TestOperationsOfTheTestControllerApiFp = l.TestOperationsOfTheTestControllerApiAxiosParamCreator = l.StripeApi = l.StripeApiFactory = l.StripeApiFp = l.StripeApiAxiosParamCreator = l.RootApi = l.RootApiFactory = l.RootApiFp = l.RootApiAxiosParamCreator = l.RbacApi = l.RbacApiFactory = l.RbacApiFp = l.RbacApiAxiosParamCreator = l.ProductsApi = l.ProductsApiFactory = l.ProductsApiFp = l.ProductsApiAxiosParamCreator = l.ProductCategoriesApi = void 0;
   const O = Wt, t = Y, A = et;
-  l.BasePayoutRequestResponseStatusEnum = {
-    Created: "CREATED",
-    Approved: "APPROVED",
-    Denied: "DENIED",
-    Cancelled: "CANCELLED"
-  }, l.FinancialMutationResponseTypeEnum = {
+  l.FinancialMutationResponseTypeEnum = {
     Transfer: "transfer",
     Transaction: "transaction"
   }, l.InvoiceStatusResponseStateEnum = {
@@ -2196,11 +2196,6 @@ Y.createRequestFunction = gn;
     Sent: "SENT",
     Paid: "PAID",
     Deleted: "DELETED"
-  }, l.PayoutRequestResponseStatusEnum = {
-    Created: "CREATED",
-    Approved: "APPROVED",
-    Denied: "DENIED",
-    Cancelled: "CANCELLED"
   }, l.PayoutRequestStatusRequestStateEnum = {
     Created: "CREATED",
     Approved: "APPROVED",

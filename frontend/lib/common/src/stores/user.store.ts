@@ -1,7 +1,7 @@
 import { createPinia, defineStore } from 'pinia';
 import {
   BalanceResponse, PaginatedBaseTransactionResponse, PaginatedFinancialMutationResponse,
-  UserResponse
+  UserResponse, RoleWithPermissionsResponse
 } from "@sudosos/sudosos-client";
 import { ApiService } from "../services/ApiService";
 import { fetchAllPages } from "../helpers/PaginationHelper";
@@ -11,6 +11,7 @@ createPinia();
 interface CurrentState {
   balance: BalanceResponse | null,
   user: UserResponse | null,
+  rolesWithPermissions: RoleWithPermissionsResponse[],
   financialMutations: PaginatedFinancialMutationResponse,
   createdTransactions: PaginatedBaseTransactionResponse
 }
@@ -24,6 +25,7 @@ export const useUserStore = defineStore('user', {
     users: [],
     current: {
       balance: null,
+      rolesWithPermissions: [],
       user: null,
       financialMutations: {
         _pagination: {
@@ -67,6 +69,9 @@ export const useUserStore = defineStore('user', {
     async fetchCurrentUserBalance(id: number, service: ApiService) {
       this.current.balance = (await service.balance.getBalanceId(id)).data;
     },
+    async fetchUserRolesWithPermissions(id: number, service: ApiService) {
+      this.current.rolesWithPermissions = (await service.user.getUserRoles(id)).data;
+    },
     async fetchUsersFinancialMutations(
       id: number,
       service: ApiService,
@@ -89,6 +94,9 @@ export const useUserStore = defineStore('user', {
     },
     setCurrentUser(user: UserResponse) {
       this.current.user = user;
+    },
+    setCurrentRolesWithPermissions(rolesWithPermissions: RoleWithPermissionsResponse[]) {
+      this.current.rolesWithPermissions = rolesWithPermissions;
     },
     addUser(user: UserResponse) {
       this.users.push(user);

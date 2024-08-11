@@ -5,7 +5,7 @@ import {
   AuthenticationResponse,
   GEWISAuthenticationPinRequest, GewiswebAuthenticationRequest, UpdatePinRequest,
   UpdateLocalRequest,
-  UserResponse, UpdateNfcRequest, AcceptTosRequest
+  UserResponse, UpdateNfcRequest, AcceptTosRequest, RoleWithPermissionsResponse
 } from "@sudosos/sudosos-client";
 import { useUserStore } from "./user.store";
 import { jwtDecode, JwtPayload } from "jwt-decode";
@@ -14,7 +14,7 @@ import { clearTokenInStorage, getTokenFromStorage, setTokenInStorage } from "../
 
 interface AuthStoreState {
   user: UserResponse | null,
-  roles: string[],
+  rolesWithPermissions: RoleWithPermissionsResponse[],
   organs: UserResponse[],
   token: string | null,
   acceptedToS: string | null,
@@ -24,7 +24,7 @@ export const useAuthStore = defineStore({
   id: 'auth',
   state: (): AuthStoreState => ({
     user: null,
-    roles: [],
+    rolesWithPermissions: [],
     token: null,
     organs: [],
     acceptedToS: null,
@@ -41,22 +41,21 @@ export const useAuthStore = defineStore({
     }
   },
   actions: {
-    handleResponse(res: AuthenticationResponse, service: ApiService) {
-      const { user, token, roles,organs, acceptedToS } = res;
-      if ( !user || !token || !roles || !organs || !acceptedToS) return;
+    handleResponse(res: AuthenticationResponse) {
+      const { user, token, rolesWithPermissions,organs, acceptedToS } = res;
+      if ( !user || !token || !rolesWithPermissions || !organs || !acceptedToS) return;
       this.user = user;
       this.token = token;
       setTokenInStorage(this.token);
-      this.roles = roles;
+      this.rolesWithPermissions = rolesWithPermissions;
       this.organs = organs;
       this.acceptedToS = acceptedToS;
       if (this.acceptedToS === "ACCEPTED") {
-        service.user.getIndividualUser(this.user.id).then((res) => {
-          const userStore = useUserStore();
-          userStore.setCurrentUser(res.data);
-        });
+        const userStore = useUserStore();
+        userStore.setCurrentUser(user);
       }
     },
+
     async gewisPinlogin(userId: string, pinCode: string, service: ApiService) {
       const userDetails: GEWISAuthenticationPinRequest = {
         gewisId: parseInt(userId, 10),
@@ -64,7 +63,7 @@ export const useAuthStore = defineStore({
       };
 
       await service.authenticate.gewisPinAuthentication(userDetails).then((res) => {
-        this.handleResponse(res.data, service);
+        this.handleResponse(res.data);
       });
     },
     async ldapLogin(accountName: string, password: string, service: ApiService) {
@@ -73,7 +72,7 @@ export const useAuthStore = defineStore({
         password
       };
       await service.authenticate.ldapAuthentication(req).then((res) => {
-        this.handleResponse(res.data, service);
+        this.handleResponse(res.data);
       });
     },
     async gewisWebLogin(nonce: string, token: string, service: ApiService) {
@@ -81,7 +80,7 @@ export const useAuthStore = defineStore({
         nonce, token
       };
       await service.authenticate.gewisWebAuthentication(req).then((res) => {
-        this.handleResponse(res.data, service);
+        this.handleResponse(res.data);
       });
     },
     async externalPinLogin(userId: number, pin: string, service: ApiService) {
@@ -89,7 +88,7 @@ export const useAuthStore = defineStore({
         pin, userId
       };
       await service.authenticate.pinAuthentication(req).then((res) => {
-        this.handleResponse(res.data, service);
+        this.handleResponse(res.data);
       });
     },
     async eanLogin(eanCode: string, service: ApiService) {
@@ -97,7 +96,7 @@ export const useAuthStore = defineStore({
         eanCode
       };
       await service.authenticate.eanAuthentication(req).then((res) => {
-        this.handleResponse(res.data, service);
+        this.handleResponse(res.data);
       });
     },
     async apiKeyLogin(key: string, userId: number, service: ApiService) {
@@ -106,7 +105,7 @@ export const useAuthStore = defineStore({
       };
 
       await service.authenticate.keyAuthentication(req).then((res) => {
-        this.handleResponse(res.data, service);
+        this.handleResponse(res.data);
       });
     },
     async gewisLdapLogin(accountName: string, password: string, service: ApiService) {
@@ -115,7 +114,7 @@ export const useAuthStore = defineStore({
         password
       };
       await service.authenticate.gewisLDAPAuthentication(req).then((res) => {
-        this.handleResponse(res.data, service);
+        this.handleResponse(res.data);
       });
     },
     async updateUserPin(pin: string, service: ApiService) {
@@ -150,7 +149,7 @@ export const useAuthStore = defineStore({
       };
       await service.user.acceptTos(req);
       const res = await service.authenticate.refreshToken();
-      this.handleResponse(res.data, service);
+      this.handleResponse(res.data);
       return;
     },
     extractStateFromToken() {
@@ -158,14 +157,13 @@ export const useAuthStore = defineStore({
       if (!token.token) return;
       const decoded = jwtDecode<JwtPayload>(token.token) as AuthStoreState;
       this.user = decoded.user;
-      this.roles = decoded.roles;
       this.token = token.token;
       this.organs = decoded.organs;
       this.acceptedToS = decoded.acceptedToS;
     },
     logout() {
       this.user = null;
-      this.roles = [];
+      this.rolesWithPermissions = [];
       this.token = null;
       this.organs = [];
       this.acceptedToS = null;

@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import PublicLayout from "@/layout/PublicLayout.vue";
 import DashboardLayout from "@/layout/DashboardLayout.vue";
-import { isAuthenticated, useAuthStore } from "@sudosos/sudosos-frontend-common";
+import {isAuthenticated, useAuthStore, useUserStore} from "@sudosos/sudosos-frontend-common";
 import 'vue-router';
 import ErrorView from "@/views/ErrorView.vue";
 import { authRoutes } from "@/modules/auth/routes";
@@ -57,6 +57,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
+  const userStore = useUserStore();
 
   const hasTOSAccepted = () => {
     return authStore.acceptedToS || authStore.user?.acceptedToS;
@@ -76,7 +77,7 @@ router.beforeEach((to, from, next) => {
   } else {
     if(to.meta?.rolesAllowed) {
       // Test overlapping roles between the allowed roles and the roles the user has
-      const rolesUnion = [...new Set([...to.meta.rolesAllowed, ...authStore.roles])];
+      const rolesUnion = [...new Set([...to.meta.rolesAllowed, ...userStore.current.rolesWithPermissions.map(r => r.name)])];
 
       // No overlapping roles -> No correct permissions -> Back to home
       if(rolesUnion.length == 0) ({ name: 'home' });

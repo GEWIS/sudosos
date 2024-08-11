@@ -1,9 +1,16 @@
-import { BalanceResponse, PaginatedBaseTransactionResponse, PaginatedFinancialMutationResponse, UserResponse } from '@sudosos/sudosos-client';
+import {
+    BalanceResponse,
+    PaginatedBaseTransactionResponse,
+    PaginatedFinancialMutationResponse,
+    UserResponse,
+    RoleWithPermissionsResponse
+} from '@sudosos/sudosos-client';
 import { ApiService } from '../services/ApiService';
 
 interface CurrentState {
     balance: BalanceResponse | null;
     user: UserResponse | null;
+    rolesWithPermissions: RoleWithPermissionsResponse[];
     financialMutations: PaginatedFinancialMutationResponse;
     createdTransactions: PaginatedBaseTransactionResponse;
 }
@@ -19,9 +26,11 @@ export declare const useUserStore: import('pinia').StoreDefinition<"user", UserM
 }, {
     fetchUsers(service: ApiService): Promise<void>;
     fetchCurrentUserBalance(id: number, service: ApiService): Promise<void>;
+    fetchUserRolesWithPermissions(id: number, service: ApiService): Promise<void>;
     fetchUsersFinancialMutations(id: number, service: ApiService, take?: number, skip?: number): Promise<void>;
     fetchUserCreatedTransactions(id: number, service: ApiService, take?: number, skip?: number): Promise<void>;
     setCurrentUser(user: UserResponse): void;
+    setCurrentRolesWithPermissions(rolesWithPermissions: RoleWithPermissionsResponse[]): void;
     addUser(user: UserResponse): void;
     clearCurrent(): void;
     deleteUser(id: number): void;

@@ -98,15 +98,19 @@ const handleLogout = () => {
 };
 
 const isBoard = () => {
-  return authStore.roles.includes(UserRole.BOARD);
+  return userStore.current.rolesWithPermissions.findIndex(r => r.name == UserRole.BOARD) != -1;
 };
 
 const isBAC = () => {
-  return authStore.roles.includes(UserRole.BAC);
+  return userStore.current.rolesWithPermissions.findIndex(r => r.name == UserRole.BAC) != -1;
 };
 
 const isSeller = () => {
-  return authStore.roles.includes(UserRole.SELLER);
+  return userStore.current.rolesWithPermissions.findIndex(r => r.name == UserRole.SELLER) != -1;
+};
+
+const isBACPM = () => {
+  return userStore.current.rolesWithPermissions.findIndex(r => r.name == UserRole.BAC_PM) != -1;
 };
 
 const { pendingPayouts } = usePendingPayouts();
@@ -147,9 +151,7 @@ const leftItems = computed(() => [
   },
   {
     label: t('app.Financial'),
-    // TODO isFinancial()
-    // https://github.com/GEWIS/sudosos-frontend/issues/229
-    visible: isBAC(),
+    visible: isBACPM(),
     notifications: getFinancialNotifications(),
     items: [
       {
@@ -179,9 +181,7 @@ const leftItems = computed(() => [
   },
   {
     label: t('app.Seller'),
-    // TODO: isSeller()
-    // https://github.com/GEWIS/sudosos-frontend/issues/229
-    visible: isBAC(),
+    visible: isSeller(),
     items: [
       {
         label: t('app.Manage products'),

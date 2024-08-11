@@ -67,6 +67,7 @@ export function populateStoresFromToken(apiService: ApiService) {
         if (user) {
             const userStore = useUserStore();
             userStore.setCurrentUser(user);
+            userStore.fetchUserRolesWithPermissions(user.id, apiService);
             userStore.fetchCurrentUserBalance(user.id, apiService);
         }
     }

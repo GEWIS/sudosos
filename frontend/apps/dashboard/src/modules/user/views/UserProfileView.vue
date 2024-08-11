@@ -44,7 +44,7 @@ import { handleError } from "@/utils/errorUtils";
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const isAdmin = computed(() => {
-  return authStore.roles.includes(UserRole.BOARD);
+  return userStore.current.rolesWithPermissions.findIndex(r => r.name == UserRole.BOARD) != -1;
 });
 const dataAnalysis: Ref<boolean> = ref(false);
 const { current } = storeToRefs(userStore);

@@ -115,7 +115,7 @@ const loginHandler = loginForm.handleSubmit(async (values) => {
       await apiService.authenticate.localAuthentication({
         accountMail: values.username,
         password: values.password
-      }).then((res) => authStore.handleResponse(res.data, apiService));
+      }).then((res) => authStore.handleResponse(res.data));
       if (authStore.getToS == 'ACCEPTED' && authStore.getUser) {
         await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
       } else {

@@ -1,9 +1,9 @@
-import { AuthenticationResponse, UserResponse } from '@sudosos/sudosos-client';
+import { AuthenticationResponse, UserResponse, RoleWithPermissionsResponse } from '@sudosos/sudosos-client';
 import { ApiService } from '../services/ApiService';
 
 interface AuthStoreState {
     user: UserResponse | null;
-    roles: string[];
+    rolesWithPermissions: RoleWithPermissionsResponse[];
     organs: UserResponse[];
     token: string | null;
     acceptedToS: string | null;
@@ -13,7 +13,7 @@ export declare const useAuthStore: import('pinia').StoreDefinition<"auth", AuthS
     getToS(): string | null;
     getUser(): UserResponse | null;
 }, {
-    handleResponse(res: AuthenticationResponse, service: ApiService): void;
+    handleResponse(res: AuthenticationResponse): void;
     gewisPinlogin(userId: string, pinCode: string, service: ApiService): Promise<void>;
     ldapLogin(accountName: string, password: string, service: ApiService): Promise<void>;
     gewisWebLogin(nonce: string, token: string, service: ApiService): Promise<void>;

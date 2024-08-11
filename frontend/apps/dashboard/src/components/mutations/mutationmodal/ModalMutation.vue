@@ -61,7 +61,7 @@ import type { AxiosError } from 'axios';
 import { handleError } from '@/utils/errorUtils';
 import { FinancialMutationType } from '@/utils/mutationUtils';
 import { UserRole } from '@/utils/rbacUtils';
-import { useAuthStore } from '@sudosos/sudosos-frontend-common';
+import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import Skeleton from "primevue/skeleton";
 
 const props = defineProps<{
@@ -79,13 +79,13 @@ const transferStore = useTransferStore();
 const transferDetails: Ref<{ [id: number]: TransferResponse }> = ref({});
 const dialog: Ref<null | any> = ref(null);
 const toast = useToast();
-const authStore = useAuthStore();
+const userStore = useUserStore();
 const isLoading: Ref<boolean> = ref(false);
 
 const shouldShowDeleteButton = computed(() => {
   // If the transfer is not loaded yet, do not show the delete button.
   if (!transferDetails.value[props.id]) return false;
-  return authStore.roles.includes(UserRole.BAC) || authStore.roles.includes(UserRole.BOARD);
+  return userStore.current.rolesWithPermissions.findIndex(r => r.name == UserRole.BAC_PM || r.name == UserRole.BOARD);
 });
 
 const shouldShowInvoice = computed(() => {
