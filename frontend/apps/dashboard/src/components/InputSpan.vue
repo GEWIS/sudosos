@@ -30,6 +30,11 @@
                 v-model="internalValue as number"
                 :disabled="disabled"/>
 
+      <Checkbox v-if="type === 'boolean'"
+                   v-model="internalValue"
+                    binary
+                   :disabled="disabled"/>
+
     </span>
     <div class="flex justify-content-end">
       <ErrorSpan :error="errors"/>
@@ -54,7 +59,7 @@ const props = defineProps({
     required: true
   },
   value: {
-    type: [String, Number],
+    type: [String, Number, Boolean],
   },
   attributes: {
     type: Object as PropType<any>,
@@ -90,14 +95,16 @@ const emit = defineEmits(['update:value']);
 
 const stringInputs = ['text', 'textarea'];
 const numberInputs = ['currency', 'number'];
+const booleanInputs = ['boolean'];
 
 const initialValue = () => {
   if (stringInputs.includes(props.type)) return '';
   if (numberInputs.includes(props.type)) return 0;
+  if (booleanInputs.includes(props.type)) return false;
   return '';
 };
 
-const internalValue: Ref<string | number | undefined> = ref(initialValue());
+const internalValue: Ref<string | number | boolean | undefined> = ref(initialValue());
 
 onMounted(() => {
   internalValue.value = props.value ?? '';

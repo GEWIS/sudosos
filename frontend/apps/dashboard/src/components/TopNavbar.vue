@@ -1,7 +1,7 @@
 
 <template>
     <nav class="bg-primary w-full flex justify-content-around">
-      <Menubar class="hidden mb:flex" :model="leftItems">
+      <Menubar class="hidden mb:flex" :model="navItems">
           <template #start>
             <router-link to="/" class="no-underline text-white font-bold flex align-items-center flex-row py-1">
               {{ $t("login.SudoSOS") }}
@@ -24,7 +24,7 @@
             </a>
           </template>
       </Menubar>
-      <Menubar class="hidden mb:flex" :model="rightItems">
+      <Menubar class="hidden mb:flex" :model="profileItems">
         <template #start>
           <img class="h-1rem" src="../assets/img/bier.png"/>
         </template>
@@ -116,24 +116,10 @@ const isBACPM = () => {
 const { pendingPayouts } = usePendingPayouts();
 const getFinancialNotifications = () => pendingPayouts?.value;
 
-const leftItems = computed(() => [
+const navItems = computed(() => [
   {
     label: t('app.Transactions'),
     route: '/transactions'
-  },
-  {
-    label: t('app.Points of Sale'),
-    visible: isSeller(),
-    items: [
-      {
-        label: t('app.Overview'),
-        route: '/point-of-sale/overview',
-      },
-      {
-        label: t('app.Create POS'),
-        route: '/point-of-sale/request'
-      }
-    ]
   },
   {
     label: t('app.Admin'),
@@ -187,11 +173,15 @@ const leftItems = computed(() => [
         label: t('app.Manage products'),
         route: '/manage-products',
       },
+      {
+        label: t('app.Overview'),
+        route: '/point-of-sale/overview',
+      }
     ]
   },
-    ]);
+]);
 
-const rightItems = computed(() =>[
+const profileItems = computed(() =>[
   {
     label: firstName.value,
     items: [
@@ -230,101 +220,8 @@ const rightItems = computed(() =>[
 ]);
 
 const mobileItems = computed(() => [
-  {
-    label: t('app.Transactions'),
-    route: '/transactions'
-  },
-  {
-    label: t('app.Points of Sale'),
-    visible: isSeller(),
-    items: [
-      {
-        label: t('app.Overview'),
-        route: '/point-of-sale/overview',
-      },
-      {
-        label: t('app.Create POS'),
-        route: '/point-of-sale/request'
-      }
-    ]
-  },
-  {
-    label: t('app.Board'),
-    visible: isBoard(),
-    items: [
-      {
-        label: t('app.User overview'),
-        route: '/user-overview'
-      },
-      {
-        label: t('app.Banners'),
-        route: '/banner'
-      },
-    ],
-  },
-  {
-    label: t('app.BAC'),
-    visible: isBAC(),
-    items: [
-      {
-        label: t('app.User overview'),
-        route: '/user-overview',
-      },
-      {
-        label: t('flagged.Flagged transactions'),
-      },
-      {
-        label: t('app.Manage products'),
-        route: '/manage-products',
-      },
-      {
-        label: t('app.Social drink cards'),
-      },
-      {
-        label: t('fine.fineOverview'),
-        route: '/fine',
-      },
-    ]
-  },
-  {
-    label: firstName.value,
-    items: [
-      {
-        label: t('app.Profile'),
-        route: '/profile',
-      },
-      {
-        label: t('app.Sign out'),
-        command: handleLogout,
-      },
-    ]
-  },
-  {
-    label: balance.value,
-    route: '/balance',
-  },
-  {
-    label: '',
-    icon: 'pi pi-globe',
-    items: [
-      {
-        label: t('app.Netherlands'),
-        disabled: () => locale.value == 'nl',
-        command: () => {
-          locale.value = 'nl';
-          localStorage.setItem('locale', 'nl');
-        },
-      },
-      {
-        label: t('app.English'),
-        disabled: () => locale.value == 'en',
-        command: () => {
-          locale.value = 'en';
-          localStorage.setItem('locale', 'en');
-        },
-      },
-    ]
-  },
+  ...navItems.value,
+  ...profileItems.value,
 ]);
 
 </script>

@@ -16,7 +16,7 @@ export declare function isTokenExpired(tokenEpochTimestamp: number): boolean;
  */
 export declare function isAuthenticated(): boolean;
 /**
- * Populates the auth and userStore from the token stored in the localStorage.
+ * Populates the auth and userStore from the token stored in the localStorage, resolves when the user roles are loaded.
  */
-export declare function populateStoresFromToken(apiService: ApiService): void;
+export declare function populateStoresFromToken(apiService: ApiService): Promise<void>;
 export {};

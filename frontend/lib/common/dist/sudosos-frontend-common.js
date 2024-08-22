@@ -167,14 +167,14 @@ function ba() {
   const l = ze();
   return !l.token || !l.expires ? !1 : !Pa(Number(l.expires));
 }
-function _n(l) {
+async function _n(l) {
   if (ba()) {
     const O = ma();
     O.extractStateFromToken();
     const t = O.getUser;
     if (t) {
       const A = mt();
-      A.setCurrentUser(t), A.fetchUserRolesWithPermissions(t.id, l), A.fetchCurrentUserBalance(t.id, l);
+      return A.setCurrentUser(t), A.fetchCurrentUserBalance(t.id, l), await A.fetchUserRolesWithPermissions(t.id, l);
     }
   }
 }
@@ -182,7 +182,6 @@ const ma = bt({
   id: "auth",
   state: () => ({
     user: null,
-    rolesWithPermissions: [],
     token: null,
     organs: [],
     acceptedToS: null
@@ -201,7 +200,10 @@ const ma = bt({
   actions: {
     handleResponse(l) {
       const { user: h, token: O, rolesWithPermissions: t, organs: A, acceptedToS: m } = l;
-      !h || !O || !t || !A || !m || (this.user = h, this.token = O, ft(this.token), this.rolesWithPermissions = t, this.organs = A, this.acceptedToS = m, this.acceptedToS === "ACCEPTED" && mt().setCurrentUser(h));
+      if (!(!h || !O || !t || !A || !m) && (this.user = h, this.token = O, ft(this.token), this.organs = A, this.acceptedToS = m, this.acceptedToS === "ACCEPTED")) {
+        const S = mt();
+        S.setCurrentUser(h), S.setCurrentRolesWithPermissions(t);
+      }
     },
     async gewisPinlogin(l, h, O) {
       const t = {
@@ -306,7 +308,7 @@ const ma = bt({
       this.user = h.user, this.token = l.token, this.organs = h.organs, this.acceptedToS = h.acceptedToS;
     },
     logout() {
-      this.user = null, this.rolesWithPermissions = [], this.token = null, this.organs = [], this.acceptedToS = null, Aa();
+      this.user = null, this.token = null, this.organs = [], this.acceptedToS = null, Aa();
     }
   }
 });

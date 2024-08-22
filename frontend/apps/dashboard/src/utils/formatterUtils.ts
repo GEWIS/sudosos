@@ -1,5 +1,5 @@
 
-import type { Dinero } from "@sudosos/sudosos-client";
+import type { Dinero, UserResponse } from "@sudosos/sudosos-client";
 
 export function formatDateTime(date: Date): string {
 
@@ -37,3 +37,6 @@ export function formatDateFromString(date: string | undefined) {
     return date.split('T')[0];
 }
 
+export function fullName(user: UserResponse) {
+    return user.lastName ? user.firstName + ' ' + user.lastName : user.firstName;
+}

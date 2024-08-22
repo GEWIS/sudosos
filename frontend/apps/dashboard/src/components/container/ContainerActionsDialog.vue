@@ -54,7 +54,7 @@ import { addListenerOnDialogueOverlay } from "@/utils/dialogUtil";
 import Dialog from "primevue/dialog";
 import { computed, type PropType, type Ref, ref } from "vue";
 import type {
-  BaseUserResponse, ContainerResponse, ContainerWithProductsResponse
+  BaseUserResponse, ContainerWithProductsResponse, PointOfSaleWithContainersResponse
 } from "@sudosos/sudosos-client";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import { toTypedSchema } from "@vee-validate/yup";
@@ -68,6 +68,7 @@ import { useContainerStore } from "@/stores/container.store";
 import { handleError } from "@/utils/errorUtils";
 import { useToast } from "primevue/usetoast";
 import { useI18n } from "vue-i18n";
+import { usePointOfSaleStore } from "@/stores/pos.store";
 const { t } = useI18n();
 
 const props = defineProps({
@@ -75,6 +76,10 @@ const props = defineProps({
     type: Object as PropType<ContainerWithProductsResponse>,
     required: false,
   },
+  associatedPos: {
+    type: Object as PropType<PointOfSaleWithContainersResponse>,
+    required: false
+  }
 });
 
 const emit = defineEmits(['update:visible', 'create:container']);
@@ -142,20 +147,36 @@ const handleSubmitContainer = handleSubmit(async (values) => {
     }).catch((err) => handleError(err, toast));
   } else {
     // Creating a container
-    await containerStore.createEmptyContainer(
+    const container = await containerStore.createEmptyContainer(
         values.name,
         values.public,
         values.owner.id
-    ).then((c: ContainerResponse) => {
-      emit('create:container', c);
-      closeDialog();
-      toast.add({
-        severity: 'success',
-        summary: t('successMessages.success'),
-        detail: t('successMessages.createContainer'),
-        life: 3000,
+    ).catch((err) => handleError(err, toast));
+
+    if(!container) return;
+
+
+
+    // Adding container directly to associated POS
+    if(props.associatedPos) {
+      const posStore = usePointOfSaleStore();
+      await posStore.updatePointOfSale(props.associatedPos.id, {
+        name: props.associatedPos.name,
+        useAuthentication: props.associatedPos.useAuthentication,
+        containers: [container, ...props.associatedPos.containers].map(c => c.id),
+        id: props.associatedPos.id,
+        cashierRoleIds: props.associatedPos.cashierRoles.map(c => c.id)
       });
-    }).catch((err) => handleError(err, toast));
+    }
+
+    emit('create:container', container);
+    closeDialog();
+    toast.add({
+      severity: 'success',
+      summary: t('successMessages.success'),
+      detail: t('successMessages.createContainer'),
+      life: 3000,
+    });
   }
 
   closeDialog();

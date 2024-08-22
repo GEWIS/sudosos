@@ -5,7 +5,7 @@ import {
   AuthenticationResponse,
   GEWISAuthenticationPinRequest, GewiswebAuthenticationRequest, UpdatePinRequest,
   UpdateLocalRequest,
-  UserResponse, UpdateNfcRequest, AcceptTosRequest, RoleWithPermissionsResponse
+  UserResponse, UpdateNfcRequest, AcceptTosRequest
 } from "@sudosos/sudosos-client";
 import { useUserStore } from "./user.store";
 import { jwtDecode, JwtPayload } from "jwt-decode";
@@ -14,7 +14,6 @@ import { clearTokenInStorage, getTokenFromStorage, setTokenInStorage } from "../
 
 interface AuthStoreState {
   user: UserResponse | null,
-  rolesWithPermissions: RoleWithPermissionsResponse[],
   organs: UserResponse[],
   token: string | null,
   acceptedToS: string | null,
@@ -24,7 +23,6 @@ export const useAuthStore = defineStore({
   id: 'auth',
   state: (): AuthStoreState => ({
     user: null,
-    rolesWithPermissions: [],
     token: null,
     organs: [],
     acceptedToS: null,
@@ -47,12 +45,12 @@ export const useAuthStore = defineStore({
       this.user = user;
       this.token = token;
       setTokenInStorage(this.token);
-      this.rolesWithPermissions = rolesWithPermissions;
       this.organs = organs;
       this.acceptedToS = acceptedToS;
       if (this.acceptedToS === "ACCEPTED") {
         const userStore = useUserStore();
         userStore.setCurrentUser(user);
+        userStore.setCurrentRolesWithPermissions(rolesWithPermissions);
       }
     },
 
@@ -163,7 +161,6 @@ export const useAuthStore = defineStore({
     },
     logout() {
       this.user = null;
-      this.rolesWithPermissions = [];
       this.token = null;
       this.organs = [];
       this.acceptedToS = null;

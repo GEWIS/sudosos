@@ -1,9 +1,8 @@
-import { AuthenticationResponse, UserResponse, RoleWithPermissionsResponse } from '@sudosos/sudosos-client';
+import { AuthenticationResponse, UserResponse } from '@sudosos/sudosos-client';
 import { ApiService } from '../services/ApiService';
 
 interface AuthStoreState {
     user: UserResponse | null;
-    rolesWithPermissions: RoleWithPermissionsResponse[];
     organs: UserResponse[];
     token: string | null;
     acceptedToS: string | null;

@@ -1,11 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import PublicLayout from "@/layout/PublicLayout.vue";
 import DashboardLayout from "@/layout/DashboardLayout.vue";
-import {isAuthenticated, useAuthStore, useUserStore} from "@sudosos/sudosos-frontend-common";
+import { isAuthenticated, useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import 'vue-router';
 import ErrorView from "@/views/ErrorView.vue";
 import { authRoutes } from "@/modules/auth/routes";
-import { posRoutes } from "@/modules/point-of-sale/routes";
 import { adminRoutes } from "@/modules/admin/routes";
 import { financialRoutes } from "@/modules/financial/routes";
 import { sellerRoutes } from "@/modules/seller/routes";
@@ -24,7 +23,6 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     ...authRoutes(),
-    ...posRoutes(),
     ...adminRoutes(),
     ...financialRoutes(),
     ...sellerRoutes(),

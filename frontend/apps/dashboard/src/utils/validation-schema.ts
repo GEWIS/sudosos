@@ -4,6 +4,7 @@ import { ref } from "vue";
 import type { Ref } from "vue";
 import i18n from './i18nUtils';
 import type { BaseUserResponse } from "@sudosos/sudosos-client";
+import type { ContainerInStore } from "@/stores/container.store";
 
 const t = i18n.global.t;
 
@@ -77,3 +78,25 @@ export const createPayoutSchema =
     bankAccountName: yup.string().required(),
     user: yup.mixed<BaseUserResponse>().required(),
   });
+
+export const updatePointOfSaleObject =
+    yup.object({
+        name: yup.string().required(),
+        useAuthentication: yup.boolean().required(),
+        containers: yup.mixed<Array<number>>().required(),
+        id: yup.number().required(),
+        cashierRoleIds: yup.mixed<Array<number>>()
+    });
+
+export const createPointOfSaleObject =
+    yup.object({
+        name: yup.string().required(),
+        useAuthentication: yup.boolean().default(false).required(),
+        owner: yup.mixed<BaseUserResponse>().required(),
+    });
+
+export const addContainerObject =
+    yup.object({
+        container: yup.mixed<ContainerInStore>().required()
+    });
+

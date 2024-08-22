@@ -18,6 +18,19 @@ export const useTransactionStore = defineStore('transaction', {
     actions: {
         async fetchIndividualTransaction (id: number, service: ApiService) {
             this.transaction = (await service.transaction.getSingleTransaction(id)).data;
+        },
+        async fetchTransactionsFromPointOfSale(
+            service: ApiService,
+            pointOfSaleId: number,
+            fromDate?: string,
+            tillDate?: string,
+            take?: number,
+            skip?: number,
+            ) {
+            return await service.transaction.getAllTransactions(
+                undefined, undefined, undefined,
+                pointOfSaleId, undefined, undefined,
+                fromDate, tillDate, take, skip);
         }
     },
 });

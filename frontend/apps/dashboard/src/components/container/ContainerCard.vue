@@ -1,7 +1,11 @@
 <template>
   <CardComponent :header="$t('containersOverview.Containers')" class="p-0">
     <template #topAction>
-      <div v-if="showCreate" class="flex justify-content-end">
+      <div v-if="showCreate || associatedPos" class="flex justify-content-endg gap-2">
+        <Button
+            v-if="associatedPos"
+            @click="openContainerAdd()"
+            outlined>{{$t('containersOverview.addExisting')}}</Button>
         <Button @click="openContainerEdit()">{{$t('app.Create')}}</Button>
       </div>
     </template>
@@ -25,7 +29,15 @@
         <ContainerProductGrid :container="container as ContainerWithProductsResponse"/>
       </AccordionTab>
     </Accordion>
-    <ContainerCreateDialog :container="selectedContainer" v-model:visible="visible"/>
+    <ContainerActionsDialog
+        :container="selectedContainer"
+        v-model:visible="visible"
+        :associatedPos="associatedPos"/>
+    <!-- For rendering in the point of sale view -->
+    <POSAddContainerModal
+        v-if="associatedPos"
+        :associated-pos="associatedPos"
+        v-model:is-visible="POSAddContainerIsVisible" />
   </CardComponent>
 
 </template>
@@ -35,11 +47,13 @@ import CardComponent from "../CardComponent.vue";
 import Accordion, { type AccordionTabOpenEvent } from "primevue/accordion";
 import AccordionTab from "primevue/accordiontab";
 import { type ContainerInStore, useContainerStore } from "@/stores/container.store";
-import { type Ref, ref } from "vue";
-import ContainerCreateDialog from "@/components/container/ContainerActionsDialog.vue";
-import type { ContainerWithProductsResponse } from "@sudosos/sudosos-client";
+import { type PropType, type Ref, ref } from "vue";
+import ContainerActionsDialog from "@/components/container/ContainerActionsDialog.vue";
+import type { ContainerWithProductsResponse, PointOfSaleWithContainersResponse } from "@sudosos/sudosos-client";
+import POSAddContainerModal from "@/modules/seller/components/POSAddContainerModal.vue";
 
 const visible = ref(false);
+const POSAddContainerIsVisible = ref(false);
 const selectedContainer: Ref<ContainerWithProductsResponse | undefined> = ref(undefined);
 
 const props = defineProps({
@@ -50,6 +64,10 @@ const props = defineProps({
   showCreate: {
     type: Boolean,
     default: false,
+  },
+  associatedPos: {
+    type: Object as PropType<PointOfSaleWithContainersResponse>,
+    required: false
   }
 });
 
@@ -71,6 +89,10 @@ const openContainerEdit = async (id?: number) => {
   }
   else selectedContainer.value = undefined;
   visible.value = true;
+};
+
+const openContainerAdd = async () => {
+  POSAddContainerIsVisible.value = true;
 };
 
 </script>

@@ -55,9 +55,9 @@ export function isAuthenticated(): boolean {
 }
 
 /**
- * Populates the auth and userStore from the token stored in the localStorage.
+ * Populates the auth and userStore from the token stored in the localStorage, resolves when the user roles are loaded.
  */
-export function populateStoresFromToken(apiService: ApiService) {
+export async function populateStoresFromToken(apiService: ApiService) {
     const isAuth = isAuthenticated();
 
     if (isAuth) {
@@ -67,8 +67,8 @@ export function populateStoresFromToken(apiService: ApiService) {
         if (user) {
             const userStore = useUserStore();
             userStore.setCurrentUser(user);
-            userStore.fetchUserRolesWithPermissions(user.id, apiService);
             userStore.fetchCurrentUserBalance(user.id, apiService);
+            return await userStore.fetchUserRolesWithPermissions(user.id, apiService);
         }
     }
 }

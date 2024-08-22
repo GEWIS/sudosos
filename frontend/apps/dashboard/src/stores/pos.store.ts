@@ -1,50 +1,67 @@
 import { defineStore } from 'pinia';
-import type { PointOfSaleWithContainersResponse, ProductResponse } from "@sudosos/sudosos-client";
+import type {
+    CreatePointOfSaleRequest,
+    PointOfSaleResponse,
+    PointOfSaleWithContainersResponse,
+    UpdatePointOfSaleRequest
+} from "@sudosos/sudosos-client";
 import ApiService from "@/services/ApiService";
 
 export const usePointOfSaleStore = defineStore('pointOfSale', {
     state: () => ({
-        pointOfSale: null as PointOfSaleWithContainersResponse | null,
+        pointsOfSale: {} as Record<number, PointOfSaleResponse>,
+        pointsOfSaleWithContainers: {} as Record<number, PointOfSaleWithContainersResponse>
     }),
     getters: {
-        allProductCategories() {
-            const categories: {[key: number]: string} = {};
 
-            if (this.pointOfSale) {
-                this.pointOfSale.containers.forEach((container) => {
-                    container.products.forEach((product) => {
-                        categories[product.category.id] = product.category.name;
-                    });
-                });
-            }
-            return Object.entries(categories).map(([key, value]) => ({ 'id': String(key), 'name': value }));
-        },
-        getPos(): PointOfSaleWithContainersResponse | null {
-            return this.pointOfSale;
-        },
     },
     actions: {
-        async fetchPointOfSale(id: number): Promise<void> {
+        async fetchPointOfSale(id: number): Promise<PointOfSaleResponse> {
             const response = await ApiService.pos.getSinglePointOfSale(id);
-            this.pointOfSale = response.data;
+            this.pointsOfSale[id] = response.data;
+            return response.data;
         },
-        getProduct(productId: number, revision: number, containerId: number): ProductResponse | undefined {
-            if (this.pointOfSale) {
-                const container = this.pointOfSale.containers.find(c => c.id === containerId);
-                if (container) {
-                    return container.products.find(p => p.id === productId && p.revision === revision);
-                }
+        async fetchPointOfSaleWithContainers(id: number): Promise<PointOfSaleWithContainersResponse> {
+            const response = await ApiService.pos.getSinglePointOfSale(id);
+            this.pointsOfSaleWithContainers[id] = response.data;
+            return response.data;
+        },
+        async getPointsOfSale(take: number, skip: number) {
+            const pointsOfSale = (await ApiService.pos.getAllPointsOfSale(take, skip)).data;
+            pointsOfSale.records.forEach((pointOfSale) => {
+                this.pointsOfSale[pointOfSale.id] = pointOfSale;
+            });
+            return pointsOfSale;
+        },
+        async getPointOfSale(id: number) {
+            const pointOfSale = this.pointsOfSaleWithContainers[id];
+            if(!pointOfSale) {
+                await this.fetchPointOfSaleWithContainers(id);
             }
-            return undefined;
+            return this.pointsOfSaleWithContainers[id];
         },
-        async getUserPointsOfSale(userId: number) {
-            return await ApiService.user.getUsersPointsOfSale(userId);
+        async getUserPointsOfSale(userId: number, take: number, skip: number) {
+            return (await ApiService.user.getUsersPointsOfSale(userId, take, skip)).data;
         },
-        async createPointOfSale(name: string, useAuthentication: boolean, containers: Array<number>, ownerId: number){
-            return await ApiService.pos.createPointOfSale({ name, useAuthentication, containers, ownerId });
+        async createPointOfSale(createPointOfSaleRequest: CreatePointOfSaleRequest) {
+            return await ApiService.pos.createPointOfSale(createPointOfSaleRequest);
         },
-        async updatePointOfSale(name: string, id: number, useAuthentication: boolean, containers: Array<number>) {
-            return await ApiService.pos.updatePointOfSale(id, { name, useAuthentication, containers, id });
+        async updatePointOfSale(id: number, updatePointOfSale: UpdatePointOfSaleRequest):
+            Promise<PointOfSaleWithContainersResponse> {
+
+            return await ApiService.pos.updatePointOfSale(id, updatePointOfSale)
+                .then((res) => {
+                    const pointOfSale: PointOfSaleResponse = res.data;
+                    const pointOfSaleWithContainers: PointOfSaleWithContainersResponse = res.data;
+                    this.pointsOfSale[pointOfSale.id] = pointOfSale;
+                    this.pointsOfSaleWithContainers[pointOfSaleWithContainers.id] = pointOfSaleWithContainers;
+                    return this.pointsOfSaleWithContainers[pointOfSaleWithContainers.id];
+                });
+        },
+        async deletePointOfSale(id: number) {
+            delete this.pointsOfSale[id];
+            delete this.pointsOfSaleWithContainers[id];
+            return await ApiService.pos.deletePointOfSale(id);
         }
     },
 });

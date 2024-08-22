@@ -149,7 +149,8 @@
     "Security": "Beveiliging"
   },
   "containersOverview": {
-    "Containers": "Containers"
+    "Containers": "Containers",
+    "addExisting": "Voeg bestaande container toe"
   },
   "errorMessages": {
     "posNotFound": "Het gevraagde verkooppunt is niet gevonden."
@@ -263,7 +264,10 @@
     "productCreate": "Product is succesvol aangemaakt.",
     "updateContainer": "Container is succesvol geüpdatet.",
     "invoiceDeleted": "Factuur is succesvol verwijderd.",
-    "invoiceUpdated": "Factuur {reference} is succesvol geüpdatet."
+    "invoiceUpdated": "Factuur {reference} is succesvol geüpdatet.",
+    "pointOfSaleUpdated": "Point of sale is succesvol geüpdatet.",
+    "pointOfSaleDeleted": "Point of sale is successvol verwijdered.",
+    "pointOfSaleCreated": "Point of sale is successvol aangemaakt."
   },
   "termsOfService": {
     "acceptFirst": "Accepteer de Voorwaarden",
@@ -335,6 +339,19 @@
   "tooltip": {
     "owner_revenue": "NB: De containereigenaar krijgt de opbrengst, niet de producteigenaar"
   },
+  "common": {
+    "approve": "Goedkeuren",
+    "deny": "Afwijzen",
+    "download PDF": "Download PDF",
+    "close": "Sluiten",
+    "create": "Aanmaken",
+    "update": "Update",
+    "delete": "Verwijderen",
+    "owner": "Eigenaar",
+    "name": "Naam",
+    "container": "Container",
+    "loading": "Laden..."
+  },
   "c_invoiceInfo": {
     "Info": "Info",
     "Created on": "Aangemaakt op",
@@ -397,5 +414,13 @@
     "ApprovedBy": "Deze uitbetaling is goedgekeurd door {approvedBy}",
     "AmountToHigh": "Bedrag is hoger dan de balans van de gebruiker",
     "Download PDF": "Download PDF"
+  },
+  "c_posInfo": {
+    "overview": "Overzicht",
+    "name": "Naam",
+    "useAuthentication": "Gebruik van pin authenticatie",
+    "posName": "Naam van de POS",
+    "confirmDelete": "Weet je zeker dat je deze point of sale wilt verwijderen? Dit kan niet ongedaan worden gemaakt!",
+    "lastWeekSales": "Verkoop van afgelopen week"
   }
 }
