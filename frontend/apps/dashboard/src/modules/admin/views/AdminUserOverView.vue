@@ -11,7 +11,7 @@
         filterDisplay="menu"
         :globalFilterFields="['type', 'firstName', 'lastName', 'fullName']"
         lazy
-        :totalRecords="sortedUsers.length > 0 ? sortedUsers.length : totalRecords"
+        :totalRecords="searchQuery.split(' ').length > 1 ? sortedUsers.length : totalRecords"
         :loading="isLoading"
         @page="onPage($event)"
         @sort="onSort"
