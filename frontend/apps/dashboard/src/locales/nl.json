@@ -84,7 +84,10 @@
     "allIsFines": "Waarvan alles een boete is",
     "balance": "Saldo",
     "someIsFines": "Waarvan {fine} boetes zijn",
-    "topup": "Je gaat opwaarderen met "
+    "topup": "Je gaat opwaarderen met ",
+    "waiveFines": "Boetes kwijtschelden",
+    "waiveFinesConfirmationTitle": "Boete kwijtschelden bevestigen",
+    "waiveFinesConfirmation": "Weet je zeker dat je de boetes wilt kwijtschelden?"
   },
   "c_productContainerOperations": {
     "Manage Products": "Beheer Producten",
@@ -267,7 +270,10 @@
     "invoiceUpdated": "Factuur {reference} is succesvol geüpdatet.",
     "pointOfSaleUpdated": "Point of sale is succesvol geüpdatet.",
     "pointOfSaleDeleted": "Point of sale is successvol verwijdered.",
-    "pointOfSaleCreated": "Point of sale is successvol aangemaakt."
+    "pointOfSaleCreated": "Point of sale is successvol aangemaakt.",
+    "waiveFinesSuccess": "Boetes zijn succesvol kwijtgescholden.",
+    "waiveFinesRejected": "Boetes zijn succesvol afgewezen.",
+    "canceled": "Geannuleerd"
   },
   "termsOfService": {
     "acceptFirst": "Accepteer de Voorwaarden",
