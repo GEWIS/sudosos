@@ -290,6 +290,7 @@
     "fineAmount": "Fine",
     "fineDescr": "You have received a fine.",
     "invoiceDescr": "You have paid an invoice to GEWIS",
+    "payoutRequestDescr": "You have requested a payout.",
     "price": "Price",
     "title": "Title",
     "total": "Total:",

@@ -75,7 +75,7 @@
         </Column>
     </DataTable>
     <ModalMutation
-        v-if="openedMutationId && openedMutationType"
+        v-if="openedMutationId && openedMutationType !== undefined"
         v-model:visible="isModalVisible"
         :id="openedMutationId"
         :type="openedMutationType"

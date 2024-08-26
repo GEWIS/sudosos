@@ -23,6 +23,7 @@
     <InvoiceDetailModal v-else-if="shouldShowInvoice" :invoiceInfo="transferDetails[props.id]" />
     <DepositDetailModal v-else-if="shouldShowDeposit" :depositInfo="transferDetails[props.id]" />
     <FineDetailModal v-else-if="shouldShowFine" :fine="transferDetails[props.id]" />
+    <PayoutRequestDetailModal v-else-if="shouldShowPayoutRequest" :payoutRequest="transferDetails[props.id]" />
     <WaivedFineDetailModal v-else-if="shouldShowWaivedFine" :waivedFines="transferDetails[props.id]" />
     <template #footer v-if="
       !shouldShowDeposit &&
@@ -49,6 +50,7 @@ import type {
 import { useTransferStore } from '@/stores/transfer.store';
 import apiService from '@/services/ApiService';
 import TransactionDetailModal from '@/components/mutations/mutationmodal/ModalDetailTransaction.vue';
+import PayoutRequestDetailModal from '@/components/mutations/mutationmodal/ModalDetailPayoutRequest.vue';
 import DepositDetailModal from '@/components/mutations/mutationmodal/ModalDetailDeposit.vue';
 import InvoiceDetailModal from '@/components/mutations/mutationmodal/ModalDetailInvoice.vue';
 import FineDetailModal from '@/components/mutations/mutationmodal/ModalDetailFine.vue';
@@ -115,6 +117,11 @@ const shouldShowWaivedFine = computed(() => {
     props.type === FinancialMutationType.WAIVED_FINE);
 });
 
+const shouldShowPayoutRequest = computed(() => {
+  if (!transferDetails.value[props.id]) return false;
+  return (
+    props.type === FinancialMutationType.PAYOUT_REQUEST);
+});
 async function fetchTransferInfo() {
   if (transferDetails.value[props.id]) return; // We already have content!
   await transferStore.fetchIndividualTransfer(props.id, apiService).then(() => {
@@ -146,6 +153,7 @@ function getProductsOfTransaction(transactionResponse: TransactionResponse): voi
 }
 
 async function fetchMutation(): Promise<void> {
+
   if (props.type == FinancialMutationType.TRANSACTION) await fetchTransactionInfo();
   else await fetchTransferInfo();
 }
