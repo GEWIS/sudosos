@@ -39,8 +39,7 @@ You can quickly start development directly in your browser by using [Codespaces]
 - After this, all of the dependencies, development environment and set up command should be run and ready.
 
 #### Step 2: Launching dashboard/point-of-sale
-- Run `cd apps/dashboard` or `cd apps/point-of-sale` in the terminal. 
-- Run `npm run dev` to start the development environment.
+- Run `yarn dev-dashboard` or `yarn dev-pos` to start the development environment.
 - There should be a pop up to open the website in the bottom right corner, changes to the code are directly reflected on this site.
 - You can also open this site using the ports tab in the same window as the terminal.
 
@@ -63,8 +62,7 @@ You can quickly start development directly in your browser by using [Codespaces]
 - Copy the .env.example file to .env in the `apps/dashboard` and `apps/point-of-sale` directories
 
 #### Step 2: Running the dashboard/point-of-sale
-- Run `cd apps/dashboard` or `cd apps/point-of-sale` in the terminal. 
-- Run `yarn run dev` to start the development environment.
+- Run `yarn dev-dashboard` or `yarn dev-pos` to start the development environment.
 - You can access the dashboard and point of sale at `localhost:5173` and `localhost:5174` respectively.
 
 ### Proxying requests to different backends

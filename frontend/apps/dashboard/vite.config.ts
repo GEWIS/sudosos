@@ -19,6 +19,7 @@ export default defineConfig(({ mode }) => {
       exclude: ['ToastService'],
     },
     server: {
+      port: 5173,
       proxy: {
         '/api': {
           target: env.VITE_DEV_API_BASE,

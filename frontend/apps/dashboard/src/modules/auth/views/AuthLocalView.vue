@@ -70,7 +70,7 @@ import { toTypedSchema } from '@vee-validate/yup';
 import * as yup from 'yup';
 import InputText from 'primevue/inputtext';
 import { useToast } from 'primevue/usetoast';
-import { AxiosError } from 'axios';
+import type { AxiosError } from 'axios';
 import { handleError } from "@/utils/errorUtils";
 import { useI18n } from "vue-i18n";
 
