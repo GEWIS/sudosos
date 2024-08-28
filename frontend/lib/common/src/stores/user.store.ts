@@ -65,7 +65,7 @@ export const useUserStore = defineStore('user', {
     async fetchUsers(service: ApiService) {
       // Fetches all users if the store is empty
       if(this.users.length == 0) {
-        this.users = await fetchAllPages<UserResponse>(0, 500, (take, skip) =>
+        this.users = await fetchAllPages<UserResponse>((take, skip) =>
             service.user.getAllUsers(take, skip)
         );
       }
@@ -73,8 +73,6 @@ export const useUserStore = defineStore('user', {
     async fetchAllOrgans(apiService: ApiService) {
       if (this.organs.length != 0) return this.organs;
       return fetchAllPages<UserResponse>(
-          0,
-          Number.MAX_SAFE_INTEGER,
           (take, skip) => apiService.user.getAllUsersOfUserType("ORGAN", take, skip))
             .then((organs) => {
               this.organs = organs;

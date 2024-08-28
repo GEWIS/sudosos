@@ -50,7 +50,7 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
       this.pointOfSaleMembers = response.data.records;
     },
     async fetchUserPointOfSale(id: number): Promise<void> {
-      this.usersPointOfSales = await fetchAllPages<PointOfSaleResponse>(0, 100,  (take, skip) =>
+      this.usersPointOfSales = await fetchAllPages<PointOfSaleResponse>((take, skip) =>
           // @ts-ignore
           apiService.user.getUsersPointsOfSale(id, take, skip)
       );

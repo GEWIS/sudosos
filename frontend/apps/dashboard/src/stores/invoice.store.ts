@@ -78,8 +78,6 @@ export const useInvoiceStore = defineStore('invoice', {
         },
         async fetchAll(): Promise<Record<number, InvoiceResponse>> {
             return fetchAllPages<InvoiceResponse>(
-              0,
-              Number.MAX_SAFE_INTEGER,
               // @ts-ignore
               (take, skip) => ApiService.invoices.getAllInvoices(null, null, null, null, null, null, take, skip)
             ).then((invoices) => {

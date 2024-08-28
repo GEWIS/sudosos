@@ -238,8 +238,6 @@ const handlePickedDates = handleSubmit(async (values) => {
 onMounted(async () => {
   await userStore.fetchUsers(apiService);
   fineHandoutEvents.value = await fetchAllPages<FineHandoutEventResponse>(
-    0,
-    Number.MAX_SAFE_INTEGER,
     // @ts-ignore
     (take, skip) => apiService.debtor.returnAllFineHandoutEvents(take, skip)
   );

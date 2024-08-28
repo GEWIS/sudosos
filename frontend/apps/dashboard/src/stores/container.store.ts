@@ -89,8 +89,6 @@ export const useContainerStore = defineStore('container', {
          */
         async fetchAllContainers() {
             return fetchAllPages<ContainerResponse>(
-              0,
-              Number.MAX_SAFE_INTEGER,
               // @ts-ignore
               (take, skip) => ApiService.container.getAllContainers(take, skip)
             ).then((containersArray) => {

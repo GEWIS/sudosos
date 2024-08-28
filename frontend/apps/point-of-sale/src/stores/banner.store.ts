@@ -11,7 +11,7 @@ export const useBannerStore = defineStore('banner', {
   }),
   actions: {
     async fetchBanners() {
-      this.banners = await fetchAllPages<BannerResponse>(0, 100, (take, skip) =>
+      this.banners = await fetchAllPages<BannerResponse>((take, skip) =>
         // @ts-ignore
         apiService.openBanner.getAllOpenBanners(take, skip)
       );
@@ -22,7 +22,7 @@ export const useBannerStore = defineStore('banner', {
       // Filter banners that are currently active based on their start and end dates and have an image attached.
       const now = new Date().toISOString();
       return this.banners.filter(
-        (banner) => banner.image && banner.active && (banner.startDate <= now && banner.endDate >= now) 
+        (banner) => banner.image && banner.active && (banner.startDate <= now && banner.endDate >= now)
       );
     }
   }

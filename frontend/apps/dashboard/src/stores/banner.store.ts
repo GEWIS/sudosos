@@ -10,7 +10,7 @@ export const useBannersStore = defineStore('banners', {
     actions: {
         async fetchBanners() {
             // TODO: Not fetch all banners (see #51)
-            this.banners = await fetchAllPages<BannerResponse>(0, 500, (take, skip) =>
+            this.banners = await fetchAllPages<BannerResponse>((take, skip) =>
                 // @ts-ignore
                 apiService.openBanner.getAllOpenBanners(take, skip)
             );

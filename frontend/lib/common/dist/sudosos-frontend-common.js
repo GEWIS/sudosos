@@ -2,14 +2,16 @@ var ca = Object.defineProperty;
 var da = (l, h, O) => h in l ? ca(l, h, { enumerable: !0, configurable: !0, writable: !0, value: O }) : l[h] = O;
 var W = (l, h, O) => da(l, typeof h != "symbol" ? h + "" : h, O);
 import { createPinia as ua, defineStore as mt } from "pinia";
-async function rt(l, h, O) {
-  let t = l, A = [];
+async function rt(l) {
+  let h = 0;
+  const O = Number.MAX_SAFE_INTEGER;
+  let t = [];
   for (; ; ) {
-    const m = await O(h, t), { records: S } = m.data;
-    if (A = A.concat(S), t += h, m.data._pagination.count <= t + h)
+    const A = await l(O, h), { records: m, _pagination: S } = A.data;
+    if (t = t.concat(m), h += S.take, A.data._pagination.count <= h)
       break;
   }
-  return A;
+  return t;
 }
 ua();
 const St = mt("user", {
@@ -53,15 +55,11 @@ const St = mt("user", {
   actions: {
     async fetchUsers(l) {
       this.users.length == 0 && (this.users = await rt(
-        0,
-        500,
         (h, O) => l.user.getAllUsers(h, O)
       ));
     },
     async fetchAllOrgans(l) {
       return this.organs.length != 0 ? this.organs : rt(
-        0,
-        Number.MAX_SAFE_INTEGER,
         (h, O) => l.user.getAllUsersOfUserType("ORGAN", h, O)
       ).then((h) => (this.organs = h, this.organs));
     },

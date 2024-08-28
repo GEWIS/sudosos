@@ -65,8 +65,6 @@ export const useProductStore = defineStore('products', {
      */
     async fetchAllProducts() {
       return fetchAllPages<ProductResponse>(
-        0,
-        Number.MAX_SAFE_INTEGER,
         // @ts-ignore
         (take, skip) => ApiService.products.getAllProducts(take, skip)
       ).then((productsArray) => {
@@ -81,8 +79,6 @@ export const useProductStore = defineStore('products', {
      */
     async fetchAllCategories() {
       return fetchAllPages<ProductCategoryResponse>(
-        0,
-        Number.MAX_SAFE_INTEGER,
         // @ts-ignore
         (take, skip) => ApiService.category.getAllProductCategories(take, skip)
       ).then((categories) => {
@@ -95,8 +91,6 @@ export const useProductStore = defineStore('products', {
      */
     async fetchAllVatGroups() {
       return fetchAllPages<VatGroupResponse>(
-        0,
-        Number.MAX_SAFE_INTEGER,
         // @ts-ignore
         (take, skip) => ApiService.vatGroups.getAllVatGroups(undefined, undefined,undefined,
             false, take, skip)).then((vatGroups) => {
