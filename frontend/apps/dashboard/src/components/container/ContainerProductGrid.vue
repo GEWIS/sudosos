@@ -7,7 +7,7 @@
     border-1 border-round-sm overflow-hidden" :outlined="true" @click="visible = true">
       <i class="pi pi-plus text-5xl my-auto product-card"></i>
     </Button>
-    <ProductActions v-model:visible="visible" :container="props.container"/>
+    <ProductActionDialog v-model:visible="visible" :container="props.container"/>
   </div>
 </template>
 
@@ -15,7 +15,7 @@
 import type { ContainerWithProductsResponse } from "@sudosos/sudosos-client";
 import ContainerProductDisplay from "@/components/container/ContainerProductDisplay.vue";
 import { type Ref, ref, type PropType } from "vue";
-import ProductActions from "@/components/ProductActions.vue";
+import ProductActionDialog from "@/modules/seller/components/ProductActionDialog.vue";
 
 let visible: Ref<boolean> = ref(false);
 const props = defineProps({

@@ -36,7 +36,7 @@ import type {
   PaginatedBaseTransactionResponse,
   Dinero as SudoSOSDinero
 } from '@sudosos/sudosos-client';
-import ContainerCard from '@/components/container/ContainerCard.vue';
+import ContainerCard from '@/components/container/ContainersCard.vue';
 import router from '@/router';
 import apiService from '@/services/ApiService';
 import { useContainerStore } from "@/stores/container.store";

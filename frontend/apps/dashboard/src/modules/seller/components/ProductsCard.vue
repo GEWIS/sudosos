@@ -5,7 +5,7 @@
         <Button @click="openCreateModal">{{ $t('app.Create') }}</Button>
       </div>
     </template>
-    <ProductActions v-model:visible="visible" :product="product"/>
+    <ProductActionDialog v-model:visible="visible" :product="product"/>
     <DataTable
         v-model:filters="filters"
         :value="products"
@@ -109,7 +109,8 @@
               @click="openEditModal(rowData.data.id)"
               type="button"
               outlined
-              icon="pi pi-pencil"
+              severity="secondary"
+              icon="pi pi-info-circle"
           />
         </template>
       </Column>
@@ -131,10 +132,10 @@ import { computed, onBeforeMount, type Ref, ref } from "vue";
 import type { ProductResponse } from "@sudosos/sudosos-client";
 import { useProductStore } from "@/stores/product.store";
 import { FilterMatchMode } from "primevue/api";
-import ProductActions from "@/components/ProductActions.vue";
+import ProductActionDialog from "@/modules/seller/components/ProductActionDialog.vue";
 
 const loading: Ref<boolean> = ref(true);
-const visible: Ref<Boolean> = ref(false);
+const visible: Ref<boolean> = ref(false);
 const product: Ref<ProductResponse | undefined> = ref(undefined);
 const fileInputs: Ref<{ [key: number]: any }> = ref({});
 

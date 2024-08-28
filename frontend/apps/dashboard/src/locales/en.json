@@ -156,7 +156,8 @@
     "Preferred": "Preferred",
     "Featured": "Featured",
     "Pricelist": "Price list",
-    "AllProducts": "All Products"
+    "AllProducts": "All Products",
+    "confirmDelete": "Are you sure you want to delete this product? This cannot be undone."
   },
   "c_transactionDetailsModal": {
     "delete": "Delete",
@@ -259,6 +260,7 @@
     "productUpdate": "Successfully updated product.",
     "productContainerAdd": "Successfully added product to container.",
     "productContainerDelete": "Successfully deleted product from container.",
+    "productDeleted": "Successfully deleted product.",
     "productCreate": "Successfully created product.",
     "updateContainer": "Successfully updated container.",
     "invoiceDeleted": "Successfully deleted invoice.",
@@ -353,7 +355,7 @@
     }
   },
   "tooltip": {
-    "owner_revenue": "Note: Container owner gets the revenue, not the product owner"
+    "productOwner": "Note: Container owner gets the revenue, not the product owner. Owner cannot be edited after creation."
   },
   "common": {
     "approve": "Approve",
@@ -366,7 +368,8 @@
     "owner": "Owner",
     "name": "Name",
     "container": "Container",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "save": "Save"
   },
   "c_invoiceInfo": {
     "Info": "Info",

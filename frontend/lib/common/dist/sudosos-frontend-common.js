@@ -1,8 +1,8 @@
-var la = Object.defineProperty;
-var ca = (l, h, O) => h in l ? la(l, h, { enumerable: !0, configurable: !0, writable: !0, value: O }) : l[h] = O;
-var W = (l, h, O) => ca(l, typeof h != "symbol" ? h + "" : h, O);
-import { createPinia as da, defineStore as bt } from "pinia";
-async function ua(l, h, O) {
+var ca = Object.defineProperty;
+var da = (l, h, O) => h in l ? ca(l, h, { enumerable: !0, configurable: !0, writable: !0, value: O }) : l[h] = O;
+var W = (l, h, O) => da(l, typeof h != "symbol" ? h + "" : h, O);
+import { createPinia as ua, defineStore as mt } from "pinia";
+async function rt(l, h, O) {
   let t = l, A = [];
   for (; ; ) {
     const m = await O(h, t), { records: S } = m.data;
@@ -11,10 +11,11 @@ async function ua(l, h, O) {
   }
   return A;
 }
-da();
-const mt = bt("user", {
+ua();
+const St = mt("user", {
   state: () => ({
     users: [],
+    organs: [],
     current: {
       balance: null,
       rolesWithPermissions: [],
@@ -51,11 +52,18 @@ const mt = bt("user", {
   },
   actions: {
     async fetchUsers(l) {
-      this.users = await ua(
+      this.users.length == 0 && (this.users = await rt(
         0,
         500,
         (h, O) => l.user.getAllUsers(h, O)
-      );
+      ));
+    },
+    async fetchAllOrgans(l) {
+      return this.organs.length != 0 ? this.organs : rt(
+        0,
+        Number.MAX_SAFE_INTEGER,
+        (h, O) => l.user.getAllUsersOfUserType("ORGAN", h, O)
+      ).then((h) => (this.organs = h, this.organs));
     },
     async fetchCurrentUserBalance(l, h) {
       this.current.balance = (await h.balance.getBalanceId(l)).data;
@@ -116,7 +124,7 @@ function pa(l) {
     return atob(h);
   }
 }
-function St(l, h) {
+function ft(l, h) {
   if (typeof l != "string")
     throw new ge("Invalid token specified: must be a string");
   h || (h = {});
@@ -138,17 +146,17 @@ function St(l, h) {
 function va(l) {
   if (l.headers.has("Set-Authorization")) {
     const h = l.headers.get("Set-Authorization");
-    h && ft(h);
+    h && gt(h);
   }
 }
 function Aa() {
   localStorage.clear();
 }
 function Oa(l) {
-  const h = String(St(l).exp);
+  const h = String(ft(l).exp);
   return { token: l, expires: h };
 }
-function ft(l) {
+function gt(l) {
   localStorage.setItem("jwt_token", JSON.stringify(Oa(l)));
 }
 function ze() {
@@ -173,12 +181,12 @@ async function _n(l) {
     O.extractStateFromToken();
     const t = O.getUser;
     if (t) {
-      const A = mt();
+      const A = St();
       return A.setCurrentUser(t), A.fetchCurrentUserBalance(t.id, l), await A.fetchUserRolesWithPermissions(t.id, l);
     }
   }
 }
-const ma = bt({
+const ma = mt({
   id: "auth",
   state: () => ({
     user: null,
@@ -200,8 +208,8 @@ const ma = bt({
   actions: {
     handleResponse(l) {
       const { user: h, token: O, rolesWithPermissions: t, organs: A, acceptedToS: m } = l;
-      if (!(!h || !O || !t || !A || !m) && (this.user = h, this.token = O, ft(this.token), this.organs = A, this.acceptedToS = m, this.acceptedToS === "ACCEPTED")) {
-        const S = mt();
+      if (!(!h || !O || !t || !A || !m) && (this.user = h, this.token = O, gt(this.token), this.organs = A, this.acceptedToS = m, this.acceptedToS === "ACCEPTED")) {
+        const S = St();
         S.setCurrentUser(h), S.setCurrentRolesWithPermissions(t);
       }
     },
@@ -304,7 +312,7 @@ const ma = bt({
     extractStateFromToken() {
       const l = ze();
       if (!l.token) return;
-      const h = St(l.token);
+      const h = ft(l.token);
       this.user = h.user, this.token = l.token, this.organs = h.organs, this.acceptedToS = h.acceptedToS;
     },
     logout() {
@@ -332,8 +340,8 @@ function Sa(l) {
     });
   }), O;
 }
-var Q = {}, gt = {};
-function jt(l, h) {
+var Q = {}, jt = {};
+function Ut(l, h) {
   return function() {
     return l.apply(h, arguments);
   };
@@ -345,12 +353,12 @@ const { toString: fa } = Object.prototype, { getPrototypeOf: Ke } = Object, Be =
 function ga(l) {
   return l !== null && !je(l) && l.constructor !== null && !je(l.constructor) && ae(l.constructor.isBuffer) && l.constructor.isBuffer(l);
 }
-const Ut = oe("ArrayBuffer");
+const Rt = oe("ArrayBuffer");
 function ja(l) {
   let h;
-  return typeof ArrayBuffer < "u" && ArrayBuffer.isView ? h = ArrayBuffer.isView(l) : h = l && l.buffer && Ut(l.buffer), h;
+  return typeof ArrayBuffer < "u" && ArrayBuffer.isView ? h = ArrayBuffer.isView(l) : h = l && l.buffer && Rt(l.buffer), h;
 }
-const Ua = Fe("string"), ae = Fe("function"), Rt = Fe("number"), Ce = (l) => l !== null && typeof l == "object", Ra = (l) => l === !0 || l === !1, Ve = (l) => {
+const Ua = Fe("string"), ae = Fe("function"), _t = Fe("number"), Ce = (l) => l !== null && typeof l == "object", Ra = (l) => l === !0 || l === !1, Ve = (l) => {
   if (Be(l) !== "object")
     return !1;
   const h = Ke(l);
@@ -374,7 +382,7 @@ function Ue(l, h, { allOwnKeys: O = !1 } = {}) {
       j = m[t], h.call(null, l[j], j, l);
   }
 }
-function _t(l, h) {
+function Vt(l, h) {
   h = h.toLowerCase();
   const O = Object.keys(l);
   let t = O.length, A;
@@ -383,10 +391,10 @@ function _t(l, h) {
       return A;
   return null;
 }
-const ve = typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : typeof window < "u" ? window : global, Vt = (l) => !je(l) && l !== ve;
+const ve = typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : typeof window < "u" ? window : global, yt = (l) => !je(l) && l !== ve;
 function He() {
-  const { caseless: l } = Vt(this) && this || {}, h = {}, O = (t, A) => {
-    const m = l && _t(h, A) || A;
+  const { caseless: l } = yt(this) && this || {}, h = {}, O = (t, A) => {
+    const m = l && Vt(h, A) || A;
     Ve(h[m]) && Ve(t) ? h[m] = He(h[m], t) : Ve(t) ? h[m] = He({}, t) : be(t) ? h[m] = t.slice() : h[m] = t;
   };
   for (let t = 0, A = arguments.length; t < A; t++)
@@ -394,7 +402,7 @@ function He() {
   return h;
 }
 const La = (l, h, O, { allOwnKeys: t } = {}) => (Ue(h, (A, m) => {
-  O && ae(A) ? l[m] = jt(A, O) : l[m] = A;
+  O && ae(A) ? l[m] = Ut(A, O) : l[m] = A;
 }, { allOwnKeys: t }), l), qa = (l) => (l.charCodeAt(0) === 65279 && (l = l.slice(1)), l), Da = (l, h, O, t) => {
   l.prototype = Object.create(h.prototype, t), l.prototype.constructor = l, Object.defineProperty(l, "super", {
     value: h.prototype
@@ -417,7 +425,7 @@ const La = (l, h, O, { allOwnKeys: t } = {}) => (Ue(h, (A, m) => {
   if (!l) return null;
   if (be(l)) return l;
   let h = l.length;
-  if (!Rt(h)) return null;
+  if (!_t(h)) return null;
   const O = new Array(h);
   for (; h-- > 0; )
     O[h] = l[h];
@@ -440,14 +448,14 @@ const La = (l, h, O, { allOwnKeys: t } = {}) => (Ue(h, (A, m) => {
   function(O, t, A) {
     return t.toUpperCase() + A;
   }
-), rt = (({ hasOwnProperty: l }) => (h, O) => l.call(h, O))(Object.prototype), za = oe("RegExp"), yt = (l, h) => {
+), nt = (({ hasOwnProperty: l }) => (h, O) => l.call(h, O))(Object.prototype), za = oe("RegExp"), Et = (l, h) => {
   const O = Object.getOwnPropertyDescriptors(l), t = {};
   Ue(O, (A, m) => {
     let S;
     (S = h(A, m, l)) !== !1 && (t[m] = S || A);
   }), Object.defineProperties(l, t);
 }, Ka = (l) => {
-  yt(l, (h, O) => {
+  Et(l, (h, O) => {
     if (ae(l) && ["arguments", "caller", "callee"].indexOf(O) !== -1)
       return !1;
     const t = l[O];
@@ -469,11 +477,11 @@ const La = (l, h, O, { allOwnKeys: t } = {}) => (Ue(h, (A, m) => {
   };
   return be(l) ? t(l) : t(String(l).split(h)), O;
 }, Xa = () => {
-}, Za = (l, h) => l != null && Number.isFinite(l = +l) ? l : h, xe = "abcdefghijklmnopqrstuvwxyz", nt = "0123456789", Et = {
-  DIGIT: nt,
+}, Za = (l, h) => l != null && Number.isFinite(l = +l) ? l : h, xe = "abcdefghijklmnopqrstuvwxyz", it = "0123456789", Tt = {
+  DIGIT: it,
   ALPHA: xe,
-  ALPHA_DIGIT: xe + xe.toUpperCase() + nt
-}, er = (l = 16, h = Et.ALPHA_DIGIT) => {
+  ALPHA_DIGIT: xe + xe.toUpperCase() + it
+}, er = (l = 16, h = Tt.ALPHA_DIGIT) => {
   let O = "";
   const { length: t } = h;
   for (; l--; )
@@ -500,21 +508,21 @@ const sr = (l) => {
     return t;
   };
   return O(l, 0);
-}, ar = oe("AsyncFunction"), rr = (l) => l && (Ce(l) || ae(l)) && ae(l.then) && ae(l.catch), Tt = ((l, h) => l ? setImmediate : h ? ((O, t) => (ve.addEventListener("message", ({ source: A, data: m }) => {
+}, ar = oe("AsyncFunction"), rr = (l) => l && (Ce(l) || ae(l)) && ae(l.then) && ae(l.catch), Bt = ((l, h) => l ? setImmediate : h ? ((O, t) => (ve.addEventListener("message", ({ source: A, data: m }) => {
   A === ve && m === O && t.length && t.shift()();
 }, !1), (A) => {
   t.push(A), ve.postMessage(O, "*");
 }))(`axios@${Math.random()}`, []) : (O) => setTimeout(O))(
   typeof setImmediate == "function",
   ae(ve.postMessage)
-), nr = typeof queueMicrotask < "u" ? queueMicrotask.bind(ve) : typeof process < "u" && process.nextTick || Tt, f = {
+), nr = typeof queueMicrotask < "u" ? queueMicrotask.bind(ve) : typeof process < "u" && process.nextTick || Bt, f = {
   isArray: be,
-  isArrayBuffer: Ut,
+  isArrayBuffer: Rt,
   isBuffer: ga,
   isFormData: Ba,
   isArrayBufferView: ja,
   isString: Ua,
-  isNumber: Rt,
+  isNumber: _t,
   isBoolean: Ra,
   isObject: Ce,
   isPlainObject: Ve,
@@ -546,25 +554,25 @@ const sr = (l) => {
   forEachEntry: Qa,
   matchAll: Ya,
   isHTMLForm: $a,
-  hasOwnProperty: rt,
-  hasOwnProp: rt,
+  hasOwnProperty: nt,
+  hasOwnProp: nt,
   // an alias to avoid ESLint no-prototype-builtins detection
-  reduceDescriptors: yt,
+  reduceDescriptors: Et,
   freezeMethods: Ka,
   toObjectSet: Ja,
   toCamelCase: Wa,
   noop: Xa,
   toFiniteNumber: Za,
-  findKey: _t,
+  findKey: Vt,
   global: ve,
-  isContextDefined: Vt,
-  ALPHABET: Et,
+  isContextDefined: yt,
+  ALPHABET: Tt,
   generateString: er,
   isSpecCompliantForm: tr,
   toJSONObject: sr,
   isAsyncFn: ar,
   isThenable: rr,
-  setImmediate: Tt,
+  setImmediate: Bt,
   asap: nr
 };
 function w(l, h, O, t, A) {
@@ -591,7 +599,7 @@ f.inherits(w, Error, {
     };
   }
 });
-const Bt = w.prototype, Ft = {};
+const Ft = w.prototype, Ct = {};
 [
   "ERR_BAD_OPTION_VALUE",
   "ERR_BAD_OPTION",
@@ -607,12 +615,12 @@ const Bt = w.prototype, Ft = {};
   "ERR_INVALID_URL"
   // eslint-disable-next-line func-names
 ].forEach((l) => {
-  Ft[l] = { value: l };
+  Ct[l] = { value: l };
 });
-Object.defineProperties(w, Ft);
-Object.defineProperty(Bt, "isAxiosError", { value: !0 });
+Object.defineProperties(w, Ct);
+Object.defineProperty(Ft, "isAxiosError", { value: !0 });
 w.from = (l, h, O, t, A, m) => {
-  const S = Object.create(Bt);
+  const S = Object.create(Ft);
   return f.toFlatObject(l, S, function(y) {
     return y !== Error.prototype;
   }, (j) => j !== "isAxiosError"), w.call(S, l.message, h, O, t, A), S.cause = l, S.name = l.name, m && Object.assign(S, m), S;
@@ -621,12 +629,12 @@ const ir = null;
 function Ne(l) {
   return f.isPlainObject(l) || f.isArray(l);
 }
-function Ct(l) {
+function It(l) {
   return f.endsWith(l, "[]") ? l.slice(0, -2) : l;
 }
-function it(l, h, O) {
+function ot(l, h, O) {
   return l ? l.concat(h).map(function(A, m) {
-    return A = Ct(A), !O && m ? "[" + A + "]" : A;
+    return A = It(A), !O && m ? "[" + A + "]" : A;
   }).join(O ? "." : "") : h;
 }
 function or(l) {
@@ -662,15 +670,15 @@ function Ie(l, h, O) {
       if (f.endsWith(L, "{}"))
         L = t ? L : L.slice(0, -2), F = JSON.stringify(F);
       else if (f.isArray(F) && or(F) || (f.isFileList(F) || f.endsWith(L, "[]")) && (J = f.toArray(F)))
-        return L = Ct(L), J.forEach(function(q, te) {
+        return L = It(L), J.forEach(function(q, te) {
           !(f.isUndefined(q) || q === null) && h.append(
             // eslint-disable-next-line no-nested-ternary
-            S === !0 ? it([L], te, m) : S === null ? L : L + "[]",
+            S === !0 ? ot([L], te, m) : S === null ? L : L + "[]",
             R(q)
           );
         }), !1;
     }
-    return Ne(F) ? !0 : (h.append(it(B, L, m), R(F)), !1);
+    return Ne(F) ? !0 : (h.append(ot(B, L, m), R(F)), !1);
   }
   const T = [], N = Object.assign(lr, {
     defaultVisitor: _,
@@ -696,7 +704,7 @@ function Ie(l, h, O) {
     throw new TypeError("data must be an object");
   return G(l), h;
 }
-function ot(l) {
+function lt(l) {
   const h = {
     "!": "%21",
     "'": "%27",
@@ -713,14 +721,14 @@ function ot(l) {
 function Je(l, h) {
   this._pairs = [], l && Ie(l, this, h);
 }
-const It = Je.prototype;
-It.append = function(h, O) {
+const Mt = Je.prototype;
+Mt.append = function(h, O) {
   this._pairs.push([h, O]);
 };
-It.toString = function(h) {
+Mt.toString = function(h) {
   const O = h ? function(t) {
-    return h.call(this, t, ot);
-  } : ot;
+    return h.call(this, t, lt);
+  } : lt;
   return this._pairs.map(function(A) {
     return O(A[0]) + "=" + O(A[1]);
   }, "").join("&");
@@ -728,7 +736,7 @@ It.toString = function(h) {
 function cr(l) {
   return encodeURIComponent(l).replace(/%3A/gi, ":").replace(/%24/g, "$").replace(/%2C/gi, ",").replace(/%20/g, "+").replace(/%5B/gi, "[").replace(/%5D/gi, "]");
 }
-function Mt(l, h, O) {
+function wt(l, h, O) {
   if (!h)
     return l;
   const t = O && O.encode || cr, A = O && O.serialize;
@@ -739,7 +747,7 @@ function Mt(l, h, O) {
   }
   return l;
 }
-class lt {
+class ct {
   constructor() {
     this.handlers = [];
   }
@@ -793,7 +801,7 @@ class lt {
     });
   }
 }
-const wt = {
+const xt = {
   silentJSONParsing: !0,
   forcedJSONParsing: !0,
   clarifyTimeoutError: !1
@@ -835,7 +843,7 @@ function Sr(l) {
     m = O[t], h[m] = l[m];
   return h;
 }
-function xt(l) {
+function Lt(l) {
   function h(O, t, A, m) {
     let S = O[m++];
     if (S === "__proto__") return !0;
@@ -861,12 +869,12 @@ function fr(l, h, O) {
   return (O || JSON.stringify)(l);
 }
 const Re = {
-  transitional: wt,
+  transitional: xt,
   adapter: ["xhr", "http", "fetch"],
   transformRequest: [function(h, O) {
     const t = O.getContentType() || "", A = t.indexOf("application/json") > -1, m = f.isObject(h);
     if (m && f.isHTMLForm(h) && (h = new FormData(h)), f.isFormData(h))
-      return A ? JSON.stringify(xt(h)) : h;
+      return A ? JSON.stringify(Lt(h)) : h;
     if (f.isArrayBuffer(h) || f.isBuffer(h) || f.isStream(h) || f.isFile(h) || f.isBlob(h) || f.isReadableStream(h))
       return h;
     if (f.isArrayBufferView(h))
@@ -954,7 +962,7 @@ const gr = f.toObjectSet([
 `).forEach(function(S) {
     A = S.indexOf(":"), O = S.substring(0, A).trim().toLowerCase(), t = S.substring(A + 1).trim(), !(!O || h[O] && gr[O]) && (O === "set-cookie" ? h[O] ? h[O].push(t) : h[O] = [t] : h[O] = h[O] ? h[O] + ", " + t : t);
   }), h;
-}, ct = Symbol("internals");
+}, dt = Symbol("internals");
 function fe(l) {
   return l && String(l).trim().toLowerCase();
 }
@@ -1101,7 +1109,7 @@ let ee = class {
     return O.forEach((A) => t.set(A)), t;
   }
   static accessor(h) {
-    const t = (this[ct] = this[ct] = {
+    const t = (this[dt] = this[dt] = {
       accessors: {}
     }).accessors, A = this.prototype;
     function m(S) {
@@ -1129,7 +1137,7 @@ function qe(l, h) {
     m = j.call(O, m, A.normalize(), h ? h.status : void 0);
   }), A.normalize(), m;
 }
-function Lt(l) {
+function qt(l) {
   return !!(l && l.__CANCEL__);
 }
 function me(l, h, O) {
@@ -1138,7 +1146,7 @@ function me(l, h, O) {
 f.inherits(me, w, {
   __CANCEL__: !0
 });
-function qt(l, h, O) {
+function Dt(l, h, O) {
   const t = O.config.validateStatus;
   !O.status || !t || t(O.status) ? l(O) : h(new w(
     "Request failed with status code " + O.status,
@@ -1199,14 +1207,14 @@ const Ee = (l, h, O = 3) => {
     };
     l(T);
   }, O);
-}, dt = (l, h) => {
+}, ut = (l, h) => {
   const O = l != null;
   return [(t) => h[0]({
     lengthComputable: O,
     total: l,
     loaded: t
   }), h[1]];
-}, ut = (l) => (...h) => f.asap(() => l(...h)), Br = ie.hasStandardBrowserEnv ? (
+}, ht = (l) => (...h) => f.asap(() => l(...h)), Br = ie.hasStandardBrowserEnv ? (
   // Standard browser envs have full support of the APIs needed to test
   // whether the request URL is of the same origin as current location.
   function() {
@@ -1270,10 +1278,10 @@ function Cr(l) {
 function Ir(l, h) {
   return h ? l.replace(/\/?\/$/, "") + "/" + h.replace(/^\/+/, "") : l;
 }
-function Dt(l, h) {
+function Ht(l, h) {
   return l && !Cr(h) ? Ir(l, h) : h;
 }
-const ht = (l) => l instanceof ee ? { ...l } : l;
+const pt = (l) => l instanceof ee ? { ...l } : l;
 function Oe(l, h) {
   h = h || {};
   const O = {};
@@ -1331,17 +1339,17 @@ function Oe(l, h) {
     socketPath: S,
     responseEncoding: S,
     validateStatus: j,
-    headers: (R, _) => A(ht(R), ht(_), !0)
+    headers: (R, _) => A(pt(R), pt(_), !0)
   };
   return f.forEach(Object.keys(Object.assign({}, l, h)), function(_) {
     const T = y[_] || A, N = T(l[_], h[_], _);
     f.isUndefined(N) && T !== j || (O[_] = N);
   }), O;
 }
-const Ht = (l) => {
+const Nt = (l) => {
   const h = Oe({}, l);
   let { data: O, withXSRFToken: t, xsrfHeaderName: A, xsrfCookieName: m, headers: S, auth: j } = h;
-  h.headers = S = ee.from(S), h.url = Mt(Dt(h.baseURL, h.url), l.params, l.paramsSerializer), j && S.set(
+  h.headers = S = ee.from(S), h.url = wt(Ht(h.baseURL, h.url), l.params, l.paramsSerializer), j && S.set(
     "Authorization",
     "Basic " + btoa((j.username || "") + ":" + (j.password ? unescape(encodeURIComponent(j.password)) : ""))
   );
@@ -1361,7 +1369,7 @@ const Ht = (l) => {
   return h;
 }, Mr = typeof XMLHttpRequest < "u", wr = Mr && function(l) {
   return new Promise(function(O, t) {
-    const A = Ht(l);
+    const A = Nt(l);
     let m = A.data;
     const S = ee.from(A.headers).normalize();
     let { responseType: j, onUploadProgress: y, onDownloadProgress: R } = A, _, T, N, G, F;
@@ -1383,7 +1391,7 @@ const Ht = (l) => {
         config: l,
         request: B
       };
-      qt(function(ne) {
+      Dt(function(ne) {
         O(ne), L();
       }, function(ne) {
         t(ne), L();
@@ -1397,7 +1405,7 @@ const Ht = (l) => {
       t(new w("Network Error", w.ERR_NETWORK, l, B)), B = null;
     }, B.ontimeout = function() {
       let te = A.timeout ? "timeout of " + A.timeout + "ms exceeded" : "timeout exceeded";
-      const le = A.transitional || wt;
+      const le = A.transitional || xt;
       A.timeoutErrorMessage && (te = A.timeoutErrorMessage), t(new w(
         te,
         le.clarifyTimeoutError ? w.ETIMEDOUT : w.ECONNABORTED,
@@ -1450,7 +1458,7 @@ const Ht = (l) => {
 }, qr = async function* (l, h, O) {
   for await (const t of l)
     yield* Lr(ArrayBuffer.isView(t) ? t : await O(String(t)), h);
-}, pt = (l, h, O, t, A) => {
+}, vt = (l, h, O, t, A) => {
   const m = qr(l, h, A);
   let S = 0, j, y = (R) => {
     j || (j = !0, t && t(R));
@@ -1479,13 +1487,13 @@ const Ht = (l) => {
   }, {
     highWaterMark: 2
   });
-}, Me = typeof fetch == "function" && typeof Request == "function" && typeof Response == "function", Nt = Me && typeof ReadableStream == "function", Ge = Me && (typeof TextEncoder == "function" ? /* @__PURE__ */ ((l) => (h) => l.encode(h))(new TextEncoder()) : async (l) => new Uint8Array(await new Response(l).arrayBuffer())), Gt = (l, ...h) => {
+}, Me = typeof fetch == "function" && typeof Request == "function" && typeof Response == "function", Gt = Me && typeof ReadableStream == "function", Ge = Me && (typeof TextEncoder == "function" ? /* @__PURE__ */ ((l) => (h) => l.encode(h))(new TextEncoder()) : async (l) => new Uint8Array(await new Response(l).arrayBuffer())), kt = (l, ...h) => {
   try {
     return !!l(...h);
   } catch {
     return !1;
   }
-}, Dr = Nt && Gt(() => {
+}, Dr = Gt && kt(() => {
   let l = !1;
   const h = new Request(ie.origin, {
     body: new ReadableStream(),
@@ -1495,7 +1503,7 @@ const Ht = (l) => {
     }
   }).headers.has("Content-Type");
   return l && !h;
-}), vt = 64 * 1024, ke = Nt && Gt(() => f.isReadableStream(new Response("").body)), Te = {
+}), At = 64 * 1024, ke = Gt && kt(() => f.isReadableStream(new Response("").body)), Te = {
   stream: ke && ((l) => l.body)
 };
 Me && ((l) => {
@@ -1533,7 +1541,7 @@ const Hr = async (l) => {
     headers: _,
     withCredentials: T = "same-origin",
     fetchOptions: N
-  } = Ht(l);
+  } = Nt(l);
   R = R ? (R + "").toLowerCase() : "text";
   let [G, F] = A || m || S ? xr([A, m], S) : [], L, B;
   const J = () => {
@@ -1550,11 +1558,11 @@ const Hr = async (l) => {
         duplex: "half"
       }), ne;
       if (f.isFormData(t) && (ne = re.headers.get("content-type")) && _.setContentType(ne), re.body) {
-        const [Se, Pe] = dt(
+        const [Se, Pe] = ut(
           X,
-          Ee(ut(y))
+          Ee(ht(y))
         );
-        t = pt(re.body, vt, Se, Pe, Ge);
+        t = vt(re.body, At, Se, Pe, Ge);
       }
     }
     f.isString(T) || (T = T ? "include" : "omit"), B = new Request(h, {
@@ -1573,12 +1581,12 @@ const Hr = async (l) => {
       ["status", "statusText", "headers"].forEach((_e) => {
         re[_e] = q[_e];
       });
-      const ne = f.toFiniteNumber(q.headers.get("content-length")), [Se, Pe] = j && dt(
+      const ne = f.toFiniteNumber(q.headers.get("content-length")), [Se, Pe] = j && ut(
         ne,
-        Ee(ut(j), !0)
+        Ee(ht(j), !0)
       ) || [];
       q = new Response(
-        pt(q.body, vt, Se, () => {
+        vt(q.body, At, Se, () => {
           Pe && Pe(), te && J();
         }, Ge),
         re
@@ -1587,7 +1595,7 @@ const Hr = async (l) => {
     R = R || "text";
     let le = await Te[f.findKey(Te, R) || "text"](q, l);
     return !te && J(), F && F(), await new Promise((re, ne) => {
-      qt(re, ne, {
+      Dt(re, ne, {
         data: le,
         headers: ee.from(q.headers),
         status: q.status,
@@ -1618,7 +1626,7 @@ f.forEach(Qe, (l, h) => {
     Object.defineProperty(l, "adapterName", { value: h });
   }
 });
-const At = (l) => `- ${l}`, kr = (l) => f.isFunction(l) || l === null || l === !1, kt = {
+const Ot = (l) => `- ${l}`, kr = (l) => f.isFunction(l) || l === null || l === !1, Qt = {
   getAdapter: (l) => {
     l = f.isArray(l) ? l : [l];
     const { length: h } = l;
@@ -1638,8 +1646,8 @@ const At = (l) => `- ${l}`, kr = (l) => f.isFunction(l) || l === null || l === !
         ([j, y]) => `adapter ${j} ` + (y === !1 ? "is not supported by the environment" : "is not available in the build")
       );
       let S = h ? m.length > 1 ? `since :
-` + m.map(At).join(`
-`) : " " + At(m[0]) : "as no adapter specified";
+` + m.map(Ot).join(`
+`) : " " + Ot(m[0]) : "as no adapter specified";
       throw new w(
         "There is no suitable adapter to dispatch the request " + S,
         "ERR_NOT_SUPPORT"
@@ -1653,34 +1661,34 @@ function De(l) {
   if (l.cancelToken && l.cancelToken.throwIfRequested(), l.signal && l.signal.aborted)
     throw new me(null, l);
 }
-function Ot(l) {
+function Pt(l) {
   return De(l), l.headers = ee.from(l.headers), l.data = qe.call(
     l,
     l.transformRequest
-  ), ["post", "put", "patch"].indexOf(l.method) !== -1 && l.headers.setContentType("application/x-www-form-urlencoded", !1), kt.getAdapter(l.adapter || Re.adapter)(l).then(function(t) {
+  ), ["post", "put", "patch"].indexOf(l.method) !== -1 && l.headers.setContentType("application/x-www-form-urlencoded", !1), Qt.getAdapter(l.adapter || Re.adapter)(l).then(function(t) {
     return De(l), t.data = qe.call(
       l,
       l.transformResponse,
       t
     ), t.headers = ee.from(t.headers), t;
   }, function(t) {
-    return Lt(t) || (De(l), t && t.response && (t.response.data = qe.call(
+    return qt(t) || (De(l), t && t.response && (t.response.data = qe.call(
       l,
       l.transformResponse,
       t.response
     ), t.response.headers = ee.from(t.response.headers))), Promise.reject(t);
   });
 }
-const Qt = "1.7.3", Ze = {};
+const Yt = "1.7.3", Ze = {};
 ["object", "boolean", "number", "function", "string", "symbol"].forEach((l, h) => {
   Ze[l] = function(t) {
     return typeof t === l || "a" + (h < 1 ? "n " : " ") + l;
   };
 });
-const Pt = {};
+const bt = {};
 Ze.transitional = function(h, O, t) {
   function A(m, S) {
-    return "[Axios v" + Qt + "] Transitional option '" + m + "'" + S + (t ? ". " + t : "");
+    return "[Axios v" + Yt + "] Transitional option '" + m + "'" + S + (t ? ". " + t : "");
   }
   return (m, S, j) => {
     if (h === !1)
@@ -1688,7 +1696,7 @@ Ze.transitional = function(h, O, t) {
         A(S, " has been removed" + (O ? " in " + O : "")),
         w.ERR_DEPRECATED
       );
-    return O && !Pt[S] && (Pt[S] = !0, console.warn(
+    return O && !bt[S] && (bt[S] = !0, console.warn(
       A(
         S,
         " has been deprecated since v" + O + " and will be removed in the near future"
@@ -1720,8 +1728,8 @@ const Ye = {
 let Ae = class {
   constructor(h) {
     this.defaults = h, this.interceptors = {
-      request: new lt(),
-      response: new lt()
+      request: new ct(),
+      response: new ct()
     };
   }
   /**
@@ -1783,7 +1791,7 @@ let Ae = class {
     });
     let _, T = 0, N;
     if (!y) {
-      const F = [Ot.bind(this), void 0];
+      const F = [Pt.bind(this), void 0];
       for (F.unshift.apply(F, j), F.push.apply(F, R), N = F.length, _ = Promise.resolve(O); T < N; )
         _ = _.then(F[T++], F[T++]);
       return _;
@@ -1800,7 +1808,7 @@ let Ae = class {
       }
     }
     try {
-      _ = Ot.call(this, G);
+      _ = Pt.call(this, G);
     } catch (F) {
       return Promise.reject(F);
     }
@@ -1810,8 +1818,8 @@ let Ae = class {
   }
   getUri(h) {
     h = Oe(this.defaults, h);
-    const O = Dt(h.baseURL, h.url);
-    return Mt(O, h.params, h.paramsSerializer);
+    const O = Ht(h.baseURL, h.url);
+    return wt(O, h.params, h.paramsSerializer);
   }
 };
 f.forEach(["delete", "get", "head", "options"], function(h) {
@@ -1838,7 +1846,7 @@ f.forEach(["post", "put", "patch"], function(h) {
   }
   Ae.prototype[h] = O(), Ae.prototype[h + "Form"] = O(!0);
 });
-let Yr = class Yt {
+let Yr = class $t {
   constructor(h) {
     if (typeof h != "function")
       throw new TypeError("executor must be a function.");
@@ -1898,7 +1906,7 @@ let Yr = class Yt {
   static source() {
     let h;
     return {
-      token: new Yt(function(A) {
+      token: new $t(function(A) {
         h = A;
       }),
       cancel: h
@@ -1981,18 +1989,18 @@ const $e = {
 Object.entries($e).forEach(([l, h]) => {
   $e[h] = l;
 });
-function $t(l) {
-  const h = new Ae(l), O = jt(Ae.prototype.request, h);
+function Wt(l) {
+  const h = new Ae(l), O = Ut(Ae.prototype.request, h);
   return f.extend(O, Ae.prototype, h, { allOwnKeys: !0 }), f.extend(O, h, null, { allOwnKeys: !0 }), O.create = function(A) {
-    return $t(Oe(l, A));
+    return Wt(Oe(l, A));
   }, O;
 }
-const $ = $t(Re);
+const $ = Wt(Re);
 $.Axios = Ae;
 $.CanceledError = me;
 $.CancelToken = Yr;
-$.isCancel = Lt;
-$.VERSION = Qt;
+$.isCancel = qt;
+$.VERSION = Yt;
 $.toFormData = Ie;
 $.AxiosError = w;
 $.Cancel = $.CanceledError;
@@ -2003,8 +2011,8 @@ $.spread = $r;
 $.isAxiosError = Wr;
 $.mergeConfig = Oe;
 $.AxiosHeaders = ee;
-$.formToJSON = (l) => xt(f.isHTMLForm(l) ? new FormData(l) : l);
-$.getAdapter = kt.getAdapter;
+$.formToJSON = (l) => Lt(f.isHTMLForm(l) ? new FormData(l) : l);
+$.getAdapter = Qt.getAdapter;
 $.HttpStatusCode = $e;
 $.default = $;
 const {
@@ -2043,11 +2051,11 @@ const {
   mergeConfig: un,
   spread: rn,
   toFormData: nn
-}, Symbol.toStringTag, { value: "Module" })), Wt = /* @__PURE__ */ Sa(hn);
+}, Symbol.toStringTag, { value: "Module" })), zt = /* @__PURE__ */ Sa(hn);
 var Y = {}, et = {};
 (function(l) {
   Object.defineProperty(l, "__esModule", { value: !0 }), l.operationServerMap = l.RequiredError = l.BaseAPI = l.COLLECTION_FORMATS = l.BASE_PATH = void 0;
-  const h = Wt;
+  const h = zt;
   l.BASE_PATH = "http://undefinedundefined".replace(/\/+$/, ""), l.COLLECTION_FORMATS = {
     csv: ",",
     ssv: " ",
@@ -2189,7 +2197,7 @@ Y.createRequestFunction = gn;
     });
   };
   Object.defineProperty(l, "__esModule", { value: !0 }), l.ProductCategoriesApiFactory = l.ProductCategoriesApiFp = l.ProductCategoriesApiAxiosParamCreator = l.PointofsaleApi = l.PointofsaleApiFactory = l.PointofsaleApiFp = l.PointofsaleApiAxiosParamCreator = l.PayoutRequestsApi = l.PayoutRequestsApiFactory = l.PayoutRequestsApiFp = l.PayoutRequestsApiAxiosParamCreator = l.GetAllInvoicesCurrentStateEnum = l.InvoicesApi = l.InvoicesApiFactory = l.InvoicesApiFp = l.InvoicesApiAxiosParamCreator = l.FilesApi = l.FilesApiFactory = l.FilesApiFp = l.FilesApiAxiosParamCreator = l.EventsApi = l.EventsApiFactory = l.EventsApiFp = l.EventsApiAxiosParamCreator = l.DebtorsApi = l.DebtorsApiFactory = l.DebtorsApiFp = l.DebtorsApiAxiosParamCreator = l.ContainersApi = l.ContainersApiFactory = l.ContainersApiFp = l.ContainersApiAxiosParamCreator = l.BannersApi = l.BannersApiFactory = l.BannersApiFp = l.BannersApiAxiosParamCreator = l.GetAllBalanceOrderDirectionEnum = l.GetAllBalanceUserTypesEnum = l.BalanceApi = l.BalanceApiFactory = l.BalanceApiFp = l.BalanceApiAxiosParamCreator = l.AuthenticateApi = l.AuthenticateApiFactory = l.AuthenticateApiFp = l.AuthenticateApiAxiosParamCreator = l.UpdateInvoiceRequestStateEnum = l.PayoutRequestStatusRequestStateEnum = l.InvoiceStatusResponseStateEnum = l.FinancialMutationResponseTypeEnum = void 0, l.WriteoffsApi = l.WriteoffsApiFactory = l.WriteoffsApiFp = l.WriteoffsApiAxiosParamCreator = l.VouchergroupsApi = l.VouchergroupsApiFactory = l.VouchergroupsApiFp = l.VouchergroupsApiAxiosParamCreator = l.VatGroupsApi = l.VatGroupsApiFactory = l.VatGroupsApiFp = l.VatGroupsApiAxiosParamCreator = l.GetAllUsersTypeEnum = l.UsersApi = l.UsersApiFactory = l.UsersApiFp = l.UsersApiAxiosParamCreator = l.TransfersApi = l.TransfersApiFactory = l.TransfersApiFp = l.TransfersApiAxiosParamCreator = l.TransactionsApi = l.TransactionsApiFactory = l.TransactionsApiFp = l.TransactionsApiAxiosParamCreator = l.TestOperationsOfTheTestControllerApi = l.TestOperationsOfTheTestControllerApiFactory = l.TestOperationsOfTheTestControllerApiFp = l.TestOperationsOfTheTestControllerApiAxiosParamCreator = l.StripeApi = l.StripeApiFactory = l.StripeApiFp = l.StripeApiAxiosParamCreator = l.RootApi = l.RootApiFactory = l.RootApiFp = l.RootApiAxiosParamCreator = l.RbacApi = l.RbacApiFactory = l.RbacApiFp = l.RbacApiAxiosParamCreator = l.ProductsApi = l.ProductsApiFactory = l.ProductsApiFp = l.ProductsApiAxiosParamCreator = l.ProductCategoriesApi = void 0;
-  const O = Wt, t = Y, A = et;
+  const O = zt, t = Y, A = et;
   l.FinancialMutationResponseTypeEnum = {
     Transfer: "transfer",
     Transaction: "transaction"
@@ -3070,8 +3078,8 @@ Y.createRequestFunction = gn;
         r && (ce = r.baseOptions);
         const st = Object.assign(Object.assign({ method: "GET" }, ce), de), at = {}, se = {};
         yield (0, t.setBearerAuthToObject)(at, r), g !== void 0 && (se.date = g), U !== void 0 && (se.minBalance = U), V !== void 0 && (se.maxBalance = V), E !== void 0 && (se.hasFine = E), M !== void 0 && (se.minFine = M), I !== void 0 && (se.maxFine = I), C && (se.userTypes = C), D !== void 0 && (se.orderBy = D), x !== void 0 && (se.orderDirection = x), Z !== void 0 && (se.allowDeleted = Z), k !== void 0 && (se.take = k), z !== void 0 && (se.skip = z), (0, t.setSearchParams)(H, se);
-        let oa = ce && ce.headers ? ce.headers : {};
-        return st.headers = Object.assign(Object.assign(Object.assign({}, at), oa), de.headers), {
+        let la = ce && ce.headers ? ce.headers : {};
+        return st.headers = Object.assign(Object.assign(Object.assign({}, at), la), de.headers), {
           url: (0, t.toPathString)(H),
           options: st
         };
@@ -5088,7 +5096,7 @@ Y.createRequestFunction = gn;
     };
   };
   l.EventsApiFp = _e;
-  const zt = function(r, c, o) {
+  const Kt = function(r, c, o) {
     const i = (0, l.EventsApiFp)(r);
     return {
       /**
@@ -5231,8 +5239,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.EventsApiFactory = zt;
-  class Kt extends A.BaseAPI {
+  l.EventsApiFactory = Kt;
+  class Jt extends A.BaseAPI {
     /**
      *
      * @summary Change the assignment of users to shifts on an event
@@ -5384,8 +5392,8 @@ Y.createRequestFunction = gn;
       return (0, l.EventsApiFp)(this.configuration).updateEventShiftAvailability(c, o, i, e, a).then((s) => s(this.axios, this.basePath));
     }
   }
-  l.EventsApi = Kt;
-  const Jt = function(r) {
+  l.EventsApi = Jt;
+  const Xt = function(r) {
     return {
       /**
        *
@@ -5450,8 +5458,8 @@ Y.createRequestFunction = gn;
       })
     };
   };
-  l.FilesApiAxiosParamCreator = Jt;
-  const Xt = function(r) {
+  l.FilesApiAxiosParamCreator = Xt;
+  const Zt = function(r) {
     const c = (0, l.FilesApiAxiosParamCreator)(r);
     return {
       /**
@@ -5499,8 +5507,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.FilesApiFp = Xt;
-  const Zt = function(r, c, o) {
+  l.FilesApiFp = Zt;
+  const es = function(r, c, o) {
     const i = (0, l.FilesApiFp)(r);
     return {
       /**
@@ -5536,8 +5544,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.FilesApiFactory = Zt;
-  class es extends A.BaseAPI {
+  l.FilesApiFactory = es;
+  class ts extends A.BaseAPI {
     /**
      *
      * @summary Upload a file with the given name.
@@ -5573,8 +5581,8 @@ Y.createRequestFunction = gn;
       return (0, l.FilesApiFp)(this.configuration).getFile(c, o).then((i) => i(this.axios, this.basePath));
     }
   }
-  l.FilesApi = es;
-  const ts = function(r) {
+  l.FilesApi = ts;
+  const ss = function(r) {
     return {
       /**
        *
@@ -5767,8 +5775,8 @@ Y.createRequestFunction = gn;
       })
     };
   };
-  l.InvoicesApiAxiosParamCreator = ts;
-  const ss = function(r) {
+  l.InvoicesApiAxiosParamCreator = ss;
+  const as = function(r) {
     const c = (0, l.InvoicesApiAxiosParamCreator)(r);
     return {
       /**
@@ -5909,8 +5917,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.InvoicesApiFp = ss;
-  const as = function(r, c, o) {
+  l.InvoicesApiFp = as;
+  const rs = function(r, c, o) {
     const i = (0, l.InvoicesApiFp)(r);
     return {
       /**
@@ -6015,8 +6023,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.InvoicesApiFactory = as;
-  class rs extends A.BaseAPI {
+  l.InvoicesApiFactory = rs;
+  class ns extends A.BaseAPI {
     /**
      *
      * @summary Adds an invoice to the system.
@@ -6127,8 +6135,8 @@ Y.createRequestFunction = gn;
       return (0, l.InvoicesApiFp)(this.configuration).updateInvoice(c, o, i).then((e) => e(this.axios, this.basePath));
     }
   }
-  l.InvoicesApi = rs, l.GetAllInvoicesCurrentStateEnum = {};
-  const ns = function(r) {
+  l.InvoicesApi = ns, l.GetAllInvoicesCurrentStateEnum = {};
+  const is = function(r) {
     return {
       /**
        *
@@ -6244,8 +6252,8 @@ Y.createRequestFunction = gn;
       })
     };
   };
-  l.PayoutRequestsApiAxiosParamCreator = ns;
-  const is = function(r) {
+  l.PayoutRequestsApiAxiosParamCreator = is;
+  const os = function(r) {
     const c = (0, l.PayoutRequestsApiAxiosParamCreator)(r);
     return {
       /**
@@ -6327,8 +6335,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.PayoutRequestsApiFp = is;
-  const os = function(r, c, o) {
+  l.PayoutRequestsApiFp = os;
+  const ls = function(r, c, o) {
     const i = (0, l.PayoutRequestsApiFp)(r);
     return {
       /**
@@ -6390,8 +6398,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.PayoutRequestsApiFactory = os;
-  class ls extends A.BaseAPI {
+  l.PayoutRequestsApiFactory = ls;
+  class cs extends A.BaseAPI {
     /**
      *
      * @summary Create a new payout request
@@ -6455,8 +6463,8 @@ Y.createRequestFunction = gn;
       return (0, l.PayoutRequestsApiFp)(this.configuration).setPayoutRequestStatus(c, o, i).then((e) => e(this.axios, this.basePath));
     }
   }
-  l.PayoutRequestsApi = ls;
-  const cs = function(r) {
+  l.PayoutRequestsApi = cs;
+  const ds = function(r) {
     return {
       /**
        *
@@ -6645,8 +6653,8 @@ Y.createRequestFunction = gn;
       })
     };
   };
-  l.PointofsaleApiAxiosParamCreator = cs;
-  const ds = function(r) {
+  l.PointofsaleApiAxiosParamCreator = ds;
+  const us = function(r) {
     const c = (0, l.PointofsaleApiAxiosParamCreator)(r);
     return {
       /**
@@ -6783,8 +6791,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.PointofsaleApiFp = ds;
-  const us = function(r, c, o) {
+  l.PointofsaleApiFp = us;
+  const hs = function(r, c, o) {
     const i = (0, l.PointofsaleApiFp)(r);
     return {
       /**
@@ -6885,8 +6893,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.PointofsaleApiFactory = us;
-  class hs extends A.BaseAPI {
+  l.PointofsaleApiFactory = hs;
+  class ps extends A.BaseAPI {
     /**
      *
      * @summary Create a new Point of Sale.
@@ -6993,8 +7001,8 @@ Y.createRequestFunction = gn;
       return (0, l.PointofsaleApiFp)(this.configuration).updatePointOfSale(c, o, i).then((e) => e(this.axios, this.basePath));
     }
   }
-  l.PointofsaleApi = hs;
-  const ps = function(r) {
+  l.PointofsaleApi = ps;
+  const vs = function(r) {
     return {
       /**
        *
@@ -7079,8 +7087,8 @@ Y.createRequestFunction = gn;
       })
     };
   };
-  l.ProductCategoriesApiAxiosParamCreator = ps;
-  const vs = function(r) {
+  l.ProductCategoriesApiAxiosParamCreator = vs;
+  const As = function(r) {
     const c = (0, l.ProductCategoriesApiAxiosParamCreator)(r);
     return {
       /**
@@ -7143,8 +7151,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.ProductCategoriesApiFp = vs;
-  const As = function(r, c, o) {
+  l.ProductCategoriesApiFp = As;
+  const Os = function(r, c, o) {
     const i = (0, l.ProductCategoriesApiFp)(r);
     return {
       /**
@@ -7191,8 +7199,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.ProductCategoriesApiFactory = As;
-  class Os extends A.BaseAPI {
+  l.ProductCategoriesApiFactory = Os;
+  class Ps extends A.BaseAPI {
     /**
      *
      * @summary Post a new productCategory.
@@ -7240,8 +7248,8 @@ Y.createRequestFunction = gn;
       return (0, l.ProductCategoriesApiFp)(this.configuration).updateProductCategory(c, o, i).then((e) => e(this.axios, this.basePath));
     }
   }
-  l.ProductCategoriesApi = Os;
-  const Ps = function(r) {
+  l.ProductCategoriesApi = Ps;
+  const bs = function(r) {
     return {
       /**
        *
@@ -7367,8 +7375,8 @@ Y.createRequestFunction = gn;
       })
     };
   };
-  l.ProductsApiAxiosParamCreator = Ps;
-  const bs = function(r) {
+  l.ProductsApiAxiosParamCreator = bs;
+  const ms = function(r) {
     const c = (0, l.ProductsApiAxiosParamCreator)(r);
     return {
       /**
@@ -7460,8 +7468,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.ProductsApiFp = bs;
-  const ms = function(r, c, o) {
+  l.ProductsApiFp = ms;
+  const Ss = function(r, c, o) {
     const i = (0, l.ProductsApiFp)(r);
     return {
       /**
@@ -7529,8 +7537,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.ProductsApiFactory = ms;
-  class Ss extends A.BaseAPI {
+  l.ProductsApiFactory = Ss;
+  class fs extends A.BaseAPI {
     /**
      *
      * @summary Create a new product.
@@ -7601,8 +7609,8 @@ Y.createRequestFunction = gn;
       return (0, l.ProductsApiFp)(this.configuration).updateProductImage(c, o, i).then((e) => e(this.axios, this.basePath));
     }
   }
-  l.ProductsApi = Ss;
-  const fs = function(r) {
+  l.ProductsApi = fs;
+  const gs = function(r) {
     return {
       /**
        *
@@ -7749,8 +7757,8 @@ Y.createRequestFunction = gn;
       })
     };
   };
-  l.RbacApiAxiosParamCreator = fs;
-  const gs = function(r) {
+  l.RbacApiAxiosParamCreator = gs;
+  const js = function(r) {
     const c = (0, l.RbacApiAxiosParamCreator)(r);
     return {
       /**
@@ -7857,8 +7865,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.RbacApiFp = gs;
-  const js = function(r, c, o) {
+  l.RbacApiFp = js;
+  const Us = function(r, c, o) {
     const i = (0, l.RbacApiFp)(r);
     return {
       /**
@@ -7937,8 +7945,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.RbacApiFactory = js;
-  class Us extends A.BaseAPI {
+  l.RbacApiFactory = Us;
+  class Rs extends A.BaseAPI {
     /**
      *
      * @summary Add new permissions to an existing role
@@ -8021,8 +8029,8 @@ Y.createRequestFunction = gn;
       return (0, l.RbacApiFp)(this.configuration).updateRole(c, o, i).then((e) => e(this.axios, this.basePath));
     }
   }
-  l.RbacApi = Us;
-  const Rs = function(r) {
+  l.RbacApi = Rs;
+  const _s = function(r) {
     return {
       /**
        *
@@ -8044,8 +8052,8 @@ Y.createRequestFunction = gn;
       })
     };
   };
-  l.RootApiAxiosParamCreator = Rs;
-  const _s = function(r) {
+  l.RootApiAxiosParamCreator = _s;
+  const Vs = function(r) {
     const c = (0, l.RootApiAxiosParamCreator)(r);
     return {
       /**
@@ -8063,8 +8071,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.RootApiFp = _s;
-  const Vs = function(r, c, o) {
+  l.RootApiFp = Vs;
+  const ys = function(r, c, o) {
     const i = (0, l.RootApiFp)(r);
     return {
       /**
@@ -8078,8 +8086,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.RootApiFactory = Vs;
-  class ys extends A.BaseAPI {
+  l.RootApiFactory = ys;
+  class Es extends A.BaseAPI {
     /**
      *
      * @summary Ping the backend to check whether everything is working correctly
@@ -8091,8 +8099,8 @@ Y.createRequestFunction = gn;
       return (0, l.RootApiFp)(this.configuration).ping(c).then((o) => o(this.axios, this.basePath));
     }
   }
-  l.RootApi = ys;
-  const Es = function(r) {
+  l.RootApi = Es;
+  const Ts = function(r) {
     return {
       /**
        *
@@ -8134,8 +8142,8 @@ Y.createRequestFunction = gn;
       })
     };
   };
-  l.StripeApiAxiosParamCreator = Es;
-  const Ts = function(r) {
+  l.StripeApiAxiosParamCreator = Ts;
+  const Bs = function(r) {
     const c = (0, l.StripeApiAxiosParamCreator)(r);
     return {
       /**
@@ -8167,8 +8175,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.StripeApiFp = Ts;
-  const Bs = function(r, c, o) {
+  l.StripeApiFp = Bs;
+  const Fs = function(r, c, o) {
     const i = (0, l.StripeApiFp)(r);
     return {
       /**
@@ -8192,8 +8200,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.StripeApiFactory = Bs;
-  class Fs extends A.BaseAPI {
+  l.StripeApiFactory = Fs;
+  class Cs extends A.BaseAPI {
     /**
      *
      * @summary Start the stripe deposit flow
@@ -8216,8 +8224,8 @@ Y.createRequestFunction = gn;
       return (0, l.StripeApiFp)(this.configuration).getStripePublicKey(c).then((o) => o(this.axios, this.basePath));
     }
   }
-  l.StripeApi = Fs;
-  const Cs = function(r) {
+  l.StripeApi = Cs;
+  const Is = function(r) {
     return {
       /**
        *
@@ -8239,8 +8247,8 @@ Y.createRequestFunction = gn;
       })
     };
   };
-  l.TestOperationsOfTheTestControllerApiAxiosParamCreator = Cs;
-  const Is = function(r) {
+  l.TestOperationsOfTheTestControllerApiAxiosParamCreator = Is;
+  const Ms = function(r) {
     const c = (0, l.TestOperationsOfTheTestControllerApiAxiosParamCreator)(r);
     return {
       /**
@@ -8258,8 +8266,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.TestOperationsOfTheTestControllerApiFp = Is;
-  const Ms = function(r, c, o) {
+  l.TestOperationsOfTheTestControllerApiFp = Ms;
+  const ws = function(r, c, o) {
     const i = (0, l.TestOperationsOfTheTestControllerApiFp)(r);
     return {
       /**
@@ -8273,8 +8281,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.TestOperationsOfTheTestControllerApiFactory = Ms;
-  class ws extends A.BaseAPI {
+  l.TestOperationsOfTheTestControllerApiFactory = ws;
+  class xs extends A.BaseAPI {
     /**
      *
      * @summary Get a beautiful Hello World email to your inbox
@@ -8286,8 +8294,8 @@ Y.createRequestFunction = gn;
       return (0, l.TestOperationsOfTheTestControllerApiFp)(this.configuration).helloworld(c).then((o) => o(this.axios, this.basePath));
     }
   }
-  l.TestOperationsOfTheTestControllerApi = ws;
-  const xs = function(r) {
+  l.TestOperationsOfTheTestControllerApi = xs;
+  const Ls = function(r) {
     return {
       /**
        *
@@ -8420,8 +8428,8 @@ Y.createRequestFunction = gn;
       })
     };
   };
-  l.TransactionsApiAxiosParamCreator = xs;
-  const Ls = function(r) {
+  l.TransactionsApiAxiosParamCreator = Ls;
+  const qs = function(r) {
     const c = (0, l.TransactionsApiAxiosParamCreator)(r);
     return {
       /**
@@ -8520,8 +8528,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.TransactionsApiFp = Ls;
-  const qs = function(r, c, o) {
+  l.TransactionsApiFp = qs;
+  const Ds = function(r, c, o) {
     const i = (0, l.TransactionsApiFp)(r);
     return {
       /**
@@ -8596,8 +8604,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.TransactionsApiFactory = qs;
-  class Ds extends A.BaseAPI {
+  l.TransactionsApiFactory = Ds;
+  class Hs extends A.BaseAPI {
     /**
      *
      * @summary Creates a new transaction
@@ -8675,8 +8683,8 @@ Y.createRequestFunction = gn;
       return (0, l.TransactionsApiFp)(this.configuration).validateTransaction(c, o).then((i) => i(this.axios, this.basePath));
     }
   }
-  l.TransactionsApi = Ds;
-  const Hs = function(r) {
+  l.TransactionsApi = Hs;
+  const Ns = function(r) {
     return {
       /**
        *
@@ -8740,8 +8748,8 @@ Y.createRequestFunction = gn;
       })
     };
   };
-  l.TransfersApiAxiosParamCreator = Hs;
-  const Ns = function(r) {
+  l.TransfersApiAxiosParamCreator = Ns;
+  const Gs = function(r) {
     const c = (0, l.TransfersApiAxiosParamCreator)(r);
     return {
       /**
@@ -8789,8 +8797,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.TransfersApiFp = Ns;
-  const Gs = function(r, c, o) {
+  l.TransfersApiFp = Gs;
+  const ks = function(r, c, o) {
     const i = (0, l.TransfersApiFp)(r);
     return {
       /**
@@ -8826,8 +8834,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.TransfersApiFactory = Gs;
-  class ks extends A.BaseAPI {
+  l.TransfersApiFactory = ks;
+  class Qs extends A.BaseAPI {
     /**
      *
      * @summary Post a new transfer.
@@ -8863,8 +8871,8 @@ Y.createRequestFunction = gn;
       return (0, l.TransfersApiFp)(this.configuration).getSingleTransfer(c, o).then((i) => i(this.axios, this.basePath));
     }
   }
-  l.TransfersApi = ks;
-  const Qs = function(r) {
+  l.TransfersApi = Qs;
+  const Ys = function(r) {
     return {
       /**
        *
@@ -9430,8 +9438,8 @@ Y.createRequestFunction = gn;
       })
     };
   };
-  l.UsersApiAxiosParamCreator = Qs;
-  const Ys = function(r) {
+  l.UsersApiAxiosParamCreator = Ys;
+  const $s = function(r) {
     const c = (0, l.UsersApiAxiosParamCreator)(r);
     return {
       /**
@@ -9843,8 +9851,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.UsersApiFp = Ys;
-  const $s = function(r, c, o) {
+  l.UsersApiFp = $s;
+  const Ws = function(r, c, o) {
     const i = (0, l.UsersApiFp)(r);
     return {
       /**
@@ -10152,8 +10160,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.UsersApiFactory = $s;
-  class Ws extends A.BaseAPI {
+  l.UsersApiFactory = Ws;
+  class zs extends A.BaseAPI {
     /**
      *
      * @summary Accept the Terms of Service if you have not accepted it yet
@@ -10484,7 +10492,7 @@ Y.createRequestFunction = gn;
       return (0, l.UsersApiFp)(this.configuration).waiveUserFines(c, o).then((i) => i(this.axios, this.basePath));
     }
   }
-  l.UsersApi = Ws, l.GetAllUsersTypeEnum = {
+  l.UsersApi = zs, l.GetAllUsersTypeEnum = {
     Member: "MEMBER",
     Organ: "ORGAN",
     Voucher: "VOUCHER",
@@ -10493,7 +10501,7 @@ Y.createRequestFunction = gn;
     Invoice: "INVOICE",
     AutomaticInvoice: "AUTOMATIC_INVOICE"
   };
-  const zs = function(r) {
+  const Ks = function(r) {
     return {
       /**
        *
@@ -10603,8 +10611,8 @@ Y.createRequestFunction = gn;
       })
     };
   };
-  l.VatGroupsApiAxiosParamCreator = zs;
-  const Ks = function(r) {
+  l.VatGroupsApiAxiosParamCreator = Ks;
+  const Js = function(r) {
     const c = (0, l.VatGroupsApiAxiosParamCreator)(r);
     return {
       /**
@@ -10686,8 +10694,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.VatGroupsApiFp = Ks;
-  const Js = function(r, c, o) {
+  l.VatGroupsApiFp = Js;
+  const Xs = function(r, c, o) {
     const i = (0, l.VatGroupsApiFp)(r);
     return {
       /**
@@ -10749,8 +10757,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.VatGroupsApiFactory = Js;
-  class Xs extends A.BaseAPI {
+  l.VatGroupsApiFactory = Xs;
+  class Zs extends A.BaseAPI {
     /**
      *
      * @summary Create a new VAT group
@@ -10814,8 +10822,8 @@ Y.createRequestFunction = gn;
       return (0, l.VatGroupsApiFp)(this.configuration).updateVatGroup(c, o, i).then((e) => e(this.axios, this.basePath));
     }
   }
-  l.VatGroupsApi = Xs;
-  const Zs = function(r) {
+  l.VatGroupsApi = Zs;
+  const ea = function(r) {
     return {
       /**
        *
@@ -10900,8 +10908,8 @@ Y.createRequestFunction = gn;
       })
     };
   };
-  l.VouchergroupsApiAxiosParamCreator = Zs;
-  const ea = function(r) {
+  l.VouchergroupsApiAxiosParamCreator = ea;
+  const ta = function(r) {
     const c = (0, l.VouchergroupsApiAxiosParamCreator)(r);
     return {
       /**
@@ -10964,8 +10972,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.VouchergroupsApiFp = ea;
-  const ta = function(r, c, o) {
+  l.VouchergroupsApiFp = ta;
+  const sa = function(r, c, o) {
     const i = (0, l.VouchergroupsApiFp)(r);
     return {
       /**
@@ -11012,8 +11020,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.VouchergroupsApiFactory = ta;
-  class sa extends A.BaseAPI {
+  l.VouchergroupsApiFactory = sa;
+  class aa extends A.BaseAPI {
     /**
      *
      * @summary Creates a new voucher group
@@ -11061,8 +11069,8 @@ Y.createRequestFunction = gn;
       return (0, l.VouchergroupsApiFp)(this.configuration).updateVoucherGroup(c, o, i).then((e) => e(this.axios, this.basePath));
     }
   }
-  l.VouchergroupsApi = sa;
-  const aa = function(r) {
+  l.VouchergroupsApi = aa;
+  const ra = function(r) {
     return {
       /**
        *
@@ -11128,8 +11136,8 @@ Y.createRequestFunction = gn;
       })
     };
   };
-  l.WriteoffsApiAxiosParamCreator = aa;
-  const ra = function(r) {
+  l.WriteoffsApiAxiosParamCreator = ra;
+  const na = function(r) {
     const c = (0, l.WriteoffsApiAxiosParamCreator)(r);
     return {
       /**
@@ -11179,8 +11187,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.WriteoffsApiFp = ra;
-  const na = function(r, c, o) {
+  l.WriteoffsApiFp = na;
+  const ia = function(r, c, o) {
     const i = (0, l.WriteoffsApiFp)(r);
     return {
       /**
@@ -11218,8 +11226,8 @@ Y.createRequestFunction = gn;
       }
     };
   };
-  l.WriteoffsApiFactory = na;
-  class ia extends A.BaseAPI {
+  l.WriteoffsApiFactory = ia;
+  class oa extends A.BaseAPI {
     /**
      *
      * @summary Creates a new write-off in the system. Creating a write-off will also close and delete the user\'s account.
@@ -11257,8 +11265,8 @@ Y.createRequestFunction = gn;
       return (0, l.WriteoffsApiFp)(this.configuration).getSingleWriteOff(c, o).then((i) => i(this.axios, this.basePath));
     }
   }
-  l.WriteoffsApi = ia;
-})(gt);
+  l.WriteoffsApi = oa;
+})(jt);
 var we = {};
 Object.defineProperty(we, "__esModule", { value: !0 });
 we.Configuration = void 0;
@@ -11294,7 +11302,7 @@ we.Configuration = jn;
   }), O = he && he.__exportStar || function(t, A) {
     for (var m in t) m !== "default" && !Object.prototype.hasOwnProperty.call(A, m) && h(A, t, m);
   };
-  Object.defineProperty(l, "__esModule", { value: !0 }), O(gt, l), O(we, l);
+  Object.defineProperty(l, "__esModule", { value: !0 }), O(jt, l), O(we, l);
 })(Q);
 const K = $.create();
 K.interceptors.response.use((l) => (va(l), l));
@@ -11395,14 +11403,14 @@ export {
   En as ApiService,
   Tn as addListenerOnDialogueOverlay,
   Aa as clearTokenInStorage,
-  ua as fetchAllPages,
+  rt as fetchAllPages,
   ze as getTokenFromStorage,
   ba as isAuthenticated,
   Pa as isTokenExpired,
   Oa as parseToken,
   _n as populateStoresFromToken,
-  ft as setTokenInStorage,
+  gt as setTokenInStorage,
   va as updateTokenIfNecessary,
   ma as useAuthStore,
-  mt as useUserStore
+  St as useUserStore
 };

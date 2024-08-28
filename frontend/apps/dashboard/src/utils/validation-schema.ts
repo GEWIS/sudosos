@@ -3,7 +3,11 @@ import * as yup from "yup";
 import { ref } from "vue";
 import type { Ref } from "vue";
 import i18n from './i18nUtils';
-import type { BaseUserResponse } from "@sudosos/sudosos-client";
+import type {
+    BaseUserResponse,
+    BaseVatGroupResponse,
+    ProductCategoryResponse, UserResponse
+} from "@sudosos/sudosos-client";
 import type { ContainerInStore } from "@/stores/container.store";
 
 const t = i18n.global.t;
@@ -79,6 +83,19 @@ export const createPayoutSchema =
     user: yup.mixed<BaseUserResponse>().required(),
   });
 
+export const createProductSchema =
+    yup.object({
+        name: yup.string().required(),
+        priceInclVat: yup.number().required().default(0),
+        vat: yup.mixed<BaseVatGroupResponse>().required(),
+        category: yup.mixed<ProductCategoryResponse>().required(),
+        alcoholPercentage: yup.number().required().default(0),
+        featured: yup.boolean().default(false),
+        preferred: yup.boolean().default(false),
+        priceList: yup.boolean().default(false),
+        owner: yup.mixed<UserResponse>().required()
+    });
+
 export const updatePointOfSaleObject =
     yup.object({
         name: yup.string().required(),
@@ -92,7 +109,7 @@ export const createPointOfSaleObject =
     yup.object({
         name: yup.string().required(),
         useAuthentication: yup.boolean().default(false).required(),
-        owner: yup.mixed<BaseUserResponse>().required(),
+        owner: yup.mixed<UserResponse>().required(),
     });
 
 export const addContainerObject =

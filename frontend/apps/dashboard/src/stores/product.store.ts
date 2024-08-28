@@ -148,6 +148,11 @@ export const useProductStore = defineStore('products', {
     },
     async addProduct(product: ProductResponse) {
       this.products[product.id] = product;
+    },
+    async deleteProduct(id: number) {
+      await ApiService.products.deleteProduct(id);
+      delete this.products[id];
+      await (useContainerStore()).handleProductDelete(id);
     }
   },
 });

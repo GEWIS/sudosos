@@ -4,17 +4,17 @@
      column ? 'flex-column gap-1' : 'flex-row align-items-center gap-3']">
       <span class="my-0">{{ label }}</span>
       <Dropdown
-          v-model="organ"
-          :options="organs || userOrgans"
-          optionLabel="firstName"
+          v-model="selectedOption"
+          :options="options"
+          :optionLabel="optionLabel"
           :placeholder="placeholder"
           class="w-full md:w-15rem"
           :disabled="disabled"
       >
-    <template #option="slotProps">
-      {{ fullName(slotProps.option) }}
-    </template>
-  </Dropdown>
+        <template #option="slotProps">
+          {{ slotProps.option[optionLabel] }}
+        </template>
+      </Dropdown>
     </span>
     <div class="flex justify-content-end">
       <ErrorSpan :error="errors"/>
@@ -22,18 +22,9 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import ErrorSpan from "@/components/ErrorSpan.vue";
-import { computed, type PropType } from "vue";
-import { useAuthStore } from "@sudosos/sudosos-frontend-common";
-import { fullName } from "@/utils/formatterUtils";
-import type { UserResponse } from "@sudosos/sudosos-client";
-
-const authStore = useAuthStore();
-
-const userOrgans = computed(() => {
-  return authStore.organs;
-});
+import { type PropType } from "vue";
 
 defineProps({
   label: {
@@ -59,14 +50,18 @@ defineProps({
     required: false,
     default: false
   },
-  organs: {
-    type: Object as PropType<UserResponse[]>,
-    required: false
+  options: {
+    type: Object as PropType<T[]>,
+    required: true
+  },
+  optionLabel: {
+    type: String,
+    required: true
   }
 });
 
+const selectedOption = defineModel<T>('selectedOption');
 
-const organ = defineModel<UserResponse>('organ');
 
 </script>
 

@@ -178,6 +178,16 @@ export const useContainerStore = defineStore('container', {
             }
         },
         /**
+         * Used for receiving and handling product deletions from product store.
+         * @param id
+         */
+        async handleProductDelete(id: Number) {
+            const containers = Object.values(this.containers).filter(isContainerWithProductsResponse);
+            for (const container of containers) {
+                container.products = container.products.filter(e => e.id !== id);
+            }
+        },
+        /**
          * Updates a container and stores it in the store.
          * @param cId
          * @param c

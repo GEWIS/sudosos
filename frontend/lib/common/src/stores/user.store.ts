@@ -17,12 +17,14 @@ interface CurrentState {
 }
 interface UserModuleState {
   users: UserResponse[];
+  organs: UserResponse[];
   current: CurrentState
 }
 
 export const useUserStore = defineStore('user', {
   state: (): UserModuleState => ({
     users: [],
+    organs: [],
     current: {
       balance: null,
       rolesWithPermissions: [],
@@ -61,10 +63,23 @@ export const useUserStore = defineStore('user', {
   },
   actions: {
     async fetchUsers(service: ApiService) {
-      // @ts-ignore TODO Fix Swagger
-      this.users = await fetchAllPages<UserResponse>(0, 500, (take, skip) =>
-        service.user.getAllUsers(take, skip)
-      );
+      // Fetches all users if the store is empty
+      if(this.users.length == 0) {
+        this.users = await fetchAllPages<UserResponse>(0, 500, (take, skip) =>
+            service.user.getAllUsers(take, skip)
+        );
+      }
+    },
+    async fetchAllOrgans(apiService: ApiService) {
+      if (this.organs.length != 0) return this.organs;
+      return fetchAllPages<UserResponse>(
+          0,
+          Number.MAX_SAFE_INTEGER,
+          (take, skip) => apiService.user.getAllUsersOfUserType("ORGAN", take, skip))
+            .then((organs) => {
+              this.organs = organs;
+              return this.organs;
+            });
     },
     async fetchCurrentUserBalance(id: number, service: ApiService) {
       this.current.balance = (await service.balance.getBalanceId(id)).data;

@@ -1,7 +1,7 @@
 <template>
   <div>
-    <span :class="['flex flex-wrap justify-content-between',
-     column ? 'flex-column gap-1' : 'flex-row align-items-center gap-3']">
+    <span :class="['flex justify-content-between',
+     column ? 'flex-column gap-1' : 'flex-row align-items-center gap-2']">
       <p class="my-0">{{ label }}</p>
       <InputText v-if="type === 'text'"
                  :placeholder="placeholder"
@@ -25,14 +25,21 @@
       <InputNumber v-if="type === 'currency'"
                  mode="currency" currency="EUR" locale="nl-NL"
                  :min="0.0"
-                 :min-fraction-digits="0" :max-fraction-digits="2"
                 :placeholder="placeholder"
                 v-model="internalValue as number"
                 :disabled="disabled"/>
 
-      <Checkbox v-if="type === 'boolean'"
-                   v-model="internalValue"
-                    binary
+      <InputNumber v-if="type === 'percentage'"
+                   mode="decimal"
+                   :min="0.0"
+                   :min-fraction-digits="0" :max-fraction-digits="2"
+                   :placeholder="placeholder"
+                   v-model="internalValue as number"
+                   :disabled="disabled"
+                   suffix="%"/>
+
+      <InputSwitch v-if="type === 'boolean'"
+                   v-model="internalValue as boolean"
                    :disabled="disabled"/>
 
     </span>
@@ -51,7 +58,6 @@ import ErrorSpan from "@/components/ErrorSpan.vue";
 import CalendarString from "@/components/CalendarString.vue";
 
 import type { HintedString } from "primevue/ts-helpers";
-import InputNumber from "primevue/inputnumber";
 
 const props = defineProps({
   label: {
@@ -75,7 +81,7 @@ const props = defineProps({
     default: ''
   },
   type: {
-    type: String as PropType<HintedString<'text' | 'textarea' | 'date' | 'currency'>>,
+    type: String as PropType<HintedString<'text' | 'textarea' | 'date' | 'currency' | 'percentage'>>,
     required: false,
     default: 'text'
   },
@@ -94,7 +100,7 @@ const props = defineProps({
 const emit = defineEmits(['update:value']);
 
 const stringInputs = ['text', 'textarea'];
-const numberInputs = ['currency', 'number'];
+const numberInputs = ['currency', 'percentage', 'number'];
 const booleanInputs = ['boolean'];
 
 const initialValue = () => {

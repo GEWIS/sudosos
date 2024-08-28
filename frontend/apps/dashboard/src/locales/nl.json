@@ -117,7 +117,8 @@
     "Preferred": "Voorkeur",
     "Featured": "Promo",
     "Pricelist": "Prijslijst",
-    "AllProducts": "Alle producten"
+    "AllProducts": "Alle producten",
+    "confirmDelete": "Weet je zeker dat je dit product wilt verwijderen? Dit kan niet ongedaan worden gemaakt."
   },
   "c_recentTransactionsTable": {
     "all transactions": "alle transacties",
@@ -264,6 +265,7 @@
     "productUpdate": "Product is succesvol geüpdatet.",
     "productContainerAdd": "Product is succesvol toegevoegd aan container.",
     "productContainerDelete": "Product is succesvol verwijderd van container.",
+    "productDeleted": "Product is successvol verwijderd",
     "productCreate": "Product is succesvol aangemaakt.",
     "updateContainer": "Container is succesvol geüpdatet.",
     "invoiceDeleted": "Factuur is succesvol verwijderd.",
@@ -343,7 +345,7 @@
     }
   },
   "tooltip": {
-    "owner_revenue": "NB: De containereigenaar krijgt de opbrengst, niet de producteigenaar"
+    "productOwner": "NB: De containereigenaar krijgt de opbrengst, niet de producteigenaar. Eigenaar kan niet gewijzigd worden na het aanmaken."
   },
   "common": {
     "approve": "Goedkeuren",
@@ -356,7 +358,8 @@
     "owner": "Eigenaar",
     "name": "Naam",
     "container": "Container",
-    "loading": "Laden..."
+    "loading": "Laden...",
+    "save": "Opslaan"
   },
   "c_invoiceInfo": {
     "Info": "Info",

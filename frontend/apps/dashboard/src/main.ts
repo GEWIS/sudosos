@@ -41,6 +41,7 @@ import ToggleButton from "primevue/togglebutton";
 import i18n from './utils/i18nUtils';
 import ConfirmDialog from "primevue/confirmdialog";
 import ConfirmationService from 'primevue/confirmationservice';
+import InputSwitch from "primevue/inputswitch";
 
 const app = createApp(App);
 
@@ -56,6 +57,7 @@ app.use(ConfirmationService);
 
 app.component('Button', Button);
 app.component('InputText', InputText);
+app.component('InputSwitch', InputSwitch);
 app.component('Menubar', Menubar);
 app.component('Panel', Panel);
 app.component('DataTable', DataTable);
