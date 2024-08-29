@@ -251,7 +251,8 @@
     "updateInfo": "Update gebruikersinformatie"
   },
   "quickOverview": {
-    "quickOverviewMessage": "Laat dit aan de bar zien zodat we je sneller kunnen helpen."
+    "quickOverviewMessage": "Laat dit aan de bar zien zodat we je sneller kunnen helpen.",
+    "underAge": "Gebruiker is onder 18!"
   },
   "successMessages": {
     "createContainer": "Container is succesvol aangemaakt.",

@@ -5,6 +5,7 @@
           {{ isGewisUser(props.user) ? props.user.gewisId : `E${props.user.id}` }} <br />
           {{ props.user.firstName }} {{ props.user.lastName }}
         </h1>
+        <p class="font-bold text-red-500 text-center" v-if="!props.user.ofAge">{{ $t("quickOverview.underAge") }}</p>
     </CardComponent>
 </template>
 

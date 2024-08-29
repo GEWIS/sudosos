@@ -5,7 +5,7 @@
     </div>
     <div class="grid">
       <div class="col-6 md:col-6">
-        <UserInfo :user="current.user as UserResponse"/>
+        <UserInfo :user="gewisUser || current.user as GewisUserResponse"/>
       </div>
       <div class="col-6 md:col-6">
           <ChangePin />
@@ -31,7 +31,7 @@ import ChangeApiKey from "@/modules/user/components/ChangeApiKey.vue";
 import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import { storeToRefs } from "pinia";
 import UserInfo from "@/modules/user/components/UserInfo.vue";
-import type { UserResponse } from "@sudosos/sudosos-client";
+import type {GewisUserResponse, UserResponse} from "@sudosos/sudosos-client";
 import { computed, onMounted, type Ref, ref } from "vue";
 import { UserRole } from "@/utils/rbacUtils";
 import InputSwitch from "primevue/inputswitch";
@@ -50,7 +50,7 @@ const dataAnalysis: Ref<boolean> = ref(false);
 const { current } = storeToRefs(userStore);
 const toast = useToast();
 const { t } = useI18n();
-
+const gewisUser: Ref<GewisUserResponse | undefined> = ref(undefined);
 
 onMounted(async () => {
   if (!userStore.current.user) {
@@ -58,6 +58,7 @@ onMounted(async () => {
     return;
   }
   await userStore.fetchUsers(apiService);
+  gewisUser.value = userStore.getUserById(userStore.current.user.id) as GewisUserResponse;
   dataAnalysis.value = userStore.getUserById(userStore.current.user.id)?.extensiveDataProcessing || false;
 });
 

@@ -246,7 +246,8 @@
     "updateInfo": "Update user information"
   },
   "quickOverview": {
-    "quickOverviewMessage": "Show this at the bar so we can help you faster"
+    "quickOverviewMessage": "Show this at the bar so we can help you faster",
+    "underAge": "User is underage!"
   },
   "successMessages": {
     "createContainer": "Successfully created container.",
