@@ -81,6 +81,7 @@ app.component('ToggleButton', ToggleButton);
 app.component('Steps', Steps);
 app.component('Calendar', Calendar);
 app.component('ConfirmDialog', ConfirmDialog);
+app.component('InputSwitch', InputSwitch);
 
 populateStoresFromToken(apiService).then(() => {
     app.mount('#app');

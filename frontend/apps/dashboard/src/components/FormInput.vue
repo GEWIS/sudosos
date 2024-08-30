@@ -19,7 +19,6 @@ import { ref, watch, onMounted, type PropType } from 'vue';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Calendar from 'primevue/calendar';
-import type { Ref } from "vue";
 import ErrorSpan from "@/components/ErrorSpan.vue";
 
 const props = defineProps({

@@ -55,6 +55,17 @@ export const updateInvoiceAddressingObject = yup.object({
   country: yup.string().required(),
 });
 
+export const updateUserDetailsObject = yup.object({
+  firstName: yup.string().required(),
+  lastName: yup.string(),
+  email: yup.string().email(),
+  nickname: yup.string().nullable(),
+  userType: yup.number().required(),
+  isActive: yup.boolean().required().default(true),
+  ofAge: yup.boolean().required().default(false),
+  canGoIntoDebt: yup.boolean().required().default(false),
+});
+
 export const editPinSchema = toTypedSchema(
   yup.object({
     pin: yup.string().required()

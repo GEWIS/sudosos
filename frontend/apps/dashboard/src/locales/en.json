@@ -275,7 +275,8 @@
     "pointOfSaleCreated": "Successfully created point of sale.",
     "waiveFinesSuccess": "Successfully waived fines.",
     "waiveFinesRejected": "Canceled waiving fines.",
-    "canceled": "Canceled"
+    "canceled": "Canceled",
+    "userUpdated": "Successfully updated user."
   },
   "termsOfService": {
     "acceptFirst": "Accept the Terms of Service",
@@ -324,7 +325,8 @@
     "Usertype": "Usertype",
     "passwordUpdated": "Password successfully updated",
     "updatedUserInfo": "Succesfully updated user info.",
-    "userInfoUpdated": "User information successfully updated"
+    "userInfoUpdated": "User information successfully updated",
+    "userInformation": "User information"
   },
   "contact": {
     "Contact": "Contact",

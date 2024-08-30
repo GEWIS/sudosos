@@ -15,7 +15,7 @@
 
 import FileUpload from "primevue/fileupload";
 
-const props = defineProps<{
+defineProps<{
   isEditable?: boolean,
   imageSrc?: string,
 }>();

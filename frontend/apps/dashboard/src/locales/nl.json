@@ -276,7 +276,8 @@
     "pointOfSaleCreated": "Point of sale is successvol aangemaakt.",
     "waiveFinesSuccess": "Boetes zijn succesvol kwijtgescholden.",
     "waiveFinesRejected": "Boetes zijn succesvol afgewezen.",
-    "canceled": "Geannuleerd"
+    "canceled": "Geannuleerd",
+    "userUpdated": "Gebruiker is succesvol geüpdatet."
   },
   "termsOfService": {
     "acceptFirst": "Accepteer de Voorwaarden",
@@ -325,7 +326,8 @@
     "Usertype": "Gebruikerstype",
     "passwordUpdated": "Wachtwoord is succesvol geüpdatet",
     "updatedUserInfo": "Profiel is succesvol geüpdatet.",
-    "userInfoUpdated": "Profiel is succesvol aangepast"
+    "userInfoUpdated": "Profiel is succesvol aangepast",
+    "userInformation": "Gebruikersinformatie"
   },
   "validation": {
     "number": {

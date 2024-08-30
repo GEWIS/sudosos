@@ -75,7 +75,8 @@ router.beforeEach((to, from, next) => {
   } else {
     if(to.meta?.rolesAllowed) {
       // Test overlapping roles between the allowed roles and the roles the user has
-      const rolesUnion = [...new Set([...to.meta.rolesAllowed, ...userStore.current.rolesWithPermissions.map(r => r.name)])];
+      const rolesUnion =
+          [...new Set([...to.meta.rolesAllowed, ...userStore.current.rolesWithPermissions.map(r => r.name)])];
 
       // No overlapping roles -> No correct permissions -> Back to home
       if(rolesUnion.length == 0) ({ name: 'home' });

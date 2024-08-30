@@ -1,7 +1,7 @@
 <template>
   <CardComponent :header="header">
     <template #topAction>
-      <div v-if="showEdit">
+      <div v-if="showEdit" class="mx-2">
         <div v-if="!edit">
           <Button
               severity="primary"

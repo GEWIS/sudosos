@@ -28,7 +28,6 @@
                 :placeholder="placeholder"
                 v-model="internalValue as number"
                 :disabled="disabled"/>
-
       <InputNumber v-if="type === 'percentage'"
                    mode="decimal"
                    :min="0.0"
@@ -37,11 +36,16 @@
                    v-model="internalValue as number"
                    :disabled="disabled"
                    suffix="%"/>
-
       <InputSwitch v-if="type === 'boolean'"
                    v-model="internalValue as boolean"
                    :disabled="disabled"/>
-
+      <Dropdown v-if="type === 'usertype'"
+                :options="userTypes"
+                optionLabel="name"
+                optionValue="value"
+                v-model="internalValue as number"
+                :placeholder="placeholder"
+                :disabled="disabled"/>
     </span>
     <div class="flex justify-content-end">
       <ErrorSpan :error="errors"/>
@@ -58,6 +62,8 @@ import ErrorSpan from "@/components/ErrorSpan.vue";
 import CalendarString from "@/components/CalendarString.vue";
 
 import type { HintedString } from "primevue/ts-helpers";
+import InputNumber from "primevue/inputnumber";
+import { userTypes } from "@/utils/validation-schema";
 
 const props = defineProps({
   label: {
@@ -100,7 +106,8 @@ const props = defineProps({
 const emit = defineEmits(['update:value']);
 
 const stringInputs = ['text', 'textarea'];
-const numberInputs = ['currency', 'percentage', 'number'];
+
+const numberInputs = ['currency', 'number', 'usertype', 'percentage'];
 const booleanInputs = ['boolean'];
 
 const initialValue = () => {

@@ -21,7 +21,7 @@ const { t } = useI18n();
 
 const selectProduct = defineModel('selectProduct');
 
-const props = defineProps<{
+defineProps<{
   products: BaseProductResponse[]
 }>();
 

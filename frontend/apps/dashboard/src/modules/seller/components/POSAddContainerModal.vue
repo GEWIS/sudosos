@@ -22,7 +22,7 @@ const isVisible = defineModel<boolean>('isVisible', { required: true });
 
 const form = schemaToForm(addContainerObject);
 
-const props = defineProps<{
+defineProps<{
   associatedPos: PointOfSaleWithContainersResponse
 }>();
 </script>
