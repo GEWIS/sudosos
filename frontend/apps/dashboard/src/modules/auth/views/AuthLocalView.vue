@@ -1,7 +1,7 @@
 <template>
   <div>
       <img class="max-h-9rem block mx-auto my-0" src="../../../assets/img/bier.png" alt="logo"/>
-      <div class="text-900 text-5xl mt-0 mx-auto mb-2 w-full">{{ $t('login.SudoSOS Login') }}</div>
+      <div class="text-900 text-5xl mt-0 mx-auto mb-2 w-full">{{ t('login.SudoSOS Login') }}</div>
       <form class="flex flex-column" @submit="loginHandler">
         <span class="p-float-label with-error">
           <InputText
@@ -13,7 +13,7 @@
               :class="{ 'p-invalid': loginForm.errors.value.username }"
           />
           <label :class="{ 'contains-text': username.modelValue }" for="username"
-          >{{ $t('login.Username') }}
+          >{{ t('login.Username') }}
           </label>
           <small class="p-error">
             <i v-if="loginForm.errors.value.username" class="pi pi-exclamation-circle"/>
@@ -30,7 +30,7 @@
               :class="{ 'p-invalid': loginForm.errors.value.password }"
           />
           <label :class="{ 'contains-text': password.modelValue }" for="password"
-          >{{ $t('login.Password') }}
+          >{{ t('login.Password') }}
           </label>
           <small class="p-error">
             <i v-if="loginForm.errors.value.password" class="pi pi-exclamation-circle"/>
@@ -42,17 +42,17 @@
             id="login-button"
             class="mx-auto w-full flex justify-content-center align-items-center"
         >
-          {{ $t('login.Login') }}
+          {{ t('login.Login') }}
         </Button>
         <Button
             @click="toHomeView"
             :outlined="true"
             class="my-3 mx-auto w-full flex justify-content-center align-items-center"
         >
-          {{ $t('login.Back') }}
+          {{ t('login.Back') }}
         </Button>
         <div class="text-900 underline cursor-pointer" @click="resetPassword">
-          {{ $t('login.Password reset') }}
+          {{ t('login.Password reset') }}
         </div>
       </form>
   </div>

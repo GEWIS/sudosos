@@ -1,12 +1,12 @@
 <template>
     <DataTable :rows="rows" :value="mutations" :rowsPerPageOptions="[5, 10, 25, 50, 100]" :paginator="paginator" lazy
                @page="onPage($event)" :totalRecords="totalRecords" >
-        <Column field="moment" :header="$t('transactions.when')">
+        <Column field="moment" :header="t('transactions.when')">
             <template #body v-if="isLoading">
                 <Skeleton class="w-6 my-1 h-1rem surface-300" />
             </template>
             <template #body="mutation" v-else>
-                <span class="hidden sm:block">{{ mutation.data.moment.toLocaleDateString($i18n.locale, {
+                <span class="hidden sm:block">{{ mutation.data.moment.toLocaleDateString(locale, {
                     dateStyle: 'full'
                 }) }}</span>
                 <span class="sm:hidden">{{
@@ -18,7 +18,7 @@
             </template>
         </Column>
 
-        <Column field="createdBy" :header="$t('transactions.createdBy')">
+        <Column field="createdBy" :header="t('transactions.createdBy')">
             <template #body v-if="isLoading">
                 <Skeleton class="w-6 my-1 h-1rem surface-300" />
             </template>
@@ -27,7 +27,7 @@
             </template>
         </Column>
 
-        <Column field="createdFor" :header="$t('transactions.createdFor')">
+        <Column field="createdFor" :header="t('transactions.createdFor')">
             <template #body v-if="isLoading">
                 <Skeleton class="w-6 my-1 h-1rem surface-300" />
             </template>
@@ -38,7 +38,7 @@
 
 
 
-        <Column field="change" :header="$t('transactions.amount')">
+        <Column field="change" :header="t('transactions.amount')">
             <template #body v-if="isLoading">
                 <Skeleton class="w-3 my-1 h-1rem surface-300" />
             </template>
@@ -94,7 +94,9 @@ import {
     isFine
 } from "@/utils/mutationUtils";
 import ModalMutation from "@/components/mutations/mutationmodal/ModalMutation.vue";
+import { useI18n } from "vue-i18n";
 
+const { t, locale } = useI18n();
 
 const props = defineProps<{
     getMutations: (take: number, skip: number) => Promise<PaginatedBaseTransactionResponse | undefined>,

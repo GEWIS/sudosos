@@ -9,7 +9,7 @@
     @hide="cancelPay"
     :draggable="false"
   >
-    <p>{{ `${$t('c_currentBalance.topup')} ${formatPrice(dinero)}` }}</p>
+    <p>{{ `${t('c_currentBalance.topup')} ${formatPrice(dinero)}` }}</p>
     <form ref="payment" id="payment-form" v-show="!loading">
       <div id="payment-element">
         <!--Stripe.js injects the Payment Element-->
@@ -17,7 +17,7 @@
     </form>
 
     <template #footer>
-      <Button :label="$t('payment.pay').toUpperCase()" @click="submitPay"/>
+      <Button :label="t('payment.pay').toUpperCase()" @click="submitPay"/>
     </template>
   </Dialog>
 </template>
@@ -30,6 +30,9 @@ import { loadStripe } from '@stripe/stripe-js/pure';
 import apiService from '@/services/ApiService';
 import type { Dinero } from "@sudosos/sudosos-client";
 import { formatPrice } from "@/utils/formatterUtils";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const loading = ref(false);
 const visible = ref(false);

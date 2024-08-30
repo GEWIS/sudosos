@@ -1,5 +1,5 @@
 <template>
-  <FormCard :header="$t('c_posInfo.overview')" v-if="pointOfSale" @cancel="updateFieldValues(pointOfSale)"
+  <FormCard :header="t('c_posInfo.overview')" v-if="pointOfSale" @cancel="updateFieldValues(pointOfSale)"
             @update:modelValue="edit = $event" @save="formSubmit">
     <div class="flex flex-column justify-content-between gap-2">
       <POSSettingsForm :point-of-sale="pointOfSale" :form="form" :edit="edit" @update:edit="edit = $event"/>

@@ -1,37 +1,37 @@
 <template>
   <div class="flex flex-column justify-content-between gap-2">
-    <InputSpan :label="$t('c_productContainerOperations.Name')"
+    <InputSpan :label="t('c_productContainerOperations.Name')"
                :value="form.model.name.value.value"
                :attributes="form.model.name.attr.value"
                @update:value="form.context.setFieldValue('name', $event)"
                :errors="form.context.errors.value.name"
-               id="name" :placeholder="$t('c_productContainerOperations.Name')" type="text"
+               id="name" :placeholder="t('c_productContainerOperations.Name')" type="text"
                :disabled="!isEditable"/>
     <span
         class="error-text-name block w15-rem"
         v-if="closeTo && !form.context.errors.value.name"
         @click="selectCloseTo">
-                {{ $t('c_productContainerOperations.Close To', {name: closeTo.name}) }}</span>
+                {{ t('c_productContainerOperations.Close To', {name: closeTo.name}) }}</span>
 
     <InputDropdownSpan
-        :label="$t('c_productContainerOperations.Category')"
+        :label="t('c_productContainerOperations.Category')"
         :options="productCategories"
         option-label="name"
         :selected-option="form.model.category.value.value"
         @update:selected-option="form.context.setFieldValue('category', $event)"
-        :placeholder="$t('c_productContainerOperations.Please select')"
+        :placeholder="t('c_productContainerOperations.Please select')"
         :disabled="!isEditable"/>
 
     <InputDropdownSpan
-        :label="$t('c_productContainerOperations.VAT')"
+        :label="t('c_productContainerOperations.VAT')"
         :options="vatGroups"
         option-label="name"
         :selected-option="form.model.vat.value.value"
         @update:selected-option="form.context.setFieldValue('vat', $event)"
-        :placeholder="$t('c_productContainerOperations.Please select VAT')"
+        :placeholder="t('c_productContainerOperations.Please select VAT')"
         :disabled="!isEditable"/>
 
-    <InputSpan :label="$t('c_productContainerOperations.Alcohol Percentage')"
+    <InputSpan :label="t('c_productContainerOperations.Alcohol Percentage')"
                :value="form.model.alcoholPercentage.value.value"
                :attributes="form.model.alcoholPercentage.attr.value"
                @update:value="form.context.setFieldValue('alcoholPercentage', $event)"
@@ -39,7 +39,7 @@
                id="alcoholPercentage" type="percentage"
                :disabled="!isEditable"/>
 
-    <InputSpan :label="$t('c_productContainerOperations.Price')"
+    <InputSpan :label="t('c_productContainerOperations.Price')"
                :value="form.model.priceInclVat.value.value"
                :attributes="form.model.priceInclVat.attr.value"
                @update:value="form.context.setFieldValue('priceInclVat', $event)"
@@ -50,8 +50,8 @@
     <!-- If the organ is not editable, add a fake option menu so the dropdown still renders  -->
     <div class="flex flex-row justify-content-between align-items-center gap-1">
       <i class="pi pi-exclamation-circle text-red-500 cursor-pointer"
-         v-tooltip.top="$t('tooltip.productOwner')"/>
-      <InputOrganSpan :label="$t('c_POSCreate.Owner')"
+         v-tooltip.top="t('tooltip.productOwner')"/>
+      <InputOrganSpan :label="t('c_POSCreate.Owner')"
                       :organs="!isOrganEditable
                         ? [form.model.owner.value.value]
                         : undefined"
@@ -64,7 +64,7 @@
 
     <div class="flex flex-column justify-content-between gap-1">
       <InputSpan
-          :label="$t('c_productContainerOperations.Preferred')"
+          :label="t('c_productContainerOperations.Preferred')"
           :value="form.model.preferred.value.value"
           :attributes="form.model.preferred.attr.value"
           @update:value="form.context.setFieldValue('preferred', $event)"
@@ -72,7 +72,7 @@
           id="preferred" type="boolean"
           :disabled="!isEditable"/>
       <InputSpan
-          :label="$t('c_productContainerOperations.Featured')"
+          :label="t('c_productContainerOperations.Featured')"
           :value="form.model.featured.value.value"
           :attributes="form.model.featured.attr.value"
           @update:value="form.context.setFieldValue('featured', $event)"
@@ -80,7 +80,7 @@
           id="featured" type="boolean"
           :disabled="!isEditable"/>
       <InputSpan
-          :label="$t('c_productContainerOperations.Pricelist')"
+          :label="t('c_productContainerOperations.Pricelist')"
           :value="form.model.priceList.value.value"
           :attributes="form.model.priceList.attr.value"
           @update:value="form.context.setFieldValue('priceList', $event)"
@@ -100,6 +100,9 @@ import InputDropdownSpan from "@/components/InputDropdownSpan.vue";
 import type { BaseVatGroupResponse, ProductCategoryResponse, ProductResponse } from "@sudosos/sudosos-client";
 import { ref, watch } from "vue";
 import Fuse from "fuse.js";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const props = defineProps<{
   form: Form<yup.InferType<typeof createProductSchema>>,

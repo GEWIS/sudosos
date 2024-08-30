@@ -1,12 +1,12 @@
 <template>
     <DataTable :rows="rows" :value="mutations" :rows-per-page-options="[5, 10, 25, 50, 100]" :paginator="paginator" lazy
                @page="onPage($event)" :total-records="totalRecords" data-key="id">
-        <Column field="moment" :header="$t('transactions.when')">
+        <Column field="moment" :header="t('transactions.when')">
             <template #body v-if="isLoading">
                 <Skeleton class="w-6 my-1 h-1rem surface-300" />
             </template>
             <template #body="mutation" v-else>
-                <span class="hidden sm:block">{{ mutation.data.moment.toLocaleDateString($i18n.locale, {
+                <span class="hidden sm:block">{{ mutation.data.moment.toLocaleDateString(locale, {
                     dateStyle: 'full'
                 }) }}</span>
                 <span class="sm:hidden">{{
@@ -18,7 +18,7 @@
             </template>
         </Column>
 
-        <Column field="createdFor" :header="$t('transactions.createdFor')">
+        <Column field="createdFor" :header="t('transactions.createdFor')">
             <template #body v-if="isLoading">
                 <Skeleton class="w-6 my-1 h-1rem surface-300" />
             </template>
@@ -27,7 +27,7 @@
             </template>
         </Column>
 
-        <Column field="mutationPOS" class="hidden sm:block" :header="$t('transactions.pos')">
+        <Column field="mutationPOS" class="hidden sm:block" :header="t('transactions.pos')">
             <template #body v-if="isLoading">
                 <Skeleton class="w-6 my-1 h-1rem surface-300" />
             </template>
@@ -36,7 +36,7 @@
             </template>
         </Column>
 
-        <Column field="change" :header="$t('transactions.amount')">
+        <Column field="change" :header="t('transactions.amount')">
             <template #body v-if="isLoading">
                 <Skeleton class="w-3 my-1 h-1rem surface-300" />
             </template>
@@ -88,6 +88,9 @@ import {
     parseFinancialMutations,
 } from "@/utils/mutationUtils";
 import type { PaginatedBaseTransactionResponse } from "@sudosos/sudosos-client";
+import { useI18n } from "vue-i18n";
+
+const { t, locale } = useI18n();
 
 const props = defineProps<{
     getMutations: (take: number, skip: number) => Promise<PaginatedBaseTransactionResponse | undefined>,

@@ -6,60 +6,60 @@
     <div class="flex flex-column md:flex-row flex-wrap justify-content-between gap-5">
       <!--      TODO: Refactor to extract this component-->
       <!--      See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/21-->
-      <CardComponent :header="$t('userDetails.Personal Info')">
+      <CardComponent :header="t('userDetails.Personal Info')">
         <form @submit="handleEditUser">
-          <small v-if="!isLocal">{{ $t('profile.notManagedThroughSudoSOS') }}</small>
+          <small v-if="!isLocal">{{ t('profile.notManagedThroughSudoSOS') }}</small>
           <div class="field">
-            <label for="firstName">{{ $t("userDetails.First name") }}</label>
+            <label for="firstName">{{ t("userDetails.First name") }}</label>
             <InputText :disabled="!isLocal" id="firstName" v-model="firstName" v-bind="firstNameAttrs" class="w-full" />
             <span class="error-text">{{ errors.firstName }}</span>
           </div>
           <div class="field">
-            <label for="lastName">{{ $t("userDetails.Last name") }}</label>
+            <label for="lastName">{{ t("userDetails.Last name") }}</label>
             <InputText :disabled="!isLocal" id="lastName" v-model="lastName" v-bind="lastNameAttrs" class="w-full" />
             <span class="error-text">{{ errors.lastName }}</span>
           </div>
           <div class="field">
-            <label for="nickname">{{ $t("userDetails.Nickname") }}</label>
+            <label for="nickname">{{ t("userDetails.Nickname") }}</label>
             <InputText id="nickname" v-model="nickname" v-bind="nicknameAttrs" class="w-full" />
           </div>
           <div class="field">
-            <label for="email">{{ $t("userDetails.Email address") }}</label>
+            <label for="email">{{ t("userDetails.Email address") }}</label>
             <InputText :disabled="!isLocal" id="email" v-model="email" v-bind="emailAttrs" class="w-full" />
           </div>
           <div class="field">
-            <label for="type">{{ $t("userDetails.Usertype") }}</label>
+            <label for="type">{{ t("userDetails.Usertype") }}</label>
             <InputText id="userType" disabled :placeholder="userTypeDisplay"
                        v-bind="userTypeAttrs" class="w-full" />
             <span class="error-text">{{ errors.userType }}</span>
           </div>
           <div class="field">
-            <label for="active">{{ $t("userDetails.Active") }}</label>
+            <label for="active">{{ t("userDetails.Active") }}</label>
             <Checkbox :binary="true" id="active" v-model="isActive" v-bind="isActiveAttrs" class="w-full" />
           </div>
           <div class="field">
-            <label for="ofAge">{{ $t('profile.ofAge') }}</label>
+            <label for="ofAge">{{ t('profile.ofAge') }}</label>
             <Checkbox :binary="true" v-model="ofAge" v-bind="ofAgeAttrs" id="ofAge" class="w-full" />
             <span class="error-text">{{ errors.ofAge }}</span>
           </div>
           <div class="field">
-            <label for="canGoIntoDebt">{{ $t('profile.canGoIntoDebt') }}</label>
+            <label for="canGoIntoDebt">{{ t('profile.canGoIntoDebt') }}</label>
             <Checkbox :binary="true" v-model="canGoIntoDebt" v-bind="canGoIntoDebtAttrs" id="canGoIntoDebt"
               class="w-full" />
             <span class="error-text">{{ errors.canGoIntoDebt }}</span>
           </div>
           <div class="flex justify-content-end">
-            <Button type="submit" class="update-button">{{ $t('userDetails.Update information') }}</Button>
+            <Button type="submit" class="update-button">{{ t('userDetails.Update information') }}</Button>
           </div>
         </form>
       </CardComponent>
       <AdminUserBalance :user="currentUser" />
         <CardComponent
-            :header="$t('transactions.recentTransactions')"
+            :header="t('transactions.recentTransactions')"
             class="w-full">
           <MutationsBalanceCard
               class="w-full"
-              :header="$t('userDetails.User Transactions')"
+              :header="t('userDetails.User Transactions')"
               paginator
               modal
               :get-mutations="getUserMutations" />

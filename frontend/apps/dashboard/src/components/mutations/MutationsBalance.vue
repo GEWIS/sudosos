@@ -1,13 +1,13 @@
 <template>
     <DataTable :rows="rows" :value="mutations" :rowsPerPageOptions="[5, 10, 25, 50, 100]" :paginator="paginator" lazy
         @page="onPage($event)" :totalRecords="totalRecords" >
-        <Column field="moment" :header="$t('transactions.when')">
+        <Column field="moment" :header="t('transactions.when')">
             <template #body v-if="isLoading">
                 <Skeleton class="w-6 my-1 h-1rem surface-300" />
             </template>
             <template #body="mutation" v-else>
                 <span class="hidden sm:block">{{
-                    mutation.data.moment.toLocaleDateString($i18n.locale, {
+                    mutation.data.moment.toLocaleDateString(locale, {
                         dateStyle: 'full'
                     })
                     }}</span>
@@ -20,7 +20,7 @@
             </template>
         </Column>
 
-        <Column field="createdBy" :header="$t('transactions.createdBy')">
+        <Column field="createdBy" :header="t('transactions.createdBy')">
             <template #body v-if="isLoading">
                 <Skeleton class="w-6 my-1 h-1rem surface-300" />
             </template>
@@ -32,7 +32,7 @@
             </template>
         </Column>
 
-        <Column field="mutationPOS" class="hidden sm:block" :header="$t('transactions.pos')">
+        <Column field="mutationPOS" class="hidden sm:block" :header="t('transactions.pos')">
             <template #body v-if="isLoading">
                 <Skeleton class="w-6 my-1 h-1rem surface-300" />
             </template>
@@ -41,7 +41,7 @@
             </template>
         </Column>
 
-        <Column field="change" :header="$t('transactions.amount')">
+        <Column field="change" :header="t('transactions.amount')">
             <template #body v-if="isLoading">
                 <Skeleton class="w-3 my-1 h-1rem surface-300" />
             </template>
@@ -96,6 +96,9 @@ import { isIncreasingTransfer, isFine } from "@/utils/mutationUtils";
 
 import { useUserStore } from "@sudosos/sudosos-frontend-common";
 import type { PaginatedFinancialMutationResponse } from "@sudosos/sudosos-client";
+import { useI18n } from "vue-i18n";
+
+const { t, locale } = useI18n();
 
 const userStore = useUserStore();
 

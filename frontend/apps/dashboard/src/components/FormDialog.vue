@@ -14,7 +14,7 @@
           v-if="deletable"
           type="button"
           icon="pi pi-trash"
-          :label="deleteLabel || $t('common.delete')"
+          :label="deleteLabel || t('common.delete')"
           outlined
           @click="emits('delete')"/>
       <div class="flex flex-row justify-content-end gap-2 flex-1">
@@ -22,14 +22,14 @@
             type="button"
             outlined
             icon="pi pi-times"
-            :label="$t('common.close')"
+            :label="t('common.close')"
             @click="visible = false; emits('close')"
         />
         <Button
             type="submit"
             icon="pi pi-check"
             :disabled="!props.form.context.meta.value.valid"
-            :label="$t('common.save')"
+            :label="t('common.save')"
             @click="props.form.submit"
         />
       </div>
@@ -42,7 +42,9 @@ import { computed, type PropType, ref } from 'vue';
 import { addListenerOnDialogueOverlay } from "@/utils/dialogUtil";
 import type { Form } from "@/utils/formUtils";
 import Button from "primevue/button";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const props = defineProps({
   modelValue: {
     type: Boolean,

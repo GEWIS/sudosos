@@ -1,7 +1,7 @@
 <template>
   <CardComponent :header="t('profile.keyGet')">
     <div>
-      <p>{{ $t('profile.keyOldRemoved') }}</p>
+      <p>{{ t('profile.keyOldRemoved') }}</p>
       <p>{{apiKeyMessage || '&nbsp;'}}</p>
     </div>
     <div style="margin-top: 1rem" class="flex justify-content-end">

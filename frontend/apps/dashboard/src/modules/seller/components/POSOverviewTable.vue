@@ -1,18 +1,18 @@
 <template>
-  <CardComponent :header="$t('app.Points of Sale')" class="w-full">
+  <CardComponent :header="t('app.Points of Sale')" class="w-full">
     <template #topAction>
       <div class="flex flex-row align-items-center justify-content-end">
-        <Button :label="$t('app.Create')" icon="pi pi-plus" @click="openCreatePOSModal"/>
+        <Button :label="t('app.Create')" icon="pi pi-plus" @click="openCreatePOSModal"/>
       </div>
     </template>
     <DataTable :rows="rows" :value="pointOfSales" :rowsPerPageOptions="[5, 10, 25, 50, 100]" paginator lazy
                @page="onPage($event)" :totalRecords="totalRecords">
-      <Column field="name" :header="$t('c_POSCreate.Title')">
+      <Column field="name" :header="t('c_POSCreate.Title')">
         <template #body v-if="isLoading">
           <Skeleton class="w-6 mr-8 my-1 h-2rem surface-300"/>
         </template>
       </Column>
-      <Column field="owner.firstName" :header="$t('c_POSCreate.Owner')">
+      <Column field="owner.firstName" :header="t('c_POSCreate.Owner')">
         <template #body v-if="isLoading">
           <Skeleton class="w-6 my-1 h-2rem surface-300"/>
         </template>
@@ -43,6 +43,10 @@ import type { PaginatedPointOfSaleResponse, PointOfSaleResponse } from "@sudosos
 import Skeleton from "primevue/skeleton";
 import router from "@/router";
 import POSCreateModal from "@/modules/seller/components/POSCreateModal.vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+
 const pointOfSales: Ref<PointOfSaleResponse[]> = ref(new Array(10));
 const totalRecords = ref<number>(0);
 const rows: Ref<number> = ref(10);

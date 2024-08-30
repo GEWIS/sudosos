@@ -3,7 +3,7 @@
     <span>
     {{ dateString }}
     </span>
-      <span>{{ $t("transactions.fineDescr") }}</span>
+      <span>{{ t("transactions.fineDescr") }}</span>
       <br>
       <DataTable
         :value="[{
@@ -16,11 +16,11 @@
           tfoot: 'font-bold'
         }"
       >
-        <Column field="description" :header="$t('transactions.description')" class="p-1">
+        <Column field="description" :header="t('transactions.description')" class="p-1">
         </Column>
         <Column
           field="totalPriceInclVat"
-          :header="$t('transactions.fineAmount')"
+          :header="t('transactions.fineAmount')"
           class="p-1"
           footerClass="font-bold"
           >
@@ -42,6 +42,9 @@ import type {
   TransferResponse
 } from "@sudosos/sudosos-client";
 import router from "@/router";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const firstName: Ref<string> = ref('');
 const lastName: Ref<string> = ref('');

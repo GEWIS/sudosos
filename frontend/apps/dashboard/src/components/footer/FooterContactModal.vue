@@ -1,29 +1,29 @@
 <!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
 <template>
-    <span class="tosLink" @click="visible = true">{{ $t('contact.Contact') }}</span>
+    <span class="tosLink" @click="visible = true">{{ t('contact.Contact') }}</span>
     <Dialog modal v-model:visible="visible" :draggable="false" class="tosModal">
         <template #header>
-            {{ $t('contact.Contact') }}
+            {{ t('contact.Contact') }}
         </template>
         <div>
-            <b>{{ $t('contact.Main contact') }}:</b><br>
+            <b>{{ t('contact.Main contact') }}:</b><br>
             <a class="text-color" href="mailto:sudosos@gewis.nl">
                 sudosos@gewis.nl
             </a> <br><br>
 
-            <b>{{ $t('contact.Incorrect transactions') }}:</b><br>
+            <b>{{ t('contact.Incorrect transactions') }}:</b><br>
             <a class="text-color" href="mailto:bacpm@gewis.nl">
                 bacpm@gewis.nl
             </a> <br><br>
 
-            <b>{{ $t('contact.Security') }}:</b><br>
+            <b>{{ t('contact.Security') }}:</b><br>
             <a class="text-color"
                 href="https://gewis.nl/.well-known/security.txt">
                 https://gewis.nl/.well-known/security.txt
             </a>
             <br><br>
 
-            <b>{{ $t('contact.Feature requests') }}:</b><br>
+            <b>{{ t('contact.Feature requests') }}:</b><br>
             <a class="text-color"
                 href="https://github.com/GEWIS/sudosos-backend">
                 https://github.com/GEWIS/sudosos-backend
@@ -47,8 +47,10 @@
 <script setup lang="ts">
 import Dialog from 'primevue/dialog';
 import { ref } from 'vue';
+import { useI18n } from "vue-i18n";
 
 const visible = ref(false);
+const { t } = useI18n();
 </script>
 <style>
 .tosLink {

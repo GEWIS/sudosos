@@ -1,12 +1,12 @@
 <template>
   <div class="flex flex-column justify-content-between gap-2">
-    <InputSpan :label="$t('c_posInfo.name')"
+    <InputSpan :label="t('c_posInfo.name')"
                :value="form.model.name.value.value"
                :attributes="form.model.name.attr.value"
                @update:value="form.context.setFieldValue('name', $event)"
                :errors="form.context.errors.value.name"
-               id="name" :placeholder="$t('c_posInfo.posName')" type="text" :disabled="!edit"/>
-    <InputSpan :label="$t('c_posInfo.useAuthentication')"
+               id="name" :placeholder="t('c_posInfo.posName')" type="text" :disabled="!edit"/>
+    <InputSpan :label="t('c_posInfo.useAuthentication')"
                :value="form.model.useAuthentication.value.value"
                :attributes="form.model.useAuthentication.attr.value"
                @update:value="form.context.setFieldValue('useAuthentication', $event)"

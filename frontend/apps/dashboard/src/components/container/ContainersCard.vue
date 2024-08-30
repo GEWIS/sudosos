@@ -1,12 +1,12 @@
 <template>
-  <CardComponent :header="$t('containersOverview.Containers')" class="p-0">
+  <CardComponent :header="t('containersOverview.Containers')" class="p-0">
     <template #topAction>
       <div v-if="showCreate || associatedPos" class="flex justify-content-endg gap-2">
         <Button
             v-if="associatedPos"
             @click="openContainerAdd()"
-            outlined>{{$t('containersOverview.addExisting')}}</Button>
-        <Button @click="openContainerEdit()">{{$t('app.Create')}}</Button>
+            outlined>{{ t('containersOverview.addExisting')}}</Button>
+        <Button @click="openContainerEdit()">{{t('app.Create')}}</Button>
       </div>
     </template>
     <Accordion :activeIndex="0" class="block w-full" :multiple="true"
@@ -20,7 +20,7 @@
             <div>
               <div @click="(event) => handleEditClick(event, container.id)" class="px-5">
                 <span class="mr-4 text-xs uppercase" v-if="container.public">
-                  {{ $t('c_containerEditModal.Public') }}</span>
+                  {{ t('c_containerEditModal.Public') }}</span>
                 <i class="pi pi-pencil"/>
               </div>
             </div>
@@ -51,6 +51,7 @@ import { type PropType, type Ref, ref } from "vue";
 import ContainerActionsDialog from "@/components/container/ContainerActionsDialog.vue";
 import type { ContainerWithProductsResponse, PointOfSaleWithContainersResponse } from "@sudosos/sudosos-client";
 import POSAddContainerModal from "@/modules/seller/components/POSAddContainerModal.vue";
+import { useI18n } from "vue-i18n";
 
 const visible = ref(false);
 const POSAddContainerIsVisible = ref(false);
@@ -72,7 +73,7 @@ const props = defineProps({
 });
 
 const containerStore = useContainerStore();
-
+const { t } = useI18n();
 const onTabOpen = async (event: AccordionTabOpenEvent) => {
   await containerStore.fetchContainer(props.containers[event.index].id);
 };

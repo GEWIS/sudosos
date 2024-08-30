@@ -12,7 +12,7 @@
         </span>
       </template>
     </Column>
-    <Column field="description" :header="$t('transactions.description')" class="p-1">
+    <Column field="description" :header="t('transactions.description')" class="p-1">
       <template #body="entry">
         <span v-if="entry.index < totalRowCutoff">
           {{ entry.data.description }}
@@ -21,7 +21,7 @@
     </Column>
     <Column
         field="priceInclVat"
-        :header="$t('transactions.price')"
+        :header="t('transactions.price')"
         class="p-1"
     >
       <template #body="entry">
@@ -42,7 +42,7 @@
     </Column>
     <Column
         field="totalPriceInclVat"
-        :header="$t('transactions.amount')"
+        :header="t('transactions.amount')"
         class="p-1"
     >
       <template #body="entry">

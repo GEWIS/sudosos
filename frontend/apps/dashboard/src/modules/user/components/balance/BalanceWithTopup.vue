@@ -1,6 +1,6 @@
 <template>
   <BalanceTopupModal v-model:visible="visible" :amount="topupAmount!!" />
-  <CardComponent :header="$t('c_currentBalance.balance')" class="w-full sm:w-full">
+  <CardComponent :header="t('c_currentBalance.balance')" class="w-full sm:w-full">
     <div class="flex flex-row justify-content-center">
       <div class="flex flex-column justify-content-center w-6">
         <Skeleton v-if="loading" class="h-4rem w-5 mx-auto" />
@@ -8,12 +8,12 @@
         <p class="text-center text-base font-semibold text-red-500" v-if="userBalance && userBalance.fine">
           {{
           isAllFine
-          ? $t('c_currentBalance.allIsFines')
-          : $t('c_currentBalance.someIsFines', { fine: displayFine })
+          ? t('c_currentBalance.allIsFines')
+          : t('c_currentBalance.someIsFines', { fine: displayFine })
           }}
         </p>
         <div v-show="displayBalanceAfterTopup" class="text-center text-600 font-italic">
-          {{ $t('balance.Balance after') }}
+          {{ t('balance.Balance after') }}
           <span v-if="displayBalanceAfterTopup">{{
             formatPrice(
             Dinero(userBalance?.amount!! as Dinero.Options)
@@ -27,9 +27,9 @@
 
       <div class="flex flex-column w-6">
         <div>
-          <p class="font-bold">{{ $t('balance.Balance increase amount') }}</p>
+          <p class="font-bold">{{ t('balance.Balance increase amount') }}</p>
           <div class="w-full flex-1">
-            <InputNumber mode="currency" currency="EUR" locale="nl-NL" :placeholder="$t('balance.Price')" :min="0.0"
+            <InputNumber mode="currency" currency="EUR" locale="nl-NL" :placeholder="t('balance.Price')" :min="0.0"
               :min-fraction-digits="0" :max-fraction-digits="2" v-model="topupAmount" inputId="amount" @input="
                 (data) => {
                   setFieldValue(
@@ -49,7 +49,7 @@
         </div>
         <div class="flex justify-content-end my-2">
           <Button @click="onSubmit" class="w-full sm:w-4 justify-content-center">
-            {{ $t('balance.Payment button') }}
+            {{ t('balance.Payment button') }}
           </Button>
         </div>
       </div>
@@ -72,6 +72,9 @@ import Divider from 'primevue/divider';
 import Dinero from 'dinero.js';
 import InputNumber from 'primevue/inputnumber';
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const loading: Ref<boolean> = ref(true);
 const productSchema = toTypedSchema(

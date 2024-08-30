@@ -1,14 +1,14 @@
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ $t('termsOfService.acceptFirst') }}</h1>
-    <p>{{ $t('termsOfService.description') }}</p>
+    <h1 class="page-title">{{ t('termsOfService.acceptFirst') }}</h1>
+    <p>{{ t('termsOfService.description') }}</p>
     <hr />
     <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
     <p>SudoSOS Terms of Service - version 1.0 (14/08/2022)</p>
     <div v-html="tos"/>
 
     <Checkbox v-model="acceptsExtensiveDataProcessing" :binary="true" class="checkbox"/>
-    <label for="accept">{{ $t('termsOfService.agreeData') }}</label>
+    <label for="accept">{{ t('termsOfService.agreeData') }}</label>
 
     <div class="tos-button-box">
       <Button
@@ -16,13 +16,13 @@
           @click="handleLogout"
           severity="secondary"
       >
-        {{ $t('app.Sign out') }}
+        {{ t('app.Sign out') }}
       </Button>
       <Button
           type="button"
           @click="acceptTermsOfService"
       >
-        {{ $t('termsOfService.agreeToS') }}
+        {{ t('termsOfService.agreeToS') }}
       </Button>
 
     </div>
@@ -36,6 +36,9 @@ import { marked } from 'marked';
 import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import termsOfService from '@/locales/termsOfService.md?raw';
 import { ref } from 'vue';
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const authStore = useAuthStore();
 const userStore = useUserStore();

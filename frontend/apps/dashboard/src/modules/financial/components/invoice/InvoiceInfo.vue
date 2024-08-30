@@ -1,30 +1,30 @@
 <template>
-  <CardComponent :header="$t('c_invoiceInfo.Info')" v-if="invoice" >
+  <CardComponent :header="t('c_invoiceInfo.Info')" v-if="invoice" >
     <template #topAction>
       <Button
           v-if="notDeleted"
           severity="primary"
-          :label="$t('c_invoiceInfo.Delete')"
+          :label="t('c_invoiceInfo.Delete')"
           icon="pi pi-exclamation-triangle"
           @click="visible = true"
       />
     </template>
     <div class="flex flex-column justify-content-between">
-      <InfoSpan :label="$t('c_invoiceInfo.id')"
+      <InfoSpan :label="t('c_invoiceInfo.id')"
                 :value="String(invoice.id)"/>
 
-      <InfoSpan :label="$t('c_invoiceInfo.For')"
+      <InfoSpan :label="t('c_invoiceInfo.For')"
                 :value="invoice.to.firstName + ' ' + invoice.to.lastName + ' (' + invoice.to.id + ')'"/>
 
-      <InfoSpan :label="$t('c_invoiceInfo.Created on')"
+      <InfoSpan :label="t('c_invoiceInfo.Created on')"
                 :value="formatDateTime(new Date(invoice.createdAt ? invoice.createdAt.toString() : ''))"/>
 
-      <InfoSpan :label="$t('c_invoiceInfo.Updated on')"
+      <InfoSpan :label="t('c_invoiceInfo.Updated on')"
                 :value="formatDateTime(new Date(invoice.updatedAt ? invoice.updatedAt.toString() : ''))"/>
     </div>
     <Dialog
         v-model:visible="visible"
-        :header="$t('c_invoiceInfo.DeleteInvoice')"
+        :header="t('c_invoiceInfo.DeleteInvoice')"
         :draggable="false"
         modal
         :close-on-escape="true"

@@ -10,7 +10,7 @@
   >
     <form @submit="handleSubmitContainer" class="flex flex-column gap-3">
       <div class="flex flex-row flex-wrap justify-content-between align-items-center">
-        <label for="name" class="mr-8">{{ $t('c_productContainerOperations.Name') }}</label>
+        <label for="name" class="mr-8">{{ t('c_productContainerOperations.Name') }}</label>
         <div class="relative">
           <InputText id="name" class="w-18rem" v-model="name" type="text" v-bind="nameAttrs"/>
           <error-span :error="errors.name"/>
@@ -18,13 +18,13 @@
       </div>
       <div class="flex flex-row flex-wrap justify-content-between align-items-center">
         <label for="owner" class="mr-8">
-          {{ $t('c_POSCreate.Owner') }}
+          {{ t('c_POSCreate.Owner') }}
           <i class="pi pi-exclamation-circle text-red-500 cursor-pointer"
-             v-tooltip.top="$t('tooltip.owner_revenue')"/>
+             v-tooltip.top="t('tooltip.owner_revenue')"/>
         </label>
         <div class="flex flex-column flex-end relative">
           <div v-if="state.create">
-          <Dropdown :placeholder="$t('c_POSCreate.Select owner')" :options="organsList" optionLabel="firstName"
+          <Dropdown :placeholder="t('c_POSCreate.Select owner')" :options="organsList" optionLabel="firstName"
                     v-model="owner" class="w-18rem" id="owner" v-bind="ownerAttrs"/>
           <error-span :error="errors.owner"/>
           </div>
@@ -34,7 +34,7 @@
         </div>
       </div>
       <div class="flex flex-row flex-wrap justify-content-between align-items-center">
-        <label for="name" class="mr-8">{{ $t('c_containerEditModal.Public') }}</label>
+        <label for="name" class="mr-8">{{ t('c_containerEditModal.Public') }}</label>
         <div class="relative">
             <Checkbox v-model="publicContainer" v-bind="publicAttrs" inputId="publicContainer"
                       name="public" value="public" :binary="true"/>
@@ -42,8 +42,8 @@
         </div>
       </div>
       <div class="flex flex-row justify-content-end gap-2">
-        <Button outlined @click="closeDialog">{{ $t("c_containerEditModal.cancel") }}</Button>
-        <Button type="submit">{{ $t("c_containerEditModal.save") }}</Button>
+        <Button outlined @click="closeDialog">{{ t("c_containerEditModal.cancel") }}</Button>
+        <Button type="submit">{{ t("c_containerEditModal.save") }}</Button>
       </div>
     </form>
   </Dialog>

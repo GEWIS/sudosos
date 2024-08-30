@@ -1,10 +1,10 @@
 <template>
   <div class="page-container">
-    <div class="page-title">{{ $t('c_productContainerOperations.Manage Products')}}</div>
+    <div class="page-title">{{ t('c_productContainerOperations.Manage Products')}}</div>
     <div class="flex flex-column gap-5">
       <ContainersCard
           v-if="containers"
-          :header="$t('manageProducts.Containers')"
+          :header="t('manageProducts.Containers')"
           :containers="containers"
           :show-create="true"
           class="w-full"/>
@@ -18,6 +18,9 @@ import { computed, onBeforeMount } from "vue";
 import ContainersCard from '@/components/container/ContainersCard.vue';
 import { type ContainerInStore, useContainerStore } from "@/stores/container.store";
 import ProductsCard from "@/modules/seller/components/ProductsCard.vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const containerStore = useContainerStore();
 

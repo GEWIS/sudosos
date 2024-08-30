@@ -7,14 +7,14 @@
             image: 'w-full'
           }" />
         <div v-else class="px-3 py-5 text-xl surface-hover text-center">
-          {{ $t('banner.noBannersFound') }}
+          {{ t('banner.noBannersFound') }}
         </div>
         <!--
                     Green when active and banner image is present
                     Yellow when active but banner image is not present
                     Red when not active
                 -->
-        <Tag :value="banner.active ? $t('banner.Active') : $t('banner.Not active')"
+        <Tag :value="banner.active ? t('banner.Active') : t('banner.Not active')"
           :severity="banner.active ? (banner.image ? 'success' : 'warning') : 'danger'" class="absolute"
           style="left: 4px; top: 4px" />
       </div>
@@ -32,13 +32,13 @@
             <span v-tooltip.top="startDate.toLocaleString()" class="font-semibold">
               {{ formatDateTime(startDate) }}
             </span>
-            {{ $t('banner.till') }}
+            {{ t('banner.till') }}
             <span v-tooltip.top="endDate.toLocaleString()" class="font-semibold">
               {{ formatDateTime(endDate) }}
             </span>
           </div>
           <!-- Add icon and delete button here -->
-          <Button @click="openDialog">{{ $t('posInfo.Edit') }}</Button>
+          <Button @click="openDialog">{{ t('posInfo.Edit') }}</Button>
         </div>
       </div>
     </div>

@@ -1,9 +1,9 @@
 <template>
-  <CardComponent :header="$t('c_invoiceInfo.Progress')" v-if="invoice">
+  <CardComponent :header="t('c_invoiceInfo.Progress')" v-if="invoice">
     <Steps v-if="!deleted" :model="stepItems" :readonly="false" :activeStep="activeStep"></Steps>
     <div v-else class="flex flex-column justify-content-center align-items-center">
       <i class="pi pi-exclamation-triangle text-5xl"></i>
-      <p class="text-2xl">{{ $t('c_invoiceInfo.Deleted') }}</p>
+      <p class="text-2xl">{{ t('c_invoiceInfo.Deleted') }}</p>
     </div>
   </CardComponent>
 </template>
@@ -14,6 +14,9 @@ import { computed, ref } from "vue";
 import type { InvoiceResponse } from "@sudosos/sudosos-client";
 import { InvoiceStatusResponseStateEnum } from "@sudosos/sudosos-client/src/api";
 import { useInvoiceStore } from "@/stores/invoice.store";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const invoiceStore = useInvoiceStore();
 

@@ -1,6 +1,6 @@
 <template>
   <div class="page-container">
-    <div class="page-title">{{ $t('pointOfSaleOverview.Point of sale overview') }}</div>
+    <div class="page-title">{{ t('pointOfSaleOverview.Point of sale overview') }}</div>
     <div class="content-wrapper">
       <POSOverviewTable class="pos-overview-table" :get-points-of-sale="getPointsOfSale"/>
     </div>
@@ -17,6 +17,9 @@ import type { PaginatedPointOfSaleResponse } from "@sudosos/sudosos-client";
 import router from "@/router";
 import { handleError } from "@/utils/errorUtils";
 import { useToast } from "primevue/usetoast";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const pointOfSaleStore = usePointOfSaleStore();
 const userStore = useUserStore();

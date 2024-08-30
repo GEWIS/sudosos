@@ -1,8 +1,8 @@
 <template>
   <div class="flex gap-5 justify-content-end">
-    <p class="prop">{{ $t('c_productContainerOperations.Existing Product') }}</p>
+    <p class="prop">{{ t('c_productContainerOperations.Existing Product') }}</p>
     <Dropdown
-        :placeholder="$t('c_ContainerAssign.Select product')"
+        :placeholder="t('c_ContainerAssign.Select product')"
         :options="products"
         optionLabel="name"
         v-model="selectProduct"
@@ -15,6 +15,9 @@
 <script setup lang="ts">
 import Dropdown from "primevue/dropdown";
 import type { BaseProductResponse } from "@sudosos/sudosos-client";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const selectProduct = defineModel('selectProduct');
 

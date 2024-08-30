@@ -1,13 +1,13 @@
 <template>
-  <CardComponent :header="$t('profile.pinChange')">
+  <CardComponent :header="t('profile.pinChange')">
     <form id="update-pin-form" @submit="changeUserPin">
       <div class="field">
-        <p>{{ $t('profile.pinNew')}}</p>
+        <p>{{ t('profile.pinNew')}}</p>
         <InputText type="password" v-bind="pin" />
         <small class="warning">{{errors.pin || '&nbsp;'}}</small>
       </div>
       <div class="field">
-        <p>{{ $t('profile.pinConfirm')}}</p>
+        <p>{{ t('profile.pinConfirm')}}</p>
         <InputText type="password" v-bind="pinConfirm" />
         <small class="warning">{{errors.pinConfirm || '&nbsp;'}}</small>
       </div>

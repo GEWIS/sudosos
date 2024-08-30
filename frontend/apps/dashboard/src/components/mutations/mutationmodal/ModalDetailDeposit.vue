@@ -3,7 +3,7 @@
     <span>
       {{ dateString }}
     </span>
-    <span>{{ $t("transactions.depositDescr") }}</span>
+    <span>{{ t("transactions.depositDescr") }}</span>
     <br>
     <DataTable
       :value="[depositInfo]"
@@ -13,7 +13,7 @@
     >
       <Column
         field="description"
-        :header="$t('transactions.depositID')"
+        :header="t('transactions.depositID')"
         class="p-1">
         <template #body="">
           <span class="text-sm xl:text-base">{{ depositInfo.description }}</span>
@@ -21,7 +21,7 @@
       </Column>
       <Column
         field="totalPriceInclVat"
-        :header="$t('transactions.amount')"
+        :header="t('transactions.amount')"
         class="p-1"
         footerClass="font-bold"
         >
@@ -38,6 +38,9 @@ import { formatPrice } from "@/utils/formatterUtils";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const { depositInfo } = defineProps({
   depositInfo: {

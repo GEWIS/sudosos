@@ -3,7 +3,7 @@
     <div>
       <div class="page-title flex flex-row">
         <div class="flex flex-column">
-          <span>{{ isCredit ? $t("c_invoiceInfo.Credit") : $t("pdf.Invoice") }}</span>
+          <span>{{ isCredit ? t("c_invoiceInfo.Credit") : t("pdf.Invoice") }}</span>
           <small class="text-base">
             {{ invoice.reference + ": " }} <i>{{ invoice.description }}</i>
           </small>
@@ -38,6 +38,9 @@ import InvoiceAddressingCard from "@/modules/financial/components/invoice/Invoic
 import InvoiceStepsCard from "@/modules/financial/components/invoice/InvoiceStepsCard.vue";
 import InvoicePdf from "@/modules/financial/components/invoice/InvoicePdf.vue";
 import InvoiceInfo from "@/modules/financial/components/invoice/InvoiceInfo.vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const toast = useToast();
 const route = useRoute();

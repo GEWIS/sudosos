@@ -1,6 +1,6 @@
 <template>
   <div class="page-container">
-    <div class="page-title">{{ $t('transactions.Transactions') }}</div>
+    <div class="page-title">{{ t('transactions.Transactions') }}</div>
     <div class="content-wrapper gap-5 flex md:flex-column flex-column">
       <MutationsUserTabs
         class="transactions-table"
@@ -22,8 +22,7 @@ import { handleError } from '@/utils/errorUtils';
 import router from '@/router';
 import { useI18n } from "vue-i18n";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const { t, locale } = useI18n();
+const { t } = useI18n();
 
 const authStore = useAuthStore();
 const userStore = useUserStore();

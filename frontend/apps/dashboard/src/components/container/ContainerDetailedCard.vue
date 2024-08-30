@@ -4,7 +4,7 @@
       <!-- Header content goes here -->
       <Button
               @click="visible = true"
-      >{{ $t("c_POSCreate.add container") }}</Button>
+      >{{ t("c_POSCreate.add container") }}</Button>
       <ContainerActionsDialog v-model:visible="visible"/>
     </template>
     <div class="flex flex-row">
@@ -20,7 +20,7 @@
             <Skeleton class="w-6 my-1 h-1rem surface-300"/>
           </template>
         </Column>
-        <Column field="name" :header="$t('c_POSCreate.Public containers')">
+        <Column field="name" :header="t('c_POSCreate.Public containers')">
           <template #body v-if="isLoading">
             <Skeleton class="w-6 my-1 h-1rem surface-300"/>
           </template>
@@ -38,7 +38,7 @@
             <Skeleton class="w-6 my-1 h-1rem surface-300"/>
           </template>
         </Column>
-        <Column field="name" :header="$t('c_POSCreate.Own containers')">
+        <Column field="name" :header="t('c_POSCreate.Own containers')">
           <template #body v-if="isLoading">
             <Skeleton class="w-6 my-1 h-1rem surface-300"/>
           </template>
@@ -55,6 +55,7 @@ import type { ContainerResponse } from "@sudosos/sudosos-client";
 import { onMounted, ref, watch } from "vue";
 import Skeleton from "primevue/skeleton";
 import ContainerActionsDialog from "@/components/container/ContainerActionsDialog.vue";
+import { useI18n } from "vue-i18n";
 
 const visible = ref(false);
 const selectedOwnContainers = ref<Array<ContainerResponse>>([]);
@@ -79,6 +80,7 @@ const props = defineProps({
   }
 });
 
+const { t } = useI18n();
 const emit = defineEmits(["selectedChanged"]);
 const expandedContainers = ref();
 function divideAndSetSelected() {

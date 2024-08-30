@@ -1,7 +1,7 @@
 <template>
   <div v-if="payout">
     <div class="flex flex-column gap-2">
-      <span>{{ $t('payout.Requested by') }} <UserLink :user="payout.requestedBy"/></span>
+      <span>{{ t('payout.Requested by') }} <UserLink :user="payout.requestedBy"/></span>
       <div v-if="isCreated">
         <skeleton v-if="userBalance === null" class="w-6 my-1 h-0.5rem surface-300"/>
         <div v-else
@@ -20,9 +20,9 @@
       <table class="table text-left my-1">
         <thead>
         <tr>
-          <th>{{ $t('payout.BankAccountNumber') }}</th>
-          <th>{{ $t('payout.AccountName') }}</th>
-          <th>{{ $t('payout.Amount') }}</th>
+          <th>{{ t('payout.BankAccountNumber') }}</th>
+          <th>{{ t('payout.AccountName') }}</th>
+          <th>{{ t('payout.Amount') }}</th>
         </tr>
         </thead>
         <tbody>
@@ -39,9 +39,9 @@
         </tbody>
       </table>
       <div class="flex flex-column">
-        <span>{{ $t('payout.CreatedAt') + ': '}}{{ formatDateFromString(payout.createdAt) }}</span>
-        <span>{{ $t('payout.UpdatedAt') + ': '}}{{ formatDateFromString(payout.updatedAt) }}</span>
-        <span>{{ $t('payout.PayoutID') + ': ' }}{{ payout.id }}</span>
+        <span>{{ t('payout.CreatedAt') + ': '}}{{ formatDateFromString(payout.createdAt) }}</span>
+        <span>{{ t('payout.UpdatedAt') + ': '}}{{ formatDateFromString(payout.updatedAt) }}</span>
+        <span>{{ t('payout.PayoutID') + ': ' }}{{ payout.id }}</span>
       </div>
     </div>
     <div v-if="isApproved && payout.approvedBy" class="mt-1">
@@ -53,13 +53,13 @@
       <div v-if="isCreated" class="flex flex-row gap-2">
         <Button
             severity="success"
-            :label="$t('common.approve')"
+            :label="t('common.approve')"
             icon="pi pi-check"
             @click="approvePayout"
         />
         <Button
             severity="danger"
-            :label="$t('common.deny')"
+            :label="t('common.deny')"
             icon="pi pi-times"
             @click="denyPayout"
         />
@@ -70,12 +70,12 @@
           icon="pi pi-file-export"
           :disabled="downloadingPdf"
           severity="danger"
-          :label="$t('common.download PDF')"
+          :label="t('common.download PDF')"
           @click="() => downloadPdf(payoutId)"
       />
       <Button
           severity="secondary"
-          :label="$t('common.close')"
+          :label="t('common.close')"
           icon="pi pi-times"
           @click="closeModal"
       />

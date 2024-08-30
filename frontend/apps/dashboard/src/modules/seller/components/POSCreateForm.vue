@@ -2,13 +2,13 @@
 
 <template>
   <div class="flex flex-column justify-content-between gap-2">
-    <InputSpan :label="$t('common.name')"
+    <InputSpan :label="t('common.name')"
                :value="form.model.name.value.value"
                :attributes="form.model.name.attr.value"
                @update:value="form.context.setFieldValue('name', $event)"
                :errors="form.context.errors.value.name"
-               id="name" :placeholder="$t('c_posInfo.posName')" type="text"/>
-    <InputSpan :label="$t('c_posInfo.useAuthentication')"
+               id="name" :placeholder="t('c_posInfo.posName')" type="text"/>
+    <InputSpan :label="t('c_posInfo.useAuthentication')"
                :value="form.model.useAuthentication.value.value"
                :attributes="form.model.useAuthentication.attr.value"
                @update:value="form.context.setFieldValue('useAuthentication', $event)"
@@ -16,7 +16,7 @@
                id="useAuthentication" type="boolean"/>
 
     <InputOrganSpan
-        :label="$t('common.owner')"
+        :label="t('common.owner')"
         :organ="form.model.owner.value.value"
         :errors="form.context.errors.value.owner"
         @update:organ="form.context.setFieldValue('owner', $event)"

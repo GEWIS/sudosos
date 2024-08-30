@@ -12,31 +12,31 @@
         class="w-full"
         tableStyle="min-width: 50rem"
     >
-      <Column field="date" :header="$t('payout.Date')">
+      <Column field="date" :header="t('payout.Date')">
         <template #body="slotProps">
           <Skeleton v-if="isLoading" class="w-6 my-1 h-1rem surface-300" />
           <span v-else>{{ formatDateFromString(slotProps.data.createdAt) }}</span>
         </template>
       </Column>
-      <Column field="status" :header="$t('payout.Progress')">
+      <Column field="status" :header="t('payout.Progress')">
         <template #body>
           <Skeleton v-if="isLoading" class="w-6 my-1 h-1rem surface-300" />
           <span v-else>{{ state }}</span>
         </template>
       </Column>
-      <Column field="requestedBy.firstName" :header="$t('payout.Requested by')">
+      <Column field="requestedBy.firstName" :header="t('payout.Requested by')">
         <template #body="slotProps">
           <Skeleton v-if="isLoading" class="w-6 my-1 h-1rem surface-300" />
           <span v-else>{{ slotProps.data.requestedBy.firstName }}</span>
         </template>
       </Column>
-      <Column field="amount" :header="$t('transactions.amount')">
+      <Column field="amount" :header="t('transactions.amount')">
         <template #body="slotProps">
           <Skeleton v-if="isLoading" class="w-3 my-1 h-1rem surface-300" />
           <span v-else>{{ formatPrice(slotProps.data.amount) }}</span>
         </template>
       </Column>
-      <Column :header="$t('payout.Actions')" style="width: 10%">
+      <Column :header="t('payout.Actions')" style="width: 10%">
         <template #body="slotProps">
           <Skeleton v-if="isLoading" class="w-3 my-1 h-1rem surface-300" />
           <span v-else class="flex flex-row align-items-center">
@@ -47,7 +47,7 @@
                 @click="() => viewPayoutRequest(slotProps.data.id)"
             />
             <Button
-                v-tooltip.top="$t('payout.Download PDF')"
+                v-tooltip.top="t('payout.Download PDF')"
                 type="button"
                 icon="pi pi-file-export"
                 class="p-button-rounded p-button-text p-button-plain"
@@ -66,7 +66,7 @@
         v-model:visible="showModal"
         :draggable="false"
         class="w-auto flex w-9 md:w-4"
-        :header="$t('payout.Payout details')">
+        :header="t('payout.Payout details')">
       <PayoutInfo :payoutId="payoutId" @close="showModal = false"/>
     </Dialog>
   </div>
@@ -85,6 +85,9 @@ import Column from 'primevue/column';
 import { addListenerOnDialogueOverlay } from "@/utils/dialogUtil";
 import PayoutInfo from "@/modules/financial/components/payout/PayoutInfo.vue";
 import Button from "primevue/button";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const props = defineProps({
   state: {

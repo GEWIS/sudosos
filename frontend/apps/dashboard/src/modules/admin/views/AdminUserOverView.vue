@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
-    <div class="page-title">{{ $t('app.User overview') }}</div>
-    <CardComponent :header="$t('app.User overview')" class="full-width">
+    <div class="page-title">{{ t('app.User overview') }}</div>
+    <CardComponent :header="t('app.User overview')" class="full-width">
       <DataTable
         v-model:filters="filters"
         :value="sortedUsers.length > 0 ? sortedUsers : allUsersWithFullName"
@@ -21,9 +21,9 @@
           <div class="flex flex-row align-items-center justify-content-between">
             <IconField iconPosition="left">
               <InputIcon class="pi pi-search"> </InputIcon>
-              <InputText v-model="searchQuery" :placeholder="$t('app.Search')" />
+              <InputText v-model="searchQuery" :placeholder="t('app.Search')" />
             </IconField>
-            <Button :label="$t('app.Create')" icon="pi pi-plus" @click="visible = true" />
+            <Button :label="t('app.Create')" icon="pi pi-plus" @click="visible = true" />
           </div>
         </template>
         <Column field="gewisId" header="GEWIS ID">
@@ -31,17 +31,17 @@
             <Skeleton class="w-6 my-1 h-1rem surface-300"/>
           </template>
         </Column>
-        <Column field="firstName" :header="$t('c_userTable.firstName')">
+        <Column field="firstName" :header="t('c_userTable.firstName')">
           <template #body v-if="isLoading">
             <Skeleton class="w-8 my-1 h-1rem surface-300"/>
           </template>
         </Column>
-        <Column field="lastName" :header="$t('c_userTable.lastName')">
+        <Column field="lastName" :header="t('c_userTable.lastName')">
           <template #body v-if="isLoading">
             <Skeleton class="w-8 my-1 h-1rem surface-300"/>
           </template>
         </Column>
-        <Column field="type" :header="$t('c_userTable.Type')" :showFilterMatchModes="false">
+        <Column field="type" :header="t('c_userTable.Type')" :showFilterMatchModes="false">
           <template #filter="{ filterModel, filterCallback }">
             <Dropdown
               v-model="filterModel.value"
@@ -49,7 +49,7 @@
               :options="userTypes"
               optionLabel="name"
               optionValue="name"
-              :placeholder="$t('c_userTable.Select Type')"
+              :placeholder="t('c_userTable.Select Type')"
             />
           </template>
           <template #body v-if="isLoading">
@@ -59,7 +59,7 @@
         <Column field="active" :showFilterMatchModes="false">
           <template #header>
             <div class="flex flex-row gap-2 align-items-center">
-              {{ $t("userDetails.Active") }}
+              {{ t("userDetails.Active") }}
               <Checkbox
                 v-model="isActiveFilter"
                 @change="onFilter()"
@@ -75,7 +75,7 @@
         <Column field="ofAge">
           <template #header>
             <div class="flex flex-row gap-2 align-items-center">
-              {{ $t('c_userTable.ofAge') }}
+              {{ t('c_userTable.ofAge') }}
               <Checkbox
                 v-model="ofAgeFilter"
                 @change="onFilter()"
@@ -108,46 +108,46 @@
       <Dialog v-model:visible="visible" modal header="Create User" :style="{ width: '50vw' }" @hide="resetForm">
         <form @submit.prevent="handleCreateUser" class="p-fluid">
           <div class="field">
-            <label for="firstName">{{ $t('c_userTable.firstName')}}</label>
+            <label for="firstName">{{ t('c_userTable.firstName')}}</label>
             <InputText id="firstName" v-model="firstName" v-bind="firstNameAttrs" />
             <small class="p-error">{{ errors.firstName }}</small>
           </div>
           <div class="field">
-            <label for="lastName">{{ $t('c_userTable.lastName')}}</label>
+            <label for="lastName">{{ t('c_userTable.lastName')}}</label>
             <InputText id="lastName" v-model="lastName" v-bind="lastNameAttrs" />
             <small class="p-error">{{ errors.lastName }}</small>
           </div>
           <div class="field">
-            <label for="userType">{{ $t('c_userTable.User Type')}}</label>
+            <label for="userType">{{ t('c_userTable.User Type')}}</label>
             <Dropdown
               id="userType"
               v-model="userType"
               v-bind="userTypeAttrs"
               :options="userTypes"
               optionLabel="name"
-              :placeholder="$t('c_userTable.Select Type')"
+              :placeholder="t('c_userTable.Select Type')"
               optionValue="name"
             />
             <small class="p-error">{{ errors.userType }}</small>
           </div>
           <div class="field">
-            <label for="email">{{ $t('userDetails.Email address')}}</label>
+            <label for="email">{{ t('userDetails.Email address')}}</label>
             <InputText id="email" v-model="email" v-bind="emailAttrs" />
             <small class="p-error">{{ errors.email }}</small>
           </div>
           <div class="field">
-            <label for="ofAge">{{ $t('c_userTable.ofAge')}}</label>
+            <label for="ofAge">{{ t('c_userTable.ofAge')}}</label>
             <Checkbox id="ofAge" v-model="ofAge" v-bind="ofAgeAttrs" binary />
             <small class="p-error">{{ errors.ofAge }}</small>
           </div>
           <div class="field">
-            <label for="canGoIntoDebt">{{ $t('profile.canGoIntoDebt') }}</label>
+            <label for="canGoIntoDebt">{{ t('profile.canGoIntoDebt') }}</label>
             <Checkbox id="canGoIntoDebt" v-model="canGoIntoDebt" v-bind="canGoIntoDebtAttrs" binary />
             <small class="p-error">{{ errors.canGoIntoDebt }}</small>
           </div>
           <div class="flex justify-content-end">
-            <Button :label="$t('c_containerEditModal.cancel')" class="p-button-text" @click="visible = false" />
-            <Button :label="$t('c_confirmationModal.Save')" class="p-button-outlined" type="submit" />
+            <Button :label="t('c_containerEditModal.cancel')" class="p-button-text" @click="visible = false" />
+            <Button :label="t('c_confirmationModal.Save')" class="p-button-outlined" type="submit" />
           </div>
         </form>
       </Dialog>
@@ -174,6 +174,9 @@ import CardComponent from '@/components/CardComponent.vue';
 import Skeleton from "primevue/skeleton";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const userStore = useUserStore();
 const searchQuery: Ref<string> = ref('');

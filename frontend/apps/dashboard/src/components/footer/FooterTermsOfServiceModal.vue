@@ -1,5 +1,5 @@
 <template>
-    <span class="tosLink" @click="visible = true">{{$t('termsOfService.termsOfService')}}</span>
+    <span class="tosLink" @click="visible = true">{{ t('termsOfService.termsOfService')}}</span>
     <Dialog
         modal
         v-model:visible="visible"
@@ -7,7 +7,7 @@
         class="tosModal"
         >
         <template #header>
-           {{ $t('termsOfService.termsOfService') }}
+           {{  t('termsOfService.termsOfService') }}
         </template>
         <div>
           <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
@@ -26,8 +26,9 @@ import Dialog from 'primevue/dialog';
 import { ref } from 'vue';
 import termsOfService from '@/locales/termsOfService.md?raw';
 import { marked } from 'marked';
+import {useI18n} from "vue-i18n";
 
-
+const { t } = useI18n();
 const tos = marked(termsOfService);
 const visible = ref(false);
 </script>

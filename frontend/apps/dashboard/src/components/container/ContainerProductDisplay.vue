@@ -6,7 +6,7 @@
       <div class="h-8rem flex justify-content-center align-items-center background-white">
         <img :src="imageSrc" :alt="product.name" class="p-1 h-8rem"/>
       </div>
-      <div v-if="product.featured" class="promo-tag uppercase">{{ $t('app.Promo') }}</div>
+      <div v-if="product.featured" class="promo-tag uppercase">{{ t('app.Promo') }}</div>
       <p class="text-center m-2 text-base text-overflow-ellipsis font-bold">{{ product.name }}</p>
   </div>
   <ProductActionDialog :container="container" v-model:visible="visible" :product="product"/>
@@ -17,6 +17,7 @@ import type { ContainerWithProductsResponse, ProductResponse } from "@sudosos/su
 import { getProductImageSrc } from "@/utils/urlUtils";
 import { computed, ref } from "vue";
 import ProductActionDialog from "@/modules/seller/components/ProductActionDialog.vue";
+import { useI18n } from "vue-i18n";
 
 const visible = ref(false);
 const imageSrc = computed(() => getProductImageSrc(props.product));
@@ -31,6 +32,8 @@ const props = defineProps({
     required: true,
   }
 });
+
+const { t } = useI18n();
 </script>
 
 <style scoped lang="scss">

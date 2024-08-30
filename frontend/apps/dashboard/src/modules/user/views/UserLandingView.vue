@@ -1,17 +1,17 @@
 <template>
   <div class="page-container flex flex-column">
-    <div class="page-title">{{ $t('home.Overview') }}</div>
+    <div class="page-title">{{ t('home.Overview') }}</div>
     <div class="content-wrapper gap-5 flex md:flex-column flex-column">
       <UserInfo :user="gewisUser || authStore.user as GewisUserResponse" class="md:hidden"/>
       <BalanceWithTopupComponent />
       <CardComponent
-          :header="$t('transactions.recentTransactions')"
+          :header="t('transactions.recentTransactions')"
           class="w-full"
-          :action="$t('c_recentTransactionsTable.all transactions')"
+          :action="t('c_recentTransactionsTable.all transactions')"
           routerLink="transaction-view">
         <MutationsBalanceCard
           :getMutations="getUserMutations"
-          :header="$t('c_recentTransactionsTable.recent transactions')"
+          :header="t('c_recentTransactionsTable.recent transactions')"
 
           :paginator="false"
           :modal="false"
@@ -35,6 +35,9 @@ import { useToast } from "primevue/usetoast";
 import CardComponent from "@/components/CardComponent.vue";
 import {onMounted, ref, type Ref} from "vue";
 import UserInfo from "@/modules/user/components/UserInfo.vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const authStore = useAuthStore();
 const userStore = useUserStore();

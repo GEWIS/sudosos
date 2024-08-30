@@ -4,7 +4,7 @@
     <div class="flex flex-column gap-5">
       <div class="flex flex-column md:flex-row gap-5 justify-content-between align-items-stretch w-12">
         <POSSettingsCard :pos-id="id!" class="flex-1 h-12" />
-        <CardComponent :header="$t('c_posInfo.lastWeekSales')" class="flex-1" >
+        <CardComponent :header="t('c_posInfo.lastWeekSales')" class="flex-1" >
           <div class="h-12 text-center text-5xl pb-3">{{ formattedTotalSales }}</div>
         </CardComponent>
       </div>
@@ -15,7 +15,7 @@
         show-create
         :associatedPos="pointsOfSaleWithContainers[id!]"
       />
-      <CardComponent :header="$t('transactions.recentTransactions')">
+      <CardComponent :header="t('transactions.recentTransactions')">
         <MutationPOSCard
           class="pos-transactions"
           :get-mutations="getPOSTransactions"

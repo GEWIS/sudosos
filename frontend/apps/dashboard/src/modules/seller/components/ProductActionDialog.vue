@@ -36,14 +36,14 @@
             <div>
               <!-- Row for Added on -->
               <div v-if="state.displayProduct" class="flex flex-row flex-wrap justify-content-between">
-                <h4 class="my-0">{{ $t("c_productContainerOperations.Added on") }}</h4>
+                <h4 class="my-0">{{ t("c_productContainerOperations.Added on") }}</h4>
                 <p class="my-0" v-if="product">
                   {{ formatDateTime(new Date(product.createdAt ? product.createdAt.toString() : '')) }}</p>
               </div>
 
               <!-- Row for Updated on -->
               <div v-if="state.displayProduct" class="flex flex-row flex-wrap justify-content-between">
-                <h4 class="my-0">{{ $t("c_productContainerOperations.Updated on") }}</h4>
+                <h4 class="my-0">{{ t("c_productContainerOperations.Updated on") }}</h4>
                 <p class="my-0" v-if="product">
                   {{ formatDateTime(new Date(product.updatedAt ? product.updatedAt.toString() : '')) }}</p>
               </div>

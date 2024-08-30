@@ -1,5 +1,5 @@
 <template>
-  <FormCard :header="$t('c_invoiceInfo.Settings')" v-if="invoice" @cancel="updateFieldValues(invoice)"
+  <FormCard :header="t('c_invoiceInfo.Settings')" v-if="invoice" @cancel="updateFieldValues(invoice)"
             @update:modelValue="edit = $event" @save="formSubmit" :enableEdit="!deleted">
       <div class="flex flex-column justify-content-between gap-2">
         <InvoiceSettingsForm :invoice="invoice" :form="form" :edit="edit" @update:edit="edit = $event"/>
@@ -16,6 +16,9 @@ import { updateInvoiceSettingsObject } from "@/utils/validation-schema";
 import { schemaToForm } from "@/utils/formUtils";
 import { InvoiceStatusResponseStateEnum } from "@sudosos/sudosos-client/src/api";
 import { useInvoiceStore } from "@/stores/invoice.store";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const edit = ref(false);
 const invoiceStore = useInvoiceStore();

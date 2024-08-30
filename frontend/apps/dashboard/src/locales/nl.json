@@ -346,7 +346,8 @@
     }
   },
   "tooltip": {
-    "productOwner": "NB: De containereigenaar krijgt de opbrengst, niet de producteigenaar. Eigenaar kan niet gewijzigd worden na het aanmaken."
+    "productOwner": "NB: De containereigenaar krijgt de opbrengst, niet de producteigenaar. Eigenaar kan niet gewijzigd worden na het aanmaken.",
+    "owner_revenue": "NB: De containereigenaar krijgt de opbrengst, niet de producteigenaar."
   },
   "common": {
     "approve": "Goedkeuren",

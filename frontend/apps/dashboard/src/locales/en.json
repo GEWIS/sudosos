@@ -356,7 +356,8 @@
     }
   },
   "tooltip": {
-    "productOwner": "Note: Container owner gets the revenue, not the product owner. Owner cannot be edited after creation."
+    "productOwner": "Note: Container owner gets the revenue, not the product owner. Owner cannot be edited after creation.",
+    "owner_revenue": "Note: Container owner gets the revenue, not the product owner."
   },
   "common": {
     "approve": "Approve",

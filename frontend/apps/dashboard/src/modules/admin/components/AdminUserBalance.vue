@@ -1,8 +1,8 @@
 <template>
   <CardComponent
-      :header="$t('c_currentBalance.balance')"
+      :header="t('c_currentBalance.balance')"
       :func="userBalance?.fine ? waiveFines : undefined"
-      :action="userBalance?.fine ? $t('c_currentBalance.waiveFines') : undefined"
+      :action="userBalance?.fine ? t('c_currentBalance.waiveFines') : undefined"
   >
     <div class="flex flex-column justify-content-center">
       <div v-if="isLoading">
@@ -10,7 +10,7 @@
       </div>
       <h1 v-else class="text-center font-medium text-6xl">{{ displayBalance }}</h1>
       <p class="text-center text-base font-semibold text-red-500" v-if="userBalance && userBalance.fine">
-        {{ isAllFine ? $t('c_currentBalance.allIsFines') : $t('c_currentBalance.someIsFines', { fine: displayFine }) }}
+        {{ isAllFine ? t('c_currentBalance.allIsFines') : t('c_currentBalance.someIsFines', { fine: displayFine }) }}
       </p>
     </div>
     <ConfirmDialog />

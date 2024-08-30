@@ -3,7 +3,7 @@
 <template>
   <div class="flex flex-column justify-content-between gap-2">
     <InputContainerSpan
-        :label="$t('common.container')"
+        :label="t('common.container')"
         :container="form.model.container.value.value"
         :errors="form.context.errors.value.container"
         @update:container="form.context.setFieldValue('container', $event)"

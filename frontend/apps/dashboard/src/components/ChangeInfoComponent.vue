@@ -1,26 +1,26 @@
 <!-- TODO unused? -->
 <!-- https://github.com/GEWIS/sudosos-frontend/issues/228 -->
 <template>
-  <CardComponent :header="$t('profile.changeUserInfo')" :class="{ 'opacity-30': !isLocal}">
+  <CardComponent :header="t('profile.changeUserInfo')" :class="{ 'opacity-30': !isLocal}">
     <form @submit="changeUserInfo">
-      <small v-if="!isLocal">{{ $t('profile.notManagedThroughSudoSOS') }}</small>
+      <small v-if="!isLocal">{{ t('profile.notManagedThroughSudoSOS') }}</small>
       <div class="field">
-        <p>{{ $t('profile.firstName')}}</p>
+        <p>{{ t('profile.firstName')}}</p>
         <InputText :disabled="!isLocal" v-bind="firstName" />
         <small class="warning">{{errors.firstName || '&nbsp;'}}</small>
       </div>
       <div class="field">
-        <p>{{ $t('profile.lastName')}}</p>
+        <p>{{ t('profile.lastName')}}</p>
         <InputText :disabled="!isLocal" v-bind="lastName" />
         <small class="warning">{{errors.lastName || '&nbsp;'}}</small>
       </div>
       <div class="field">
-        <p>{{ $t('profile.emailAddress')}}</p>
+        <p>{{ t('profile.emailAddress')}}</p>
         <InputText :disabled="!isLocal" v-bind="email" />
         <small class="warning">{{errors.email || '&nbsp;'}}</small>
       </div>
       <div style="margin-top: 1rem" class="flex justify-content-end">
-        <Button :disabled="!isLocal" :label="$t('profile.updateInfo')" type="submit" />
+        <Button :disabled="!isLocal" :label="t('profile.updateInfo')" type="submit" />
       </div>
     </form>
   </CardComponent>

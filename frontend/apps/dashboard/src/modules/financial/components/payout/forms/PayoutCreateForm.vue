@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-column justify-content-between gap-2">
-    <InputUserSpan :label="$t('payout.For')"
+    <InputUserSpan :label="t('payout.For')"
                    :value="form.model.user.value.value"
                    @update:value="form.context.setFieldValue('user', $event)"
                    :errors="form.context.errors.value.user"
@@ -12,21 +12,21 @@
       <span>{{ t('payout.Current balance', { balance: formatPrice(userBalance.amount) }) }}</span>
     </div>
 
-    <InputSpan :label="$t('payout.BankAccountNumber')"
+    <InputSpan :label="t('payout.BankAccountNumber')"
                :value="form.model.bankAccountNumber.value.value"
                :attributes="form.model.bankAccountNumber.attr.value"
                @update:value="form.context.setFieldValue('bankAccountNumber', $event)"
                :errors="form.context.errors.value.bankAccountNumber"
                id="name" placeholder="NL69 ABNA 0012 3456 78" type="text"/>
 
-    <InputSpan :label="$t('payout.BankAccountName')"
+    <InputSpan :label="t('payout.BankAccountName')"
                :value="form.model.bankAccountName.value.value"
                :attributes="form.model.bankAccountName.attr.value"
                @update:value="form.context.setFieldValue('bankAccountName', $event)"
                :errors="form.context.errors.value.bankAccountName"
                id="name" placeholder="John Doe" type="text"/>
 
-    <InputSpan :label="$t('payout.Amount')"
+    <InputSpan :label="t('payout.Amount')"
                :value="form.model.amount.value.value"
                :attributes="form.model.amount.attr.value"
                @update:value="form.context.setFieldValue('amount', $event)"
