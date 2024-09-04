@@ -682,10 +682,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stripe/stripe-js@npm:^2.1.7":
-  version: 2.4.0
-  resolution: "@stripe/stripe-js@npm:2.4.0"
-  checksum: 10c0/010849482974f80526528580e9d711082ab52784a14f99356bd4fcbdd9067c1963d6cf667ea3b0209633236f80db6aadd20c34c8cdd7d106865805deb2ae752b
+"@stripe/stripe-js@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "@stripe/stripe-js@npm:4.4.0"
+  checksum: 10c0/ac418b6141c5b60dc6a40cfb2c4be15ff80f4b6ca802650d8e81141755a0a487dc44b0225a3bffe83b2d5c3d9a9d67c55cd35f39e23d5b68e38afdc9e144f355
   languageName: node
   linkType: hard
 
@@ -5569,7 +5569,7 @@ __metadata:
   dependencies:
     "@intlify/eslint-plugin-vue-i18n": "npm:^2.0.0"
     "@rushstack/eslint-patch": "npm:^1.2.0"
-    "@stripe/stripe-js": "npm:^2.1.7"
+    "@stripe/stripe-js": "npm:^4.4.0"
     "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#ba8d67ec53b2232d19aec9408d2f53924dcdf6af"
     "@sudosos/sudosos-frontend-common": "workspace:^"
     "@tsconfig/node18": "npm:^18.2.2"
