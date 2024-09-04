@@ -23,7 +23,7 @@
               <InputIcon class="pi pi-search"> </InputIcon>
               <InputText v-model="searchQuery" :placeholder="t('app.Search')" />
             </IconField>
-            <Button :label="t('app.Create')" icon="pi pi-plus" @click="visible = true" />
+            <Button :label="t('app.Create')" icon="pi pi-plus" @click="showDialog = true" />
           </div>
         </template>
         <Column field="gewisId" header="GEWIS ID">
@@ -105,101 +105,60 @@
 
         </Column>
       </DataTable>
-      <Dialog v-model:visible="visible" modal header="Create User" :style="{ width: '50vw' }" @hide="resetForm">
-        <form @submit.prevent="handleCreateUser" class="p-fluid">
-          <div class="field">
-            <label for="firstName">{{ t('c_userTable.firstName')}}</label>
-            <InputText id="firstName" v-model="firstName" v-bind="firstNameAttrs" />
-            <small class="p-error">{{ errors.firstName }}</small>
-          </div>
-          <div class="field">
-            <label for="lastName">{{ t('c_userTable.lastName')}}</label>
-            <InputText id="lastName" v-model="lastName" v-bind="lastNameAttrs" />
-            <small class="p-error">{{ errors.lastName }}</small>
-          </div>
-          <div class="field">
-            <label for="userType">{{ t('c_userTable.User Type')}}</label>
-            <Dropdown
-              id="userType"
-              v-model="userType"
-              v-bind="userTypeAttrs"
-              :options="userTypes"
-              optionLabel="name"
-              :placeholder="t('c_userTable.Select Type')"
-              optionValue="name"
-            />
-            <small class="p-error">{{ errors.userType }}</small>
-          </div>
-          <div class="field">
-            <label for="email">{{ t('userDetails.Email address')}}</label>
-            <InputText id="email" v-model="email" v-bind="emailAttrs" />
-            <small class="p-error">{{ errors.email }}</small>
-          </div>
-          <div class="field">
-            <label for="ofAge">{{ t('c_userTable.ofAge')}}</label>
-            <Checkbox id="ofAge" v-model="ofAge" v-bind="ofAgeAttrs" binary />
-            <small class="p-error">{{ errors.ofAge }}</small>
-          </div>
-          <div class="field">
-            <label for="canGoIntoDebt">{{ t('profile.canGoIntoDebt') }}</label>
-            <Checkbox id="canGoIntoDebt" v-model="canGoIntoDebt" v-bind="canGoIntoDebtAttrs" binary />
-            <small class="p-error">{{ errors.canGoIntoDebt }}</small>
-          </div>
-          <div class="flex justify-content-end">
-            <Button :label="t('c_containerEditModal.cancel')" class="p-button-text" @click="visible = false" />
-            <Button :label="t('c_confirmationModal.Save')" class="p-button-outlined" type="submit" />
-          </div>
-        </form>
-      </Dialog>
     </CardComponent>
+    <FormDialog :header="t('c_userTable.createUser')" v-model:modelValue="showDialog"
+                :form="form" >
+      <template #form="slotProps">
+        <UserCreateForm
+            :form="slotProps.form"
+            v-model:isVisible="showDialog"
+            :edit="true"
+            @submit:success="showDialog = false"
+        />
+      </template>
+    </FormDialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "@sudosos/sudosos-frontend-common";
 import { computed, onMounted, ref, type Ref, watch } from "vue";
 import apiService from '@/services/ApiService';
-import type { CreateUserRequest, GewisUserResponse, UserResponse } from "@sudosos/sudosos-client";
+import type { GewisUserResponse, UserResponse } from "@sudosos/sudosos-client";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { FilterMatchMode } from 'primevue/api';
 import Checkbox from "primevue/checkbox";
 import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
-import router from '@/router';
-import { userDetailsSchema, userTypes } from "@/utils/validation-schema";
-import { useForm } from 'vee-validate';
+import { createUserSchema, userTypes } from "@/utils/validation-schema";
 import Fuse from 'fuse.js';
 import CardComponent from '@/components/CardComponent.vue';
 import Skeleton from "primevue/skeleton";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import { useI18n } from "vue-i18n";
+import FormDialog from "@/components/FormDialog.vue";
+import UserCreateForm from "@/modules/admin/components/users/forms/UserCreateForm.vue";
+import { schemaToForm } from "@/utils/formUtils";
+import { useUserStore } from "@sudosos/sudosos-frontend-common";
+import router from "@/router";
 
 const { t } = useI18n();
-
 const userStore = useUserStore();
+
 const searchQuery: Ref<string> = ref('');
-const { defineField, handleSubmit, errors, resetForm } = useForm({
-  validationSchema: userDetailsSchema,
-});
+
+const showDialog: Ref<boolean> = ref(false);
+const form = schemaToForm(createUserSchema);
+
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   type: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
-const [firstName, firstNameAttrs] = defineField('firstName', {});
-const [lastName, lastNameAttrs] = defineField('lastName', {});
-const [userType, userTypeAttrs] = defineField('userType', {});
-const [email, emailAttrs] = defineField('email', {});
-const [ofAge, ofAgeAttrs] = defineField('ofAge', {});
-const [canGoIntoDebt, canGoIntoDebtAttrs] = defineField('canGoIntoDebt', {});
-
-
 const isActiveFilter: Ref<boolean> = ref(true);
 const ofAgeFilter: Ref<boolean> = ref(true);
-const visible: Ref<boolean> = ref(false);
 const isLoading = ref(true);
 const totalRecords = ref(0);
 const allUsers: Ref<GewisUserResponse[]> = ref(new Array(10));
@@ -270,42 +229,6 @@ watch(searchQuery, () => {
   delayedAPICall(0);
 });
 
-const handleCreateUser = handleSubmit(async (values) => {
-  // Ensure userType is a number. You might need a more complex check depending on your data.
-  const userTypeAsNumber = Number(values.userType);
-
-  // Check if conversion was successful or if the value was already a number
-  if (isNaN(userTypeAsNumber)) {
-    console.error('User type is not a valid number:', values.userType);
-    // Handle error appropriately, possibly aborting the submit or setting a default
-    return;
-  }
-
-  const createUserRequest: CreateUserRequest = {
-    firstName: values.firstName,
-    lastName: values.lastName,
-    type: userTypeAsNumber, // Use the converted/validated number here
-    email: values.email || '',
-    ofAge: values.ofAge,
-    canGoIntoDebt: values.canGoIntoDebt,
-  };
-  const response = await apiService.user.createUser(createUserRequest);
-  if (response.status === 200) {
-    await router.push({ name: 'user-overview' });
-  } else {
-    console.error(response.status + ': ' + response.statusText);
-  }
-  visible.value = false;
-});
-
-async function handleInfoPush(userId: number) {
-  const clickedUser: UserResponse | undefined = allUsers.value.find(
-    (record) => record.id == userId
-  );
-  if (clickedUser) userStore.addUser(clickedUser);
-  router.push({ name: 'user', params: { userId } });
-}
-
 const sortedUsers = computed(() => {
   const fuzzed: UserResponse[] = new Fuse(allUsersWithFullName.value, {
     keys: ['fullName'],
@@ -318,6 +241,13 @@ const sortedUsers = computed(() => {
   return fuzzed;
 });
 
+async function handleInfoPush(userId: number) {
+  const clickedUser: UserResponse | undefined = allUsers.value.find(
+      (record) => record.id == userId
+  );
+  if (clickedUser) userStore.addUser(clickedUser);
+  router.push({ name: 'user', params: { userId } });
+}
 </script>
 
 <style scoped>

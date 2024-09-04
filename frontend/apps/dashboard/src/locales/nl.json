@@ -143,7 +143,8 @@
     "User Type": "Gebruikerstype",
     "firstName": "Voornaam",
     "lastName": "Achternaam",
-    "ofAge": "18+"
+    "ofAge": "18+",
+    "createUser": "Maak gebruiker"
   },
   "contact": {
     "Contact": "Contact",

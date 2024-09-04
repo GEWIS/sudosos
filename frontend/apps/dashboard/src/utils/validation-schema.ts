@@ -12,26 +12,23 @@ import type { ContainerInStore } from "@/stores/container.store";
 
 const t = i18n.global.t;
 
-export const userDetailsSchema = toTypedSchema(
+export const createUserSchema =
     yup.object({
         firstName: yup.string().required(),
         lastName: yup.string().required(),
         email: yup.string().email(),
         nickname: yup.string(),
-        userType: yup.mixed().required(),
-        isActive: yup.boolean().required().default(true),
+        userType: yup.number().required().default(4),
         ofAge: yup.boolean().required().default(false),
         canGoIntoDebt: yup.boolean().required().default(false),
-    })
-);
+    });
 
-export const simpleUserDetailsSchema = toTypedSchema(
+export const simpleUserDetailsSchema =
   yup.object({
           firstName: yup.string().required(),
           lastName: yup.string().required(),
           email: yup.string().email(),
-  })
-);
+  });
 
 export const editPasswordSchema = toTypedSchema(
   yup.object({

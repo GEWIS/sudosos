@@ -178,7 +178,8 @@
     "User Type": "User Type",
     "firstName": "First Name",
     "lastName": "Last Name",
-    "ofAge": "18+"
+    "ofAge": "18+",
+    "createUser": "Create user"
   },
   "errorMessages": {
     "posNotFound": "The requested POS was not found."

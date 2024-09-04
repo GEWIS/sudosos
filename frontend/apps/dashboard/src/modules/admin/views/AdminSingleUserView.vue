@@ -19,7 +19,7 @@
       </CardComponent>
     </div>
   </div>
-</template>s
+</template>
 
 <script setup lang="ts">
 import { onBeforeMount, ref } from "vue";
