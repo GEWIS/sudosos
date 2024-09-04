@@ -30,12 +30,11 @@ export const simpleUserDetailsSchema =
           email: yup.string().email(),
   });
 
-export const editPasswordSchema = toTypedSchema(
+export const editPasswordSchema =
   yup.object({
     password: yup.string().required(),
     passwordConfirm: yup.string().required().oneOf([yup.ref('password')], t('validation.password.match')),
-  })
-);
+  });
 
 export const updateInvoiceSettingsObject = yup.object({
   reference: yup.string().required(),
@@ -63,15 +62,14 @@ export const updateUserDetailsObject = yup.object({
   canGoIntoDebt: yup.boolean().required().default(false),
 });
 
-export const editPinSchema = toTypedSchema(
+export const editPinSchema =
   yup.object({
     pin: yup.string().required()
       .matches(/^[0-9]+$/, t('validation.pin.onlyDigits'))
       .min(4, t('validation.string.exact', { len: '4' } ))
       .max(4, t('validation.string.exact', { len: '4' } )),
     pinConfirm: yup.string().required().oneOf([yup.ref('pin')], t('validation.pin.match')),
-  })
-);
+  });
 
 export const userTypes : Ref<Array<{name: string, value: number}>> = ref([
   { name: 'MEMBER', value: 1 },

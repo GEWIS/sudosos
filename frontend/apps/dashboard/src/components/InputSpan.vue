@@ -46,6 +46,22 @@
                 v-model="internalValue as number"
                 :placeholder="placeholder"
                 :disabled="disabled"/>
+
+      <InputText v-if="type === 'pin'"
+                 class="w-3"
+                 size="small"
+                 type="password"
+                 :placeholder="placeholder"
+                 v-model="internalValue"
+                 v-bind="attributes"
+                 :disabled="disabled"/>
+      <InputText v-if="type === 'password'"
+                 class="w-5"
+                 type="password"
+                 :placeholder="placeholder"
+                 v-model="internalValue"
+                 v-bind="attributes"
+                 :disabled="disabled"/>
     </span>
     <div class="flex justify-content-end">
       <ErrorSpan :error="errors"/>
@@ -105,7 +121,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:value']);
 
-const stringInputs = ['text', 'textarea'];
+const stringInputs = ['text', 'textarea', 'pin', 'password'];
 
 const numberInputs = ['currency', 'number', 'usertype', 'percentage'];
 const booleanInputs = ['boolean'];

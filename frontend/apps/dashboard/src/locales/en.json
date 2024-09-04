@@ -244,7 +244,8 @@
     "pinChange": "Change pin code",
     "pinConfirm": "Confirm new pin code",
     "pinNew": "New pin code",
-    "updateInfo": "Update user information"
+    "updateInfo": "Update user information",
+    "passwordNew": "New password"
   },
   "quickOverview": {
     "quickOverviewMessage": "Show this at the bar so we can help you faster",
@@ -277,7 +278,12 @@
     "waiveFinesSuccess": "Successfully waived fines.",
     "waiveFinesRejected": "Canceled waiving fines.",
     "canceled": "Canceled",
-    "userUpdated": "Successfully updated user."
+    "userUpdated": "Successfully updated user.",
+    "pinUpdated": "Successfully updated pin.",
+    "dataAnalysisChanged": "Successfully changed data analysis preference.",
+    "apiKeyChanged": "Successfully changed API key.",
+    "apiKeyDeleted": "Successfully deleted API key.",
+    "passwordUpdated": "Successfully changed password."
   },
   "termsOfService": {
     "acceptFirst": "Accept the Terms of Service",
@@ -329,6 +335,19 @@
     "userInfoUpdated": "User information successfully updated",
     "userInformation": "User information"
   },
+  "userSettings": {
+    "userSettings": "User settings",
+    "changeCredentials": "Change credentials",
+    "changePin": "Change pin",
+    "changePassword": "Change password",
+    "apiKeys": "API keys",
+    "changeApiKey": "Change API key",
+    "deleteApiKey": "Delete API key",
+    "preferences": "Preferences",
+    "dataAnalysis": "Extensive Data Analysis",
+    "confirmChangeApiKey": "Are you sure you want to change your API key? This cannot be undone!",
+    "confirmDeleteApiKey": "Are you sure you want to delete your API key? This cannot be undone!"
+  },
   "contact": {
     "Contact": "Contact",
     "Main contact": "Main contact",
@@ -342,7 +361,7 @@
   },
   "validation": {
     "number": {
-      "min": "This field must be greater than ${min}"
+      "min": "This field must be greater than {min}"
     },
     "password": {
       "match": "Passwords must match."
@@ -353,9 +372,9 @@
     },
     "required": "This field is required",
     "string": {
-      "exact": "This field must be exactly ${len} characters",
-      "max": "This field can't be greater than ${max} characters",
-      "min": "This field must be at least ${min} characters"
+      "exact": "This field must be exactly {len} characters",
+      "max": "This field can't be greater than {max} characters",
+      "min": "This field must be at least {min} characters"
     }
   },
   "tooltip": {

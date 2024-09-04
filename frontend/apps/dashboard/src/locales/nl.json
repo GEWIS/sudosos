@@ -249,7 +249,8 @@
     "pinChange": "Verander PIN code",
     "pinConfirm": "Bevestig nieuwe PIN code",
     "pinNew": "Nieuwe PIN code",
-    "updateInfo": "Update gebruikersinformatie"
+    "updateInfo": "Update gebruikersinformatie",
+    "passwordNew": "Nieuw wachtwoord"
   },
   "quickOverview": {
     "quickOverviewMessage": "Laat dit aan de bar zien zodat we je sneller kunnen helpen.",
@@ -278,7 +279,12 @@
     "waiveFinesSuccess": "Boetes zijn succesvol kwijtgescholden.",
     "waiveFinesRejected": "Boetes zijn succesvol afgewezen.",
     "canceled": "Geannuleerd",
-    "userUpdated": "Gebruiker is succesvol geüpdatet."
+    "userUpdated": "Gebruiker is succesvol geüpdatet.",
+    "pinUpdated": "Pincode is succesvol geüpdatet.",
+    "dataAnalysisChanged": "Extensieve dataverwerking is succesvol gewijzigd.",
+    "apiKeyChanged": "API-sleutel is succesvol gewijzigd.",
+    "apiKeyDeleted": "API-sleutel is succesvol verwijderd.",
+    "passwordUpdated": "Wachtwoord is succesvol gewijzigd."
   },
   "termsOfService": {
     "acceptFirst": "Accepteer de Voorwaarden",
@@ -330,9 +336,22 @@
     "userInfoUpdated": "Profiel is succesvol aangepast",
     "userInformation": "Gebruikersinformatie"
   },
+  "userSettings": {
+    "userSettings": "Gebruikersinstellingen",
+    "changeCredentials": "Wijzig inloggegevens",
+    "changePin": "Wijzig pincode",
+    "changePassword": "Wijzig wachtwoord",
+    "apiKeys": "API-sleutels",
+    "changeApiKey": "Wijzig API-sleutel",
+    "deleteApiKey": "Verwijder API-sleutel",
+    "preferences": "Voorkeuren",
+    "dataAnalysis": "Uitgebreide Data Analyse",
+    "confirmChangeApiKey": "Weet je zeker dat je de API-sleutel wilt wijzigen? Dit kan niet ongedaan worden gemaakt!",
+    "confirmDeleteApiKey": "Weet je zeker dat je de API-sleutel wilt verwijderen? Dit kan niet ongedaan worden gemaakt!"
+  },
   "validation": {
     "number": {
-      "min": "Dit veld moet groter zijn dan ${min}"
+      "min": "Dit veld moet groter zijn dan {min}"
     },
     "password": {
       "match": "Wachtwoorden moeten overeenkomen."
@@ -343,9 +362,9 @@
     },
     "required": "Dit veld is verplicht",
     "string": {
-      "exact": "Dit veld moet precies ${len} tekens bevatten.",
-      "max": "Dit veld mag maximaal ${max} tekens bevatten.",
-      "min": "Dit veld moet minimaal ${min} tekens bevatten."
+      "exact": "Dit veld moet precies {len} tekens bevatten.",
+      "max": "Dit veld mag maximaal {max} tekens bevatten.",
+      "min": "Dit veld moet minimaal {min} tekens bevatten."
     }
   },
   "tooltip": {

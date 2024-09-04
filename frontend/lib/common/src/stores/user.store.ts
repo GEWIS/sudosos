@@ -1,7 +1,7 @@
 import { createPinia, defineStore } from 'pinia';
 import {
   BalanceResponse, PaginatedBaseTransactionResponse, PaginatedFinancialMutationResponse,
-  UserResponse, RoleWithPermissionsResponse
+  UserResponse, RoleWithPermissionsResponse, GewisUserResponse
 } from "@sudosos/sudosos-client";
 import { ApiService } from "../services/ApiService";
 import { fetchAllPages } from "../helpers/PaginationHelper";
@@ -104,6 +104,12 @@ export const useUserStore = defineStore('user', {
       this.current.createdTransactions = (
         await service.transaction.getAllTransactions(undefined, id, undefined, undefined,undefined,undefined,undefined,undefined,take, skip)
       ).data;
+    },
+    async fetchGewisUser(id: number, service: ApiService): Promise<GewisUserResponse> {
+      return service.user.getIndividualUser(id).then((res) => {
+        this.current.user = res.data;
+        return res.data;
+      });
     },
     setCurrentUser(user: UserResponse) {
       this.current.user = user;
