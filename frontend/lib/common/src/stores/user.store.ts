@@ -102,7 +102,10 @@ export const useUserStore = defineStore('user', {
       skip?: number
     ) {
       this.current.createdTransactions = (
-        await service.transaction.getAllTransactions(undefined, id, undefined, undefined,undefined,undefined,undefined,undefined,take, skip)
+          await service.user.getUsersTransactions(
+              id, undefined,
+              id, undefined, undefined, undefined, undefined, undefined,
+              take, skip)
       ).data;
     },
     async fetchGewisUser(id: number, service: ApiService): Promise<GewisUserResponse> {
