@@ -40,7 +40,7 @@ const updateFieldValues = (p: UserResponse) => {
   if (!p) return;
   const values = {
     ...p,
-    userType: userTypes.value.find(ut => ut.name === p.type)?.value || undefined,
+    userType: p.type,
     isActive: p.active,
   };
   form.context.resetForm({ values });

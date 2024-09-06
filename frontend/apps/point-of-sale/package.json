@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
-    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#ba8d67ec53b2232d19aec9408d2f53924dcdf6af",
+    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#3bf2ffe021b10165d0ba54285bb9bd1c4401d5bd",
     "@sudosos/sudosos-frontend-common": "workspace:^",
     "bootstrap": "^5.3.0",
     "dinero": "^1.0.1",

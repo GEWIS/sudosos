@@ -109,13 +109,15 @@ onMounted(() => {
     description: t('transactions.Excl'),
     amount: 1,
     vatPercentage: 0,
-    priceInclVat: exclVat.value
+    priceInclVat: exclVat.value,
+    custom: false,
   });
 
   for (const key in vat.value) {
     totalRows.push({
       description: t('transactions.VAT', { vat: key }),
       amount: 1,
+      custom: false,
       vatPercentage: Number(key),
       priceInclVat: vat.value[key]
     });
@@ -126,7 +128,8 @@ onMounted(() => {
       description: t('transactions.Incl'),
       amount: 1,
       vatPercentage: 0,
-      priceInclVat: props.invoice.transfer.amountInclVat
+      priceInclVat: props.invoice.transfer.amountInclVat,
+      custom: false,
     });
   }
 

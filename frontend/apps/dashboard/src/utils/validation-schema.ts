@@ -18,7 +18,7 @@ export const createUserSchema =
         lastName: yup.string().required(),
         email: yup.string().email(),
         nickname: yup.string(),
-        userType: yup.number().required().default(4),
+        userType: yup.string().required().default("LOCAL_USER"),
         ofAge: yup.boolean().required().default(false),
         canGoIntoDebt: yup.boolean().required().default(false),
     });
@@ -56,7 +56,7 @@ export const updateUserDetailsObject = yup.object({
   lastName: yup.string(),
   email: yup.string().email(),
   nickname: yup.string().nullable(),
-  userType: yup.number().required(),
+  userType: yup.string().required(),
   isActive: yup.boolean().required().default(true),
   ofAge: yup.boolean().required().default(false),
   canGoIntoDebt: yup.boolean().required().default(false),
@@ -71,14 +71,14 @@ export const editPinSchema =
     pinConfirm: yup.string().required().oneOf([yup.ref('pin')], t('validation.pin.match')),
   });
 
-export const userTypes : Ref<Array<{name: string, value: number}>> = ref([
-  { name: 'MEMBER', value: 1 },
-  { name: 'ORGAN', value: 2 },
-  { name: 'VOUCHER', value: 3 },
-  { name: 'LOCAL_USER', value: 4 },
-  { name: 'LOCAL_ADMIN', value: 5 },
-  { name: 'INVOICE', value: 6 },
-  { name: 'AUTOMATIC_INVOICE', value: 7 },
+export const userTypes : Ref<Array<{name: string, value: string}>> = ref([
+  { name: 'MEMBER', value: 'MEMBER' },
+  { name: 'ORGAN', value: 'ORGAN' },
+  { name: 'VOUCHER', value: 'VOUCHER' },
+  { name: 'LOCAL_USER', value: 'LOCAL_USER' },
+  { name: 'LOCAL_ADMIN', value: 'LOCAL_ADMIN' },
+  { name: 'INVOICE', value: 'INVOICE' },
+  { name: 'AUTOMATIC_INVOICE', value: 'AUTOMATIC_INVOICE' },
 ]);
 
 export const createPayoutSchema =

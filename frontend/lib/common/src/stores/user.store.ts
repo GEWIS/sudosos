@@ -111,7 +111,7 @@ export const useUserStore = defineStore('user', {
     async fetchGewisUser(id: number, service: ApiService): Promise<GewisUserResponse> {
       return service.user.getIndividualUser(id).then((res) => {
         this.current.user = res.data;
-        return res.data;
+        return res.data as GewisUserResponse;
       });
     },
     setCurrentUser(user: UserResponse) {
