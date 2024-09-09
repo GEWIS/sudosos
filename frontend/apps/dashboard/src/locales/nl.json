@@ -75,10 +75,13 @@
     "Public": "Publiek",
     "cancel": "Annuleren",
     "save": "Opslaan",
+    "Select owner": "Selecteer eigenaar",
+    "Owner": "Eigenaar",
     "header": {
       "edit": "Edit container",
       "create": "Container aanmaken"
-    }
+    },
+    "confirmDelete": "Weet je zeker dat je deze container wilt verwijderen? Dit kan niet ongedaan worden."
   },
   "c_currentBalance": {
     "allIsFines": "Waarvan alles een boete is",
@@ -271,6 +274,7 @@
     "productDeleted": "Product is successvol verwijderd",
     "productCreate": "Product is succesvol aangemaakt.",
     "updateContainer": "Container is succesvol geüpdatet.",
+    "containerDeleted": "Container is succesvol verwijderd.",
     "invoiceDeleted": "Factuur is succesvol verwijderd.",
     "invoiceUpdated": "Factuur {reference} is succesvol geüpdatet.",
     "pointOfSaleUpdated": "Point of sale is succesvol geüpdatet.",
@@ -284,7 +288,8 @@
     "dataAnalysisChanged": "Extensieve dataverwerking is succesvol gewijzigd.",
     "apiKeyChanged": "API-sleutel is succesvol gewijzigd.",
     "apiKeyDeleted": "API-sleutel is succesvol verwijderd.",
-    "passwordUpdated": "Wachtwoord is succesvol gewijzigd."
+    "passwordUpdated": "Wachtwoord is succesvol gewijzigd.",
+    "containerDeleteRejected": "Geannuleerd container verwijderen."
   },
   "termsOfService": {
     "acceptFirst": "Accepteer de Voorwaarden",

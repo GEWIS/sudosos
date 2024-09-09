@@ -212,6 +212,14 @@ export const useContainerStore = defineStore('container', {
             this.containers[container.id] = container;
 
             return container;
+        },
+        /**
+         * Deletes a container, and updates the store.
+         * @param id
+         */
+        async deleteContainer(id: number) {
+            await ApiService.container.deleteContainer(id);
+            delete this.containers[id];
         }
     }
 });

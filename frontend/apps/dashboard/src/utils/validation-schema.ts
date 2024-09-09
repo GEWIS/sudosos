@@ -6,7 +6,7 @@ import i18n from './i18nUtils';
 import type {
     BaseUserResponse,
     BaseVatGroupResponse,
-    ProductCategoryResponse, UserResponse
+    ProductCategoryResponse
 } from "@sudosos/sudosos-client";
 import type { ContainerInStore } from "@/stores/container.store";
 
@@ -99,7 +99,7 @@ export const createProductSchema =
         featured: yup.boolean().default(false),
         preferred: yup.boolean().default(false),
         priceList: yup.boolean().default(false),
-        owner: yup.mixed<UserResponse>().required()
+        owner: yup.mixed<BaseUserResponse>().required()
     });
 
 export const updatePointOfSaleObject =
@@ -115,11 +115,18 @@ export const createPointOfSaleObject =
     yup.object({
         name: yup.string().required(),
         useAuthentication: yup.boolean().default(false).required(),
-        owner: yup.mixed<UserResponse>().required(),
+        owner: yup.mixed<BaseUserResponse>().required(),
     });
 
 export const addContainerObject =
     yup.object({
         container: yup.mixed<ContainerInStore>().required()
+    });
+
+export const containerActionSchema =
+    yup.object({
+        name: yup.string().required(),
+        public: yup.boolean().required().default(false),
+        owner: yup.mixed<BaseUserResponse>().required()
     });
 

@@ -114,10 +114,13 @@
     "Public": "Public",
     "cancel": "Cancel",
     "save": "Save",
+    "Select owner": "Select owner",
+    "Owner": "Owner",
     "header": {
       "edit": "Edit container",
       "create": "Create container"
-    }
+    },
+    "confirmDelete": "Are you sure you want to delete this container? This cannot be undone"
   },
   "c_currentBalance": {
     "allIsFines": "All of which is a fine",
@@ -266,6 +269,7 @@
     "productDeleted": "Successfully deleted product.",
     "productCreate": "Successfully created product.",
     "updateContainer": "Successfully updated container.",
+    "containerDeleted": "Successfully deleted container.",
     "invoiceDeleted": "Successfully deleted invoice.",
     "invoiceUpdated": "Successfully updated invoice.",
     "payoutCreated": "Successfully created payout.",
@@ -278,12 +282,13 @@
     "waiveFinesSuccess": "Successfully waived fines.",
     "waiveFinesRejected": "Canceled waiving fines.",
     "canceled": "Canceled",
-    "userUpdated": "Successfully updated user.",
     "pinUpdated": "Successfully updated pin.",
     "dataAnalysisChanged": "Successfully changed data analysis preference.",
     "apiKeyChanged": "Successfully changed API key.",
     "apiKeyDeleted": "Successfully deleted API key.",
-    "passwordUpdated": "Successfully changed password."
+    "passwordUpdated": "Successfully changed password.",
+    "userUpdated": "Successfully updated user.",
+    "containerDeleteRejected": "Canceled deleting container."
   },
   "termsOfService": {
     "acceptFirst": "Accept the Terms of Service",

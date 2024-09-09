@@ -113,8 +113,6 @@ const props = defineProps<{
   isOrganEditable?: boolean
 }>();
 
-console.log(props.isOrganEditable);
-
 const selectExistingProduct = defineModel('existingProduct');
 
 // Give user a warning if making possible duplicate product
