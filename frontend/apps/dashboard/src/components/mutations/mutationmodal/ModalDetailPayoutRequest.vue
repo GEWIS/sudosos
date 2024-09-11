@@ -3,7 +3,7 @@
     <span>
       {{ dateString }}
     </span>
-    <span>{{ t("transactions.payoutRequestDescr") }}</span>
+    <span>{{ t("components.mutations.modal.payoutRequestDescription") }}</span>
     <br>
     <DataTable
       :value="[{
@@ -16,11 +16,11 @@
         tfoot: 'font-bold'
       }"
     >
-      <Column field="description" :header="t('transactions.description')" class="p-1">
+      <Column field="description" :header="t('common.description')" class="p-1">
       </Column>
       <Column
         field="waivedAmount"
-        :header="t('transactions.amount')"
+        :header="t('common.amount')"
         class="p-1"
         footerClass="font-bold"
       >

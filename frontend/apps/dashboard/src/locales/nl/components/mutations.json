@@ -1,0 +1,34 @@
+{
+  "components": {
+    "mutations": {
+      "balance": "Saldo mutaties",
+      "recent": "Recente transacties",
+      "all": "Alle transacties",
+      "when": "Wanneer",
+      "created": "Aangemaakte transacties",
+      "createdBy": "Aangemaakt door",
+      "createdFor": "Aangemaakt voor",
+      "amount": "Bedrag",
+      "pos": "Verkooppunt",
+      "you": "Jij",
+      "user": "Gebruikerstransacties",
+      "modal": {
+        "header": "Transactiedetails",
+        "waivedFine": "Kwijtgescholden boete",
+        "invoice": "Factuur",
+        "fine": "Boete",
+        "topUp": "Opwaardering",
+        "payment": "Betaling",
+        "payoutRequestDescription": "Je hebt een uitbetaling aangevraagd.",
+        "waivedFineDescription": "Je boetes zijn kwijtgescholden.",
+        "invoiceDescription": "Je hebt een factuur betaald aan GEWIS",
+        "depositDescription": "Je hebt geld gestort bij GEWIS",
+        "fineDescription": "Je hebt een boete betaald aan GEWIS",
+        "unknown": "Onbekende transactie"
+      },
+      "userBoughtAt": "Je hebt gekocht bij {pos}",
+      "otherBoughtAt": "{user} heeft gekocht bij {pos}",
+      "putInBy": "Transactie ingevoerd door {createdBy}"
+    }
+  }
+}

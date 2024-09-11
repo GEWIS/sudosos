@@ -60,8 +60,8 @@ const state = computed(() => {
   };
 });
 const header = computed(() => {
-  if (state.value.create) return t('c_containerEditModal.header.create');
-  if (state.value.edit) return t('c_containerEditModal.header.edit');
+  if (state.value.create) return t('modules.seller.productContainers.containers.create');
+  if (state.value.edit) return t('modules.seller.productContainers.containers.edit');
   return '';
 });
 
@@ -95,8 +95,8 @@ setSubmit(form, form.context.handleSubmit(async (values) => {
         .then(() => {
           toast.add({
             severity: 'success',
-            summary: t('successMessages.success'),
-            detail: t('successMessages.createContainer'),
+            summary: t('common.toast.success.success'),
+            detail: t('common.toast.success.containerCreated'),
             life: 3000,
           });
         })
@@ -114,8 +114,8 @@ setSubmit(form, form.context.handleSubmit(async (values) => {
         .then(() => {
           toast.add({
             severity: 'success',
-            summary: t('successMessages.success'),
-            detail: t('successMessages.updateContainer'),
+            summary: t('common.toast.success.success'),
+            detail: t('common.toast.success.containerUpdated'),
             life: 3000,
           });
           closeDialog();
@@ -137,7 +137,7 @@ const confirm = useConfirm();
 async function deleteProduct() {
   if(props.container == undefined) return;
   confirm.require({
-    message: t('c_containerEditModal.confirmDelete'),
+    message: t('modules.seller.productContainers.products.confirmDelete'),
     acceptLabel: t('common.delete'),
     rejectLabel: t('common.close'),
     acceptIcon: 'pi pi-trash',
@@ -147,8 +147,8 @@ async function deleteProduct() {
       await containerStore.deleteContainer(props.container!.id)
           .then(() => {
             toast.add({
-              summary: t('successMessages.success'),
-              detail: t('successMessages.containerDeleted'),
+              summary: t('common.toast.success.success'),
+              detail: t('common.toast.success.containerDeleted'),
               severity: 'success',
               life: 3000
             });

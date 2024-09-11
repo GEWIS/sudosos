@@ -6,7 +6,9 @@
       <div class="h-8rem flex justify-content-center align-items-center background-white">
         <img :src="imageSrc" :alt="product.name" class="p-1 h-8rem"/>
       </div>
-      <div v-if="product.featured" class="promo-tag uppercase">{{ t('app.Promo') }}</div>
+      <div v-if="product.featured" class="promo-tag uppercase">
+        {{ t('modules.seller.productContainers.products.promo') }}
+      </div>
       <p class="text-center m-2 text-base text-overflow-ellipsis font-bold">{{ product.name }}</p>
   </div>
   <ProductActionDialog :container="container" v-model:visible="visible" :product="product"/>

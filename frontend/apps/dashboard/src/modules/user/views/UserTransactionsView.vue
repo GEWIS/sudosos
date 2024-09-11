@@ -1,6 +1,6 @@
 <template>
   <div class="page-container">
-    <div class="page-title">{{ t('transactions.Transactions') }}</div>
+    <div class="page-title">{{ t('modules.user.transactions.title') }}</div>
     <div class="content-wrapper gap-5 flex md:flex-column flex-column">
       <MutationsUserTabs
         class="transactions-table"

@@ -12,7 +12,7 @@
         </span>
       </template>
     </Column>
-    <Column field="description" :header="t('transactions.description')" class="p-1">
+    <Column field="description" :header="t('common.description')" class="p-1">
       <template #body="entry">
         <span v-if="entry.index < totalRowCutoff">
           {{ entry.data.description }}
@@ -21,7 +21,7 @@
     </Column>
     <Column
         field="priceInclVat"
-        :header="t('transactions.price')"
+        :header="t('common.price')"
         class="p-1"
     >
       <template #body="entry">
@@ -30,19 +30,19 @@
         </span>
       </template>
     </Column>
-    <Column field="vatPercentage" header="VAT" class="p-1">
+    <Column field="vatPercentage" :header="t('common.vat')" class="p-1">
       <template #body="entry">
         <span v-if="entry.index < totalRowCutoff">
-          {{ entry.data.vatPercentage +  '%'}}
+          {{ entry.data.vatPercentage +  '%' }}
         </span>
         <span v-else class="font-bold">
-          {{entry.data.description}}
+          {{ entry.data.description }}
         </span>
       </template>
     </Column>
     <Column
         field="totalPriceInclVat"
-        :header="t('transactions.amount')"
+        :header="t('common.amount')"
         class="p-1"
     >
       <template #body="entry">
@@ -106,7 +106,7 @@ onMounted(() => {
 
 
   totalRows.push({
-    description: t('transactions.Excl'),
+    description: t('common.excl'),
     amount: 1,
     vatPercentage: 0,
     priceInclVat: exclVat.value,
@@ -115,7 +115,7 @@ onMounted(() => {
 
   for (const key in vat.value) {
     totalRows.push({
-      description: t('transactions.VAT', { vat: key }),
+      description: t('common.vat', { vat: key }),
       amount: 1,
       custom: false,
       vatPercentage: Number(key),
@@ -125,7 +125,7 @@ onMounted(() => {
 
   if (props.invoice.transfer) {
     totalRows.push({
-      description: t('transactions.Incl'),
+      description: t('common.incl'),
       amount: 1,
       vatPercentage: 0,
       priceInclVat: props.invoice.transfer.amountInclVat,

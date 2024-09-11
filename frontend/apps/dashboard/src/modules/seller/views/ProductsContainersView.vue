@@ -1,10 +1,10 @@
 <template>
   <div class="page-container">
-    <div class="page-title">{{ t('c_productContainerOperations.Manage Products')}}</div>
+    <div class="page-title">{{ t('modules.seller.productContainers.title') }}</div>
     <div class="flex flex-column gap-5">
       <ContainersCard
           v-if="containers"
-          :header="t('manageProducts.Containers')"
+          :header="t('modules.seller.productContainers.containers.header')"
           :containers="containers"
           :show-create="true"
           class="w-full"/>

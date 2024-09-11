@@ -1,8 +1,8 @@
 <template>
   <CardComponent
-      :header="t('c_currentBalance.balance')"
+      :header="t('modules.admin.singleUser.balance.header')"
       :func="userBalance?.fine ? waiveFines : undefined"
-      :action="userBalance?.fine ? t('c_currentBalance.waiveFines') : undefined"
+      :action="userBalance?.fine ? t('modules.admin.singleUser.balance.waiveFines') : undefined"
   >
     <div class="flex flex-column justify-content-center">
       <div v-if="isLoading">
@@ -10,7 +10,9 @@
       </div>
       <h1 v-else class="text-center font-medium text-6xl">{{ displayBalance }}</h1>
       <p class="text-center text-base font-semibold text-red-500" v-if="userBalance && userBalance.fine">
-        {{ isAllFine ? t('c_currentBalance.allIsFines') : t('c_currentBalance.someIsFines', { fine: displayFine }) }}
+        {{ isAllFine ?
+          t('modules.admin.singleUser.balance.allIsFines')
+          : t('modules.admin.singleUser.balance.someIsFines', { fine: displayFine }) }}
       </p>
     </div>
     <ConfirmDialog />
@@ -24,9 +26,9 @@ import type { BalanceResponse, UserResponse } from '@sudosos/sudosos-client';
 import apiService from '@/services/ApiService';
 import { formatPrice } from "@/utils/formatterUtils";
 import ConfirmDialog from "primevue/confirmdialog";
-import {useConfirm} from "primevue/useconfirm";
-import {useI18n} from "vue-i18n";
-import {useToast} from "primevue/usetoast";
+import { useConfirm } from "primevue/useconfirm";
+import { useI18n } from "vue-i18n";
+import { useToast } from "primevue/usetoast";
 
 const props = defineProps<{
     user: UserResponse | undefined;
@@ -69,15 +71,15 @@ const displayBalance = computed(() => {
 const waiveFines = () => {
   if (!props.user || !props.user.id) return;
   confirm.require({
-    message: t('c_currentBalance.waiveFinesConfirmation' ),
-    header: t('c_currentBalance.waiveFinesConfirmationTitle'),
+    message: t('modules.admin.singleUser.balance.waiveFinesConfirmation' ),
+    header: t('modules.admin.singleUser.balance.waiveFinesConfirmationTitle'),
     icon: 'pi pi-exclamation-triangle',
     accept: async () => {
-      await apiService.user.waiveUserFines(<number>props.user?.id).then(() => {
+      await apiService.user.waiveUserFines(props.user?.id as number).then(() => { // Use 'as number' instead of <number>
         toast.add({
           severity: 'success',
-          summary: t('successMessages.success'),
-          detail: t('successMessages.waiveFinesSuccess'),
+          summary: t('common.toast.success.success'),
+          detail: t('common.toast.success.waiveFinesSuccess'),
           life: 3000
         });
         updateUserBalance();
@@ -86,13 +88,13 @@ const waiveFines = () => {
     reject: () => {
       toast.add({
         severity: 'info',
-        summary: t('successMessages.canceled'),
-        detail: t('successMessages.waiveFinesRejected'),
+        summary: t('common.toast.canceled'),
+        detail: t('common.toast.reject.waiveFinesRejected'),
         life: 3000
       });
     },
   });
-}
+};
 </script>
 
 <style scoped lang="scss">

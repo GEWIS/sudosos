@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-column justify-content-between gap-2">
-    <InputSpan :label="t('profile.pinNew')"
+    <InputSpan :label="t('modules.user.profile.pinNew')"
                :value="form.model.pin.value.value || ''"
                :attributes="form.model.pin.attr.value"
                @update:value="form.context.setFieldValue('pin', $event)"
@@ -9,7 +9,7 @@
                :disabled="!edit"
                autocomplete="new-password"
     />
-    <InputSpan :label="t('profile.pinConfirm')"
+    <InputSpan :label="t('modules.user.profile.pinConfirm')"
                :value="form.model.pinConfirm.value.value"
                :attributes="form.model.pinConfirm.attr.value"
                @update:value="form.context.setFieldValue('pinConfirm', $event)"
@@ -58,8 +58,8 @@ setSubmit(props.form, props.form.context.handleSubmit(async (values) => {
           emit('submit:success', values);
           toast.add({
             severity: "success",
-            summary: t('successMessages.success'),
-            detail: `${t('successMessages.pinUpdated')}`,
+            summary: t('common.toast.success.success'),
+            detail: `${t('common.toast.success.pinUpdated')}`,
             life: 3000,
           });
           props.form.context.resetForm();

@@ -1,13 +1,13 @@
 <template>
   <div class="page-container">
-    <div class="page-title">{{ t('payout.Payouts overview') }}</div>
+    <div class="page-title">{{ t('modules.financial.payout.title') }}</div>
     <div class="content-wrapper flex flex-column">
       <div class="flex flex-row justify-content-end w-full -mb-5">
         <Button
             type="button"
             severity="primary"
             class="z-5"
-            :label="t('payout.Create payout')"
+            :label="t('modules.financial.payout.create')"
             icon="pi pi-plus"
             @click="showDialog = true"
         />
@@ -18,7 +18,7 @@
         </TabPanel>
       </TabView>
     </div>
-    <FormDialog v-model="showDialog" :form="form" :header="t('payout.Create payout')">
+    <FormDialog v-model="showDialog" :form="form" :header="t('modules.financial.payout.create')">
       <template #form="slotProps">
         <PayoutCreateForm :form="slotProps.form" @submit:success="showDialog = false"/>
       </template>

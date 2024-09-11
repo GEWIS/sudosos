@@ -3,17 +3,17 @@
     <span>
       {{ dateString }}
     </span>
-    <span>{{ t("transactions.invoiceDescr") }}</span>
+    <span>{{ t("components.mutations.modal.invoiceDescription") }}</span>
     <br>
     <DataTable :value="[invoiceInfo]" :pt="{
           tfoot: 'font-bold'
         }">
-      <Column field="description" :header="t('transactions.depositID')" class="p-1">
+      <Column field="description" :header="t('common.id')" class="p-1">
         <template #body="">
           <span class="text-sm xl:text-base">{{ invoiceInfo.description }}</span>
         </template>
       </Column>
-      <Column field="totalPriceInclVat" :header="t('transactions.amount')" class="p-1" footerClass="font-bold">
+      <Column field="totalPriceInclVat" :header="t('common.amount')" class="p-1" footerClass="font-bold">
         <template #body="">
           {{ formatPrice(invoiceInfo.amount) }}
         </template>

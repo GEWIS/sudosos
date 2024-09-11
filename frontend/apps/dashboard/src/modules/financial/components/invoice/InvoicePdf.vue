@@ -5,7 +5,7 @@
         <div>
           <Button
               severity="primary"
-              :label="showTable ? t('pdf.Invoice') : t('pdf.Table')"
+              :label="showTable ? t('modules.financial.invoice.invoice') : t('modules.financial.invoice.table')"
               icon="pi pi-eye"
               @click="showTable = !showTable"
           />
@@ -13,13 +13,13 @@
         <div class="flex flex-row gap-3">
           <Button
               severity="primary"
-              :label="t('pdf.Recompile')"
+              :label="t('modules.financial.invoice.recompile')"
               icon="pi pi-sync"
               @click="reloadPdf"
           />
           <Button
               severity="secondary"
-              :label="t('pdf.Reload')"
+              :label="t('modules.financial.invoice.reload')"
               icon="pi pi-refresh"
               @click="reloadPdf"
           />
@@ -30,7 +30,7 @@
       <div v-if="missingPdf && pdfLoaded" class="w-full h-full flex flex-column
       justify-content-center align-items-center text-4xl text-red-500">
         <i class="pi pi-exclamation-triangle text-5xl"></i>
-        {{ t('pdf.Missing') }}
+        {{ t('modules.financial.invoice.missingPdf') }}
       </div>
       <Skeleton v-if="!pdfLoaded" class="w-full h-full"/>
       <vue-pdf-app v-if="showPdf" class="w-full h-full" :pdf="getInvoicePdfSrc(invoice.pdf ? invoice.pdf : '')"/>

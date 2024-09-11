@@ -1,22 +1,21 @@
 <template>
   <div class="page-container">
-    <div class="page-title">{{ `${currentUser ? currentUser.firstName : ''}'s profile` }}</div>
-
+    <div class="page-title">
+      {{ t('modules.admin.singleUser.profile', {user: currentUser ? currentUser.firstName : ''}) }}
+    </div>
     <div class="flex flex-column gap-5">
       <div class="flex flex-column  md:flex-row justify-content-between gap-8">
         <AdminUserInfoCard :user="currentUser" class="flex-grow-1"/>
         <AdminUserBalance :user="currentUser"/>
       </div>
-      <CardComponent
-          :header="t('transactions.recentTransactions')"
-          class="w-full">
-        <MutationsBalanceCard
-            class="w-full"
-            :header="t('userDetails.User Transactions')"
-            paginator
-            modal
-            :get-mutations="getUserMutations"/>
-      </CardComponent>
+      <MutationsBalanceCard
+          class="w-full"
+          :header="t('components.mutations.user')"
+          paginator
+          modal
+          :get-mutations="getUserMutations"
+          :simple="true"
+      />
     </div>
   </div>
 </template>
@@ -27,8 +26,7 @@ import type { Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUserStore } from "@sudosos/sudosos-frontend-common";
 import type { PaginatedFinancialMutationResponse, UserResponse } from "@sudosos/sudosos-client";
-import CardComponent from "@/components/CardComponent.vue";
-import AdminUserBalance from "@/modules/admin/components/AdminUserBalance.vue";
+import AdminUserBalance from "@/modules/admin/components/users/AdminUserBalance.vue";
 import apiService from "@/services/ApiService";
 import router from "@/router";
 import { handleError } from "@/utils/errorUtils";

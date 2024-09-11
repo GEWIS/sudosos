@@ -1,0 +1,14 @@
+{
+  "components": {
+    "footer": {
+      "copyright": "© 2024 GEWIS",
+      "localBuild": "Lokale build",
+      "contact": "Contact",
+      "mainContact": "Hoofdcontact",
+      "incorrectTransactions": "Onjuiste transacties",
+      "security": "Beveiliging",
+      "featureRequests": "Functieverzoeken",
+      "termsOfService": "Gebruiksvoorwaarden"
+    }
+  }
+}

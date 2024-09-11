@@ -1,20 +1,20 @@
 <template>
   <div class="flex flex-column justify-content-between gap-2">
-    <InputSpan :label="t('c_invoiceInfo.Reference')"
+    <InputSpan :label="t('modules.financial.forms.invoice.reference')"
                :value="form.model.reference.value.value"
                :attributes="form.model.reference.attr.value"
                @update:value="form.context.setFieldValue('reference', $event)"
                :errors="form.context.errors.value.reference"
                id="name" placeholder="BAC-2324-000" type="text" :disabled="!edit"/>
 
-    <InputSpan :label="t('c_invoiceInfo.Date')"
+    <InputSpan :label="t('common.date')"
                :value="form.model.date.value.value"
                :attributes="form.model.date.attr.value"
                @update:value="form.context.setFieldValue('date', $event)"
                :errors="form.context.errors.value.date"
                type="date" :disabled="!edit"/>
 
-    <InputSpan :label="t('c_invoiceInfo.Description')"
+    <InputSpan :label="t('common.description')"
                :value="form.model.description.value.value"
                :attributes="form.model.description.attr.value"
                @update:value="form.context.setFieldValue('description', $event)"
@@ -65,8 +65,8 @@ setSubmit(props.form, props.form.context.handleSubmit(async (values) => {
   await invoiceStore.updateInvoice(props.invoice.id, values).then(() => {
     toast.add({
       severity: 'success',
-      summary: t('successMessages.success'),
-      detail: t('successMessages.invoiceUpdated'),
+      summary: t('common.toast.success.success'),
+      detail: t('common.toast.success.invoiceUpdated'),
       life: 3000,
     });
     emit('update:edit', false);

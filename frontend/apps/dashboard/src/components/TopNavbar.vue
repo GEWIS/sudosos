@@ -4,13 +4,17 @@
       <Menubar class="hidden mb:flex" :model="navItems">
           <template #start>
             <router-link to="/" class="no-underline text-white font-bold flex align-items-center flex-row py-1">
-              {{ t("login.SudoSOS") }}
+              {{ t("common.sudosos") }}
               <img class="h-4rem py-2" src="../assets/img/gewis-branding.svg" alt="SudoSOS" />
             </router-link>
           </template>
           <template #item="{ item, props, hasSubmenu }">
             <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-              <a :href="href" v-bind="props.action" @click="navigate" class="flex align-items-center justify-content-between">
+              <a :href="href"
+                 v-bind="props.action"
+                 @click="navigate"
+                 class="flex align-items-center justify-content-between"
+              >
                 <span class="p-menuitem-text">{{ item.label }}</span>
                 <span v-if="item.notifications" class="p-badge p-badge-danger">{{ item.notifications }}</span>
               </a>
@@ -18,7 +22,11 @@
             <a v-else :href="item.url" :target="item.target" v-bind="props.action">
               <div class="flex align-items-center justify-content-between">
                 <span class="p-menuitem-text">{{ item.label }}</span>
-                <span v-if="item.notifications" class="p-badge p-badge-no-gutter p-badge-danger-inverse ml-2">{{ item.notifications }}</span>
+                <span
+                    v-if="item.notifications"
+                    class="p-badge p-badge-no-gutter p-badge-danger-inverse ml-2">
+                  {{ item.notifications }}
+                </span>
                 <span v-else-if="hasSubmenu" class="pi pi-fw pi-angle-down ml-2" />
               </div>
             </a>
@@ -26,7 +34,7 @@
       </Menubar>
       <Menubar class="hidden mb:flex" :model="profileItems">
         <template #start>
-          <img class="h-1rem" src="../assets/img/bier.png"/>
+          <img class="h-1rem" src="../assets/img/bier.png" alt="beer"/>
         </template>
         <template #item="{ item, props, hasSubmenu }">
           <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
@@ -47,19 +55,19 @@
       >
         <template #start>
           <router-link to="/" class="no-underline text-white font-bold flex align-items-center flex-row py-1">
-            {{ t("login.SudoSOS") }}
+            {{ t("modules.auth.login.sudosos") }}
             <img class="h-4rem py-2" src="../assets/img/gewis-branding.svg" alt="SudoSOS" />
           </router-link>
         </template>
         <template #item="{ item, props, hasSubmenu }">
           <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
             <a :href="href" v-bind="props.action" @click="navigate">
-              <span class="p-menuitem-text">{{ item.label}}</span>
+              <span class="p-menuitem-text">{{ item.label }}</span>
               <span v-if="item.icon" :class="item.icon" />
             </a>
           </router-link>
           <a v-else :href="item.url" :target="item.target" v-bind="props.action">
-            <span class="p-menuitem-text">{{ item.label}}</span>
+            <span class="p-menuitem-text">{{ item.label }}</span>
               <span v-if="item.icon" :class="item.icon" />
             <span v-if="hasSubmenu" class="pi pi-fw pi-angle-down ml-2" />
           </a>
@@ -69,24 +77,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type ComputedRef } from "vue";
+import { computed } from "vue";
 import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import { useRouter } from "vue-router";
 import { UserRole } from "@/utils/rbacUtils";
 import { useI18n } from "vue-i18n";
-import { formatPrice } from "@/utils/formatterUtils";
 import { usePendingPayouts } from "@/mixins/pendingPayoutsMixin";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const router = useRouter();
 const { t, locale } = useI18n();
-
-const balance = computed((): string | undefined => {
-  const balanceInCents = userStore.getCurrentUser.balance;
-  if (!balanceInCents) return undefined;
-  return formatPrice(balanceInCents.amount);
-});
 
 const firstName = computed((): string | undefined => {
   return userStore.getCurrentUser.user ? userStore.getCurrentUser.user.firstName : undefined;
@@ -99,10 +100,6 @@ const handleLogout = () => {
 
 const isBoard = () => {
   return userStore.current.rolesWithPermissions.findIndex(r => r.name == UserRole.BOARD) != -1;
-};
-
-const isBAC = () => {
-  return userStore.current.rolesWithPermissions.findIndex(r => r.name == UserRole.BAC) != -1;
 };
 
 const isSeller = () => {
@@ -118,63 +115,63 @@ const getFinancialNotifications = () => pendingPayouts?.value;
 
 const navItems = computed(() => [
   {
-    label: t('app.Transactions'),
+    label: t('common.navigation.transactions'),
     route: '/transactions'
   },
   {
-    label: t('app.Admin'),
+    label: t('common.navigation.admin'),
     visible: isBoard(),
     items: [
       {
-        label: t('app.User overview'),
+        label: t('common.navigation.userOverview'),
         route: '/user-overview'
       },
       {
-        label: t('app.Banners'),
+        label: t('common.navigation.banners'),
         route: '/banners'
       },
     ],
   },
   {
-    label: t('app.Financial'),
+    label: t('common.navigation.financial'),
     visible: isBACPM(),
     notifications: getFinancialNotifications(),
     items: [
       {
-        label: t('app.User overview'),
+        label: t('common.navigation.userOverview'),
         route: '/user-overview',
       },
       {
-        label: t('flagged.Flagged transactions'),
+        label: t('common.navigation.flaggedTransactions'),
       },
       {
-        label: t('app.Social drink cards'),
+        label: t('common.navigation.socialDrinkCards'),
       },
       {
-        label: t('app.Invoices'),
+        label: t('common.navigation.invoices'),
         route: '/invoice',
       },
       {
-        label: t('fine.fineOverview'),
+        label: t('common.navigation.fineOverview'),
         route: '/fine',
       },
       {
-        label: t('payout.Payouts'),
+        label: t('common.navigation.payouts'),
         route: '/payouts',
         notifications: pendingPayouts?.value
       }
     ]
   },
   {
-    label: t('app.Seller'),
+    label: t('common.navigation.seller'),
     visible: isSeller(),
     items: [
       {
-        label: t('app.Manage products'),
+        label: t('common.navigation.manageProducts'),
         route: '/manage-products',
       },
       {
-        label: t('app.Overview'),
+        label: t('common.navigation.posOverview'),
         route: '/point-of-sale/overview',
       }
     ]
@@ -186,11 +183,11 @@ const profileItems = computed(() =>[
     label: firstName.value,
     items: [
       {
-        label: t('app.Profile'),
+        label: t('common.navigation.profile'),
         route: '/profile',
       },
       {
-        label: t('app.Sign out'),
+        label: t('common.navigation.signOut'),
         command: handleLogout,
       },
     ]
@@ -200,7 +197,7 @@ const profileItems = computed(() =>[
     icon: 'pi pi-globe',
     items: [
       {
-        label: t('app.Netherlands'),
+        label: t('common.navigation.dutch'),
         disabled: () => locale.value == 'nl',
         command: () => {
           locale.value = 'nl';
@@ -208,7 +205,7 @@ const profileItems = computed(() =>[
         },
       },
       {
-        label: t('app.English'),
+        label: t('common.navigation.english'),
         disabled: () => locale.value == 'en',
         command: () => {
           locale.value = 'en';

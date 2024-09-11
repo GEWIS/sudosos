@@ -3,7 +3,7 @@
     <span>
     {{ dateString }}
     </span>
-      <span>{{ t("transactions.fineDescr") }}</span>
+      <span>{{ t("components.mutations.modal.fineDescription") }}</span>
       <br>
       <DataTable
         :value="[{
@@ -16,11 +16,11 @@
           tfoot: 'font-bold'
         }"
       >
-        <Column field="description" :header="t('transactions.description')" class="p-1">
+        <Column field="description" :header="t('common.description')" class="p-1">
         </Column>
         <Column
           field="totalPriceInclVat"
-          :header="t('transactions.fineAmount')"
+          :header="t('common.amount')"
           class="p-1"
           footerClass="font-bold"
           >

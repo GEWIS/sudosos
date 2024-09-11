@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
-    <div class="page-title">{{ t('app.User overview') }}</div>
-    <CardComponent :header="t('app.User overview')" class="full-width">
+    <div class="page-title">{{ t('modules.admin.userOverview.title') }}</div>
+    <CardComponent :header="t('modules.admin.userOverview.list.header')" class="full-width">
       <DataTable
         v-model:filters="filters"
         :value="sortedUsers.length > 0 ? sortedUsers : allUsersWithFullName"
@@ -21,27 +21,27 @@
           <div class="flex flex-row align-items-center justify-content-between">
             <IconField iconPosition="left">
               <InputIcon class="pi pi-search"> </InputIcon>
-              <InputText v-model="searchQuery" :placeholder="t('app.Search')" />
+              <InputText v-model="searchQuery" :placeholder="t('common.search')" />
             </IconField>
-            <Button :label="t('app.Create')" icon="pi pi-plus" @click="showDialog = true" />
+            <Button :label="t('common.create')" icon="pi pi-plus" @click="showDialog = true" />
           </div>
         </template>
-        <Column field="gewisId" header="GEWIS ID">
+        <Column field="gewisId" :header="t('common.gewisId')">
           <template #body v-if="isLoading">
             <Skeleton class="w-6 my-1 h-1rem surface-300"/>
           </template>
         </Column>
-        <Column field="firstName" :header="t('c_userTable.firstName')">
+        <Column field="firstName" :header="t('common.firstName')">
           <template #body v-if="isLoading">
             <Skeleton class="w-8 my-1 h-1rem surface-300"/>
           </template>
         </Column>
-        <Column field="lastName" :header="t('c_userTable.lastName')">
+        <Column field="lastName" :header="t('common.lastName')">
           <template #body v-if="isLoading">
             <Skeleton class="w-8 my-1 h-1rem surface-300"/>
           </template>
         </Column>
-        <Column field="type" :header="t('c_userTable.Type')" :showFilterMatchModes="false">
+        <Column field="type" :header="t('common.type')" :showFilterMatchModes="false">
           <template #filter="{ filterModel, filterCallback }">
             <Dropdown
               v-model="filterModel.value"
@@ -49,7 +49,7 @@
               :options="userTypes"
               optionLabel="name"
               optionValue="name"
-              :placeholder="t('c_userTable.Select Type')"
+              :placeholder="t('common.placeholders.selectType')"
             />
           </template>
           <template #body v-if="isLoading">
@@ -59,7 +59,7 @@
         <Column field="active" :showFilterMatchModes="false">
           <template #header>
             <div class="flex flex-row gap-2 align-items-center">
-              {{ t("userDetails.Active") }}
+              {{ t("common.active") }}
               <Checkbox
                 v-model="isActiveFilter"
                 @change="onFilter()"
@@ -75,7 +75,7 @@
         <Column field="ofAge">
           <template #header>
             <div class="flex flex-row gap-2 align-items-center">
-              {{ t('c_userTable.ofAge') }}
+              {{ t('common.ofAge') }}
               <Checkbox
                 v-model="ofAgeFilter"
                 @change="onFilter()"
@@ -106,7 +106,7 @@
         </Column>
       </DataTable>
     </CardComponent>
-    <FormDialog :header="t('c_userTable.createUser')" v-model:modelValue="showDialog"
+    <FormDialog :header="t('modules.admin.forms.user.header')" v-model:modelValue="showDialog"
                 :form="form" >
       <template #form="slotProps">
         <UserCreateForm

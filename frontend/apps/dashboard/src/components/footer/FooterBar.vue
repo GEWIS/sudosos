@@ -1,8 +1,8 @@
 <template>
   <footer>
     <span @click="showVersion = !showVersion" class="copyright">
-      <b v-if="!showVersion">{{ t('login.copyright')}}</b>
-      <b v-else>{{localBuild ? t('login.localBuild') : `${branch}#${commit}`}}</b>
+      <b v-if="!showVersion">{{ t('components.footer.copyright') }}</b>
+      <b v-else>{{ localBuild ? t('components.footer.localBuild') : `${branch}#${commit}` }}</b>
     </span>
     <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
     <span class="separator"> | </span>

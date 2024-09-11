@@ -1,9 +1,9 @@
 <template>
-  <CardComponent :header="t('c_invoiceInfo.Progress')" v-if="invoice">
+  <CardComponent :header="t('common.status')" v-if="invoice">
     <Steps v-if="!deleted" :model="stepItems" :readonly="false" :activeStep="activeStep"></Steps>
     <div v-else class="flex flex-column justify-content-center align-items-center">
       <i class="pi pi-exclamation-triangle text-5xl"></i>
-      <p class="text-2xl">{{ t('c_invoiceInfo.Deleted') }}</p>
+      <p class="text-2xl">{{ t('modules.financial.invoice.deleted') }}</p>
     </div>
   </CardComponent>
 </template>

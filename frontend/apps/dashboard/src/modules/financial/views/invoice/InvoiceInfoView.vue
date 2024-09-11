@@ -3,7 +3,7 @@
     <div>
       <div class="page-title flex flex-row">
         <div class="flex flex-column">
-          <span>{{ isCredit ? t("c_invoiceInfo.Credit") : t("pdf.Invoice") }}</span>
+          <span>{{ isCredit ? t("modules.financial.invoice.credit") : t("modules.financial.invoice.invoice") }}</span>
           <small class="text-base">
             {{ invoice.reference + ": " }} <i>{{ invoice.description }}</i>
           </small>

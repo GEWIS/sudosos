@@ -1,30 +1,30 @@
 <template>
-  <CardComponent :header="t('c_invoiceInfo.Info')" v-if="invoice" >
+  <CardComponent :header="t('common.info')" v-if="invoice" >
     <template #topAction>
       <Button
           v-if="notDeleted"
           severity="primary"
-          :label="t('c_invoiceInfo.Delete')"
+          :label="t('common.delete')"
           icon="pi pi-exclamation-triangle"
           @click="visible = true"
       />
     </template>
     <div class="flex flex-column justify-content-between">
-      <InfoSpan :label="t('c_invoiceInfo.id')"
+      <InfoSpan :label="t('common.id')"
                 :value="String(invoice.id)"/>
 
-      <InfoSpan :label="t('c_invoiceInfo.For')"
+      <InfoSpan :label="t('common.for')"
                 :value="invoice.to.firstName + ' ' + invoice.to.lastName + ' (' + invoice.to.id + ')'"/>
 
-      <InfoSpan :label="t('c_invoiceInfo.Created on')"
+      <InfoSpan :label="t('common.createdAt')"
                 :value="formatDateTime(new Date(invoice.createdAt ? invoice.createdAt.toString() : ''))"/>
 
-      <InfoSpan :label="t('c_invoiceInfo.Updated on')"
+      <InfoSpan :label="t('common.updatedAt')"
                 :value="formatDateTime(new Date(invoice.updatedAt ? invoice.updatedAt.toString() : ''))"/>
     </div>
     <Dialog
         v-model:visible="visible"
-        :header="t('c_invoiceInfo.DeleteInvoice')"
+        :header="t('modules.financial.invoice.delete')"
         :draggable="false"
         modal
         :close-on-escape="true"
@@ -33,16 +33,16 @@
     >
       <div class="flex flex-column justify-content-between gap-3">
         <div>
-          {{ t('c_invoiceInfo.AreYouSure') }}
+          {{ t('modules.financial.invoice.confirmDelete') }}
           <br>
-          {{ t('c_invoiceInfo.CreditNoteWarning') }}
+          {{ t('modules.financial.invoice.creditNoteWarning') }}
           <br>
           <br>
-          {{  t('c_invoiceInfo.Unrecoverable') }}
+          {{  t('modules.financial.invoice.unrecoverable') }}
         </div>
         <div class="flex gap-3 flex-row justify-content-end align-items-end">
-          <Button severity="secondary" @click="dialog.close()">{{ t('c_invoiceInfo.Cancel') }}</Button>
-          <Button @click="deleteInvoice">{{ t('c_invoiceInfo.Delete') }}</Button>
+          <Button severity="secondary" @click="dialog.close()">{{ t('common.cancel') }}</Button>
+          <Button @click="deleteInvoice">{{ t('common.delete') }}</Button>
         </div>
       </div>
     </Dialog>
@@ -85,8 +85,8 @@ const openDialog = () => {
 const deleteInvoice = async () => {
   await invoiceStore.deleteInvoice(props.invoiceId).then(() => {
     toast.add({
-      summary: t('successMessages.success'),
-      detail: t('successMessages.invoiceDeleted'),
+      summary: t('common.toast.success.success'),
+      detail: t('common.toast.success.invoiceDeleted'),
       severity: 'success',
       life: 3000
     });

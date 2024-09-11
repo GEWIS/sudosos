@@ -1,0 +1,63 @@
+{
+  "modules": {
+    "seller": {
+      "posOverview": {
+        "title": "Overzicht verkooppunten",
+        "list": {
+          "header": "Verkooppunten",
+          "posName": "Naam verkooppunt"
+        }
+      },
+      "singlePos": {
+        "sales": "Verkopen in de afgelopen week",
+        "confirmDelete": "Weet je zeker dat je dit verkooppunt wilt verwijderen?"
+      },
+      "productContainers": {
+        "title": "Producten beheren",
+        "containers": {
+          "header": "Containers",
+          "addExisting": "Bestaande container toevoegen",
+          "public": "Openbaar",
+          "container": "Container",
+          "create": "Container aanmaken",
+          "edit": "Container bewerken"
+        },
+        "products": {
+          "header": "Alle producten",
+          "promo": "Promotie",
+          "addExisting": "Bestaand product toevoegen",
+          "category": "Categorie",
+          "vat": "BTW",
+          "alcoholPercentage": "Alcoholpercentage",
+          "owner": "Eigenaar",
+          "preferred": "Voorkeur",
+          "featured": "Uitgelicht",
+          "priceList": "Prijslijst",
+          "image": "Afbeelding",
+          "addToContainer": "Product toevoegen aan container",
+          "createProduct": "Product aanmaken",
+          "productDetails": "Productdetails",
+          "productContainerDelete": "Product uit container verwijderen",
+          "confirmDelete": "Weet je zeker dat je dit product wilt verwijderen?",
+          "confirmProductContainerDelete": "Weet je zeker dat je dit product uit deze container wilt verwijderen?"
+        }
+      },
+      "forms": {
+        "common": {
+          "selectOwner": "Selecteer eigenaar"
+        },
+        "pos": {
+          "overview": "Overzicht",
+          "useAuthentication": "Gebruik PIN-authenticatie",
+          "create": "Verkooppunt aanmaken"
+        },
+        "product": {
+          "select": "Selecteer product",
+          "closeTo": "Naam komt overeen met: {name} (klik om te kiezen)",
+          "selectCategory": "Selecteer categorie",
+          "selectVat": "Selecteer BTW"
+        }
+      }
+    }
+  }
+}

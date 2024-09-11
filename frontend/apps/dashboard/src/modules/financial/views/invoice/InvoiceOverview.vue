@@ -1,6 +1,6 @@
 <template>
   <div class="page-container flex flex-column">
-    <div class="page-title">{{ t('c_invoiceInfo.InvoiceOverview') }}</div>
+    <div class="page-title">{{ t('modules.financial.invoice.title') }}</div>
       <div class="content-wrapper">
           <TabView class="w-full">
             <TabPanel v-for="state in states" :key="state" :header="state">

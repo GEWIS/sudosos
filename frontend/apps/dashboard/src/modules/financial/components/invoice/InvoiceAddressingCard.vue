@@ -1,5 +1,5 @@
 <template>
-  <FormCard :header="t('c_invoiceInfo.Addressing')" v-if="invoice" @cancel="form.context.resetForm"
+  <FormCard :header="t('modules.financial.forms.invoice.addressing')" v-if="invoice" @cancel="form.context.resetForm"
             @update:modelValue="edit = $event" @save="formSubmit" :enableEdit="!deleted">
     <div class="flex flex-column justify-content-between gap-2">
       <InvoiceAddressingForm :invoice="invoice" :form="form" :edit="edit" @update:edit="edit = $event"/>

@@ -1,8 +1,8 @@
 <template>
     <Dialog v-model:visible="visible" modal :draggable="false" :header="
             banner != undefined
-            ? t('banner.Edit banner')
-            : t('banner.Create banner')
+            ? t('modules.admin.forms.banner.headerEdit')
+            : t('modules.admin.forms.banner.headerCreate')
         " ref="dialog" @show="addListenerOnDialogueOverlay(dialog)" class="w-full md:w-6">
         <span v-if="imageSource" class=" w-full mx-1 image-preview-container">
             <img class="w-full" :src="imageSource" />
@@ -13,7 +13,7 @@
             </button>
         </span>
         <div v-else class="px-3 py-5 text-xl surface-hover text-center  relative">
-            {{ t('banner.noBannersFound') }}
+            {{ t('modules.admin.banners.noBannerFound') }} <br>
             <button ref="previewButton" type="button"
                 class="cursor-pointer image-preview-indicator p-image-preview-indicator fileupload"
                 @click="fileInput.click()">
@@ -22,31 +22,31 @@
         </div>
         <Divider />
         <div class="py-2">
-            {{t('banner.name')}} <br>
+            {{ t('common.name') }} <br>
             <InputText v-model="name" /> <br>
             <span class="font-bold text-red-500">{{ errors['Name'] }}</span>
         </div>
         <div class="py-2">
-            {{ t('banner.duration') }}<br>
+            {{ t('modules.admin.forms.banner.duration') }}<br>
             <InputNumber v-model="duration"
-                         :suffix="' ' + t('banner.seconds', duration || 0)" :maxFractionDigits="3" />
+                         :suffix="' ' + t('modules.admin.banners.seconds', duration || 0)" :maxFractionDigits="3" />
           <br>
             <span class="font-bold text-red-500">{{ errors['Duration'] }}</span>
         </div>
         <div class="py-2">
-            {{ t('banner.timespan') }}<br>
+            {{ t('modules.admin.forms.banner.timespan') }}<br>
             <Calendar v-model="startDate" showTime hourFormat="24" />
-            {{ t('banner.till' )}}
+            {{ t('modules.admin.banners.till' ) }}
             <Calendar v-model="endDate" showTime hourFormat="24" class="pt-1 md:pt-0" /><br>
             <span class="font-bold text-red-500">{{ errors['Start date'] }}</span><br>
             <span class="font-bold text-red-500">{{ errors['End date'] }}</span>
         </div>
         <div class="py-2">
-            {{ t('banner.active') }}<br>
+            {{ t('modules.admin.banners.till') }}<br>
             <InputSwitch v-model="active" />
         </div>
         <div class="flex flex-column justify-content-end align-items-end">
-            <Button @click="onSubmit">{{ t('banner.submit') }}</Button>
+            <Button @click="onSubmit">{{ t('common.save') }}</Button>
         </div>
     </Dialog>
 </template>

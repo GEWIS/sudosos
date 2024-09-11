@@ -1,0 +1,11 @@
+{
+  "components": {
+    "general": {
+      "quickOverview": {
+        "header": "Quick overview",
+        "message": "Quick overview of your account",
+        "underAge": "User is underage!"
+      }
+    }
+  }
+}

@@ -1,46 +1,46 @@
 <template>
   <div class="flex flex-column justify-content-between gap-2">
-    <InputSpan :label="t('c_invoiceInfo.Addressee')"
+    <InputSpan :label="t('modules.financial.forms.invoice.addressee')"
                :value="form.model.addressee.value.value"
                :attributes="form.model.addressee.attr.value"
                @update:value="form.context.setFieldValue('addressee', $event)"
                :errors="form.context.errors.value.addressee"
-               id="name" placeholder="John & Co." type="text" :disabled="!edit"/>
+               id="name" :placeholder="t('common.placeholders.addressee')" type="text" :disabled="!edit"/>
 
-    <InputSpan :label="t('c_invoiceInfo.Attention')"
+    <InputSpan :label="t('modules.financial.forms.invoice.attention')"
                :value="form.model.attention?.value.value"
                :attributes="form.model.attention?.attr.value"
                @update:value="form.context.setFieldValue('attention', $event)"
                :errors="form.context.errors.value.attention"
-               id="name" placeholder="John Doe" type="text" :disabled="!edit"/>
+               id="name" :placeholder="t('common.placeholders.fullName')" type="text" :disabled="!edit"/>
 
-    <InputSpan :label="t('c_invoiceInfo.Street')"
+    <InputSpan :label="t('modules.financial.forms.invoice.street')"
                :value="form.model.street.value.value"
                :attributes="form.model.street.attr.value"
                @update:value="form.context.setFieldValue('street', $event)"
                :errors="form.context.errors.value.street"
-               id="name" placeholder="Street" type="text" :disabled="!edit"/>
+               id="name" :placeholder="t('common.placeholders.street')" type="text" :disabled="!edit"/>
 
-    <InputSpan :label="t('c_invoiceInfo.Postal code')"
+    <InputSpan :label="t('modules.financial.forms.invoice.postalCode')"
                :value="form.model.postalCode.value.value"
                :attributes="form.model.postalCode.attr.value"
                @update:value="form.context.setFieldValue('postalCode', $event)"
                :errors="form.context.errors.value.postalCode"
-               id="name" placeholder="Postal code" type="text" :disabled="!edit"/>
+               id="name" :placeholder="t('common.placeholders.postalCode')" type="text" :disabled="!edit"/>
 
-    <InputSpan :label="t('c_invoiceInfo.City')"
+    <InputSpan :label="t('modules.financial.forms.invoice.city')"
                :value="form.model.city.value.value"
                :attributes="form.model.city.attr.value"
                @update:value="form.context.setFieldValue('city', $event)"
                :errors="form.context.errors.value.city"
-               id="name" placeholder="City" type="text" :disabled="!edit"/>
+               id="name" :placeholder="t('common.placeholders.city')" type="text" :disabled="!edit"/>
 
-    <InputSpan :label="t('c_invoiceInfo.Country')"
+    <InputSpan :label="t('modules.financial.forms.invoice.country')"
                :value="form.model.country.value.value"
                :attributes="form.model.country.attr.value"
                @update:value="form.context.setFieldValue('country', $event)"
                :errors="form.context.errors.value.country"
-               id="name" placeholder="Country" type="text" :disabled="!edit"/>
+               id="name" :placeholder="t('common.placeholders.country')" type="text" :disabled="!edit"/>
   </div>
 </template>
 
@@ -87,7 +87,7 @@ setSubmit(props.form, props.form.context.handleSubmit(async (values) => {
   await invoiceStore.updateInvoice(props.invoice.id, values).then(() => {
     toast.add({
       severity: 'success',
-      summary: t('successMessages.success'),
+      summary: t('common.toast.success.success'),
       detail: values,
       life: 3000,
     });

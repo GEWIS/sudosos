@@ -1,0 +1,11 @@
+{
+  "components": {
+    "general": {
+      "quickOverview": {
+        "header": "Snel overzicht",
+        "message": "Snel overzicht van je account",
+        "underAge": "Gebruiker is minderjarig!"
+      }
+    }
+  }
+}

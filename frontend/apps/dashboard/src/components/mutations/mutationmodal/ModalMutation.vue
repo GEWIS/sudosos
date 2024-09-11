@@ -3,7 +3,7 @@
     @show="addListenerOnDialogueOverlay(dialog)"
     :visible="visible"
     modal
-    :header="t('c_transactionDetailsModal.transactionDetails')"
+    :header="t('components.mutations.modal.header')"
     class="w-auto flex w-11 md:w-4"
     ref="dialog"
   >
@@ -31,7 +31,7 @@
       shouldShowDeleteButton">
       <div class="flex flex-column align-items-end">
         <Button @click="deleteMutation" severity="danger">
-          {{ t('c_transactionDetailsModal.delete').toUpperCase() }}
+          {{ t('common.delete').toUpperCase() }}
         </Button>
       </div>
     </template>
@@ -191,8 +191,8 @@ const deleteMutation = async () => {
       .deleteFine(transferDetail.fine.id)
       .then(() => {
         toast.add({
-          summary: t('successMessages.success'),
-          detail: t('successMessages.fineDeleted'),
+          summary: t('common.toast.success.success'),
+          detail: t('common.toast.success.fineDeleted'),
           severity: 'success',
           life: 3000
         });
@@ -213,8 +213,8 @@ const deleteMutation = async () => {
       .deleteTransaction(transactionsDetail.id)
       .then(() => {
         toast.add({
-          summary: t('successMessages.success'),
-          detail: t('successMessages.transactionDeleted'),
+          summary: t('common.toast.success.success'),
+          detail: t('common.toast.success.transactionDeleted'),
           severity: 'success',
           life: 3000
         });

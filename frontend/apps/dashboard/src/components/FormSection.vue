@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import { onMounted, ref } from "vue";
 import Divider from "primevue/divider";
 import Button from "primevue/button";
 

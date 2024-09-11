@@ -1,0 +1,133 @@
+{
+    "common": {
+        "sudosos": "SudoSOS",
+        "title": "Title",
+        "total": "Total",
+        "amount": "Amount",
+        "actions": "Actions",
+        "gewisId": "GEWIS ID",
+        "downloadPdf": "Download PDF",
+        "description": "Description",
+        "id": "ID",
+        "vat": "VAT",
+        "loading": "Loading",
+        "excl": "Excl VAT",
+        "incl": "Incl VAT",
+        "firstName": "First name",
+        "lastName": "Last name",
+        "name": "Name",
+        "for": "For",
+        "type": "Type",
+        "date": "Date",
+        "ofAge": "18+",
+        "info": "Info",
+        "price": "Price",
+        "status": "Status",
+        "active": "Active",
+        "create": "Create",
+        "edit": "Edit",
+        "search": "Search",
+        "save": "Save",
+        "close": "Close",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "owner": "Owner",
+        "back": "Back",
+        "signOut": "Sign out",
+        "createdAt": "Created at",
+        "updatedAt": "Updated at",
+        "placeholders": {
+            "selectType": "Select Type",
+            "email": "example@example.com",
+            "bankAccountNumber": "NL69 ABNA 0012 3456 78",
+            "fullName": "John Doe",
+            "addressee": "John & Co.",
+            "street": "Grote Kerkplein 15",
+            "postalCode": "8011 PK",
+            "city": "Zwolle",
+            "country": "Netherlands",
+            "product": "Ice cream",
+            "pos": "GELIMBO"
+        },
+        "tooltip": {
+            "productOwner": "Note: Container owner gets the revenue, not the product owner. Owner cannot be edited after creation."
+        },
+        "nickname": "Nickname",
+        "email": "Email address",
+        "usertype": "Usertype",
+        "toast": {
+            "success": {
+                "success": "Success",
+                "userUpdated": "Successfully updated user.",
+                "userCreated": "Successfully created user.",
+                "waiveFinesSuccess": "Successfully waived fines.",
+                "resetPasswordSuccess": "Successfully reset password.",
+                "dataAnalysis": "Successfully changed data analysis preference.",
+                "apiKeyChanged": "Successfully changed API key.",
+                "apiKeyDeleted": "Successfully deleted API key.",
+                "passwordUpdated": "Successfully updated password.",
+                "pinUpdated": "Successfully updated PIN.",
+                "finesNotified": "Successfully notified users.",
+                "finesHandedOut": "Successfully handed out fines.",
+                "payoutCreated": "Successfully created payout.",
+                "invoiceDeleted": "Successfully deleted invoice.",
+                "invoiceUpdated": "Successfully updated invoice.",
+                "pointOfSaleDeleted": "Successfully deleted POS.",
+                "pointOfSaleUpdated": "Successfully updated POS.",
+                "pointOfSaleCreated": "Successfully created POS.",
+                "containerUpdated": "Successfully updated container.",
+                "containerCreated": "Successfully created container.",
+                "containerDeleted": "Successfully deleted container.",
+                "fineDeleted": "Successfully deleted fine.",
+                "transactionDeleted": "Successfully deleted transaction.",
+                "productCreated": "Successfully created product.",
+                "productUpdated": "Successfully updated product.",
+                "productContainerDeleted": "Successfully deleted product from container.",
+                "productDeleted": "Successfully deleted product."
+            },
+            "canceled": "Canceled",
+            "reject": {
+                "waiveFinesRejected": "Canceled waiving fines."
+            }
+        },
+        "navigation": {
+            "transactions": "Transactions",
+            "admin": "Admin",
+            "financial": "Financial",
+            "seller": "Seller",
+            "profile": "Profile",
+            "signOut": "Sign out",
+            "dutch": "Dutch",
+            "english": "English",
+            "userOverview": "User overview",
+            "banners": "Banners",
+            "socialDrinkCards": "Social drink cards",
+            "invoices": "Invoices",
+            "payouts": "Payouts",
+            "manageProducts": "Manage products",
+            "posOverview": "POS overview",
+            "flaggedTransactions": "Flagged transactions",
+            "fineOverview": "Fine overview"
+        },
+        "validation": {
+            "number": {
+                "min": "This field must be greater than {min}"
+            },
+            "password": {
+                "match": "Passwords must match."
+            },
+            "pin": {
+                "match": "PINs must match.",
+                "onlyDigits": "PIN must be only digits."
+            },
+            "required": "This field is required",
+            "string": {
+                "exact": "This field must be exactly {len} characters",
+                "max": "This field can't be greater than {max} characters",
+                "min": "This field must be at least {min} characters"
+            }
+        },
+        "apiError": "Error",
+        "errorMessage": "Something is going wrong, please open an issue on {link} describing the issue."
+    }
+}

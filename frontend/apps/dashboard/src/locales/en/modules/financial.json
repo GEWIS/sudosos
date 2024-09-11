@@ -1,0 +1,71 @@
+{
+  "modules": {
+    "financial": {
+      "fine":{
+        "title": "Fine overview",
+        "eligibleUsers": {
+          "header": "Eligible users",
+          "firstDate": "First date",
+          "secondDate": "Second date",
+          "apply": "Apply",
+          "notify": "Notify",
+          "handout": "Hand out",
+          "info": "Currently, eligible users have a total debt of {debt}. This would result in a total of {fines} in fines being handed out.",
+          "pleaseSelect": "Please apply two dates to see how much users are in debt.",
+          "firstBalance": "First balance",
+          "lastBalance": "Last balance"
+        },
+        "handoutEvents": {
+          "header": "Fine handout events",
+          "referenceDate": "Reference date",
+          "number": "Number of fines",
+          "total": "Total of fines",
+          "details": "Fine Handout Event Details"
+        }
+      },
+      "invoice": {
+        "title": "Invoice overview",
+        "invoice": "Invoice",
+        "credit": "Credit invoice",
+        "delete": "Delete invoice",
+        "confirmDelete": "Are you sure you want to delete this invoice?",
+        "creditNoteWarning": "This will not create a credit note.",
+        "unrecoverable": "This deletes the invoice and cannot be undone.",
+        "table": "Table",
+        "recompile": "Recompile",
+        "reload": "Reload",
+        "missingPdf": "PDF is missing or generation failed",
+        "deleted": "Invoice has been deleted."
+      },
+      "payout": {
+        "title": "Payout overview",
+        "create": "Create payout",
+        "requestedBy": "Requested by",
+        "details": "Payout details",
+        "approvedBy": "Approved by",
+        "approve": "Approve",
+        "deny": "Deny"
+      },
+      "forms": {
+        "payout": {
+          "for": "For",
+          "currentBalance": "User has a current balance of {balance}",
+          "bankAccountNumber": "Bank account number",
+          "bankAccountName": "Bank account name",
+          "amountTooHigh": "Amount is higher than the user's balance"
+        },
+        "invoice": {
+          "reference": "Reference",
+          "settings": "Settings",
+          "addressing": "Addressing",
+          "addressee": "Addressee",
+          "attention": "Attention",
+          "street": "Street",
+          "postalCode": "Postal code",
+          "city": "City",
+          "country": "Country"
+        }
+      }
+    }
+  }
+}

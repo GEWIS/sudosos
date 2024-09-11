@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-column justify-content-between gap-2">
-    <InputUserSpan :label="t('payout.For')"
+    <InputUserSpan :label="t('modules.financial.forms.payout.for')"
                    :value="form.model.user.value.value"
                    @update:value="form.context.setFieldValue('user', $event)"
                    :errors="form.context.errors.value.user"
@@ -9,29 +9,30 @@
     <skeleton v-if="userBalance === null && form.model.user.value.value" class="w-6 my-1 h-0.5rem surface-300"/>
     <div v-else-if="userBalance" class="flex flex-row gap-1"
          :class="{'text-gray-700': !balanceError, 'text-red-500 font-bold': balanceError}">
-      <span>{{ t('payout.Current balance', { balance: formatPrice(userBalance.amount) }) }}</span>
+      <span>
+        {{ t('modules.financial.forms.payout.currentBalance', { balance: formatPrice(userBalance.amount) }) }}</span>
     </div>
 
-    <InputSpan :label="t('payout.BankAccountNumber')"
+    <InputSpan :label="t('modules.financial.forms.payout.bankAccountNumber')"
                :value="form.model.bankAccountNumber.value.value"
                :attributes="form.model.bankAccountNumber.attr.value"
                @update:value="form.context.setFieldValue('bankAccountNumber', $event)"
                :errors="form.context.errors.value.bankAccountNumber"
-               id="name" placeholder="NL69 ABNA 0012 3456 78" type="text"/>
+               id="name" :placeholder="t('common.placeholders.bankAccountNumber')" type="text"/>
 
-    <InputSpan :label="t('payout.BankAccountName')"
+    <InputSpan :label="t('modules.financial.forms.payout.bankAccountName')"
                :value="form.model.bankAccountName.value.value"
                :attributes="form.model.bankAccountName.attr.value"
                @update:value="form.context.setFieldValue('bankAccountName', $event)"
                :errors="form.context.errors.value.bankAccountName"
-               id="name" placeholder="John Doe" type="text"/>
+               id="name" :placeholder="t('common.placeholders.fullName')" type="text"/>
 
-    <InputSpan :label="t('payout.Amount')"
+    <InputSpan :label="t('common.amount')"
                :value="form.model.amount.value.value"
                :attributes="form.model.amount.attr.value"
                @update:value="form.context.setFieldValue('amount', $event)"
                :errors="form.context.errors.value.amount"
-               id="name" placeholder="Amount" type="currency"/>
+               id="name" :placeholder="t('common.amount')" type="currency"/>
 
     <div class="flex w-full justify-content-end">
       <ErrorSpan :error="balanceError"/>
@@ -75,7 +76,7 @@ const balanceError = ref<string>('');
 
 const validateAmount = () => {
   if (userBalance.value && props.form.model.amount.value.value > userBalance.value.amount.amount / 100) {
-    balanceError.value = `${t('payout.AmountToHigh')}`;
+    balanceError.value = `${t('modules.financial.forms.payout.amountTooHigh')}`;
   } else {
     balanceError.value = ''; // Clear error if valid
   }
@@ -115,8 +116,8 @@ setSubmit(props.form, props.form.context.handleSubmit(async (values) => {
     emit('submit:success', request);
     toast.add({
       severity: 'success',
-      summary: t('successMessages.success'),
-      detail: t('successMessages.payoutCreated'),
+      summary: t('common.toast.success.success'),
+      detail: t('common.toast.success.payoutCreated'),
       life: 3000,
     });
     props.form.context.resetForm();

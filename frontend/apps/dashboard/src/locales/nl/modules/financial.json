@@ -1,0 +1,71 @@
+{
+  "modules": {
+    "financial": {
+      "fine": {
+        "title": "Boete overzicht",
+        "eligibleUsers": {
+          "header": "In aanmerking komende gebruikers",
+          "firstDate": "Eerste datum",
+          "secondDate": "Tweede datum",
+          "apply": "Toepassen",
+          "notify": "Waarschuwen",
+          "handout": "Uitreiken",
+          "info": "Momenteel hebben in aanmerking komende gebruikers een totale schuld van {debt}. Dit zou resulteren in een totaal van {fines} aan opgelegde boetes.",
+          "pleaseSelect": "Selecteer twee datums om te zien hoeveel schuld gebruikers hebben.",
+          "firstBalance": "Eerste saldo",
+          "lastBalance": "Laatste saldo"
+        },
+        "handoutEvents": {
+          "header": "Boete-uitreikings evenementen",
+          "referenceDate": "Referentiedatum",
+          "number": "Aantal boetes",
+          "total": "Totaal aan boetes",
+          "details": "Details van het boete-uitreikingsevenement"
+        }
+      },
+      "invoice": {
+        "title": "Factuuroverzicht",
+        "invoice": "Factuur",
+        "credit": "Creditfactuur",
+        "delete": "Factuur verwijderen",
+        "confirmDelete": "Weet je zeker dat je deze factuur wilt verwijderen?",
+        "creditNoteWarning": "Dit zal geen creditnota aanmaken.",
+        "unrecoverable": "Dit verwijdert de factuur en kan niet ongedaan worden gemaakt.",
+        "table": "Tabel",
+        "recompile": "Opnieuw samenstellen",
+        "reload": "Opnieuw laden",
+        "missingPdf": "PDF ontbreekt of genereren is mislukt",
+        "deleted": "Factuur is verwijderd."
+      },
+      "payout": {
+        "title": "Uitbetalingsoverzicht",
+        "create": "Uitbetaling aanmaken",
+        "requestedBy": "Aangevraagd door",
+        "details": "Uitbetalingsdetails",
+        "approvedBy": "Goedgekeurd door",
+        "approve": "Goedkeuren",
+        "deny": "Afwijzen"
+      },
+      "forms": {
+        "payout": {
+          "for": "Voor",
+          "currentBalance": "Gebruiker heeft een huidig saldo van {balance}",
+          "bankAccountNumber": "Bankrekeningnummer",
+          "bankAccountName": "Naam bankrekening",
+          "amountTooHigh": "Het bedrag is hoger dan het saldo van de gebruiker"
+        },
+        "invoice": {
+          "reference": "Referentie",
+          "settings": "Instellingen",
+          "addressing": "Adressering",
+          "addressee": "Geadresseerde",
+          "attention": "Ter attentie van",
+          "street": "Straat",
+          "postalCode": "Postcode",
+          "city": "Stad",
+          "country": "Land"
+        }
+      }
+    }
+  }
+}

@@ -1,13 +1,13 @@
 <template>
   <CardComponent
-      :header="t('userSettings.userSettings')"
+      :header="t('modules.user.settings.header')"
       :func="undefined"
       :action="undefined"
       class="w-full md:w-5"
   >
     <div class="flex flex-column">
       <FormSection
-          :header="t('userSettings.changePin')"
+          :header="t('modules.user.settings.changePin')"
           @cancel="pinForm.context.resetForm"
           @save="pinForm.submit"
           :enableEdit="true"
@@ -17,32 +17,32 @@
         <ChangePinForm :form="pinForm" :edit="editPin"/>
       </FormSection>
       <div class="flex flex-row align-items-center w-11">
-        <p class="flex-grow-1 my-1">{{ t('userSettings.changePassword') }}</p>
+        <p class="flex-grow-1 my-1">{{ t('modules.user.settings.changePassword') }}</p>
         <i
             class="pi pi-arrow-up-right text-gray-500 flex align-items-center cursor-pointer"
             @click="showPasswordDialog = true"
         />
       </div>
       <Divider />
-      <h4 class="mt-0">{{ t('userSettings.apiKeys') }}</h4>
+      <h4 class="mt-0">{{ t('modules.user.settings.apiKeys') }}</h4>
       <div class="flex flex-row align-items-center w-11">
-        <p class="flex-grow-1 my-1">{{ t('userSettings.changeApiKey') }}</p>
+        <p class="flex-grow-1 my-1">{{ t('modules.user.settings.changeApiKey') }}</p>
         <i
             class="pi pi-arrow-up-right text-gray-500 flex align-items-center cursor-pointer"
             @click="confirmChangeApiKey()"
         />
       </div>
       <div class="flex flex-row align-items-center w-11">
-        <p class="flex-grow-1 my-1">{{ t('userSettings.deleteApiKey') }}</p>
+        <p class="flex-grow-1 my-1">{{ t('modules.user.settings.deleteApiKey') }}</p>
         <i
             class="pi pi-arrow-up-right text-gray-500 flex align-items-center cursor-pointer"
             @click="confirmDeleteApiKey()"
         />
       </div>
       <Divider />
-      <h4 class="mt-0">{{ t('userSettings.preferences') }}</h4>
+      <h4 class="mt-0">{{ t('modules.user.settings.preferences') }}</h4>
       <div class="flex flex-row align-items-center w-11">
-        <p class="flex-grow-1 my-0">{{ t('userSettings.dataAnalysis') }}</p>
+        <p class="flex-grow-1 my-0">{{ t('modules.user.settings.dataAnalysis') }}</p>
         <InputSwitch
             @update:modelValue="handleChangeDataAnalysis"
             v-model="dataAnalysis"
@@ -53,7 +53,7 @@
   <FormDialog
       v-model="showPasswordDialog"
       :form="passwordForm"
-      :header="t('userSettings.changePassword')"
+      :header="t('modules.user.settings.changePassword')"
   >
     <template #form="slotProps">
       <ChangePasswordForm :form="slotProps.form" @submit:success="showPasswordDialog = false"/>
@@ -103,8 +103,8 @@ const handleChangeDataAnalysis = (value: boolean) => {
         dataAnalysis.value = value;
         toast.add({
           severity: "success",
-          summary: t('successMessages.success'),
-          detail: t('successMessages.dataAnalysisChanged'),
+          summary: t('common.toast.success.success'),
+          detail: t('common.toast.success.dataAnalysis'),
           life: 5000,
         });
       })
@@ -115,16 +115,16 @@ const handleChangeDataAnalysis = (value: boolean) => {
 
 const confirmChangeApiKey = () => {
   confirm.require({
-    message: t('userSettings.confirmChangeApiKey'),
-    header: t('userSettings.changeApiKey'),
+    message: t('modules.user.settings.confirmChangeApiKey'),
+    header: t('modules.user.settings.changeApiKey'),
     icon: 'pi pi-exclamation-triangle',
     accept: () => {
       apiService.user.updateUserKey(props.user.id)
           .then((res) => {
             toast.add({
               severity: "success",
-              summary: t('successMessages.success'),
-              detail: `${t('successMessages.apiKeyChanged')} \n ${res.data.key}`,
+              summary: t('common.toast.success.success'),
+              detail: `${t('common.toast.success.apiKeyChanged')} \n ${res.data.key}`,
               life: 5000,
             });
           })
@@ -137,16 +137,16 @@ const confirmChangeApiKey = () => {
 
 const confirmDeleteApiKey = () => {
   confirm.require({
-    message: t('userSettings.confirmDeleteApiKey'),
-    header: t('userSettings.deleteApiKey'),
+    message: t('modules.user.settings.confirmDeleteApiKey'),
+    header: t('modules.user.settings.deleteApiKey'),
     icon: 'pi pi-exclamation-triangle',
     accept: () => {
       apiService.user.deleteUserKey(props.user.id)
           .then(() => {
             toast.add({
               severity: "success",
-              summary: t('successMessages.success'),
-              detail: t('successMessages.apiKeyDeleted'),
+              summary: t('common.toast.success.success'),
+              detail: t('common.toast.success.apiKeyDeleted'),
               life: 5000,
             });
           })

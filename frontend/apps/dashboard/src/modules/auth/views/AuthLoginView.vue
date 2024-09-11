@@ -1,21 +1,21 @@
 <template>
   <div>
         <img class="max-h-9rem block mx-auto my-0" src="../../../assets/img/bier.png" alt="logo"/>
-        <div class="text-900 text-5xl mt-0 mx-auto mb-2 w-full">{{ t('login.SudoSOS Login') }}</div>
+        <div class="text-900 text-5xl mt-0 mx-auto mb-2 w-full">{{ t('modules.auth.login.sudosos') }}</div>
         <Button
             id="login-gewis-button"
             @click="loginViaGEWIS"
             class="my-3 mx-auto w-full flex justify-content-center align-items-center"
         >
           <img class="mr-3 h-18" src="../../../assets/img/gewis-branding.svg" alt="GEWIS"/>
-          {{ t('login.Login via GEWIS') }}
+          {{ t('modules.auth.login.gewis') }}
         </Button>
         <Button
             id="login-gewis-button"
             @click="navigateToLocal"
             class="my-3 mx-auto w-full flex justify-content-center align-items-center"
         >
-          {{ t('login.localAccount') }}
+          {{ t('modules.auth.login.localAccount') }}
         </Button>
       </div>
 </template>

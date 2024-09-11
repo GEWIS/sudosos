@@ -1,62 +1,62 @@
 <template>
   <div class="flex flex-column gap-2">
-    <InputSpan :label="t('userDetails.First name')"
+    <InputSpan :label="t('common.firstName')"
                :value="form.model.firstName.value.value"
                :attributes="form.model.firstName.attr.value"
                @update:value="form.context.setFieldValue('firstName', $event)"
                :errors="form.context.errors.value.firstName"
                :disabled="!edit"
-               id="name" :placeholder="t('userDetails.First name')" type="text" />
-    <InputSpan :label="t('userDetails.Last name')"
+               id="name" :placeholder="t('common.firstName')" type="text" />
+    <InputSpan :label="t('common.lastName')"
                :value="form.model.lastName?.value.value"
                :attributes="form.model.lastName?.attr.value"
                @update:value="form.context.setFieldValue('lastName', $event)"
                :errors="form.context.errors.value.lastName"
                :disabled="!edit"
-               id="name" placeholder="Doe" type="text" />
-    <InputSpan :label="t('userDetails.Nickname')"
+               id="name" :placeholder="t('common.lastName')" type="text" />
+    <InputSpan :label="t('common.nickname')"
                :value="form.model.nickname?.value.value || undefined"
                :attributes="form.model.nickname?.attr.value"
                @update:value="form.context.setFieldValue('nickname', $event)"
                :errors="form.context.errors.value.nickname"
                :disabled="!edit"
-               id="name" :placeholder="t('userDetails.Nickname')" type="text" />
+               id="name" :placeholder="t('common.nickname')" type="text" />
     <InputSpan
         v-if="!(props.user?.type === 'MEMBER')"
-               :label="t('userDetails.Email address')"
+               :label="t('common.email')"
                :value="form.model.email?.value.value"
                :attributes="form.model.email?.attr.value"
                @update:value="form.context.setFieldValue('email', $event)"
                :errors="form.context.errors.value.email"
                :disabled="!edit"
-               id="name" placeholder="first.last@example.com" type="text" />
-    <InputSpan :label="t('userDetails.Usertype')"
+               id="name" :placeholder="t('common.placeholders.email')" type="text" />
+    <InputSpan :label="t('common.usertype')"
                :value="form.model.userType?.value.value"
                :attributes="form.model.userType?.attr.value"
                @update:value="form.context.setFieldValue('userType', $event)"
                :errors="form.context.errors.value.userType"
-               id="name" :placeholder="t('userDetails.Usertype')" type="usertype" disabled/>
-    <InputSpan :label="t('userDetails.Active')"
+               id="name" :placeholder="t('common.placeholders.selectType')" type="usertype" disabled/>
+    <InputSpan :label="t('common.active')"
                :value="form.model.isActive?.value.value"
                :attributes="form.model.isActive?.attr.value"
                @update:value="form.context.setFieldValue('isActive', $event)"
                :errors="form.context.errors.value.isActive"
                :disabled="!edit"
-               id="name" :placeholder="t('userDetails.Active')" type="boolean"/>
-    <InputSpan :label="t('profile.ofAge')"
+               id="name" type="boolean"/>
+    <InputSpan :label="t('modules.admin.forms.user.ofAge')"
                :value="form.model.ofAge?.value.value"
                :attributes="form.model.ofAge?.attr.value"
                @update:value="form.context.setFieldValue('ofAge', $event)"
                :errors="form.context.errors.value.ofAge"
                :disabled="!edit"
-               id="name" :placeholder="t('profile.ofAge')" type="boolean"/>
-    <InputSpan :label="t('profile.canGoIntoDebt')"
+               id="name" type="boolean"/>
+    <InputSpan :label="t('modules.admin.forms.user.canGoIntoDebt')"
                :value="form.model.canGoIntoDebt?.value.value"
                :attributes="form.model.canGoIntoDebt?.attr.value"
                @update:value="form.context.setFieldValue('canGoIntoDebt', $event)"
                :errors="form.context.errors.value.canGoIntoDebt"
                :disabled="!edit"
-               id="name" :placeholder="t('profile.canGoIntoDebt')" type="boolean"/>
+               id="name" type="boolean"/>
   </div>
 </template>
 
@@ -106,8 +106,8 @@ setSubmit(props.form, props.form.context.handleSubmit(async (values) => {
   await apiService.user.updateUser(props.user.id, updateUserRequest).then(() => {
     toast.add({
       severity: 'success',
-      summary: t('successMessages.success'),
-      detail: t('successMessages.userUpdated'),
+      summary: t('common.toast.success.success'),
+      detail: t('common.toast.success.userUpdated'),
       life: 3000,
     });
     emit('update:edit', false);

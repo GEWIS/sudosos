@@ -1,8 +1,8 @@
 <template>
-  <CardComponent :header="t('c_productContainerOperations.AllProducts')" class="w-full">
+  <CardComponent :header="t('modules.seller.productContainers.products.header')" class="w-full">
     <template #topAction>
       <div>
-        <Button @click="openCreateModal">{{ t('app.Create') }}</Button>
+        <Button @click="openCreateModal">{{ t('common.create') }}</Button>
       </div>
     </template>
     <ProductActionDialog v-model:visible="visible" :product="product"/>
@@ -29,7 +29,7 @@
           </IconField>
         </div>
       </template>
-      <Column field="image" :header="t('c_productContainerOperations.Image')">
+      <Column field="image" :header="t('modules.seller.productContainers.products.image')">
         <template #body="rowDataImg" v-if="!loading">
           <div
               class="h-4rem flex justify-content-center align-items-center background-white
@@ -58,12 +58,12 @@
           <Skeleton class="w-8 my-1 h-4rem surface-300"/>
         </template>
       </Column>
-      <Column field="name" :header="t('c_productContainerOperations.Name')" style="width: 30%">
+      <Column field="name" :header="t('common.name')" style="width: 30%">
         <template #body v-if="loading">
           <Skeleton class="w-6 my-1 h-2rem surface-300"/>
         </template>
       </Column>
-      <Column field="category" :header="t('c_productContainerOperations.Category')" style="width: 15%">
+      <Column field="category" :header="t('modules.seller.productContainers.products.category')" style="width: 15%">
         <template #body="rowData" v-if="!loading">
           {{ rowData.data.category.name }}
         </template>
@@ -71,7 +71,7 @@
           <Skeleton class="w-6 my-1 h-2rem surface-300"/>
         </template>
       </Column>
-      <Column field="priceInclVat" :header="t('c_productContainerOperations.Price')" style="width: 17%">
+      <Column field="priceInclVat" :header="t('common.price')" style="width: 17%">
         <template #body="rowData" v-if="!loading">
           {{ formatPrice(rowData.data.priceInclVat) }}
         </template>
@@ -80,7 +80,7 @@
         </template>
       </Column>
       <Column field="alcoholPercentage"
-              :header="t('c_productContainerOperations.Alcohol Percentage')" style="width: 10%">
+              :header="t('modules.seller.productContainers.products.alcoholPercentage')" style="width: 10%">
         <template #body="rowData" v-if="!loading">
           {{ `${rowData.data.alcoholPercentage} %` }}
         </template>
@@ -88,7 +88,7 @@
           <Skeleton class="w-6 my-1 h-2rem surface-300"/>
         </template>
       </Column>
-      <Column field="vat" :header="t('c_productContainerOperations.VAT')" style="width: 10%">
+      <Column field="vat" :header="t('modules.seller.productContainers.products.vat')" style="width: 10%">
         <template #body v-if="loading">
           <Skeleton class="w-6 my-1 h-2rem surface-300"/>
         </template>

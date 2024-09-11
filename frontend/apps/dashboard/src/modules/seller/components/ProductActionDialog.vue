@@ -36,14 +36,14 @@
             <div>
               <!-- Row for Added on -->
               <div v-if="state.displayProduct" class="flex flex-row flex-wrap justify-content-between">
-                <h4 class="my-0">{{ t("c_productContainerOperations.Added on") }}</h4>
+                <h4 class="my-0">{{ t("common.createdAt") }}</h4>
                 <p class="my-0" v-if="product">
                   {{ formatDateTime(new Date(product.createdAt ? product.createdAt.toString() : '')) }}</p>
               </div>
 
               <!-- Row for Updated on -->
               <div v-if="state.displayProduct" class="flex flex-row flex-wrap justify-content-between">
-                <h4 class="my-0">{{ t("c_productContainerOperations.Updated on") }}</h4>
+                <h4 class="my-0">{{ t("common.updatedAt") }}</h4>
                 <p class="my-0" v-if="product">
                   {{ formatDateTime(new Date(product.updatedAt ? product.updatedAt.toString() : '')) }}</p>
               </div>
@@ -193,9 +193,9 @@ const state = computed(() => {
 
 // Generate the correct header for the Dialog
 const header = computed(() => {
-  if (state.value.addToContainer) return t('c_productContainerOperations.header.addProductToContainer');
-  if (state.value.createProduct) return t('c_productContainerOperations.header.createProduct');
-  if (state.value.displayProduct) return t('c_productContainerOperations.header.productDetails');
+  if (state.value.addToContainer) return t('modules.seller.productContainers.products.addToContainer');
+  if (state.value.createProduct) return t('modules.seller.productContainers.products.createProduct');
+  if (state.value.displayProduct) return t('modules.seller.productContainers.products.productDetails');
   return '';
 });
 
@@ -235,8 +235,8 @@ setSubmit(form, form.context.handleSubmit(async (values) => {
         .catch((err) => handleError(err, toast));
     toast.add({
       severity: 'success',
-      summary: t('successMessages.success'),
-      detail: t('successMessages.productCreate'),
+      summary: t('common.toast.success.success'),
+      detail: t('common.toast.success.productCreated'),
       life: 3000,
     });
 
@@ -273,8 +273,8 @@ setSubmit(form, form.context.handleSubmit(async (values) => {
       await productStore.updateProduct(props.product!.id, updateProductRequest);
       toast.add({
         severity: 'success',
-        summary: t('successMessages.success'),
-        detail: t('successMessages.productUpdate'),
+        summary: t('common.toast.success.success'),
+        detail: t('common.toast.success.productUpdated'),
         life: 3000,
       });
     }
@@ -288,7 +288,7 @@ setSubmit(form, form.context.handleSubmit(async (values) => {
 // Deleting a product from container or in general
 const deleteLabel = computed(() => {
   return props.container
-  ? t("c_productContainerOperations.Delete From Container") : undefined;
+  ? t("modules.seller.productContainers.products.productContainerDelete") : undefined;
 });
 
 const confirm = useConfirm();
@@ -300,15 +300,15 @@ async function deleteProduct() {
     await containerStore.deleteProductFromContainer(props.container, props.product).then(() => {
       toast.add({
         severity: 'success',
-        summary: t('successMessages.success'),
-        detail: t('successMessages.productContainerDelete'),
+        summary: t('common.toast.success.success'),
+        detail: t('common.toast.success.productContainerDeleted'),
         life: 3000,
       });
       closeDialog();
     }).catch((err) => handleError(err, toast));
   } else {
     confirm.require({
-      message: t('c_productContainerOperations.confirmDelete'),
+      message: t('modules.seller.productContainers.products.confirmProductContainerDelete'),
       target: deleteConfirm.value,
       acceptLabel: t('common.delete'),
       rejectLabel: t('common.close'),
@@ -320,8 +320,8 @@ async function deleteProduct() {
               handleError(err, toast);
             });
         toast.add({
-          summary: t('successMessages.success'),
-          detail: t('successMessages.productDeleted'),
+          summary: t('common.toast.success.success'),
+          detail: t('common.toast.success.productDeleted'),
           severity: 'success',
           life: 3000
         });

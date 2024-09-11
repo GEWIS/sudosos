@@ -7,8 +7,8 @@
                :attributes="form.model.name.attr.value"
                @update:value="form.context.setFieldValue('name', $event)"
                :errors="form.context.errors.value.name"
-               id="name" :placeholder="t('c_posInfo.posName')" type="text"/>
-    <InputSpan :label="t('c_posInfo.useAuthentication')"
+               id="name" :placeholder="t('common.placeholders.pos')" type="text"/>
+    <InputSpan :label="t('modules.seller.forms.pos.useAuthentication')"
                :value="form.model.useAuthentication.value.value"
                :attributes="form.model.useAuthentication.attr.value"
                @update:value="form.context.setFieldValue('useAuthentication', $event)"
@@ -57,8 +57,8 @@ setSubmit(props.form, props.form.context.handleSubmit(async (values) => {
   }).then(() => {
     toast.add({
       severity: 'success',
-      summary: t('successMessages.success'),
-      detail: t('successMessages.pointOfSaleCreated'),
+      summary: t('common.toast.success.success'),
+      detail: t('common.toast.success.pointOfSaleCreated'),
       life: 3000,
     });
   }).catch((error) => {

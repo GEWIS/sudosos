@@ -1,6 +1,6 @@
 <template>
   <div class="page-container">
-    <div class="page-title">{{ t('pointOfSaleOverview.Point of sale overview') }}</div>
+    <div class="page-title">{{ t('modules.seller.posOverview.title') }}</div>
     <div class="content-wrapper">
       <POSOverviewTable class="pos-overview-table" :get-points-of-sale="getPointsOfSale"/>
     </div>

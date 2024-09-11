@@ -1,5 +1,5 @@
 <template>
-  <FormDialog :header="t('c_posInfo.overview')" v-model:modelValue="isVisible"
+  <FormDialog :header="t('modules.seller.forms.pos.create')" v-model:modelValue="isVisible"
               :form="form">
     <template #form="slotProps">
       <POSCreateForm :form="slotProps.form" v-model:isVisible="isVisible"/>

@@ -1,4 +1,3 @@
-import { toTypedSchema } from "@vee-validate/yup";
 import * as yup from "yup";
 import { ref } from "vue";
 import type { Ref } from "vue";
@@ -33,7 +32,7 @@ export const simpleUserDetailsSchema =
 export const editPasswordSchema =
   yup.object({
     password: yup.string().required(),
-    passwordConfirm: yup.string().required().oneOf([yup.ref('password')], t('validation.password.match')),
+    passwordConfirm: yup.string().required().oneOf([yup.ref('password')], t('common.validation.password.match')),
   });
 
 export const updateInvoiceSettingsObject = yup.object({
@@ -65,10 +64,10 @@ export const updateUserDetailsObject = yup.object({
 export const editPinSchema =
   yup.object({
     pin: yup.string().required()
-      .matches(/^[0-9]+$/, t('validation.pin.onlyDigits'))
-      .min(4, t('validation.string.exact', { len: '4' } ))
-      .max(4, t('validation.string.exact', { len: '4' } )),
-    pinConfirm: yup.string().required().oneOf([yup.ref('pin')], t('validation.pin.match')),
+      .matches(/^[0-9]+$/, t('common.validation.pin.onlyDigits'))
+      .min(4, t('common.validation.string.exact', { len: '4' } ))
+      .max(4, t('common.validation.string.exact', { len: '4' } )),
+    pinConfirm: yup.string().required().oneOf([yup.ref('pin')], t('common.validation.pin.match')),
   });
 
 export const userTypes : Ref<Array<{name: string, value: string}>> = ref([

@@ -1,8 +1,8 @@
 <template>
   <div class="flex gap-5 justify-content-end">
-    <p class="prop">{{ t('c_productContainerOperations.Existing Product') }}</p>
+    <p class="prop">{{ t('modules.seller.productContainers.products.addExisting') }}</p>
     <Dropdown
-        :placeholder="t('c_ContainerAssign.Select product')"
+        :placeholder="t('modules.seller.forms.product.select')"
         :options="products"
         optionLabel="name"
         v-model="selectProduct"

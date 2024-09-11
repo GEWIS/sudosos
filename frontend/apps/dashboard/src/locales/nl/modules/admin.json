@@ -1,0 +1,52 @@
+{
+  "modules": {
+    "admin": {
+      "userOverview": {
+        "title": "Gebruikersoverzicht",
+        "list": {
+          "header": "Gebruikersoverzicht"
+        }
+      },
+      "singleUser": {
+        "profile": "{user}'s profiel",
+        "userInfo": {
+          "header": "Gebruikersinformatie"
+        },
+        "balance": {
+          "header": "Saldo",
+          "waiveFines": "Boetes kwijtschelden",
+          "allIsFines": "Alles hiervan is een boete",
+          "someIsFines": "Waarvan {fine} boetes zijn",
+          "waiveFinesConfirmation": "Weet je zeker dat je de boetes wilt kwijtschelden? Dit kan niet ongedaan worden gemaakt.",
+          "waiveFinesConfirmationTitle": "Boetes kwijtschelden"
+        }
+      },
+      "banners": {
+        "title": "Banners",
+        "noBannerFound": "Geen banner gevonden, upload er een!",
+        "list": {
+          "header": "Banner overzicht",
+          "filterActive": "Filter actief",
+          "filterNotExpired": "Filter niet verlopen",
+          "active": "Actief",
+          "notActive": "Niet actief"
+        },
+        "seconds": "Seconde | Seconden",
+        "till": "tot"
+      },
+      "forms": {
+        "banner": {
+          "headerCreate": "Banner aanmaken",
+          "headerEdit": "Banner bewerken",
+          "duration": "Duur",
+          "timespan": "Tijdsbestek"
+        },
+        "user": {
+          "header": "Gebruiker aanmaken",
+          "ofAge": "Gebruiker is meerderjarig",
+          "canGoIntoDebt": "Gebruiker kan schulden maken"
+        }
+      }
+    }
+  }
+}

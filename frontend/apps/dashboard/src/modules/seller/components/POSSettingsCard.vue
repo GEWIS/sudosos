@@ -1,5 +1,5 @@
 <template>
-  <FormCard :header="t('c_posInfo.overview')" v-if="pointOfSale" @cancel="updateFieldValues(pointOfSale)"
+  <FormCard :header="t('modules.seller.forms.pos.overview')" v-if="pointOfSale" @cancel="updateFieldValues(pointOfSale)"
             @update:modelValue="edit = $event" @save="formSubmit">
     <div class="flex flex-column justify-content-between gap-2">
       <POSSettingsForm :point-of-sale="pointOfSale" :form="form" :edit="edit" @update:edit="edit = $event"/>
@@ -67,7 +67,7 @@ const toast = useToast();
 const deleteConfirm = ref<HTMLElement | undefined>();
 function handleDelete() {
   confirm.require({
-    message: t('c_posInfo.confirmDelete'),
+    message: t('modules.seller.singlePos.confirmDelete'),
     target: deleteConfirm.value,
     acceptLabel: t('common.delete'),
     rejectLabel: t('common.close'),
@@ -80,8 +80,8 @@ function handleDelete() {
           });
       router.push({ name: 'pointOfSale' });
       toast.add({
-        summary: t('successMessages.success'),
-        detail: t('successMessages.pointOfSaleDeleted'),
+        summary: t('common.toast.success.success'),
+        detail: t('common.toast.success.pointOfSaleDeleted'),
         severity: 'success',
         life: 3000
       });

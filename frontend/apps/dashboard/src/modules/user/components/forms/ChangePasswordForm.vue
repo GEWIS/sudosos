@@ -1,13 +1,13 @@
 <template>
   <div class="flex flex-column justify-content-between gap-2">
-    <InputSpan :label="t('profile.passwordNew')"
+    <InputSpan :label="t('modules.user.profile.passwordNew')"
                :value="form.model.password.value.value"
                :attributes="form.model.password.attr.value"
                @update:value="form.context.setFieldValue('password', $event)"
                :errors="form.context.errors.value.password"
                id="password" type="password"
     />
-    <InputSpan :label="t('profile.passwordConfirm')"
+    <InputSpan :label="t('modules.user.profile.passwordConfirm')"
                :value="form.model.passwordConfirm.value.value"
                :attributes="form.model.passwordConfirm.attr.value"
                @update:value="form.context.setFieldValue('passwordConfirm', $event)"
@@ -55,8 +55,8 @@ setSubmit(props.form, props.form.context.handleSubmit(async (values) => {
           emit('submit:success', values);
           toast.add({
             severity: "success",
-            summary: t('successMessages.success'),
-            detail: `${t('successMessages.passwordUpdated')}`,
+            summary: t('common.toast.success.success'),
+            detail: `${t('common.toast.success.passwordUpdated')}`,
             life: 3000,
           });
           props.form.context.resetForm();

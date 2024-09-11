@@ -3,7 +3,7 @@
 <template>
   <div class="flex flex-column justify-content-between gap-2">
     <InputContainerSpan
-        :label="t('common.container')"
+        :label="t('modules.seller.productContainers.containers.container')"
         :container="form.model.container.value.value"
         :errors="form.context.errors.value.container"
         @update:container="form.context.setFieldValue('container', $event)"
@@ -45,8 +45,8 @@ setSubmit(props.form, props.form.context.handleSubmit(async (values) => {
   }).then(() => {
     toast.add({
       severity: 'success',
-      summary: t('successMessages.success'),
-      detail: t('successMessages.pointOfSaleUpdated'),
+      summary: t('common.toast.success.success'),
+      detail: t('common.toast.success.pointOfSaleUpdated'),
       life: 3000,
     });
   }).catch((error) => {

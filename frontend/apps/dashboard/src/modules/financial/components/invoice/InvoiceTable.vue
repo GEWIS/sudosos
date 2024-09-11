@@ -12,7 +12,7 @@
         class="w-full"
         tableStyle="min-width: 50rem"
     >
-      <Column field="date" :header="t('c_invoiceInfo.Date')">
+      <Column field="date" :header="t('common.date')">
         <template #body="slotProps">
           <Skeleton v-if="isLoading" class="w-6 my-1 h-1rem surface-300" />
           <span v-else>
@@ -20,7 +20,7 @@
                     </span>
         </template>
       </Column>
-      <Column field="currentState.state" :header="t('c_invoiceInfo.Progress')">
+      <Column field="currentState.state" :header="t('common.status')">
         <template #body="slotProps">
           <Skeleton v-if="isLoading" class="w-6 my-1 h-1rem surface-300" />
           <span v-else>
@@ -28,7 +28,7 @@
                     </span>
         </template>
       </Column>
-      <Column field="to.firstName" :header="t('c_invoiceInfo.For')">
+      <Column field="to.firstName" :header="t('common.for')">
         <template #body="slotProps">
           <Skeleton v-if="isLoading" class="w-6 my-1 h-1rem surface-300" />
           <span v-else>
@@ -36,7 +36,7 @@
                     </span>
         </template>
       </Column>
-      <Column field="description" :header="t('c_invoiceInfo.Description')" style="max-width: 15rem">
+      <Column field="description" :header="t('common.description')" style="max-width: 15rem">
         <template #body="slotProps">
           <Skeleton v-if="isLoading" class="w-6 my-1 h-1rem surface-300" />
           <span v-else>
@@ -44,7 +44,7 @@
                     </span>
         </template>
       </Column>
-      <Column field="transfer.amount" :header="t('transactions.amount')">
+      <Column field="transfer.amount" :header="t('common.amount')">
         <template #body="slotProps">
           <Skeleton v-if="isLoading" class="w-3 my-1 h-1rem surface-300" />
           <span v-else>
@@ -52,7 +52,7 @@
                     </span>
         </template>
       </Column>
-      <Column :header="t('c_invoiceInfo.Actions')" style="width: 10%">
+      <Column :header="t('common.actions')" style="width: 10%">
         <template #body="slotProps">
           <Skeleton v-if="isLoading" class="w-3 my-1 h-1rem surface-300" />
           <span v-else>

@@ -1,30 +1,46 @@
 <template>
   <div>
     <img class="max-h-9rem block mx-auto my-0" src="../../../assets/img/bier.png" alt="logo" />
-    <div class="text-900 text-5xl mt-0 mx-auto mb-2 w-full">{{ t('login.Reset') }}</div>
+    <div class="text-900 text-5xl mt-0 mx-auto mb-2 w-full">{{ t('modules.auth.reset.reset') }}</div>
     <form v-if="passwordResetMode === 0" class="flex flex-column" @submit="resetPasswordRequest">
       <span class="p-float-label with-error">
         <InputText v-bind="email" id="email" size="large" name="email" class="input-field"
           :class="{'p-invalid': emailForm.errors.value.email}" />
-        <label :class="{'contains-text': email.modelValue }" for="email">{{ t('login.Enter email') }}</label>
+        <label
+            :class="{'contains-text': email.modelValue }"
+            for="email">
+          {{ t('modules.auth.reset.enterEmail') }}
+        </label>
       </span>
       <small v-if="emailForm.errors.value.email" class="p-error">
         <i class="pi pi-exclamation-circle" />
         {{ emailForm.errors.value.email }}
       </small>
-      <Button type="submit" id="reset-button">{{ t('login.Reset') }}</Button>
-      <div class="text-900 underline cursor-pointer" @click="backToLogin">{{ t('login.Back to login') }}</div>
+      <Button type="submit" id="reset-button">{{ t('modules.auth.reset.reset') }}</Button>
+      <div
+          class="text-900 underline cursor-pointer"
+          @click="backToLogin">
+        {{ t('modules.auth.reset.backToLogin') }}
+      </div>
 
     </form>
     <div v-else-if="passwordResetMode === 1" class="login-form">
-      <div class="text-900">{{ t('login.Email sent') }}</div>
-      <div class="text-900 underline cursor-pointer" @click="backToLogin">{{ t('login.Back to login') }}</div>
+      <div class="text-900">{{ t('modules.auth.reset.emailSent') }}</div>
+      <div
+          class="text-900 underline cursor-pointer"
+          @click="backToLogin">
+        {{ t('modules.auth.reset.backToLogin') }}
+      </div>
     </div>
     <form v-else class="login-form" @submit="setNewPassword">
       <span class="p-float-label with-error">
         <InputText v-bind="password" id="password" size="large" name="password" type="password" class="input-field"
           :class="{'p-invalid': passwordForm.errors.value.password}" />
-        <label :class="{'contains-text': password.modelValue }" for="password">{{ t('login.New password') }}</label>
+        <label
+            :class="{'contains-text': password.modelValue }"
+            for="password">
+          {{ t('modules.auth.reset.newPassword') }}
+        </label>
       </span>
       <small v-if="passwordForm.errors.value.password" class="p-error">
         <i class="pi pi-exclamation-circle" />
@@ -34,15 +50,19 @@
         <InputText v-bind="passwordConfirm" id="passwordConfirm" size="large" name="passwordConfirm" type="password"
           class="input-field" :class="{'p-invalid': passwordForm.errors.value.passwordConfirm}" />
         <label :class="{'contains-text': passwordConfirm.modelValue }" for="passwordConfirm">
-          {{ t('login.Confirm password') }}
+          {{ t('modules.auth.reset.confirmPassword') }}
         </label>
       </span>
       <small v-if="passwordForm.errors.value.passwordConfirm" class="p-error">
         <i class="pi pi-exclamation-circle" />
         {{ passwordForm.errors.value.passwordConfirm }}
       </small>
-      <Button type="submit" id="reset-button">{{ t('login.Reset') }}</Button>
-      <div class="text-900 underline cursor-pointer" @click="backToLogin">{{ t('login.Back to login') }}</div>
+      <Button type="submit" id="reset-button">{{ t('modules.auth.reset.reset') }}</Button>
+      <div
+          class="text-900 underline cursor-pointer"
+          @click="backToLogin">
+        {{ t('modules.auth.reset.backToLogin') }}
+      </div>
     </form>
   </div>
 </template>
@@ -133,8 +153,8 @@ const setNewPassword = passwordForm.handleSubmit(async (values) => {
     backToLogin();
     toast.add({
       severity: 'success',
-      summary: t('successMessages.success'),
-      detail: t('successMessages.resetPassword'),
+      summary: t('common.toast.success.success'),
+      detail: t('common.toast.success.resetPasswordSuccess'),
       life: 3000,
     });
   }).catch((err) => handleError(err, toast));

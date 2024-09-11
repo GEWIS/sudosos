@@ -17,16 +17,16 @@
         :attributes="form.model.owner.attr.value"
         @update:organ="form.context.setFieldValue('owner', $event)"
         :errors="form.context.errors.value.owner"
-        id="owner" :placeholder="t('c_containerEditModal.Select owner')"
-        :label="t('c_containerEditModal.Owner')"/>
+        id="owner" :placeholder="t('modules.seller.forms.common.selectOwner')"
+        :label="t('common.owner')"/>
 
     <InputSpan
         :value="form.model.public.value.value"
         :attributes="form.model.public.attr.value"
         @update:value="form.context.setFieldValue('public', $event)"
         :errors="form.context.errors.value.public"
-        id="public" :placeholder="t('c_containerEditModal.Public')"
-        :label="t('c_containerEditModal.Public')" type="boolean"
+        id="public" :placeholder="t('modules.seller.productContainers.containers.public')"
+        :label="t('modules.seller.productContainers.containers.public')" type="boolean"
       />
   </div>
 </template>

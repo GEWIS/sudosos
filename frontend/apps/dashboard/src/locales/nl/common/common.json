@@ -1,0 +1,133 @@
+{
+    "common": {
+        "sudosos": "SudoSOS",
+        "title": "Titel",
+        "total": "Totaal",
+        "amount": "Bedrag",
+        "actions": "Acties",
+        "gewisId": "GEWIS ID",
+        "downloadPdf": "Download PDF",
+        "description": "Beschrijving",
+        "id": "ID",
+        "vat": "BTW",
+        "loading": "Bezig met laden",
+        "excl": "Excl. BTW",
+        "incl": "Incl. BTW",
+        "firstName": "Voornaam",
+        "lastName": "Achternaam",
+        "name": "Naam",
+        "for": "Voor",
+        "type": "Type",
+        "date": "Datum",
+        "ofAge": "18+",
+        "info": "Informatie",
+        "price": "Prijs",
+        "status": "Status",
+        "active": "Actief",
+        "create": "Aanmaken",
+        "edit": "Bewerken",
+        "search": "Zoeken",
+        "save": "Opslaan",
+        "close": "Sluiten",
+        "cancel": "Annuleren",
+        "delete": "Verwijderen",
+        "owner": "Eigenaar",
+        "back": "Terug",
+        "signOut": "Uitloggen",
+        "createdAt": "Aangemaakt op",
+        "updatedAt": "Bijgewerkt op",
+        "placeholders": {
+            "selectType": "Selecteer Type",
+            "email": "voorbeeld@voorbeeld.com",
+            "bankAccountNumber": "NL69 ABNA 0012 3456 78",
+            "fullName": "Jan Jansen",
+            "addressee": "Jan & Co.",
+            "street": "Grote Kerkplein 15",
+            "postalCode": "8011 PK",
+            "city": "Zwolle",
+            "country": "Nederland",
+            "product": "IJs",
+            "pos": "GELIMBO"
+        },
+        "tooltip": {
+            "productOwner": "Opmerking: De eigenaar van de container krijgt de opbrengst, niet de producteigenaar. Eigenaar kan na aanmaak niet meer worden bewerkt."
+        },
+        "nickname": "Bijnaam",
+        "email": "E-mailadres",
+        "usertype": "Gebruikerstype",
+        "toast": {
+            "success": {
+                "success": "Succes",
+                "userUpdated": "Gebruiker succesvol bijgewerkt.",
+                "userCreated": "Gebruiker succesvol aangemaakt.",
+                "waiveFinesSuccess": "Boetes succesvol kwijtgescholden.",
+                "resetPasswordSuccess": "Wachtwoord succesvol gereset.",
+                "dataAnalysis": "Voorkeur gegevensanalyse succesvol gewijzigd.",
+                "apiKeyChanged": "API-sleutel succesvol gewijzigd.",
+                "apiKeyDeleted": "API-sleutel succesvol verwijderd.",
+                "passwordUpdated": "Wachtwoord succesvol bijgewerkt.",
+                "pinUpdated": "Pincode succesvol bijgewerkt.",
+                "finesNotified": "Gebruikers succesvol op de hoogte gebracht.",
+                "finesHandedOut": "Boetes succesvol uitgedeeld.",
+                "payoutCreated": "Uitbetaling succesvol aangemaakt.",
+                "invoiceDeleted": "Factuur succesvol verwijderd.",
+                "invoiceUpdated": "Factuur succesvol bijgewerkt.",
+                "pointOfSaleDeleted": "POS succesvol verwijderd.",
+                "pointOfSaleUpdated": "POS succesvol bijgewerkt.",
+                "pointOfSaleCreated": "POS succesvol aangemaakt.",
+                "containerUpdated": "Container succesvol bijgewerkt.",
+                "containerCreated": "Container succesvol aangemaakt.",
+                "containerDeleted": "Container succesvol verwijderd.",
+                "fineDeleted": "Boete succesvol verwijderd.",
+                "transactionDeleted": "Transactie succesvol verwijderd.",
+                "productCreated": "Product succesvol aangemaakt.",
+                "productUpdated": "Product succesvol bijgewerkt.",
+                "productContainerDeleted": "Product succesvol verwijderd uit container.",
+                "productDeleted": "Product succesvol verwijderd."
+            },
+            "canceled": "Geannuleerd",
+            "reject": {
+                "waiveFinesRejected": "Kwijtschelding van boetes geannuleerd."
+            }
+        },
+        "navigation": {
+            "transactions": "Transacties",
+            "admin": "Beheer",
+            "financial": "Financieel",
+            "seller": "Verkoper",
+            "profile": "Profiel",
+            "signOut": "Uitloggen",
+            "dutch": "Nederlands",
+            "english": "Engels",
+            "userOverview": "Gebruikersoverzicht",
+            "banners": "Banners",
+            "socialDrinkCards": "Sociale drinkkaarten",
+            "invoices": "Facturen",
+            "payouts": "Uitbetalingen",
+            "manageProducts": "Producten beheren",
+            "posOverview": "POS overzicht",
+            "flaggedTransactions": "Gemarkeerde transacties",
+            "fineOverview": "Boeteoverzicht"
+        },
+        "validation": {
+            "number": {
+                "min": "Dit veld moet groter zijn dan {min}"
+            },
+            "password": {
+                "match": "Wachtwoorden moeten overeenkomen."
+            },
+            "pin": {
+                "match": "Pincodes moeten overeenkomen.",
+                "onlyDigits": "Pincode mag alleen uit cijfers bestaan."
+            },
+            "required": "Dit veld is verplicht",
+            "string": {
+                "exact": "Dit veld moet exact {len} tekens bevatten",
+                "max": "Dit veld mag niet meer dan {max} tekens bevatten",
+                "min": "Dit veld moet ten minste {min} tekens bevatten"
+            }
+        },
+        "apiError": "Fout",
+        "errorMessage": "Er is iets misgegaan, open een issue op {link} en beschrijf het probleem."
+    }
+}

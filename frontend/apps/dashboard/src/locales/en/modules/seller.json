@@ -1,0 +1,63 @@
+{
+  "modules": {
+    "seller": {
+      "posOverview": {
+        "title": "Point of sale overview",
+        "list": {
+          "header": "Points of sale",
+          "posName": "POS name"
+        }
+      },
+      "singlePos": {
+        "sales": "Sales in the last week",
+        "confirmDelete": "Are you sure you want to delete this POS?"
+      },
+      "productContainers": {
+        "title": "Manage products",
+        "containers": {
+          "header": "Containers",
+          "addExisting": "Add existing container",
+          "public": "Public",
+          "container": "Container",
+          "create": "Create container",
+          "edit": "Edit container"
+        },
+        "products": {
+          "header": "All products",
+          "promo": "Promo",
+          "addExisting": "Add existing product",
+          "category": "Category",
+          "vat": "VAT",
+          "alcoholPercentage": "Alcohol percentage",
+          "owner": "Owner",
+          "preferred": "Preferred",
+          "featured": "Featured",
+          "priceList": "Pricelist",
+          "image": "Image",
+          "addToContainer": "Add product to container",
+          "createProduct": "Create product",
+          "productDetails": "Product details",
+          "productContainerDelete": "Delete product from container",
+          "confirmProductContainerDelete": "Are you sure you want to delete this product from this container?",
+          "confirmDelete": "Are you sure you want to delete this product?"
+        }
+      },
+      "forms": {
+        "common": {
+          "selectOwner": "Select owner"
+        },
+        "pos": {
+          "overview": "Overview",
+          "useAuthentication": "Use PIN authentication",
+          "create": "Create POS"
+        },
+        "product": {
+          "select": "Select product",
+          "closeTo": "Name is close to: {name} (click to pick)",
+          "selectCategory": "Select category",
+          "selectVat": "Select VAT"
+        }
+      }
+    }
+  }
+}

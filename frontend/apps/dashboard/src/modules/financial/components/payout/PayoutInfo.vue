@@ -1,7 +1,10 @@
 <template>
   <div v-if="payout">
     <div class="flex flex-column gap-2">
-      <span>{{ t('payout.Requested by') }} <UserLink :user="payout.requestedBy"/></span>
+      <span>
+        {{ t('modules.financial.payout.requestedBy') }}
+        <UserLink :user="payout.requestedBy"/>
+      </span>
       <div v-if="isCreated">
         <skeleton v-if="userBalance === null" class="w-6 my-1 h-0.5rem surface-300"/>
         <div v-else
@@ -9,10 +12,10 @@
           <div class="flex flex-row gap-1">
             <span v-if="overBalance"><i class="pi pi-exclamation-triangle"></i></span>
             <span v-if="userBalance">
-            {{ t('payout.Current balance', { balance: formatPrice(userBalance.amount) }) }}
+            {{ t('modules.financial.forms.payout.currentBalance', { balance: formatPrice(userBalance.amount) }) }}
             </span>
             <span v-else>
-              {{ t('payout.Current balance', { balance: '-' }) }}
+              {{ t('modules.financial.forms.payout.currentBalance', { balance: '-' }) }}
             </span>
           </div>
         </div>
@@ -20,9 +23,9 @@
       <table class="table text-left my-1">
         <thead>
         <tr>
-          <th>{{ t('payout.BankAccountNumber') }}</th>
-          <th>{{ t('payout.AccountName') }}</th>
-          <th>{{ t('payout.Amount') }}</th>
+          <th>{{ t('modules.financial.forms.payout.bankAccountNumber') }}</th>
+          <th>{{ t('modules.financial.forms.payout.bankAccountName') }}</th>
+          <th>{{ t('common.amount') }}</th>
         </tr>
         </thead>
         <tbody>
@@ -39,27 +42,28 @@
         </tbody>
       </table>
       <div class="flex flex-column">
-        <span>{{ t('payout.CreatedAt') + ': '}}{{ formatDateFromString(payout.createdAt) }}</span>
-        <span>{{ t('payout.UpdatedAt') + ': '}}{{ formatDateFromString(payout.updatedAt) }}</span>
-        <span>{{ t('payout.PayoutID') + ': ' }}{{ payout.id }}</span>
+        <span>{{ t('common.createdAt') + ': ' }}{{ formatDateFromString(payout.createdAt) }}</span>
+        <span>{{ t('common.updatedAt') + ': ' }}{{ formatDateFromString(payout.updatedAt) }}</span>
+        <span>{{ t('common.id') + ': ' }}{{ payout.id }}</span>
       </div>
     </div>
     <div v-if="isApproved && payout.approvedBy" class="mt-1">
       <span class="font-italic text-sm">
-        {{ t('payout.ApprovedBy', {approvedBy: payout.approvedBy.firstName + ' ' + payout.approvedBy.lastName}) }}
+        {{ t('modules.financial.payout.approvedBy',
+          {approvedBy: payout.approvedBy.firstName + ' ' + payout.approvedBy.lastName}) }}
       </span>
     </div>
     <div class="flex flex-row gap-2 justify-content-end w-full mt-3">
       <div v-if="isCreated" class="flex flex-row gap-2">
         <Button
             severity="success"
-            :label="t('common.approve')"
+            :label="t('modules.financial.payout.approve')"
             icon="pi pi-check"
             @click="approvePayout"
         />
         <Button
             severity="danger"
-            :label="t('common.deny')"
+            :label="t('modules.financial.payout.deny')"
             icon="pi pi-times"
             @click="denyPayout"
         />
@@ -70,7 +74,7 @@
           icon="pi pi-file-export"
           :disabled="downloadingPdf"
           severity="danger"
-          :label="t('common.download PDF')"
+          :label="t('common.downloadPdf')"
           @click="() => downloadPdf(payoutId)"
       />
       <Button

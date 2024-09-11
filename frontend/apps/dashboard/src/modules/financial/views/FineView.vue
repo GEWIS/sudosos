@@ -2,9 +2,9 @@
 <!-- https://github.com/GEWIS/sudosos-frontend/issues/228 -->
 <template>
   <div class="page-container">
-    <div class="page-title">{{ t('fine.fineOverview') }}</div>
+    <div class="page-title">{{ t('modules.financial.fine.title') }}</div>
     <div class="content-wrapper flex flex-column gap-5">
-      <CardComponent :header="t('fine.eligibleUsers')" class="w-full">
+      <CardComponent :header="t('modules.financial.fine.eligibleUsers.header')" class="w-full">
         <DataTable
           paginator
           :rows="10"
@@ -25,7 +25,7 @@
                       showTime
                       hourFormat="24"
                     />
-                    <label for="firstDate">{{ t('fine.firstDate') }}</label>
+                    <label for="firstDate">{{ t('modules.financial.fine.eligibleUsers.firstDate') }}</label>
                   </span>
                   <span class="p-float-label">
                     <Calendar
@@ -35,40 +35,46 @@
                       showTime
                       hourFormat="24"
                     />
-                    <label for="secondDate">{{ t('fine.secondDate') }}</label>
+                    <label for="secondDate">{{ t('modules.financial.fine.eligibleUsers.secondDate') }}</label>
                   </span>
-                  <Button type="submit">{{ t('fine.apply') }}</Button>
-                  <Button @click="notifyUsers" severity="info">{{ t('fine.notify') }}</Button>
+                  <Button type="submit">{{ t('modules.financial.fine.eligibleUsers.apply') }}</Button>
+                  <Button
+                      @click="notifyUsers"
+                      severity="info">
+                    {{ t('modules.financial.fine.eligibleUsers.notify') }}
+                  </Button>
                   <ProgressSpinner class="h-2rem ml-0" v-if="isNotifying"/>
                 </form>
-                <Button @click="handoutFines">{{ t('fine.handout') }}</Button>
+                <Button @click="handoutFines">{{ t('modules.financial.fine.eligibleUsers.handout') }}</Button>
               </div>
               <p class="text-red-500">
                 {{
-                  showMessage ? t('fine.infoMessage', {
+                  showMessage ? t('modules.financial.fine.eligibleUsers.info', {
                     fines: formatPrice(totalFines),
                     debt: formatPrice(totalDebt)
-                  }): t('fine.pleaseSelect')
+                  }): t('modules.financial.fine.eligibleUsers.pleaseSelect')
                 }}
               </p>
             </div>
           </template>
           <Column selectionMode="multiple" />
-          <Column field="gewisId" :header="t('fine.gewisId')" />
-          <Column field="fullName" :header="t('fine.name')" />
-          <Column field="firstBalance" :header="t('fine.firstBalance')">
+          <Column field="gewisId" :header="t('common.gewisId')" />
+          <Column field="fullName" :header="t('common.name')" />
+          <Column field="firstBalance" :header="t('modules.financial.fine.eligibleUsers.firstBalance')">
             <template #body="slotProps">
               {{ formatPrice(slotProps.data.firstBalance.amount) }}
             </template>
           </Column>
-          <Column field="lastBalance" :header="t('fine.lastBalance')">
+          <Column field="lastBalance" :header="t('modules.financial.fine.eligibleUsers.lastBalance')">
             <template #body="slotProps">
               {{ formatPrice(slotProps.data.lastBalance.amount) }}
             </template>
           </Column>
         </DataTable>
       </CardComponent>
-      <CardComponent :header="t('fine.fineHandoutEvents')" class="w-full">
+      <CardComponent
+          :header="t('modules.financial.fine.handoutEvents.header')"
+          class="w-full">
         <DataTable
           paginator
           :rows="10"
@@ -76,24 +82,27 @@
           :value="fineHandoutEvents"
           @row-click="(e: any) => openHandoutEvent(e.data.id)"
         >
-          <Column field="id" id="id" :header="t('fine.id')">
+          <Column field="id" id="id" :header="t('common.id')">
             <template #body v-if="isLoading">
               <Skeleton class="w-4 my-1 h-1rem surface-300"/>
             </template>
           </Column>
-          <Column field="createdAt" id="date" :header="t('fine.date')">
+          <Column field="createdAt" id="date" :header="t('common.date')">
             <template #body v-if="isLoading">
               <Skeleton class="w-7 my-1 h-1rem surface-300"/>
             </template>
             <template #body="slotProps" v-else>{{ formatDateTime(new Date(slotProps.data.createdAt)) }}</template>
           </Column>
-          <Column field="referenceDate" id="referenceDate" :header="t('fine.referenceDate')">
+          <Column
+              field="referenceDate"
+              id="referenceDate"
+              :header="t('modules.financial.fine.handoutEvents.referenceDate')">
             <template #body v-if="isLoading">
               <Skeleton class="w-4 my-1 h-1rem surface-300"/>
             </template>
             <template #body="slotProps" v-else>{{ formatDateTime(new Date(slotProps.data.referenceDate)) }}</template>
           </Column>
-          <Column id="info" :header="t('fine.info')" >
+          <Column id="info" :header="t('common.info')" >
             <template #body v-if="isLoading">
               <Skeleton class="w-2 my-1 h-1rem surface-300"/>
             </template>
@@ -105,23 +114,26 @@
       </CardComponent>
     </div>
   </div>
-    <Dialog v-model:visible="showModal" class="w-auto flex w-9 md:w-4" :header="t('fine.handoutEventDetails')">
+    <Dialog
+        v-model:visible="showModal"
+        class="w-auto flex w-9 md:w-4"
+        :header="t('modules.financial.fine.handoutEvents.details')">
       <div class="flex flex-column">
         <div class="flex flex-row justify-content-between">
-          <p>{{ t("fine.fineNumber") }}</p>
+          <p>{{ t("modules.financial.fine.handoutEvents.number") }}</p>
           <p>{{ selectedHandoutEvent?.fines.length }}</p>
         </div>
         <div class="flex flex-row justify-content-between">
-          <p>{{ t("fine.fineTotal") }}</p>
+          <p>{{ t("modules.financial.fine.handoutEvents.total") }}</p>
           <p>{{ formatPrice(modalTotalFines) }}
           </p>
         </div>
         <div class="flex flex-row justify-content-between">
-          <p>{{ t("fine.createdAt") }}</p>
+          <p>{{ t("common.createdAt") }}</p>
           <p>{{ formatDateTime(new Date(selectedHandoutEvent?.createdAt || '')) }}</p>
         </div>
         <div class="flex flex-row justify-content-between">
-          <p>{{ t("fine.referenceDate") }}</p>
+          <p>{{ t("modules.financial.fine.handoutEvents.referenceDate") }}</p>
           <p>{{ formatDateTime(new Date(selectedHandoutEvent?.referenceDate || '')) }}</p>
         </div>
       </div>
@@ -270,8 +282,8 @@ const notifyUsers = async () => {
   })
     .then(() => {
       toast.add({
-        summary: t('successMessages.success'),
-        detail: t('successMessages.finesNotified'),
+        summary: t('common.toast.success.success'),
+        detail: t('common.toast.success.finesNotified'),
         life: 3000,
         severity: 'success',
       });
@@ -291,8 +303,8 @@ const handoutFines = async () => {
   })
     .then(() => {
       toast.add({
-        summary: t('successMessages.success'),
-        detail: t('successMessages.finesHandedOut'),
+        summary: t('common.toast.success.success'),
+        detail: t('common.toast.success.finesHandedOut'),
         life: 3000,
         severity: 'success',
       });

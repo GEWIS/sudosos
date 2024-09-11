@@ -1,0 +1,41 @@
+{
+  "modules": {
+    "user": {
+      "landing": {
+        "title": "Overzicht"
+      },
+      "profile": {
+        "title": "Profiel",
+        "passwordNew": "Nieuw wachtwoord",
+        "passwordConfirm": "Bevestig wachtwoord",
+        "pinNew": "Nieuwe PIN",
+        "pinConfirm": "Bevestig PIN"
+      },
+      "transactions": {
+        "title": "Transacties"
+      },
+      "settings": {
+        "header": "Gebruikersinstellingen",
+        "changePin": "PIN wijzigen",
+        "changePassword": "Wachtwoord wijzigen",
+        "apiKeys": "API-sleutels",
+        "changeApiKey": "API-sleutel wijzigen",
+        "deleteApiKey": "API-sleutel verwijderen",
+        "preferences": "Voorkeuren",
+        "dataAnalysis": "Data-analyse",
+        "confirmChangeApiKey": "Weet je zeker dat je de API-sleutel wilt wijzigen?",
+        "confirmDeleteApiKey": "Weet je zeker dat je de API-sleutel wilt verwijderen?"
+      },
+      "balance": {
+        "balance": "Saldo",
+        "allIsFines": "Alles is een boete",
+        "someIsFines": "Waarvan {fine} een boete is",
+        "after": "Saldo na",
+        "increaseAmount": "Saldo verhogen",
+        "topUp": "Opwaarderen",
+        "price": "Prijs",
+        "pay": "Betalen"
+      }
+    }
+  }
+}

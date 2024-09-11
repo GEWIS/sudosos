@@ -1,11 +1,11 @@
 <template>
-    <CardComponent :header="t('banner.Banner overview')">
+    <CardComponent :header="t('modules.admin.banners.list.header')">
         <DataView :value="displayedBanners" data-key="id" paginator :first="props.skip && props.skip-1"
             :rows="props.take">
             <template #header>
                 <div class="flex flex-column md:flex-row align-items-center justify-content-between">
                     <SelectButton v-model="filters" :options="options" optionLabel="name" multiple />
-                    <Button class="mt-2 md:mt-0" :label="t('app.Create')" icon="pi pi-plus"
+                    <Button class="mt-2 md:mt-0" :label="t('common.create')" icon="pi pi-plus"
                         @click="isCreateDialogVisible = true" />
                 </div>
             </template>
@@ -58,11 +58,11 @@ enum Filter {
 
 const options = [
     {
-        name: t('banner.Filter active'),
+        name: t('modules.admin.banners.list.filterActive'),
         type: Filter.ACTIVE
     },
     {
-        name: t('banner.Filter not expired'),
+        name: t('modules.admin.banners.list.filterNotExpired'),
         type: Filter.EXPIRED
     }
 ];

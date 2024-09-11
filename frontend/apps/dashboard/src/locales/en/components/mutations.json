@@ -1,0 +1,34 @@
+{
+  "components": {
+    "mutations": {
+      "balance": "Balance mutations",
+      "recent": "Recent transactions",
+      "all": "All transactions",
+      "when": "When",
+      "created": "Created transactions",
+      "createdBy": "Created by",
+      "createdFor": "Created for",
+      "amount": "Amount",
+      "pos": "Point of sale",
+      "you": "You",
+      "user": "User transactions",
+      "modal": {
+        "header": "Transaction details",
+        "waivedFine": "Waived fine",
+        "invoice": "Invoice",
+        "fine": "Fine",
+        "topUp": "Top up",
+        "payment": "Payment",
+        "payoutRequestDescription": "You have requested a payout.",
+        "waivedFineDescription": "Your fines were waived.",
+        "invoiceDescription": "You have paid an invoice to GEWIS",
+        "depositDescription": "You have deposited money to GEWIS",
+        "fineDescription": "You have paid a fine to GEWIS",
+        "unknown": "Unknown transaction"
+      },
+      "userBoughtAt": "You bought at {pos}",
+      "otherBoughtAt": "{user} bought at {pos}",
+      "putInBy": "Transaction put in by {createdBy}"
+    }
+  }
+}

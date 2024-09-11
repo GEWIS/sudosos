@@ -1,7 +1,7 @@
 <template>
     <DataTable :rows="rows" :value="mutations" :rowsPerPageOptions="[5, 10, 25, 50, 100]" :paginator="paginator" lazy
                @page="onPage($event)" :totalRecords="totalRecords" >
-        <Column field="moment" :header="t('transactions.when')">
+        <Column field="moment" :header="t('components.mutations.when')">
             <template #body v-if="isLoading">
                 <Skeleton class="w-6 my-1 h-1rem surface-300" />
             </template>
@@ -18,7 +18,7 @@
             </template>
         </Column>
 
-        <Column field="createdBy" :header="t('transactions.createdBy')">
+        <Column field="createdBy" :header="t('components.mutations.createdBy')">
             <template #body v-if="isLoading">
                 <Skeleton class="w-6 my-1 h-1rem surface-300" />
             </template>
@@ -27,18 +27,18 @@
             </template>
         </Column>
 
-        <Column field="createdFor" :header="t('transactions.createdFor')">
+        <Column field="createdFor" :header="t('components.mutations.createdFor')">
             <template #body v-if="isLoading">
                 <Skeleton class="w-6 my-1 h-1rem surface-300" />
             </template>
             <template #body="mutation" v-else>
-                {{ mutation.data.from?.firstName + " " + mutation.data.from?.lastName}}
+                {{ mutation.data.from?.firstName + " " + mutation.data.from?.lastName }}
             </template>
         </Column>
 
 
 
-        <Column field="change" :header="t('transactions.amount')">
+        <Column field="change" :header="t('components.mutations.amount')">
             <template #body v-if="isLoading">
                 <Skeleton class="w-3 my-1 h-1rem surface-300" />
             </template>

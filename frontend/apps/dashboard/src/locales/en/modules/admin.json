@@ -1,0 +1,52 @@
+{
+  "modules": {
+    "admin": {
+      "userOverview": {
+        "title": "User overview",
+        "list": {
+          "header": "User overview"
+        }
+      },
+      "singleUser": {
+        "profile": "{user}'s profile",
+        "userInfo": {
+          "header": "User information"
+        },
+        "balance": {
+          "header": "Balance",
+          "waiveFines": "Waive fines",
+          "allIsFines": "All of which is a fine",
+          "someIsFines": "Of which {fine} is fines",
+          "waiveFinesConfirmation": "Are you sure you want to waive the fines? This cannot be undone.",
+          "waiveFinesConfirmationTitle": "Waive fines"
+        }
+      },
+      "banners": {
+        "title": "Banners",
+        "noBannerFound": "No banner found, please upload one!",
+        "list": {
+          "header": "Banner overview",
+          "filterActive": "Filter active",
+          "filterNotExpired": "Filter not expired",
+          "active": "Active",
+          "notActive": "Not active"
+        },
+        "seconds": "Second | Seconds",
+        "till": "till"
+      },
+      "forms": {
+        "banner": {
+          "headerCreate": "Create banner",
+          "headerEdit": "Edit banner",
+          "duration": "Duration",
+          "timespan": "Timespan"
+        },
+        "user": {
+          "header": "Create user",
+          "ofAge": "User is of age",
+          "canGoIntoDebt": "User can go into debt"
+        }
+      }
+    }
+  }
+}

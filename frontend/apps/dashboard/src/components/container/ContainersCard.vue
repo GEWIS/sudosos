@@ -1,12 +1,12 @@
 <template>
-  <CardComponent :header="t('containersOverview.Containers')" class="p-0">
+  <CardComponent :header="t('modules.seller.productContainers.containers.header')" class="p-0">
     <template #topAction>
       <div v-if="showCreate || associatedPos" class="flex justify-content-endg gap-2">
         <Button
             v-if="associatedPos"
             @click="openContainerAdd()"
-            outlined>{{ t('containersOverview.addExisting')}}</Button>
-        <Button @click="openContainerEdit()">{{t('app.Create')}}</Button>
+            outlined>{{ t('modules.seller.productContainers.containers.addExisting') }}</Button>
+        <Button @click="openContainerEdit()">{{ t('common.create') }}</Button>
       </div>
     </template>
     <Accordion :activeIndex="0" class="block w-full" :multiple="true"
@@ -20,8 +20,9 @@
             <div>
               <div @click="(event) => handleEditClick(event, container.id)" class="px-5">
                 <span class="mr-4 text-xs uppercase" v-if="container.public">
-                  {{ t('c_containerEditModal.Public') }}</span>
+                  {{ t('modules.seller.productContainers.containers.public') }}
                 <i class="pi pi-pencil"/>
+                </span>
               </div>
             </div>
           </div>

@@ -1,12 +1,12 @@
 <template>
   <div class="flex flex-column justify-content-between gap-2">
-    <InputSpan :label="t('c_posInfo.name')"
+    <InputSpan :label="t('common.name')"
                :value="form.model.name.value.value"
                :attributes="form.model.name.attr.value"
                @update:value="form.context.setFieldValue('name', $event)"
                :errors="form.context.errors.value.name"
-               id="name" :placeholder="t('c_posInfo.posName')" type="text" :disabled="!edit"/>
-    <InputSpan :label="t('c_posInfo.useAuthentication')"
+               id="name" :placeholder="t('modules.seller.posOverview.list.posName')" type="text" :disabled="!edit"/>
+    <InputSpan :label="t('modules.seller.forms.pos.useAuthentication')"
                :value="form.model.useAuthentication.value.value"
                :attributes="form.model.useAuthentication.attr.value"
                @update:value="form.context.setFieldValue('useAuthentication', $event)"
@@ -58,8 +58,8 @@ setSubmit(props.form, props.form.context.handleSubmit(async (values) => {
   await pointOfSaleStore.updatePointOfSale(props.pointOfSale.id, values).then(() => {
     toast.add({
       severity: 'success',
-      summary: t('successMessages.success'),
-      detail: t('successMessages.pointOfSaleUpdated'),
+      summary: t('common.toast.success.success'),
+      detail: t('common.toast.success.pointOfSaleUpdated'),
       life: 3000,
     });
     emit('update:edit', false);

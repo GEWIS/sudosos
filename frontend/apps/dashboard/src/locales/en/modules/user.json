@@ -1,0 +1,41 @@
+{
+  "modules": {
+    "user": {
+      "landing": {
+        "title": "Overview"
+      },
+      "profile": {
+        "title": "Profile",
+        "passwordNew": "New password",
+        "passwordConfirm": "Confirm password",
+        "pinNew": "New PIN",
+        "pinConfirm": "Confirm PIN"
+      },
+      "transactions": {
+        "title": "Transactions"
+      },
+      "settings": {
+        "header": "User settings",
+        "changePin": "Change PIN",
+        "changePassword": "Change password",
+        "apiKeys": "API keys",
+        "changeApiKey": "Change API key",
+        "deleteApiKey": "Delete API key",
+        "preferences": "Preferences",
+        "dataAnalysis": "Data analysis",
+        "confirmChangeApiKey": "Are you sure you want to change the API key?",
+        "confirmDeleteApiKey": "Are you sure you want to delete the API key?"
+      },
+      "balance": {
+        "balance": "Balance",
+        "allIsFines": "All of which is a fine",
+        "someIsFines": "Of which {fine} is fine",
+        "after": "Balance after",
+        "increaseAmount": "Increase balance",
+        "topUp": "Top up",
+        "price": "Price",
+        "pay": "Pay"
+      }
+    }
+  }
+}
