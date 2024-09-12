@@ -2,7 +2,8 @@
   "modules": {
     "user": {
       "landing": {
-        "title": "Overzicht"
+        "title": "Overzicht",
+        "motd": "We hebben meldingen gekregen van opwaarderingen die niet correct behandeld worden. Meestal wordt dit bedrag teruggestort binnen 48 uur. Je kunt boetes voorkomen en ons heel erg helpen door {link} in te vullen als je dit probleem zelf mee maakt. Helaas krijgen we hier geen meldingen van omdat dit een probleem is tussen onze payment provider en iDeal."
       },
       "profile": {
         "title": "Profiel",

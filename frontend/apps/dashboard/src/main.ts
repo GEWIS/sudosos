@@ -8,6 +8,7 @@ import Button from "primevue/button";
 import "./styles/themes/sudosos-light/theme.scss";
 import InputText from "primevue/inputtext";
 import Menubar from "primevue/menubar";
+import Message from "primevue/message";
 import Panel from "primevue/panel";
 import DataTable from "primevue/datatable";
 import Calendar from 'primevue/calendar';
@@ -59,6 +60,7 @@ app.component('Button', Button);
 app.component('InputText', InputText);
 app.component('InputSwitch', InputSwitch);
 app.component('Menubar', Menubar);
+app.component('Message', Message)
 app.component('Panel', Panel);
 app.component('DataTable', DataTable);
 app.component('DataView', DataView);

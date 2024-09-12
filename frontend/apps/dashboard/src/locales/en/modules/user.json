@@ -2,7 +2,8 @@
   "modules": {
     "user": {
       "landing": {
-        "title": "Overview"
+        "title": "Overview",
+        "motd": "We have had reports of top ups not being processed. Usually your top up will be refunded within 48 hours. You can prevent unnecessary fines and help us by filling in {link}. Sadly we cannot detect these things as this happens between our payment processor and iDeal."
       },
       "profile": {
         "title": "Profile",

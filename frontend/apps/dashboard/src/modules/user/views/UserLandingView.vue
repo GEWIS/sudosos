@@ -2,6 +2,14 @@
   <div class="page-container flex flex-column">
     <div class="page-title">{{ t('modules.user.landing.title') }}</div>
     <div class="content-wrapper gap-5 flex md:flex-column flex-column">
+      <Message v-if="true" severity="warn" class="w-full">
+        <i18n-t keypath="modules.user.landing.motd" tag="label">
+          <template v-slot:link>
+            <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text  -->
+            <a href="https://gew.is/failedtopup" target="_blank" rel="noopener noreferrer">gew.is/failedtopup</a>
+          </template>
+        </i18n-t>
+      </Message>
       <UserInfo :user="gewisUser || authStore.user as GewisUserResponse" class="md:hidden"/>
       <BalanceWithTopupComponent />
       <MutationsBalanceCard
