@@ -4,7 +4,7 @@ RUN corepack enable && yarn set version berry
 WORKDIR /app
 COPY lib/common/ lib/common/
 COPY apps/point-of-sale/package.json apps/point-of-sale/
-COPY ./package.json ./yarn.lock ./
+COPY ./package.json ./yarn.lock .yarnrc.yml ./
 RUN yarn install
 COPY apps/point-of-sale/ apps/point-of-sale/
 ARG GIT_COMMIT_BRANCH
