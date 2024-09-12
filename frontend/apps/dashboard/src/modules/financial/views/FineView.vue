@@ -203,7 +203,7 @@ const fineHandoutEvents: Ref<Array<FineHandoutEventResponse>> = ref(new Array(10
 const handlePickedDates = handleSubmit(async (values) => {
   const result = await apiService.debtor.calculateFines(
     [values.firstDate.toISOString(), values.secondDate.toISOString()],
-    [1]);
+    ["MEMBER"]);
   const userFullNameMap: { [key: number]: string } = {};
   userStore.users.forEach((user: any) => {
     userFullNameMap[user.id] = `${user.firstName} ${user.lastName}`;

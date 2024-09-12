@@ -129,3 +129,10 @@ export const containerActionSchema =
         owner: yup.mixed<BaseUserResponse>().required()
     });
 
+export const createSellerPayoutObject =
+  yup.object({
+    fromDate: yup.string().required(),
+    toDate: yup.string().required(),
+    reference: yup.string().required(),
+    user: yup.mixed<BaseUserResponse>().required(),
+  });

@@ -82,13 +82,13 @@
         </template>
       </Column>
     </DataTable>
-  </CardComponent>
     <ModalMutation
         v-if="openedMutationId && openedMutationType !== undefined"
         v-model:visible="isModalVisible"
         :id="openedMutationId"
         :type="openedMutationType"
     />
+  </CardComponent>
 </template>
 <script lang="ts" setup>
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
@@ -124,13 +124,21 @@ const isLoading: Ref<boolean> = ref(true);
 const currentUserId = computed(() => userStore.current.user?.id);
 
 const rows: Ref<number> = ref(props.rowsAmount || 10);
-onMounted(async () => {
-  const initialMutations = await props.getMutations(rows.value, 0);
-  if(!initialMutations) return;
-  mutations.value = parseFinancialMutations(initialMutations);
-  totalRecords.value = initialMutations._pagination.count || 0;
+
+// Expose the refresh method
+async function refresh() {
+  isLoading.value = true;
+  const newTransactions = await props.getMutations(rows.value, 0);
+  if (!newTransactions) {
+    isLoading.value = false;
+    return;
+  }
+  mutations.value = parseFinancialMutations(newTransactions);
+  totalRecords.value = newTransactions._pagination.count || 0;
   isLoading.value = false;
-});
+}
+
+onMounted(refresh);
 
 async function onPage(event: DataTablePageEvent) {
   const newTransactions = await props.getMutations(event.rows, event.first);
@@ -150,5 +158,7 @@ function openModal(id: number, type: FinancialMutationType) {
     openedMutationType.value = type;
     isModalVisible.value = true;
 }
+
+defineExpose({ refresh });
 </script>
 <style lang="scss" scoped></style>

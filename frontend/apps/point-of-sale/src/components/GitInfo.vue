@@ -1,6 +1,6 @@
 <template>
   <div class="absolute tag font-bold opacity-30">
-    <b>{{localBuild ? `Local build`: `${branch}#${commit}`}}</b>
+    <b>{{ localBuild ? `Local build`: `${branch}#${commit}` }}</b>
   </div>
 </template>
 

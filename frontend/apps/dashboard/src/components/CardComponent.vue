@@ -30,6 +30,10 @@ const props = defineProps({
     type: String,
     required: false,
   },
+  routerParams: {
+    type: Object,
+    required: false,
+  },
   action: {
     type: String,
     required: false,
@@ -44,7 +48,7 @@ const router = useRouter();
 const handleClick = () => {
   if (props.routerLink) {
     // If routerLink is defined, use router.push to navigate
-    router.push({ name: props.routerLink });
+    router.push({ name: props.routerLink, params: { ...props.routerParams } });
   } else if (props.func) {
     // If routerLink is not defined and func is provided, execute the func
     props.func();

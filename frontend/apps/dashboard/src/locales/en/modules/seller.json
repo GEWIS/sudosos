@@ -57,6 +57,39 @@
           "selectCategory": "Select category",
           "selectVat": "Select VAT"
         }
+      },
+      "payouts": {
+        "title": "Payouts",
+        "payout": {
+          "check": "Make sure to check report before creating a payout!",
+          "verify": "Verify",
+          "Download PDF": "Download PDF",
+          "payoutDetails": "Payout details",
+          "verifySuccess": "Payout is verified",
+          "verifyFailed": "Payout amount does not match the amount of purchases",
+          "verifyFailedTitle": "Verification failed",
+          "verifyFailedDescription": "Payout amount does not match the amount of purchases. {amount} vs. {totalInclVat}",
+          "verifySuccessTitle": "Verification successful",
+          "verifySuccessDescription": "Payout is verified.",
+          "downloadPdf": "Download PDF",
+          "close": "Close",
+          "startDate": "Start date",
+          "endDate": "End date",
+          "description": "Description",
+          "amount": "Amount",
+          "calculateAmount": "Calculate amount",
+          "reference": "Reference",
+          "pdf": "PDF",
+          "id": "Payout ID",
+          "dates": "Dates",
+          "details": "Details",
+          "deleted": "Payout deleted",
+          "deleteError": "Error deleting payout",
+          "CreatePayout": "Create payout",
+          "actions": "Actions",
+          "report": "Reported amount is",
+          "update": "Update payout"
+        }
       }
     }
   }

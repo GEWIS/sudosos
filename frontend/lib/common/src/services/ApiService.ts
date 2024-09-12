@@ -17,7 +17,7 @@ import {
     TransactionsApi,
     TransfersApi,
     UsersApi,
-    VatGroupsApi, DebtorsApi,
+    VatGroupsApi, DebtorsApi, SellerPayoutsApi,
 } from '@sudosos/sudosos-client';
 import axios, { AxiosInstance } from "axios";
 import { AxiosResponse } from "axios";
@@ -74,6 +74,8 @@ export class ApiService {
 
     private readonly _openBannerApi: BannersApi;
 
+    private readonly _sellerPayoutsApi: SellerPayoutsApi;
+
     constructor(basePath: string) {
         const withKeyConfiguration = new Configuration({
             accessToken: () => getTokenFromStorage().token,
@@ -99,6 +101,7 @@ export class ApiService {
         this._vatGroupsApi = new VatGroupsApi(withKeyConfiguration, basePath, axiosInstance);
         this._stripeApi = new StripeApi(withKeyConfiguration, basePath, axiosInstance);
         this._rbacApi = new RbacApi(withKeyConfiguration, basePath, axiosInstance);
+        this._sellerPayoutsApi = new SellerPayoutsApi(withKeyConfiguration, basePath, axiosInstance);
     }
 
     get authenticate(): AuthenticateApi {
@@ -181,4 +184,7 @@ export class ApiService {
         return this._openBannerApi;
     }
 
+    get sellerPayouts(): SellerPayoutsApi {
+        return this._sellerPayoutsApi;
+    }
 }

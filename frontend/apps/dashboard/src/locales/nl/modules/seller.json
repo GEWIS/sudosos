@@ -57,6 +57,39 @@
           "selectCategory": "Selecteer categorie",
           "selectVat": "Selecteer BTW"
         }
+      },
+      "payouts": {
+        "title": "Uitbetalingen",
+        "payout": {
+          "check": "Zorg ervoor dat je het rapport controleert voordat je een uitbetaling aanmaakt!",
+          "verify": "Verifiëren",
+          "Download PDF": "Download PDF",
+          "payoutDetails": "Uitbetalingsdetails",
+          "verifySuccess": "Uitbetaling geverifieerd",
+          "verifyFailed": "Uitbetalingsbedrag komt niet overeen met de hoeveelheid aankopen",
+          "verifyFailedTitle": "Verificatie mislukt",
+          "verifyFailedDescription": "Uitbetalingsbedrag komt niet overeen met de hoeveelheid aankopen. {amount} vs. {totalInclVat}",
+          "verifySuccessTitle": "Verificatie geslaagd",
+          "verifySuccessDescription": "Uitbetaling is geverifieerd.",
+          "downloadPdf": "Download PDF",
+          "close": "Sluiten",
+          "startDate": "Startdatum",
+          "endDate": "Einddatum",
+          "description": "Beschrijving",
+          "amount": "Bedrag",
+          "calculateAmount": "Bereken bedrag",
+          "reference": "Referentie",
+          "pdf": "PDF",
+          "id": "Uitbetalings-ID",
+          "dates": "Datums",
+          "details": "Details",
+          "deleted": "Uitbetaling verwijderd",
+          "deleteError": "Fout bij het verwijderen van uitbetaling",
+          "CreatePayout": "Uitbetaling aanmaken",
+          "actions": "Acties",
+          "report": "Verslag bedrag is",
+          "update": "Uitbetaling bijwerken"
+        }
       }
     }
   }

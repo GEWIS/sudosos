@@ -7,10 +7,13 @@
         "actions": "Actions",
         "gewisId": "GEWIS ID",
         "downloadPdf": "Download PDF",
+        "pdf": "PDF",
+        "till": "till",
         "description": "Description",
         "id": "ID",
         "vat": "VAT",
         "loading": "Loading",
+        "failed": "Failed",
         "excl": "Excl VAT",
         "incl": "Incl VAT",
         "firstName": "First name",
@@ -25,6 +28,8 @@
         "status": "Status",
         "active": "Active",
         "create": "Create",
+        "verify": "Verify",
+        "verified": "Verified",
         "edit": "Edit",
         "search": "Search",
         "save": "Save",
@@ -83,11 +88,25 @@
                 "productCreated": "Successfully created product.",
                 "productUpdated": "Successfully updated product.",
                 "productContainerDeleted": "Successfully deleted product from container.",
-                "productDeleted": "Successfully deleted product."
+                "productDeleted": "Successfully deleted product.",
+                "payoutDeleted": "Successfully deleted payout.",
+                "payoutUpdated": "Successfully updated payout.",
+                "payout": {
+                    "verify": "Verification Success",
+                    "details": "Payout is verified."
+                }
             },
             "canceled": "Canceled",
             "reject": {
                 "waiveFinesRejected": "Canceled waiving fines."
+            },
+            "failed": {
+                "failed": "Failed",
+                "payout": {
+                    "verify": "Verification Failed",
+                    "details": "Payout amount does not match the amount of purchases. {amount} vs. {totalInclVat}",
+                    "unable": "Unable to verify the payout."
+                }
             }
         },
         "navigation": {

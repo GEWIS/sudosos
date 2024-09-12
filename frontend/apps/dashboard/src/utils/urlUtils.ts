@@ -27,3 +27,7 @@ export function getInvoicePdfSrc(pdf: string): string {
 export function getPayoutPdfSrc(pdf: string): string {
     return `${import.meta.env.VITE_APP_IMAGE_BASE}payouts/${pdf}`;
 }
+
+export function getSellerPayoutPdfSrc(pdf: string): string {
+    return `${import.meta.env.VITE_APP_IMAGE_BASE}sellerPayouts/${pdf}`;
+}

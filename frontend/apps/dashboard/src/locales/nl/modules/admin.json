@@ -31,8 +31,7 @@
           "active": "Actief",
           "notActive": "Niet actief"
         },
-        "seconds": "Seconde | Seconden",
-        "till": "tot"
+        "seconds": "Seconde | Seconden"
       },
       "forms": {
         "banner": {

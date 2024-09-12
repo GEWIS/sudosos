@@ -4,6 +4,7 @@ import ProductsContainersView from "@/modules/seller/views/ProductsContainersVie
 import { UserRole } from "@/utils/rbacUtils";
 import POSOverviewView from "@/modules/seller/views/POSOverviewView.vue";
 import POSInfoView from "@/modules/seller/views/POSInfoView.vue";
+import SellerPayoutsView from "@/modules/seller/views/SellerPayoutsView.vue";
 
 export function sellerRoutes(): RouteRecordRaw[] {
   return [
@@ -12,6 +13,16 @@ export function sellerRoutes(): RouteRecordRaw[] {
       component: DashboardLayout,
       meta: { requiresAuth: true },
       children: [
+        {
+          path: '/sellers/:id/payouts',
+          name: 'sellerPayouts',
+          component: SellerPayoutsView,
+          props: true,
+          meta: {
+            requiresAuth: true,
+            rolesAllowed: [UserRole.SELLER]
+          }
+        },
         {
           path: '/manage-products',
           component: ProductsContainersView,

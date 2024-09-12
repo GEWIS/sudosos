@@ -11,7 +11,7 @@
     </div>
       <div v-if="settings.isBorrelmode">
         <div class="mt-1 fs-6">
-          Transaction for {{ transaction.from.firstName}} by {{transaction.createdBy?.firstName}}
+          Transaction for {{ transaction.from.firstName }} by {{ transaction.createdBy?.firstName }}
         </div>
       </div>
     <!-- Here, we attach animation related functions to the corresponding Vue transition hooks-->

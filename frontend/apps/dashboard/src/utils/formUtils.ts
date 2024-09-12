@@ -4,12 +4,14 @@ import type { BaseFieldProps, FormContext, GenericObject, TypedSchema } from "ve
 import { toTypedSchema } from "@vee-validate/yup";
 import { useForm } from "vee-validate";
 import type { AnyObject } from "yup";
+import { ref } from "vue";
 
 export interface Form<T extends yup.AnyObject> {
   context: FormContext<T, T>;
   schema: TypedSchema<T>;
   model: { [K in keyof T]: { value: Ref<T[K]>, attr: Ref<BaseFieldProps & GenericObject> } };
   submit: () => Promise<any>;
+  success: Ref<boolean|null>;
 }
 
 const schemaToFields = <T extends AnyObject>(yupSchema: yup.ObjectSchema<T, yup.AnyObject, T, "">, ctx: FormContext):
@@ -38,9 +40,14 @@ export function schemaToForm<T extends AnyObject>(yupSchema: yup.ObjectSchema<T>
     schema,
     model,
     submit: async () => console.error("Submit not implemented"),
+    success: ref(null),
   };
 }
 
 export function setSubmit(form: Form<any>, submit: () => Promise<any>) {
   form.submit = submit;
+}
+
+export function setSuccess(form: Form<any>, success: boolean | null) {
+  form.success.value = success;
 }

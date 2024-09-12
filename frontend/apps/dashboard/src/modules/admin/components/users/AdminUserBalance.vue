@@ -1,8 +1,11 @@
 <template>
   <CardComponent
-      :header="t('modules.admin.singleUser.balance.header')"
-      :func="userBalance?.fine ? waiveFines : undefined"
-      :action="userBalance?.fine ? t('modules.admin.singleUser.balance.waiveFines') : undefined"
+    :header="t('modules.admin.singleUser.balance.header')"
+    :action="getAction"
+    :routerLink="getRouterLink"
+    :routerParams="getRouterParams"
+    :func="!isOrgan ? waiveFines : undefined"
+    class="w-19rem"
   >
     <div class="flex flex-column justify-content-center">
       <div v-if="isLoading">
@@ -40,6 +43,31 @@ const toast = useToast();
 
 const userBalance: Ref<BalanceResponse | null> = ref(null);
 const isLoading: Ref<boolean> = ref(true);
+const isOrgan = computed(() => props.user?.type == 'ORGAN');
+
+const emits = defineEmits(['update:value']);
+
+const getAction = computed(() => {
+  if (isOrgan.value) {
+    return t('modules.seller.payouts.payout.CreatePayout');
+  }
+  return t('modules.admin.singleUser.balance.waiveFinesConfirmationTitle');
+});
+
+const getRouterLink = computed(() => {
+  if (isOrgan.value) {
+    return 'sellerPayouts';
+  }
+  return undefined;
+});
+
+const getRouterParams = computed(() => {
+  if (isOrgan.value && props.user) {
+    return { id: props.user.id, name: props.user.firstName };
+  }
+  return undefined;
+});
+
 const updateUserBalance = async () => {
   if(props.user) {
     const response = await apiService.balance.getBalanceId(props.user.id);

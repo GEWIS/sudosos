@@ -13,10 +13,10 @@
         <Dropdown v-model="selectedPos" :options="options" :loading="loadingPos" optionLabel="Point of Sale"
                   placeholder="Select a POS" class="w-full md:w-14rem">
           <template #value="slotProps">
-            {{ slotProps.value.name}}
+            {{ slotProps.value.name }}
           </template>
           <template #option="slotProps">
-            {{slotProps.option.name}}
+            {{ slotProps.option.name }}
           </template>
         </Dropdown>
         <div class="mt-2">

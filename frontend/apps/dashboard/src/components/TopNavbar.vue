@@ -77,12 +77,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onBeforeMount, ref, type Ref } from "vue";
 import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
 import { useRouter } from "vue-router";
 import { UserRole } from "@/utils/rbacUtils";
 import { useI18n } from "vue-i18n";
 import { usePendingPayouts } from "@/mixins/pendingPayoutsMixin";
+import apiService from "@/services/ApiService";
+import { GetAllUsersTypeEnum } from "@sudosos/sudosos-client";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
@@ -112,6 +114,47 @@ const isBACPM = () => {
 
 const { pendingPayouts } = usePendingPayouts();
 const getFinancialNotifications = () => pendingPayouts?.value;
+
+const organs: Ref<any[]> = ref([]);
+
+const getOrgans = async () => {
+  organs.value = [];
+  const promises = [];
+  for (let organ of authStore.organs) {
+    promises.push(apiService.balance.getBalanceId(organ.id).then((res) => {
+      organs.value.push({
+        label: `${organ.firstName} ${organ.lastName}`,
+        route: '/user/' + organ.id,
+        notifications: res.data.amount.amount > 0 ? ' ' : '',
+      });
+    }));
+  }
+  await Promise.all(promises);
+  organs.value = organs.value.sort((a, b) => a.label.localeCompare(b.label));
+};
+
+const getAllOrgans = async () => {
+  organs.value = [];
+  const promises: Promise<any>[] = [];
+  await apiService.user.getAllUsers(100, undefined, undefined, undefined, undefined, undefined, GetAllUsersTypeEnum.Organ).then((res) => {
+    const orgs = res.data.records;
+    orgs.forEach((organ) => {
+      promises.push(apiService.balance.getBalanceId(organ.id).then((res) => {
+        organs.value.push({
+          label: organ.firstName + ' ' + organ.lastName,
+          route: '/user/' + organ.id,
+          notifications: res.data.amount.amount > 0 ? ' ' : '',
+        });
+      }));
+    });
+  });
+  await Promise.all(promises);
+  organs.value = organs.value.sort((a, b) => a.label.localeCompare(b.label));
+};
+
+onBeforeMount(async () => {
+  await getOrgans();
+});
 
 const navItems = computed(() => [
   {
@@ -173,7 +216,8 @@ const navItems = computed(() => [
       {
         label: t('common.navigation.posOverview'),
         route: '/point-of-sale/overview',
-      }
+      },
+        ...organs.value,
     ]
   },
 ]);

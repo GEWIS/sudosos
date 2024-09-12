@@ -5,8 +5,8 @@
     </div>
     <div class="flex flex-column gap-5">
       <div class="flex flex-column  md:flex-row justify-content-between gap-8">
-        <AdminUserInfoCard :user="currentUser" class="flex-grow-1"/>
-        <AdminUserBalance :user="currentUser"/>
+        <AdminUserInfoCard v-if="currentUser" :user="currentUser" class="flex-grow-1"/>
+        <AdminUserBalance v-if="currentUser" :user="currentUser"/>
       </div>
       <MutationsBalanceCard
           class="w-full"
@@ -15,13 +15,14 @@
           modal
           :get-mutations="getUserMutations"
           :simple="true"
+          ref="mutations"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import type { Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUserStore } from "@sudosos/sudosos-frontend-common";
@@ -42,8 +43,9 @@ const route = useRoute();
 const userStore = useUserStore();
 const toast = useToast();
 const currentUser: Ref<UserResponse> = ref<UserResponse>(null!);
+const mutations: Ref<InstanceType<typeof MutationsBalanceCard> | null> = ref(null);
 
-onBeforeMount(async () => {
+const getUser = async () => {
   await apiService.user.getIndividualUser(Number(route.params.userId)).then((res) => {
     currentUser.value = res.data;
   }).catch((error: AxiosError) => {
@@ -53,6 +55,15 @@ onBeforeMount(async () => {
     await router.replace({ path: '/error' });
     return;
   }
+  if (mutations?.value) await mutations.value.refresh();
+};
+
+watch(() => route.params.userId, async () => {
+  await getUser();
+});
+
+onBeforeMount(async () => {
+  await getUser();
 });
 
 const getUserMutations = async (take: number, skip: number):
