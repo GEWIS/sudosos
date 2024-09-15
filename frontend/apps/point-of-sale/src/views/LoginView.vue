@@ -122,7 +122,7 @@ const loginSucces = async () => {
   if (user === null) return;
 
   if (userStore.getActiveUsers.length === 0) await userStore.fetchUsers;
-  useCartStore().setBuyer(user);
+  await useCartStore().setBuyer(user);
   userStore.fetchCurrentUserBalance(user.id, apiService);
 
   await router.push({ path: '/cashier' });

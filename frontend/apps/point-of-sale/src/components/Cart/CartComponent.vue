@@ -23,7 +23,7 @@
         <div class="font-bold font-size-lg">€{{ formatPrice(totalPrice) }}</div>
       </div>
       <div class="font-size-md pt-2 align-items-end flex-container justify-content-between"
-           v-if="balance">
+           v-if="cartStore.buyerBalance != null">
         <span><i
           class="pi pi-exclamation-triangle"/> Debit after purchase: </span>
         €{{ formattedBalanceAfter }}
@@ -61,7 +61,6 @@ const current = computed(() => cartStore.getBuyer);
 const totalPrice = computed(() => cartStore.getTotalPrice);
 const shouldShowTransactions = computed(() => cartStore.cartTotalCount === 0);
 const showHistory = ref(true);
-const balance = ref<number | null>(null);
 
 const { pointOfSale } = storeToRefs(posStore);
 const { lockedIn } = storeToRefs(cartStore);
@@ -94,16 +93,6 @@ const getPointOfSaleRecentTransactions = () => {
   posStore.fetchRecentPosTransactions().then((res) => {
     if (res) transactions.value.push(...res.records);
   });
-};
-
-const getBalance = async () => {
-  if (!cartStore.buyer) return 0;
-  try {
-    const response = await apiService.balance.getBalanceId(cartStore.buyer.id);
-    return response.data.amount.amount;
-  } catch (error) {
-    return null;
-  }
 };
 
 const isOwnBuyer = computed(() => {
@@ -146,7 +135,6 @@ const showLock = () => {
 };
 
 onMounted(async () => {
-  balance.value = await getBalance();
   if (shouldShowTransactions.value) getUserRecentTransactions();
 });
 
@@ -157,13 +145,6 @@ watch(cartItems, () => {
 watch(shouldShowTransactions, () => {
   if (shouldShowTransactions.value) getUserRecentTransactions();
 });
-
-watch(
-  () => cartStore.buyer,
-  async () => {
-    balance.value = await getBalance();
-  }
-);
 
 watch(
   () => cartStore.buyer,
@@ -204,8 +185,8 @@ const selectUser = () => {
 };
 
 const formattedBalanceAfter = computed(() => {
-  if (!balance.value) return null;
-  const price = balance.value - totalPrice.value;
+  if (cartStore.buyerBalance == null) return null;
+  const price = cartStore.buyerBalance.amount - totalPrice.value;
   return formatPrice(price);
 });
 

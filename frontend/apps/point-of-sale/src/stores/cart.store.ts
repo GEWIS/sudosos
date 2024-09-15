@@ -10,6 +10,7 @@ import { SubTransactionRowRequest } from '@sudosos/sudosos-client/src/api';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import apiService from '@/services/ApiService';
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
+import { DineroObjectResponse } from "@sudosos/sudosos-client/dist/api";
 
 export interface CartProduct {
   container: ContainerResponse
@@ -20,6 +21,7 @@ export interface CartProduct {
 interface CartState {
   products: CartProduct[]
   buyer: BaseUserResponse | null
+  buyerBalance: DineroObjectResponse | null
   createdBy: BaseUserResponse | null
   lockedIn: BaseUserResponse | null
 }
@@ -27,6 +29,7 @@ export const useCartStore = defineStore('cart', {
   state: (): CartState => ({
     products: [] as CartProduct[],
     buyer: null,
+    buyerBalance: null,
     createdBy: null,
     lockedIn: null,
   }),
@@ -51,8 +54,14 @@ export const useCartStore = defineStore('cart', {
     setLockedIn(lockedIn: BaseUserResponse | null) {
       this.lockedIn = lockedIn;
     },
-    setBuyer(buyer: BaseUserResponse | null) {
+    async setBuyer(buyer: BaseUserResponse | null) {
       this.buyer = buyer;
+      if (buyer) {
+        const response = await apiService.balance.getBalanceId(buyer.id);
+        this.buyerBalance = response.data.amount;
+      } else {
+        this.buyerBalance = null;
+      }
     },
     setCreatedBy(createdBy: BaseUserResponse) {
       this.createdBy = createdBy;
@@ -154,11 +163,10 @@ export const useCartStore = defineStore('cart', {
         }
       };
 
-      await apiService.transaction.createTransaction(request).then(() => {
-        this.products.length = 0;
-        this.buyer = this.lockedIn;
-        this.createdBy = null;
-      });
+      await apiService.transaction.createTransaction(request);
+      this.products.length = 0;
+      await this.setBuyer(this.lockedIn);
+      this.createdBy = null;
     }
   }
 });
