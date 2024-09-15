@@ -3,7 +3,7 @@
     <div class="flex flex-row align-items-center">
       <h4 class="flex-grow-1">{{ header }}</h4>
       <div class="flex flex-row ">
-        <Button v-if="simpleSave" icon="pi pi-save" class="my-0" @click="toggleEdit(true)" label="Save" ></Button>
+        <Button v-if="simpleSave" icon="pi pi-save" class="my-0" @click="handleSave()" label="Save" ></Button>
         <Button v-else-if="!edit" icon="pi pi-pencil" class="my-0" @click="toggleEdit(true)" label="Edit" ></Button>
         <div v-else class="flex flex-row gap-2">
           <Button icon ="pi pi-check" class="my-0" @click="handleSave" />
@@ -62,7 +62,9 @@ const cancel = () => {
 
 const handleSave = () => {
   emit('save');
-  toggleEdit(false);
+  if (!props.simpleSave) {
+    toggleEdit(false);
+  }
 };
 
 onMounted(() => {
