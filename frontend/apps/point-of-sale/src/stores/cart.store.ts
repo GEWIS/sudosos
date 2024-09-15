@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia';
 import {
+  BaseUserResponse,
   ContainerResponse,
   ProductResponse,
   SubTransactionRequest,
   TransactionRequest,
-  UserResponse
 } from '@sudosos/sudosos-client';
 import { SubTransactionRowRequest } from '@sudosos/sudosos-client/src/api';
 import { usePointOfSaleStore } from '@/stores/pos.store';
@@ -19,9 +19,9 @@ export interface CartProduct {
 
 interface CartState {
   products: CartProduct[]
-  buyer: UserResponse | null
-  createdBy: UserResponse | null
-  lockedIn: UserResponse | null
+  buyer: BaseUserResponse | null
+  createdBy: BaseUserResponse | null
+  lockedIn: BaseUserResponse | null
 }
 export const useCartStore = defineStore('cart', {
   state: (): CartState => ({
@@ -43,18 +43,18 @@ export const useCartStore = defineStore('cart', {
         return total + product.count * productPrice;
       }, 0);
     },
-    getBuyer(): UserResponse | null {
+    getBuyer(): BaseUserResponse | null {
       return this.buyer;
     }
   },
   actions: {
-    setLockedIn(lockedIn: UserResponse | null) {
+    setLockedIn(lockedIn: BaseUserResponse | null) {
       this.lockedIn = lockedIn;
     },
-    setBuyer(buyer: UserResponse | null) {
+    setBuyer(buyer: BaseUserResponse | null) {
       this.buyer = buyer;
     },
-    setCreatedBy(createdBy: UserResponse) {
+    setCreatedBy(createdBy: BaseUserResponse) {
       this.createdBy = createdBy;
     },
     addToCart(cartProduct: CartProduct): void {

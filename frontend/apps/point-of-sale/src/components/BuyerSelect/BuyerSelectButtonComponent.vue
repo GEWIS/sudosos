@@ -1,18 +1,22 @@
 <template>
-  <div class="select-user c-btn active square flex-grow-1 fs-6 py-4 px-4" @click="select()">
+  <div
+    class="select-user active square flex-grow-1 fs-6 py-4 px-4"
+    :class="{ 'c-btn': props.associate.type === 'owner', 'c-btn-outline': props.associate.type !== 'owner' }"
+    @click="select()"
+  >
     {{ displayName() }}
   </div>
 </template>
 
 <script setup lang="ts">
-import { UserResponse } from "@sudosos/sudosos-client";
 import { useCartStore } from "@/stores/cart.store";
+import { PointOfSaleAssociate } from "@/stores/pos.store";
 
 const cartStore = useCartStore();
 
 const props = defineProps({
-  member: {
-    type: Object as () => UserResponse,
+  associate: {
+    type: Object as () => PointOfSaleAssociate,
     required: true,
   }
 });
@@ -20,17 +24,17 @@ const props = defineProps({
 const emit = defineEmits(['cancelSelectCreator']);
 
 const displayName = () => {
-  let name = props.member.firstName;
-  if (props.member) {
+  let name = props.associate.firstName;
+  if (props.associate) {
     // @ts-ignore
-    if (props.member.nickname) name += ` "${props.member.nickname}"`;
+    if (props.associate.nickname) name += ` "${props.associate.nickname}"`;
   }
-  name += ' ' + props.member.lastName;
+  name += ' ' + props.associate.lastName;
   return name;
 };
 
 const select = () => {
-  cartStore.setCreatedBy(props.member);
+  cartStore.setCreatedBy(props.associate);
   cartStore.checkout();
   emit('cancelSelectCreator');
 };

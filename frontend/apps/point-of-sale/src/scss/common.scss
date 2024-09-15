@@ -161,27 +161,13 @@ input:focus {
 }
 
 /* Custom button styles */
-.c-btn {
+.c-btn-base {
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   border: none;
-  color: var(--accent-color);;
   transition: background-color 0.2s ease-in-out;
-
-  &.active {
-    background-color: var(--accent-color);;
-    color: $text-on-accent;
-
-    > svg {
-      color: $text-on-accent;
-
-      &-large {
-        font-size: $icon-large;
-      }
-    }
-  }
 
   &.icon {
     &-large {
@@ -212,5 +198,28 @@ input:focus {
   &.rounder {
     border-radius: $border-radius-rounder;
     padding: 13px 25px;
+  }
+}
+
+.c-btn-outline {
+  @extend .c-btn-base;
+  border: var(--accent-color) solid 3px;
+}
+
+.c-btn {
+  @extend .c-btn-base;
+  color: var(--accent-color);
+
+  &.active {
+    background-color: var(--accent-color);
+    color: $text-on-accent;
+
+    > svg {
+      color: $text-on-accent;
+
+      &-large {
+        font-size: $icon-large;
+      }
+    }
   }
 }

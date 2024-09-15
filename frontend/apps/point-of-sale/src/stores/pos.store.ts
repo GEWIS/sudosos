@@ -1,17 +1,20 @@
 import { defineStore } from 'pinia';
 import {
-  PaginatedBaseTransactionResponse,
+  BaseUserResponse,
+  PaginatedBaseTransactionResponse, PointOfSaleAssociateUsersResponse,
   PointOfSaleResponse,
   PointOfSaleWithContainersResponse,
-  ProductResponse, UserResponse
+  ProductResponse,
 } from '@sudosos/sudosos-client';
 import apiService from '@/services/ApiService';
 import { fetchAllPages } from "@sudosos/sudosos-frontend-common";
 
+export type PointOfSaleAssociate = BaseUserResponse & { type: 'owner' | 'cashier' };
+
 export const usePointOfSaleStore = defineStore('pointOfSale', {
   state: () => ({
     pointOfSale: null as PointOfSaleWithContainersResponse | null,
-    pointOfSaleMembers: null as UserResponse[] | null,
+    pointOfSaleAssociates: null as PointOfSaleAssociateUsersResponse | null,
     usersPointOfSales: null as PointOfSaleResponse[] | null,
   }),
   getters: {
@@ -30,8 +33,18 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
     getPos(): PointOfSaleWithContainersResponse | null {
       return this.pointOfSale;
     },
-    getPointOfSaleMembers(): UserResponse[] | null {
-      return this.pointOfSaleMembers;
+    getPointOfSaleAssociates(): PointOfSaleAssociate[] | null {
+      if (this.pointOfSaleAssociates == null) return null;
+
+      const owners: PointOfSaleAssociate[] = this.pointOfSaleAssociates.ownerMembers
+        .map((u) => ({ ...u, type: 'owner' }));
+      const cashiers: PointOfSaleAssociate[] = this.pointOfSaleAssociates.cashiers
+        // Owner overrides cashier (so we avoid duplicates)
+        .filter((u1) => !owners.some((u2) => u1.id === u2.id))
+        .map((u) => ({ ...u, type: 'cashier' }));
+
+      const associates = owners.concat(cashiers);
+      return associates.sort((a, b) => a.id - b.id);
     }
   },
   actions: {
@@ -42,12 +55,12 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
     },
     async fetchPointOfSale(id: number): Promise<void> {
       const response = await apiService.pos.getSinglePointOfSale(id);
-      this.pointOfSaleMembers = null;
+      this.pointOfSaleAssociates = null;
       this.pointOfSale = response.data;
     },
-    async fetchPointOfSaleMembers(organId: number): Promise<void> {
-      const response = await apiService.user.getOrganMembers(organId);
-      this.pointOfSaleMembers = response.data.records;
+    async fetchPointOfSaleAssociates(posId: number): Promise<void> {
+      const response = await apiService.pos.getPointOfSaleAssociates(posId);
+      this.pointOfSaleAssociates = response.data;
     },
     async fetchUserPointOfSale(id: number): Promise<void> {
       this.usersPointOfSales = await fetchAllPages<PointOfSaleResponse>((take, skip) =>
