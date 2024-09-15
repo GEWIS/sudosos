@@ -165,6 +165,13 @@ watch(
   }
 );
 
+watch(
+  () => cartStore.buyer,
+  () => {
+    if (shouldShowTransactions.value) getUserRecentTransactions();
+  }
+);
+
 let refreshRecentPosTransactions: number | null;
 
 const refreshInterval = 1000 * 60 * 5;
