@@ -34,6 +34,11 @@
       </div>
       </div>
     </div>
+    <Message v-if="isCategoryAlcoholic && !useSettingStore().isAlcoholTime" severity="warn" class="mr-4">
+      Please note that today, alcoholic drinks are only allowed to be served after
+      {{ new Date(useSettingStore().alcoholTimeToday).toLocaleTimeString('nl-NL', { hour: "2-digit", minute: "2-digit" }) }}.
+      This also applies to non-alcoholic alternatives on this page.
+    </Message>
     <PointOfSaleProductsComponent
         :search-query="searchQuery"
         :is-product-search="isSearchViewVisible"
@@ -100,6 +105,11 @@ function getDefaultCategoryId(): string | undefined {
   if (shouldShowAllCategory.value) return 'all';
   return nonAlcoholicCategory ? nonAlcoholicCategory.id : undefined;
 }
+
+const isCategoryAlcoholic = computed(() => {
+  const category = computedCategories.value.find((c) => c.id == selectedCategoryId.value)!;
+  return category.name == 'Alcoholic';
+});
 
 const selectCategory = (categoryId: string) => {
   selectedCategoryId.value = categoryId;

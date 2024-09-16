@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "point-of-sale:dev": "yarn dev",
     "dev-host": "vite --host",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
