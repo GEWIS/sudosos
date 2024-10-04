@@ -1,7 +1,7 @@
 // vite.config.ts
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue'
+import vue from '@vitejs/plugin-vue';
 import dts from 'vite-plugin-dts';
 
 // https://vitejs.dev/guide/build.html#library-mode
@@ -24,7 +24,8 @@ export default defineConfig({
           pinia: 'pinia'
         }
       }
-    }
+    },
+    watch: process.env.WATCH ? {} : undefined
   },
   server: {
     port: 5175
