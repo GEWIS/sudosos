@@ -39,6 +39,10 @@ app.component('Message', Message);
 
 app.use(createPinia());
 app.mount('#app');
-useSettingStore().fetchAlcoholTimeToday();
+
+// Refresh alcohol time every hour.
+setInterval(() => {
+  useSettingStore().fetchAlcoholTimeToday();
+}, 1000*60*60);
 
 
