@@ -12,6 +12,7 @@
       "pos": "Verkooppunt",
       "you": "Jij",
       "user": "Gebruikerstransacties",
+      "notYou": "Heb jij deze aankoop niet gedaan?",
       "modal": {
         "header": "Transactiedetails",
         "waivedFine": "Kwijtgescholden boete",

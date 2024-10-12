@@ -54,11 +54,14 @@
       </Column>
     </DataTable>
 
-
+    <a @click="sendEmail(transactionInfo, productsInfo)" class="underline text-right cursor-pointer ">
+      {{ t('components.mutations.notYou') }}
+    </a>
   </div>
 </template>
 <script setup lang="ts">
 import { formatPrice } from "@/utils/formatterUtils";
+import { sendEmail } from "@/utils/mailUtil";
 import type { SubTransactionRowResponse } from "@sudosos/sudosos-client/src/api";
 import type { TransactionResponse } from "@sudosos/sudosos-client";
 import { useUserStore } from '@sudosos/sudosos-frontend-common';

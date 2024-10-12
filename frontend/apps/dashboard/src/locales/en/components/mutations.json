@@ -12,6 +12,7 @@
       "pos": "Point of sale",
       "you": "You",
       "user": "User transactions",
+      "notYou": "Did you not make this transaction?",
       "modal": {
         "header": "Transaction details",
         "waivedFine": "Waived fine",
