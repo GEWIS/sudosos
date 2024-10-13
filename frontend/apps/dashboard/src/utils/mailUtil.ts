@@ -4,9 +4,9 @@ import { formatPrice } from '@/utils/formatterUtils';
 
 export function sendEmail(transactionInfo: TransactionResponse, productsInfo: Array<SubTransactionRowResponse>)
 {
-  window.open("mailto:" + getEmail()
-    + "?subject=" + getSubject(transactionInfo)
-    + "&body="+ getBody(transactionInfo, productsInfo));
+  window.open(`mailto:${getEmail()}
+  ?subject=${getSubject(transactionInfo)}
+  &body=${getBody(transactionInfo, productsInfo)}`);
 }
 
 function getEmail(): string {
@@ -14,23 +14,24 @@ function getEmail(): string {
 }
 
 function getSubject(transactionInfo: TransactionResponse): string {
-  return "[FLAGGED TRANSACTION] "
+  return encodeURIComponent("[FLAGGED TRANSACTION] "
     + transactionInfo.from.firstName + " "
     + transactionInfo.from.lastName + " "
-    + getTime(transactionInfo);
+    + getTime(transactionInfo));
 }
 
 function getBody(transactionInfo: TransactionResponse, productsInfo: Array<SubTransactionRowResponse>): string {
-  return "Transaction Id: " + transactionInfo.id +  "%0D%0A"
+  return encodeURIComponent("Transaction Id: " + transactionInfo.id +  "\n"
     + "Transaction for: " + transactionInfo.from.firstName + " "
-      + transactionInfo.from.lastName + " (" + transactionInfo.from.id + ")%0D%0A"
+      + transactionInfo.from.lastName + " (" + transactionInfo.from.id + ")\n"
     + "Transaction by: " + transactionInfo.createdBy!.firstName
-      + " " + transactionInfo.createdBy!.lastName + " (" + transactionInfo.createdBy!.id + ")%0D%0A"
-    + "Transaction at: " + transactionInfo.pointOfSale.name + "%0D%0A"
-    + "%0D%0AProducts in transaction: " + "%0D%0A" + formatProducts(productsInfo)
-    + "________________________%0D%0A"
-    + "DO NOT CHANGE ANY OF THE ABOVE INFO%0D%0A"
-    + "Please add any additional information below:%0D%0A";
+      + " " + transactionInfo.createdBy!.lastName + " (" + transactionInfo.createdBy!.id + ")\n"
+    + "Transaction at: " + transactionInfo.pointOfSale.name + "\n"
+    + "\nProducts in transaction: \n"
+    + formatProducts(productsInfo)
+    + "________________________\n"
+    + "DO NOT CHANGE ANY OF THE ABOVE INFO\n"
+    + "Please add any additional information below:\n");
 }
 
 function getTime(transactionInfo: TransactionResponse): string {
@@ -47,7 +48,7 @@ function formatProducts(productsInfo: Array<SubTransactionRowResponse>): string 
     returnString +=  product.amount + "x "
       + product.product.name + " @ "
       + formatPrice(product.product.priceInclVat) + " = "
-      + formatPrice(product.totalPriceInclVat) + "%0D%0A";
+      + formatPrice(product.totalPriceInclVat) + "\n";
   });
 
   return returnString;
