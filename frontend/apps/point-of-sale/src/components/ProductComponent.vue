@@ -1,11 +1,11 @@
 <template>
-  <div class="text-center product-card shadow-2 mb-3">
+  <div class="text-center product-card shadow-2 mb-2">
     <div class="image-container">
       <img ref="productImage" :class="{ pulsing, featured: product.featured }"
            class="product-card-image" :src="image" :alt="product.name" @click="addToCart"/>
       <div v-if="product.featured" class="promo-tag">PROMO</div>
     </div>
-    <p class="product-name text-overflow font-size-md font-semibold m-0">{{ product.name }}</p>
+    <p class="product-name text-overflow font-size-md font-semibold m-0 px-2" >{{ product.name }}</p>
     <p class="product-price font-size-sm m-0">€{{ productPrice }}</p>
   </div>
 </template>
