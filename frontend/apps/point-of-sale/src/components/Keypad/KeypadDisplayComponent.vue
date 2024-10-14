@@ -2,7 +2,7 @@
   <LoginInfoComponent/>
   <div class="wrapper user accent-text" :class="{ inactive: !isActive }">
     <i class="pi pi-user text-6xl text-center w-full"/>
-    <div class="display-value pl-3" @click="() => { emits('focus:userid') }">
+    <div class="display-value pl-3 shadow-1" @click="() => { emits('focus:userid') }">
       {{ external ? 'E' : '' }}
       <span v-for="char in userId" :key="char">
         {{ char }}
@@ -17,7 +17,7 @@
       </div>
       <div class="flex w-full h-full justify-content-between align-items-center" v-else
         @click="() => { emits('focus:passcode') }">
-        <span class="passcode-span" v-for="char in displayCode" :key="char">{{ char }}</span>
+        <span class="passcode-span shadow-1" v-for="char in displayCode" :key="char">{{ char }}</span>
       </div>
     </div>
   </div>

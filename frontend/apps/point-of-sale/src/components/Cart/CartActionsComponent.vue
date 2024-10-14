@@ -118,7 +118,6 @@ const checkout = async () => {
 
   &.disabled {
     background-color: grey;
-    opacity: 0.5;
   }
 }
 </style>

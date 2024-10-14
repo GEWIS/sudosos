@@ -3,6 +3,7 @@
 
 body {
   min-height: 100vh;
+  overflow: hidden;
   background: #edece7;
   transition: color 0.5s, background-color 0.5s;
   line-height: 1.6;
@@ -22,7 +23,7 @@ body {
 }
 
 .main-content {
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.9);
   border-radius: 25px;
   font-family: Lato, Arial, sans-serif;
   height: calc(100vh - 100px);

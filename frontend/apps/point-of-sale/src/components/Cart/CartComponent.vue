@@ -11,13 +11,13 @@
         <i :class="lockIcon" class="text-4xl"/>
       </button>
     </div>
-    <div class="overflow-y-auto flex-grow-1 my-2" v-if="!shouldShowTransactions || !showHistory">
+    <div class="overflow-y-auto flex-column flex-grow-1 gap-2 mt-4" v-if="!shouldShowTransactions || !showHistory">
       <div v-for="item in cartItems" :key="item.product.id">
         <CartItemComponent :cart-product="item"/>
       </div>
     </div>
     <TransactionHistoryComponent v-else-if="shouldShowTransactions" :transactions="transactions"/>
-    <div class="content-body px-3 py-2 font-size-lg mt-3">
+    <div class="content-body px-3 py-2 font-size-lg mt-3 shadow-1">
       <div class="flex-between w-full">
         <div class="font-semibold">Total</div>
         <div class="font-bold font-size-lg">€{{ formatPrice(totalPrice) }}</div>

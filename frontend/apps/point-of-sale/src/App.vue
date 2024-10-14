@@ -1,15 +1,22 @@
 <template>
-  <RouterView />
-<!--    <img class="image-overlay fullscreen-positioning" src="@/assets/checkout.jpg" alt="Overlay Image" />-->
+  <RouterView/>
+    <img class="image-underlay" src="@/assets/splash.svg" alt="Overlay Image" />
 </template>
 
 <style lang="scss">
-.image-overlay {
+.image-underlay {
   display: flex;
   justify-content: center;
   align-items: center;
-  opacity: 0.5;
+  opacity: 1;
   pointer-events: none;
-}
+  z-index: -10;
+  overflow: hidden;
 
+  position: fixed;
+  top: -25%;
+  right: 0px;
+  height: 175%;
+  width: 33%;
+}
 </style>

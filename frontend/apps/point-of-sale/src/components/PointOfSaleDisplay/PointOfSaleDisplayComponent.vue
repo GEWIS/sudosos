@@ -22,7 +22,7 @@
               <i class="pi pi-search text-4xl"/>
             </label>
             <div
-                class="c-btn rounder font-size-lg"
+                class="c-btn square px-4 font-size-lg shadow-1"
                 v-for="category in computedCategories"
                 :key="category.id"
                 :class="{ 'active': category.id === selectedCategoryId }"

@@ -1,5 +1,5 @@
 <template>
-  <div class="user-row flex-container font-size-lg font-semibold text-center border-round-xl my-1 py-3 my-3 bg-red-100"
+  <div class="user-row flex-container font-size-lg font-semibold text-center shadow-1 border-round-xl my-1 py-3 my-3 bg-red-100"
        :class="{inactive: !active}" @click="selectUser">
     {{ displayName() }}
     <i class="pi pi-user-minus" v-if="shouldShowAge()"/>

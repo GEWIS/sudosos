@@ -1,5 +1,5 @@
 <template>
-  <div v-if="transaction">
+  <div v-if="transaction" class="shadow-1">
     <div class="flex-column content-body px-3 py-1" @click="toggleOpen" >
     <div class="flex justify-content-between w-full font-size-lg font-medium">
       <div>{{ formattedDate }}</div>
