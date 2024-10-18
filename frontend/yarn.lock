@@ -470,6 +470,140 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/watcher-android-arm64@npm:2.4.1":
+  version: 2.4.1
+  resolution: "@parcel/watcher-android-arm64@npm:2.4.1"
+  conditions: os=android & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher-darwin-arm64@npm:2.4.1":
+  version: 2.4.1
+  resolution: "@parcel/watcher-darwin-arm64@npm:2.4.1"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher-darwin-x64@npm:2.4.1":
+  version: 2.4.1
+  resolution: "@parcel/watcher-darwin-x64@npm:2.4.1"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher-freebsd-x64@npm:2.4.1":
+  version: 2.4.1
+  resolution: "@parcel/watcher-freebsd-x64@npm:2.4.1"
+  conditions: os=freebsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher-linux-arm-glibc@npm:2.4.1":
+  version: 2.4.1
+  resolution: "@parcel/watcher-linux-arm-glibc@npm:2.4.1"
+  conditions: os=linux & cpu=arm & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher-linux-arm64-glibc@npm:2.4.1":
+  version: 2.4.1
+  resolution: "@parcel/watcher-linux-arm64-glibc@npm:2.4.1"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher-linux-arm64-musl@npm:2.4.1":
+  version: 2.4.1
+  resolution: "@parcel/watcher-linux-arm64-musl@npm:2.4.1"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher-linux-x64-glibc@npm:2.4.1":
+  version: 2.4.1
+  resolution: "@parcel/watcher-linux-x64-glibc@npm:2.4.1"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher-linux-x64-musl@npm:2.4.1":
+  version: 2.4.1
+  resolution: "@parcel/watcher-linux-x64-musl@npm:2.4.1"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher-win32-arm64@npm:2.4.1":
+  version: 2.4.1
+  resolution: "@parcel/watcher-win32-arm64@npm:2.4.1"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher-win32-ia32@npm:2.4.1":
+  version: 2.4.1
+  resolution: "@parcel/watcher-win32-ia32@npm:2.4.1"
+  conditions: os=win32 & cpu=ia32
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher-win32-x64@npm:2.4.1":
+  version: 2.4.1
+  resolution: "@parcel/watcher-win32-x64@npm:2.4.1"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@parcel/watcher@npm:^2.4.1":
+  version: 2.4.1
+  resolution: "@parcel/watcher@npm:2.4.1"
+  dependencies:
+    "@parcel/watcher-android-arm64": "npm:2.4.1"
+    "@parcel/watcher-darwin-arm64": "npm:2.4.1"
+    "@parcel/watcher-darwin-x64": "npm:2.4.1"
+    "@parcel/watcher-freebsd-x64": "npm:2.4.1"
+    "@parcel/watcher-linux-arm-glibc": "npm:2.4.1"
+    "@parcel/watcher-linux-arm64-glibc": "npm:2.4.1"
+    "@parcel/watcher-linux-arm64-musl": "npm:2.4.1"
+    "@parcel/watcher-linux-x64-glibc": "npm:2.4.1"
+    "@parcel/watcher-linux-x64-musl": "npm:2.4.1"
+    "@parcel/watcher-win32-arm64": "npm:2.4.1"
+    "@parcel/watcher-win32-ia32": "npm:2.4.1"
+    "@parcel/watcher-win32-x64": "npm:2.4.1"
+    detect-libc: "npm:^1.0.3"
+    is-glob: "npm:^4.0.3"
+    micromatch: "npm:^4.0.5"
+    node-addon-api: "npm:^7.0.0"
+    node-gyp: "npm:latest"
+  dependenciesMeta:
+    "@parcel/watcher-android-arm64":
+      optional: true
+    "@parcel/watcher-darwin-arm64":
+      optional: true
+    "@parcel/watcher-darwin-x64":
+      optional: true
+    "@parcel/watcher-freebsd-x64":
+      optional: true
+    "@parcel/watcher-linux-arm-glibc":
+      optional: true
+    "@parcel/watcher-linux-arm64-glibc":
+      optional: true
+    "@parcel/watcher-linux-arm64-musl":
+      optional: true
+    "@parcel/watcher-linux-x64-glibc":
+      optional: true
+    "@parcel/watcher-linux-x64-musl":
+      optional: true
+    "@parcel/watcher-win32-arm64":
+      optional: true
+    "@parcel/watcher-win32-ia32":
+      optional: true
+    "@parcel/watcher-win32-x64":
+      optional: true
+  checksum: 10c0/33b7112094b9eb46c234d824953967435b628d3d93a0553255e9910829b84cab3da870153c3a870c31db186dc58f3b2db81382fcaee3451438aeec4d786a6211
+  languageName: node
+  linkType: hard
+
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -689,10 +823,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stripe/stripe-js@npm:^4.4.0":
-  version: 4.4.0
-  resolution: "@stripe/stripe-js@npm:4.4.0"
-  checksum: 10c0/ac418b6141c5b60dc6a40cfb2c4be15ff80f4b6ca802650d8e81141755a0a487dc44b0225a3bffe83b2d5c3d9a9d67c55cd35f39e23d5b68e38afdc9e144f355
+"@stripe/stripe-js@npm:^4.8.0":
+  version: 4.8.0
+  resolution: "@stripe/stripe-js@npm:4.8.0"
+  checksum: 10c0/7c09315e4cd125a090e01256b6c4936626be50a83814a2cb4f9a0bfcdba312303e72ce13e83778d9b6d7ae76735d9ffc27cfac3a1cd4296a48b71dc1b23b8ab5
   languageName: node
   linkType: hard
 
@@ -716,7 +850,7 @@ __metadata:
     "@vitejs/plugin-vue": "npm:^5.0.4"
     "@vue/eslint-config-prettier": "npm:^9.0.0"
     "@vue/eslint-config-typescript": "npm:^13.0.0"
-    axios: "npm:^1.6.8"
+    axios: "npm:^1.7.7"
     babel: "npm:^6.23.0"
     eslint: "npm:^8.56.0"
     eslint-plugin-import: "npm:^2.29.1"
@@ -724,7 +858,7 @@ __metadata:
     husky: "npm:^9.0.11"
     jwt-decode: "npm:^4.0.0"
     lint-staged: "npm:^15.2.2"
-    pinia: "npm:^2.1.7"
+    pinia: "npm:^2.2.4"
     prettier: "npm:^3.3.3"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.9"
@@ -734,7 +868,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@tsconfig/node18@npm:^18.2.2":
+"@tsconfig/node18@npm:^18.2.4":
   version: 18.2.4
   resolution: "@tsconfig/node18@npm:18.2.4"
   checksum: 10c0/cdfd17f212660374eb2765cd5907b2252e43cfa2623cd52307a49f004327ef49bbe7d53c78b0aca57f33e9a5cb0d7d2eb5ded9be1235e6212f65c9f0699322b6
@@ -1656,7 +1790,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.0, axios@npm:^1.6.3, axios@npm:^1.6.8":
+"axios@npm:^1.6.0, axios@npm:^1.6.3, axios@npm:^1.6.8, axios@npm:^1.7.7":
   version: 1.7.7
   resolution: "axios@npm:1.7.7"
   dependencies:
@@ -1843,6 +1977,15 @@ __metadata:
     fsevents:
       optional: true
   checksum: 10c0/8361dcd013f2ddbe260eacb1f3cb2f2c6f2b0ad118708a343a5ed8158941a39cb8fb1d272e0f389712e74ee90ce8ba864eece9e0e62b9705cb468a2f6d917462
+  languageName: node
+  linkType: hard
+
+"chokidar@npm:^4.0.0":
+  version: 4.0.1
+  resolution: "chokidar@npm:4.0.1"
+  dependencies:
+    readdirp: "npm:^4.0.1"
+  checksum: 10c0/4bb7a3adc304059810bb6c420c43261a15bb44f610d77c35547addc84faa0374265c3adc67f25d06f363d9a4571962b02679268c40de07676d260de1986efea9
   languageName: node
   linkType: hard
 
@@ -2145,6 +2288,15 @@ __metadata:
   version: 1.0.0
   resolution: "delayed-stream@npm:1.0.0"
   checksum: 10c0/d758899da03392e6712f042bec80aa293bbe9e9ff1b2634baae6a360113e708b91326594c8a486d475c69d6259afb7efacdc3537bfcda1c6c648e390ce601b19
+  languageName: node
+  linkType: hard
+
+"detect-libc@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "detect-libc@npm:1.0.3"
+  bin:
+    detect-libc: ./bin/detect-libc.js
+  checksum: 10c0/4da0deae9f69e13bc37a0902d78bf7169480004b1fed3c19722d56cff578d16f0e11633b7fbf5fb6249181236c72e90024cbd68f0b9558ae06e281f47326d50d
   languageName: node
   linkType: hard
 
@@ -4048,7 +4200,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"micromatch@npm:^4.0.4, micromatch@npm:~4.0.8":
+"micromatch@npm:^4.0.4, micromatch@npm:^4.0.5, micromatch@npm:~4.0.8":
   version: 4.0.8
   resolution: "micromatch@npm:4.0.8"
   dependencies:
@@ -4301,6 +4453,15 @@ __metadata:
   version: 1.0.5
   resolution: "nice-try@npm:1.0.5"
   checksum: 10c0/95568c1b73e1d0d4069a3e3061a2102d854513d37bcfda73300015b7ba4868d3b27c198d1dbbd8ebdef4112fc2ed9e895d4a0f2e1cce0bd334f2a1346dc9205f
+  languageName: node
+  linkType: hard
+
+"node-addon-api@npm:^7.0.0":
+  version: 7.1.1
+  resolution: "node-addon-api@npm:7.1.1"
+  dependencies:
+    node-gyp: "npm:latest"
+  checksum: 10c0/fb32a206276d608037fa1bcd7e9921e177fe992fc610d098aa3128baca3c0050fc1e014fa007e9b3874cf865ddb4f5bd9f43ccb7cbbbe4efaff6a83e920b17e9
   languageName: node
   linkType: hard
 
@@ -4691,7 +4852,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pinia@npm:^2.1.3, pinia@npm:^2.1.7":
+"pinia@npm:^2.1.3":
   version: 2.2.2
   resolution: "pinia@npm:2.2.2"
   dependencies:
@@ -4707,6 +4868,25 @@ __metadata:
     typescript:
       optional: true
   checksum: 10c0/6c30a6e355be294f87a0256d4b2c266d3315d4fc1451c0a17847d03c0e7879faab4d58df2496e0c2b34a54743807bf65b27f8e80e400883d8bb46682f7af3b5f
+  languageName: node
+  linkType: hard
+
+"pinia@npm:^2.2.4":
+  version: 2.2.4
+  resolution: "pinia@npm:2.2.4"
+  dependencies:
+    "@vue/devtools-api": "npm:^6.6.3"
+    vue-demi: "npm:^0.14.10"
+  peerDependencies:
+    "@vue/composition-api": ^1.4.0
+    typescript: ">=4.4.4"
+    vue: ^2.6.14 || ^3.3.0
+  peerDependenciesMeta:
+    "@vue/composition-api":
+      optional: true
+    typescript:
+      optional: true
+  checksum: 10c0/d4eea590e19f8b499488664d28c280292f1821990ba9d3021408093b253acfba260ab6405c33dafe761a761469d108e9c11ebe0f877ce99f19658d6a3eeb0578
   languageName: node
   linkType: hard
 
@@ -4862,6 +5042,13 @@ __metadata:
     normalize-package-data: "npm:^2.3.2"
     path-type: "npm:^3.0.0"
   checksum: 10c0/65acf2df89fbcd506b48b7ced56a255ba00adf7ecaa2db759c86cc58212f6fd80f1f0b7a85c848551a5d0685232e9b64f45c1fd5b48d85df2761a160767eeb93
+  languageName: node
+  linkType: hard
+
+"readdirp@npm:^4.0.1":
+  version: 4.0.2
+  resolution: "readdirp@npm:4.0.2"
+  checksum: 10c0/a16ecd8ef3286dcd90648c3b103e3826db2b766cdb4a988752c43a83f683d01c7059158d623cbcd8bdfb39e65d302d285be2d208e7d9f34d022d912b929217dd
   languageName: node
   linkType: hard
 
@@ -5141,7 +5328,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass@npm:^1.63.6, sass@npm:^1.69.7":
+"sass@npm:^1.63.6":
   version: 1.78.0
   resolution: "sass@npm:1.78.0"
   dependencies:
@@ -5151,6 +5338,20 @@ __metadata:
   bin:
     sass: sass.js
   checksum: 10c0/6577a87c00b03a5a50f3a11b4b6592f28abce34e61812e381535a3b712151bd94db3ca06467d20395431e0f38a23f99e616d6859d771fb6d4617c359f590c48c
+  languageName: node
+  linkType: hard
+
+"sass@npm:^1.80.2":
+  version: 1.80.2
+  resolution: "sass@npm:1.80.2"
+  dependencies:
+    "@parcel/watcher": "npm:^2.4.1"
+    chokidar: "npm:^4.0.0"
+    immutable: "npm:^4.0.0"
+    source-map-js: "npm:>=0.6.2 <2.0.0"
+  bin:
+    sass: sass.js
+  checksum: 10c0/0006e2ee7a732abaa96a663167b078b8d53b4d7fe5ce435636a8bca6e8a3b6ebc12308c0725f577a456329ed962436d96cfcdd50a8e733ed4c4e4590f21243c9
   languageName: node
   linkType: hard
 
@@ -5577,10 +5778,10 @@ __metadata:
   dependencies:
     "@intlify/eslint-plugin-vue-i18n": "npm:^2.0.0"
     "@rushstack/eslint-patch": "npm:^1.2.0"
-    "@stripe/stripe-js": "npm:^4.4.0"
+    "@stripe/stripe-js": "npm:^4.8.0"
     "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#cfcc3dad2494d8eb1911002fe0526c1e2e29cd25"
     "@sudosos/sudosos-frontend-common": "workspace:^"
-    "@tsconfig/node18": "npm:^18.2.2"
+    "@tsconfig/node18": "npm:^18.2.4"
     "@types/dinero.js": "npm:^1.9.4"
     "@types/lodash": "npm:^4.14.198"
     "@types/node": "npm:^18.19.4"
@@ -5602,7 +5803,7 @@ __metadata:
     lodash: "npm:^4.17.21"
     marked: "npm:^11.1.1"
     npm-run-all: "npm:^4.1.5"
-    pinia: "npm:^2.1.3"
+    pinia: "npm:^2.2.4"
     prettier: "npm:^3.1.1"
     primeflex: "npm:^3.3.1"
     primeicons: "npm:^6.0.1"
@@ -5630,7 +5831,7 @@ __metadata:
     "@rushstack/eslint-patch": "npm:^1.2.0"
     "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#cfcc3dad2494d8eb1911002fe0526c1e2e29cd25"
     "@sudosos/sudosos-frontend-common": "workspace:^"
-    "@tsconfig/node18": "npm:^18.2.2"
+    "@tsconfig/node18": "npm:^18.2.4"
     "@types/eslint": "npm:^9"
     "@types/lodash": "npm:^4.14.196"
     "@types/node": "npm:^18.16.19"
@@ -5641,7 +5842,7 @@ __metadata:
     "@vue/eslint-config-prettier": "npm:^9.0.0"
     "@vue/eslint-config-typescript": "npm:^12.0.0"
     "@vue/tsconfig": "npm:^0.5.1"
-    axios: "npm:^1.6.8"
+    axios: "npm:^1.7.7"
     bootstrap: "npm:^5.3.0"
     dinero: "npm:^1.0.1"
     dinero.js: "npm:^1.9.1"
@@ -5659,7 +5860,7 @@ __metadata:
     primeflex: "npm:^3.3.1"
     primeicons: "npm:^6.0.1"
     primevue: "npm:^3.49.0"
-    sass: "npm:^1.69.7"
+    sass: "npm:^1.80.2"
     typescript: "npm:^5.3.3"
     vite: "npm:^5.0.11"
     vue: "npm:^3.4.5"

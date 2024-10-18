@@ -13,7 +13,7 @@
 <script setup lang="ts">
 
 import { useUserStore } from "@sudosos/sudosos-frontend-common";
-import { storeToRefs } from "pinia";
+import { type StoreGeneric, storeToRefs } from "pinia";
 import type { GewisUserResponse, UserResponse } from "@sudosos/sudosos-client";
 import { onMounted, type Ref, ref } from "vue";
 import apiService from "@/services/ApiService";
@@ -24,7 +24,7 @@ import UserInfo from "@/modules/user/components/UserInfo.vue";
 
 const userStore = useUserStore();
 const dataAnalysis: Ref<boolean> = ref(false);
-const { current } = storeToRefs(userStore);
+const { current } = storeToRefs(userStore as StoreGeneric as StoreGeneric);
 const { t } = useI18n();
 const gewisUser: Ref<GewisUserResponse | undefined> = ref(undefined);
 

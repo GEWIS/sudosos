@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
+import { StoreGeneric, storeToRefs } from 'pinia';
 import { onUnmounted, ref, watch } from 'vue';
 import { useBannerStore } from '@/stores/banner.store';
 import BannerDisplayComponent from '@/components/Banner/BannerDisplayComponent.vue';
@@ -18,7 +18,7 @@ import BannerDisplayComponent from '@/components/Banner/BannerDisplayComponent.v
 // Extract banners from the store
 const bannerStore = useBannerStore();
 bannerStore.fetchBanners();
-const { activeBanners } = storeToRefs(bannerStore);
+const { activeBanners } = storeToRefs(bannerStore as StoreGeneric);
 
 // Initialize the index and currentBanner with the first active banner
 let bannerIndex = 0;

@@ -8,14 +8,14 @@
 import BannersList from '@/modules/admin/components/banners/BannersList.vue';
 import { onMounted } from 'vue';
 import { useBannersStore } from '@/stores/banner.store';
-import { storeToRefs } from 'pinia';
+import { type StoreGeneric, storeToRefs } from 'pinia';
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
 const bannersStore = useBannersStore();
 
-const { banners } = storeToRefs(bannersStore);
+const { banners } = storeToRefs(bannersStore as StoreGeneric);
 
 onMounted(async () => {
     bannersStore.fetchBanners();

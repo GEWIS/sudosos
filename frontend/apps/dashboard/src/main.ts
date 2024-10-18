@@ -60,7 +60,7 @@ app.component('Button', Button);
 app.component('InputText', InputText);
 app.component('InputSwitch', InputSwitch);
 app.component('Menubar', Menubar);
-app.component('Message', Message)
+app.component('Message', Message);
 app.component('Panel', Panel);
 app.component('DataTable', DataTable);
 app.component('DataView', DataView);

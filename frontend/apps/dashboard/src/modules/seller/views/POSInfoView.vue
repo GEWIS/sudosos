@@ -46,14 +46,15 @@ import POSSettingsCard from "@/modules/seller/components/POSSettingsCard.vue";
 import { useTransactionStore } from "@/stores/transaction.store";
 import { formatPrice } from "sudosos-dashboard/src/utils/formatterUtils";
 import Dinero from "dinero.js";
-import { storeToRefs } from "pinia";
+import { type StoreGeneric, storeToRefs } from "pinia";
 import { useI18n } from "vue-i18n";
+import { type ContainerWithProductsResponse } from "@sudosos/sudosos-client/src/api";
 
 const route = useRoute(); // Use the useRoute function to access the current route
 const id = ref<number>();
 const pointOfSaleStore = usePointOfSaleStore();
 
-const { pointsOfSaleWithContainers } = storeToRefs(pointOfSaleStore);
+const { pointsOfSaleWithContainers } = storeToRefs(pointOfSaleStore as StoreGeneric);
 
 const containerStore = useContainerStore();
 
@@ -67,7 +68,8 @@ const posName = computed(() => {
 
 // Fetch containers from the container store, then the ContainerCard will be reactive.
 const posContainerIds = computed(() =>
-    pointsOfSaleWithContainers.value[id.value!]?.containers.map((container) => container.id)
+    pointsOfSaleWithContainers.value[id.value!]?.containers
+        .map((container: ContainerWithProductsResponse) => container.id)
 );
 const posContainers = computed(() => Object.values(containerStore.getAllContainers)
     .filter((container) => posContainerIds.value?.includes(container.id)));

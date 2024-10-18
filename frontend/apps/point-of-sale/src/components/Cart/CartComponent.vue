@@ -49,7 +49,7 @@ import { useSettingStore } from "@/stores/settings.store";
 import CartActionsComponent from "@/components/Cart/CartActionsComponent.vue";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { usePointOfSaleStore } from "@/stores/pos.store";
-import { storeToRefs } from "pinia";
+import { StoreGeneric, storeToRefs } from "pinia";
 
 const cartStore = useCartStore();
 const authStore = useAuthStore();
@@ -62,8 +62,8 @@ const totalPrice = computed(() => cartStore.getTotalPrice);
 const shouldShowTransactions = computed(() => cartStore.cartTotalCount === 0);
 const showHistory = ref(true);
 
-const { pointOfSale } = storeToRefs(posStore);
-const { lockedIn } = storeToRefs(cartStore);
+const { pointOfSale } = storeToRefs(posStore as StoreGeneric);
+const { lockedIn } = storeToRefs(cartStore as StoreGeneric);
 const transactions = ref<BaseTransactionResponse[]>([]);
 
 const getUserRecentTransactions = () => {

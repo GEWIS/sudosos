@@ -38,7 +38,7 @@ import { computed, Ref, ref, watch } from "vue";
 import { addListenerOnDialogueOverlay } from "@/utils/dialogUtil";
 import { usePointOfSaleStore } from "@/stores/pos.store";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
-import { storeToRefs } from "pinia";
+import { StoreGeneric, storeToRefs } from "pinia";
 import { PointOfSaleResponse } from "@sudosos/sudosos-client";
 import { PointOfSaleSwitchService } from "@/services/PointOfSaleSwitchService";
 import { logoutService } from "@/services/logoutService";
@@ -50,7 +50,7 @@ const authStore = useAuthStore();
 const selectedPos = ref<PointOfSaleResponse | null>(null);
 const loadingPos = ref(false);
 
-const { usersPointOfSales, pointOfSale } = storeToRefs(posStore);
+const { usersPointOfSales, pointOfSale } = storeToRefs(posStore as StoreGeneric);
 const options = computed(() => {
   return usersPointOfSales.value ? usersPointOfSales.value : [];
 });

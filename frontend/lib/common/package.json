@@ -42,7 +42,7 @@
     "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#cfcc3dad2494d8eb1911002fe0526c1e2e29cd25",
     "axios": "^1.7.7",
     "jwt-decode": "^4.0.0",
-    "pinia": "^2.1.7",
+    "pinia": "^2.2.4",
     "vue": "^3.3.13"
   },
   "devDependencies": {
