@@ -68,3 +68,11 @@ You can quickly start development directly in your browser by using [Codespaces]
 
 ### Proxying requests to different backends
 In the respective `.env` files, you can change which backend the frontend uses in development by changing the `VITE_DEV_API_BASE`. By default, this is set to the test backend (`https://sudosos.test.gewis.nl/api/v1`), but you can also change it to `https://sudosos.gewis.nl/api/v1` for the production backend. Or you can change it to `http://localhost:3000` if you are running the backend locally.   
+
+## Contributors
+
+This project exists thanks to all the people who contribute code.
+
+[//]: # (TODO create a CONTRIBUTING.md)
+[//]: # (If you'd like to help, see [our guide to contributing code]&#40;CONTRIBUTING.md&#41;.)
+<a href="https://github.com/GEWIS/sudosos-frontend/graphs/contributors"><img src="https://contributors.aika.dev/GEWIS/sudosos-frontend/contributors.svg?max=44" alt="Code contributors" /></a>
