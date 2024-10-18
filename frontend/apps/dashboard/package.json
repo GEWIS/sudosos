@@ -15,7 +15,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@stripe/stripe-js": "^4.4.0",
+    "@stripe/stripe-js": "^4.8.0",
     "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#cfcc3dad2494d8eb1911002fe0526c1e2e29cd25",
     "@sudosos/sudosos-frontend-common": "workspace:^",
     "@types/dinero.js": "^1.9.4",
