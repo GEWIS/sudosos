@@ -38,28 +38,28 @@
   },
   "homepage": "https://gitlab.com/sudosos/sudosos-frontend-common#readme",
   "dependencies": {
-    "@babel/types": "^7.23.6",
+    "@babel/types": "^7.25.8",
     "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#cfcc3dad2494d8eb1911002fe0526c1e2e29cd25",
     "axios": "^1.7.7",
     "jwt-decode": "^4.0.0",
     "pinia": "^2.2.4",
-    "vue": "^3.3.13"
+    "vue": "^3.5.12"
   },
   "devDependencies": {
-    "@rushstack/eslint-patch": "^1.10.2",
-    "@vitejs/plugin-vue": "^5.0.4",
+    "@rushstack/eslint-patch": "^1.10.4",
+    "@vitejs/plugin-vue": "^5.1.4",
     "@vue/eslint-config-prettier": "^9.0.0",
     "@vue/eslint-config-typescript": "^13.0.0",
     "babel": "^6.23.0",
-    "eslint": "^8.56.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-vue": "^9.25.0",
-    "husky": "^9.0.11",
-    "lint-staged": "^15.2.2",
+    "eslint": "^8.57.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-vue": "^9.29.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
     "prettier": "^3.3.3",
-    "typescript": "^5.4.5",
-    "vite": "^5.2.9",
-    "vite-plugin-dts": "^3.4.23",
-    "vue-tsc": "^2.0.13"
+    "typescript": "^5.6.3",
+    "vite": "^5.4.9",
+    "vite-plugin-dts": "^3.9.1",
+    "vue-tsc": "^2.1.6"
   }
 }
