@@ -90,7 +90,7 @@ export class ApiService {
         this._transactionApi = new TransactionsApi(withKeyConfiguration, basePath, axiosInstance);
         this._bannerApi = new BannersApi(withKeyConfiguration, basePath, axiosInstance);
         this._openBannerApi = new BannersApi(undefined, basePath, axiosInstance);
-        this._rootApi = new RootApi();
+        this._rootApi = new RootApi(undefined, basePath, axiosInstance);
         this._voucherGroupApi = new VouchergroupsApi(withKeyConfiguration, basePath, axiosInstance);
         this._containerApi = new ContainersApi(withKeyConfiguration, basePath, axiosInstance);
         this._filesApi = new FilesApi(withKeyConfiguration, basePath, axiosInstance);
