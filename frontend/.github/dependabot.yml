@@ -1,0 +1,24 @@
+version: 2
+updates:
+  - package-ecosystem: "npm" # Specify npm as the package manager
+    directories:
+      - "apps/point-of-sale"
+      - "apps/dashboard"
+      - "lib/common"
+    schedule:
+      interval: "weekly" # Set the update schedule to weekly
+    groups:
+      production-dependencies:
+        patterns:
+          - ".*" # Match all dependencies for production group
+        dependency-type: "production"
+      development-dependencies:
+        patterns:
+          - ".*" # Match all dependencies for development group
+        dependency-type: "development"
+    commit-message:
+      prefix: "chore(deps)"
+    versioning-strategy: "increase" # This limits updates to patch and minor versions
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"] # Ignore major updates
