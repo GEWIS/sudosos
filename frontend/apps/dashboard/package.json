@@ -41,7 +41,7 @@
   "devDependencies": {
     "@intlify/eslint-plugin-vue-i18n": "^2.0.0",
     "@rushstack/eslint-patch": "^1.2.0",
-    "@tsconfig/node18": "^18.2.2",
+    "@tsconfig/node18": "^18.2.4",
     "@types/lodash": "^4.14.198",
     "@types/node": "^18.19.4",
     "@types/uuid": "^9.0.2",
