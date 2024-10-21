@@ -27,7 +27,6 @@ import { onBeforeMount, ref } from "vue";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import apiService from "@/services/ApiService";
 import router from "@/router";
-import { v4 as uuid } from 'uuid';
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -48,7 +47,7 @@ const hasToken = () => {
 onBeforeMount(() => {
   if (route.query.token !== undefined) {
     const token = route.query.token as string;
-    authStore.gewisWebLogin(uuid(), token, apiService)
+    authStore.gewisWebLogin(crypto.randomUUID(), token, apiService)
     .then(() => {
       router.push('/');
     })

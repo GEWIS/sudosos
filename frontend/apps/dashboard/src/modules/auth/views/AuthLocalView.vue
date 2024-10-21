@@ -64,7 +64,6 @@ import { onBeforeMount } from "vue";
 import { useUserStore, useAuthStore } from "@sudosos/sudosos-frontend-common";
 import apiService from "@/services/ApiService";
 import router from "@/router";
-import { v4 as uuid } from 'uuid';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/yup';
 import * as yup from 'yup';
@@ -99,7 +98,7 @@ const route = useRoute();
 onBeforeMount(() => {
   if (route.query.token !== undefined) {
     const token = route.query.token as string;
-    authStore.gewisWebLogin(uuid(), token, apiService).catch(() => {
+    authStore.gewisWebLogin(crypto.randomUUID(), token, apiService).catch(() => {
       router.replace({ path: "/error" });
     });
   }
