@@ -1,3 +1,7 @@
+@use "sass:meta";
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../mixins";
+
 // core
 .p-button {
     display: inline-flex;
@@ -69,136 +73,136 @@
 
 // theme
 .p-button {
-    color: $buttonTextColor;
-    background: $buttonBg;
-    border: $buttonBorder;
-    padding: $buttonPadding;
-    font-size: $fontSize;
-    transition: $formElementTransition;
-    border-radius: $borderRadius;
+    color: variables_light.$buttonTextColor;
+    background: variables_light.$buttonBg;
+    border: variables_light.$buttonBorder;
+    padding: variables_light.$buttonPadding;
+    font-size: variables_light.$fontSize;
+    transition: variables_light.$formElementTransition;
+    border-radius: variables_light.$borderRadius;
     outline-color: transparent;
 
     &:not(:disabled):hover {
-        background: $buttonHoverBg;
-        color: $buttonTextHoverColor;
-        border-color: $buttonHoverBorderColor;
+        background: variables_light.$buttonHoverBg;
+        color: variables_light.$buttonTextHoverColor;
+        border-color: variables_light.$buttonHoverBorderColor;
     }
 
     &:not(:disabled):active {
-        background: $buttonActiveBg;
-        color: $buttonTextActiveColor;
-        border-color: $buttonActiveBorderColor;
+        background: variables_light.$buttonActiveBg;
+        color: variables_light.$buttonTextActiveColor;
+        border-color: variables_light.$buttonActiveBorderColor;
     }
 
     &.p-button-outlined {
         background-color: transparent;
-        color: $buttonBg;
-        border: $outlinedButtonBorder;
+        color: variables_light.$buttonBg;
+        border: variables_light.$outlinedButtonBorder;
 
         &:not(:disabled):hover {
-            background: rgba($buttonBg, $textButtonHoverBgOpacity);
-            color: $buttonBg;
-            border: $outlinedButtonBorder;
+            background: rgba(variables_light.$buttonBg, variables_light.$textButtonHoverBgOpacity);
+            color: variables_light.$buttonBg;
+            border: variables_light.$outlinedButtonBorder;
         }
 
         &:not(:disabled):active {
-            background: rgba($buttonBg, $textButtonActiveBgOpacity);
-            color: $buttonBg;
-            border: $outlinedButtonBorder;
+            background: rgba(variables_light.$buttonBg, variables_light.$textButtonActiveBgOpacity);
+            color: variables_light.$buttonBg;
+            border: variables_light.$outlinedButtonBorder;
         }
 
         &.p-button-plain {
-            color: $plainButtonTextColor;
-            border-color: $plainButtonTextColor;
+            color: variables_light.$plainButtonTextColor;
+            border-color: variables_light.$plainButtonTextColor;
 
             &:not(:disabled):hover {
-                background: $plainButtonHoverBgColor;
-                color: $plainButtonTextColor;
+                background: variables_light.$plainButtonHoverBgColor;
+                color: variables_light.$plainButtonTextColor;
             }
     
             &:not(:disabled):active {
-                background: $plainButtonActiveBgColor;
-                color: $plainButtonTextColor;
+                background: variables_light.$plainButtonActiveBgColor;
+                color: variables_light.$plainButtonTextColor;
             }
         }
     }
 
     &.p-button-text {
         background-color: transparent;
-        color: $buttonBg;
+        color: variables_light.$buttonBg;
         border-color: transparent;
 
         &:not(:disabled):hover {
-            background: rgba($buttonBg, $textButtonHoverBgOpacity);
-            color: $buttonBg;
+            background: rgba(variables_light.$buttonBg, variables_light.$textButtonHoverBgOpacity);
+            color: variables_light.$buttonBg;
             border-color: transparent;
         }
 
         &:not(:disabled):active {
-            background: rgba($buttonBg, $textButtonActiveBgOpacity);
-            color: $buttonBg;
+            background: rgba(variables_light.$buttonBg, variables_light.$textButtonActiveBgOpacity);
+            color: variables_light.$buttonBg;
             border-color: transparent;
         }
 
         &.p-button-plain {
-            color: $plainButtonTextColor;
+            color: variables_light.$plainButtonTextColor;
 
             &:not(:disabled):hover {
-                background: $plainButtonHoverBgColor;
-                color: $plainButtonTextColor;
+                background: variables_light.$plainButtonHoverBgColor;
+                color: variables_light.$plainButtonTextColor;
             }
     
             &:not(:disabled):active {
-                background: $plainButtonActiveBgColor;
-                color: $plainButtonTextColor;
+                background: variables_light.$plainButtonActiveBgColor;
+                color: variables_light.$plainButtonTextColor;
             }
         }
     }
 
     &:focus-visible {
-        @include focused();
+        @include mixins.focused();
     }
 
     .p-button-label {
-        transition-duration: $transitionDuration;
+        transition-duration: variables_light.$transitionDuration;
     }
 
     .p-button-icon-left {
-         margin-right: $inlineSpacing;
+         margin-right: variables_light.$inlineSpacing;
     }
 
     .p-button-icon-right {
-        margin-left: $inlineSpacing;
+        margin-left: variables_light.$inlineSpacing;
     }
 
     .p-button-icon-bottom {
-        margin-top: $inlineSpacing;
+        margin-top: variables_light.$inlineSpacing;
     }
 
     .p-button-icon-top {
-       margin-bottom: $inlineSpacing;
+       margin-bottom: variables_light.$inlineSpacing;
     }
 
     .p-badge {
-        margin-left: $inlineSpacing;
-        min-width: $fontSize;
-        height: $fontSize;
-        line-height: $fontSize;
-        color: $buttonBg;
-        background-color: $buttonTextColor;
+        margin-left: variables_light.$inlineSpacing;
+        min-width: variables_light.$fontSize;
+        height: variables_light.$fontSize;
+        line-height: variables_light.$fontSize;
+        color: variables_light.$buttonBg;
+        background-color: variables_light.$buttonTextColor;
     }
 
     &.p-button-raised {
-        box-shadow: $raisedButtonShadow;
+        box-shadow: variables_light.$raisedButtonShadow;
     }
 
     &.p-button-rounded {
-        border-radius: $roundedButtonBorderRadius;
+        border-radius: variables_light.$roundedButtonBorderRadius;
     }
 
     &.p-button-icon-only {
-        width: $buttonIconOnlyWidth;
-        padding: $buttonIconOnlyPadding;
+        width: variables_light.$buttonIconOnlyWidth;
+        padding: variables_light.$buttonIconOnlyPadding;
 
         .p-button-icon-left,
         .p-button-icon-right {
@@ -207,31 +211,31 @@
 
         &.p-button-rounded {
             border-radius: 50%;
-            height: $buttonIconOnlyWidth;
+            height: variables_light.$buttonIconOnlyWidth;
         }
     }
 
     &.p-button-sm {
-        @include scaledFontSize($fontSize, $scaleSM);
-        @include scaledPadding($buttonPadding, $scaleSM);
+        @include mixins.scaledFontSize(variables_light.$fontSize, variables_light.$scaleSM);
+        @include mixins.scaledPadding(variables_light.$buttonPadding, variables_light.$scaleSM);
 
         .p-button-icon {
-            @include scaledFontSize($primeIconFontSize, $scaleSM);
+            @include mixins.scaledFontSize(variables_light.$primeIconFontSize, variables_light.$scaleSM);
         }
     }
 
     &.p-button-lg {
-        @include scaledFontSize($fontSize, $scaleLG);
-        @include scaledPadding($buttonPadding, $scaleLG);
+        @include mixins.scaledFontSize(variables_light.$fontSize, variables_light.$scaleLG);
+        @include mixins.scaledPadding(variables_light.$buttonPadding, variables_light.$scaleLG);
 
         .p-button-icon {
-            @include scaledFontSize($primeIconFontSize, $scaleLG);
+            @include mixins.scaledFontSize(variables_light.$primeIconFontSize, variables_light.$scaleLG);
         }
     }
 
     &.p-button-loading-label-only {
         .p-button-label {
-            margin-left: $inlineSpacing;
+            margin-left: variables_light.$inlineSpacing;
         }
 
         .p-button-loading-icon {
@@ -246,7 +250,7 @@
     }
     
     .p-button-icon-only {
-        width: $buttonIconOnlyWidth;
+        width: variables_light.$buttonIconOnlyWidth;
     }
 
     .p-button-group {
@@ -259,437 +263,437 @@
 }
 
 .p-button.p-button-secondary, .p-button-group.p-button-secondary > .p-button, .p-splitbutton.p-button-secondary > .p-button {
-    color: $secondaryButtonTextColor;
-    background: $secondaryButtonBg;
-    border: $secondaryButtonBorder;
+    color: variables_light.$secondaryButtonTextColor;
+    background: variables_light.$secondaryButtonBg;
+    border: variables_light.$secondaryButtonBorder;
 
     &:not(:disabled):hover {
-        background: $secondaryButtonHoverBg;
-        color: $secondaryButtonTextHoverColor;
-        border-color: $secondaryButtonHoverBorderColor;
+        background: variables_light.$secondaryButtonHoverBg;
+        color: variables_light.$secondaryButtonTextHoverColor;
+        border-color: variables_light.$secondaryButtonHoverBorderColor;
     }
 
     &:not(:disabled):focus {
-        box-shadow: $secondaryButtonFocusShadow;
+        box-shadow: variables_light.$secondaryButtonFocusShadow;
     }
 
     &:not(:disabled):active {
-        background: $secondaryButtonActiveBg;
-        color: $secondaryButtonTextActiveColor;
-        border-color: $secondaryButtonActiveBorderColor;
+        background: variables_light.$secondaryButtonActiveBg;
+        color: variables_light.$secondaryButtonTextActiveColor;
+        border-color: variables_light.$secondaryButtonActiveBorderColor;
     }
     
     &.p-button-outlined {
         background-color: transparent;
-        color: $secondaryButtonBg;
-        border: $outlinedButtonBorder;
+        color: variables_light.$secondaryButtonBg;
+        border: variables_light.$outlinedButtonBorder;
 
         &:not(:disabled):hover {
-            background: rgba($secondaryButtonBg, $textButtonHoverBgOpacity);
-            color: $secondaryButtonBg;
-            border: $outlinedButtonBorder;
+            background: rgba(variables_light.$secondaryButtonBg, variables_light.$textButtonHoverBgOpacity);
+            color: variables_light.$secondaryButtonBg;
+            border: variables_light.$outlinedButtonBorder;
         }
 
         &:not(:disabled):active {
-            background: rgba($secondaryButtonBg, $textButtonActiveBgOpacity);
-            color: $secondaryButtonBg;
-            border: $outlinedButtonBorder;
+            background: rgba(variables_light.$secondaryButtonBg, variables_light.$textButtonActiveBgOpacity);
+            color: variables_light.$secondaryButtonBg;
+            border: variables_light.$outlinedButtonBorder;
         }
     }
 
     &.p-button-text {
         background-color: transparent;
-        color: $secondaryButtonBg;
+        color: variables_light.$secondaryButtonBg;
         border-color: transparent;
 
         &:not(:disabled):hover {
-            background: rgba($secondaryButtonBg, $textButtonHoverBgOpacity);
+            background: rgba(variables_light.$secondaryButtonBg, variables_light.$textButtonHoverBgOpacity);
             border-color: transparent;
-            color: $secondaryButtonBg;
+            color: variables_light.$secondaryButtonBg;
         }
 
         &:not(:disabled):active {
-            background: rgba($secondaryButtonBg, $textButtonActiveBgOpacity);
+            background: rgba(variables_light.$secondaryButtonBg, variables_light.$textButtonActiveBgOpacity);
             border-color: transparent;
-            color: $secondaryButtonBg;
+            color: variables_light.$secondaryButtonBg;
         }
     }
 }
 
 .p-button.p-button-info, .p-button-group.p-button-info > .p-button, .p-splitbutton.p-button-info > .p-button {
-    color: $infoButtonTextColor;
-    background: $infoButtonBg;
-    border: $infoButtonBorder;
+    color: variables_light.$infoButtonTextColor;
+    background: variables_light.$infoButtonBg;
+    border: variables_light.$infoButtonBorder;
 
     &:not(:disabled):hover {
-        background: $infoButtonHoverBg;
-        color: $infoButtonTextHoverColor;
-        border-color: $infoButtonHoverBorderColor;
+        background: variables_light.$infoButtonHoverBg;
+        color: variables_light.$infoButtonTextHoverColor;
+        border-color: variables_light.$infoButtonHoverBorderColor;
     }
 
     &:not(:disabled):focus {
-        box-shadow: $infoButtonFocusShadow;
+        box-shadow: variables_light.$infoButtonFocusShadow;
     }
 
     &:not(:disabled):active {
-        background: $infoButtonActiveBg;
-        color: $infoButtonTextActiveColor;
-        border-color: $infoButtonActiveBorderColor;
+        background: variables_light.$infoButtonActiveBg;
+        color: variables_light.$infoButtonTextActiveColor;
+        border-color: variables_light.$infoButtonActiveBorderColor;
     }
 
     &.p-button-outlined {
         background-color: transparent;
-        color: $infoButtonBg;
-        border: $outlinedButtonBorder;
+        color: variables_light.$infoButtonBg;
+        border: variables_light.$outlinedButtonBorder;
 
         &:not(:disabled):hover {
-            background: rgba($infoButtonBg, $textButtonHoverBgOpacity);
-            color: $infoButtonBg;
-            border: $outlinedButtonBorder;
+            background: rgba(variables_light.$infoButtonBg, variables_light.$textButtonHoverBgOpacity);
+            color: variables_light.$infoButtonBg;
+            border: variables_light.$outlinedButtonBorder;
         }
 
         &:not(:disabled):active {
-            background: rgba($infoButtonBg, $textButtonActiveBgOpacity);
-            color: $infoButtonBg;
-            border: $outlinedButtonBorder;
+            background: rgba(variables_light.$infoButtonBg, variables_light.$textButtonActiveBgOpacity);
+            color: variables_light.$infoButtonBg;
+            border: variables_light.$outlinedButtonBorder;
         }
     }
 
     &.p-button-text {
         background-color: transparent;
-        color: $infoButtonBg;
+        color: variables_light.$infoButtonBg;
         border-color: transparent;
 
         &:not(:disabled):hover {
-            background: rgba($infoButtonBg, $textButtonHoverBgOpacity);
+            background: rgba(variables_light.$infoButtonBg, variables_light.$textButtonHoverBgOpacity);
             border-color: transparent;
-            color: $infoButtonBg;
+            color: variables_light.$infoButtonBg;
         }
 
         &:not(:disabled):active {
-            background: rgba($infoButtonBg, $textButtonActiveBgOpacity);
+            background: rgba(variables_light.$infoButtonBg, variables_light.$textButtonActiveBgOpacity);
             border-color: transparent;
-            color: $infoButtonBg;
+            color: variables_light.$infoButtonBg;
         }
     }
 }
 
 .p-button.p-button-success, .p-button-group.p-button-success > .p-button, .p-splitbutton.p-button-success > .p-button {
-    color: $successButtonTextColor;
-    background: $successButtonBg;
-    border: $successButtonBorder;
+    color: variables_light.$successButtonTextColor;
+    background: variables_light.$successButtonBg;
+    border: variables_light.$successButtonBorder;
 
     &:not(:disabled):hover {
-        background: $successButtonHoverBg;
-        color: $successButtonTextHoverColor;
-        border-color: $successButtonHoverBorderColor;
+        background: variables_light.$successButtonHoverBg;
+        color: variables_light.$successButtonTextHoverColor;
+        border-color: variables_light.$successButtonHoverBorderColor;
     }
 
     &:not(:disabled):focus {
-        box-shadow: $successButtonFocusShadow;
+        box-shadow: variables_light.$successButtonFocusShadow;
     }
 
     &:not(:disabled):active {
-        background: $successButtonActiveBg;
-        color: $successButtonTextActiveColor;
-        border-color: $successButtonActiveBorderColor;
+        background: variables_light.$successButtonActiveBg;
+        color: variables_light.$successButtonTextActiveColor;
+        border-color: variables_light.$successButtonActiveBorderColor;
     }
 
     &.p-button-outlined {
         background-color: transparent;
-        color: $successButtonBg;
-        border: $outlinedButtonBorder;
+        color: variables_light.$successButtonBg;
+        border: variables_light.$outlinedButtonBorder;
 
         &:not(:disabled):hover {
-            background: rgba($successButtonBg, $textButtonHoverBgOpacity);
-            color: $successButtonBg;
-            border: $outlinedButtonBorder;
+            background: rgba(variables_light.$successButtonBg, variables_light.$textButtonHoverBgOpacity);
+            color: variables_light.$successButtonBg;
+            border: variables_light.$outlinedButtonBorder;
         }
 
         &:not(:disabled):active {
-            background: rgba($successButtonBg, $textButtonActiveBgOpacity);
-            color: $successButtonBg;
-            border: $outlinedButtonBorder;
+            background: rgba(variables_light.$successButtonBg, variables_light.$textButtonActiveBgOpacity);
+            color: variables_light.$successButtonBg;
+            border: variables_light.$outlinedButtonBorder;
         }
     }
 
     &.p-button-text {
         background-color: transparent;
-        color: $successButtonBg;
+        color: variables_light.$successButtonBg;
         border-color: transparent;
 
         &:not(:disabled):hover {
-            background: rgba($successButtonBg, $textButtonHoverBgOpacity);
+            background: rgba(variables_light.$successButtonBg, variables_light.$textButtonHoverBgOpacity);
             border-color: transparent;
-            color: $successButtonBg;
+            color: variables_light.$successButtonBg;
         }
 
         &:not(:disabled):active {
-            background: rgba($successButtonBg, $textButtonActiveBgOpacity);
+            background: rgba(variables_light.$successButtonBg, variables_light.$textButtonActiveBgOpacity);
             border-color: transparent;
-            color: $successButtonBg;
+            color: variables_light.$successButtonBg;
         }
     }
 }
 
 .p-button.p-button-warning, .p-button-group.p-button-warning > .p-button, .p-splitbutton.p-button-warning > .p-button {
-    color: $warningButtonTextColor;
-    background: $warningButtonBg;
-    border: $warningButtonBorder;
+    color: variables_light.$warningButtonTextColor;
+    background: variables_light.$warningButtonBg;
+    border: variables_light.$warningButtonBorder;
     
     &:not(:disabled):hover {
-        background: $warningButtonHoverBg;
-        color: $warningButtonTextHoverColor;
-        border-color: $warningButtonHoverBorderColor;
+        background: variables_light.$warningButtonHoverBg;
+        color: variables_light.$warningButtonTextHoverColor;
+        border-color: variables_light.$warningButtonHoverBorderColor;
     }
 
     &:not(:disabled):focus {
-        box-shadow: $warningButtonFocusShadow;
+        box-shadow: variables_light.$warningButtonFocusShadow;
     }
 
     &:not(:disabled):active {
-        background: $warningButtonActiveBg;
-        color: $warningButtonTextActiveColor;
-        border-color: $warningButtonActiveBorderColor;
+        background: variables_light.$warningButtonActiveBg;
+        color: variables_light.$warningButtonTextActiveColor;
+        border-color: variables_light.$warningButtonActiveBorderColor;
     }
 
     &.p-button-outlined {
         background-color: transparent;
-        color: $warningButtonBg;
-        border: $outlinedButtonBorder;
+        color: variables_light.$warningButtonBg;
+        border: variables_light.$outlinedButtonBorder;
 
         &:not(:disabled):hover {
-            background: rgba($warningButtonBg, $textButtonHoverBgOpacity);
-            color: $warningButtonBg;
-            border: $outlinedButtonBorder;
+            background: rgba(variables_light.$warningButtonBg, variables_light.$textButtonHoverBgOpacity);
+            color: variables_light.$warningButtonBg;
+            border: variables_light.$outlinedButtonBorder;
         }
 
         &:not(:disabled):active {
-            background: rgba($warningButtonBg, $textButtonActiveBgOpacity);
-            color: $warningButtonBg;
-            border: $outlinedButtonBorder;
+            background: rgba(variables_light.$warningButtonBg, variables_light.$textButtonActiveBgOpacity);
+            color: variables_light.$warningButtonBg;
+            border: variables_light.$outlinedButtonBorder;
         }
     }
 
     &.p-button-text {
         background-color: transparent;
-        color: $warningButtonBg;
+        color: variables_light.$warningButtonBg;
         border-color: transparent;
 
         &:not(:disabled):hover {
-            background: rgba($warningButtonBg, $textButtonHoverBgOpacity);
+            background: rgba(variables_light.$warningButtonBg, variables_light.$textButtonHoverBgOpacity);
             border-color: transparent;
-            color: $warningButtonBg;
+            color: variables_light.$warningButtonBg;
         }
 
         &:not(:disabled):active {
-            background: rgba($warningButtonBg, $textButtonActiveBgOpacity);
+            background: rgba(variables_light.$warningButtonBg, variables_light.$textButtonActiveBgOpacity);
             border-color: transparent;
-            color: $warningButtonBg;
+            color: variables_light.$warningButtonBg;
         }
     }
 }
 
 .p-button.p-button-help, .p-button-group.p-button-help > .p-button, .p-splitbutton.p-button-help > .p-button {
-    color: $helpButtonTextColor;
-    background: $helpButtonBg;
-    border: $helpButtonBorder;
+    color: variables_light.$helpButtonTextColor;
+    background: variables_light.$helpButtonBg;
+    border: variables_light.$helpButtonBorder;
 
     &:not(:disabled):hover {
-        background: $helpButtonHoverBg;
-        color: $helpButtonTextHoverColor;
-        border-color: $helpButtonHoverBorderColor;
+        background: variables_light.$helpButtonHoverBg;
+        color: variables_light.$helpButtonTextHoverColor;
+        border-color: variables_light.$helpButtonHoverBorderColor;
     }
 
     &:not(:disabled):focus {
-        box-shadow: $helpButtonFocusShadow;
+        box-shadow: variables_light.$helpButtonFocusShadow;
     }
 
     &:not(:disabled):active {
-        background: $helpButtonActiveBg;
-        color: $helpButtonTextActiveColor;
-        border-color: $helpButtonActiveBorderColor;
+        background: variables_light.$helpButtonActiveBg;
+        color: variables_light.$helpButtonTextActiveColor;
+        border-color: variables_light.$helpButtonActiveBorderColor;
     }
 
     &.p-button-outlined {
         background-color: transparent;
-        color: $helpButtonBg;
-        border: $outlinedButtonBorder;
+        color: variables_light.$helpButtonBg;
+        border: variables_light.$outlinedButtonBorder;
 
         &:not(:disabled):hover {
-            background: rgba($helpButtonBg, $textButtonHoverBgOpacity);
-            color: $helpButtonBg;
-            border: $outlinedButtonBorder;
+            background: rgba(variables_light.$helpButtonBg, variables_light.$textButtonHoverBgOpacity);
+            color: variables_light.$helpButtonBg;
+            border: variables_light.$outlinedButtonBorder;
         }
 
         &:not(:disabled):active {
-            background: rgba($helpButtonBg, $textButtonActiveBgOpacity);
-            color: $helpButtonBg;
-            border: $outlinedButtonBorder;
+            background: rgba(variables_light.$helpButtonBg, variables_light.$textButtonActiveBgOpacity);
+            color: variables_light.$helpButtonBg;
+            border: variables_light.$outlinedButtonBorder;
         }
     }
 
     &.p-button-text {
         background-color: transparent;
-        color: $helpButtonBg;
+        color: variables_light.$helpButtonBg;
         border-color: transparent;
 
         &:not(:disabled):hover {
-            background: rgba($helpButtonBg, $textButtonHoverBgOpacity);
+            background: rgba(variables_light.$helpButtonBg, variables_light.$textButtonHoverBgOpacity);
             border-color: transparent;
-            color: $helpButtonBg;
+            color: variables_light.$helpButtonBg;
         }
 
         &:not(:disabled):active {
-            background: rgba($helpButtonBg, $textButtonActiveBgOpacity);
+            background: rgba(variables_light.$helpButtonBg, variables_light.$textButtonActiveBgOpacity);
             border-color: transparent;
-            color: $helpButtonBg;
+            color: variables_light.$helpButtonBg;
         }
     }
 }
 
 .p-button.p-button-danger, .p-button-group.p-button-danger > .p-button, .p-splitbutton.p-button-danger > .p-button {
-    color: $dangerButtonTextColor;
-    background: $dangerButtonBg;
-    border: $dangerButtonBorder;
+    color: variables_light.$dangerButtonTextColor;
+    background: variables_light.$dangerButtonBg;
+    border: variables_light.$dangerButtonBorder;
 
     &:not(:disabled):hover {
-        background: $dangerButtonHoverBg;
-        color: $dangerButtonTextHoverColor;
-        border-color: $dangerButtonHoverBorderColor;
+        background: variables_light.$dangerButtonHoverBg;
+        color: variables_light.$dangerButtonTextHoverColor;
+        border-color: variables_light.$dangerButtonHoverBorderColor;
     }
 
     &:not(:disabled):focus {
-        box-shadow: $dangerButtonFocusShadow;
+        box-shadow: variables_light.$dangerButtonFocusShadow;
     }
 
     &:not(:disabled):active {
-        background: $dangerButtonActiveBg;
-        color: $dangerButtonTextActiveColor;
-        border-color: $dangerButtonActiveBorderColor;
+        background: variables_light.$dangerButtonActiveBg;
+        color: variables_light.$dangerButtonTextActiveColor;
+        border-color: variables_light.$dangerButtonActiveBorderColor;
     }
 
     &.p-button-outlined {
         background-color: transparent;
-        color: $dangerButtonBg;
-        border: $outlinedButtonBorder;
+        color: variables_light.$dangerButtonBg;
+        border: variables_light.$outlinedButtonBorder;
 
         &:not(:disabled):hover {
-            background: rgba($dangerButtonBg, $textButtonHoverBgOpacity);
-            color: $dangerButtonBg;
-            border: $outlinedButtonBorder;
+            background: rgba(variables_light.$dangerButtonBg, variables_light.$textButtonHoverBgOpacity);
+            color: variables_light.$dangerButtonBg;
+            border: variables_light.$outlinedButtonBorder;
         }
 
         &:not(:disabled):active {
-            background: rgba($dangerButtonBg, $textButtonActiveBgOpacity);
-            color: $dangerButtonBg;
-            border: $outlinedButtonBorder;
+            background: rgba(variables_light.$dangerButtonBg, variables_light.$textButtonActiveBgOpacity);
+            color: variables_light.$dangerButtonBg;
+            border: variables_light.$outlinedButtonBorder;
         }
     }
 
     &.p-button-text {
         background-color: transparent;
-        color: $dangerButtonBg;
+        color: variables_light.$dangerButtonBg;
         border-color: transparent;
 
         &:not(:disabled):hover {
-            background: rgba($dangerButtonBg, $textButtonHoverBgOpacity);
+            background: rgba(variables_light.$dangerButtonBg, variables_light.$textButtonHoverBgOpacity);
             border-color: transparent;
-            color: $dangerButtonBg;
+            color: variables_light.$dangerButtonBg;
         }
 
         &:not(:disabled):active {
-            background: rgba($dangerButtonBg, $textButtonActiveBgOpacity);
+            background: rgba(variables_light.$dangerButtonBg, variables_light.$textButtonActiveBgOpacity);
             border-color: transparent;
-            color: $dangerButtonBg;
+            color: variables_light.$dangerButtonBg;
         }
     }
 }
 
-@if variable-exists(contrastButtonTextColor) {
+@if meta.variable-exists(contrastButtonTextColor) {
     .p-button.p-button-contrast, .p-button-group.p-button-contrast > .p-button, .p-splitbutton.p-button-contrast > .p-button {
-        color: $contrastButtonTextColor;
-        background: $contrastButtonBg;
-        border: $contrastButtonBorder;
+        color: variables_light.$contrastButtonTextColor;
+        background: variables_light.$contrastButtonBg;
+        border: variables_light.$contrastButtonBorder;
     
         &:not(:disabled):hover {
-            background: $contrastButtonHoverBg;
-            color: $contrastButtonTextHoverColor;
-            border-color: $contrastButtonHoverBorderColor;
+            background: variables_light.$contrastButtonHoverBg;
+            color: variables_light.$contrastButtonTextHoverColor;
+            border-color: variables_light.$contrastButtonHoverBorderColor;
         }
     
         &:not(:disabled):focus {
-            box-shadow: $contrastButtonFocusShadow;
+            box-shadow: variables_light.$contrastButtonFocusShadow;
         }
     
         &:not(:disabled):active {
-            background: $contrastButtonActiveBg;
-            color: $contrastButtonTextActiveColor;
-            border-color: $contrastButtonActiveBorderColor;
+            background: variables_light.$contrastButtonActiveBg;
+            color: variables_light.$contrastButtonTextActiveColor;
+            border-color: variables_light.$contrastButtonActiveBorderColor;
         }
     
         &.p-button-outlined {
             background-color: transparent;
-            color: $contrastButtonBg;
-            border: $outlinedButtonBorder;
+            color: variables_light.$contrastButtonBg;
+            border: variables_light.$outlinedButtonBorder;
     
             &:not(:disabled):hover {
-                background: rgba($contrastButtonBg, $textButtonHoverBgOpacity);
-                color: $contrastButtonBg;
-                border: $outlinedButtonBorder;
+                background: rgba(variables_light.$contrastButtonBg, variables_light.$textButtonHoverBgOpacity);
+                color: variables_light.$contrastButtonBg;
+                border: variables_light.$outlinedButtonBorder;
             }
     
             &:not(:disabled):active {
-                background: rgba($contrastButtonBg, $textButtonActiveBgOpacity);
-                color: $contrastButtonBg;
-                border: $outlinedButtonBorder;
+                background: rgba(variables_light.$contrastButtonBg, variables_light.$textButtonActiveBgOpacity);
+                color: variables_light.$contrastButtonBg;
+                border: variables_light.$outlinedButtonBorder;
             }
         }
     
         &.p-button-text {
             background-color: transparent;
-            color: $contrastButtonBg;
+            color: variables_light.$contrastButtonBg;
             border-color: transparent;
     
             &:not(:disabled):hover {
-                background: rgba($contrastButtonBg, $textButtonHoverBgOpacity);
+                background: rgba(variables_light.$contrastButtonBg, variables_light.$textButtonHoverBgOpacity);
                 border-color: transparent;
-                color: $contrastButtonBg;
+                color: variables_light.$contrastButtonBg;
             }
     
             &:not(:disabled):active {
-                background: rgba($contrastButtonBg, $textButtonActiveBgOpacity);
+                background: rgba(variables_light.$contrastButtonBg, variables_light.$textButtonActiveBgOpacity);
                 border-color: transparent;
-                color: $contrastButtonBg;
+                color: variables_light.$contrastButtonBg;
             }
         }
     }
 }
 
 .p-button.p-button-link {
-    color: $linkButtonColor;
+    color: variables_light.$linkButtonColor;
     background: transparent;
     border: transparent;
 
     &:not(:disabled):hover {
         background:  transparent;
-        color: $linkButtonHoverColor;
+        color: variables_light.$linkButtonHoverColor;
         border-color:  transparent;
 
         .p-button-label {
-            text-decoration: $linkButtonTextHoverDecoration;
+            text-decoration: variables_light.$linkButtonTextHoverDecoration;
         }
     }
 
     &:not(:disabled):focus {
         background: transparent;
-        box-shadow: $linkButtonFocusShadow;
+        box-shadow: variables_light.$linkButtonFocusShadow;
         border-color:  transparent;
     }
 
     &:not(:disabled):active {
         background:  transparent;
-        color: $linkButtonColor;
+        color: variables_light.$linkButtonColor;
         border-color:  transparent;
     }
 }

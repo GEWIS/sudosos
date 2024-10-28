@@ -1,3 +1,5 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-scrolltop {
     position: fixed;
@@ -34,27 +36,27 @@
 
 // theme
 .p-scrolltop {
-    width: $scrollTopWidth;
-    height: $scrollTopHeight;
-    border-radius: $scrollTopBorderRadius;
-    box-shadow: $inputOverlayShadow;
-    transition: $actionIconTransition;
+    width: variables_light.$scrollTopWidth;
+    height: variables_light.$scrollTopHeight;
+    border-radius: variables_light.$scrollTopBorderRadius;
+    box-shadow: variables_light.$inputOverlayShadow;
+    transition: variables_light.$actionIconTransition;
 
     &.p-link {
-        background: $scrollTopBg;
+        background: variables_light.$scrollTopBg;
 
         &:hover {
-            background: $scrollTopHoverBg;
+            background: variables_light.$scrollTopHoverBg;
         }
     }
 
     .p-scrolltop-icon {
-        font-size: $scrollTopFontSize;
-        color: $scrollTopTextColor;
+        font-size: variables_light.$scrollTopFontSize;
+        color: variables_light.$scrollTopTextColor;
 
         &.p-icon {
-            width: $scrollTopFontSize;
-            height: $scrollTopFontSize;
+            width: variables_light.$scrollTopFontSize;
+            height: variables_light.$scrollTopFontSize;
         }
     }
 }

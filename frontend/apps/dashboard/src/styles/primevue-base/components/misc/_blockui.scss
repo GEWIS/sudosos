@@ -1,3 +1,5 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-blockui-container {
     position: relative;
@@ -13,5 +15,5 @@
 
 // theme
 .p-blockui {
-    border-radius: $borderRadius;
+    border-radius: variables_light.$borderRadius;
 }

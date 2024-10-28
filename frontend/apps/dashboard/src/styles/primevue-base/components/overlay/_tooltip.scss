@@ -1,3 +1,5 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-tooltip {
     position:absolute;
@@ -57,34 +59,34 @@
 // theme
 .p-tooltip {
     .p-tooltip-text {
-        background: $tooltipBg;
-        color: $tooltipTextColor;
-        padding: $tooltipPadding;
-        box-shadow: $inputOverlayShadow;
-        border-radius: $borderRadius;
+        background: variables_light.$tooltipBg;
+        color: variables_light.$tooltipTextColor;
+        padding: variables_light.$tooltipPadding;
+        box-shadow: variables_light.$inputOverlayShadow;
+        border-radius: variables_light.$borderRadius;
     }
 
     &.p-tooltip-right {
         .p-tooltip-arrow {
-            border-right-color: $tooltipBg;
+            border-right-color: variables_light.$tooltipBg;
         }
     }
 
     &.p-tooltip-left {
         .p-tooltip-arrow {
-            border-left-color: $tooltipBg;
+            border-left-color: variables_light.$tooltipBg;
         }
     }
 
     &.p-tooltip-top {
         .p-tooltip-arrow {
-            border-top-color: $tooltipBg;
+            border-top-color: variables_light.$tooltipBg;
         }
     }
 
     &.p-tooltip-bottom {
         .p-tooltip-arrow {
-            border-bottom-color: $tooltipBg;
+            border-bottom-color: variables_light.$tooltipBg;
         }
     }
 }

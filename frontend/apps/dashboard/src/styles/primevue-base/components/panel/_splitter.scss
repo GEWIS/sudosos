@@ -1,3 +1,6 @@
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../mixins";
+
 // core
 .p-splitter {
     display: flex;
@@ -61,27 +64,27 @@
 
 // theme
 .p-splitter {
-    border: $panelContentBorder;
-    background: $panelContentBg;
-    border-radius: $borderRadius;
-    color: $panelContentTextColor;
+    border: variables_light.$panelContentBorder;
+    background: variables_light.$panelContentBg;
+    border-radius: variables_light.$borderRadius;
+    color: variables_light.$panelContentTextColor;
 
     .p-splitter-gutter {
-        transition: $actionIconTransition;
-        background: $splitterGutterBg;
+        transition: variables_light.$actionIconTransition;
+        background: variables_light.$splitterGutterBg;
         
         .p-splitter-gutter-handle {
-            background: $splitterGutterHandleBg;
-            transition: $formElementTransition;
+            background: variables_light.$splitterGutterHandleBg;
+            transition: variables_light.$formElementTransition;
             outline-color: transparent;
             
             &:focus-visible {
-                @include focused();
+                @include mixins.focused();
             }
         }
     }
 
     .p-splitter-gutter-resizing {
-        background: $splitterGutterHandleBg;
+        background: variables_light.$splitterGutterHandleBg;
     }
 }

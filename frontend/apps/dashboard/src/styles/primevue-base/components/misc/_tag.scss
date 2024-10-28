@@ -1,3 +1,6 @@
+@use "sass:meta";
+@use "../../../themes/sudosos-light/variables_light";
+
 @use "sass:math";
 
 // core
@@ -19,55 +22,55 @@
 
 // theme
 .p-tag {
-    background: $badgeBg;
-    color: $badgeTextColor;
-    font-size: $badgeFontSize;
-    font-weight: $badgeFontWeight;
-    padding: $tagPadding;
-    border-radius: $borderRadius;
+    background: variables_light.$badgeBg;
+    color: variables_light.$badgeTextColor;
+    font-size: variables_light.$badgeFontSize;
+    font-weight: variables_light.$badgeFontWeight;
+    padding: variables_light.$tagPadding;
+    border-radius: variables_light.$borderRadius;
 
     &.p-tag-success {
-        background-color: $successButtonBg;
-        color: $successButtonTextColor;
+        background-color: variables_light.$successButtonBg;
+        color: variables_light.$successButtonTextColor;
     }
 
     &.p-tag-info {
-        background-color: $infoButtonBg;
-        color: $infoButtonTextColor;
+        background-color: variables_light.$infoButtonBg;
+        color: variables_light.$infoButtonTextColor;
     }
 
     &.p-tag-warning {
-        background-color: $warningButtonBg;
-        color: $warningButtonTextColor;
+        background-color: variables_light.$warningButtonBg;
+        color: variables_light.$warningButtonTextColor;
     }
 
     &.p-tag-danger {
-        background-color: $dangerButtonBg;
-        color: $dangerButtonTextColor;
+        background-color: variables_light.$dangerButtonBg;
+        color: variables_light.$dangerButtonTextColor;
     }
 
-    @if variable-exists(secondaryMessageBg) {
+    @if meta.variable-exists(secondaryMessageBg) {
         &.p-tag-secondary {
-            background-color: $secondaryButtonBg;
-            color: $secondaryButtonTextColor;
+            background-color: variables_light.$secondaryButtonBg;
+            color: variables_light.$secondaryButtonTextColor;
         }
     
         &.p-tag-contrast {
-            background-color: $contrastButtonBg;
-            color: $contrastButtonTextColor;
+            background-color: variables_light.$contrastButtonBg;
+            color: variables_light.$contrastButtonTextColor;
         }
     }
 
     .p-tag-icon {
-        font-size: $badgeFontSize;
+        font-size: variables_light.$badgeFontSize;
 
         &:not(:last-child) {
-            margin-right: math.div($inlineSpacing, 2);
+            margin-right: math.div(variables_light.$inlineSpacing, 2);
         }
 
         &.p-icon {
-            width: $badgeFontSize;
-            height: $badgeFontSize;
+            width: variables_light.$badgeFontSize;
+            height: variables_light.$badgeFontSize;
         }
     }
 }

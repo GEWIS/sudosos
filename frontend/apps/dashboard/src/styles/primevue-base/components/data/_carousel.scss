@@ -1,3 +1,7 @@
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../../themes/variables";
+@use "../../mixins";
+
 // core
 .p-carousel {
     display: flex;
@@ -74,34 +78,34 @@
     .p-carousel-content {
         .p-carousel-prev,
         .p-carousel-next {
-            @include action-icon();
-            margin: $inlineSpacing;
+            @include mixins.action-icon();
+            margin: variables_light.$inlineSpacing;
         }
     }
 
     .p-carousel-indicators {
-        padding: $carouselIndicatorsPadding;
+        padding: variables_light.$carouselIndicatorsPadding;
 
         .p-carousel-indicator {
-            margin-right: $inlineSpacing;
-            margin-bottom: $inlineSpacing;
+            margin-right: variables_light.$inlineSpacing;
+            margin-bottom: variables_light.$inlineSpacing;
            
             button {
-                background-color: $carouselIndicatorBg;
-                width: $carouselIndicatorWidth;
-                height: $carouselIndicatorHeight;
-                transition: $actionIconTransition;
-                border-radius: $carouselIndicatorBorderRadius;
+                background-color: variables_light.$carouselIndicatorBg;
+                width: variables_light.$carouselIndicatorWidth;
+                height: variables_light.$carouselIndicatorHeight;
+                transition: variables_light.$actionIconTransition;
+                border-radius: variables_light.$carouselIndicatorBorderRadius;
 
                 &:hover {
-                    background: $carouselIndicatorHoverBg;
+                    background: variables_light.$carouselIndicatorHoverBg;
                 }
             }
 
             &.p-highlight {
                 button {
-                    background: $highlightBg;
-                    color: $highlightTextColor;
+                    background: variables.$highlightBg;
+                    color: variables.$highlightTextColor;
                 }
             }
         }

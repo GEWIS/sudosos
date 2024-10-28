@@ -1,3 +1,5 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-inputgroup {
     display: flex;
@@ -27,16 +29,16 @@
 
 // theme
 .p-inputgroup-addon {
-    background: $inputGroupBg;
-    color: $inputGroupTextColor;
-    border-top: $inputBorder;
-    border-left: $inputBorder;
-    border-bottom: $inputBorder;
-    padding: $inputPadding;
-    min-width: $inputGroupAddOnMinWidth;
+    background: variables_light.$inputGroupBg;
+    color: variables_light.$inputGroupTextColor;
+    border-top: variables_light.$inputBorder;
+    border-left: variables_light.$inputBorder;
+    border-bottom: variables_light.$inputBorder;
+    padding: variables_light.$inputPadding;
+    min-width: variables_light.$inputGroupAddOnMinWidth;
 
     &:last-child {
-        border-right: $inputBorder;
+        border-right: variables_light.$inputBorder;
     }
 }
 
@@ -66,13 +68,13 @@
 .p-inputgroup input:first-child,
 .p-inputgroup > .p-inputwrapper:first-child,
 .p-inputgroup > .p-inputwrapper:first-child > .p-inputtext {
-    border-top-left-radius: $borderRadius;
-    border-bottom-left-radius: $borderRadius;
+    border-top-left-radius: variables_light.$borderRadius;
+    border-bottom-left-radius: variables_light.$borderRadius;
 }
 
 .p-inputgroup .p-float-label:first-child input {
-    border-top-left-radius: $borderRadius;
-    border-bottom-left-radius: $borderRadius;
+    border-top-left-radius: variables_light.$borderRadius;
+    border-bottom-left-radius: variables_light.$borderRadius;
 }
 
 .p-inputgroup-addon:last-child,
@@ -80,13 +82,13 @@
 .p-inputgroup input:last-child,
 .p-inputgroup > .p-inputwrapper:last-child, 
 .p-inputgroup > .p-inputwrapper:last-child > .p-inputtext {
-    border-top-right-radius: $borderRadius;
-    border-bottom-right-radius: $borderRadius;
+    border-top-right-radius: variables_light.$borderRadius;
+    border-bottom-right-radius: variables_light.$borderRadius;
 }
 
 .p-inputgroup .p-float-label:last-child input {
-    border-top-right-radius: $borderRadius;
-    border-bottom-right-radius: $borderRadius;
+    border-top-right-radius: variables_light.$borderRadius;
+    border-bottom-right-radius: variables_light.$borderRadius;
 }
 
 .p-fluid {
@@ -95,7 +97,7 @@
             width: auto;
 
             &.p-button-icon-only {
-                width: $buttonIconOnlyWidth;
+                width: variables_light.$buttonIconOnlyWidth;
             }
         }
     }

@@ -1,3 +1,6 @@
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../mixins";
+
 // core
 .p-tieredmenu ul {
     margin: 0;
@@ -50,17 +53,17 @@
 
 // theme
 .p-tieredmenu {
-    padding: $verticalMenuPadding;
-    background: $menuBg;
-    color: $menuTextColor;
-    border: $menuBorder;
-    border-radius: $borderRadius;
-    min-width: $menuWidth;
+    padding: variables_light.$verticalMenuPadding;
+    background: variables_light.$menuBg;
+    color: variables_light.$menuTextColor;
+    border: variables_light.$menuBorder;
+    border-radius: variables_light.$borderRadius;
+    min-width: variables_light.$menuWidth;
 
     &.p-tieredmenu-overlay {
-        background: $overlayMenuBg;
-        border: $overlayMenuBorder;
-        box-shadow: $overlayMenuShadow;
+        background: variables_light.$overlayMenuBg;
+        border: variables_light.$overlayMenuBorder;
+        box-shadow: variables_light.$overlayMenuShadow;
     }
 
     .p-tieredmenu-root-list {
@@ -68,28 +71,28 @@
     }
 
     .p-submenu-list {
-        padding: $verticalMenuPadding;
-        background: $overlayMenuBg;
-        border: $overlayMenuBorder;
-        box-shadow: $overlayMenuShadow;
-        border-radius: $borderRadius;
+        padding: variables_light.$verticalMenuPadding;
+        background: variables_light.$overlayMenuBg;
+        border: variables_light.$overlayMenuBorder;
+        box-shadow: variables_light.$overlayMenuShadow;
+        border-radius: variables_light.$borderRadius;
     }
 
     .p-menuitem {
-        @include menuitem();
+        @include mixins.menuitem();
     }
 
     .p-menuitem-separator {
-        border-top: $divider;
-        margin: $menuSeparatorMargin;
+        border-top: variables_light.$divider;
+        margin: variables_light.$menuSeparatorMargin;
     }
 
     .p-submenu-icon {
-        font-size: $menuitemSubmenuIconFontSize;
+        font-size: variables_light.$menuitemSubmenuIconFontSize;
 
         &.p-icon {
-            width: $menuitemSubmenuIconFontSize;
-            height: $menuitemSubmenuIconFontSize;
+            width: variables_light.$menuitemSubmenuIconFontSize;
+            height: variables_light.$menuitemSubmenuIconFontSize;
         }
     }
 }

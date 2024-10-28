@@ -1,3 +1,5 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-skeleton {
     overflow: hidden;
@@ -34,10 +36,10 @@
 
 // theme
 .p-skeleton {
-    background-color: $skeletonBg;
-    border-radius: $borderRadius;
+    background-color: variables_light.$skeletonBg;
+    border-radius: variables_light.$borderRadius;
 
     &:after {
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0), $skeletonAnimationBg, rgba(255, 255, 255, 0));
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0), variables_light.$skeletonAnimationBg, rgba(255, 255, 255, 0));
     }
 }

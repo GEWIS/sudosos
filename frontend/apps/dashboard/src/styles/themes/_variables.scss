@@ -1,3 +1,4 @@
+@use "sass:color";
 $primaryLightColor: rgba(212, 0, 0, 0.5) !default;
 $primaryColor: #D40000 !default;
 $primaryDarkColor: #C40000 !default;
@@ -7,4 +8,4 @@ $primaryAccentBg: #fcbfbf !default;
 
 $highlightBg: $primaryColor !default;
 $highlightTextColor: $primaryTextColor !default;
-$highlightFocusBg: darken($primaryColor, 8%) !default;
+$highlightFocusBg: color.adjust($primaryColor, $lightness: -8%) !default;

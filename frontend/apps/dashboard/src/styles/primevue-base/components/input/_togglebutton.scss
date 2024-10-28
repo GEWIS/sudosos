@@ -1,3 +1,6 @@
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../mixins";
+
 // core
 .p-togglebutton {
     position: relative;
@@ -28,32 +31,32 @@
         opacity: 0;
         z-index: 1;
         outline: 0 none;
-        border: $toggleButtonBorder;
-        border-radius: $borderRadius;
+        border: variables_light.$toggleButtonBorder;
+        border-radius: variables_light.$borderRadius;
     }
 
     .p-button {
-        background: $toggleButtonBg;
-        border: $toggleButtonBorder;
-        color: $toggleButtonTextColor;
-        transition: $formElementTransition;
+        background: variables_light.$toggleButtonBg;
+        border: variables_light.$toggleButtonBorder;
+        color: variables_light.$toggleButtonTextColor;
+        transition: variables_light.$formElementTransition;
         outline-color: transparent;
 
         .p-button-icon-left,
         .p-button-icon-right {
-            color: $toggleButtonIconColor;
+            color: variables_light.$toggleButtonIconColor;
         }
     }
 
     &.p-highlight {
         .p-button {
-            background: $toggleButtonActiveBg;
-            border-color: $toggleButtonActiveBorderColor;
-            color: $toggleButtonTextActiveColor;
+            background: variables_light.$toggleButtonActiveBg;
+            border-color: variables_light.$toggleButtonActiveBorderColor;
+            color: variables_light.$toggleButtonTextActiveColor;
 
             .p-button-icon-left,
             .p-button-icon-right {
-                color: $toggleButtonIconActiveColor;
+                color: variables_light.$toggleButtonIconActiveColor;
             }
         }
     }
@@ -62,26 +65,26 @@
         &:has(.p-togglebutton-input:hover) {
             &:not(.p-highlight) {
                 .p-button {
-                    background: $toggleButtonHoverBg;
-                    border-color: $toggleButtonHoverBorderColor;
-                    color: $toggleButtonTextHoverColor;
+                    background: variables_light.$toggleButtonHoverBg;
+                    border-color: variables_light.$toggleButtonHoverBorderColor;
+                    color: variables_light.$toggleButtonTextHoverColor;
 
                     .p-button-icon-left,
                     .p-button-icon-right {
-                        color: $toggleButtonIconHoverColor;
+                        color: variables_light.$toggleButtonIconHoverColor;
                     }
                 }
             }
 
             &.p-highlight {
                 .p-button {
-                    background: $toggleButtonActiveHoverBg;
-                    border-color: $toggleButtonActiveHoverBorderColor;
-                    color: $toggleButtonTextActiveHoverColor;
+                    background: variables_light.$toggleButtonActiveHoverBg;
+                    border-color: variables_light.$toggleButtonActiveHoverBorderColor;
+                    color: variables_light.$toggleButtonTextActiveHoverColor;
 
                     .p-button-icon-left,
                     .p-button-icon-right {
-                        color: $toggleButtonIconActiveHoverColor;
+                        color: variables_light.$toggleButtonIconActiveHoverColor;
                     }
                 }
             }
@@ -89,12 +92,12 @@
 
         &:has(.p-togglebutton-input:focus-visible) {
             .p-button {
-                @include focused-input();
+                @include mixins.focused-input();
             }
         }
     }
 
     &.p-invalid > .p-button {
-        @include invalid-input();
+        @include mixins.invalid-input();
     }
 }

@@ -1,3 +1,5 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-toolbar {
     display: flex;
@@ -21,13 +23,13 @@
 
 // theme
 .p-toolbar {
-    background: $panelHeaderBg;
-    border: $panelHeaderBorder;
-    padding: $panelHeaderPadding;
-    border-radius: $borderRadius;
-    gap: $inlineSpacing;
+    background: variables_light.$panelHeaderBg;
+    border: variables_light.$panelHeaderBorder;
+    padding: variables_light.$panelHeaderPadding;
+    border-radius: variables_light.$borderRadius;
+    gap: variables_light.$inlineSpacing;
 
     .p-toolbar-separator {
-        margin: 0 $inlineSpacing;
+        margin: 0 variables_light.$inlineSpacing;
     }
 }

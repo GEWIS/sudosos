@@ -1,6 +1,6 @@
-@import '../variables';
-@import './_variables_dark';
-@import '../_fonts';
-@import '../../primevue-base/_components';
-@import '../_vendor_extensions';
-@import '../_extensions';
+@use '../variables';
+@use '_variables_dark';
+@use '../_fonts';
+@use '../../primevue-base/_components';
+@use '../_vendor_extensions';
+@use '../_extensions';

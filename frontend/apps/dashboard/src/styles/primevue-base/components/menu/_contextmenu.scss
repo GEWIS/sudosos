@@ -1,3 +1,6 @@
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../mixins";
+
 // core
 .p-contextmenu ul {
     margin: 0;
@@ -43,41 +46,41 @@
 
 // theme
 .p-contextmenu {
-    padding: $verticalMenuPadding;
-    background: $overlayMenuBg;
-    color: $menuTextColor;
-    border: $overlayMenuBorder;
-    box-shadow: $overlayMenuShadow;
-    border-radius: $borderRadius;
-    min-width: $menuWidth;
+    padding: variables_light.$verticalMenuPadding;
+    background: variables_light.$overlayMenuBg;
+    color: variables_light.$menuTextColor;
+    border: variables_light.$overlayMenuBorder;
+    box-shadow: variables_light.$overlayMenuShadow;
+    border-radius: variables_light.$borderRadius;
+    min-width: variables_light.$menuWidth;
 
     .p-contextmenu-root-list {
         outline: 0 none;
     }
 
     .p-submenu-list {
-        padding: $verticalMenuPadding;
-        background: $overlayMenuBg;
-        border: $overlayMenuBorder;
-        box-shadow: $overlayMenuShadow;
-        border-radius: $borderRadius;
+        padding: variables_light.$verticalMenuPadding;
+        background: variables_light.$overlayMenuBg;
+        border: variables_light.$overlayMenuBorder;
+        box-shadow: variables_light.$overlayMenuShadow;
+        border-radius: variables_light.$borderRadius;
     }
 
     .p-menuitem {
-        @include menuitem();
+        @include mixins.menuitem();
     }
 
     .p-menuitem-separator {
-        border-top: $divider;
-        margin: $menuSeparatorMargin;
+        border-top: variables_light.$divider;
+        margin: variables_light.$menuSeparatorMargin;
     }
 
     .p-submenu-icon {
-        font-size: $menuitemSubmenuIconFontSize;
+        font-size: variables_light.$menuitemSubmenuIconFontSize;
 
         &.p-icon {
-            width: $menuitemSubmenuIconFontSize;
-            height: $menuitemSubmenuIconFontSize;
+            width: variables_light.$menuitemSubmenuIconFontSize;
+            height: variables_light.$menuitemSubmenuIconFontSize;
         }
     }
 }

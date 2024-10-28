@@ -1,3 +1,5 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 @use "sass:math";
 
 // core
@@ -40,25 +42,25 @@
 
 // theme
 .p-metergroup {
-    gap: $inlineSpacing * 2;
+    gap: variables_light.$inlineSpacing * 2;
 
     .p-metergroup-meters {
-        background: $progressBarBg;
-        border-radius: $borderRadius;
+        background: variables_light.$progressBarBg;
+        border-radius: variables_light.$borderRadius;
     }
 
     .p-metergroup-meter {
-        border: $progressBarBorder;
-        background: $progressBarValueBg;
+        border: variables_light.$progressBarBorder;
+        background: variables_light.$progressBarValueBg;
     }
 
     .p-metergroup-labels {
         .p-metergroup-label {
-            gap: $inlineSpacing;
+            gap: variables_light.$inlineSpacing;
         }
 
         .p-metergroup-label-marker {
-            background: $progressBarValueBg;
+            background: variables_light.$progressBarValueBg;
             width: 0.5rem;
             height: 0.5rem;
             border-radius: 100%;
@@ -70,11 +72,11 @@
         }
 
         &.p-metergroup-labels-vertical {
-            gap: $inlineSpacing;
+            gap: variables_light.$inlineSpacing;
         }
 
         &.p-metergroup-labels-horizontal {
-            gap: $inlineSpacing * 2;
+            gap: variables_light.$inlineSpacing * 2;
         }
     }
 
@@ -86,13 +88,13 @@
         }
 
         .p-metergroup-meter:first-of-type {
-            border-top-left-radius: $borderRadius;
-            border-bottom-left-radius: $borderRadius;
+            border-top-left-radius: variables_light.$borderRadius;
+            border-bottom-left-radius: variables_light.$borderRadius;
         }
 
         .p-metergroup-meter:last-of-type {
-            border-top-right-radius: $borderRadius;
-            border-bottom-right-radius: $borderRadius;
+            border-top-right-radius: variables_light.$borderRadius;
+            border-bottom-right-radius: variables_light.$borderRadius;
         }
     }
 
@@ -105,13 +107,13 @@
         }
 
         .p-metergroup-meter:first-of-type {
-            border-top-left-radius: $borderRadius;
-            border-top-right-radius: $borderRadius;
+            border-top-left-radius: variables_light.$borderRadius;
+            border-top-right-radius: variables_light.$borderRadius;
         }
 
         .p-metergroup-meter:last-of-type {
-            border-bottom-left-radius: $borderRadius;
-            border-bottom-right-radius: $borderRadius;
+            border-bottom-left-radius: variables_light.$borderRadius;
+            border-bottom-right-radius: variables_light.$borderRadius;
         }
     }
 }

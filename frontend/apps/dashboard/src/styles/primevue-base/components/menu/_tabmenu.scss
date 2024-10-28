@@ -1,3 +1,6 @@
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../mixins";
+
 // core
 .p-tabmenu {
     overflow-x: auto;
@@ -42,49 +45,49 @@
 // theme
 .p-tabmenu {
     .p-tabmenu-nav {
-        background: $tabviewNavBg;
-        border: $tabviewNavBorder;
-        border-width: $tabviewNavBorderWidth;
+        background: variables_light.$tabviewNavBg;
+        border: variables_light.$tabviewNavBorder;
+        border-width: variables_light.$tabviewNavBorderWidth;
 
         .p-tabmenuitem {
-            margin-right: $tabviewHeaderSpacing;
+            margin-right: variables_light.$tabviewHeaderSpacing;
 
             .p-menuitem-link {
-                border: $tabviewHeaderBorder;
-                border-width: $tabviewHeaderBorderWidth;
-                border-color: $tabviewHeaderBorderColor;
-                background: $tabviewHeaderBg;
-                color: $tabviewHeaderTextColor;
-                padding: $tabviewHeaderPadding;
-                font-weight: $tabviewHeaderFontWeight;
-                border-top-right-radius: $borderRadius;
-                border-top-left-radius: $borderRadius;
-                transition: $listItemTransition;
-                margin: $tabviewHeaderMargin;
+                border: variables_light.$tabviewHeaderBorder;
+                border-width: variables_light.$tabviewHeaderBorderWidth;
+                border-color: variables_light.$tabviewHeaderBorderColor;
+                background: variables_light.$tabviewHeaderBg;
+                color: variables_light.$tabviewHeaderTextColor;
+                padding: variables_light.$tabviewHeaderPadding;
+                font-weight: variables_light.$tabviewHeaderFontWeight;
+                border-top-right-radius: variables_light.$borderRadius;
+                border-top-left-radius: variables_light.$borderRadius;
+                transition: variables_light.$listItemTransition;
+                margin: variables_light.$tabviewHeaderMargin;
                 outline-color: transparent;
 
                 .p-menuitem-icon {
-                    margin-right: $inlineSpacing;
+                    margin-right: variables_light.$inlineSpacing;
                 }
 
                 &:not(.p-disabled):focus-visible {
-                    @include focused-inset();
+                    @include mixins.focused-inset();
                 }
             }
 
             &:not(.p-highlight):not(.p-disabled):hover {
                 .p-menuitem-link {
-                    background: $tabviewHeaderHoverBg;
-                    border-color: $tabviewHeaderHoverBorderColor;
-                    color: $tabviewHeaderTextHoverColor;
+                    background: variables_light.$tabviewHeaderHoverBg;
+                    border-color: variables_light.$tabviewHeaderHoverBorderColor;
+                    color: variables_light.$tabviewHeaderTextHoverColor;
                 }
             }
 
             &.p-highlight {
                 .p-menuitem-link {
-                    background: $tabviewHeaderActiveBg;
-                    border-color: $tabviewHeaderActiveBorderColor;
-                    color: $tabviewHeaderTextActiveColor;
+                    background: variables_light.$tabviewHeaderActiveBg;
+                    border-color: variables_light.$tabviewHeaderActiveBorderColor;
+                    color: variables_light.$tabviewHeaderTextActiveColor;
                 }
             }
         }

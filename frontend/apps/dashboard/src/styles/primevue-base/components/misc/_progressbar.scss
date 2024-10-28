@@ -1,3 +1,5 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-progressbar {
     position: relative;
@@ -110,19 +112,19 @@
 
 // theme
 .p-progressbar {
-    border: $progressBarBorder;
-    height: $progressBarHeight;
-    background: $progressBarBg;
-    border-radius: $borderRadius;
+    border: variables_light.$progressBarBorder;
+    height: variables_light.$progressBarHeight;
+    background: variables_light.$progressBarBg;
+    border-radius: variables_light.$borderRadius;
 
     .p-progressbar-value {
         border: 0 none;
         margin: 0;
-        background: $progressBarValueBg;
+        background: variables_light.$progressBarValueBg;
     }
 
     .p-progressbar-label {
-        color: $progressBarValueTextColor;
-        line-height: $progressBarHeight;
+        color: variables_light.$progressBarValueTextColor;
+        line-height: variables_light.$progressBarHeight;
     }
 }

@@ -1,3 +1,6 @@
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../mixins";
+
 // core
 .p-inputnumber {
     display: inline-flex;
@@ -103,18 +106,18 @@
 // theme
 .p-inputnumber {
     &.p-invalid.p-component > .p-inputtext {
-        @include invalid-input();
+        @include mixins.invalid-input();
     }
 
     &.p-variant-filled > .p-inputnumber-input {
-        background-color: $inputFilledBg;
+        background-color: variables_light.$inputFilledBg;
 
         &:enabled:hover {
-            background-color: $inputFilledHoverBg;
+            background-color: variables_light.$inputFilledHoverBg;
         }
 
         &:enabled:focus {
-            background-color: $inputFilledFocusBg;
+            background-color: variables_light.$inputFilledFocusBg;
         }
     }
 }

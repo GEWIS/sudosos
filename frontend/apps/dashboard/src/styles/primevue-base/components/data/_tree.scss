@@ -1,3 +1,8 @@
+@use "sass:list";
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../../themes/variables";
+@use "../../mixins";
+
 // core
 .p-tree-container {
     margin: 0;
@@ -83,92 +88,92 @@
 
 // theme
 .p-tree {
-    border: $panelContentBorder;
-    background: $panelContentBg;
-    color: $panelContentTextColor;
-    padding: $panelContentPadding;
-    border-radius: $borderRadius;
+    border: variables_light.$panelContentBorder;
+    background: variables_light.$panelContentBg;
+    color: variables_light.$panelContentTextColor;
+    padding: variables_light.$panelContentPadding;
+    border-radius: variables_light.$borderRadius;
 
     .p-tree-container {
         .p-treenode {
-            padding: $treeNodePadding;
+            padding: variables_light.$treeNodePadding;
             outline: 0 none;
 
             &:focus > .p-treenode-content {
-                @include focused-listitem();
+                @include mixins.focused-listitem();
             }
 
             .p-treenode-content {
-                border-radius: $borderRadius;
-                transition: $listItemTransition;
-                padding: $treeNodeContentPadding;
+                border-radius: variables_light.$borderRadius;
+                transition: variables_light.$listItemTransition;
+                padding: variables_light.$treeNodeContentPadding;
 
                 .p-tree-toggler {
-                    margin-right: $inlineSpacing;
-                    @include action-icon();
+                    margin-right: variables_light.$inlineSpacing;
+                    @include mixins.action-icon();
                 }
 
                 .p-treenode-icon {
-                    margin-right: $inlineSpacing;
-                    color: $treeNodeIconColor;
+                    margin-right: variables_light.$inlineSpacing;
+                    color: variables_light.$treeNodeIconColor;
                 }
 
                 .p-checkbox {
-                    margin-right: $inlineSpacing;
+                    margin-right: variables_light.$inlineSpacing;
 
                     &.p-indeterminate {
                         .p-checkbox-icon {
-                            color: $textColor;
+                            color: variables_light.$textColor;
                         }
                     }
                 }
 
                 &.p-highlight {
-                    background: $highlightBg;
-                    color: $highlightTextColor;
+                    background: variables.$highlightBg;
+                    color: variables.$highlightTextColor;
 
                     .p-tree-toggler,
                     .p-treenode-icon {
-                        color: $highlightTextColor;
+                        color: variables.$highlightTextColor;
 
                         &:hover {
-                            color: $highlightTextColor;
+                            color: variables.$highlightTextColor;
                         }
                     }
                 }
 
                 &.p-treenode-selectable:not(.p-highlight):hover {
-                    background: $inputListItemHoverBg;
-                    color: $inputListItemTextHoverColor;
+                    background: variables_light.$inputListItemHoverBg;
+                    color: variables_light.$inputListItemTextHoverColor;
                 }
             }
         }
     }
 
     .p-tree-filter-container {
-        margin-bottom: $inlineSpacing;
+        margin-bottom: variables_light.$inlineSpacing;
 
         .p-tree-filter {
             width: 100%;
-            padding-right: nth($inputPadding, 2) + $primeIconFontSize;
+            padding-right: list.nth(variables_light.$inputPadding, 2) + variables_light.$primeIconFontSize;
         }
 
         .p-tree-filter-icon {
-            right: nth($inputPadding, 2);
-            color: $inputIconColor;
+            right: list.nth(variables_light.$inputPadding, 2);
+            color: variables_light.$inputIconColor;
         }
     }
 
     .p-treenode-children {
-        padding: $treeNodeChildrenPadding;
+        padding: variables_light.$treeNodeChildrenPadding;
     }
 
     .p-tree-loading-icon {
-        font-size: $loadingIconFontSize;
+        font-size: variables_light.$loadingIconFontSize;
 
         &.p-icon {
-            width:  $loadingIconFontSize;
-            height: $loadingIconFontSize;
+            width:  variables_light.$loadingIconFontSize;
+            height: variables_light.$loadingIconFontSize;
         }
     }
 }

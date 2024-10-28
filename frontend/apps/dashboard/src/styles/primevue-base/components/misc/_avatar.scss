@@ -1,3 +1,5 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-avatar {
     display: inline-flex;
@@ -40,8 +42,8 @@
 
 // theme
 .p-avatar {
-    background-color: $avatarBg;
-    border-radius: $borderRadius;
+    background-color: variables_light.$avatarBg;
+    border-radius: variables_light.$borderRadius;
 
     &.p-avatar-lg {
         width: 3rem;
@@ -66,6 +68,6 @@
 
 .p-avatar-group {
     .p-avatar {
-        border: 2px solid $panelContentBg;
+        border: 2px solid variables_light.$panelContentBg;
     }
 }

@@ -1,3 +1,6 @@
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../mixins";
+
 // core
 .p-breadcrumb {
     overflow-x: auto;
@@ -33,43 +36,43 @@
 
 // theme
 .p-breadcrumb {
-    background: $breadcrumbBg;
-    border: $breadcrumbBorder;
-    border-radius: $borderRadius;
-    padding: $breadcrumbPadding;
+    background: variables_light.$breadcrumbBg;
+    border: variables_light.$breadcrumbBorder;
+    border-radius: variables_light.$borderRadius;
+    padding: variables_light.$breadcrumbPadding;
 
     .p-breadcrumb-list {
         li {
             .p-menuitem-link {
-                transition: $listItemTransition;
-                border-radius: $borderRadius;
+                transition: variables_light.$listItemTransition;
+                border-radius: variables_light.$borderRadius;
                 outline-color: transparent;
 
                 &:focus-visible {
-                    @include focused();
+                    @include mixins.focused();
                 }
 
                 .p-menuitem-text {
-                    color: $breadcrumbItemTextColor;
+                    color: variables_light.$breadcrumbItemTextColor;
                 }
 
                 .p-menuitem-icon {
-                    color: $breadcrumbItemIconColor;
+                    color: variables_light.$breadcrumbItemIconColor;
                 }
             }
 
             &.p-menuitem-separator {
-                margin: 0 $inlineSpacing 0 $inlineSpacing;
-                color: $breadcrumbSeparatorColor;
+                margin: 0 variables_light.$inlineSpacing 0 variables_light.$inlineSpacing;
+                color: variables_light.$breadcrumbSeparatorColor;
             }
 
             &:last-child {
                 .p-menuitem-text {
-                    color: $breadcrumbLastItemTextColor;
+                    color: variables_light.$breadcrumbLastItemTextColor;
                 }
 
                 .p-menuitem-icon {
-                    color: $breadcrumbLastItemIconColor;
+                    color: variables_light.$breadcrumbLastItemIconColor;
                 }
             }
         }

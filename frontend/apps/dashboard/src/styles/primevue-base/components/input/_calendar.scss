@@ -1,3 +1,7 @@
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../../themes/variables";
+@use "../../mixins";
+
 // core
 .p-calendar {
     display: inline-flex;
@@ -152,110 +156,110 @@
 // theme
 .p-calendar {
     &.p-invalid.p-component > .p-inputtext {
-        @include invalid-input();
+        @include mixins.invalid-input();
     }
 
     &:not(.p-calendar-disabled).p-focus > .p-inputtext {
-        @include focused-input();
+        @include mixins.focused-input();
     }
 }
 
 .p-datepicker {
-    padding: $calendarPadding;
-    background: $calendarInlineBg;
-    color: $calendarTextColor;
-    border: $calendarBorder;
-    border-radius: $borderRadius;
+    padding: variables_light.$calendarPadding;
+    background: variables_light.$calendarInlineBg;
+    color: variables_light.$calendarTextColor;
+    border: variables_light.$calendarBorder;
+    border-radius: variables_light.$borderRadius;
 
     &:not(.p-datepicker-inline) {
-        background: $calendarBg;
-        border: $calendarOverlayBorder;
-        box-shadow: $inputOverlayShadow;
+        background: variables_light.$calendarBg;
+        border: variables_light.$calendarOverlayBorder;
+        box-shadow: variables_light.$inputOverlayShadow;
 
         .p-datepicker-header {
-            background: $calendarHeaderBg;
+            background: variables_light.$calendarHeaderBg;
         }
     }
 
     .p-datepicker-header {
-        padding: $calendarHeaderPadding;
-        color: $calendarHeaderTextColor;
-        background: $calendarInlineHeaderBg;
-        font-weight: $calendarHeaderFontWeight;
-        margin: $inputListHeaderMargin;
-        border-bottom: $calendarHeaderBorder;
-        border-top-right-radius: $borderRadius;
-        border-top-left-radius: $borderRadius;
+        padding: variables_light.$calendarHeaderPadding;
+        color: variables_light.$calendarHeaderTextColor;
+        background: variables_light.$calendarInlineHeaderBg;
+        font-weight: variables_light.$calendarHeaderFontWeight;
+        margin: variables_light.$inputListHeaderMargin;
+        border-bottom: variables_light.$calendarHeaderBorder;
+        border-top-right-radius: variables_light.$borderRadius;
+        border-top-left-radius: variables_light.$borderRadius;
 
         .p-datepicker-prev,
         .p-datepicker-next {
-            @include action-icon();
+            @include mixins.action-icon();
         }
 
         .p-datepicker-title {
-            line-height: $actionIconHeight;
+            line-height: variables_light.$actionIconHeight;
 
             .p-datepicker-year,
             .p-datepicker-month {
-                color: $calendarHeaderTextColor;
-                transition: $actionIconTransition;
-                font-weight: $calendarHeaderFontWeight;
-                padding: $calendarHeaderCellPadding;
+                color: variables_light.$calendarHeaderTextColor;
+                transition: variables_light.$actionIconTransition;
+                font-weight: variables_light.$calendarHeaderFontWeight;
+                padding: variables_light.$calendarHeaderCellPadding;
 
                 &:enabled:hover {
-                    color: $calendarMonthYearHeaderHoverTextColor;
+                    color: variables_light.$calendarMonthYearHeaderHoverTextColor;
                 }
             }
 
             .p-datepicker-month {
-                margin-right: $inlineSpacing;
+                margin-right: variables_light.$inlineSpacing;
             }
         }
     }
 
     table {
-        font-size: $fontSize;
-        margin: $calendarTableMargin;
+        font-size: variables_light.$fontSize;
+        margin: variables_light.$calendarTableMargin;
 
         th {
-            padding: $calendarHeaderCellPadding;
+            padding: variables_light.$calendarHeaderCellPadding;
 
             > span {
-                width: $calendarCellDateWidth;
-                height: $calendarCellDateHeight;
+                width: variables_light.$calendarCellDateWidth;
+                height: variables_light.$calendarCellDateHeight;
             }
         }
 
         td {
-            padding: $calendarCellDatePadding;
+            padding: variables_light.$calendarCellDatePadding;
 
             > span {
-                width: $calendarCellDateWidth;
-                height: $calendarCellDateHeight;
-                border-radius: $calendarCellDateBorderRadius;
-                transition: $listItemTransition;
-                border: $calendarCellDateBorder;
+                width: variables_light.$calendarCellDateWidth;
+                height: variables_light.$calendarCellDateHeight;
+                border-radius: variables_light.$calendarCellDateBorderRadius;
+                transition: variables_light.$listItemTransition;
+                border: variables_light.$calendarCellDateBorder;
                 outline-color: transparent;
 
                 &.p-highlight {
-                    color: $highlightTextColor;
-                    background: $highlightBg;
+                    color: variables.$highlightTextColor;
+                    background: variables.$highlightBg;
                 }
 
                 &:focus {
-                    @include focused();
+                    @include mixins.focused();
                 }
             }
 
             &.p-datepicker-today {
                 > span {
-                    background: $calendarCellDateTodayBg;
-                    color: $calendarCellDateTodayTextColor;
-                    border-color: $calendarCellDateTodayBorderColor;
+                    background: variables_light.$calendarCellDateTodayBg;
+                    color: variables_light.$calendarCellDateTodayTextColor;
+                    border-color: variables_light.$calendarCellDateTodayBorderColor;
 
                     &.p-highlight {
-                        color: $highlightTextColor;
-                        background: $highlightBg;
+                        color: variables.$highlightTextColor;
+                        background: variables.$highlightBg;
                     }
                 }
             }
@@ -263,8 +267,8 @@
     }
 
     .p-datepicker-buttonbar {
-        padding: $calendarButtonBarPadding;
-        border-top: $divider;
+        padding: variables_light.$calendarButtonBarPadding;
+        border-top: variables_light.$divider;
 
         .p-button {
             width: auto;
@@ -272,11 +276,11 @@
     }
 
     .p-timepicker {
-        border-top: $divider;
-        padding: $calendarTimePickerPadding;
+        border-top: variables_light.$divider;
+        padding: variables_light.$calendarTimePickerPadding;
 
         button {
-            @include action-icon();
+            @include mixins.action-icon();
 
             &:last-child {
                 margin-top: 0.2em;
@@ -284,11 +288,11 @@
         }
 
         span {
-            font-size: $calendarTimePickerTimeFontSize;
+            font-size: variables_light.$calendarTimePickerTimeFontSize;
         }
 
         > div {
-            padding: $calendarTimePickerElementPadding;
+            padding: variables_light.$calendarTimePickerElementPadding;
         }
     }
 
@@ -299,40 +303,40 @@
     }
 
     .p-monthpicker {
-        margin: $calendarTableMargin;
+        margin: variables_light.$calendarTableMargin;
 
         .p-monthpicker-month {
-            padding: $calendarCellDatePadding;
-            transition: $listItemTransition;
-            border-radius: $borderRadius;
+            padding: variables_light.$calendarCellDatePadding;
+            transition: variables_light.$listItemTransition;
+            border-radius: variables_light.$borderRadius;
 
             &.p-highlight {
-                color: $highlightTextColor;
-                background: $highlightBg;
+                color: variables.$highlightTextColor;
+                background: variables.$highlightBg;
             }
         }
     }
 
     .p-yearpicker {
-        margin: $calendarTableMargin;
+        margin: variables_light.$calendarTableMargin;
 
         .p-yearpicker-year {
-            padding: $calendarCellDatePadding;
-            transition: $listItemTransition;
-            border-radius: $borderRadius;
+            padding: variables_light.$calendarCellDatePadding;
+            transition: variables_light.$listItemTransition;
+            border-radius: variables_light.$borderRadius;
 
             &.p-highlight {
-                color: $highlightTextColor;
-                background: $highlightBg;
+                color: variables.$highlightTextColor;
+                background: variables.$highlightBg;
             }
         }
     }
 
     &.p-datepicker-multiple-month {
         .p-datepicker-group {
-            border-left: $divider;
-            padding-right: $calendarPadding;
-            padding-left: $calendarPadding;
+            border-left: variables_light.$divider;
+            padding-right: variables_light.$calendarPadding;
+            padding-left: variables_light.$calendarPadding;
             padding-top: 0;
             padding-bottom: 0;
 
@@ -351,7 +355,7 @@
         table {
             th,
             td {
-                padding: $calendarCellDatePaddingSM;
+                padding: variables_light.$calendarCellDatePaddingSM;
             }
         }
     }
@@ -363,11 +367,11 @@
                     outline-color: transparent;
 
                     &:hover {
-                        background: $calendarCellDateHoverBg;
+                        background: variables_light.$calendarCellDateHoverBg;
                     }
 
                     &:focus {
-                        @include focused();
+                        @include mixins.focused();
                     }
                 }
             }
@@ -379,11 +383,11 @@
                     outline-color: transparent;
 
                     &:not(.p-highlight):hover {
-                        background: $calendarCellDateHoverBg;
+                        background: variables_light.$calendarCellDateHoverBg;
                     }
 
                     &:focus {
-                        @include focused();
+                        @include mixins.focused();
                     }
                 }
             }
@@ -395,11 +399,11 @@
                     outline-color: transparent;
 
                     &:not(.p-highlight):hover {
-                        background: $calendarCellDateHoverBg;
+                        background: variables_light.$calendarCellDateHoverBg;
                     }
 
                     &:focus {
-                        @include focused();
+                        @include mixins.focused();
                     }
                 }
             }

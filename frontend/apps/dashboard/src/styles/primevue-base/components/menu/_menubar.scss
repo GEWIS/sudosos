@@ -1,3 +1,7 @@
+@use "sass:list";
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../mixins";
+
 // core
 .p-menubar {
     display: flex;
@@ -107,74 +111,74 @@
 
 // theme
 .p-menubar {
-    padding: $horizontalMenuPadding;
-    background: $horizontalMenuBg;
-    color: $horizontalMenuTextColor;
-    border: $horizontalMenuBorder;
-    border-radius: $borderRadius;
+    padding: variables_light.$horizontalMenuPadding;
+    background: variables_light.$horizontalMenuBg;
+    color: variables_light.$horizontalMenuTextColor;
+    border: variables_light.$horizontalMenuBorder;
+    border-radius: variables_light.$borderRadius;
 
     .p-menubar-root-list {
         outline: 0 none;
 
         > .p-menuitem {
-            @include horizontal-rootmenuitem();
+            @include mixins.horizontal-rootmenuitem();
         }
     }
 
     .p-menuitem {
-        @include menuitem();
+        @include mixins.menuitem();
     }
 
     .p-submenu-list {
-        padding: $verticalMenuPadding;
-        background: $overlayMenuBg;
-        border: $overlayMenuBorder;
-        box-shadow: $overlayMenuShadow;
-        min-width: $menuWidth;
-        border-radius: $borderRadius;
+        padding: variables_light.$verticalMenuPadding;
+        background: variables_light.$overlayMenuBg;
+        border: variables_light.$overlayMenuBorder;
+        box-shadow: variables_light.$overlayMenuShadow;
+        min-width: variables_light.$menuWidth;
+        border-radius: variables_light.$borderRadius;
 
         .p-menuitem-separator {
-            border-top: $divider;
-            margin: $menuSeparatorMargin;
+            border-top: variables_light.$divider;
+            margin: variables_light.$menuSeparatorMargin;
         }
 
         .p-submenu-icon {
-            font-size: $menuitemSubmenuIconFontSize;
+            font-size: variables_light.$menuitemSubmenuIconFontSize;
         }
     }
 
     &.p-menubar-mobile {
         .p-menubar-button {
-            width: $actionIconWidth;
-            height: $actionIconHeight;
-            color: $horizontalMenuRootMenuitemIconColor;
-            border-radius: $actionIconBorderRadius;
-            transition: $actionIconTransition;
+            width: variables_light.$actionIconWidth;
+            height: variables_light.$actionIconHeight;
+            color: variables_light.$horizontalMenuRootMenuitemIconColor;
+            border-radius: variables_light.$actionIconBorderRadius;
+            transition: variables_light.$actionIconTransition;
             outline-color: transparent;
         
             &:hover {
-                color: $horizontalMenuRootMenuitemIconHoverColor;
-                background: $horizontalMenuRootMenuitemHoverBg;
+                color: variables_light.$horizontalMenuRootMenuitemIconHoverColor;
+                background: variables_light.$horizontalMenuRootMenuitemHoverBg;
             }
         
             &:focus {
-                @include focused();
+                @include mixins.focused();
             }
         }
 
         .p-menubar-root-list {
-            padding: $verticalMenuPadding;
-            background: $overlayMenuBg;
-            border: $overlayMenuBorder;
-            box-shadow: $overlayMenuShadow;
+            padding: variables_light.$verticalMenuPadding;
+            background: variables_light.$overlayMenuBg;
+            border: variables_light.$overlayMenuBorder;
+            box-shadow: variables_light.$overlayMenuShadow;
     
             .p-menuitem-separator {
-                border-top: $divider;
-                margin: $menuSeparatorMargin;
+                border-top: variables_light.$divider;
+                margin: variables_light.$menuSeparatorMargin;
             }
     
             .p-submenu-icon {
-                font-size: $menuitemSubmenuIconFontSize;
+                font-size: variables_light.$menuitemSubmenuIconFontSize;
             }
 
             .p-menuitem {
@@ -182,7 +186,7 @@
                     .p-menuitem-link {
                         .p-submenu-icon {
                             margin-left: auto;
-                            transition: transform $transitionDuration;
+                            transition: transform variables_light.$transitionDuration;
                         }
                     }
                 }
@@ -201,7 +205,7 @@
 
             .p-submenu-list {
                 .p-submenu-icon {
-                    transition: transform $transitionDuration;
+                    transition: transform variables_light.$transitionDuration;
                     transform: rotate(90deg);
                 }
 
@@ -216,7 +220,7 @@
                 }
             }
     
-            @include nested-submenu-indents(nth($menuitemPadding, 1), 2, 10);
+            @include mixins.nested-submenu-indents(list.nth(variables_light.$menuitemPadding, 1), 2, 10);
         }
     }
 }

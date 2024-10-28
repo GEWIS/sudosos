@@ -1,3 +1,5 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-terminal {
 	height: 18rem;
@@ -24,14 +26,14 @@
 
 // theme
 .p-terminal {
-	background: $panelContentBg;
-	color: $panelContentTextColor;
-	border: $panelContentBorder;
-	padding: $panelContentPadding;
+	background: variables_light.$panelContentBg;
+	color: variables_light.$panelContentTextColor;
+	border: variables_light.$panelContentBorder;
+	padding: variables_light.$panelContentPadding;
 
 	.p-terminal-input {
 		font-family: var(--font-family);
 		font-feature-settings: var(--font-feature-settings, normal);
-		font-size: $inputTextFontSize;
+		font-size: variables_light.$inputTextFontSize;
 	}
 }

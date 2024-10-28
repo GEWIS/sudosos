@@ -1,3 +1,6 @@
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../mixins";
+
 @use 'sass:math';
 
 // core
@@ -27,8 +30,8 @@
 
 // theme
 .p-inputswitch {
-    width: $inputSwitchWidth;
-    height: $inputSwitchHeight;
+    width: variables_light.$inputSwitchWidth;
+    height: variables_light.$inputSwitchHeight;
 
     .p-inputswitch-input {
         appearance: none;
@@ -42,33 +45,33 @@
         opacity: 0;
         z-index: 1;
         outline: 0 none;
-        border-radius: $inputSwitchBorderRadius;
+        border-radius: variables_light.$inputSwitchBorderRadius;
     }
 
     .p-inputswitch-slider {
-        background: $inputSwitchSliderOffBg;
-        transition: $formElementTransition;
-        border-radius: $inputSwitchBorderRadius;
+        background: variables_light.$inputSwitchSliderOffBg;
+        transition: variables_light.$formElementTransition;
+        border-radius: variables_light.$inputSwitchBorderRadius;
         outline-color: transparent;
 
         &:before {
-            background: $inputSwitchHandleOffBg;
-            width: $inputSwitchHandleWidth;
-            height: $inputSwitchHandleHeight;
-            left: $inputSwitchSliderPadding;
-            margin-top: math.div(-1 * $inputSwitchHandleHeight, 2);
-            border-radius: $inputSwitchHandleBorderRadius;
-            transition-duration: $transitionDuration;
+            background: variables_light.$inputSwitchHandleOffBg;
+            width: variables_light.$inputSwitchHandleWidth;
+            height: variables_light.$inputSwitchHandleHeight;
+            left: variables_light.$inputSwitchSliderPadding;
+            margin-top: math.div(-1 * variables_light.$inputSwitchHandleHeight, 2);
+            border-radius: variables_light.$inputSwitchHandleBorderRadius;
+            transition-duration: variables_light.$transitionDuration;
         }
     }
 
     &.p-highlight {
         .p-inputswitch-slider {
-            background: $inputSwitchSliderOnBg;
+            background: variables_light.$inputSwitchSliderOnBg;
 
             &:before {
-                background: $inputSwitchHandleOnBg;
-                transform: translateX($inputSwitchHandleWidth);
+                background: variables_light.$inputSwitchHandleOnBg;
+                transform: translateX(variables_light.$inputSwitchHandleWidth);
             }
         }
     }
@@ -76,24 +79,24 @@
     &:not(.p-disabled) {
         &:has(.p-inputswitch-input:hover) {
             .p-inputswitch-slider {
-                background: $inputSwitchSliderOffHoverBg;
+                background: variables_light.$inputSwitchSliderOffHoverBg;
             }
 
             &.p-highlight {
                 .p-inputswitch-slider {
-                    background: $inputSwitchSliderOnHoverBg;
+                    background: variables_light.$inputSwitchSliderOnHoverBg;
                 }
             }
         }
 
         &:has(.p-inputswitch-input:focus-visible) {
             .p-inputswitch-slider {
-                @include focused();
+                @include mixins.focused();
             }
         }
     }
 
     &.p-invalid > .p-inputswitch-slider {
-        @include invalid-input();
+        @include mixins.invalid-input();
     }
 }

@@ -1,3 +1,5 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-progress-spinner {
     position: relative;
@@ -33,7 +35,7 @@
 .p-progress-spinner-circle {
     stroke-dasharray: 89, 200;
     stroke-dashoffset: 0;
-    stroke: $progressSpinnerStrokeColor;
+    stroke: variables_light.$progressSpinnerStrokeColor;
     animation: p-progress-spinner-dash 1.5s ease-in-out infinite, p-progress-spinner-color 6s ease-in-out infinite;
     stroke-linecap: round;
 }
@@ -62,16 +64,16 @@
 @keyframes p-progress-spinner-color {
     100%,
     0% {
-        stroke: $progressSpinnerColorOne;
+        stroke: variables_light.$progressSpinnerColorOne;
     }
     40% {
-        stroke: $progressSpinnerColorTwo;
+        stroke: variables_light.$progressSpinnerColorTwo;
     }
     66% {
-        stroke: $progressSpinnerColorThree;
+        stroke: variables_light.$progressSpinnerColorThree;
     }
     80%,
     90% {
-        stroke: $progressSpinnerColorFour;
+        stroke: variables_light.$progressSpinnerColorFour;
     }
 }

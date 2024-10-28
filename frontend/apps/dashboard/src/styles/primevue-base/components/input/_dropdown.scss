@@ -1,3 +1,8 @@
+@use "sass:list";
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../../themes/variables";
+@use "../../mixins";
+
 // core
 .p-dropdown {
     display: inline-flex;
@@ -96,29 +101,29 @@ input.p-dropdown-label {
 
 // theme
 .p-dropdown {
-    background: $inputBg;
-    border: $inputBorder;
-    transition: $formElementTransition;
-    border-radius: $borderRadius;
+    background: variables_light.$inputBg;
+    border: variables_light.$inputBorder;
+    transition: variables_light.$formElementTransition;
+    border-radius: variables_light.$borderRadius;
     outline-color: transparent;
 
     &:not(.p-disabled):hover {
-        border-color: $inputHoverBorderColor;
+        border-color: variables_light.$inputHoverBorderColor;
     }
 
     &:not(.p-disabled).p-focus {
-        @include focused-input();
+        @include mixins.focused-input();
     }
 
     &.p-variant-filled {
-        background: $inputFilledBg;
+        background: variables_light.$inputFilledBg;
 
         &:not(.p-disabled):hover {
-            background-color: $inputFilledHoverBg;
+            background-color: variables_light.$inputFilledHoverBg;
         }
 
         &:not(.p-disabled).p-focus {
-            background-color: $inputFilledFocusBg;
+            background-color: variables_light.$inputFilledFocusBg;
 
             .p-inputtext {
                 background-color: transparent;
@@ -128,7 +133,7 @@ input.p-dropdown-label {
 
     &.p-dropdown-clearable {
         .p-dropdown-label {
-            padding-right: nth($inputPadding, 2) + $primeIconFontSize;
+            padding-right: list.nth(variables_light.$inputPadding, 2) + variables_light.$primeIconFontSize;
         }
     }
 
@@ -137,7 +142,7 @@ input.p-dropdown-label {
         border: 0 none;
 
         &.p-placeholder {
-            color: $inputPlaceholderTextColor;
+            color: variables_light.$inputPlaceholderTextColor;
         }
 
         &:focus,
@@ -149,60 +154,60 @@ input.p-dropdown-label {
 
     .p-dropdown-trigger {
         background: transparent;
-        color: $inputIconColor;
-        width: $inputGroupAddOnMinWidth;
-        border-top-right-radius: $borderRadius;
-        border-bottom-right-radius: $borderRadius;
+        color: variables_light.$inputIconColor;
+        width: variables_light.$inputGroupAddOnMinWidth;
+        border-top-right-radius: variables_light.$borderRadius;
+        border-bottom-right-radius: variables_light.$borderRadius;
     }
 
     .p-dropdown-clear-icon {
-        color: $inputIconColor;
-        right: $inputGroupAddOnMinWidth;
+        color: variables_light.$inputIconColor;
+        right: variables_light.$inputGroupAddOnMinWidth;
     }
 
     &.p-invalid.p-component {
-        @include invalid-input();
+        @include mixins.invalid-input();
     }
 }
 
 .p-dropdown-panel {
-    background: $inputOverlayBg;
-    color: $inputListTextColor;
-    border: $inputOverlayBorder;
-    border-radius: $borderRadius;
-    box-shadow: $inputOverlayShadow;
+    background: variables_light.$inputOverlayBg;
+    color: variables_light.$inputListTextColor;
+    border: variables_light.$inputOverlayBorder;
+    border-radius: variables_light.$borderRadius;
+    box-shadow: variables_light.$inputOverlayShadow;
 
     .p-dropdown-header {
-        padding: $inputListHeaderPadding;
-        border-bottom: $inputListHeaderBorder;
-        color: $inputListHeaderTextColor;
-        background: $inputOverlayHeaderBg;
-        margin: $inputListHeaderMargin;
-        border-top-right-radius: $borderRadius;
-        border-top-left-radius: $borderRadius;
+        padding: variables_light.$inputListHeaderPadding;
+        border-bottom: variables_light.$inputListHeaderBorder;
+        color: variables_light.$inputListHeaderTextColor;
+        background: variables_light.$inputOverlayHeaderBg;
+        margin: variables_light.$inputListHeaderMargin;
+        border-top-right-radius: variables_light.$borderRadius;
+        border-top-left-radius: variables_light.$borderRadius;
 
         .p-dropdown-filter {
-            padding-right: nth($inputPadding, 2) + $primeIconFontSize;
-            margin-right: -1 * (nth($inputPadding, 2) + $primeIconFontSize);
+            padding-right: list.nth(variables_light.$inputPadding, 2) + variables_light.$primeIconFontSize;
+            margin-right: -1 * (list.nth(variables_light.$inputPadding, 2) + variables_light.$primeIconFontSize);
         }
 
         .p-dropdown-filter-icon {
-            right: nth($inputPadding, 2);
-            color: $inputIconColor;
+            right: list.nth(variables_light.$inputPadding, 2);
+            color: variables_light.$inputIconColor;
         }
     }
 
     .p-dropdown-items {
-        padding: $inputListPadding;
+        padding: variables_light.$inputListPadding;
 
         .p-dropdown-item {
-            margin: $inputListItemMargin;
-            padding: $inputListItemPadding;
-            border: $inputListItemBorder;
-            color: $inputListItemTextColor;
-            background: $inputListItemBg;
-            transition: $listItemTransition;
-            border-radius: $inputListItemBorderRadius;
+            margin: variables_light.$inputListItemMargin;
+            padding: variables_light.$inputListItemPadding;
+            border: variables_light.$inputListItemBorder;
+            color: variables_light.$inputListItemTextColor;
+            background: variables_light.$inputListItemBg;
+            transition: variables_light.$listItemTransition;
+            border-radius: variables_light.$inputListItemBorderRadius;
 
             &:first-child {
                 margin-top: 0;
@@ -213,40 +218,40 @@ input.p-dropdown-label {
             }
 
             &.p-highlight {
-                color: $highlightTextColor;
-                background: $highlightBg;
+                color: variables.$highlightTextColor;
+                background: variables.$highlightBg;
 
                 &.p-focus {
-                    background: $highlightFocusBg;
+                    background: variables.$highlightFocusBg;
                 }
             }
 
             &:not(.p-highlight):not(.p-disabled) {
                 &.p-focus {
-                    color: $inputListItemTextHoverColor;
-                    background: $inputListItemHoverBg;
+                    color: variables_light.$inputListItemTextHoverColor;
+                    background: variables_light.$inputListItemHoverBg;
                 }
             }
 
             .p-dropdown-check-icon {
                 position: relative;
-                margin-left: -1 * $inlineSpacing;
-                margin-right: $inlineSpacing;
+                margin-left: -1 * variables_light.$inlineSpacing;
+                margin-right: variables_light.$inlineSpacing;
             }
         }
 
         .p-dropdown-item-group {
-            margin: $submenuHeaderMargin;
-            padding: $submenuHeaderPadding;
-            color: $submenuHeaderTextColor;
-            background: $submenuHeaderBg;
-            font-weight: $submenuHeaderFontWeight;
+            margin: variables_light.$submenuHeaderMargin;
+            padding: variables_light.$submenuHeaderPadding;
+            color: variables_light.$submenuHeaderTextColor;
+            background: variables_light.$submenuHeaderBg;
+            font-weight: variables_light.$submenuHeaderFontWeight;
         }
 
         .p-dropdown-empty-message {
-            padding: $inputListItemPadding;
-            color: $inputListItemTextColor;
-            background: $inputListItemBg;
+            padding: variables_light.$inputListItemPadding;
+            color: variables_light.$inputListItemTextColor;
+            background: variables_light.$inputListItemBg;
         }
     }
 }

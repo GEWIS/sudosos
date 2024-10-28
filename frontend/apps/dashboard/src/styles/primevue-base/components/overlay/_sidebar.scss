@@ -1,3 +1,6 @@
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../mixins";
+
 // core
 .p-sidebar-mask {
     display: none;
@@ -150,22 +153,22 @@
 
 // theme
 .p-sidebar {
-    background: $overlayContentBg;
-    color: $panelContentTextColor;
-    border: $overlayContentBorder;
-    box-shadow: $overlayContainerShadow;
+    background: variables_light.$overlayContentBg;
+    color: variables_light.$panelContentTextColor;
+    border: variables_light.$overlayContentBorder;
+    box-shadow: variables_light.$overlayContainerShadow;
 
     .p-sidebar-header {
-        padding: $panelHeaderPadding;
+        padding: variables_light.$panelHeaderPadding;
 
         .p-sidebar-header-content {
-            font-weight: $dialogHeaderFontWeight;
-            font-size: $dialogHeaderFontSize;
+            font-weight: variables_light.$dialogHeaderFontWeight;
+            font-size: variables_light.$dialogHeaderFontSize;
         }
 
         .p-sidebar-close,
         .p-sidebar-icon {
-            @include action-icon();
+            @include mixins.action-icon();
         }
 
         & + .p-sidebar-content {
@@ -174,6 +177,6 @@
     }
 
     .p-sidebar-content {
-        padding: $panelContentPadding;
+        padding: variables_light.$panelContentPadding;
     }
 }

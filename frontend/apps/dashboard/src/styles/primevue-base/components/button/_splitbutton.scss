@@ -1,3 +1,5 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-splitbutton {
     display: inline-flex;
@@ -34,17 +36,17 @@
 
 // theme
 .p-splitbutton {
-    border-radius: $borderRadius;
+    border-radius: variables_light.$borderRadius;
 
     &.p-button-rounded {
-        border-radius: $roundedButtonBorderRadius;
+        border-radius: variables_light.$roundedButtonBorderRadius;
 
         > .p-button {
-            border-radius: $roundedButtonBorderRadius;
+            border-radius: variables_light.$roundedButtonBorderRadius;
         }
     }
 
     &.p-button-raised {
-        box-shadow: $raisedButtonShadow;
+        box-shadow: variables_light.$raisedButtonShadow;
     }
 }

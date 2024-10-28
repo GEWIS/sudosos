@@ -1,3 +1,7 @@
+@use "sass:meta";
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../mixins";
+
 // core
 .p-message-wrapper {
     display: flex;
@@ -50,19 +54,19 @@
 
 // theme
 .p-message {
-    margin: $messageMargin;
-    border-radius: $borderRadius;
+    margin: variables_light.$messageMargin;
+    border-radius: variables_light.$borderRadius;
 
     .p-message-wrapper {
-        padding: $messagePadding;
+        padding: variables_light.$messagePadding;
     }
 
     .p-message-close {
-        width: $actionIconWidth;
-        height: $actionIconHeight;
-        border-radius: $actionIconBorderRadius;
+        width: variables_light.$actionIconWidth;
+        height: variables_light.$actionIconHeight;
+        border-radius: variables_light.$actionIconBorderRadius;
         background: transparent;
-        transition: $actionIconTransition;
+        transition: variables_light.$actionIconTransition;
         outline-color: transparent;
 
         &:hover {
@@ -70,75 +74,75 @@
         }
 
         &:focus-visible {
-            @include focused();
+            @include mixins.focused();
         }
     }
 
     &.p-message-info {
-        background: $infoMessageBg;
-        border: $infoMessageBorder;
-        border-width: $messageBorderWidth;
-        color: $infoMessageTextColor;
+        background: variables_light.$infoMessageBg;
+        border: variables_light.$infoMessageBorder;
+        border-width: variables_light.$messageBorderWidth;
+        color: variables_light.$infoMessageTextColor;
 
         .p-message-icon {
-            color: $infoMessageIconColor;
+            color: variables_light.$infoMessageIconColor;
         }
 
         .p-message-close {
-            color: $infoMessageIconColor;
+            color: variables_light.$infoMessageIconColor;
         }
     }
 
     &.p-message-success {
-        background: $successMessageBg;
-        border: $successMessageBorder;
-        border-width: $messageBorderWidth;
-        color: $successMessageTextColor;
+        background: variables_light.$successMessageBg;
+        border: variables_light.$successMessageBorder;
+        border-width: variables_light.$messageBorderWidth;
+        color: variables_light.$successMessageTextColor;
 
         .p-message-icon {
-            color: $successMessageIconColor;
+            color: variables_light.$successMessageIconColor;
         }
 
         .p-message-close {
-            color: $successMessageIconColor;
+            color: variables_light.$successMessageIconColor;
         }
     }
 
     &.p-message-warn {
-        background: $warningMessageBg;
-        border: $warningMessageBorder;
-        border-width: $messageBorderWidth;
-        color: $warningMessageTextColor;
+        background: variables_light.$warningMessageBg;
+        border: variables_light.$warningMessageBorder;
+        border-width: variables_light.$messageBorderWidth;
+        color: variables_light.$warningMessageTextColor;
 
         .p-message-icon {
-            color: $warningMessageIconColor;
+            color: variables_light.$warningMessageIconColor;
         }
 
         .p-message-close {
-            color: $warningMessageIconColor;
+            color: variables_light.$warningMessageIconColor;
         }
     }
 
     &.p-message-error {
-        background: $errorMessageBg;
-        border: $errorMessageBorder;
-        border-width: $messageBorderWidth;
-        color: $errorMessageTextColor;
+        background: variables_light.$errorMessageBg;
+        border: variables_light.$errorMessageBorder;
+        border-width: variables_light.$messageBorderWidth;
+        color: variables_light.$errorMessageTextColor;
 
         .p-message-icon {
-            color: $errorMessageIconColor;
+            color: variables_light.$errorMessageIconColor;
         }
 
         .p-message-close {
-            color: $errorMessageIconColor;
+            color: variables_light.$errorMessageIconColor;
         }
     }
 
-    @if variable-exists(secondaryMessageBg) {
+    @if meta.variable-exists(secondaryMessageBg) {
         &.p-message-secondary {
             background: $secondaryMessageBg;
             border: $secondaryMessageBorder;
-            border-width: $messageBorderWidth;
+            border-width: variables_light.$messageBorderWidth;
             color: $secondaryMessageTextColor;
 
             .p-message-icon {
@@ -151,11 +155,11 @@
         }
     }
 
-    @if variable-exists(contrastMessageBg) {
+    @if meta.variable-exists(contrastMessageBg) {
         &.p-message-contrast {
             background: $contrastMessageBg;
             border: $contrastMessageBorder;
-            border-width: $messageBorderWidth;
+            border-width: variables_light.$messageBorderWidth;
             color: $contrastMessageTextColor;
 
             .p-message-icon {
@@ -169,17 +173,17 @@
     }
 
     .p-message-text {
-        font-size: $messageTextFontSize;
-        font-weight: $messageTextFontWeight;
+        font-size: variables_light.$messageTextFontSize;
+        font-weight: variables_light.$messageTextFontWeight;
     }
 
     .p-message-icon {
-        font-size: $messageIconFontSize;
-        margin-right: $inlineSpacing;
+        font-size: variables_light.$messageIconFontSize;
+        margin-right: variables_light.$inlineSpacing;
     }
 
     .p-icon:not(.p-message-close-icon) {
-        width: $messageIconFontSize;
-        height: $messageIconFontSize;
+        width: variables_light.$messageIconFontSize;
+        height: variables_light.$messageIconFontSize;
     }
 }

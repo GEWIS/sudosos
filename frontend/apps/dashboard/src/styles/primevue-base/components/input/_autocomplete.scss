@@ -1,3 +1,8 @@
+@use "sass:list";
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../../themes/variables";
+@use "../../mixins";
+
 @use "sass:math";
 
 // core
@@ -100,85 +105,85 @@
 // theme
 .p-autocomplete {
     .p-autocomplete-loader {
-        right: nth($inputPadding, 2);
+        right: list.nth(variables_light.$inputPadding, 2);
     }
 
     &.p-autocomplete-dd {
         .p-autocomplete-loader {
-            right: nth($inputPadding, 2) + $buttonIconOnlyWidth;
+            right: list.nth(variables_light.$inputPadding, 2) + variables_light.$buttonIconOnlyWidth;
         }
     }
 
     &:not(.p-disabled):hover {
         .p-autocomplete-multiple-container {
-            border-color: $inputHoverBorderColor;
+            border-color: variables_light.$inputHoverBorderColor;
         }
     }
 
     &:not(.p-disabled).p-focus {
         .p-autocomplete-multiple-container {
-            @include focused-input();
+            @include mixins.focused-input();
         }
     }
 
     .p-autocomplete-multiple-container {
-        padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
-        gap: $inlineSpacing;
+        padding: math.div(list.nth(variables_light.$inputPadding, 1), 2) list.nth(variables_light.$inputPadding, 2);
+        gap: variables_light.$inlineSpacing;
         outline-color: transparent;
 
         .p-autocomplete-input-token {
-            padding: math.div(nth($inputPadding, 1), 2) 0;
+            padding: math.div(list.nth(variables_light.$inputPadding, 1), 2) 0;
 
             input {
                 font-family: var(--font-family);
                 font-feature-settings: var(--font-feature-settings, normal);
-                font-size: $inputTextFontSize;
-                color: $textColor;
+                font-size: variables_light.$inputTextFontSize;
+                color: variables_light.$textColor;
                 padding: 0;
                 margin: 0;
             }
         }
 
         .p-autocomplete-token {
-            padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
-            background: $chipBg;
-            color: $chipTextColor;
-            border-radius: $chipBorderRadius;
+            padding: math.div(list.nth(variables_light.$inputPadding, 1), 2) list.nth(variables_light.$inputPadding, 2);
+            background: variables_light.$chipBg;
+            color: variables_light.$chipTextColor;
+            border-radius: variables_light.$chipBorderRadius;
 
             .p-autocomplete-token-icon {
-                margin-left: $inlineSpacing;
+                margin-left: variables_light.$inlineSpacing;
             }
 
             &.p-focus {
-                background: $chipFocusBg;
-                color: $chipFocusTextColor;
+                background: variables_light.$chipFocusBg;
+                color: variables_light.$chipFocusTextColor;
             }
         }
     }
 
     &.p-invalid.p-component > .p-inputtext {
-        @include invalid-input();
+        @include mixins.invalid-input();
     }
 }
 
 .p-autocomplete-panel {
-    background: $inputOverlayBg;
-    color: $inputListTextColor;
-    border: $inputOverlayBorder;
-    border-radius: $borderRadius;
-    box-shadow: $inputOverlayShadow;
+    background: variables_light.$inputOverlayBg;
+    color: variables_light.$inputListTextColor;
+    border: variables_light.$inputOverlayBorder;
+    border-radius: variables_light.$borderRadius;
+    box-shadow: variables_light.$inputOverlayShadow;
 
     .p-autocomplete-items {
-        padding: $inputListPadding;
+        padding: variables_light.$inputListPadding;
 
         .p-autocomplete-item {
-            margin: $inputListItemMargin;
-            padding: $inputListItemPadding;
-            border: $inputListItemBorder;
-            color: $inputListItemTextColor;
-            background: $inputListItemBg;
-            transition: $listItemTransition;
-            border-radius: $inputListItemBorderRadius;
+            margin: variables_light.$inputListItemMargin;
+            padding: variables_light.$inputListItemPadding;
+            border: variables_light.$inputListItemBorder;
+            color: variables_light.$inputListItemTextColor;
+            background: variables_light.$inputListItemBg;
+            transition: variables_light.$listItemTransition;
+            border-radius: variables_light.$inputListItemBorderRadius;
 
             &:first-child {
                 margin-top: 0;
@@ -189,28 +194,28 @@
             }
 
             &.p-highlight {
-                color: $highlightTextColor;
-                background: $highlightBg;
+                color: variables.$highlightTextColor;
+                background: variables.$highlightBg;
 
                 &.p-focus {
-                    background: $highlightFocusBg;
+                    background: variables.$highlightFocusBg;
                 }
             }
 
             &:not(.p-highlight):not(.p-disabled) {
                 &.p-focus {
-                    color: $inputListItemTextHoverColor;
-                    background: $inputListItemHoverBg;
+                    color: variables_light.$inputListItemTextHoverColor;
+                    background: variables_light.$inputListItemHoverBg;
                 }
             }
         }
 
         .p-autocomplete-item-group {
-            margin: $submenuHeaderMargin;
-            padding: $submenuHeaderPadding;
-            color: $submenuHeaderTextColor;
-            background: $submenuHeaderBg;
-            font-weight: $submenuHeaderFontWeight;
+            margin: variables_light.$submenuHeaderMargin;
+            padding: variables_light.$submenuHeaderPadding;
+            color: variables_light.$submenuHeaderTextColor;
+            background: variables_light.$submenuHeaderBg;
+            font-weight: variables_light.$submenuHeaderFontWeight;
         }
     }
 }

@@ -1,3 +1,8 @@
+@use "sass:list";
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../../themes/variables";
+@use "../../mixins";
+
 @use "sass:math";
 
 // core
@@ -109,65 +114,65 @@
 
 // theme
 .p-multiselect {
-    background: $inputBg;
-    border: $inputBorder;
-    transition: $formElementTransition;
-    border-radius: $borderRadius;
+    background: variables_light.$inputBg;
+    border: variables_light.$inputBorder;
+    transition: variables_light.$formElementTransition;
+    border-radius: variables_light.$borderRadius;
     outline-color: transparent;
 
     &:not(.p-disabled):hover {
-        border-color: $inputHoverBorderColor;
+        border-color: variables_light.$inputHoverBorderColor;
     }
 
     &:not(.p-disabled).p-focus {
-        @include focused-input();
+        @include mixins.focused-input();
     }
 
     &.p-variant-filled {
-        background: $inputFilledBg;
+        background: variables_light.$inputFilledBg;
 
         &:not(.p-disabled):hover {
-            background-color: $inputFilledHoverBg;
+            background-color: variables_light.$inputFilledHoverBg;
         }
 
         &:not(.p-disabled).p-focus {
-            background-color: $inputFilledFocusBg;
+            background-color: variables_light.$inputFilledFocusBg;
         }
     }
 
     .p-multiselect-label {
-        padding: $inputPadding;
-        transition: $formElementTransition;
+        padding: variables_light.$inputPadding;
+        transition: variables_light.$formElementTransition;
 
         &.p-placeholder {
-            color: $inputPlaceholderTextColor;
+            color: variables_light.$inputPlaceholderTextColor;
         }
     }
 
     &.p-multiselect-chip {
         .p-multiselect-token {
-            padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
-            margin-right: $inlineSpacing;
-            background: $chipBg;
-            color: $chipTextColor;
-            border-radius: $chipBorderRadius;
+            padding: math.div(list.nth(variables_light.$inputPadding, 1), 2) list.nth(variables_light.$inputPadding, 2);
+            margin-right: variables_light.$inlineSpacing;
+            background: variables_light.$chipBg;
+            color: variables_light.$chipTextColor;
+            border-radius: variables_light.$chipBorderRadius;
 
             .p-multiselect-token-icon {
-                margin-left: $inlineSpacing;
+                margin-left: variables_light.$inlineSpacing;
             }
         }
     }
 
     .p-multiselect-trigger {
         background: transparent;
-        color: $inputIconColor;
-        width: $inputGroupAddOnMinWidth;
-        border-top-right-radius: $borderRadius;
-        border-bottom-right-radius: $borderRadius;
+        color: variables_light.$inputIconColor;
+        width: variables_light.$inputGroupAddOnMinWidth;
+        border-top-right-radius: variables_light.$borderRadius;
+        border-bottom-right-radius: variables_light.$borderRadius;
     }
 
     &.p-invalid.p-component {
-        @include invalid-input();
+        @include mixins.invalid-input();
     }
 }
 
@@ -175,61 +180,61 @@
     &.p-multiselect {
         &.p-multiselect-chip {
             .p-multiselect-label {
-                padding: math.div(nth($inputPadding, 1), 2)
-                    nth($inputPadding, 2);
+                padding: math.div(list.nth(variables_light.$inputPadding, 1), 2)
+                    list.nth(variables_light.$inputPadding, 2);
             }
         }
     }
 }
 
 .p-multiselect-panel {
-    background: $inputOverlayBg;
-    color: $inputListTextColor;
-    border: $inputOverlayBorder;
-    border-radius: $borderRadius;
-    box-shadow: $inputOverlayShadow;
+    background: variables_light.$inputOverlayBg;
+    color: variables_light.$inputListTextColor;
+    border: variables_light.$inputOverlayBorder;
+    border-radius: variables_light.$borderRadius;
+    box-shadow: variables_light.$inputOverlayShadow;
 
     .p-multiselect-header {
-        padding: $inputListHeaderPadding;
-        border-bottom: $inputListHeaderBorder;
-        color: $inputListHeaderTextColor;
-        background: $inputOverlayHeaderBg;
-        margin: $inputListHeaderMargin;
-        border-top-right-radius: $borderRadius;
-        border-top-left-radius: $borderRadius;
+        padding: variables_light.$inputListHeaderPadding;
+        border-bottom: variables_light.$inputListHeaderBorder;
+        color: variables_light.$inputListHeaderTextColor;
+        background: variables_light.$inputOverlayHeaderBg;
+        margin: variables_light.$inputListHeaderMargin;
+        border-top-right-radius: variables_light.$borderRadius;
+        border-top-left-radius: variables_light.$borderRadius;
 
         .p-multiselect-filter-container {
             .p-inputtext {
-                padding-right: nth($inputPadding, 2) + $primeIconFontSize;
+                padding-right: list.nth(variables_light.$inputPadding, 2) + variables_light.$primeIconFontSize;
             }
 
             .p-multiselect-filter-icon {
-                right: nth($inputPadding, 2);
-                color: $inputIconColor;
+                right: list.nth(variables_light.$inputPadding, 2);
+                color: variables_light.$inputIconColor;
             }
         }
 
         .p-checkbox {
-            margin-right: $inlineSpacing;
+            margin-right: variables_light.$inlineSpacing;
         }
 
         .p-multiselect-close {
-            margin-left: $inlineSpacing;
-            @include action-icon();
+            margin-left: variables_light.$inlineSpacing;
+            @include mixins.action-icon();
         }
     }
 
     .p-multiselect-items {
-        padding: $inputListPadding;
+        padding: variables_light.$inputListPadding;
 
         .p-multiselect-item {
-            margin: $inputListItemMargin;
-            padding: $inputListItemPadding;
-            border: $inputListItemBorder;
-            color: $inputListItemTextColor;
-            background: $inputListItemBg;
-            transition: $listItemTransition;
-            border-radius: $inputListItemBorderRadius;
+            margin: variables_light.$inputListItemMargin;
+            padding: variables_light.$inputListItemPadding;
+            border: variables_light.$inputListItemBorder;
+            color: variables_light.$inputListItemTextColor;
+            background: variables_light.$inputListItemBg;
+            transition: variables_light.$listItemTransition;
+            border-radius: variables_light.$inputListItemBorderRadius;
 
             &:first-child {
                 margin-top: 0;
@@ -240,38 +245,38 @@
             }
 
             &.p-highlight {
-                color: $highlightTextColor;
-                background: $highlightBg;
+                color: variables.$highlightTextColor;
+                background: variables.$highlightBg;
 
                 &.p-focus {
-                    background: $highlightFocusBg;
+                    background: variables.$highlightFocusBg;
                 }
             }
 
             &:not(.p-highlight):not(.p-disabled) {
                 &.p-focus {
-                    color: $inputListItemTextHoverColor;
-                    background: $inputListItemHoverBg;
+                    color: variables_light.$inputListItemTextHoverColor;
+                    background: variables_light.$inputListItemHoverBg;
                 }
             }
 
             .p-checkbox {
-                margin-right: $inlineSpacing;
+                margin-right: variables_light.$inlineSpacing;
             }
         }
 
         .p-multiselect-item-group {
-            margin: $submenuHeaderMargin;
-            padding: $submenuHeaderPadding;
-            color: $submenuHeaderTextColor;
-            background: $submenuHeaderBg;
-            font-weight: $submenuHeaderFontWeight;
+            margin: variables_light.$submenuHeaderMargin;
+            padding: variables_light.$submenuHeaderPadding;
+            color: variables_light.$submenuHeaderTextColor;
+            background: variables_light.$submenuHeaderBg;
+            font-weight: variables_light.$submenuHeaderFontWeight;
         }
 
         .p-multiselect-empty-message {
-            padding: $inputListItemPadding;
-            color: $inputListItemTextColor;
-            background: $inputListItemBg;
+            padding: variables_light.$inputListItemPadding;
+            color: variables_light.$inputListItemTextColor;
+            background: variables_light.$inputListItemBg;
         }
     }
 }

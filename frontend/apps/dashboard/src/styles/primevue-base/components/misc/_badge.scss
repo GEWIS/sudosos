@@ -1,3 +1,6 @@
+@use "sass:meta";
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-badge {
     display: inline-block;
@@ -34,67 +37,67 @@
 
 // theme
 .p-badge {
-    background: $badgeBg;
-    color: $badgeTextColor;
-    font-size: $badgeFontSize;
-    font-weight: $badgeFontWeight;
-    min-width: $badgeMinWidth;
-    height: $badgeHeight;
-    line-height: $badgeHeight;
+    background: variables_light.$badgeBg;
+    color: variables_light.$badgeTextColor;
+    font-size: variables_light.$badgeFontSize;
+    font-weight: variables_light.$badgeFontWeight;
+    min-width: variables_light.$badgeMinWidth;
+    height: variables_light.$badgeHeight;
+    line-height: variables_light.$badgeHeight;
 
     &.p-badge-secondary {
-        background-color: $secondaryButtonBg;
-        color: $secondaryButtonTextColor;
+        background-color: variables_light.$secondaryButtonBg;
+        color: variables_light.$secondaryButtonTextColor;
     }
 
     &.p-badge-success {
-        background-color: $successButtonBg;
-        color: $successButtonTextColor;
+        background-color: variables_light.$successButtonBg;
+        color: variables_light.$successButtonTextColor;
     }
 
     &.p-badge-info {
-        background-color: $infoButtonBg;
-        color: $infoButtonTextColor;
+        background-color: variables_light.$infoButtonBg;
+        color: variables_light.$infoButtonTextColor;
     }
 
     &.p-badge-warning {
-        background-color: $warningButtonBg;
-        color: $warningButtonTextColor;
+        background-color: variables_light.$warningButtonBg;
+        color: variables_light.$warningButtonTextColor;
     }
 
     &.p-badge-danger {
-        background-color: $dangerButtonBg;
-        color: $dangerButtonTextColor;
+        background-color: variables_light.$dangerButtonBg;
+        color: variables_light.$dangerButtonTextColor;
     }
 
     &.p-badge-danger-inverse {
-        background-color: $dangerButtonTextColor;
-        color: $dangerButtonBg;
+        background-color: variables_light.$dangerButtonTextColor;
+        color: variables_light.$dangerButtonBg;
     }
 
-    @if variable-exists(secondaryMessageBg) {
+    @if meta.variable-exists(secondaryMessageBg) {
         &.p-badge-secondary {
-            background-color: $secondaryButtonBg;
-            color: $secondaryButtonTextColor;
+            background-color: variables_light.$secondaryButtonBg;
+            color: variables_light.$secondaryButtonTextColor;
         }
 
         &.p-badge-contrast {
-            background-color: $contrastButtonBg;
-            color: $contrastButtonTextColor;
+            background-color: variables_light.$contrastButtonBg;
+            color: variables_light.$contrastButtonTextColor;
         }
     }
 
     &.p-badge-lg {
-        font-size: 1.5 * $badgeFontSize;
-        min-width: 1.5 * $badgeMinWidth;
-        height: 1.5 * $badgeHeight;
-        line-height: 1.5 * $badgeHeight;
+        font-size: 1.5 * variables_light.$badgeFontSize;
+        min-width: 1.5 * variables_light.$badgeMinWidth;
+        height: 1.5 * variables_light.$badgeHeight;
+        line-height: 1.5 * variables_light.$badgeHeight;
     }
 
     &.p-badge-xl {
-        font-size: 2 * $badgeFontSize;
-        min-width: 2 * $badgeMinWidth;
-        height: 2 * $badgeHeight;
-        line-height: 2 * $badgeHeight;
+        font-size: 2 * variables_light.$badgeFontSize;
+        min-width: 2 * variables_light.$badgeMinWidth;
+        height: 2 * variables_light.$badgeHeight;
+        line-height: 2 * variables_light.$badgeHeight;
     }
 }

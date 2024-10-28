@@ -1,3 +1,5 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-timeline {
     display: flex;
@@ -113,36 +115,36 @@
 // theme
 .p-timeline {
     .p-timeline-event-marker {
-        border: $timelineEventMarkerBorder; 
-        border-radius: $timelineEventMarkerBorderRadius;
-        width: $timelineEventMarkerWidth;
-        height: $timelineEventMarkerHeight;
-        background-color: $timelineEventMarkerBackground;
+        border: variables_light.$timelineEventMarkerBorder; 
+        border-radius: variables_light.$timelineEventMarkerBorderRadius;
+        width: variables_light.$timelineEventMarkerWidth;
+        height: variables_light.$timelineEventMarkerHeight;
+        background-color: variables_light.$timelineEventMarkerBackground;
     }
 
     .p-timeline-event-connector {
-        background-color: $timelineEventColor;
+        background-color: variables_light.$timelineEventColor;
     }
 
     &.p-timeline-vertical {
         .p-timeline-event-opposite,
         .p-timeline-event-content  {
-            padding: $timelineVerticalEventContentPadding;
+            padding: variables_light.$timelineVerticalEventContentPadding;
         }
 
         .p-timeline-event-connector {
-            width: $timelineEventConnectorSize;
+            width: variables_light.$timelineEventConnectorSize;
         }
     }
 
     &.p-timeline-horizontal {
         .p-timeline-event-opposite,
         .p-timeline-event-content  {
-            padding: $timelineHorizontalEventContentPadding;
+            padding: variables_light.$timelineHorizontalEventContentPadding;
         }
 
         .p-timeline-event-connector {
-            height: $timelineEventConnectorSize;
+            height: variables_light.$timelineEventConnectorSize;
         }
     }
 }

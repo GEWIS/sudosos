@@ -1,3 +1,7 @@
+@use "sass:color";
+@use "sass:list";
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-confirm-popup {
     position: absolute;
@@ -71,22 +75,22 @@
 
 // theme
 .p-confirm-popup {
-    background: $overlayContentBg;
-    color: $panelContentTextColor;
-    border: $overlayContentBorder;
-    border-radius: $borderRadius;
-    box-shadow: $overlayContainerShadow;
+    background: variables_light.$overlayContentBg;
+    color: variables_light.$panelContentTextColor;
+    border: variables_light.$overlayContentBorder;
+    border-radius: variables_light.$borderRadius;
+    box-shadow: variables_light.$overlayContainerShadow;
 
     .p-confirm-popup-content {
-        padding: $confirmPopupContentPadding;
+        padding: variables_light.$confirmPopupContentPadding;
     }
 
     .p-confirm-popup-footer {
         text-align: right;
-        padding: $confirmPopupFooterPadding;
+        padding: variables_light.$confirmPopupFooterPadding;
 
         button {
-            margin: 0 $inlineSpacing 0 0;
+            margin: 0 variables_light.$inlineSpacing 0 0;
             width: auto;
 
             &:last-child {
@@ -97,48 +101,48 @@
 
     &:after {
         border-style: solid;
-        border-color: rgba($overlayContentBg, 0);
-        border-bottom-color: $overlayContentBg;
+        border-color: rgba(variables_light.$overlayContentBg, 0);
+        border-bottom-color: variables_light.$overlayContentBg;
     }
 
     &:before {
         border-style: solid;
 
-        @if (nth($overlayContentBorder, 2) == 'none') {
-            border-color: rgba($overlayContentBg, 0);
-            border-bottom-color: scale-color($overlayContentBg, $lightness: -5%);
+        @if (list.nth(variables_light.$overlayContentBorder, 2) == 'none') {
+            border-color: rgba(variables_light.$overlayContentBg, 0);
+            border-bottom-color: color.scale(variables_light.$overlayContentBg, $lightness: -5%);
         }
         @else {
-            border-color: rgba(nth($overlayContentBorder, 3), 0);
-            border-bottom-color: scale-color(nth($overlayContentBorder, 3), $lightness: -5%);
+            border-color: rgba(list.nth(variables_light.$overlayContentBorder, 3), 0);
+            border-bottom-color: color.scale(list.nth(variables_light.$overlayContentBorder, 3), $lightness: -5%);
         }
     }
 
     &.p-confirm-popup-flipped {
         &:after {
-            border-top-color: $overlayContentBg;
+            border-top-color: variables_light.$overlayContentBg;
         }
 
         &:before {
-            @if (nth($overlayContentBorder, 2) == 'none') {
-                border-top-color: $overlayContentBg;
+            @if (list.nth(variables_light.$overlayContentBorder, 2) == 'none') {
+                border-top-color: variables_light.$overlayContentBg;
             }
             @else {
-                border-top-color: nth($overlayContentBorder, 3);
+                border-top-color: list.nth(variables_light.$overlayContentBorder, 3);
             }
         }
     }
 
     .p-confirm-popup-icon {
-        font-size: $primeIconFontSize * 1.5;
+        font-size: variables_light.$primeIconFontSize * 1.5;
 
         &.p-icon {
-            width: $primeIconFontSize * 1.5;
-            height: $primeIconFontSize * 1.5;
+            width: variables_light.$primeIconFontSize * 1.5;
+            height: variables_light.$primeIconFontSize * 1.5;
         }
     }
 
     .p-confirm-popup-message {
-        margin-left: $inlineSpacing * 2;
+        margin-left: variables_light.$inlineSpacing * 2;
     }
 }

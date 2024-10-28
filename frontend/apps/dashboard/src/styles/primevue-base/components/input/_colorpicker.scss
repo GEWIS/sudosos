@@ -1,3 +1,5 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-colorpicker-panel .p-colorpicker-color {
     background: linear-gradient(to top, #000 0%, rgb(0 0 0 / 0) 100%), linear-gradient(to right, #fff 0%, rgb(255 255 255 / 0) 100%)
@@ -9,20 +11,20 @@
 
 // theme
 .p-colorpicker-preview  {
-    width: $colorPickerPreviewWidth;
-    height: $colorPickerPreviewHeight;
+    width: variables_light.$colorPickerPreviewWidth;
+    height: variables_light.$colorPickerPreviewHeight;
 }
 
 .p-colorpicker-panel {
-    background: $colorPickerBg;
-    border: $colorPickerBorder;
+    background: variables_light.$colorPickerBg;
+    border: variables_light.$colorPickerBorder;
 
     .p-colorpicker-color-handle,
     .p-colorpicker-hue-handle {
-        border-color: $colorPickerHandleColor;
+        border-color: variables_light.$colorPickerHandleColor;
     }
 }
 
 .p-colorpicker-overlay-panel {
-    box-shadow: $inputOverlayShadow;
+    box-shadow: variables_light.$inputOverlayShadow;
 }

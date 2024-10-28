@@ -1,3 +1,6 @@
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../mixins";
+
 // core
 .p-scrollpanel-wrapper {
     overflow: hidden;
@@ -58,13 +61,13 @@
 // theme
 .p-scrollpanel {
     .p-scrollpanel-bar {
-        background: $scrollPanelTrackBg;
-        border: $scrollPanelTrackBorder;
-        transition: $formElementTransition;
+        background: variables_light.$scrollPanelTrackBg;
+        border: variables_light.$scrollPanelTrackBorder;
+        transition: variables_light.$formElementTransition;
         outline-color: transparent;
 
         &:focus-visible {
-            @include focused();
+            @include mixins.focused();
         }
     }
 }

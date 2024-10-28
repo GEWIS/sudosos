@@ -1,38 +1,40 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 .p-dataview {
     .p-paginator-top {
-        border-width: $tableTopPaginatorBorderWidth;
+        border-width: variables_light.$tableTopPaginatorBorderWidth;
         border-radius: 0;
     }
 
     .p-paginator-bottom {
-        border-width: $tableBottomPaginatorBorderWidth;
+        border-width: variables_light.$tableBottomPaginatorBorderWidth;
         border-radius: 0;
     }
 
     .p-dataview-header {
-        background: $tableHeaderBg;
-        color: $tableHeaderTextColor;
-        border: $tableHeaderBorder;
-        border-width: $tableHeaderBorderWidth;
-        padding: $tableHeaderPadding;
-        font-weight: $tableHeaderFontWeight;
+        background: variables_light.$tableHeaderBg;
+        color: variables_light.$tableHeaderTextColor;
+        border: variables_light.$tableHeaderBorder;
+        border-width: variables_light.$tableHeaderBorderWidth;
+        padding: variables_light.$tableHeaderPadding;
+        font-weight: variables_light.$tableHeaderFontWeight;
     }
 
     .p-dataview-content {
-        background: $tableBodyRowBg;
-        color: $tableBodyRowTextColor;
-        border: $dataViewContentBorder;
-        padding: $dataViewContentPadding;
+        background: variables_light.$tableBodyRowBg;
+        color: variables_light.$tableBodyRowTextColor;
+        border: variables_light.$dataViewContentBorder;
+        padding: variables_light.$dataViewContentPadding;
     }
 
     .p-dataview-footer {
-        background: $tableFooterBg;
-        color: $tableFooterTextColor;
-        border: $tableFooterBorder;
-        border-width: $tableFooterBorderWidth;
-        padding: $tableFooterPadding;
-        font-weight: $tableFooterFontWeight;
-        border-bottom-left-radius: $borderRadius;
-        border-bottom-right-radius: $borderRadius;
+        background: variables_light.$tableFooterBg;
+        color: variables_light.$tableFooterTextColor;
+        border: variables_light.$tableFooterBorder;
+        border-width: variables_light.$tableFooterBorderWidth;
+        padding: variables_light.$tableFooterPadding;
+        font-weight: variables_light.$tableFooterFontWeight;
+        border-bottom-left-radius: variables_light.$borderRadius;
+        border-bottom-right-radius: variables_light.$borderRadius;
     }
 }

@@ -1,3 +1,7 @@
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../../themes/variables";
+@use "../../mixins";
+
 // core
 .p-orderlist {
     display: flex;
@@ -40,47 +44,47 @@
 // theme
 .p-orderlist {
     .p-orderlist-controls {
-        padding: $panelContentPadding;
+        padding: variables_light.$panelContentPadding;
 
         .p-button {
-            margin-bottom: $inlineSpacing;
+            margin-bottom: variables_light.$inlineSpacing;
         }
     }
 
     .p-orderlist-list-container {
-        background: $panelContentBg;
-        border: $panelContentBorder;
-        border-radius: $borderRadius;
-        transition: $formElementTransition;
+        background: variables_light.$panelContentBg;
+        border: variables_light.$panelContentBorder;
+        border-radius: variables_light.$borderRadius;
+        transition: variables_light.$formElementTransition;
         outline-color: transparent;
 
         &.p-focus {
-            @include focused-input();
+            @include mixins.focused-input();
         }
     }
 
     .p-orderlist-header {
-        color: $panelHeaderTextColor;
-        padding: $panelHeaderPadding;
-        font-weight: $panelHeaderFontWeight;
+        color: variables_light.$panelHeaderTextColor;
+        padding: variables_light.$panelHeaderPadding;
+        font-weight: variables_light.$panelHeaderFontWeight;
     }
 
     .p-orderlist-list {
-        color: $panelContentTextColor;
-        padding: $inputListPadding;
+        color: variables_light.$panelContentTextColor;
+        padding: variables_light.$inputListPadding;
         outline: 0 none;
         
         &:not(:first-child) {
-            border-top: $panelContentBorder;
+            border-top: variables_light.$panelContentBorder;
         }
 
         .p-orderlist-item {
-            padding: $inputListItemPadding;
-            margin: $inputListItemMargin;
-            border: $inputListItemBorder;
-            color: $inputListItemTextColor;
-            background: $inputListItemBg;
-            transition: transform $transitionDuration, $listItemTransition;
+            padding: variables_light.$inputListItemPadding;
+            margin: variables_light.$inputListItemMargin;
+            border: variables_light.$inputListItemBorder;
+            color: variables_light.$inputListItemTextColor;
+            background: variables_light.$inputListItemBg;
+            transition: transform variables_light.$transitionDuration, variables_light.$listItemTransition;
 
             &:first-child {
                 margin-top: 0;
@@ -91,26 +95,26 @@
             }
 
             &:not(.p-highlight):hover {
-                background: $inputListItemHoverBg;
-                color: $inputListItemTextHoverColor;
+                background: variables_light.$inputListItemHoverBg;
+                color: variables_light.$inputListItemTextHoverColor;
 
                 &.p-focus {
-                    color: $inputListItemTextHoverColor;
-                    background: $inputListItemHoverBg;
+                    color: variables_light.$inputListItemTextHoverColor;
+                    background: variables_light.$inputListItemHoverBg;
                 }
             }
 
             &.p-focus {
-                color: $inputListItemTextHoverColor;
-                background: $inputListItemHoverBg;
+                color: variables_light.$inputListItemTextHoverColor;
+                background: variables_light.$inputListItemHoverBg;
             }
 
             &.p-highlight {
-                color: $highlightTextColor;
-                background: $highlightBg;
+                color: variables.$highlightTextColor;
+                background: variables.$highlightBg;
 
                 &.p-focus {
-                    background: $highlightFocusBg;
+                    background: variables.$highlightFocusBg;
                 }
             }
         }
@@ -119,10 +123,10 @@
     &.p-orderlist-striped {
         .p-orderlist-list {
             .p-orderlist-item:nth-child(even) {
-                background: $panelContentEvenRowBg;
+                background: variables_light.$panelContentEvenRowBg;
 
                 &:hover {
-                    background: $inputListItemHoverBg;
+                    background: variables_light.$inputListItemHoverBg;
                 }
             }
         }

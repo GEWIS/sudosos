@@ -1,71 +1,73 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 .p-editor-container {
     .p-editor-toolbar {
-        background: $editorToolbarBg;
-        border-top-right-radius: $borderRadius;
-        border-top-left-radius: $borderRadius;
+        background: variables_light.$editorToolbarBg;
+        border-top-right-radius: variables_light.$borderRadius;
+        border-top-left-radius: variables_light.$borderRadius;
 
         &.ql-snow {
-            border: $editorToolbarBorder;
+            border: variables_light.$editorToolbarBorder;
 
             .ql-stroke {
-                stroke: $editorToolbarIconColor;
+                stroke: variables_light.$editorToolbarIconColor;
             }
     
             .ql-fill {
-                fill: $editorToolbarIconColor;
+                fill: variables_light.$editorToolbarIconColor;
             }
     
             .ql-picker {
                 .ql-picker-label {
                     border: 0 none;
-                    color: $editorToolbarIconColor;
+                    color: variables_light.$editorToolbarIconColor;
 
                     &:hover {
-                        color: $editorToolbarIconHoverColor;
+                        color: variables_light.$editorToolbarIconHoverColor;
 
                         .ql-stroke {
-                            stroke: $editorToolbarIconHoverColor;
+                            stroke: variables_light.$editorToolbarIconHoverColor;
                         }
                 
                         .ql-fill {
-                            fill: $editorToolbarIconHoverColor;
+                            fill: variables_light.$editorToolbarIconHoverColor;
                         }
                     }
                 }
 
                 &.ql-expanded {
                     .ql-picker-label {
-                        color: $editorToolbarIconHoverColor;
+                        color: variables_light.$editorToolbarIconHoverColor;
 
                         .ql-stroke {
-                            stroke: $editorToolbarIconHoverColor;
+                            stroke: variables_light.$editorToolbarIconHoverColor;
                         }
                 
                         .ql-fill {
-                            fill: $editorToolbarIconHoverColor;
+                            fill: variables_light.$editorToolbarIconHoverColor;
                         }
                     }
 
                     .ql-picker-options {
-                        background: $inputOverlayBg;
-                        border:$inputOverlayBorder;
-                        box-shadow:$inputOverlayShadow;
-                        border-radius: $borderRadius;
-                        padding: $inputListPadding;
+                        background: variables_light.$inputOverlayBg;
+                        border:variables_light.$inputOverlayBorder;
+                        box-shadow:variables_light.$inputOverlayShadow;
+                        border-radius: variables_light.$borderRadius;
+                        padding: variables_light.$inputListPadding;
 
                         .ql-picker-item {
-                            color: $inputListItemTextColor;
+                            color: variables_light.$inputListItemTextColor;
                             
                             &:hover {
-                                color: $inputListItemTextHoverColor;
-                                background: $inputListItemHoverBg;
+                                color: variables_light.$inputListItemTextHoverColor;
+                                background: variables_light.$inputListItemHoverBg;
                             }
                         }
                     }
 
                     &:not(.ql-icon-picker) {
                         .ql-picker-item {
-                            padding: $inputListItemPadding;
+                            padding: variables_light.$inputListItemPadding;
                         }
                     }
                 }
@@ -74,49 +76,49 @@
     }
 
     .p-editor-content {
-        border-bottom-right-radius: $borderRadius;
-        border-bottom-left-radius: $borderRadius;
+        border-bottom-right-radius: variables_light.$borderRadius;
+        border-bottom-left-radius: variables_light.$borderRadius;
 
         &.ql-snow {
-            border: $editorContentBorder;
+            border: variables_light.$editorContentBorder;
         }
 
         .ql-editor {
-            background: $inputBg;
-            color: $inputTextColor;
-            border-bottom-right-radius: $borderRadius;
-            border-bottom-left-radius: $borderRadius;
+            background: variables_light.$inputBg;
+            color: variables_light.$inputTextColor;
+            border-bottom-right-radius: variables_light.$borderRadius;
+            border-bottom-left-radius: variables_light.$borderRadius;
         }
     }
 
     .ql-snow.ql-toolbar button:hover,
     .ql-snow.ql-toolbar button:focus {
-        color: $editorToolbarIconHoverColor;
+        color: variables_light.$editorToolbarIconHoverColor;
 
         .ql-stroke {
-            stroke: $editorToolbarIconHoverColor;
+            stroke: variables_light.$editorToolbarIconHoverColor;
         }
 
         .ql-fill {
-            fill: $editorToolbarIconHoverColor;
+            fill: variables_light.$editorToolbarIconHoverColor;
         }
     }
 
     .ql-snow.ql-toolbar button.ql-active,
     .ql-snow.ql-toolbar .ql-picker-label.ql-active,
     .ql-snow.ql-toolbar .ql-picker-item.ql-selected {
-        color: $editorIconActiveColor;
+        color: variables_light.$editorIconActiveColor;
 
         .ql-stroke {
-            stroke: $editorIconActiveColor;
+            stroke: variables_light.$editorIconActiveColor;
         }
 
         .ql-fill {
-            fill: $editorIconActiveColor;
+            fill: variables_light.$editorIconActiveColor;
         }
 
         .ql-picker-label {
-            color: $editorIconActiveColor;
+            color: variables_light.$editorIconActiveColor;
         }
     }
 }

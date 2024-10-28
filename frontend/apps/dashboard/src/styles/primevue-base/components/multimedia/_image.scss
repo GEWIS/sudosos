@@ -1,3 +1,5 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-image-mask {
     display: flex;
@@ -73,56 +75,56 @@
 
 // theme
 .p-image-mask {
-    --maskbg: #{$imageMaskBg};
+    --maskbg: #{variables_light.$imageMaskBg};
 }
 
 .p-image-preview-indicator {
     background-color: transparent;
-    color: $imagePreviewIndicatorColor;
-    transition: $actionIconTransition;
+    color: variables_light.$imagePreviewIndicatorColor;
+    transition: variables_light.$actionIconTransition;
 
     .p-icon {
-        width: $imagePreviewActionIconFontSize;
-        height: $imagePreviewActionIconFontSize;
+        width: variables_light.$imagePreviewActionIconFontSize;
+        height: variables_light.$imagePreviewActionIconFontSize;
     }
 }
 
 .p-image-preview-container {
     &:hover {
         > .p-image-preview-indicator {
-            background-color: $imagePreviewIndicatorBg;
+            background-color: variables_light.$imagePreviewIndicatorBg;
         }
     }
 }
 
 .p-image-toolbar {
-    padding: $imagePreviewToolbarPadding;
+    padding: variables_light.$imagePreviewToolbarPadding;
 }
 
 .p-image-action.p-link {
-    color: $imagePreviewActionIconColor;
-    background-color: $imagePreviewActionIconBg;
-    width: $imagePreviewActionIconWidth;
-    height: $imagePreviewActionIconHeight;
-    border-radius: $imagePreviewActionIconBorderRadius;
-    transition: $actionIconTransition;
-    margin-right: $inlineSpacing;
+    color: variables_light.$imagePreviewActionIconColor;
+    background-color: variables_light.$imagePreviewActionIconBg;
+    width: variables_light.$imagePreviewActionIconWidth;
+    height: variables_light.$imagePreviewActionIconHeight;
+    border-radius: variables_light.$imagePreviewActionIconBorderRadius;
+    transition: variables_light.$actionIconTransition;
+    margin-right: variables_light.$inlineSpacing;
 
     &:last-child {
         margin-right: 0;
     }
 
     &:hover {
-        color: $imagePreviewActionIconHoverColor;
-        background-color: $imagePreviewActionIconHoverBg;
+        color: variables_light.$imagePreviewActionIconHoverColor;
+        background-color: variables_light.$imagePreviewActionIconHoverBg;
     }
 
     i {
-        font-size: $imagePreviewActionIconFontSize;
+        font-size: variables_light.$imagePreviewActionIconFontSize;
     }
 
     .p-icon {
-        width: $imagePreviewActionIconFontSize;
-        height: $imagePreviewActionIconFontSize;
+        width: variables_light.$imagePreviewActionIconFontSize;
+        height: variables_light.$imagePreviewActionIconFontSize;
     }
 }

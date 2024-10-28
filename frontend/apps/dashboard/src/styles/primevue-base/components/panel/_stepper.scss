@@ -1,3 +1,8 @@
+@use "sass:meta";
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../../themes/variables";
+@use "../../mixins";
+
 @use 'sass:math';
 
 //core
@@ -35,7 +40,7 @@
     cursor: pointer;
 
     &:focus-visible {
-        @include focused();
+        @include mixins.focused();
     }
 }
 
@@ -76,75 +81,75 @@
     }
     
     .p-stepper-header {
-        padding: $inlineSpacing;
+        padding: variables_light.$inlineSpacing;
 
         .p-stepper-action {
-            transition: $listItemTransition;
-            border-radius: $borderRadius;
-            background: $stepsItemBg;
+            transition: variables_light.$listItemTransition;
+            border-radius: variables_light.$borderRadius;
+            background: variables_light.$stepsItemBg;
             outline-color: transparent;
             
             .p-stepper-number {
-                color: $stepsItemNumberColor;
-                border: $stepsItemBorder;
+                color: variables_light.$stepsItemNumberColor;
+                border: variables_light.$stepsItemBorder;
                 border-width: 2px;
-                background: $stepsItemBg;
-                min-width: $stepsItemNumberWidth;
-                height: $stepsItemNumberHeight;
-                line-height: $stepsItemNumberHeight;
-                font-size: $stepsItemNumberFontSize;
-                border-radius: $stepsItemNumberBorderRadius;
-                transition: $actionIconTransition;
+                background: variables_light.$stepsItemBg;
+                min-width: variables_light.$stepsItemNumberWidth;
+                height: variables_light.$stepsItemNumberHeight;
+                line-height: variables_light.$stepsItemNumberHeight;
+                font-size: variables_light.$stepsItemNumberFontSize;
+                border-radius: variables_light.$stepsItemNumberBorderRadius;
+                transition: variables_light.$actionIconTransition;
             }
             
             .p-stepper-title {
-                margin-left: $inlineSpacing;
-                color: $stepsItemTextColor;
-                font-weight: $stepsItemActiveFontWeight;
-                transition: $actionIconTransition;
+                margin-left: variables_light.$inlineSpacing;
+                color: variables_light.$stepsItemTextColor;
+                font-weight: variables_light.$stepsItemActiveFontWeight;
+                transition: variables_light.$actionIconTransition;
             }
 
             &:not(.p-disabled):focus-visible {
-                @include focused();
+                @include mixins.focused();
             }
         }
 
         &.p-highlight {
             .p-stepper-number {
-                background: $highlightBg;
-                color: $highlightTextColor;
+                background: variables.$highlightBg;
+                color: variables.$highlightTextColor;
             }
 
             .p-stepper-title {
-                color: $textColor;
+                color: variables_light.$textColor;
             }
         }
 
         &:not(.p-disabled):focus-visible {
-            @include focused();
+            @include mixins.focused();
         }
 
         &:has(~ .p-highlight) {
-            @if variable-exists(primaryColor) {
+            @if meta.variable-exists(primaryColor) {
                 .p-stepper-separator {
-                    background-color: $primaryColor;
+                    background-color: variables.$primaryColor;
                 }
             }
         }
     }
 
     .p-stepper-panels {
-        background: $tabviewContentBg;
-        padding: $tabviewContentPadding;
-        color: $tabviewContentTextColor;
+        background: variables_light.$tabviewContentBg;
+        padding: variables_light.$tabviewContentPadding;
+        color: variables_light.$tabviewContentTextColor;
     }
 
     .p-stepper-separator {
-        background-color: $timelineEventColor;
+        background-color: variables_light.$timelineEventColor;
         width: 100%;
         height: 2px;
-        margin-inline-start: calc($inlineSpacing * 2);
-        transition: $listItemTransition;
+        margin-inline-start: calc(variables_light.$inlineSpacing * 2);
+        transition: variables_light.$listItemTransition;
     }
 
     &.p-stepper-vertical {
@@ -154,8 +159,8 @@
         .p-stepper-toggleable-content {
             display: flex;
             flex: 1 1 auto;
-            background: $tabviewContentBg;
-            color: $tabviewContentTextColor;
+            background: variables_light.$tabviewContentBg;
+            color: variables_light.$tabviewContentTextColor;
         }
 
         .p-stepper-panel {
@@ -173,27 +178,27 @@
 
             .p-stepper-content {
                 width: 100%;
-                padding-left: calc($inlineSpacing * 2);
+                padding-left: calc(variables_light.$inlineSpacing * 2);
             }
 
             .p-stepper-separator {
                 flex: 0 0 auto;
                 width: 2px;
                 height: auto;
-                margin-inline-start: calc($inlineSpacing * 7 / 2 + 2px);
+                margin-inline-start: calc(variables_light.$inlineSpacing * 7 / 2 + 2px);
             }
 
             &:has(~ .p-stepper-panel-active) {
-                @if variable-exists(primaryColor) {
+                @if meta.variable-exists(primaryColor) {
                     .p-stepper-separator {
-                        background-color: $primaryColor;
+                        background-color: variables.$primaryColor;
                     }
                 }
             }
 
             &:last-of-type {
                 .p-stepper-content {
-                    padding-left: calc($inlineSpacing * 6);
+                    padding-left: calc(variables_light.$inlineSpacing * 6);
                 }
             }
         }

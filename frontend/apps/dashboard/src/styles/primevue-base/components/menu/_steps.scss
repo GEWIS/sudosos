@@ -1,3 +1,7 @@
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../../themes/variables";
+@use "../../mixins";
+
 @use 'sass:math';
 
 // core
@@ -59,54 +63,54 @@
     .p-steps-item {
         .p-menuitem-link {
             background: transparent;
-            transition: $listItemTransition;
-            border-radius: $borderRadius;
-            background: $stepsItemBg;
+            transition: variables_light.$listItemTransition;
+            border-radius: variables_light.$borderRadius;
+            background: variables_light.$stepsItemBg;
             outline-color: transparent;
 
             .p-steps-number {
-                color: $stepsItemNumberColor;
-                border: $stepsItemBorder;
-                background: $stepsItemBg;
-                min-width: $stepsItemNumberWidth;
-                height: $stepsItemNumberHeight;
-                line-height: $stepsItemNumberHeight;
-                font-size: $stepsItemNumberFontSize;
+                color: variables_light.$stepsItemNumberColor;
+                border: variables_light.$stepsItemBorder;
+                background: variables_light.$stepsItemBg;
+                min-width: variables_light.$stepsItemNumberWidth;
+                height: variables_light.$stepsItemNumberHeight;
+                line-height: variables_light.$stepsItemNumberHeight;
+                font-size: variables_light.$stepsItemNumberFontSize;
                 z-index: 1;
-                border-radius: $stepsItemNumberBorderRadius;
+                border-radius: variables_light.$stepsItemNumberBorderRadius;
             }
 
             .p-steps-title {
-                margin-top: $inlineSpacing;
-                color: $stepsItemTextColor;
+                margin-top: variables_light.$inlineSpacing;
+                color: variables_light.$stepsItemTextColor;
             }
 
             &:not(.p-disabled):focus-visible {
-                @include focused();
+                @include mixins.focused();
             }
         }
 
         &.p-highlight {
             .p-steps-number {
-                background: $highlightBg;
-                color: $highlightTextColor;
+                background: variables.$highlightBg;
+                color: variables.$highlightTextColor;
             }
 
             .p-steps-title {
-                font-weight: $stepsItemActiveFontWeight;
-                color: $textColor;
+                font-weight: variables_light.$stepsItemActiveFontWeight;
+                color: variables_light.$textColor;
             }
         }
 
         &:before {
             content:' ';
-            border-top: $divider;
+            border-top: variables_light.$divider;
             width: 100%;
             top: 50%;
             left: 0;
             display: block;
             position: absolute;
-            margin-top: math.div(-1 * $stepsItemNumberHeight, 2);
+            margin-top: math.div(-1 * variables_light.$stepsItemNumberHeight, 2);
         }
     }
 }

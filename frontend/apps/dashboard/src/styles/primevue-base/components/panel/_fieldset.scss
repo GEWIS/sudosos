@@ -1,3 +1,6 @@
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../mixins";
+
 // core
 .p-fieldset-legend > a,
 .p-fieldset-legend > span {
@@ -20,54 +23,54 @@
 
 // theme
 .p-fieldset {
-    border: $panelContentBorder;
-    background: $panelContentBg;
-    color: $panelContentTextColor;
-    border-radius: $borderRadius;
+    border: variables_light.$panelContentBorder;
+    background: variables_light.$panelContentBg;
+    color: variables_light.$panelContentTextColor;
+    border-radius: variables_light.$borderRadius;
 
     .p-fieldset-legend {
-        padding: $panelHeaderPadding;
-        border: $panelHeaderBorder;
-        color: $panelHeaderTextColor;
-        background: $panelHeaderBg;
-        font-weight: $panelHeaderFontWeight;
-        border-radius: $borderRadius;
+        padding: variables_light.$panelHeaderPadding;
+        border: variables_light.$panelHeaderBorder;
+        color: variables_light.$panelHeaderTextColor;
+        background: variables_light.$panelHeaderBg;
+        font-weight: variables_light.$panelHeaderFontWeight;
+        border-radius: variables_light.$borderRadius;
     }
 
     &.p-fieldset-toggleable {
         .p-fieldset-legend {
             padding: 0;
-            transition: $actionIconTransition;
+            transition: variables_light.$actionIconTransition;
 
             a {
-                padding: $panelHeaderPadding;
-                color: $panelHeaderTextColor;
-                border-radius: $borderRadius;
-                transition: $listItemTransition;
+                padding: variables_light.$panelHeaderPadding;
+                color: variables_light.$panelHeaderTextColor;
+                border-radius: variables_light.$borderRadius;
+                transition: variables_light.$listItemTransition;
                 outline-color: transparent;
 
                 .p-fieldset-toggler {
-                    margin-right: $inlineSpacing;
+                    margin-right: variables_light.$inlineSpacing;
                 }
 
                 &:focus-visible {
-                    @include focused();
+                    @include mixins.focused();
                 }
 
                 &:hover {
-                    color: $panelHeaderTextHoverColor;
+                    color: variables_light.$panelHeaderTextHoverColor;
                 }
             }
 
             &:hover {
-                background: $panelHeaderHoverBg;
-                border-color: $panelHeaderHoverBorderColor;
-                color: $panelHeaderTextHoverColor;
+                background: variables_light.$panelHeaderHoverBg;
+                border-color: variables_light.$panelHeaderHoverBorderColor;
+                color: variables_light.$panelHeaderTextHoverColor;
             }
         }
     }
 
     .p-fieldset-content {
-        padding: $panelContentPadding;
+        padding: variables_light.$panelContentPadding;
     }
 }

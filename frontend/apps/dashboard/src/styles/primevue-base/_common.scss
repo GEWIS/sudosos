@@ -1,3 +1,6 @@
+@use "../themes/sudosos-light/variables_light";
+@use "mixins";
+
 // core
 .p-component, .p-component * {
     box-sizing: border-box;
@@ -127,45 +130,45 @@
 .p-component {
     font-family: var(--font-family);
     font-feature-settings: var(--font-feature-settings, normal);
-    font-size: $fontSize;
-    font-weight: $fontWeight;
+    font-size: variables_light.$fontSize;
+    font-weight: variables_light.$fontWeight;
 }
 
 .p-component-overlay {
-    background-color: $maskBg;
-    transition-duration: $transitionDuration;
+    background-color: variables_light.$maskBg;
+    transition-duration: variables_light.$transitionDuration;
 }
 
 .p-disabled, .p-component:disabled {
-    opacity: $disabledOpacity;
+    opacity: variables_light.$disabledOpacity;
 }
 
 .p-error {
-    color: $errorColor;
+    color: variables_light.$errorColor;
 }
 
 .p-text-secondary {
-    color: $textSecondaryColor;
+    color: variables_light.$textSecondaryColor;
 }
 
 .pi {
-    font-size: $primeIconFontSize;
+    font-size: variables_light.$primeIconFontSize;
 }
 
 .p-icon {
-    width: $primeIconFontSize;
-    height: $primeIconFontSize;
+    width: variables_light.$primeIconFontSize;
+    height: variables_light.$primeIconFontSize;
 }
 
 .p-link {
     font-family: var(--font-family);
     font-feature-settings: var(--font-feature-settings, normal);
-    font-size: $fontSize;
-    border-radius: $borderRadius;
+    font-size: variables_light.$fontSize;
+    border-radius: variables_light.$borderRadius;
     outline-color: transparent;
 
     &:focus-visible {
-        @include focused();
+        @include mixins.focused();
     }
 }
 

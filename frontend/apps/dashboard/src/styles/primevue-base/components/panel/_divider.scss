@@ -1,3 +1,5 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-divider-horizontal {
     display: flex;
@@ -65,32 +67,32 @@
 // theme
 .p-divider {
     .p-divider-content {
-        background-color: $panelContentBg;
+        background-color: variables_light.$panelContentBg;
     }
 
     &.p-divider-horizontal {
-        margin: $dividerHorizontalMargin;
-        padding: $dividerHorizontalPadding;
+        margin: variables_light.$dividerHorizontalMargin;
+        padding: variables_light.$dividerHorizontalPadding;
 
         &:before {
-            border-top: $dividerSize solid $dividerColor;
+            border-top: variables_light.$dividerSize solid variables_light.$dividerColor;
         }
 
         .p-divider-content {
-            padding: 0 $inlineSpacing;
+            padding: 0 variables_light.$inlineSpacing;
         }
     }
 
     &.p-divider-vertical {
-        margin: $dividerVerticalMargin;
-        padding: $dividerVerticalPadding;
+        margin: variables_light.$dividerVerticalMargin;
+        padding: variables_light.$dividerVerticalPadding;
 
         &:before {
-            border-left: $dividerSize solid $dividerColor;
+            border-left: variables_light.$dividerSize solid variables_light.$dividerColor;
         }
 
         .p-divider-content {
-            padding: $inlineSpacing 0;
+            padding: variables_light.$inlineSpacing 0;
         }
     }
 }

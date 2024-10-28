@@ -1,3 +1,6 @@
+@use "sass:meta";
+@use "../../../themes/sudosos-light/variables_light";
+
 // core
 .p-inline-message {
     display: inline-flex;
@@ -21,59 +24,59 @@
 
 // theme
 .p-inline-message {
-    padding: $inlineMessagePadding;
-    margin: $inlineMessageMargin;
-    border-radius: $borderRadius;
+    padding: variables_light.$inlineMessagePadding;
+    margin: variables_light.$inlineMessageMargin;
+    border-radius: variables_light.$borderRadius;
 
     &.p-inline-message-info {
-        background: $infoMessageBg;
-        border: $infoMessageBorder;
-        border-width: $inlineMessageBorderWidth;
-        color: $infoMessageTextColor;
+        background: variables_light.$infoMessageBg;
+        border: variables_light.$infoMessageBorder;
+        border-width: variables_light.$inlineMessageBorderWidth;
+        color: variables_light.$infoMessageTextColor;
 
         .p-inline-message-icon {
-            color: $infoMessageIconColor;
+            color: variables_light.$infoMessageIconColor;
         }
     }
 
     &.p-inline-message-success {
-        background: $successMessageBg;
-        border: $successMessageBorder;
-        border-width: $inlineMessageBorderWidth;
-        color: $successMessageTextColor;
+        background: variables_light.$successMessageBg;
+        border: variables_light.$successMessageBorder;
+        border-width: variables_light.$inlineMessageBorderWidth;
+        color: variables_light.$successMessageTextColor;
 
         .p-inline-message-icon {
-            color: $successMessageIconColor;
+            color: variables_light.$successMessageIconColor;
         }
     }
 
     &.p-inline-message-warn {
-        background: $warningMessageBg;
-        border: $warningMessageBorder;
-        border-width: $inlineMessageBorderWidth;
-        color: $warningMessageTextColor;
+        background: variables_light.$warningMessageBg;
+        border: variables_light.$warningMessageBorder;
+        border-width: variables_light.$inlineMessageBorderWidth;
+        color: variables_light.$warningMessageTextColor;
 
         .p-inline-message-icon {
-            color: $warningMessageIconColor;
+            color: variables_light.$warningMessageIconColor;
         }
     }
 
     &.p-inline-message-error {
-        background: $errorMessageBg;
-        border: $errorMessageBorder;
-        border-width: $inlineMessageBorderWidth;
-        color: $errorMessageTextColor;
+        background: variables_light.$errorMessageBg;
+        border: variables_light.$errorMessageBorder;
+        border-width: variables_light.$inlineMessageBorderWidth;
+        color: variables_light.$errorMessageTextColor;
 
         .p-inline-message-icon {
-            color: $errorMessageIconColor;
+            color: variables_light.$errorMessageIconColor;
         }
     }
 
-    @if variable-exists(secondaryMessageBg) {
+    @if meta.variable-exists(secondaryMessageBg) {
         &.p-inline-message-secondary {
             background: $secondaryMessageBg;
             border: $secondaryMessageBorder;
-            border-width: $inlineMessageBorderWidth;
+            border-width: variables_light.$inlineMessageBorderWidth;
             color: $secondaryMessageTextColor;
 
             .p-inline-message-icon {
@@ -82,11 +85,11 @@
         }
     }
 
-    @if variable-exists(contrastMessageBg) {
+    @if meta.variable-exists(contrastMessageBg) {
         &.p-inline-message-contrast {
             background: $contrastMessageBg;
             border: $contrastMessageBorder;
-            border-width: $inlineMessageBorderWidth;
+            border-width: variables_light.$inlineMessageBorderWidth;
             color: $contrastMessageTextColor;
 
             .p-inline-message-icon {
@@ -96,12 +99,12 @@
     }
 
     .p-inline-message-icon {
-        font-size: $inlineMessageIconFontSize;
-        margin-right: $inlineSpacing;
+        font-size: variables_light.$inlineMessageIconFontSize;
+        margin-right: variables_light.$inlineSpacing;
     }
 
     .p-inline-message-text {
-        font-size: $inlineMessageTextFontSize;
+        font-size: variables_light.$inlineMessageTextFontSize;
     }
 
     &.p-inline-message-icon-only {

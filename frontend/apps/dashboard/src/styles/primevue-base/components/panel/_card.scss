@@ -1,30 +1,32 @@
+@use "../../../themes/sudosos-light/variables_light";
+
 .p-card {
-    background: $panelContentBg;
-    color: $panelContentTextColor;
-    box-shadow: $cardShadow;
-    border-radius: $borderRadius;
+    background: variables_light.$panelContentBg;
+    color: variables_light.$panelContentTextColor;
+    box-shadow: variables_light.$cardShadow;
+    border-radius: variables_light.$borderRadius;
 
     .p-card-body {
-        padding: $cardBodyPadding;
+        padding: variables_light.$cardBodyPadding;
     }
 
     .p-card-title {
-        font-size: $cardTitleFontSize;
-        font-weight: $cardTitleFontWeight;
-        margin-bottom: $inlineSpacing;
+        font-size: variables_light.$cardTitleFontSize;
+        font-weight: variables_light.$cardTitleFontWeight;
+        margin-bottom: variables_light.$inlineSpacing;
     }
 
     .p-card-subtitle {
-        font-weight: $cardSubTitleFontWeight;
-        margin-bottom: $inlineSpacing;
-        color: $cardSubTitleColor;
+        font-weight: variables_light.$cardSubTitleFontWeight;
+        margin-bottom: variables_light.$inlineSpacing;
+        color: variables_light.$cardSubTitleColor;
     }
 
     .p-card-content {
-        padding: $cardContentPadding;
+        padding: variables_light.$cardContentPadding;
     }
 
     .p-card-footer {
-        padding: $cardFooterPadding;
+        padding: variables_light.$cardFooterPadding;
     }
 }

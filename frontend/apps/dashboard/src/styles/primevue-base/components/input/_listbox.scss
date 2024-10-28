@@ -1,3 +1,8 @@
+@use "sass:list";
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../../themes/variables";
+@use "../../mixins";
+
 // core
 .p-listbox-list-wrapper {
     overflow: auto;
@@ -35,43 +40,43 @@
 
 // theme
 .p-listbox {
-    background: $inputListBg;
-    color: $inputListTextColor;
-    border: $inputListBorder;
-    border-radius: $borderRadius;
-    transition: $formElementTransition;
+    background: variables_light.$inputListBg;
+    color: variables_light.$inputListTextColor;
+    border: variables_light.$inputListBorder;
+    border-radius: variables_light.$borderRadius;
+    transition: variables_light.$formElementTransition;
     outline-color: transparent;
 
     .p-listbox-header {
-        padding: $inputListHeaderPadding;
-        border-bottom: $inputListHeaderBorder;
-        color: $inputListHeaderTextColor;
-        background: $inputListHeaderBg;
-        margin: $inputListHeaderMargin;
-        border-top-right-radius: $borderRadius;
-        border-top-left-radius: $borderRadius;
+        padding: variables_light.$inputListHeaderPadding;
+        border-bottom: variables_light.$inputListHeaderBorder;
+        color: variables_light.$inputListHeaderTextColor;
+        background: variables_light.$inputListHeaderBg;
+        margin: variables_light.$inputListHeaderMargin;
+        border-top-right-radius: variables_light.$borderRadius;
+        border-top-left-radius: variables_light.$borderRadius;
 
         .p-listbox-filter {
-            padding-right: nth($inputPadding, 2) + $primeIconFontSize;
+            padding-right: list.nth(variables_light.$inputPadding, 2) + variables_light.$primeIconFontSize;
         }
 
         .p-listbox-filter-icon {
-            right: nth($inputPadding, 2);
-            color: $inputIconColor;
+            right: list.nth(variables_light.$inputPadding, 2);
+            color: variables_light.$inputIconColor;
         }
     }
 
     .p-listbox-list {
-        padding: $inputListPadding;
+        padding: variables_light.$inputListPadding;
         outline: 0 none;
 
         .p-listbox-item {
-            margin: $inputListItemMargin;
-            padding: $inputListItemPadding;
-            border: $inputListItemBorder;
-            color: $inputListItemTextColor;
-            transition: $listItemTransition;
-            border-radius: $inputListItemBorderRadius;
+            margin: variables_light.$inputListItemMargin;
+            padding: variables_light.$inputListItemPadding;
+            border: variables_light.$inputListItemBorder;
+            color: variables_light.$inputListItemTextColor;
+            transition: variables_light.$listItemTransition;
+            border-radius: variables_light.$inputListItemBorderRadius;
 
             &:first-child {
                 margin-top: 0;
@@ -82,23 +87,23 @@
             }
 
             &.p-highlight {
-                color: $highlightTextColor;
-                background: $highlightBg;
+                color: variables.$highlightTextColor;
+                background: variables.$highlightBg;
             }
         }
 
         .p-listbox-item-group {
-            margin: $submenuHeaderMargin;
-            padding: $submenuHeaderPadding;
-            color: $submenuHeaderTextColor;
-            background: $submenuHeaderBg;
-            font-weight: $submenuHeaderFontWeight;
+            margin: variables_light.$submenuHeaderMargin;
+            padding: variables_light.$submenuHeaderPadding;
+            color: variables_light.$submenuHeaderTextColor;
+            background: variables_light.$submenuHeaderBg;
+            font-weight: variables_light.$submenuHeaderFontWeight;
         }
 
         .p-listbox-empty-message {
-            padding: $inputListItemPadding;
-            color: $inputListItemTextColor;
-            background: $inputListItemBg;
+            padding: variables_light.$inputListItemPadding;
+            color: variables_light.$inputListItemTextColor;
+            background: variables_light.$inputListItemBg;
         }
     }
 
@@ -106,23 +111,23 @@
         .p-listbox-item {
             &.p-highlight {
                 &.p-focus {
-                    background: $highlightFocusBg;
+                    background: variables.$highlightFocusBg;
                 }
             }
 
             &:not(.p-highlight):not(.p-disabled) {
                 &.p-focus {
-                    color: $inputListItemTextHoverColor;
-                    background: $inputListItemHoverBg;
+                    color: variables_light.$inputListItemTextHoverColor;
+                    background: variables_light.$inputListItemHoverBg;
                 }
 
                 &:hover {
-                    color: $inputListItemTextHoverColor;
-                    background: $inputListItemHoverBg;
+                    color: variables_light.$inputListItemTextHoverColor;
+                    background: variables_light.$inputListItemHoverBg;
 
                     &.p-focus {
-                        color: $inputListItemTextHoverColor;
-                        background: $inputListItemHoverBg;
+                        color: variables_light.$inputListItemTextHoverColor;
+                        background: variables_light.$inputListItemHoverBg;
                     }
                 }
             }
@@ -130,10 +135,10 @@
     }
 
     &.p-focus {
-        @include focused-input();
+        @include mixins.focused-input();
     }
 
     &.p-invalid {
-        @include invalid-input();
+        @include mixins.invalid-input();
     }
 }

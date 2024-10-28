@@ -1,3 +1,7 @@
+@use "sass:list";
+@use "../../../themes/sudosos-light/variables_light";
+@use "../../mixins";
+
 @use "sass:math";
 
 // core
@@ -54,61 +58,61 @@
 
 // theme
 .p-treeselect {
-    background: $inputBg;
-    border: $inputBorder;
-    transition: $formElementTransition;
-    border-radius: $borderRadius;
+    background: variables_light.$inputBg;
+    border: variables_light.$inputBorder;
+    transition: variables_light.$formElementTransition;
+    border-radius: variables_light.$borderRadius;
     outline-color: transparent;
 
     &:not(.p-disabled):hover {
-        border-color: $inputHoverBorderColor;
+        border-color: variables_light.$inputHoverBorderColor;
     }
 
     &:not(.p-disabled).p-focus {
-        @include focused-input();
+        @include mixins.focused-input();
     }
 
     &.p-variant-filled {
-        background: $inputFilledBg;
+        background: variables_light.$inputFilledBg;
 
         &:not(.p-disabled):hover {
-            background-color: $inputFilledHoverBg;
+            background-color: variables_light.$inputFilledHoverBg;
         }
 
         &:not(.p-disabled).p-focus {
-            background-color: $inputFilledFocusBg;
+            background-color: variables_light.$inputFilledFocusBg;
         }
     }
 
     .p-treeselect-label {
-        padding: $inputPadding;
-        transition: $formElementTransition;
+        padding: variables_light.$inputPadding;
+        transition: variables_light.$formElementTransition;
 
         &.p-placeholder {
-            color: $inputPlaceholderTextColor;
+            color: variables_light.$inputPlaceholderTextColor;
         }
     }
 
     &.p-treeselect-chip {
         .p-treeselect-token {
-            padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
-            margin-right: $inlineSpacing;
-            background: $chipBg;
-            color: $chipTextColor;
-            border-radius: $chipBorderRadius;
+            padding: math.div(list.nth(variables_light.$inputPadding, 1), 2) list.nth(variables_light.$inputPadding, 2);
+            margin-right: variables_light.$inlineSpacing;
+            background: variables_light.$chipBg;
+            color: variables_light.$chipTextColor;
+            border-radius: variables_light.$chipBorderRadius;
         }
     }
 
     .p-treeselect-trigger {
         background: transparent;
-        color: $inputIconColor;
-        width: $inputGroupAddOnMinWidth;
-        border-top-right-radius: $borderRadius;
-        border-bottom-right-radius: $borderRadius;
+        color: variables_light.$inputIconColor;
+        width: variables_light.$inputGroupAddOnMinWidth;
+        border-top-right-radius: variables_light.$borderRadius;
+        border-bottom-right-radius: variables_light.$borderRadius;
     }
 
     &.p-invalid.p-component {
-        @include invalid-input();
+        @include mixins.invalid-input();
     }
 }
 
@@ -116,19 +120,19 @@
     &.p-treeselect {
         &.p-treeselect-chip {
             .p-treeselect-label {
-                padding: math.div(nth($inputPadding, 1), 2)
-                    nth($inputPadding, 2);
+                padding: math.div(list.nth(variables_light.$inputPadding, 1), 2)
+                    list.nth(variables_light.$inputPadding, 2);
             }
         }
     }
 }
 
 .p-treeselect-panel {
-    background: $inputOverlayBg;
-    color: $inputListTextColor;
-    border: $inputOverlayBorder;
-    border-radius: $borderRadius;
-    box-shadow: $inputOverlayShadow;
+    background: variables_light.$inputOverlayBg;
+    color: variables_light.$inputListTextColor;
+    border: variables_light.$inputOverlayBorder;
+    border-radius: variables_light.$borderRadius;
+    box-shadow: variables_light.$inputOverlayShadow;
 
     .p-treeselect-items-wrapper {
         .p-tree {
@@ -136,23 +140,23 @@
         }
 
         .p-treeselect-empty-message {
-            padding: $inputListItemPadding;
-            color: $inputListItemTextColor;
-            background: $inputListItemBg;
+            padding: variables_light.$inputListItemPadding;
+            color: variables_light.$inputListItemTextColor;
+            background: variables_light.$inputListItemBg;
         }
     }
 }
 
 .p-input-filled {
     .p-treeselect {
-        background: $inputFilledBg;
+        background: variables_light.$inputFilledBg;
 
         &:not(.p-disabled):hover {
-            background-color: $inputFilledHoverBg;
+            background-color: variables_light.$inputFilledHoverBg;
         }
 
         &:not(.p-disabled).p-focus {
-            background-color: $inputFilledFocusBg;
+            background-color: variables_light.$inputFilledFocusBg;
         }
     }
 }
