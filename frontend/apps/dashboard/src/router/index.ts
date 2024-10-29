@@ -9,6 +9,8 @@ import { adminRoutes } from "@/modules/admin/routes";
 import { financialRoutes } from "@/modules/financial/routes";
 import { sellerRoutes } from "@/modules/seller/routes";
 import { userRoutes } from "@/modules/user/routes";
+import MaintenanceView from '@/views/MaintenanceView.vue';
+import { useSettingsStore } from '@/stores/settings.store';
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -49,13 +51,30 @@ const router = createRouter({
           name: 'error',
         },
       ]
-    }
+    },
+    {
+      path: '',
+      component: PublicLayout,
+      children: [
+        {
+          path: '',
+          component: MaintenanceView,
+          name: 'maintenance',
+        },
+      ]
+    },
   ]
 });
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
   const userStore = useUserStore();
+  const settingsStore = useSettingsStore();
+
+  if (settingsStore.activeSettings.maintenanceMode && to.name !== 'maintenance') {
+    next ({ name: 'maintenance' });
+    return;
+  }
 
   const hasTOSAccepted = () => {
     return authStore.acceptedToS || authStore.user?.acceptedToS;
