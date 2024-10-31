@@ -16,9 +16,13 @@
           "header": "Saldo",
           "waiveFines": "Boetes kwijtschelden",
           "allIsFines": "Alles hiervan is een boete",
+          "waiveAllFines": "Scheld alle boetes kwijt",
           "someIsFines": "Waarvan {fine} boetes zijn",
+          "someIsFinesDetailed": "Huidige boete is {fine} waarvan {waived} kwijt gescholden ",
           "waiveFinesConfirmation": "Weet je zeker dat je de boetes wilt kwijtschelden? Dit kan niet ongedaan worden gemaakt.",
-          "waiveFinesConfirmationTitle": "Boetes kwijtschelden"
+          "waiveFinesConfirmationTitle": "Boetes kwijtschelden",
+          "waiveFineTooMuch": "Je kan niet meer kwijt schelden dan de huidige boete.",
+          "waiveExplanation": "Je kan slechts 1 keer boetes kwijt schelden per boete groep, als je opnieuw kwijt scheld dan vervang je de huidige kwijtschelding."
         }
       },
       "banners": {

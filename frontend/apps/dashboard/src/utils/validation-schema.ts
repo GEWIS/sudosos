@@ -136,3 +136,8 @@ export const createSellerPayoutObject =
     reference: yup.string().required(),
     user: yup.mixed<BaseUserResponse>().required(),
   });
+
+export const waiveUserFineSchema =
+    yup.object({
+        amount: yup.number().required().default(0)
+    });

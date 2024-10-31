@@ -1,7 +1,7 @@
 import { createPinia, defineStore } from 'pinia';
 import {
   BalanceResponse, PaginatedBaseTransactionResponse, PaginatedFinancialMutationResponse,
-  UserResponse, RoleWithPermissionsResponse, GewisUserResponse
+  UserResponse, RoleWithPermissionsResponse, GewisUserResponse, DineroObjectRequest
 } from "@sudosos/sudosos-client";
 import { ApiService } from "../services/ApiService";
 import { fetchAllPages } from "../helpers/PaginationHelper";
@@ -16,14 +16,16 @@ interface CurrentState {
   createdTransactions: PaginatedBaseTransactionResponse
 }
 interface UserModuleState {
-  users: UserResponse[];
+  users: Record<number, UserResponse>;
+  balances: Record<number, BalanceResponse>;
   organs: UserResponse[];
   current: CurrentState
 }
 
 export const useUserStore = defineStore('user', {
   state: (): UserModuleState => ({
-    users: [],
+    users: {} as Record<number, UserResponse>,
+    balances: {} as Record<number, BalanceResponse>,
     organs: [],
     current: {
       balance: null,
@@ -49,13 +51,19 @@ export const useUserStore = defineStore('user', {
   }),
   getters: {
     getUserById: (state: UserModuleState) => {
-      return (userId: number) => state.users.find((user) => user.id === userId);
+      return (userId: number) => state.users[userId];
+    },
+    getBalanceById: (state: UserModuleState) => {
+      return (userId: number) => state.balances[userId];
+    },
+    getAllBalances: (state: UserModuleState) => {
+      return () => state.balances;
     },
     getActiveUsers(): UserResponse[] {
-      return this.users.filter((user) => user.active);
+      return Object.values(this.users).filter((user) => user.active);
     },
     getDeletedUsers(): UserResponse[] {
-      return this.users.filter((user) => user.deleted);
+      return Object.values(this.users).filter((user) => user.deleted);
     },
     getCurrentUser(): CurrentState {
       return this.current;
@@ -64,7 +72,7 @@ export const useUserStore = defineStore('user', {
   actions: {
     async fetchUsers(service: ApiService) {
       // Fetches all users if the store is empty
-      if(this.users.length == 0) {
+      if(Object.values(this.users).length == 0) {
         this.users = await fetchAllPages<UserResponse>((take, skip) =>
             service.user.getAllUsers(take, skip)
         );
@@ -81,6 +89,9 @@ export const useUserStore = defineStore('user', {
     },
     async fetchCurrentUserBalance(id: number, service: ApiService) {
       this.current.balance = (await service.balance.getBalanceId(id)).data;
+    },
+    async fetchUserBalance(id: number, service: ApiService) {
+      this.balances[id] = (await service.balance.getBalanceId(id)).data;
     },
     async fetchUserRolesWithPermissions(id: number, service: ApiService) {
       this.current.rolesWithPermissions = (await service.user.getUserRoles(id)).data;
@@ -114,6 +125,11 @@ export const useUserStore = defineStore('user', {
         return res.data as GewisUserResponse;
       });
     },
+    async waiveUserFine(id: number, amount: DineroObjectRequest, service: ApiService) {
+      return service.user.waiveUserFines(id, {
+        amount
+      });
+    },
     setCurrentUser(user: UserResponse) {
       this.current.user = user;
     },
@@ -121,17 +137,14 @@ export const useUserStore = defineStore('user', {
       this.current.rolesWithPermissions = rolesWithPermissions;
     },
     addUser(user: UserResponse) {
-      this.users.push(user);
+      this.users[user.id] = user;
     },
     clearCurrent() {
       this.current.balance = null;
       this.current.user = null;
     },
     deleteUser(id: number) {
-      const index = this.users.findIndex((user) => user.id === id);
-      if (index !== -1) {
-        this.users.splice(index, 1);
-      }
+      delete this.users[id];
     },
   },
 });

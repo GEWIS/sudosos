@@ -4,11 +4,11 @@
     :action="getAction"
     :routerLink="getRouterLink"
     :routerParams="getRouterParams"
-    :func="!isOrgan ? waiveFines : undefined"
+    :func="!isOrgan ? openFineWaiveModal : undefined"
     class="w-19rem"
   >
     <div class="flex flex-column justify-content-center">
-      <div v-if="isLoading">
+      <div v-if="userBalance === null">
         <Skeleton class="h-4rem w-10rem mx-1rem my-6"/>
       </div>
       <h1 v-else class="text-center font-medium text-6xl">{{ displayBalance }}</h1>
@@ -18,40 +18,45 @@
           : t('modules.admin.singleUser.balance.someIsFines', { fine: displayFine }) }}
       </p>
     </div>
-    <ConfirmDialog />
+    <AdminUserFineWaiveModal
+        v-if="userBalance"
+        :user="props.user"
+        :balance="userBalance"
+        v-model:is-visible="isFineWaiveModalVisible" />
   </CardComponent>
 </template>
 
 <script setup lang="ts">
 import CardComponent from '@/components/CardComponent.vue';
-import { computed, ref, onMounted, type Ref, watch } from "vue";
+import { computed, ref, onMounted, watch, type ComputedRef } from "vue";
 import type { BalanceResponse, UserResponse } from '@sudosos/sudosos-client';
 import apiService from '@/services/ApiService';
 import { formatPrice } from "@/utils/formatterUtils";
-import ConfirmDialog from "primevue/confirmdialog";
-import { useConfirm } from "primevue/useconfirm";
 import { useI18n } from "vue-i18n";
-import { useToast } from "primevue/usetoast";
+import { useUserStore } from "@sudosos/sudosos-frontend-common";
+import AdminUserFineWaiveModal from "@/modules/admin/components/users/AdminUserFineWaiveModal.vue";
+import Dinero from "dinero.js";
 
 const props = defineProps<{
-    user: UserResponse | undefined;
+    user: UserResponse;
 }>();
 
-const confirm = useConfirm();
 const { t } = useI18n();
-const toast = useToast();
+const userStore = useUserStore();
 
-const userBalance: Ref<BalanceResponse | null> = ref(null);
-const isLoading: Ref<boolean> = ref(true);
+const userBalance: ComputedRef<BalanceResponse | null> = computed(() => {
+  return userStore.getBalanceById(props.user.id);
+});
 const isOrgan = computed(() => props.user?.type == 'ORGAN');
-
-const emits = defineEmits(['update:value']);
+const isFineWaiveModalVisible = ref(false);
 
 const getAction = computed(() => {
   if (isOrgan.value) {
     return t('modules.seller.payouts.payout.CreatePayout');
   }
-  return t('modules.admin.singleUser.balance.waiveFinesConfirmationTitle');
+  return userBalance.value?.fine
+      ? t('modules.admin.singleUser.balance.waiveFinesConfirmationTitle')
+      : undefined;
 });
 
 const getRouterLink = computed(() => {
@@ -68,19 +73,16 @@ const getRouterParams = computed(() => {
   return undefined;
 });
 
-const updateUserBalance = async () => {
-  if(props.user) {
-    const response = await apiService.balance.getBalanceId(props.user.id);
-    userBalance.value = response.data;
-    isLoading.value = false;
-  }
-};
-
-onMounted(updateUserBalance);
-
-watch(() => props.user, () => {
-  updateUserBalance();
+// Ideally this is done less dirty, and instead of refreshing, we make the mutations from the store reactive
+const emit = defineEmits(['updateMutations']);
+watch(userBalance, () => {
+  emit('updateMutations');
 });
+
+onMounted(async () => {
+  await userStore.fetchUserBalance(props.user.id, apiService);
+});
+
 
 const isAllFine = computed(() => {
   if (!userBalance.value?.fine) return false;
@@ -89,39 +91,21 @@ const isAllFine = computed(() => {
 
 const displayFine = computed(() => {
   if (!userBalance.value?.fine) return undefined;
-  return formatPrice(userBalance.value.fine || { amount: 0, currency: 'EUR', precision: 2 });
+  return formatPrice(
+      Dinero(userBalance.value.fine as Dinero.Options)
+          .subtract(
+              Dinero(userBalance.value.fineWaived as Dinero.Options
+                  || { amount: 0, currency: 'EUR', precision: 2 })
+          ).toObject()
+      || { amount: 0, currency: 'EUR', precision: 2 });
 });
 
 const displayBalance = computed(() => {
   return formatPrice(userBalance.value?.amount || { amount: 0, currency: 'EUR', precision: 2 });
 });
 
-const waiveFines = () => {
-  if (!props.user || !props.user.id) return;
-  confirm.require({
-    message: t('modules.admin.singleUser.balance.waiveFinesConfirmation' ),
-    header: t('modules.admin.singleUser.balance.waiveFinesConfirmationTitle'),
-    icon: 'pi pi-exclamation-triangle',
-    accept: async () => {
-      await apiService.user.waiveUserFines(props.user?.id as number).then(() => { // Use 'as number' instead of <number>
-        toast.add({
-          severity: 'success',
-          summary: t('common.toast.success.success'),
-          detail: t('common.toast.success.waiveFinesSuccess'),
-          life: 3000
-        });
-        updateUserBalance();
-      });
-    },
-    reject: () => {
-      toast.add({
-        severity: 'info',
-        summary: t('common.toast.canceled'),
-        detail: t('common.toast.reject.waiveFinesRejected'),
-        life: 3000
-      });
-    },
-  });
+const openFineWaiveModal = () => {
+  isFineWaiveModalVisible.value = true;
 };
 </script>
 

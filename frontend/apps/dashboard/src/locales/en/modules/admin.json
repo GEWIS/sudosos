@@ -16,9 +16,13 @@
           "header": "Balance",
           "waiveFines": "Waive fines",
           "allIsFines": "All of which is a fine",
+          "waiveAllFines": "Waive all fines",
           "someIsFines": "Of which {fine} is fines",
+          "someIsFinesDetailed": "Current fine is {fine} of which {waived} is waived.",
           "waiveFinesConfirmation": "Are you sure you want to waive the fines? This cannot be undone.",
-          "waiveFinesConfirmationTitle": "Waive fines"
+          "waiveFinesConfirmationTitle": "Waive fines",
+          "waiveFineTooMuch": "You cannot waive more than the fine of the user.",
+          "waiveExplanation": "There can only be one waive per fine group, adding a fine when there is already one, will replace the existing waive."
         }
       },
       "banners": {

@@ -25,12 +25,14 @@ import FileUpload from "primevue/fileupload";
 import Tooltip from 'primevue/tooltip';
 import SelectButton from "primevue/selectbutton";
 import 'primeflex/primeflex.css';
+import { clearTokenInStorage, populateStoresFromToken, useAuthStore } from "@sudosos/sudosos-frontend-common";
 import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css'; // Import PrimeIcons
 
 import 'primeflex/primeflex.css';
+import apiService from './services/ApiService';
 import Accordion from "primevue/accordion";
 import Skeleton from "primevue/skeleton";
 import IconField from "primevue/iconfield";
@@ -41,9 +43,12 @@ import i18n from './utils/i18nUtils';
 import ConfirmDialog from "primevue/confirmdialog";
 import ConfirmationService from 'primevue/confirmationservice';
 import InputSwitch from "primevue/inputswitch";
+import Divider from "primevue/divider";
 import beforeLoad from '@/utils/beforeLoadUtil';
 
 const app = createApp(App);
+
+
 
 app.use(i18n);
 app.use(createPinia());
@@ -63,6 +68,7 @@ app.component('DataTable', DataTable);
 app.component('DataView', DataView);
 app.component('InputNumber', InputNumber);
 app.component('Dialog', Dialog);
+app.component('Divider', Divider);
 app.component('Dropdown', Dropdown);
 app.component('Checkbox', Checkbox);
 app.component('TabView', TabView);

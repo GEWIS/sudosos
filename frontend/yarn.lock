@@ -825,9 +825,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sudosos/sudosos-client@github:GEWIS/sudosos-client#e876cfa72b0e7d5ff7cd7cd6a1a3a1fcb3bbda9c":
+"@sudosos/sudosos-client@github:GEWIS/sudosos-client#bba04e6ea5d2942016c763f4053b6b9fb5965d1e":
   version: 1.1.2
-  resolution: "@sudosos/sudosos-client@https://github.com/GEWIS/sudosos-client.git#commit=e876cfa72b0e7d5ff7cd7cd6a1a3a1fcb3bbda9c"
+  resolution: "@sudosos/sudosos-client@https://github.com/GEWIS/sudosos-client.git#commit=bba04e6ea5d2942016c763f4053b6b9fb5965d1e"
   dependencies:
     axios: "npm:^1.6.3"
     swagger-axios-codegen: "npm:^0.16.4"
@@ -5272,7 +5272,7 @@ __metadata:
   dependencies:
     "@intlify/eslint-plugin-vue-i18n": "npm:^2.0.0"
     "@rushstack/eslint-patch": "npm:^1.2.0"
-    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#e876cfa72b0e7d5ff7cd7cd6a1a3a1fcb3bbda9c"
+    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#bba04e6ea5d2942016c763f4053b6b9fb5965d1e"
     "@tsconfig/node-lts": "npm:^20.1.3"
     "@types/dinero.js": "npm:^1.9.4"
     "@types/lodash": "npm:^4.17.12"

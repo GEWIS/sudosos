@@ -6,7 +6,7 @@
     <div class="flex flex-column gap-5">
       <div class="flex flex-column  md:flex-row justify-content-between gap-8">
         <AdminUserInfoCard v-if="currentUser" :user="currentUser" class="flex-grow-1"/>
-        <AdminUserBalance v-if="currentUser" :user="currentUser"/>
+        <AdminUserBalance v-if="currentUser" :user="currentUser" @update-mutations="() => mutations?.refresh()"/>
       </div>
       <MutationsBalanceCard
           class="w-full"

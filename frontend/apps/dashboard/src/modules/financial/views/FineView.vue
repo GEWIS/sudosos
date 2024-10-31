@@ -205,7 +205,7 @@ const handlePickedDates = handleSubmit(async (values) => {
     [values.firstDate.toISOString(), values.secondDate.toISOString()],
     ["MEMBER"]);
   const userFullNameMap: { [key: number]: string } = {};
-  userStore.users.forEach((user: any) => {
+  Object.values(userStore.users).forEach((user: any) => {
     userFullNameMap[user.id] = `${user.firstName} ${user.lastName}`;
   });
   const deletedUsers = userStore.getDeletedUsers.map((u: UserResponse) => u.id);
