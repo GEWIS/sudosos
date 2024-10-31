@@ -106,6 +106,9 @@
                     "verify": "Verification Failed",
                     "details": "Payout amount does not match the amount of purchases. {amount} vs. {totalInclVat}",
                     "unable": "Unable to verify the payout."
+                },
+                "topUp": {
+                    "unable": "Unable to complete the top-up. Please try again later."
                 }
             }
         },

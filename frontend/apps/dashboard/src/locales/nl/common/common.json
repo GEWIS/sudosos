@@ -106,6 +106,9 @@
                     "verify": "Verificatie mislukt",
                     "details": "Uitbetaling heeft een ongeldige bedrag. {amount} vs. {totalInclVat}",
                     "unable": "Kan de uitbetaling niet verifiëren."
+                },
+                "topUp": {
+                    "unable": "Het is niet gelukt om op te waarderen. Probeer het later opnieuw."
                 }
             }
         },

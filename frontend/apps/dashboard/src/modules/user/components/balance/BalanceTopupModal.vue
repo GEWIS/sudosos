@@ -17,7 +17,7 @@
     </form>
 
     <template #footer>
-      <Button :label="t('modules.user.balance.pay').toUpperCase()" @click="submitPay"/>
+      <Button :label="t('modules.user.balance.pay').toUpperCase()" @click="submitPay" :disabled="loading"/>
     </template>
   </Dialog>
 </template>
@@ -27,10 +27,12 @@
 
 import { computed, onBeforeMount, ref } from 'vue';
 import { loadStripe } from '@stripe/stripe-js/pure';
+import type { PaymentIntentResult } from "@stripe/stripe-js";
 import apiService from '@/services/ApiService';
 import type { Dinero } from "@sudosos/sudosos-client";
 import { formatPrice } from "@/utils/formatterUtils";
 import { useI18n } from "vue-i18n";
+import { useToast } from "primevue/usetoast";
 
 const { t } = useI18n();
 
@@ -52,6 +54,7 @@ const props = defineProps({
   }
 });
 
+const toast = useToast();
 const stripe = ref();
 const paymentElement = ref();
 const elements = ref();
@@ -76,11 +79,28 @@ const pay = async () => {
 };
 
 const submitPay = async () => {
+  if (loading.value) return; // Early return if confirmation is already (being) sent.
+  // Set loading to ensure that the payment button is disabled and cannot be pressed again.
+  loading.value = true;
   await stripe.value.confirmPayment({
     elements: elements.value,
     confirmParams: {
       return_url: import.meta.env.VITE_APP_STRIPE_RETURN_URL
     }
+  }).then((result: PaymentIntentResult) => {
+    if (result.error) {
+      // Issue on Stripe's side, close modal and show toast.
+      visible.value = false;
+      toast.add({
+        severity: 'error',
+        summary: t('common.toast.failed.failed'),
+        detail: t('common.toast.failed.topUp.unable'),
+        life: 3000,
+      });
+    }
+  }).finally(() => {
+    // If the top-up succeeds, this will not matter as the user is redirected.
+    loading.value = false;
   });
 };
 
