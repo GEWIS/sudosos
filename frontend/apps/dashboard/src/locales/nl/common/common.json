@@ -61,6 +61,10 @@
         "email": "E-mailadres",
         "usertype": "Gebruikerstype",
         "toast": {
+            "info": {
+                "Info": "Info",
+                "scanStarted": "NFC Scan gestart, houd je NFC kaart tegen je telefoon!"
+            },
             "success": {
                 "success": "Succes",
                 "userUpdated": "Gebruiker succesvol bijgewerkt.",
@@ -71,6 +75,7 @@
                 "apiKeyChanged": "API-sleutel succesvol gewijzigd.",
                 "apiKeyDeleted": "API-sleutel succesvol verwijderd.",
                 "passwordUpdated": "Wachtwoord succesvol bijgewerkt.",
+                "nfcCodeUpdated": "NFC code succesvol bijgewerkt.",
                 "pinUpdated": "Pincode succesvol bijgewerkt.",
                 "finesNotified": "Gebruikers succesvol op de hoogte gebracht.",
                 "finesHandedOut": "Boetes succesvol uitgedeeld.",
@@ -95,6 +100,11 @@
                     "verify": "Verificatie succesvol",
                     "details": "Uitbetaling is geverifieerd."
                 }
+            },
+            "error": {
+                "error": "Error",
+                "scanNotStarted": "NFC scan niet gestart, kijk of NFC permissies kloppen.",
+                "unsupported": "Je browser is niet mobiel en heeft geen Web NFC."
             },
             "canceled": "Geannuleerd",
             "reject": {

@@ -9,6 +9,7 @@
         "title": "Profile",
         "passwordNew": "New password",
         "passwordConfirm": "Confirm password",
+        "nfcNew": "New NFC Code",
         "pinNew": "New PIN",
         "pinConfirm": "Confirm PIN"
       },
@@ -19,6 +20,7 @@
         "header": "User settings",
         "changePin": "Change PIN",
         "changePassword": "Change password",
+        "changeNFC": "Change NFC code",
         "apiKeys": "API keys",
         "changeApiKey": "Change API key",
         "deleteApiKey": "Delete API key",

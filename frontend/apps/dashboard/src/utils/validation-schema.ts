@@ -35,6 +35,11 @@ export const editPasswordSchema =
     passwordConfirm: yup.string().required().oneOf([yup.ref('password')], t('common.validation.password.match')),
   });
 
+export const editNFCSchema =
+    yup.object({
+        nfcCode: yup.string().required(),
+    });
+
 export const updateInvoiceSettingsObject = yup.object({
   reference: yup.string().required(),
   date: yup.string().required(),

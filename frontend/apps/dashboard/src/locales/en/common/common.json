@@ -61,6 +61,10 @@
         "email": "Email address",
         "usertype": "Usertype",
         "toast": {
+            "info": {
+                "info": "Info",
+                "scanStarted": "NFC Scan started, please hold your NFC card to your phone!"
+            },
             "success": {
                 "success": "Success",
                 "userUpdated": "Successfully updated user.",
@@ -71,6 +75,7 @@
                 "apiKeyChanged": "Successfully changed API key.",
                 "apiKeyDeleted": "Successfully deleted API key.",
                 "passwordUpdated": "Successfully updated password.",
+                "nfcCodeUpdated": "Successfully updated NFC code.",
                 "pinUpdated": "Successfully updated PIN.",
                 "finesNotified": "Successfully notified users.",
                 "finesHandedOut": "Successfully handed out fines.",
@@ -95,6 +100,11 @@
                     "verify": "Verification Success",
                     "details": "Payout is verified."
                 }
+            },
+            "error": {
+                "error": "Error",
+                "scanNotStarted": "NFC scan not started, please check permission regarding NFC.",
+                "unsupported": "Your browser is not mobile and does not have Web NFC."
             },
             "canceled": "Canceled",
             "reject": {

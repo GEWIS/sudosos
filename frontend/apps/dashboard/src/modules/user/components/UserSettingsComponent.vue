@@ -23,6 +23,13 @@
             @click="showPasswordDialog = true"
         />
       </div>
+      <div class="flex flex-row align-items-center w-11">
+        <p class="flex-grow-1 my-1">{{ t('modules.user.settings.changeNFC') }}</p>
+        <i
+            class="pi pi-arrow-up-right text-gray-500 flex align-items-center cursor-pointer"
+            @click="startScan()"
+        />
+      </div>
       <Divider />
       <h4 class="mt-0">{{ t('modules.user.settings.apiKeys') }}</h4>
       <div class="flex flex-row align-items-center w-11">
@@ -80,6 +87,54 @@ import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import apiService from "@/services/ApiService";
 import { handleError } from "@/utils/errorUtils";
+
+async function startScan() {
+  if (!('NDEFReader' in window)) {
+    toast.add({
+          severity: "error",
+          summary: t("common.toast.error.error"),
+          detail: t("common.toast.error.unsupported"),
+          life: 3000,
+        });
+    return;
+  }
+
+  const ndef = new window.NDEFReader();
+  await ndef.scan().then(() => {
+    toast.add({
+      severity: "info",
+      summary: t("common.toast.info.info"),
+      detail: t("common.toast.info.scanStarted"),
+      life: 3000,
+    });
+  });
+
+  // Handle the NFC tag when it is detected
+  ndef.onreading = async (event: NDEFReadingEvent) => {
+
+    // Extract and log the NFC tag's ID (serial number)
+    const tagId = event.serialNumber;
+
+    await apiService.user.updateUserNfc(props.user.id, { nfcCode: tagId })
+        .then(() => {
+          toast.add({
+            severity: "success",
+            summary: t('common.toast.success.success'),
+            detail: t('common.toast.success.nfcCodeUpdated'),
+            life: 3000,
+          });
+        })
+        .catch(() => {
+          toast.add({
+            severity: "error",
+            summary: t("common.toast.error.error"),
+            detail: t("common.toast.error.scanNotStarted"),
+            life: 3000,
+          });
+        });
+  };
+}
+
 
 const props = defineProps({
   user: {

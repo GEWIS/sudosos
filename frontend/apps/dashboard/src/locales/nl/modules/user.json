@@ -9,6 +9,7 @@
         "title": "Profiel",
         "passwordNew": "Nieuw wachtwoord",
         "passwordConfirm": "Bevestig wachtwoord",
+        "nfcNew": "Nieuwe NFC Code",
         "pinNew": "Nieuwe PIN",
         "pinConfirm": "Bevestig PIN"
       },
@@ -19,6 +20,7 @@
         "header": "Gebruikersinstellingen",
         "changePin": "PIN wijzigen",
         "changePassword": "Wachtwoord wijzigen",
+        "changeNFC": "NFC code wijzigen",
         "apiKeys": "API-sleutels",
         "changeApiKey": "API-sleutel wijzigen",
         "deleteApiKey": "API-sleutel verwijderen",
