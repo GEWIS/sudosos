@@ -5,7 +5,7 @@ import {
   AuthenticationResponse,
   GEWISAuthenticationPinRequest, GewiswebAuthenticationRequest, UpdatePinRequest,
   UpdateLocalRequest,
-  UserResponse, UpdateNfcRequest, AcceptTosRequest
+  UserResponse, UpdateNfcRequest, AcceptTosRequest, AuthenticationNfcRequest
 } from "@sudosos/sudosos-client";
 import { useUserStore } from "./user.store";
 import { jwtDecode, JwtPayload } from "jwt-decode";
@@ -86,6 +86,14 @@ export const useAuthStore = defineStore({
         pin, userId
       };
       await service.authenticate.pinAuthentication(req).then((res) => {
+        this.handleResponse(res.data);
+      });
+    },
+    async nfcLogin(nfcCode: string, service: ApiService) {
+      const req: AuthenticationNfcRequest = {
+        nfcCode
+      };
+      await service.authenticate.nfcAuthentication(req).then((res) => {
         this.handleResponse(res.data);
       });
     },

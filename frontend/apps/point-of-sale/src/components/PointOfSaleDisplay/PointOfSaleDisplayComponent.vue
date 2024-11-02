@@ -36,7 +36,8 @@
     </div>
     <Message v-if="isCategoryAlcoholic && !useSettingStore().isAlcoholTime" severity="warn" class="mr-4">
       Please note that today, alcoholic drinks are only allowed to be served after
-      {{ new Date(useSettingStore().alcoholTimeToday).toLocaleTimeString('nl-NL', { hour: "2-digit", minute: "2-digit" }) }}.
+      {{ new Date(useSettingStore().alcoholTimeToday)
+      .toLocaleTimeString('nl-NL', { hour: "2-digit", minute: "2-digit" }) }}.
       This also applies to non-alcoholic alternatives on this page.
     </Message>
     <PointOfSaleProductsComponent

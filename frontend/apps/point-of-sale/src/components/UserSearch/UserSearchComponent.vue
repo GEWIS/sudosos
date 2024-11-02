@@ -39,7 +39,6 @@ import UserSearchRowComponent from "@/components/UserSearch/UserSearchRowCompone
 import { useCartStore } from "@/stores/cart.store";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import { debounce } from 'lodash';
-import axios from 'axios';
 import type { AxiosResponse } from 'axios';
 import { useSettingStore } from "@/stores/settings.store";
 import ScrollPanel from "primevue/scrollpanel";

@@ -30,7 +30,10 @@
   </div>
   <SettingsIconComponent />
   <GitInfo/>
-  <EanLoginComponent :handle-login="eanLogin"/>
+  <ScannersLoginComponent
+    :handle-nfc-login="nfcLogin"
+    :handle-ean-login="eanLogin"
+  />
 </template>
 
 <script setup lang="ts">
@@ -43,7 +46,8 @@ import router from '@/router';
 import { useCartStore } from '@/stores/cart.store';
 import apiService from '@/services/ApiService';
 import BannerComponent from '@/components/Banner/BannerComponent.vue';
-import EanLoginComponent from "@/components/EanLoginComponent.vue";
+import ScannersLoginComponent from "@/components/ScannersLoginComponent.vue";
+
 import GitInfo from "@/components/GitInfo.vue";
 
 const userStore = useUserStore();
@@ -164,9 +168,18 @@ const login = () => {
   loggingIn.value = false;
 };
 
+const nfcLogin = async (nfcCode: string) => {
+  try {
+    await authStore.nfcLogin(nfcCode, apiService).then(async () => {
+      await loginSucces();
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const eanLogin = async (eanCode: string) => {
-  console.error(eanCode);
+
   try {
     await authStore.eanLogin(eanCode, apiService).then(async () => {
       await loginSucces();

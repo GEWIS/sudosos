@@ -13,6 +13,7 @@ import Panel from "primevue/panel";
 import Dialog from "primevue/dialog";
 import OverlayPanel from "primevue/overlaypanel";
 import Dropdown from "primevue/dropdown";
+import Toast from "primevue/toast";
 
 import router from './router';
 import App from './App.vue';
@@ -36,7 +37,8 @@ app.component('OverlayPanel', OverlayPanel);
 app.component('Dropdown', Dropdown);
 // eslint-disable-next-line
 app.component('Message', Message);
-
+// eslint-disable-next-line
+app.component('Toast', Toast);
 app.use(createPinia());
 app.mount('#app');
 
