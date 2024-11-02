@@ -50,7 +50,7 @@ import { useToast } from "primevue/usetoast";
 import type { InvoiceResponse } from "@sudosos/sudosos-client";
 import CardComponent from "@/components/CardComponent.vue";
 import VuePdfApp from "vue3-pdf-app";
-import InvoiceEntriesTable from "@/modules/financial/components/invoice/forms/InvoiceEntriesTable.vue";
+import InvoiceEntriesTable from "@/modules/financial/components/invoice/InvoiceEntriesTable.vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();

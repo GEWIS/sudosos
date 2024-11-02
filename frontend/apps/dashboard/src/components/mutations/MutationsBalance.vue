@@ -59,7 +59,7 @@
             {{ formatPrice((mutation.data as FinancialMutation).amount) }}
           </div>
 
-          <!-- Fines get green -->
+          <!-- Fines get red -->
           <div v-else-if="isFine(mutation.data.type)" style="color: #d40000"
                class="font-bold">
             {{ formatPrice((mutation.data as FinancialMutation).amount, true) }}

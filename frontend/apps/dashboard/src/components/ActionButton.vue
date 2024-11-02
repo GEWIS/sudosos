@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import Button from 'primevue/button';
 
 const props = defineProps({
@@ -27,7 +27,7 @@ const props = defineProps({
   },
 });
 
-const emits = defineEmits(['click']);
+defineEmits(['click']);
 
 const buttonIcon = ref('pi pi-check');
 const buttonSeverity = ref('primary');

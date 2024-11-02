@@ -5,6 +5,7 @@ import PayoutsView from "@/modules/financial/views/payouts/PayoutsView.vue";
 import { UserRole } from "@/utils/rbacUtils";
 import InvoiceOverview from "@/modules/financial/views/invoice/InvoiceOverview.vue";
 import InvoiceInfoView from "@/modules/financial/views/invoice/InvoiceInfoView.vue";
+import InvoiceCreateView from "@/modules/financial/views/invoice/InvoiceCreateView.vue";
 
 export function financialRoutes(): RouteRecordRaw[] {
   return [
@@ -14,42 +15,62 @@ export function financialRoutes(): RouteRecordRaw[] {
       meta: { requiresAuth: true },
       children: [
         {
-        path: '/fine',
-        component: FineView,
-        name: 'fine',
-        meta: {
-          requiresAuth: true,
-          rolesAllowed: [UserRole.BAC_PM]
+          path: '/fine',
+          component: FineView,
+          name: 'fine',
+          meta: {
+            requiresAuth: true,
+            rolesAllowed: [UserRole.BAC_PM]
+          }
+        },
+        {
+          path: '/invoice',
+          component: InvoiceOverview,
+          name: 'invoice',
+          meta: {
+            requiresAuth: true,
+            rolesAllowed: [UserRole.BAC_PM]
+          }
+        },
+        {
+          path: '/invoice/create',
+          component: InvoiceCreateView,
+          name: 'invoiceCreate',
+          meta: {
+            requiresAuth: true,
+            rolesAllowed: [UserRole.BAC_PM]
+          }
+        },
+        {
+          path: '/invoice/:id',
+          redirect: to => {
+            const { id } = to.params;
+            return `/invoice/${id}/info`;
+          },
+          meta: {
+            requiresAuth: true,
+            rolesAllowed: [UserRole.BAC_PM]
+          }
+        },
+        {
+          path: '/invoice/:id/info',
+          name: 'invoiceInfo',
+          component: InvoiceInfoView,
+          props: true,
+          meta: {
+            requiresAuth: true,
+            rolesAllowed: [UserRole.BAC_PM]
+          }
+        },
+        {
+          path: '/payouts',
+          component: PayoutsView,
+          name: 'payouts',
+          meta: {
+            requiresAuth: true,
+            rolesAllowed: [UserRole.BAC_PM]
+          }
         }
-      },
-      {
-        path: '/invoice',
-        component: InvoiceOverview,
-        name: 'invoice',
-        meta: {
-          requiresAuth: true,
-          rolesAllowed: [UserRole.BAC_PM]
-        }
-      },
-      {
-        path: '/invoice/:id/info',
-        name: 'invoiceInfo',
-        component: InvoiceInfoView,
-        props: true,
-        meta: {
-          requiresAuth: true,
-          rolesAllowed: [UserRole.BAC_PM]
-        }
-      },
-      {
-        path: '/payouts',
-        component: PayoutsView,
-        name: 'payouts',
-        meta: {
-          requiresAuth: true,
-          rolesAllowed: [UserRole.BAC_PM]
-        }
-      }
       ]
     }
   ];

@@ -46,28 +46,15 @@
 
 <script setup lang="ts">
 import InputSpan from "@/components/InputSpan.vue";
-import { type PropType } from "vue";
-import type { InvoiceResponse } from "@sudosos/sudosos-client";
-import { type Form, setSubmit } from "@/utils/formUtils";
-import { updateInvoiceAddressingObject } from "@/utils/validation-schema";
-import { useToast } from "primevue/usetoast";
 import { useI18n } from "vue-i18n";
-import { useInvoiceStore } from "@/stores/invoice.store";
+import type { PropType } from "vue";
+import type { Form } from "@/utils/formUtils";
 import * as yup from "yup";
-import { handleError } from "@/utils/errorUtils";
+import { updateInvoiceAddressingObject } from "@/utils/validation-schema";
 
 const { t } = useI18n();
-const toast = useToast();
 
-const emit = defineEmits(['update:edit']);
-const invoiceStore = useInvoiceStore();
-
-
-const props = defineProps({
-  invoice: {
-    type: Object as PropType<InvoiceResponse>,
-    required: true
-  },
+defineProps({
   form: {
     type: Object as PropType<Form<yup.InferType<typeof updateInvoiceAddressingObject>>>,
     required: true,
@@ -79,25 +66,7 @@ const props = defineProps({
   },
 });
 
-setSubmit(props.form, props.form.context.handleSubmit(async (values) => {
-  if (!props.form.context.meta.value.dirty) {
-    emit('update:edit', false);
-    return;
-  }
-  await invoiceStore.updateInvoice(props.invoice.id, values).then(() => {
-    toast.add({
-      severity: 'success',
-      summary: t('common.toast.success.success'),
-      detail: values,
-      life: 3000,
-    });
-    emit('update:edit', false);
-  }).catch((error) => {
-    handleError(error, toast);
-  });
-}));
 </script>
 
 <style scoped lang="scss">
-
 </style>

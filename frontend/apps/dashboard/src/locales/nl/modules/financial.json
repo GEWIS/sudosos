@@ -26,6 +26,7 @@
       "invoice": {
         "title": "Factuuroverzicht",
         "invoice": "Factuur",
+        "transfer": "Overboeking",
         "credit": "Creditfactuur",
         "delete": "Factuur verwijderen",
         "confirmDelete": "Weet je zeker dat je deze factuur wilt verwijderen?",
@@ -35,7 +36,18 @@
         "recompile": "Opnieuw samenstellen",
         "reload": "Opnieuw laden",
         "missingPdf": "PDF ontbreekt of genereren is mislukt",
-        "deleted": "Factuur is verwijderd."
+        "deleted": "Factuur is verwijderd.",
+        "dirty": "De factuurbedrag komt niet overeen met de overboeking.",
+        "total": "Het huidige totaal op de factuur is {total}",
+        "for": "Invoice for",
+        "create": {
+          "create": "Factuur aanmaken",
+          "userBalance": "Geselecteerde gebruikers saldo",
+          "invocieAmount": "Voorgestelde factuurbedrag",
+          "balanceAfter": "Saldo na factuur",
+          "pos": "POS's die in de factuur zijn opgenomen:",
+          "warning": "Controleer de factuur voordat je deze aanmaakt."
+        }
       },
       "payout": {
         "title": "Uitbetalingsoverzicht",

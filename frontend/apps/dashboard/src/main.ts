@@ -25,14 +25,11 @@ import FileUpload from "primevue/fileupload";
 import Tooltip from 'primevue/tooltip';
 import SelectButton from "primevue/selectbutton";
 import 'primeflex/primeflex.css';
-import { clearTokenInStorage, populateStoresFromToken, useAuthStore } from "@sudosos/sudosos-frontend-common";
 import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
 import 'primeflex/primeflex.css';
-import 'primeicons/primeicons.css'; // Import PrimeIcons
-
+import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
-import apiService from './services/ApiService';
 import Accordion from "primevue/accordion";
 import Skeleton from "primevue/skeleton";
 import IconField from "primevue/iconfield";
@@ -68,7 +65,6 @@ app.component('DataTable', DataTable);
 app.component('DataView', DataView);
 app.component('InputNumber', InputNumber);
 app.component('Dialog', Dialog);
-app.component('Divider', Divider);
 app.component('Dropdown', Dropdown);
 app.component('Checkbox', Checkbox);
 app.component('TabView', TabView);
@@ -86,6 +82,7 @@ app.component('ToggleButton', ToggleButton);
 app.component('Steps', Steps);
 app.component('Calendar', Calendar);
 app.component('ConfirmDialog', ConfirmDialog);
+app.component('Divider', Divider);
 
 beforeLoad().then(() => {
   app.mount('#app');

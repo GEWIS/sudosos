@@ -8,6 +8,7 @@ import type {
     ProductCategoryResponse
 } from "@sudosos/sudosos-client";
 import type { ContainerInStore } from "@/stores/container.store";
+import type { DineroObject } from "dinero.js";
 
 const t = i18n.global.t;
 
@@ -53,6 +54,10 @@ export const updateInvoiceAddressingObject = yup.object({
   postalCode: yup.string().required(),
   city: yup.string().required(),
   country: yup.string().required(),
+});
+
+export const updateInvoiceAmountObject = yup.object({
+  amount: yup.number().required().default(0),
 });
 
 export const updateUserDetailsObject = yup.object({
@@ -146,3 +151,20 @@ export const waiveUserFineSchema =
     yup.object({
         amount: yup.number().required().default(0)
     });
+
+export const createInvoiceObject =
+  yup.object({
+    forId: yup.number().required(),
+    byId: yup.number(),
+    addressee: yup.string().required(),
+    description: yup.string().required(),
+    reference: yup.string().required(),
+    transactionIDs: yup.array().of(yup.number().required()).required(),
+    transactionTotal: yup.mixed<DineroObject>().default({ precision: 2, currency: 'EUR', amount: 0 }).required(),
+    street: yup.string().required(),
+    postalCode: yup.string().required(),
+    city: yup.string().required(),
+    country: yup.string().required(),
+    date: yup.string().required(),
+    attention: yup.string(),
+  });

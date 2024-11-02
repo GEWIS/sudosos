@@ -84,7 +84,6 @@
 import { ref, onMounted, type PropType, type Ref, computed } from "vue";
 import { formatPrice, formatDateFromString } from "@/utils/formatterUtils";
 import {
-  type PaginatedSellerPayoutResponse,
   type UserResponse
 } from "@sudosos/sudosos-client";
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
@@ -92,7 +91,6 @@ import Column from 'primevue/column';
 import { addListenerOnDialogueOverlay } from "@/utils/dialogUtil";
 import Button from "primevue/button";
 import ApiService from "@/services/ApiService";
-import { useRouter } from "vue-router";
 import { getSellerPayoutPdfSrc } from "@/utils/urlUtils";
 import SellerPayoutInfo from "@/modules/seller/components/seller/SellerPayoutInfo.vue";
 import { useSellerPayoutStore } from "@/stores/seller-payout.store";
@@ -102,7 +100,6 @@ import { verifyPayoutMixin } from "@/mixins/verifyPayoutMixin";
 import { useI18n } from "vue-i18n";
 
 const { verifyPayout, verifying } = verifyPayoutMixin.setup();
-const router = useRouter();
 const toast = useToast();
 const { t } = useI18n();
 const sellerPayoutStore = useSellerPayoutStore();

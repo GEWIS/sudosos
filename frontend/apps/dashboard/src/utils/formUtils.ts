@@ -51,3 +51,10 @@ export function setSubmit(form: Form<any>, submit: () => Promise<any>) {
 export function setSuccess(form: Form<any>, success: boolean | null) {
   form.success.value = success;
 }
+
+export function getProperty<T extends yup.AnyObject, K extends keyof T>(
+    form: Form<T>,
+    key: K
+): T[K] | undefined {
+  return form.model[key]?.value.value ?? undefined;
+}

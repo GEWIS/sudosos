@@ -35,7 +35,7 @@
         <span v-if="entry.index < totalRowCutoff">
           {{ entry.data.vatPercentage +  '%' }}
         </span>
-        <span v-else class="font-bold">
+        <span v-else class="font-bold" :class="{ ...entry.data.class }">
           {{ entry.data.description }}
         </span>
       </template>
@@ -46,7 +46,7 @@
         class="p-1"
     >
       <template #body="entry">
-        <span :class="{ 'font-bold': entry.index >= totalRowCutoff }">
+        <span :class="{ 'font-bold': entry.index >= totalRowCutoff, ...entry.data.class }">
           {{ formatPrice(rowTotal(entry.data)) }}
         </span>
       </template>
@@ -58,10 +58,11 @@
 import { formatPrice } from "@/utils/formatterUtils";
 import Column from "primevue/column";
 import DataTable from "primevue/datatable";
-import { computed, onMounted, type PropType, type Ref, ref } from "vue";
+import { onMounted, type PropType, type Ref, ref } from "vue";
 import type { InvoiceEntryResponse, InvoiceResponse } from "@sudosos/sudosos-client";
 import type { DineroObject } from "dinero.js";
 import { useI18n } from "vue-i18n";
+import { isDirty } from "@/utils/invoiceUtil";
 
 const { t } = useI18n();
 
@@ -73,13 +74,13 @@ const props = defineProps({
 });
 
 const exclVat: Ref<DineroObject> = ref({ amount: 0, precision: 2, currency: 'EUR' });
+const totalEntries: Ref<DineroObject> = ref({ amount: 0, precision: 2, currency: 'EUR' });
 const vat: Ref<Record<number, DineroObject>> = ref({});
 const inclVat: Ref<DineroObject> = ref({ amount: 0, precision: 2, currency: 'EUR' });
-const totalRows: InvoiceEntryResponse[] = [];
-const totalRowCutoff = computed(() => {
-  return props.invoice.invoiceEntries.length - totalRows.length;
-});
-const allRows = ref(props.invoice.invoiceEntries);
+const totalRows: (InvoiceEntryResponse & { class?: any })[] = [];
+const allRows: Ref<(InvoiceEntryResponse & { class?: any })[]> = ref([]);
+const totalRowCutoff = ref(0);
+
 
 const rowTotal = (row: any): DineroObject => {
   return {
@@ -90,12 +91,20 @@ const rowTotal = (row: any): DineroObject => {
 
 onMounted(() => {
   props.invoice.invoiceEntries.forEach((entry) => {
+    allRows.value.push({
+      description: entry.description,
+      amount: entry.amount,
+      vatPercentage: entry.vatPercentage,
+      priceInclVat: entry.priceInclVat,
+      custom: false,
+    });
     const price = entry.priceInclVat.amount * entry.amount;
     inclVat.value.amount += price;
 
     const excl = Math.round(price / (1 + (entry.vatPercentage / 100)));
     const vatAmount = price - excl;
     exclVat.value.amount += excl;
+    totalEntries.value.amount += price;
 
     if (entry.vatPercentage in vat.value) {
       vat.value[entry.vatPercentage].amount += vatAmount;
@@ -123,16 +132,26 @@ onMounted(() => {
     });
   }
 
-  if (props.invoice.transfer) {
+  totalRows.push({
+    description: t('common.incl'),
+    amount: 1,
+    vatPercentage: 0,
+    priceInclVat: totalEntries.value,
+    custom: false,
+  });
+
+  if (props.invoice.transfer && isDirty(props.invoice)) {
     totalRows.push({
-      description: t('common.incl'),
+      description: t('modules.financial.invoice.transfer'),
       amount: 1,
       vatPercentage: 0,
+      class: { 'text-red-500': true },
       priceInclVat: props.invoice.transfer.amountInclVat,
       custom: false,
     });
   }
 
+  totalRowCutoff.value = allRows.value.length;
   allRows.value.push(...totalRows);
 });
 

@@ -5,7 +5,8 @@
       <span class="my-0">{{ label }}</span>
       <FindUser  :placeholder="placeholder"
                  v-model="internalValue"
-                 :disabled="disabled"/>
+                 :disabled="disabled"
+                 :type="type"/>
     </span>
     <div class="flex justify-content-end">
       <ErrorSpan :error="errors"/>
@@ -17,7 +18,7 @@
 import ErrorSpan from "@/components/ErrorSpan.vue";
 import { onMounted, type PropType, ref, watch } from "vue";
 import FindUser from "@/components/FindUser.vue";
-import type { BaseUserResponse } from "@sudosos/sudosos-client";
+import { type BaseUserResponse, GetAllUsersTypeEnum } from "@sudosos/sudosos-client";
 
 const emit = defineEmits(['update:value']);
 
@@ -48,6 +49,11 @@ const props = defineProps({
     required: false,
     default: false
   },
+  type: {
+    type: String as PropType<GetAllUsersTypeEnum>,
+    required: false,
+    default: undefined
+  }
 });
 
 const internalValue = ref();

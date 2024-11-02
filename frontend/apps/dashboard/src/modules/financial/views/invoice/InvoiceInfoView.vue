@@ -3,15 +3,20 @@
     <div>
       <div class="page-title flex flex-row">
         <div class="flex flex-column">
-          <span>{{ isCredit ? t("modules.financial.invoice.credit") : t("modules.financial.invoice.invoice") }}</span>
+          <span>{{ t("modules.financial.invoice.invoice") }}</span>
           <small class="text-base">
             {{ invoice.reference + ": " }} <i>{{ invoice.description }}</i>
           </small>
+          <span v-if="dirty" class="text-red-500">
+            <i class="pi pi-exclamation-triangle text-4xl"></i>
+            {{ t("modules.financial.invoice.dirty") }}
+          </span>
         </div>
       </div>
       <div class="flex flex-row gap-5 flex-wrap flex-grow justify-content-center">
         <div class="flex flex-column gap-5">
-          <InvoiceStepsCard :invoiceId="invoice.id"/>
+          <InvoiceAmountCard v-if="dirty" :invoiceId="invoice.id"/>
+          <InvoiceStepsCard v-else :invoiceId="invoice.id"/>
           <InvoiceSettingsCard :invoiceId="invoice.id"/>
           <InvoiceAddressingCard :invoiceId="invoice.id"/>
           <InvoiceInfo :invoiceId="invoice.id"/>
@@ -39,19 +44,18 @@ import InvoiceStepsCard from "@/modules/financial/components/invoice/InvoiceStep
 import InvoicePdf from "@/modules/financial/components/invoice/InvoicePdf.vue";
 import InvoiceInfo from "@/modules/financial/components/invoice/InvoiceInfo.vue";
 import { useI18n } from "vue-i18n";
+import InvoiceAmountCard from "@/modules/financial/components/invoice/InvoiceAmountCard.vue";
+import { isDirty } from "@/utils/invoiceUtil";
 
 const { t } = useI18n();
-
 const toast = useToast();
 const route = useRoute();
-
-const invoice: Ref<InvoiceResponse | undefined> = ref(undefined);
 const invoiceStore = useInvoiceStore();
 
-const isCredit = computed(() => {
-  if (!invoice.value) return false;
-  return invoice.value?.transfer?.to === undefined;
-});
+const invoice: Ref<InvoiceResponse | undefined> = ref(undefined);
+
+// Invoice is considered dirty if entry total does not match transfer total
+const dirty = computed(() => isDirty(invoice.value as InvoiceResponse));
 
 onBeforeMount(async () => {
   const id = Number(route.params.id);

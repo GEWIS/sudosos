@@ -136,7 +136,8 @@ const getOrgans = async () => {
 const getAllOrgans = async () => {
   organs.value = [];
   const promises: Promise<any>[] = [];
-  await apiService.user.getAllUsers(100, undefined, undefined, undefined, undefined, undefined, GetAllUsersTypeEnum.Organ).then((res) => {
+  await apiService.user.getAllUsers(100, undefined, undefined, undefined, undefined,
+      undefined, GetAllUsersTypeEnum.Organ).then((res) => {
     const orgs = res.data.records;
     orgs.forEach((organ) => {
       promises.push(apiService.balance.getBalanceId(organ.id).then((res) => {

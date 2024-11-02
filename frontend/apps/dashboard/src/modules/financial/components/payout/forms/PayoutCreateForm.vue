@@ -4,8 +4,9 @@
                    :value="form.model.user.value.value"
                    @update:value="form.context.setFieldValue('user', $event)"
                    :errors="form.context.errors.value.user"
-                   id="name" placeholder="John Doe" type="text"/>
+                   id="name" placeholder="John Doe"/>
 
+<!-- TODO think about turning this into a component? -->
     <skeleton v-if="userBalance === null && form.model.user.value.value" class="w-6 my-1 h-0.5rem surface-300"/>
     <div v-else-if="userBalance" class="flex flex-row gap-1"
          :class="{'text-gray-700': !balanceError, 'text-red-500 font-bold': balanceError}">

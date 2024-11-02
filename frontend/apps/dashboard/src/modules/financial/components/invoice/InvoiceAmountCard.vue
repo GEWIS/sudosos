@@ -1,22 +1,22 @@
 <template>
-  <FormCard :header="t('modules.financial.forms.invoice.addressing')" v-if="invoice" @cancel="form.context.resetForm"
+  <FormCard :header="t('modules.financial.invoice.transfer')" v-if="invoice" @cancel="form.context.resetForm"
             @update:modelValue="edit = $event" @save="formSubmit" :enableEdit="!deleted">
     <div class="flex flex-column justify-content-between gap-2">
-      <InvoiceAddressingForm :invoice="invoice" :form="form" :edit="edit" @update:edit="edit = $event"/>
+      <InvoiceAmountForm :invoice="invoice" :form="form" :edit="edit" @update:edit="edit = $event"/>
     </div>
   </FormCard>
 </template>
 
 <script setup lang="ts">
-import FormCard from "@/components/FormCard.vue";
 import { computed, onBeforeMount, ref, watch } from "vue";
 import type { InvoiceResponse } from "@sudosos/sudosos-client";
-import InvoiceAddressingForm from "@/modules/financial/components/invoice/forms/InvoiceUpdateAddressingForm.vue";
-import { updateInvoiceAddressingObject } from "@/utils/validation-schema";
+import { updateInvoiceAmountObject } from "@/utils/validation-schema";
 import { schemaToForm } from "@/utils/formUtils";
 import { InvoiceStatusResponseStateEnum } from "@sudosos/sudosos-client/src/api";
 import { useInvoiceStore } from "@/stores/invoice.store";
 import { useI18n } from "vue-i18n";
+import InvoiceAmountForm from "@/modules/financial/components/invoice/forms/InvoiceAmountForm.vue";
+import FormCard from "@/components/FormCard.vue";
 
 const { t } = useI18n();
 
@@ -32,20 +32,16 @@ const props = defineProps({
   }
 });
 
-const form = schemaToForm(updateInvoiceAddressingObject);
+const form = schemaToForm(updateInvoiceAmountObject);
 
 const formSubmit = () => {
   form.submit();
 };
+
 const updateFieldValues = (p: InvoiceResponse) => {
-  if (!p) return;
+  if (!p || !p.transfer) return;
   const values = {
-    addressee: p.addressee,
-    attention: p.attention,
-    street: p.street,
-    postalCode: p.postalCode,
-    city: p.city,
-    country: p.country,
+    amount: p.transfer.amountInclVat.amount / 100,
   };
   form.context.resetForm({ values });
 };
@@ -59,7 +55,6 @@ onBeforeMount(() => {
     updateFieldValues(invoice.value);
   }
 });
-
 </script>
 
 <style scoped lang="scss">

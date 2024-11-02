@@ -22,16 +22,11 @@ import { onMounted, type PropType, ref, watch } from "vue";
 import type { Ref } from "vue";
 import apiService from "@/services/ApiService";
 import { debounce } from "lodash";
-import type { BaseUserResponse, UserResponse } from "@sudosos/sudosos-client";
+import { type BaseUserResponse, GetAllUsersTypeEnum, type UserResponse } from "@sudosos/sudosos-client";
 
-const lastQuery = ref("");
-const selectedUser = ref(null);
-const loading = ref(false);
-
-const users: Ref<(BaseUserResponse & { fullName: string })[]> = ref([]);
 const emits = defineEmits(['update:value']);
 
-defineProps({
+const props = defineProps({
   value: {
     type: Object as PropType<UserResponse>,
   },
@@ -40,7 +35,23 @@ defineProps({
     required: false,
     default: ''
   },
+  type: {
+    type: String as PropType<GetAllUsersTypeEnum>,
+    required: false,
+    default: undefined
+  },
+  take: {
+    type: Number,
+    required: false,
+    default: 10,
+  }
 });
+
+const lastQuery = ref("");
+const selectedUser = ref(null);
+
+const loading = ref(false);
+const users: Ref<(BaseUserResponse & { fullName: string })[]> = ref([]);
 
 const transformUsers = (userData: BaseUserResponse[]) => {
   return userData.map((user: BaseUserResponse) => ({
@@ -51,8 +62,8 @@ const transformUsers = (userData: BaseUserResponse[]) => {
 
 const debouncedSearch = debounce((e: any) => {
   loading.value = true;
-  apiService.user.getAllUsers(50, 0, e.value).then((res) => {
-    users.value = transformUsers(res.data.records); // Transform users
+  apiService.user.getAllUsers(props.take, 0, e.value, undefined, undefined, undefined, props.type).then((res) => {
+    users.value = transformUsers(res.data.records);
   }).finally(() => {
     loading.value = false;
   });
@@ -67,15 +78,14 @@ const filterUsers = (e: any) => {
 };
 
 onMounted(async () => {
-  apiService.user.getAllUsers(10, 0).then((res) => {
-    users.value = transformUsers(res.data.records); // Transform users
+  apiService.user.getAllUsers(props.take, 0, undefined, undefined, undefined, undefined, props.type).then((res) => {
+    users.value = transformUsers(res.data.records);
   });
 });
 
 watch(selectedUser, () => {
   emits('update:value', selectedUser.value);
 });
-
 </script>
 
 <style scoped lang="scss">
