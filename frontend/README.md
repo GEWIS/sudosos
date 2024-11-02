@@ -67,7 +67,7 @@ You can quickly start development directly in your browser by using [Codespaces]
 - You can access the dashboard and point of sale at `localhost:5173` and `localhost:5174` respectively.
 
 ### Proxying requests to different backends
-In the respective `.env` files, you can change which backend the frontend uses in development by changing the `VITE_DEV_API_BASE`. By default, this is set to the test backend (`https://sudosos.test.gewis.nl/api/v1`), but you can also change it to `https://sudosos.gewis.nl/api/v1` for the production backend. Or you can change it to `http://localhost:3000` if you are running the backend locally.   
+In the respective `.env` files, you can change which backend the frontend uses in development by changing the proxy target in vite.config.ts. By default, this is set to the test backend (`https://sudosos.test.gewis.nl/api/v1`), but you can also change it to `https://sudosos.gewis.nl/api/v1` for the production backend. Or you can change it to `http://localhost:3000` if you are running the backend locally.   
 
 ## Contributors
 

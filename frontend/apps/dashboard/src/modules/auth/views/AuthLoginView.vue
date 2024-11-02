@@ -28,9 +28,11 @@ import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import apiService from "@/services/ApiService";
 import router from "@/router";
 import { useI18n } from "vue-i18n";
+import { useSettingsStore } from "@/stores/settings.store";
 
 const { t } = useI18n();
 
+const settingStore = useSettingsStore();
 const authStore = useAuthStore();
 const route = useRoute();
 const returning = ref();
@@ -58,7 +60,7 @@ onBeforeMount(() => {
   returning.value = hasToken();
 });
 const loginViaGEWIS = () => {
-  window.location.href = `https://gewis.nl/token/${import.meta.env.VITE_APP_GEWIS_TOKEN}`;
+  window.location.href = `https://gewis.nl/token/${settingStore.getToken}`;
 };
 </script>
 

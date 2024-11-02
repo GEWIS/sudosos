@@ -12,22 +12,22 @@ export function getProductImageSrc(product: ProductResponse): string {
             return product.image;
         } else {
             // If product.image is not a URL, construct the URL
-            return `${import.meta.env.VITE_APP_IMAGE_BASE}products/${product.image}`;
+            return `${window.location.origin}/static/products/${product.image}`;
         }
     }
 }
 export function getBannerImageSrc(banner: BannerResponse): string {
-    return `${import.meta.env.VITE_APP_IMAGE_BASE}banners/${banner.image}`;
+    return `${window.location.origin}/static/banners/${banner.image}`;
 }
 
 export function getInvoicePdfSrc(pdf: string): string {
-    return `${import.meta.env.VITE_APP_IMAGE_BASE}invoices/${pdf}`;
+    return `${window.location.origin}/static/invoices/${pdf}`;
 }
 
 export function getPayoutPdfSrc(pdf: string): string {
-    return `${import.meta.env.VITE_APP_IMAGE_BASE}payouts/${pdf}`;
+    return `${window.location.origin}/static/payouts/${pdf}`;
 }
 
 export function getSellerPayoutPdfSrc(pdf: string): string {
-    return `${import.meta.env.VITE_APP_IMAGE_BASE}sellerPayouts/${pdf}`;
+    return `${window.location.origin}/static/sellerPayouts/${pdf}`;
 }

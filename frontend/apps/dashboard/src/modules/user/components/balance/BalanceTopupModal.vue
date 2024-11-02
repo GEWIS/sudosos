@@ -32,6 +32,7 @@ import apiService from '@/services/ApiService';
 import type { Dinero } from "@sudosos/sudosos-client";
 import { formatPrice } from "@/utils/formatterUtils";
 import { useI18n } from "vue-i18n";
+import { useSettingsStore } from "@/stores/settings.store";
 import { useToast } from "primevue/usetoast";
 
 const { t } = useI18n();
@@ -58,9 +59,10 @@ const toast = useToast();
 const stripe = ref();
 const paymentElement = ref();
 const elements = ref();
+const settingStore = useSettingsStore();
 onBeforeMount(async () => {
   loadStripe.setLoadParameters({ advancedFraudSignals: false });
-  stripe.value = await loadStripe(`${import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY}`);
+  stripe.value = await loadStripe(`${settingStore.getStripe}`);
 
 });
 
@@ -85,7 +87,7 @@ const submitPay = async () => {
   await stripe.value.confirmPayment({
     elements: elements.value,
     confirmParams: {
-      return_url: import.meta.env.VITE_APP_STRIPE_RETURN_URL
+      return_url: window.location.origin
     }
   }).then((result: PaymentIntentResult) => {
     if (result.error) {

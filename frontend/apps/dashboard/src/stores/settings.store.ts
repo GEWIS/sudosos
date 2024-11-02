@@ -4,16 +4,41 @@ import type { ServerStatusResponse } from '@sudosos/sudosos-client';
 
 export const useSettingsStore = defineStore('settings', {
   state: () => ({
-    settings: {} as ServerStatusResponse
+    status: {} as ServerStatusResponse,
+    token: "",
+    stripe: ""
   }),
   actions: {
     async fetchMaintenanceMode() {
-      this.settings.maintenanceMode = (await apiService.rootApi.ping()).data.maintenanceMode;
+      this.status.maintenanceMode = (await apiService.rootApi.ping()).data.maintenanceMode;
+    },
+    async fetchToken(){
+      await apiService.authenticate.getGEWISWebPublic().then((res) => {
+        this.token = res.data;
+        },
+      ).catch(() => {
+        this.status.maintenanceMode = true;
+      });
+    },
+    async fetchStripe(){
+      await apiService.stripe.getStripePublicKey().then((res) =>{
+        this.stripe = res.data;
+      });
+    },
+    async fetchKeys(){
+      await this.fetchToken();
+      await this.fetchStripe();
     }
   },
   getters: {
     activeSettings(): ServerStatusResponse {
-      return this.settings;
+      return this.status;
+    },
+    getToken(): String {
+      return this.token;
+    },
+    getStripe(): String {
+      return this.stripe;
     }
   }
 });

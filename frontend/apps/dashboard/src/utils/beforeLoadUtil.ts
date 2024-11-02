@@ -6,6 +6,7 @@ export default async function beforeLoad() {
 
   const settingsStore = useSettingsStore();
   await settingsStore.fetchMaintenanceMode();
+  await settingsStore.fetchKeys();
 
   await populateStoresFromToken(apiService).catch(() => {
     clearTokenInStorage();
