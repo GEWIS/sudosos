@@ -1,2 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg viewBox="-63.5807 -854.474 563.5807 2337.6194" width="563.581px" height="2337.62px" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path style="fill: rgb(212, 1, 0);" d="M 500 1483.145 C 500 1483.145 -57.571 463.418 -63.534 -49.427 C -69.497 -562.272 497.017 -854.474 497.017 -854.474" id="object-0" transform="matrix(1, 0, 0, 1, 2.2737367544323206e-13, 2.2737367544323206e-13)"/></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 624.78 2337.62">
+    <defs>
+        <style>
+            .cls-1 {
+            fill: #d40100;
+            stroke-width: 0px;
+            }
+        </style>
+    </defs>
+    <g id="Layer_1-2" data-name="Layer 1">
+        <path id="object-0" class="cls-1" d="m624.78,2337.62c-139.64,0-520.82-669.8-605.58-1531.68C-53.34,68.32,65.19,0,624.78,0"/>
+    </g>
+</svg>

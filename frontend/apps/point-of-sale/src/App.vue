@@ -1,6 +1,6 @@
 <template>
   <RouterView/>
-    <img class="image-underlay" src="@/assets/splash.svg" alt="Overlay Image" />
+  <img class="image-underlay" src="@/assets/splash.svg" alt="Overlay Image" />
 </template>
 
 <style lang="scss">
@@ -15,8 +15,8 @@
 
   position: fixed;
   top: -25%;
-  right: 0px;
+  right: -7%;
   height: 175%;
-  width: 33%;
+  width: 45%;
 }
 </style>
