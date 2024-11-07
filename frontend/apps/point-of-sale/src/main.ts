@@ -19,11 +19,13 @@ import router from './router';
 import App from './App.vue';
 import { useSettingStore } from "@/stores/settings.store";
 import Message from "primevue/message";
+import ToastService from "primevue/toastservice";
 
 const app = createApp(App);
 
 app.use(router);
 app.use(PrimeVue);
+app.use(ToastService);
 
 // eslint-disable-next-line
 app.component('Button', Button);

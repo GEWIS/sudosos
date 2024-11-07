@@ -40,7 +40,6 @@ const onInput = (event: KeyboardEvent): void => {
       captures = [];
   } else {
     captures.push(event);
-    console.log(captures);
   }
 };
 
