@@ -60,7 +60,8 @@ You can quickly start development directly in your browser by using [Codespaces]
 #### Step 1: Installing
 - Use git to [clone](https://github.com/git-guides#how-do-i-use-git) the repository.
 - Run `yarn install`
-- Copy the .env.example file to .env in the `apps/dashboard` and `apps/point-of-sale` directories
+- Copy the `.env.example` file to `.env` file in the `apps/dashboard` and `apps/point-of-sale` directories
+- Run `yarn build-libraries` to have the SudoSOS libraries also ready
 
 #### Step 2: Running the dashboard/point-of-sale
 - Run `yarn dev-dashboard` or `yarn dev-pos` to start the development environment.
