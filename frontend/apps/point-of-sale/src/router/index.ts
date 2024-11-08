@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { clearTokenInStorage, useAuthStore } from '@sudosos/sudosos-frontend-common';
 import LoginView from '@/views/LoginView.vue';
 import CashierView from '../views/CashierView.vue';
+import { getBasePath } from '@/utils/basePathUtils';
 
 const authGuard = (to: any, from: any, next: any) => {
   const authStore = useAuthStore();
@@ -16,8 +17,10 @@ const authGuard = (to: any, from: any, next: any) => {
   }
 };
 
+const baseUrl  = getBasePath();
+
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(baseUrl),
   routes: [
     {
       path: '/cashier',
@@ -29,7 +32,7 @@ const router = createRouter({
       path: '/',
       name: 'login',
       component: LoginView
-    }
+    },
   ]
 });
 

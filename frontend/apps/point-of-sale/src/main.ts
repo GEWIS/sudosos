@@ -1,4 +1,3 @@
-// import "bootstrap/dist/css/bootstrap.css";
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
 
@@ -15,8 +14,8 @@ import OverlayPanel from "primevue/overlaypanel";
 import Dropdown from "primevue/dropdown";
 import Toast from "primevue/toast";
 
-import router from './router';
-import App from './App.vue';
+import router from '@/router';
+import App from '@/App.vue';
 import { useSettingStore } from "@/stores/settings.store";
 import Message from "primevue/message";
 import ToastService from "primevue/toastservice";
