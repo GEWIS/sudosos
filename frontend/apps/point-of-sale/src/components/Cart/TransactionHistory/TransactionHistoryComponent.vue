@@ -8,7 +8,7 @@
 */
 <template>
   <div class="flex-column h-full gap-2 mt-2 overflow-y-auto">
-    <h class="font-medium text-xl">Recent Purchases:</h>
+    <h1 class="font-medium text-xl" v-if="transactions.length > 0">Recent Purchases:</h1>
     <TransactionHistoryRowComponent
       v-for="transaction in transactions"
       :key="transaction.id"

@@ -57,7 +57,7 @@ export const useCartStore = defineStore('cart', {
     async setBuyer(buyer: BaseUserResponse | null) {
       this.buyer = buyer;
       if (buyer) {
-        const response = await apiService.balance.getBalanceId(buyer.id);
+        const response = await apiService.balance.getBalanceId(buyer.id).catch(this.buyerBalance = null);
         this.buyerBalance = response.data.amount;
       } else {
         this.buyerBalance = null;
