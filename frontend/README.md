@@ -6,6 +6,7 @@
 <!-- Centered Name Beneath Logo -->
 <h1>SudoSOS Frontend Monorepo</h1>
 
+[![Uptime](https://uptime.gewis.nl/api/badge/2/uptime)](https://sudosos.gewis.nl/api/v1/ping)
 [![Build](https://img.shields.io/github/actions/workflow/status/GEWIS/sudosos-frontend/semver.yml?branch=main&label=Build)](https://github.com/GEWIS/sudosos-frontend/actions/workflows/semver.yml)
 [![Latest Release](https://img.shields.io/github/v/tag/GEWIS/sudosos-frontend?label=Latest)](https://github.com/GEWIS/sudosos-frontend/releases)
 [![Issues](https://img.shields.io/github/issues/GEWIS/sudosos-frontend)](https://github.com/GEWIS/sudosos-frontend/issues)
