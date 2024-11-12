@@ -8,7 +8,7 @@
       <link rel="manifest" href="favicon/manifest.json">
       <script>
           // @ts-ignore
-          window.__BASE_URL__ = ((path) => path !== '//' ? `/${path}/` : '/')
+          window.__BASE_URL__ = ((path) => path !== '' ? `/${path}/` : '')
           (window.location.pathname.split('/')[1] || '');
       </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>

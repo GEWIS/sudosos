@@ -36,7 +36,12 @@ export default defineConfig(({ mode }) => {
         '/api/v1': {
           target: PROXY_URL + '/api/v1',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
+          rewrite: (path) => path.replace(/^\/api\/v1/, ''),
+        },
+        '/static': {
+          target:  PROXY_URL + '/static',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/static/, ''),
         }
       }
     }
