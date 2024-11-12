@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app: [ dashboard, point-of-sale, point-of-sale-ab]
+        app: [ dashboard, point-of-sale ]
         include:
           - app: dashboard
             env_file_main: ${{ vars.ENV_FILE_PRODUCTION }}
@@ -30,13 +30,6 @@ jobs:
             docker_tag: ${{ vars.DOCKER_TAG_POS }}
             dockerfile_path: "apps/point-of-sale/Dockerfile"
             dir: "point-of-sale"
-          - app: point-of-sale-ab
-            env_file_main: ${{ vars.ENV_FILE_PRODUCTION }}
-            env_file_develop: ${{ vars.ENV_FILE_PRODUCTION }}
-            docker_tag: ${{ vars.DOCKER_TAG_POS }}-ab
-            dockerfile_path: "apps/point-of-sale/Dockerfile"
-            dir: "point-of-sale"
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
