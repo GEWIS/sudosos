@@ -22,7 +22,7 @@ export const useSettingsStore = defineStore('settings', {
     },
     async fetchStripe(){
       await apiService.stripe.getStripePublicKey().then((res) =>{
-        this.stripe = res.data;
+        this.stripe = (res.data as any).publicKey as string;
       });
     },
     async fetchKeys(){
