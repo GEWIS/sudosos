@@ -49,7 +49,6 @@ const app = createApp(App);
 
 app.use(i18n);
 app.use(createPinia());
-app.use(router);
 app.use(PrimeVue);
 
 app.use(ToastService);
@@ -85,5 +84,6 @@ app.component('ConfirmDialog', ConfirmDialog);
 app.component('Divider', Divider);
 
 beforeLoad().then(() => {
+  app.use(router);
   app.mount('#app');
 });
