@@ -6,8 +6,25 @@
   >
       <div class="flex flex-column justify-content-between gap-2">
         <UserEditForm :user="props.user" :form="form" :edit="edit" @update:edit="edit = $event"/>
+        <Divider />
+        <h4 class="mt-0">{{ t('modules.user.settings.apiKeys') }}</h4>
+        <div class="flex flex-row align-items-center w-11">
+          <p class="flex-grow-1 my-1">{{ t('modules.user.settings.changeApiKey') }}</p>
+          <i
+              class="pi pi-arrow-up-right text-gray-500 flex align-items-center cursor-pointer"
+              @click="confirmChangeApiKey()"
+          />
+        </div>
+        <div class="flex flex-row align-items-center w-11">
+          <p class="flex-grow-1 my-1">{{ t('modules.user.settings.deleteApiKey') }}</p>
+          <i
+              class="pi pi-arrow-up-right text-gray-500 flex align-items-center cursor-pointer"
+              @click="confirmDeleteApiKey()"
+          />
+        </div>
       </div>
   </FormCard>
+  <ConfirmDialog />
 </template>
 
 <script setup lang="ts">
@@ -18,8 +35,16 @@ import { schemaToForm } from "@/utils/formUtils";
 import { updateUserDetailsObject } from "@/utils/validation-schema";
 import UserEditForm from "@/modules/admin/components/users/forms/UserEditForm.vue";
 import { useI18n } from "vue-i18n";
+import apiService from "@/services/ApiService";
+import { handleError } from "@/utils/errorUtils";
+import { useConfirm } from "primevue/useconfirm";
+import { useUserStore } from "@sudosos/sudosos-frontend-common";
+import { useToast } from "primevue/usetoast";
 
 const { t } = useI18n();
+const confirm = useConfirm();
+const userStore = useUserStore();
+const toast = useToast();
 
 const props = defineProps({
   user: {
@@ -55,6 +80,50 @@ onMounted(() => {
     updateFieldValues(props.user);
   }
 });
+
+const confirmChangeApiKey = () => {
+  confirm.require({
+    message: t('modules.user.settings.confirmChangeApiKey'),
+    header: t('modules.user.settings.changeApiKey'),
+    icon: 'pi pi-exclamation-triangle',
+    accept: () => {
+      userStore.fetchUserApi(apiService, props.user.id)
+          .then((res) => {
+            toast.add({
+              severity: "success",
+              summary: t('common.toast.success.success'),
+              detail: `${t('common.toast.success.apiKeyChanged')} \n ${res.data.key}`,
+              life: 5000,
+            });
+          })
+          .catch((err) => {
+            handleError(err, toast);
+          });
+    },
+  });
+};
+
+const confirmDeleteApiKey = () => {
+  confirm.require({
+    message: t('modules.user.settings.confirmDeleteApiKey'),
+    header: t('modules.user.settings.deleteApiKey'),
+    icon: 'pi pi-exclamation-triangle',
+    accept: () => {
+      apiService.user.deleteUserKey(props.user.id)
+          .then(() => {
+            toast.add({
+              severity: "success",
+              summary: t('common.toast.success.success'),
+              detail: t('common.toast.success.apiKeyDeleted'),
+              life: 5000,
+            });
+          })
+          .catch((err) => {
+            handleError(err, toast);
+          });
+    },
+  });
+};
 </script>
 
 <style scoped lang="scss">

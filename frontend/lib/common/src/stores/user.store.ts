@@ -125,6 +125,9 @@ export const useUserStore = defineStore('user', {
         return res.data as GewisUserResponse;
       });
     },
+    async fetchUserApi(service: ApiService, id: number){
+      return (await service.user.updateUserKey(id));
+    },
     async waiveUserFine(id: number, amount: DineroObjectRequest, service: ApiService) {
       return service.user.waiveUserFines(id, {
         amount

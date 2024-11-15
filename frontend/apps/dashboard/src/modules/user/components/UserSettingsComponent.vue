@@ -87,6 +87,7 @@ import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import apiService from "@/services/ApiService";
 import { handleError } from "@/utils/errorUtils";
+import { useUserStore } from "@sudosos/sudosos-frontend-common";
 
 async function startScan() {
   if (!('NDEFReader' in window)) {
@@ -151,6 +152,7 @@ const editPin = ref(true);
 const confirm = useConfirm();
 const toast = useToast();
 const dataAnalysis = ref(props.user.extensiveDataProcessing);
+const userStore = useUserStore();
 
 const handleChangeDataAnalysis = (value: boolean) => {
   apiService.user.updateUser(props.user.id, { extensiveDataProcessing: value })
@@ -174,7 +176,7 @@ const confirmChangeApiKey = () => {
     header: t('modules.user.settings.changeApiKey'),
     icon: 'pi pi-exclamation-triangle',
     accept: () => {
-      apiService.user.updateUserKey(props.user.id)
+      userStore.fetchUserApi(apiService, props.user.id)
           .then((res) => {
             toast.add({
               severity: "success",
