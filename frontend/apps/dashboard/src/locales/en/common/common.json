@@ -106,8 +106,10 @@
             },
             "error": {
                 "error": "Error",
-                "scanNotStarted": "NFC scan not started, please check permission regarding NFC.",
-                "unsupported": "Your browser is not mobile and does not have Web NFC."
+                "scanNotStarted": "NFC scan not started, please check permissions regarding NFC.",
+                "desktopUnsupported": "NFC scans can only be done using a mobile phone.",
+                "androidUnsupported": "Only Chrome browsers support Web NFC.",
+                "iosUnsupported": "iOS does not support Web NFC."
             },
             "canceled": "Canceled",
             "reject": {
