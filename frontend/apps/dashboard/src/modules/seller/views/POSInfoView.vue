@@ -38,7 +38,7 @@ import type {
 } from '@sudosos/sudosos-client';
 import ContainerCard from '@/components/container/ContainersCard.vue';
 import router from '@/router';
-import apiService from '@/services/ApiService';
+import apiService, { DEFAULT_PAGINATION_MAX } from '@/services/ApiService';
 import { useContainerStore } from "@/stores/container.store";
 import MutationPOSCard from "@/components/mutations/MutationsPOS.vue";
 import CardComponent from "@/components/CardComponent.vue";
@@ -96,7 +96,7 @@ onMounted(async () => {
       apiService,
       id.value!,
       new Date(Date.now()-(7*24*60*60*1000)).toISOString(),
-      new Date().toISOString(), Number.MAX_SAFE_INTEGER, 0)).data.records;
+      new Date().toISOString(), DEFAULT_PAGINATION_MAX, 0)).data.records;
 
   for (let transaction of transactionsInLastWeek) {
     totalSales.value = totalSales.value.add(Dinero(transaction.value as Dinero.Options));

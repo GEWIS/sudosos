@@ -122,8 +122,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, type Ref, watch } from "vue";
-import apiService from '@/services/ApiService';
-import { DEFAULT_PAGINATION_MAX } from '@/services/ApiService';
+import apiService, { DEFAULT_PAGINATION_MAX } from '@/services/ApiService';
 import type { GewisUserResponse, UserResponse } from "@sudosos/sudosos-client";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -247,7 +246,8 @@ async function handleInfoPush(userId: number) {
       (record) => record.id == userId
   );
   if (clickedUser) userStore.addUser(clickedUser);
-  router.push({ name: 'user', params: { userId } });
+  const route = router.resolve({ name: 'user', params: { userId } });
+  window.open(route.href, '_blank');
 }
 </script>
 
