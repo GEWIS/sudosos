@@ -79,6 +79,7 @@ export const useActivityStore = defineStore('activity', {
 
     async onTimerEnd() {
       const cartStore = useCartStore();
+      if (cartStore.checkUnallowedUserInDebt()) return logoutService();
       if (useSettingStore().isBorrelmode) return;
       if (cartStore.cartTotalCount > 0 ) await useCartStore().checkout();
       await logoutService();

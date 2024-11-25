@@ -4,7 +4,7 @@ import {
   ContainerResponse,
   ProductResponse,
   SubTransactionRequest,
-  TransactionRequest,
+  TransactionRequest, UserResponse,
 } from '@sudosos/sudosos-client';
 import { SubTransactionRowRequest } from '@sudosos/sudosos-client/src/api';
 import { usePointOfSaleStore } from '@/stores/pos.store';
@@ -20,10 +20,10 @@ export interface CartProduct {
 
 interface CartState {
   products: CartProduct[]
-  buyer: BaseUserResponse | null
+  buyer: UserResponse | null
   buyerBalance: DineroObjectResponse | null
   createdBy: BaseUserResponse | null
-  lockedIn: BaseUserResponse | null
+  lockedIn: UserResponse | null
 }
 export const useCartStore = defineStore('cart', {
   state: (): CartState => ({
@@ -46,15 +46,15 @@ export const useCartStore = defineStore('cart', {
         return total + product.count * productPrice;
       }, 0);
     },
-    getBuyer(): BaseUserResponse | null {
+    getBuyer(): UserResponse | null {
       return this.buyer;
     }
   },
   actions: {
-    setLockedIn(lockedIn: BaseUserResponse | null) {
+    setLockedIn(lockedIn: UserResponse | null) {
       this.lockedIn = lockedIn;
     },
-    async setBuyer(buyer: BaseUserResponse | null) {
+    async setBuyer(buyer: UserResponse | null) {
       this.buyer = buyer;
       if (buyer) {
         const response = await apiService.balance.getBalanceId(buyer.id).catch(this.buyerBalance = null);
@@ -78,6 +78,16 @@ export const useCartStore = defineStore('cart', {
       } else {
         this.products.push(cartProduct);
       }
+    },
+    checkUnallowedUserInDebt(): boolean{
+      const buyer = this.buyer;
+      if (buyer) {
+        if (buyer.canGoIntoDebt) return false;
+        if (!this.buyerBalance) return false;
+
+        return (this.buyerBalance.amount - this.getTotalPrice) < 0;
+      }
+      return false;
     },
     removeFromCart(product: CartProduct): void {
       const index = this.products.findIndex(

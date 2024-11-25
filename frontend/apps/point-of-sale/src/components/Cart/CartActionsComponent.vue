@@ -1,4 +1,20 @@
 <template>
+  <Dialog
+    v-model:visible="showDebtWarningDialog"
+    header="Warning!"
+    :closable="true"
+    modal
+    :content-style="{ width: '35rem' }"
+    @click="resetDialog"
+    :pt="{
+        header: () => ({class: ['dialog-header']}),
+        closeButton: () => ({class: ['dialog-close']})}"
+  >
+    <Message severity="warn" :closable="false" :icon="undefined">
+      You cannot checkout as you are a user that cannot go into debt! <br>
+      Please remove items before you can continue.
+    </Message>
+  </Dialog>
   <div class="flex justify-content-between w-full">
     <button
         class="c-btn rounder font-medium checkout text-3xl"
@@ -28,7 +44,6 @@ const cartStore = useCartStore();
 const cartItems = cartStore.getProducts;
 const borrelMode = computed(() => settings.isBorrelmode);
 const sound = ref<HTMLAudioElement | null>(null);
-
 const buyer = computed(() => cartStore.getBuyer);
 
 const checkoutText = computed(() => {
@@ -41,6 +56,14 @@ const checkoutText = computed(() => {
 const enabled = computed(() => {
   return cartItems.length > 0 && buyer.value;
 });
+const unallowedUserInDebt = computed(() => cartStore.checkUnallowedUserInDebt());
+const showDebtWarning = ref(true);
+const showDebtWarningDialog = computed(() => {
+  return unallowedUserInDebt.value && showDebtWarning.value;
+});
+const resetDialog = () => {
+  showDebtWarning.value = false;
+};
 
 const duration = ref(3);
 const checkingOut = ref(false);
@@ -68,11 +91,14 @@ watch(cartItems, () => {
 });
 
 const finalizeCheckout = async () => {
+  if (unallowedUserInDebt.value) return stopCheckout();
+
   stopCheckout();
   if (sound.value) {
     sound.value = new Audio('sounds/rct-cash.wav');
     sound.value.play();
   }
+
   await cartStore.checkout();
   checkingOut.value = false;
   duration.value = 3;
@@ -80,7 +106,7 @@ const finalizeCheckout = async () => {
 };
 const checkout = async () => {
   if (!enabled.value) return;
-
+  if (unallowedUserInDebt.value) return stopCheckout();
 
   if (borrelMode.value) {
     emit('selectCreator');
@@ -119,5 +145,13 @@ const checkout = async () => {
   &.disabled {
     background-color: grey;
   }
+}
+.dialog-header {
+  background: var(--accent-color)!important;
+  color: white!important;
+}
+
+.dialog-close {
+  color: white!important;
 }
 </style>
