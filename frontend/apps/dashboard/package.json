@@ -15,7 +15,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@stripe/stripe-js": "^4.8.0",
+    "@stripe/stripe-js": "^5.2.0",
     "@sudosos/sudosos-frontend-common": "workspace:^",
     "@vee-validate/rules": "^4.14.1",
     "@vee-validate/yup": "^4.14.1",
