@@ -136,15 +136,15 @@
             "signOut": "Sign out",
             "dutch": "Dutch",
             "english": "English",
-            "userOverview": "User overview",
+            "users": "Users",
             "banners": "Banners",
             "socialDrinkCards": "Social drink cards",
             "invoices": "Invoices",
             "payouts": "Payouts",
-            "manageProducts": "Manage products",
-            "posOverview": "POS overview",
+            "productsContainers": "Products & containers",
+            "pos": "Points of sale",
             "flaggedTransactions": "Flagged transactions",
-            "fineOverview": "Fine overview"
+            "fines": "Fines"
         },
         "validation": {
             "number": {

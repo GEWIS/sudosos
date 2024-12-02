@@ -17,9 +17,9 @@ export function userRoutes(): RouteRecordRaw[] {
           name: 'home'
         },
         {
-          path: '/transactions',
+          path: '/transaction',
           component: UserTransactionsView,
-          name: 'transaction-view'
+          name: 'transactions'
         },
         {
           path: '/profile',

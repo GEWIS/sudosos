@@ -13,8 +13,8 @@ export function adminRoutes(): RouteRecordRaw[] {
       meta: { requiresAuth: true },
       children: [
         {
-          path: '/user-overview',
-          name: 'userOverview',
+          path: '/user',
+          name: 'users',
           component: AdminUserOverView,
           meta: {
             requiresAuth: true,
@@ -22,7 +22,7 @@ export function adminRoutes(): RouteRecordRaw[] {
           }
         },
         {
-          path: '/banners',
+          path: '/banner',
           component: AdminBannersView,
           name: 'banners',
           meta: {

@@ -160,19 +160,19 @@ onBeforeMount(async () => {
 const navItems = computed(() => [
   {
     label: t('common.navigation.transactions'),
-    route: '/transactions'
+    route: '/transaction'
   },
   {
     label: t('common.navigation.admin'),
     visible: isBoard(),
     items: [
       {
-        label: t('common.navigation.userOverview'),
-        route: '/user-overview'
+        label: t('common.navigation.users'),
+        route: '/user'
       },
       {
         label: t('common.navigation.banners'),
-        route: '/banners'
+        route: '/banner'
       },
     ],
   },
@@ -182,26 +182,20 @@ const navItems = computed(() => [
     notifications: getFinancialNotifications(),
     items: [
       {
-        label: t('common.navigation.userOverview'),
-        route: '/user-overview',
-      },
-      {
-        label: t('common.navigation.flaggedTransactions'),
-      },
-      {
-        label: t('common.navigation.socialDrinkCards'),
+        label: t('common.navigation.users'),
+        route: '/user',
       },
       {
         label: t('common.navigation.invoices'),
         route: '/invoice',
       },
       {
-        label: t('common.navigation.fineOverview'),
+        label: t('common.navigation.fines'),
         route: '/fine',
       },
       {
         label: t('common.navigation.payouts'),
-        route: '/payouts',
+        route: '/payout',
         notifications: pendingPayouts?.value
       }
     ]
@@ -211,12 +205,12 @@ const navItems = computed(() => [
     visible: isSeller(),
     items: [
       {
-        label: t('common.navigation.manageProducts'),
-        route: '/manage-products',
+        label: t('common.navigation.productsContainers'),
+        route: '/product',
       },
       {
-        label: t('common.navigation.posOverview'),
-        route: '/point-of-sale/overview',
+        label: t('common.navigation.pos'),
+        route: '/point-of-sale',
       },
         ...organs.value,
     ]

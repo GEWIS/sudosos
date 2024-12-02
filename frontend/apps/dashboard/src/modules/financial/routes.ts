@@ -17,7 +17,7 @@ export function financialRoutes(): RouteRecordRaw[] {
         {
           path: '/fine',
           component: FineView,
-          name: 'fine',
+          name: 'fines',
           meta: {
             requiresAuth: true,
             rolesAllowed: [UserRole.BAC_PM]
@@ -26,7 +26,7 @@ export function financialRoutes(): RouteRecordRaw[] {
         {
           path: '/invoice',
           component: InvoiceOverview,
-          name: 'invoice',
+          name: 'invoices',
           meta: {
             requiresAuth: true,
             rolesAllowed: [UserRole.BAC_PM]
@@ -63,7 +63,7 @@ export function financialRoutes(): RouteRecordRaw[] {
           }
         },
         {
-          path: '/payouts',
+          path: '/payout',
           component: PayoutsView,
           name: 'payouts',
           meta: {

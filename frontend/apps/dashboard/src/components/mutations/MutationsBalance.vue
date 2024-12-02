@@ -3,7 +3,7 @@
       :header="t('components.mutations.balance')"
       class="w-full"
       :action="simple ? undefined: t('components.mutations.all')"
-      :routerLink="simple ? undefined : 'transaction-view'"
+      :routerLink="simple ? undefined : 'transactions'"
 
   >
     <DataTable :rows="rows" :value="mutations" :rowsPerPageOptions="[5, 10, 25, 50, 100]" :paginator="paginator" lazy

@@ -24,17 +24,17 @@ export function sellerRoutes(): RouteRecordRaw[] {
           }
         },
         {
-          path: '/manage-products',
+          path: '/product',
           component: ProductsContainersView,
-          name: 'products-containers-overview',
+          name: 'products',
           meta: {
             requiresAuth: true,
             rolesAllowed: [UserRole.SELLER]
           }
         },
         {
-          path: '/point-of-sale/overview',
-          name: 'pointOfSale',
+          path: '/point-of-sale',
+          name: 'pointsOfSale',
           component: POSOverviewView,
           meta: {
             requiresAuth: true,
