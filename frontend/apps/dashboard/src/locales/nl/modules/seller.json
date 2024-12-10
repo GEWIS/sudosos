@@ -20,7 +20,8 @@
           "public": "Openbaar",
           "container": "Container",
           "create": "Container aanmaken",
-          "edit": "Container bewerken"
+          "edit": "Container bewerken",
+          "view": "Container bekijken"
         },
         "products": {
           "header": "Alle producten",

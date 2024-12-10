@@ -1,6 +1,8 @@
 <template>
-  <FormDialog :header="t('modules.seller.productContainers.containers.addExisting')" v-model:modelValue="isVisible"
-              :form="form">
+  <FormDialog :header="t('modules.seller.productContainers.containers.addExisting')"
+              v-model:modelValue="isVisible"
+              :form="form"
+              :is-editable="true">
     <template #form="slotProps">
       <POSAddContainerForm :form="slotProps.form" :associatedPos="associatedPos" v-model:isVisible="isVisible"/>
     </template>

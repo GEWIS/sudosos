@@ -9,15 +9,14 @@
 
 <script setup lang="ts">
 import POSOverviewTable from "@/modules/seller/components/POSOverviewTable.vue";
-import { computed } from "vue";
 import { useUserStore } from "@sudosos/sudosos-frontend-common";
-import { UserRole } from "@/utils/rbacUtils";
 import { usePointOfSaleStore } from "@/stores/pos.store";
 import type { PaginatedPointOfSaleResponse } from "@sudosos/sudosos-client";
 import router from "@/router";
 import { handleError } from "@/utils/errorUtils";
 import { useToast } from "primevue/usetoast";
 import { useI18n } from "vue-i18n";
+import { isAllowed } from "@/utils/permissionUtils";
 
 const { t } = useI18n();
 
@@ -26,10 +25,6 @@ const userStore = useUserStore();
 
 const toast = useToast();
 
-const isBacPM = computed(() => {
-  return userStore.current.rolesWithPermissions.findIndex(r => r.name == UserRole.BAC_PM) != -1;
-});
-
 const getPointsOfSale = async (take: number, skip: number):
     Promise<PaginatedPointOfSaleResponse | undefined> => {
   if (!userStore.getCurrentUser) {
@@ -37,7 +32,10 @@ const getPointsOfSale = async (take: number, skip: number):
     return;
   }
   let pointsOfSale;
-  if (isBacPM.value) {
+  // If you can get all point of sales, render them. Otherwise only the user ones.
+  console.log(isAllowed('get', ['all'], 'PointOfSale', ['any']));
+  // TODO: Change to `action: get` after https://github.com/GEWIS/sudosos-backend/issues/62 is fully finished
+  if (isAllowed('update', ['all'], 'PointOfSale', ['any'])) {
     pointsOfSale = await pointOfSaleStore.getPointsOfSale(take, skip)
         .catch((err) => handleError(err, toast));
   } else {

@@ -2,7 +2,12 @@
   <CardComponent :header="t('modules.seller.posOverview.list.header')" class="w-full">
     <template #topAction>
       <div class="flex flex-row align-items-center justify-content-end">
-        <Button :label="t('common.create')" icon="pi pi-plus" @click="openCreatePOSModal"/>
+        <Button
+            :label="t('common.create')"
+            icon="pi pi-plus"
+            @click="openCreatePOSModal"
+            v-if="isAllowed('create', ['own', 'organ'], 'PointOfSale', ['any'])"
+        />
       </div>
     </template>
     <DataTable :rows="rows" :value="pointOfSales" :rowsPerPageOptions="[5, 10, 25, 50, 100]" paginator lazy
@@ -44,6 +49,7 @@ import Skeleton from "primevue/skeleton";
 import router from "@/router";
 import POSCreateModal from "@/modules/seller/components/POSCreateModal.vue";
 import { useI18n } from "vue-i18n";
+import { isAllowed } from "@/utils/permissionUtils";
 
 const { t } = useI18n();
 

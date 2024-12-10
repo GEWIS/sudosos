@@ -6,14 +6,16 @@
         @update:value="form.context.setFieldValue('name', $event)"
         :errors="form.context.errors.value.name"
         id="name" :placeholder="t('common.name')"
-        :label="t('common.name')"/>
+        :label="t('common.name')"
+        :disabled="!isEditable"
+    />
 
     <InputOrganSpan
         :organ="form.model.owner.value.value"
         :organs="!isOrganEditable
                         ? [form.model.owner.value.value]
                         : undefined"
-        :disabled="!isOrganEditable"
+        :disabled="!isEditable || !isOrganEditable"
         :attributes="form.model.owner.attr.value"
         @update:organ="form.context.setFieldValue('owner', $event)"
         :errors="form.context.errors.value.owner"
@@ -27,6 +29,7 @@
         :errors="form.context.errors.value.public"
         id="public" :placeholder="t('modules.seller.productContainers.containers.public')"
         :label="t('modules.seller.productContainers.containers.public')" type="boolean"
+        :disabled="!isEditable"
       />
   </div>
 </template>
@@ -44,6 +47,7 @@ const { t } = useI18n();
 defineProps<{
   form: Form<yup.InferType<typeof containerActionSchema>>,
   isOrganEditable?: boolean,
+  isEditable: boolean
 }>();
 
 </script>

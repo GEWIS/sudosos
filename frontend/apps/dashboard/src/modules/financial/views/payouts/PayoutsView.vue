@@ -18,7 +18,7 @@
         </TabPanel>
       </TabView>
     </div>
-    <FormDialog v-model="showDialog" :form="form" :header="t('modules.financial.payout.create')">
+    <FormDialog v-model="showDialog" :form="form" :header="t('modules.financial.payout.create')" :is-editable="false">
       <template #form="slotProps">
         <PayoutCreateForm :form="slotProps.form" @submit:success="showDialog = false"/>
       </template>

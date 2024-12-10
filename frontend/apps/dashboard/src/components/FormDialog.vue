@@ -11,7 +11,7 @@
     <slot name="form" :form="form" />
     <div class="flex flex-row gap-2 justify-content-between w-full mt-3">
       <Button
-          v-if="deletable"
+          v-if="isEditable && deletable"
           type="button"
           icon="pi pi-trash"
           :label="deleteLabel || t('common.delete')"
@@ -19,6 +19,7 @@
           @click="emits('delete')"/>
       <div class="flex flex-row justify-content-end gap-2 flex-1">
         <Button
+            v-if="isEditable"
             type="button"
             outlined
             icon="pi pi-times"
@@ -26,6 +27,7 @@
             @click="visible = false; emits('close')"
         />
         <Button
+            v-if="isEditable"
             type="submit"
             icon="pi pi-check"
             :disabled="!props.form.context.meta.value.valid"
@@ -59,6 +61,10 @@ const props = defineProps({
     required: false,
     default: '',
   },
+  isEditable: {
+    type: Boolean,
+    required: true
+  },
   deletable: {
     type: Boolean,
     required: false,
@@ -69,7 +75,6 @@ const props = defineProps({
     required: false
   }
 });
-
 
 const emits = defineEmits(['update:modelValue', 'show', 'close', 'delete']);
 

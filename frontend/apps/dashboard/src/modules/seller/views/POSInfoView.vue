@@ -5,7 +5,8 @@
       <div class="flex flex-column md:flex-row gap-5 justify-content-between align-items-stretch w-12">
         <POSSettingsCard :pos-id="id!" class="flex-1 h-12" />
         <CardComponent :header="t('modules.seller.singlePos.sales')" class="flex-1" >
-          <div class="h-12 text-center text-5xl pb-3">{{ formattedTotalSales }}</div>
+          <div class="h-12 text-center text-5xl pb-3" v-if="canLoadTransactions">{{ formattedTotalSales }}</div>
+          <div v-else>{{ t('common.permissionMessages.transactions') }}</div>
         </CardComponent>
       </div>
       <ContainerCard
@@ -14,14 +15,17 @@
         :containers="posContainers"
         show-create
         :associatedPos="pointsOfSaleWithContainers[id!]"
+        :pos-edit-allowed="canEditPos"
       />
       <CardComponent :header="t('components.mutations.recent')">
         <MutationPOSCard
+            v-if="canLoadTransactions"
           class="pos-transactions"
           :get-mutations="getPOSTransactions"
           paginator
           style="width: 100% !important"
         />
+        <div v-else>{{ t('common.permissionMessages.transactions') }}</div>
       </CardComponent>
     </div>
   </div>
@@ -49,6 +53,7 @@ import Dinero from "dinero.js";
 import { type StoreGeneric, storeToRefs } from "pinia";
 import { useI18n } from "vue-i18n";
 import { type ContainerWithProductsResponse } from "@sudosos/sudosos-client/src/api";
+import { getRelation, isAllowed } from "@/utils/permissionUtils";
 
 const route = useRoute(); // Use the useRoute function to access the current route
 const id = ref<number>();
@@ -60,10 +65,20 @@ const containerStore = useContainerStore();
 
 const { t } = useI18n();
 
+const canEditPos = computed(() => {
+  return pointsOfSaleWithContainers.value[id.value!] &&
+  isAllowed('update', [getRelation(pointsOfSaleWithContainers.value[id.value!].owner!.id)], 'PointOfSale', ['any']);
+});
+
 const posName = computed(() => {
   return id.value && pointsOfSaleWithContainers.value[id.value]
   ? pointsOfSaleWithContainers.value[id.value].name
   : t('common.loading');
+});
+
+const canLoadTransactions = computed(() => {
+  if (pointsOfSaleWithContainers.value[id.value!] == undefined) return false;
+  return isAllowed('get', [getRelation(pointsOfSaleWithContainers.value[id.value!].owner!.id)], 'Transaction', ['any']);
 });
 
 // Fetch containers from the container store, then the ContainerCard will be reactive.
@@ -91,6 +106,7 @@ const formattedTotalSales = computed(() => {
 });
 
 onMounted(async () => {
+  if (!canLoadTransactions.value) return;
   const transactionStore = useTransactionStore();
   const transactionsInLastWeek = (await transactionStore.fetchTransactionsFromPointOfSale(
       apiService,

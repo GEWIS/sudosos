@@ -20,7 +20,8 @@
           "public": "Public",
           "container": "Container",
           "create": "Create container",
-          "edit": "Edit container"
+          "edit": "Edit container",
+          "view": "View container"
         },
         "products": {
           "header": "All products",

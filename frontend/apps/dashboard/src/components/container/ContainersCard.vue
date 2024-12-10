@@ -3,10 +3,15 @@
     <template #topAction>
       <div v-if="showCreate || associatedPos" class="flex justify-content-endg gap-2">
         <Button
-            v-if="associatedPos"
+            v-if="posEditAllowed && associatedPos"
             @click="openContainerAdd()"
             outlined>{{ t('modules.seller.productContainers.containers.addExisting') }}</Button>
-        <Button @click="openContainerEdit()">{{ t('common.create') }}</Button>
+        <Button
+            @click="openContainerEdit()"
+            v-if="isAllowed('create', ['own', 'organ'], 'Container', ['any'])"
+        >
+          {{ t('common.create') }}
+        </Button>
       </div>
     </template>
     <Accordion :activeIndex="0" class="block w-full" :multiple="true"
@@ -18,10 +23,21 @@
               {{ container.name }}
             </span>
             <div>
-              <div @click="(event) => handleEditClick(event, container.id)" class="px-5">
+              <div
+                  @click="(event) => handleEditClick(event, container.id)"
+                  class="px-5"
+              >
                 <span class="mr-4 text-xs uppercase" v-if="container.public">
                   {{ t('modules.seller.productContainers.containers.public') }}
-                <i class="pi pi-pencil"/>
+                  <i
+                      class="pi pi-pencil"
+                      v-if="isAllowed('update', ['own', 'organ'], 'Container', ['any'])"
+                  />
+                  <i
+                     class="pi pi-info-circle"
+                      v-else
+                  />
+
                 </span>
               </div>
             </div>
@@ -33,7 +49,9 @@
     <ContainerActionsDialog
         :container="selectedContainer"
         v-model:visible="visible"
-        :associatedPos="associatedPos"/>
+        :associatedPos="associatedPos"
+        :is-edit-allowed="isAllowed('update', ['own', 'organ'], 'Container', ['any'])"
+    />
     <!-- For rendering in the point of sale view -->
     <POSAddContainerModal
         v-if="associatedPos"
@@ -53,6 +71,7 @@ import ContainerActionsDialog from "@/components/container/ContainerActionsDialo
 import type { ContainerWithProductsResponse, PointOfSaleWithContainersResponse } from "@sudosos/sudosos-client";
 import POSAddContainerModal from "@/modules/seller/components/POSAddContainerModal.vue";
 import { useI18n } from "vue-i18n";
+import { isAllowed } from "@/utils/permissionUtils";
 
 const visible = ref(false);
 const POSAddContainerIsVisible = ref(false);
@@ -69,6 +88,10 @@ const props = defineProps({
   },
   associatedPos: {
     type: Object as PropType<PointOfSaleWithContainersResponse>,
+    required: false
+  },
+  posEditAllowed: {
+    type: Boolean,
     required: false
   }
 });

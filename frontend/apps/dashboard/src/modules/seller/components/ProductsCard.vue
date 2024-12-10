@@ -2,10 +2,19 @@
   <CardComponent :header="t('modules.seller.productContainers.products.header')" class="w-full">
     <template #topAction>
       <div>
-        <Button @click="openCreateModal">{{ t('common.create') }}</Button>
+        <Button
+            @click="openCreateModal"
+            v-if="isAllowed('create', ['own', 'organ'], 'Product')"
+        >
+          {{ t('common.create') }}
+        </Button>
       </div>
     </template>
-    <ProductActionDialog v-model:visible="visible" :product="product"/>
+    <ProductActionDialog
+        v-model:visible="visible"
+        :product="product"
+        :is-update-allowed="isAllowed('update', ['own', 'organ'], 'Product')"
+    />
     <DataTable
         v-model:filters="filters"
         :value="products"
@@ -31,28 +40,19 @@
       </template>
       <Column field="image" :header="t('modules.seller.productContainers.products.image')">
         <template #body="rowDataImg" v-if="!loading">
-          <div
-              class="h-4rem flex justify-content-center align-items-center background-white
-                   w-4rem mx-1 cursor-pointer image-preview-container">
-            <div class="h-4rem w-4rem">
-              <img :src="getProductImageSrc(rowDataImg.data)" alt="img" class="h-4rem w-4rem product-image"/>
-            </div>
-            <button
-                ref="previewButton"
-                type="button"
-                class="image-preview-indicator p-image-preview-indicator fileupload"
-                @click="triggerFileInput(rowDataImg.data.id)"
-            >
-              <i class="pi pi-upload"></i>
-              <input
-                  :ref="(el) => (fileInputs[rowDataImg.data.id] = el)"
-                  type="file"
-                  accept="image/*"
-                  id="fileInput"
-                  @change="(e) => onImgUpload(e, rowDataImg.data.id)"
-              />
-            </button>
-          </div>
+          <Image
+              :src="getProductImageSrc(rowDataImg.data)" preview
+              class="h-4rem w-4rem image-preview-container"
+              :pt="{
+                image: {
+                  class: 'h-4rem w-4rem',
+                  style: {
+                    'object-fit': 'contain',
+                    'box-sizing': 'border-box'
+                  }
+                }
+              }"
+          />
         </template>
         <template #body v-else>
           <Skeleton class="w-8 my-1 h-4rem surface-300"/>
@@ -134,14 +134,13 @@ import { useProductStore } from "@/stores/product.store";
 import { FilterMatchMode } from "primevue/api";
 import ProductActionDialog from "@/modules/seller/components/ProductActionDialog.vue";
 import { useI18n } from "vue-i18n";
+import { isAllowed } from "@/utils/permissionUtils";
 
 const { t } = useI18n();
 
 const loading: Ref<boolean> = ref(true);
 const visible: Ref<boolean> = ref(false);
 const product: Ref<ProductResponse | undefined> = ref(undefined);
-const fileInputs: Ref<{ [key: number]: any }> = ref({});
-
 const productStore = useProductStore();
 
 const products = computed<ProductResponse[]>(() => Object.values(productStore.getAllProducts)
@@ -156,17 +155,6 @@ onBeforeMount(async () => {
   await productStore.fetchAllIfEmpty();
   loading.value = false;
 });
-
-const triggerFileInput = (id: number) => {
-  if (fileInputs.value[id]) {
-    fileInputs.value[id].click();
-  }
-};
-const onImgUpload = async (event: Event, productId: number) => {
-  const el = (event.target as HTMLInputElement);
-  if (el == null || el.files == null || el.files.length === 0) return;
-  await productStore.updateProductImage(productId, el.files[0]);
-};
 
 const openCreateModal = () => {
   product.value = undefined;

@@ -107,7 +107,7 @@
       </DataTable>
     </CardComponent>
     <FormDialog :header="t('modules.admin.forms.user.header')" v-model:modelValue="showDialog"
-                :form="form" >
+                :form="form" :is-editable="true">
       <template #form="slotProps">
         <UserCreateForm
             :form="slotProps.form"

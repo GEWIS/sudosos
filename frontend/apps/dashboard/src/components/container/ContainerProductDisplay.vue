@@ -11,7 +11,12 @@
       </div>
       <p class="text-center m-2 text-base text-overflow-ellipsis font-bold">{{ product.name }}</p>
   </div>
-  <ProductActionDialog :container="container" v-model:visible="visible" :product="product"/>
+  <ProductActionDialog
+      :container="container"
+      v-model:visible="visible"
+      :product="product"
+      :is-update-allowed="isAllowed('update', ['own', 'organ'], 'Product')"
+  />
 </template>
 
 <script setup lang="ts">
@@ -20,6 +25,7 @@ import { getProductImageSrc } from "@/utils/urlUtils";
 import { computed, ref } from "vue";
 import ProductActionDialog from "@/modules/seller/components/ProductActionDialog.vue";
 import { useI18n } from "vue-i18n";
+import { isAllowed } from "@/utils/permissionUtils";
 
 const visible = ref(false);
 const imageSrc = computed(() => getProductImageSrc(props.product));

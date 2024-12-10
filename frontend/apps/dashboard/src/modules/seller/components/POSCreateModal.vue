@@ -1,6 +1,6 @@
 <template>
   <FormDialog :header="t('modules.seller.forms.pos.create')" v-model:modelValue="isVisible"
-              :form="form">
+              :form="form" :is-editable="true">
     <template #form="slotProps">
       <POSCreateForm :form="slotProps.form" v-model:isVisible="isVisible"/>
     </template>

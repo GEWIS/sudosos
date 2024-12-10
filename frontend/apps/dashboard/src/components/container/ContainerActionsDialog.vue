@@ -7,9 +7,11 @@
    @close="closeDialog()"
    @delete="deleteProduct()"
    :deletable="state.edit"
+   :is-editable="state.edit || state.create"
   >
     <template #form>
       <ContainerActionsForm
+          :is-editable="state.edit || state.create"
           :is-organ-editable="state.create"
           :form="form"/>
       <ConfirmDialog group="containerDelete"/>
@@ -44,6 +46,10 @@ const props = defineProps({
   associatedPos: {
     type: Object as PropType<PointOfSaleWithContainersResponse>,
     required: false
+  },
+  isEditAllowed: {
+    type: Boolean,
+    required: false
   }
 });
 
@@ -56,13 +62,13 @@ const toast = useToast();
 const state = computed(() => {
   return {
     create: props.container == undefined,
-    edit: props.container != undefined,
+    edit: props.container != undefined && props.isEditAllowed
   };
 });
 const header = computed(() => {
   if (state.value.create) return t('modules.seller.productContainers.containers.create');
   if (state.value.edit) return t('modules.seller.productContainers.containers.edit');
-  return '';
+  return t('modules.seller.productContainers.containers.view');
 });
 
 const form = schemaToForm(containerActionSchema);

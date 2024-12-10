@@ -1,10 +1,12 @@
 <template>
   <FormCard :header="t('modules.seller.forms.pos.overview')" v-if="pointOfSale" @cancel="updateFieldValues(pointOfSale)"
-            @update:modelValue="edit = $event" @save="formSubmit">
+            @update:modelValue="edit = $event" @save="formSubmit"
+            :enableEdit="isAllowed('update', ['own', 'organ'], 'PointOfSale', ['any'])">
     <div class="flex flex-column justify-content-between gap-2">
       <POSSettingsForm :point-of-sale="pointOfSale" :form="form" :edit="edit" @update:edit="edit = $event"/>
       <div class="flex flex-row justify-content-end">
         <Button
+            v-if="isAllowed('delete', ['own', 'organ'], 'PointOfSale', ['any'])"
             :disabled="!edit"
             @click="handleDelete"
             icon="pi pi-trash"
@@ -30,6 +32,7 @@ import router from "@/router";
 import { useI18n } from "vue-i18n";
 import { useToast } from "primevue/usetoast";
 import { handleError } from "@/utils/errorUtils";
+import { isAllowed } from "@/utils/permissionUtils";
 
 const confirm = useConfirm();
 

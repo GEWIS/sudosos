@@ -36,6 +36,9 @@ export const useAuthStore = defineStore({
     },
     getUser(): UserResponse | null {
       return this.user;
+    },
+    getOrgans(): UserResponse[] | null {
+      return this.organs;
     }
   },
   actions: {

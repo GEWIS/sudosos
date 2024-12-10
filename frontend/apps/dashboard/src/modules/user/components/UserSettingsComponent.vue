@@ -61,6 +61,7 @@
       v-model="showPasswordDialog"
       :form="passwordForm"
       :header="t('modules.user.settings.changePassword')"
+      :is-editable="true"
   >
     <template #form="slotProps">
       <ChangePasswordForm :form="slotProps.form" @submit:success="showPasswordDialog = false"/>

@@ -165,6 +165,9 @@
             }
         },
         "apiError": "Fout",
-        "errorMessage": "Er is iets misgegaan, open een issue op {link} en beschrijf het probleem."
+        "errorMessage": "Er is iets misgegaan, open een issue op {link} en beschrijf het probleem.",
+        "permissionMessages": {
+            "transactions": "Je mag deze transacties niet bekijken."
+        }
     }
 }

@@ -5,8 +5,9 @@
               @show="openDialog()"
               @close="closeDialog()"
               @delete="deleteProduct()"
-              :deletable="product != null"
+              :deletable="props.product != null"
               :delete-label="deleteLabel"
+              :is-editable="props.isUpdateAllowed"
   >
     <template #form>
       <div class="flex flex-column gap-1">
@@ -37,15 +38,15 @@
               <!-- Row for Added on -->
               <div v-if="state.displayProduct" class="flex flex-row flex-wrap justify-content-between">
                 <h4 class="my-0">{{ t("common.createdAt") }}</h4>
-                <p class="my-0" v-if="product">
-                  {{ formatDateTime(new Date(product.createdAt ? product.createdAt.toString() : '')) }}</p>
+                <p class="my-0" v-if="props.product">
+                  {{ formatDateTime(new Date(props.product.createdAt ? props.product.createdAt.toString() : '')) }}</p>
               </div>
 
               <!-- Row for Updated on -->
               <div v-if="state.displayProduct" class="flex flex-row flex-wrap justify-content-between">
                 <h4 class="my-0">{{ t("common.updatedAt") }}</h4>
-                <p class="my-0" v-if="product">
-                  {{ formatDateTime(new Date(product.updatedAt ? product.updatedAt.toString() : '')) }}</p>
+                <p class="my-0" v-if="props.product">
+                  {{ formatDateTime(new Date(props.product.updatedAt ? props.product.updatedAt.toString() : '')) }}</p>
               </div>
             </div>
           </div>
@@ -98,6 +99,9 @@ const props = defineProps({
   product: {
     type: Object as PropType<ProductResponse | undefined>,
   },
+  isUpdateAllowed: {
+    type: Boolean
+  }
 });
 
 const visible = defineModel<boolean>('visible', { required: true });
@@ -206,7 +210,7 @@ watch(selectExistingProduct, () => {
 });
 
 // We don't allow editing of dropdown products
-const isProductEditable = computed(() => selectExistingProduct.value == null);
+const isProductEditable = computed(() => props.isUpdateAllowed && selectExistingProduct.value == null);
 
 setSubmit(form, form.context.handleSubmit(async (values) => {
   let createdProduct;

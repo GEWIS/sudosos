@@ -1,5 +1,7 @@
 <template>
-  <FormDialog :header="t('modules.admin.singleUser.balance.waiveFines')" v-model:modelValue="isVisible"
+  <FormDialog :header="t('modules.admin.singleUser.balance.waiveFines')"
+              v-model:modelValue="isVisible"
+              :is-editable="true"
               :form="form">
     <template #form="slotProps">
       <div>

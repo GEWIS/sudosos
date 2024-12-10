@@ -165,6 +165,9 @@
             }
         },
         "apiError": "Error",
-        "errorMessage": "Something is going wrong, please open an issue on {link} describing the issue."
+        "errorMessage": "Something is going wrong, please open an issue on {link} describing the issue.",
+        "permissionMessages": {
+            "transactions": "You are not allowed to view these transactions."
+        }
     }
 }
