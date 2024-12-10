@@ -140,7 +140,8 @@ const resetPassword = () => {
 };
 
 const toHomeView = () => {
-  router.push({ name: 'home' });
+  router.push(sessionStorage.getItem('fromPath') || { name: 'home' });
+  sessionStorage.removeItem('fromPath');
 };
 </script>
 

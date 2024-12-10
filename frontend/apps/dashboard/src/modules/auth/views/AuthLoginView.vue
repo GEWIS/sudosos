@@ -51,7 +51,8 @@ onBeforeMount(() => {
     const token = route.query.token as string;
     authStore.gewisWebLogin(crypto.randomUUID(), token, apiService)
     .then(() => {
-      router.push('/');
+      router.push(sessionStorage.getItem('fromPath') || '/');
+      sessionStorage.removeItem('fromPath');
     })
     .catch(() => {
       router.replace({ path: "/error" });

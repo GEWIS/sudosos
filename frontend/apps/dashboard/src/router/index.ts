@@ -82,6 +82,7 @@ router.beforeEach((to, from, next) => {
 
   if (to.meta?.requiresAuth && !isAuth) {
     // If the route requires authentication and the user is not authenticated, redirect to login
+    sessionStorage.setItem('fromPath', window.location.pathname);
     next({ name: 'login' });
   } else if (isAuth && hasTOSAccepted() == 'NOT_ACCEPTED' && to.name !== 'tos') {
     // If the user is authenticated but user hasn't accepted the TOS, always redirect to TOS
