@@ -84,8 +84,9 @@ import { useI18n } from "vue-i18n";
 import { usePendingPayouts } from "@/mixins/pendingPayoutsMixin";
 import apiService from "@/services/ApiService";
 import { GetAllUsersTypeEnum } from "@sudosos/sudosos-client";
-import { isAllowed } from "@/utils/permissionUtils";
 
+import { useOpenInvoiceAccounts } from "@/mixins/openInvoiceAccountsMixin";
+import { isAllowed } from "@/utils/permissionUtils";
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const router = useRouter();
@@ -101,7 +102,10 @@ const handleLogout = () => {
 };
 
 const { pendingPayouts } = usePendingPayouts();
-const getFinancialNotifications = () => isAllowed('update', ['all'], 'SellerPayout', ['any']) && pendingPayouts?.value;
+
+const { openInvoiceAccounts } = useOpenInvoiceAccounts();
+const getFinancialNotifications = () => isAllowed('update', ['all'], 'SellerPayout', ['any']) && pendingPayouts?.value + openInvoiceAccounts?.value;
+
 
 const organs: Ref<any[]> = ref([]);
 
@@ -184,7 +188,8 @@ const navItems = computed(() => [
       {
         label: t('common.navigation.invoices'),
         route: '/invoice',
-        visible: isAllowed('get', ['all'], 'Invoice', ['any']),
+        notifications: openInvoiceAccounts?.value,
+        visible: isAllowed('get', ['all'], 'Invoice', ['any'])
       },
       {
         label: t('common.navigation.fineOverview'),

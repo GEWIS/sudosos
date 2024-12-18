@@ -4,9 +4,12 @@
      column ? 'flex-column gap-1' : 'flex-row align-items-center gap-3']">
       <span class="my-0">{{ label }}</span>
       <FindUser  :placeholder="placeholder"
-                 v-model="internalValue"
+                 v-model:user="internalValue"
                  :disabled="disabled"
-                 :type="type"/>
+                 :type="type"
+                 :showPositive="props.showPositive"
+                 :default="props.default"
+      />
     </span>
     <div class="flex justify-content-end">
       <ErrorSpan :error="errors"/>
@@ -26,6 +29,10 @@ const props = defineProps({
   label: {
     type: String,
     required: true
+  },
+  default: {
+    type: Object as PropType<BaseUserResponse>,
+    required: false,
   },
   value: {
     type: Object as PropType<BaseUserResponse>,
@@ -53,6 +60,11 @@ const props = defineProps({
     type: String as PropType<GetAllUsersTypeEnum>,
     required: false,
     default: undefined
+  },
+  showPositive: {
+    type: Boolean,
+    required: false,
+    default: true
   }
 });
 

@@ -11,8 +11,10 @@
       class="w-full md:w-15rem"
       @filter="filterUsers"
   >
-  <template #option="slotProps">
-    {{ slotProps.option.fullName }} {{ slotProps.option.gewisId ? `(${slotProps.option.gewisId})` : '' }}
+  <template #option="slotProps" >
+    <span :class="{'text-gray-500': !isNegative(slotProps.option)}">
+      {{ slotProps.option.fullName }} {{ slotProps.option.gewisId ? `(${slotProps.option.gewisId})` : '' }}
+    </span>
   </template>
   </Dropdown>
 </template>
@@ -23,12 +25,17 @@ import type { Ref } from "vue";
 import apiService from "@/services/ApiService";
 import { debounce } from "lodash";
 import { type BaseUserResponse, GetAllUsersTypeEnum, type UserResponse } from "@sudosos/sudosos-client";
+import { useUserStore } from "@sudosos/sudosos-frontend-common";
 
-const emits = defineEmits(['update:value']);
+const emits = defineEmits(['update:user']);
 
 const props = defineProps({
-  value: {
+  user: {
     type: Object as PropType<UserResponse>,
+  },
+  default: {
+    type: Object as PropType<BaseUserResponse>,
+    required: false,
   },
   placeholder: {
     type: String,
@@ -44,20 +51,42 @@ const props = defineProps({
     type: Number,
     required: false,
     default: 10,
+  },
+  showPositive: {
+    type: Boolean,
+    required: false,
+    default: true
   }
 });
 
 const lastQuery = ref("");
-const selectedUser = ref(null);
+const selectedUser: Ref<BaseUserResponse | undefined> = ref(undefined);
+const userStore = useUserStore();
 
 const loading = ref(false);
 const users: Ref<(BaseUserResponse & { fullName: string })[]> = ref([]);
 
 const transformUsers = (userData: BaseUserResponse[]) => {
-  return userData.map((user: BaseUserResponse) => ({
+  const usersData: (BaseUserResponse & { fullName: string})[]
+      = userData.map((user) => ({
     ...user,
     fullName: `${user.firstName} ${user.lastName}`
   }));
+
+  usersData.sort((a, b) => {
+    const isANegative = isNegative(a);
+    const isBNegative = isNegative(b);
+
+    if (isANegative && !isBNegative) {
+      return -1;
+    }
+    if (!isANegative && isBNegative) {
+      return 1;
+    }
+    return a.fullName.localeCompare(b.fullName);
+  });
+
+  return usersData;
 };
 
 const debouncedSearch = debounce((e: any) => {
@@ -77,15 +106,26 @@ const filterUsers = (e: any) => {
   }
 };
 
+function isNegative(user: BaseUserResponse) {
+  return userStore.getBalanceById(user.id).amount.amount < 0;
+}
+
 onMounted(async () => {
   apiService.user.getAllUsers(props.take, 0, undefined, undefined, undefined, undefined, props.type).then((res) => {
-    users.value = transformUsers(res.data.records);
+    userStore.addUsers(res.data.records);
+    userStore.fetchUserBalances(res.data.records, apiService).then(() => {
+      users.value = transformUsers(res.data.records);
+    });
+    if (props.default) {
+      selectedUser.value = transformUsers([props.default])[0];
+    }
   });
 });
 
 watch(selectedUser, () => {
-  emits('update:value', selectedUser.value);
+  emits('update:user', selectedUser.value);
 });
+
 </script>
 
 <style scoped lang="scss">

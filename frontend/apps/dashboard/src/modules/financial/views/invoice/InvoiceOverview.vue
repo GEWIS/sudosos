@@ -2,6 +2,7 @@
   <div class="page-container flex flex-column">
     <div class="page-title">{{ t('modules.financial.invoice.title') }}</div>
       <div class="content-wrapper flex flex-column">
+        <InvoiceAccountOverview />
         <div class="flex flex-row justify-content-end w-full -mb-5">
           <Button
               type="button"
@@ -29,6 +30,7 @@ import { InvoiceStatusResponseStateEnum } from "@sudosos/sudosos-client/src/api"
 import { useI18n } from "vue-i18n";
 import Button from "primevue/button";
 import router from "@/router";
+import InvoiceAccountOverview from "@/modules/financial/views/invoice/InvoiceAccountOverview.vue";
 
 const { t } = useI18n();
 

@@ -6,6 +6,8 @@
                    @update:value="updateUser($event)"
                    v-model:value="selectedUser"
                    class="mb-3"
+                   :showPositive="false"
+                   :default="queryUser"
     />
 
     <div class="flex flex-row justify-content-between">
@@ -33,21 +35,24 @@
  * Component used to select the invoiced user and display the balance before and after the invoice.
  */
 
-import {computed, type PropType, type Ref, ref, watch} from "vue";
+import { computed, onMounted, type PropType, type Ref, ref, watch } from "vue";
 import { type Form, getProperty } from "@/utils/formUtils";
 import * as yup from "yup";
 import { createInvoiceObject } from "@/utils/validation-schema";
 import CardComponent from "@/components/CardComponent.vue";
 import {
+  type BaseUserResponse,
   type DineroObjectResponse,
-  type InvoiceUserResponse,
   GetAllUsersTypeEnum,
-  type UserResponse, type BaseUserResponse
+  type InvoiceUserResponse,
+  type UserResponse
 } from "@sudosos/sudosos-client";
 import InputUserSpan from "@/components/InputUserSpan.vue";
 import { useI18n } from "vue-i18n";
 import { formatPrice } from "@/utils/formatterUtils";
 import apiService from "@/services/ApiService";
+import { useRoute } from "vue-router";
+import { useUserStore } from "@sudosos/sudosos-frontend-common";
 
 const { t } = useI18n();
 
@@ -59,6 +64,8 @@ const props = defineProps({
 });
 
 const selectedUser = ref<BaseUserResponse | undefined>(undefined);
+const route = useRoute();
+const userStore = useUserStore();
 
 const transactionTotal = computed(() => {
   const total = getProperty(props.form, "transactionTotal");
@@ -137,6 +144,22 @@ const updateDefaultUser = (forId: number) => {
     props.form.context.setFieldValue('country', user.country);
   });
 };
+
+const queryUser: Ref<BaseUserResponse | undefined> = ref(undefined);
+
+onMounted(() => {
+  console.error(route.query.userId);
+  if (route.query.userId){
+    const userId = route.query.userId as unknown as number;
+    props.form.context.setFieldValue("forId", userId);
+
+    const user = userStore.getUserById(userId);
+    queryUser.value = user;
+
+    updateUserBalance();
+    updateDefaultUser(userId);
+  }
+});
 </script>
 
 <style scoped lang="scss">

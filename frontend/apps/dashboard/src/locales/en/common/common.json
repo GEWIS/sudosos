@@ -144,6 +144,8 @@
             "productsContainers": "Products & containers",
             "pos": "Points of sale",
             "flaggedTransactions": "Flagged transactions",
+            "fineOverview": "Fine overview",
+            "invoiceAccounts": "Invoice Account Overview",
             "fines": "Fines"
         },
         "validation": {

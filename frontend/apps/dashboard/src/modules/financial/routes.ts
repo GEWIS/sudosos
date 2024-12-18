@@ -6,6 +6,7 @@ import InvoiceOverview from "@/modules/financial/views/invoice/InvoiceOverview.v
 import InvoiceInfoView from "@/modules/financial/views/invoice/InvoiceInfoView.vue";
 import { isAllowed } from "@/utils/permissionUtils";
 import InvoiceCreateView from "@/modules/financial/views/invoice/InvoiceCreateView.vue";
+import InvoiceAccountOverview from "@/modules/financial/views/invoice/InvoiceAccountOverview.vue";
 
 export function financialRoutes(): RouteRecordRaw[] {
   return [

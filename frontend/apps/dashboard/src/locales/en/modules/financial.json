@@ -47,6 +47,12 @@
           "balanceAfter": "Balance after invoice",
           "pos": "Points of sale included in the invoice:",
           "warning": "Make sure to check the invoice before creating it."
+        },
+        "account": {
+          "title": "Invoice Account Overview",
+          "header": "Invoice Account Overview",
+          "balance": "Balance",
+          "type": "INVOICE"
         }
       },
       "payout": {
