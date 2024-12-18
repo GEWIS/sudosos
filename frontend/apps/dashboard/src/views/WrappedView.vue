@@ -51,7 +51,7 @@
 import { computed, onBeforeMount, ref } from "vue";
 import apiService from "@/services/ApiService";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
-import type { ReportResponse } from "@sudosos/sudosos-client";
+import type { ReportProductEntryResponse, ReportResponse } from "@sudosos/sudosos-client";
 import { formatPrice } from "@/utils/formatterUtils";
 import Dinero from "dinero.js";
 import { useI18n } from "vue-i18n";
@@ -104,7 +104,20 @@ const topProducts = computed(() => {
     return [];
   }
 
-  return report.value.data.products!.sort((a, b) => b.count - a.count).slice(0, 10);
+  const allProducts: ReportProductEntryResponse[] = [];
+
+  for (let product of report.value.data.products!) {
+    let idx = allProducts.findIndex(p => p.product.id == product.product.id);
+    if (idx >= 0) {
+      allProducts[idx].totalInclVat = Dinero(allProducts[idx].totalInclVat as Dinero.Options)
+          .add(Dinero(product.totalInclVat as Dinero.Options)).toObject();
+      allProducts[idx].count += product.count;
+    } else {
+      allProducts.push(product);
+    }
+  }
+
+  return allProducts.sort((a, b) => b.count - a.count).slice(0, 10);
 });
 
 onBeforeMount(async () => {
