@@ -169,7 +169,19 @@
         "apiError": "Fout",
         "errorMessage": "Er is iets misgegaan, open een issue op {link} en beschrijf het probleem.",
         "permissionMessages": {
-            "transactions": "Je mag deze transacties niet bekijken."
+          "transactions": "Je mag deze transacties niet bekijken."
+        },
+        "wrapped": {
+            "lastYear": "In het afgelopen jaar:",
+            "total": "Heb je in total uitgegeven:",
+            "totalBorrel": "In totaal bij borrel heb je uitgegeven:",
+            "depth": "Verder uitgesplitst",
+            "totalAlc": "Aan alcohol (incl. 0.0) heb je uitgegeven:",
+            "totalSoda": "Aan fris heb je uitgegeven:",
+            "totalSnacks": "Aan snacks heb je uitgegeven:",
+            "fav": "Je absolute favorieten waren:",
+            "christmas": "Fijne kerst en een gelukkig nieuw jaar van de ABC!"
         }
+
     }
 }

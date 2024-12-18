@@ -169,7 +169,18 @@
         "apiError": "Error",
         "errorMessage": "Something is going wrong, please open an issue on {link} describing the issue.",
         "permissionMessages": {
-            "transactions": "You are not allowed to view these transactions."
+          "transactions": "You are not allowed to view these transactions."
+        },
+        "wrapped": {
+            "lastYear": "In the last year:",
+            "total": "You spent in total:",
+            "totalBorrel": "You spent in total at borrels:",
+            "depth": "But more in depth",
+            "totalAlc": "On alcohol (incl. 0.0) you spent:",
+            "totalSoda": "On soda you spent:",
+            "totalSnacks": "On snacks you spent:",
+            "fav": "Lastly your favourites were:",
+            "christmas": "Merry christmas and a happy new year from the ABC!"
         }
     }
 }

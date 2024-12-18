@@ -11,6 +11,7 @@ import { sellerRoutes } from "@/modules/seller/routes";
 import { userRoutes } from "@/modules/user/routes";
 import MaintenanceView from '@/views/MaintenanceView.vue';
 import { useSettingsStore } from '@/stores/settings.store';
+import WrappedView from "@/views/WrappedView.vue";
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -48,6 +49,11 @@ const router = createRouter({
           path: '/error',
           component: ErrorView,
           name: 'error',
+        },
+        {
+          path: 'wrapped',
+          component: WrappedView,
+          name: 'wrapped',
         },
       ]
     },
