@@ -55,7 +55,7 @@
       >
         <template #start>
           <router-link to="/" class="no-underline text-white font-bold flex align-items-center flex-row py-1">
-            {{ t("modules.auth.login.sudosos") }}
+            {{ t("common.sudosos") }}
             <img class="h-4rem py-2" src="../assets/img/gewis-branding.svg" alt="SudoSOS" />
           </router-link>
         </template>
