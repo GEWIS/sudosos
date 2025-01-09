@@ -13,7 +13,11 @@
           "info": "Momenteel hebben in aanmerking komende gebruikers een totale schuld van {debt}. Dit zou resulteren in een totaal van {fines} aan opgelegde boetes.",
           "pleaseSelect": "Selecteer twee datums om te zien hoeveel schuld gebruikers hebben.",
           "firstBalance": "Eerste saldo",
-          "lastBalance": "Laatste saldo"
+          "lastBalance": "Laatste saldo",
+          "confirm": {
+            "handoutMessage": "Wil je boetes opleggen voor {count} gebruikers?",
+            "notifyMessage": "Wil je een boete-waarschuwing sturen naar {count} gebruikers?"
+          }
         },
         "handoutEvents": {
           "header": "Boete-uitreikings evenementen",

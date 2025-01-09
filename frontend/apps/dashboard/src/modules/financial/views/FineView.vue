@@ -155,6 +155,7 @@
       </div>
     </div>
   </Dialog>
+  <ConfirmDialog />
 </template>
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
@@ -179,9 +180,11 @@ import type { AxiosError } from "axios";
 import { handleError } from "@/utils/errorUtils";
 import Skeleton from "primevue/skeleton";
 import ProgressSpinner from "primevue/progressspinner";
+import { useConfirm } from "primevue/useconfirm";
 
 const { t } = useI18n();
 const router = useRouter();
+const confirm = useConfirm();
 const eligibleUsers = ref();
 const userStore = useUserStore();
 const { defineField, handleSubmit } = useForm({
@@ -297,42 +300,60 @@ const openHandoutEvent = async (eventId: number) => {
 };
 
 const notifyUsers = async () => {
-  isNotifying.value = true;
-  apiService.debtor.notifyAboutFutureFines({
-    userIds: selection.value.map((item: any) => item.id),
-    referenceDate: secondDate.value?.toISOString() || new Date().toISOString()
-  })
-      .then(() => {
-        toast.add({
-          summary: t('common.toast.success.success'),
-          detail: t('common.toast.success.finesNotified'),
-          life: 3000,
-          severity: 'success',
-        });
-        isNotifying.value = false;
-        selection.value = [];
-      });
+  confirm.require({
+    header: t('common.areYouSure'),
+    message: t('modules.financial.fine.eligibleUsers.confirm.notifyMessage', { count: selection.value.length }),
+    icon: 'pi pi-question-circle',
+    acceptLabel: t('modules.financial.fine.eligibleUsers.notify'),
+    rejectLabel: t('common.cancel'),
+    accept: async () => {
+      isNotifying.value = true;
+      apiService.debtor.notifyAboutFutureFines({
+        userIds: selection.value.map((item: any) => item.id),
+        referenceDate: secondDate.value?.toISOString() || new Date().toISOString()
+      })
+          .then(() => {
+            toast.add({
+              summary: t('common.toast.success.success'),
+              detail: t('common.toast.success.finesNotified'),
+              life: 3000,
+              severity: 'success',
+            });
+            isNotifying.value = false;
+            selection.value = [];
+          });
+    }
+  });
 };
 
 const handoutFines = async () => {
-  if (!firstDate.value) {
-    await router.replace({ path: "/error" });
-    return;
-  }
-  await apiService.debtor.handoutFines({
-    userIds: selection.value.map((item: any) => item.id),
-    referenceDate: firstDate.value.toISOString(),
-  })
-      .then(() => {
-        toast.add({
-          summary: t('common.toast.success.success'),
-          detail: t('common.toast.success.finesHandedOut'),
-          life: 3000,
-          severity: 'success',
-        });
+  confirm.require({
+    header: t('common.areYouSure'),
+    message: t('modules.financial.fine.eligibleUsers.confirm.handoutMessage', { count: selection.value.length }),
+    icon: 'pi pi-question-circle',
+    acceptLabel: t('modules.financial.fine.eligibleUsers.handout'),
+    rejectLabel: t('common.cancel'),
+    accept: async () => {
+      if (!firstDate.value) {
+        await router.replace({ path: "/error" });
+        return;
+      }
+      await apiService.debtor.handoutFines({
+        userIds: selection.value.map((item: any) => item.id),
+        referenceDate: firstDate.value.toISOString(),
       })
-      .catch((err: AxiosError) => handleError(err, toast))
-      .finally(() => selection.value = []);
+          .then(() => {
+            toast.add({
+              summary: t('common.toast.success.success'),
+              detail: t('common.toast.success.finesHandedOut'),
+              life: 3000,
+              severity: 'success',
+            });
+          })
+          .catch((err: AxiosError) => handleError(err, toast))
+          .finally(() => selection.value = []);
+    }
+  });
 };
 </script>
 

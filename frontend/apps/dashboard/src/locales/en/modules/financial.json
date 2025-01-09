@@ -1,7 +1,7 @@
 {
   "modules": {
     "financial": {
-      "fine":{
+      "fine": {
         "title": "Fine overview",
         "eligibleUsers": {
           "header": "Eligible users",
@@ -13,7 +13,11 @@
           "info": "Currently, eligible users have a total debt of {debt}. This would result in a total of {fines} in fines being handed out.",
           "pleaseSelect": "Please apply two dates to see how much users are in debt.",
           "firstBalance": "First balance",
-          "lastBalance": "Last balance"
+          "lastBalance": "Last balance",
+          "confirm": {
+            "handoutMessage": "Do you want to hand out fines for {count} users?",
+            "notifyMessage": "Do you want to send a fine warning to {count} users?"
+          }
         },
         "handoutEvents": {
           "header": "Fine handout events",
