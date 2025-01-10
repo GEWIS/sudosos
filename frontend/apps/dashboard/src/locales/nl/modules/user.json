@@ -26,6 +26,8 @@
         "deleteApiKey": "API-sleutel verwijderen",
         "preferences": "Voorkeuren",
         "dataAnalysis": "Data-analyse",
+        "confirmChangeNFC": "Are you sure you want to change the NFC code?",
+        "confirmDeleteNFC": "Are you sure you want to delete the NFC code?",
         "confirmChangeApiKey": "Weet je zeker dat je de API-sleutel wilt wijzigen?",
         "confirmDeleteApiKey": "Weet je zeker dat je de API-sleutel wilt verwijderen?"
       },

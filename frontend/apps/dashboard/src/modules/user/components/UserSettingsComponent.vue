@@ -23,11 +23,20 @@
             @click="showPasswordDialog = true"
         />
       </div>
+      <Divider />
+      <h4 class="mt-0">{{ t('modules.user.settings.nfc') }}</h4>
       <div class="flex flex-row align-items-center w-11">
         <p class="flex-grow-1 my-1">{{ t('modules.user.settings.changeNFC') }}</p>
         <i
             class="pi pi-arrow-up-right text-gray-500 flex align-items-center cursor-pointer"
             @click="startScan()"
+        />
+      </div>
+      <div class="flex flex-row align-items-center w-11">
+        <p class="flex-grow-1 my-1">{{ t('modules.user.settings.deleteNFC') }}</p>
+        <i
+            class="pi pi-arrow-up-right text-gray-500 flex align-items-center cursor-pointer"
+            @click="confirmDeleteNFC()"
         />
       </div>
       <Divider />
@@ -225,6 +234,30 @@ const confirmDeleteApiKey = () => {
           })
           .catch((err) => {
             handleError(err, toast);
+          });
+    },
+  });
+};
+
+const confirmDeleteNFC = () => {
+
+  confirm.require({
+    message: t('modules.user.settings.confirmDeleteNFC'),
+    header: t('modules.user.settings.deleteNFC'),
+    icon: 'pi pi-exclamation-triangle',
+    accept: () => {
+      apiService.user.deleteUserNfc(props.user.id)
+          .then(() => {
+            toast.add({
+              severity: "success",
+              summary: t('common.toast.success.success'),
+              detail: t('common.toast.success.nfcCodeDeleted'),
+              life: 5000,
+            });
+          })
+          .catch((err) => {
+            handleError(err, toast);
+            console.error(err.message);
           });
     },
   });

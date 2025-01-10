@@ -78,6 +78,7 @@
                 "apiKeyDeleted": "API-sleutel succesvol verwijderd.",
                 "passwordUpdated": "Wachtwoord succesvol bijgewerkt.",
                 "nfcCodeUpdated": "NFC code succesvol bijgewerkt.",
+                "nfcCodeDeleted": "Successfully deleted NFC code.",
                 "pinUpdated": "Pincode succesvol bijgewerkt.",
                 "finesNotified": "Gebruikers succesvol op de hoogte gebracht.",
                 "finesHandedOut": "Boetes succesvol uitgedeeld.",
