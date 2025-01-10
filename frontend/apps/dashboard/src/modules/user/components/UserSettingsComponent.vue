@@ -151,11 +151,11 @@ async function startScan() {
             life: 3000,
           });
         })
-        .catch(() => {
+        .catch((err) => {
           toast.add({
             severity: "error",
             summary: t("common.toast.error.error"),
-            detail: t("common.toast.error.scanNotStarted"),
+            detail: t("common.toast.error.error") + ": " + err.message,
             life: 3000,
           });
         });
