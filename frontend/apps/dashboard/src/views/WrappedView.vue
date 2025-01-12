@@ -80,7 +80,8 @@ const totalAlc = computed(() => {
     return { amount: 0, currency: 'EUR', precision: 2 };
   }
 
-  return report.value.data.categories!.find(p => p.category.id == 1)!.totalInclVat;
+  return report.value.data.categories!.find(p => p.category.id == 1)?.totalInclVat
+      || { amount: 0, currency: 'EUR', precision: 2 };
 });
 
 const totalSoda = computed(() => {
@@ -88,7 +89,8 @@ const totalSoda = computed(() => {
     return { amount: 0, currency: 'EUR', precision: 2 };
   }
 
-  return report.value.data.categories!.find(p => p.category.id == 2)!.totalInclVat;
+  return report.value.data.categories!.find(p => p.category.id == 2)?.totalInclVat
+      || { amount: 0, currency: 'EUR', precision: 2 };
 });
 
 const totalSnacks = computed(() => {
@@ -96,7 +98,8 @@ const totalSnacks = computed(() => {
     return { amount: 0, currency: 'EUR', precision: 2 };
   }
 
-  return report.value.data.categories!.find(p => p.category.id == 3)!.totalInclVat;
+  return report.value.data.categories!.find(p => p.category.id == 3)?.totalInclVat
+      || { amount: 0, currency: 'EUR', precision: 2 };
 });
 
 const topProducts = computed(() => {
