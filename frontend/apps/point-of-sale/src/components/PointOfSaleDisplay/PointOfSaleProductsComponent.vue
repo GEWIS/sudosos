@@ -89,17 +89,11 @@ const sortedProducts = computed(() => {
   const products = [...filteredProducts.value];
 
   products.sort((a, b) => {
-    // Prioritize 'preferred+featured' then 'preferred', then sort alphabetically
+    // Prioritize 'preferred', then sort alphabetically
     if (a.product.preferred && !b.product.preferred) {
       return -1;
     } else if (!a.product.preferred && b.product.preferred) {
       return 1;
-    } else if (a.product.preferred && b.product.preferred) {
-      if (a.product.featured && !b.product.featured) {
-        return -1;
-      } else if (!a.product.featured && b.product.featured) {
-        return 1;
-      }
     }
 
     // If category is 'all', first also sort by categoryId
