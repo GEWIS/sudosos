@@ -4,7 +4,7 @@ import type { ServerStatusResponse } from '@sudosos/sudosos-client';
 
 export const useSettingsStore = defineStore('settings', {
   state: () => ({
-    status: {} as ServerStatusResponse,
+    status: {} as Partial<ServerStatusResponse>,
     token: "",
     stripe: ""
   }),
@@ -31,7 +31,7 @@ export const useSettingsStore = defineStore('settings', {
     }
   },
   getters: {
-    activeSettings(): ServerStatusResponse {
+    activeSettings(): Partial<ServerStatusResponse> {
       return this.status;
     },
     getToken(): String {
