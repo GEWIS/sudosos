@@ -29,7 +29,7 @@ export const useTransactionStore = defineStore('transaction', {
             ) {
             return await service.transaction.getAllTransactions(
                 undefined, undefined, undefined,
-                pointOfSaleId, undefined, undefined,
+                undefined, pointOfSaleId, undefined, undefined,
                 fromDate, tillDate, take, skip);
         }
     },
