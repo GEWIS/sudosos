@@ -54,7 +54,7 @@ jobs:
           ENV_FILE: ${{ matrix.env_file_develop }}
         if: github.ref != 'refs/heads/main'
         run: |
-          echo "${ENV_FILE}" > apps/${{ matrix.dir }}/.env
+          echo "${ENV_FILE}" > ./apps/${{ matrix.dir }}/.env
 
       - name: Get Docker meta (for tags)
         id: meta
@@ -63,10 +63,38 @@ jobs:
           images: |
             ${{ vars.DOCKER_REGISTRY }}/${{ matrix.docker_tag }}
           tags: |
-            type=ref,enable=true,priority=600,prefix=,suffix=,event=branch
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+
+# --------- TEMPORARY, until nexus is available again -------------
+
+      - name: Login to Registry (GitHub)
+        uses: docker/login-action@v3
+        if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push to GitHub Container Registry
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile_path }}
+          build-args: |
+            GIT_COMMIT_BRANCH=${{ github.head_ref || github.ref_name }} 
+            GIT_COMMIT_SHA=${{ env.GIT_COMMIT_SHA }}
+          platforms: linux/amd64
+          push: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+          tags: ghcr.io/gewis/${{ matrix.docker_tag }}:${{ steps.meta.outputs.version }}
+          cache-from: type=gha
+
+# -----------------------------------------------------------------
 
       - name: Login to SudoSOS Container Registry
         if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
