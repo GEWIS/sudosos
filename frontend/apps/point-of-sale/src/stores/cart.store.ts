@@ -66,6 +66,12 @@ export const useCartStore = defineStore('cart', {
     setCreatedBy(createdBy: BaseUserResponse) {
       this.createdBy = createdBy;
     },
+    async setBuyerFromNfc(nfc: string) {
+      return apiService.user.findUserNfc(nfc).then((res) => {
+        this.buyer = res.data;
+        return this.buyer;
+      });
+    },
     addToCart(cartProduct: CartProduct): void {
       const existingProduct = this.products.find(
         (p) =>
