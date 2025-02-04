@@ -33,7 +33,7 @@
     <InputSpan :label="t('common.usertype')"
                :value="form.model.userType?.value.value"
                :attributes="form.model.userType?.attr.value"
-               @update:value="form.context.setFieldValue('userType', $event)"
+               @update:value="updateType($event)"
                :errors="form.context.errors.value.userType"
                id="name" :placeholder="t('common.placeholders.selectType')" type="usertype" disabled/>
     <InputSpan :label="t('common.active')"
@@ -92,6 +92,10 @@ const props = defineProps({
     default: false,
   },
 });
+
+const updateType = (event: string) => {
+  if (event) props.form.context.setFieldValue('userType', event);
+};
 
 setSubmit(props.form, props.form.context.handleSubmit(async (values) => {
   const updateUserRequest: UpdateUserRequest = {
