@@ -40,3 +40,25 @@ export function formatDateFromString(date: string | undefined) {
 export function fullName(user: UserResponse) {
     return user.lastName ? user.firstName + ' ' + user.lastName : user.firstName;
 }
+
+export function formatTimeSince(startDate: Date, now: Date) {
+    const diff = now.getTime() - startDate.getTime();
+    const diffInSeconds = Math.floor(diff / 1000);
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInDays > 365) {
+        return `${Math.floor(diffInDays / 365)} year(s) ago`;
+    } else if (diffInDays > 0) {
+        return `${diffInDays} days ago`;
+    } else if (diffInHours > 0) {
+        return `${diffInHours} hours ago`;
+    } else if (diffInMinutes > 0) {
+        return `${diffInMinutes} minutes ago`;
+    } else if (diffInSeconds > 0) {
+        return `${diffInSeconds} seconds ago`;
+    } else {
+        return 'just now';
+    }
+}

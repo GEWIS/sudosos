@@ -70,6 +70,20 @@
               {{ formatPrice(slotProps.data.lastBalance.amount) }}
             </template>
           </Column>
+          <Column header="Total Fine">
+            <template #body="slotProps">
+              <span v-if="slotProps.data.lastBalance.fine" class="text-red-500 font-bold">
+                {{ formatPrice(slotProps.data.lastBalance.fine) }}
+              </span>
+            </template>
+          </Column>
+          <Column header="Fine Since">
+            <template #body="slotProps">
+              <span v-if="slotProps.data.lastBalance.fineSince" class="text-red-500 font-bold">
+                {{ formatTimeSince(new Date(slotProps.data.lastBalance.fineSince), new Date()) }}
+              </span>
+            </template>
+          </Column>
           <Column
               headerStyle="width: 3rem; text-align: center"
               bodyStyle="text-align: center; overflow: visible"
@@ -169,7 +183,7 @@ import Calendar from "primevue/calendar";
 import apiService from "@/services/ApiService";
 import { onMounted, type Ref, ref } from "vue";
 import { useUserStore } from "@sudosos/sudosos-frontend-common";
-import { formatDateTime, formatPrice } from "@/utils/formatterUtils";
+import { formatDateTime, formatPrice, formatTimeSince } from "@/utils/formatterUtils";
 import { useRouter } from "vue-router";
 import { type DineroObject } from 'dinero.js';
 import { floor, min } from "lodash";
@@ -357,6 +371,6 @@ const handoutFines = async () => {
 };
 </script>
 
-<style scoped>
-@import '../../../styles/BasePage.scss';
+<style scoped lang="scss">
+
 </style>
