@@ -105,6 +105,7 @@ setSubmit(form, form.context.handleSubmit(async (values) => {
             detail: t('common.toast.success.containerCreated'),
             life: 3000,
           });
+          closeDialog();
         })
         .catch((err) => handleError(err, toast));
   }
