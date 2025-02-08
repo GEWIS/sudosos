@@ -20,8 +20,7 @@ import Toast from 'primevue/toast';
 
   position: fixed;
   top: -25%;
-  right: -7%;
+  right: 0;
   height: 175%;
-  width: 45%;
 }
 </style>
