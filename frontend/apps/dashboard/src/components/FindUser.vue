@@ -12,7 +12,7 @@
       @filter="filterUsers"
   >
   <template #option="slotProps" >
-    <span :class="{'text-gray-500': !isNegative(slotProps.option)}">
+    <span :class="{'text-gray-500': isNegative(slotProps.option) === true}">
       {{ slotProps.option.fullName }} {{ slotProps.option.gewisId ? `(${slotProps.option.gewisId})` : '' }}
     </span>
   </template>
@@ -66,6 +66,19 @@ const userStore = useUserStore();
 const loading = ref(false);
 const users: Ref<(BaseUserResponse & { fullName: string })[]> = ref([]);
 
+const compareBalance = (a: BaseUserResponse, b: BaseUserResponse) => {
+  const isANegative = isNegative(a);
+  const isBNegative = isNegative(b);
+
+  if (isANegative && !isBNegative) {
+    return -1;
+  }
+  if (!isANegative && isBNegative) {
+    return 1;
+  }
+  return 0;
+};
+
 const transformUsers = (userData: BaseUserResponse[]) => {
   const usersData: (BaseUserResponse & { fullName: string})[]
       = userData.map((user) => ({
@@ -74,18 +87,12 @@ const transformUsers = (userData: BaseUserResponse[]) => {
   }));
 
   usersData.sort((a, b) => {
-    const isANegative = isNegative(a);
-    const isBNegative = isNegative(b);
-
-    if (isANegative && !isBNegative) {
-      return -1;
-    }
-    if (!isANegative && isBNegative) {
-      return 1;
+    if (!props.showPositive) {
+      const res = compareBalance(a, b);
+      if (res !== 0) return res;
     }
     return a.fullName.localeCompare(b.fullName);
   });
-
   return usersData;
 };
 
@@ -107,7 +114,9 @@ const filterUsers = (e: any) => {
 };
 
 function isNegative(user: BaseUserResponse) {
-  return userStore.getBalanceById(user.id).amount.amount < 0;
+  const balance = userStore.getBalanceById(user.id);
+  if (!balance) return undefined;
+  else return balance.amount.amount < 0;
 }
 
 onMounted(async () => {

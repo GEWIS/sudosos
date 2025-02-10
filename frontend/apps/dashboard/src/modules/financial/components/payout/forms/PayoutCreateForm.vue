@@ -4,6 +4,7 @@
                    :value="form.model.user.value.value"
                    @update:value="form.context.setFieldValue('user', $event)"
                    :errors="form.context.errors.value.user"
+                   :show-positive="true"
                    id="name" placeholder="John Doe"/>
 
 <!-- TODO think about turning this into a component? -->
