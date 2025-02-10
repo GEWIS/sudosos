@@ -1,9 +1,9 @@
-@use "sass:meta";
+@use "sass:list";
 @use "../themes/sudosos-light/variables_light";
 @use "mixins";
 
 :root {
-    @if meta.variable-exists(colors) {
+    @if list.length(variables_light.$colors) > 0 {
         @each $name, $color in variables_light.$colors {
             @for $i from 0 through 5 {
                 @if ($i == 0) {
