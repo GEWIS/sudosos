@@ -122,12 +122,19 @@ function isNegative(user: BaseUserResponse) {
 onMounted(async () => {
   apiService.user.getAllUsers(props.take, 0, undefined, undefined, undefined, undefined, props.type).then((res) => {
     userStore.addUsers(res.data.records);
-    userStore.fetchUserBalances(res.data.records, apiService).then(() => {
-      users.value = transformUsers(res.data.records);
-    });
+    let selected = undefined;
     if (props.default) {
-      selectedUser.value = transformUsers([props.default])[0];
+      selected = transformUsers([props.default])[0];
     }
+    userStore.fetchUserBalances(res.data.records, apiService).then(() => {
+      const transformed = transformUsers(res.data.records);
+      if (selected) {
+        users.value = [...transformed, selected];
+        selectedUser.value = selected;
+      } else {
+        users.value = transformed;
+      }
+    });
   });
 });
 
