@@ -63,8 +63,8 @@
         "title": "Payout overview",
         "create": "Create payout",
         "requestedBy": "Requested by",
-        "details": "Payout details",
-        "approvedBy": "Approved by",
+        "details": "Payout details #{payoutId}",
+        "approvedBy": "Approved by {approvedBy}",
         "approve": "Approve",
         "deny": "Deny"
       },

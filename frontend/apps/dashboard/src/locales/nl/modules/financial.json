@@ -63,8 +63,8 @@
         "title": "Uitbetalingsoverzicht",
         "create": "Uitbetaling aanmaken",
         "requestedBy": "Aangevraagd door",
-        "details": "Uitbetalingsdetails",
-        "approvedBy": "Goedgekeurd door",
+        "details": "Uitbetalingsdetails #{payoutId}",
+        "approvedBy": "Goedgekeurd door {approvedBy}",
         "approve": "Goedkeuren",
         "deny": "Afwijzen"
       },

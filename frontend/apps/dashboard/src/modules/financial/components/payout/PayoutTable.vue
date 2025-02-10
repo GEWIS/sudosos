@@ -66,7 +66,7 @@
         v-model:visible="showModal"
         :draggable="false"
         class="w-auto flex w-9 md:w-4"
-        :header="t('modules.financial.payout.details')">
+        :header="t('modules.financial.payout.details', { payoutId })">
       <PayoutInfo :payoutId="payoutId" @close="showModal = false"/>
     </Dialog>
   </div>
