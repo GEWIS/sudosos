@@ -92,7 +92,8 @@ const rows = ref<number>(10);
 const paginator = ref<boolean>(true);
 
 const viewInvoice = async (id: number) => {
-  await router.push({ name: "invoiceInfo", params: { id } });
+  let route = router.resolve({ name: 'invoiceInfo', params: { id } });
+  window.open(route.href, '_blank');
 };
 
 const props = defineProps({
