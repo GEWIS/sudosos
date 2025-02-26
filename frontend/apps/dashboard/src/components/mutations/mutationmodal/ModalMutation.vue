@@ -3,7 +3,7 @@
     @show="addListenerOnDialogueOverlay(dialog)"
     :visible="visible"
     modal
-    :header="t('components.mutations.modal.header')"
+    :header="t('components.mutations.modal.header', {id} )"
     class="w-auto flex w-11 md:w-4"
     ref="dialog"
   >

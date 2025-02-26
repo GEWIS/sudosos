@@ -14,7 +14,7 @@
       "user": "Gebruikerstransacties",
       "notYou": "Heb jij deze aankoop niet gedaan?",
       "modal": {
-        "header": "Transactiedetails",
+        "header": "Transactiedetails (#{id})",
         "waivedFine": "Kwijtgescholden boete",
         "invoice": "Factuur",
         "fine": "Boete",

@@ -14,7 +14,7 @@
       "user": "User transactions",
       "notYou": "Did you not make this transaction?",
       "modal": {
-        "header": "Transaction details",
+        "header": "Transaction details (#{id})",
         "waivedFine": "Waived fine",
         "invoice": "Invoice",
         "fine": "Fine",
