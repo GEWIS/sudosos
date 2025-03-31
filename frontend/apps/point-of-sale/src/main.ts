@@ -5,6 +5,7 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import PrimeVue from 'primevue/config';
 import 'primevue/resources/themes/bootstrap4-light-blue/theme.css';
+import '@gewis/splash';
 
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';

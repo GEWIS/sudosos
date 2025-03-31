@@ -269,6 +269,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gewis/splash@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "@gewis/splash@npm:2.4.0"
+  checksum: 10c0/d54e126b8435b2b1f425f47d880a24d2df973bf353edcdd585fa4401c4a0a03bea94dde489589b5dfdb06f3ff71a9ee0b278356c411d49f5a8899bd20517f8d0
+  languageName: node
+  linkType: hard
+
 "@humanwhocodes/config-array@npm:^0.13.0":
   version: 0.13.0
   resolution: "@humanwhocodes/config-array@npm:0.13.0"
@@ -5510,6 +5517,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "sudodos-frontend@workspace:."
   dependencies:
+    "@gewis/splash": "npm:^2.4.0"
     "@intlify/eslint-plugin-vue-i18n": "npm:^2.0.0"
     "@rushstack/eslint-patch": "npm:^1.2.0"
     "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#2d6105a0b440f6d62b024edbc7612508263970c2"
