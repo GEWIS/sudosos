@@ -14,8 +14,8 @@
           />
         </div>
           <TabView class="w-full">
-            <TabPanel v-for="state in states" :key="state" :header="state">
-              <InvoiceTable :state="state" />
+            <TabPanel v-for="year in years" :key="year" :header="year.toString()">
+              <InvoiceTableState :year="year" />
             </TabPanel>
           </TabView>
       </div>
@@ -23,10 +23,9 @@
 </template>
 
 <script setup lang="ts">
-import InvoiceTable from "@/modules/financial/components/invoice/InvoiceTable.vue";
+import InvoiceTableState from "@/modules/financial/components/invoice/InvoiceTableState.vue";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import { InvoiceStatusResponseStateEnum } from "@sudosos/sudosos-client/src/api";
 import { useI18n } from "vue-i18n";
 import Button from "primevue/button";
 import router from "@/router";
@@ -34,8 +33,11 @@ import InvoiceAccountOverview from "@/modules/financial/views/invoice/InvoiceAcc
 
 const { t } = useI18n();
 
-const states = [ InvoiceStatusResponseStateEnum.Created, InvoiceStatusResponseStateEnum.Sent,
-  InvoiceStatusResponseStateEnum.Paid, InvoiceStatusResponseStateEnum.Deleted ];
+const years = Array.from(
+    { length: Number(new Date().getMonth() > 5) + new Date().getFullYear() - 2022 },
+    (_, i) => new Date().getFullYear() + Number(new Date().getMonth() > 5) - i
+);
+
 
 const navigateToCreateInvoice = () => {
   router.push({ name: 'invoiceCreate' });
