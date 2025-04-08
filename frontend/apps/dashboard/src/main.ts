@@ -43,6 +43,7 @@ import ConfirmDialog from "primevue/confirmdialog";
 import ConfirmationService from 'primevue/confirmationservice';
 import InputSwitch from "primevue/inputswitch";
 import Divider from "primevue/divider";
+import Column from "primevue/column";
 import beforeLoad from '@/utils/beforeLoadUtil';
 
 const app = createApp(App);
@@ -85,6 +86,7 @@ app.component('Steps', Steps);
 app.component('Calendar', Calendar);
 app.component('ConfirmDialog', ConfirmDialog);
 app.component('Divider', Divider);
+app.component('Column', Column)
 
 beforeLoad().then(() => {
   app.use(router);

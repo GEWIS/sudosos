@@ -43,6 +43,9 @@
         "signOut": "Uitloggen",
         "createdAt": "Aangemaakt op",
         "updatedAt": "Bijgewerkt op",
+        "selected": "Geselecteerd",
+        "users": "Gebruikers",
+        "confirm": "Akkoord",
         "placeholders": {
             "selectType": "Selecteer Type",
             "email": "voorbeeld@voorbeeld.com",
@@ -82,6 +85,7 @@
                 "pinUpdated": "Pincode succesvol bijgewerkt.",
                 "finesNotified": "Gebruikers succesvol op de hoogte gebracht.",
                 "finesHandedOut": "Boetes succesvol uitgedeeld.",
+                "finesCannotGoIntoDebt": "Schuld mogelijkheid van gebruikers succesvol uitgeschakeld.",
                 "payoutCreated": "Uitbetaling succesvol aangemaakt.",
                 "invoiceDeleted": "Factuur succesvol verwijderd.",
                 "invoiceCreated": "Factuur succesvol aangemaakt.",
@@ -146,7 +150,7 @@
             "manageProducts": "Producten beheren",
             "posOverview": "POS overzicht",
             "flaggedTransactions": "Gemarkeerde transacties",
-            "fineOverview": "Boeteoverzicht",
+            "debtors": "Schuldigen",
             "invoiceAccounts": "Facturen Account Overzicht",
             "fines" : "Boetes"
         },
@@ -172,6 +176,23 @@
         "errorMessage": "Er is iets misgegaan, open een issue op {link} en beschrijf het probleem.",
         "permissionMessages": {
           "transactions": "Je mag deze transacties niet bekijken."
+        },
+        "time": {
+            "today": "Vandaag",
+            "yesterday": "Gisteren",
+            "yearsAgo": " jaar geleden",
+            "daysAgo": " dagen geleden",
+            "hoursAgo": " uren geleden",
+            "minutesAgo": " minuten geleden",
+            "secondsAgo": " seconden geleden",
+            "justNow": "net nu",
+            "sunday": "Zondag",
+            "monday": "Maandag",
+            "tuesday": "Dinsdag",
+            "wednesday": "Woensdag",
+            "thursday": "Donderdag",
+            "friday": "Vrijdag",
+            "saturday": "Zaterdag"
         },
         "wrapped": {
             "lastYear": "In het afgelopen jaar:",

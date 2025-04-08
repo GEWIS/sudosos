@@ -192,8 +192,8 @@ const navItems = computed(() => [
         visible: isAllowed('get', ['all'], 'Invoice', ['any'])
       },
       {
-        label: t('common.navigation.fineOverview'),
-        route: '/fine',
+        label: t('common.navigation.debtors'),
+        route: '/debtor',
         visible: isAllowed('get', ['all'], 'Fine', ['any']),
       },
       {

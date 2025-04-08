@@ -1,26 +1,36 @@
 {
   "modules": {
     "financial": {
-      "fine": {
-        "title": "Fine overview",
-        "eligibleUsers": {
-          "header": "Eligible users",
-          "firstDate": "First date",
-          "secondDate": "Second date",
+      "debtor": {
+        "title": "Debtor overview",
+        "debtorUsers": {
+          "header": "Debtors",
+          "currentBalance": "Current balance",
+          "balanceOn": "Balance on {date}",
+          "target": "reference",
+          "control": "control",
+          "explanation": "The table below selects all the users where the user has at most -€5 on both dates. Fines to be handed out are calculated on the balance of the target date.",
           "apply": "Apply",
           "notify": "Notify",
           "handout": "Hand out",
-          "info": "Currently, eligible users have a total debt of {debt}. This would result in a total of {fines} in fines being handed out.",
-          "pleaseSelect": "Please apply two dates to see how much users are in debt.",
-          "firstBalance": "First balance",
-          "lastBalance": "Last balance",
+          "toBeFined": "To be fined",
+          "wasFined": "Was fined",
+          "cannotDebt": "Disable ability to go into debt",
+          "ofWhichFine": "Of which fine",
+          "fineSince": "Fine since",
+          "sumCurrentBalance": "Sum of balances",
+          "sumToBeFined": "Sum of \"To be fined\"",
+          "sumWasFined": "Sum of \"Was fined\"",
           "confirm": {
             "handoutMessage": "Do you want to hand out fines for {count} users?",
-            "notifyMessage": "Do you want to send a fine warning to {count} users?"
+            "notifyMessage": "Do you want to send a fine warning to {count} users?",
+            "cannotGoInDebt": "Do you want disable the ability to go further into debt for {count} users?"
           }
         },
         "handoutEvents": {
-          "header": "Fine handout events",
+          "title": "Fine hand out",
+          "header": "Fine hand out events",
+          "handoutDate": "Hand out date",
           "referenceDate": "Reference date",
           "number": "Number of fines",
           "total": "Total of fines",

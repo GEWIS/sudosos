@@ -1,5 +1,5 @@
 <template>
-  <div class="page-container-large align-items-center flex flex-column gap-5" v-if="invoice">
+  <div class="page-container-wide align-items-center flex flex-column gap-5" v-if="invoice">
     <div>
       <div class="page-title flex flex-row">
         <div class="flex flex-column">

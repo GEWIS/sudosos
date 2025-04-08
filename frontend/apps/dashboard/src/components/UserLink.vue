@@ -13,11 +13,17 @@ const props = defineProps({
   user: {
     type: Object as PropType<BaseUserResponse>,
     required: true,
+  },
+  newTab: {
+    type: Boolean,
+    required: false,
+    default: false,
   }
 });
 
 const goToUser = () => {
-  router.push({ name: 'user', params: { userId: props.user.id } });
+  const routeData = router.resolve({ name: 'user', params: { userId: props.user.id } });
+  window.open(routeData.href, '_blank');
 };
 
 </script>

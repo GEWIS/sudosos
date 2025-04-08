@@ -1,16 +1,18 @@
-
 import type { Dinero, UserResponse } from "@sudosos/sudosos-client";
+import i18n from '@/utils/i18nUtils';
+
+const t = i18n.global.t;
 
 export function formatDateTime(date: Date): string {
 
     const daysOfWeek: Array<string> = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
+        t('common.time.sunday'),
+        t('common.time.monday'),
+        t('common.time.tuesday'),
+        t('common.time.wednesday'),
+        t('common.time.thursday'),
+        t('common.time.friday'),
+        t('common.time.saturday'),
     ];
 
     const day = parseTime(date.getDate());
@@ -49,16 +51,32 @@ export function formatTimeSince(startDate: Date, now: Date) {
     const diffInDays = Math.floor(diffInHours / 24);
 
     if (diffInDays > 365) {
-        return `${Math.floor(diffInDays / 365)} year(s) ago`;
+        return Math.floor(diffInDays / 365) + t('common.time.yearsAgo');
     } else if (diffInDays > 0) {
-        return `${diffInDays} days ago`;
+        return diffInDays + t('common.time.daysAgo');
     } else if (diffInHours > 0) {
-        return `${diffInHours} hours ago`;
+        return diffInHours + t('common.time.hoursAgo');
     } else if (diffInMinutes > 0) {
-        return `${diffInMinutes} minutes ago`;
+        return diffInMinutes + t('common.time.minutesAgo');
     } else if (diffInSeconds > 0) {
-        return `${diffInSeconds} seconds ago`;
+        return diffInSeconds + t('common.time.secondsAgo');
     } else {
-        return 'just now';
+        return t('common.time.justNow');
+    }
+}
+
+export function formatFineTimeSince(startDate: Date, now: Date) {
+    const diff = now.getTime() - startDate.getTime();
+    const diffInDays = Math.floor(diff / (24 * 60*60*1000));
+
+
+    if (diff <= 0) {
+        return "";
+    } else if (diffInDays == 0) {
+        return t('common.time.today');
+    } else if (diffInDays == 1) {
+        return t('common.time.yesterday');
+    } else {
+        return diffInDays + t('common.time.daysAgo');
     }
 }

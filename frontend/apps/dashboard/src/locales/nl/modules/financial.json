@@ -1,30 +1,40 @@
 {
   "modules": {
     "financial": {
-      "fine": {
-        "title": "Boete overzicht",
-        "eligibleUsers": {
-          "header": "In aanmerking komende gebruikers",
-          "firstDate": "Eerste datum",
-          "secondDate": "Tweede datum",
+      "debtor": {
+        "title": "Debiteuren overzicht",
+        "debtorUsers": {
+          "header": "Debiteuren",
+          "currentBalance": "Huidig saldo",
+          "balanceOn": "Saldo op {date}",
+          "target": "doel",
+          "control": "controle",
+          "explanation": "De tabel hieronder selecteert alle gebruikers waarbij de gebruiker op beide data maximaal -€5 heeft. Boetes die uitgedeeld moeten worden, worden berekend op het saldo van de doeldatum.",
           "apply": "Toepassen",
           "notify": "Waarschuwen",
-          "handout": "Uitreiken",
-          "info": "Momenteel hebben in aanmerking komende gebruikers een totale schuld van {debt}. Dit zou resulteren in een totaal van {fines} aan opgelegde boetes.",
-          "pleaseSelect": "Selecteer twee datums om te zien hoeveel schuld gebruikers hebben.",
-          "firstBalance": "Eerste saldo",
-          "lastBalance": "Laatste saldo",
+          "handout": "Uitdelen",
+          "toBeFined": "Te beboeten",
+          "wasFined": "Is beboet",
+          "cannotDebt": "Schakel schuld mogelijkheid uit",
+          "ofWhichFine": "Waarvan boete",
+          "fineSince": "Boete sinds",
+          "sumCurrentBalance": "Totaal van saldi",
+          "sumToBeFined": "Totaal van \"Te beboeten\"",
+          "sumWasFined": "Totaal van \"Is beboet\"",
           "confirm": {
-            "handoutMessage": "Wil je boetes opleggen voor {count} gebruikers?",
-            "notifyMessage": "Wil je een boete-waarschuwing sturen naar {count} gebruikers?"
+            "handoutMessage": "Wilt u boetes uitdelen aan {count} gebruikers?",
+            "notifyMessage": "Wilt u een boetewaarschuwing sturen naar {count} gebruikers?",
+            "cannotGoInDebt": "Wilt u het niet meer mogelijk maken voor {count} gebruikers om verder de schulden in te gaan?"
           }
         },
         "handoutEvents": {
-          "header": "Boete-uitreikings evenementen",
+          "title": "Boete uitdeel moment",
+          "header": "Boete uitdeel momenten",
+          "handoutDate": "Uitdeel datum",
           "referenceDate": "Referentiedatum",
           "number": "Aantal boetes",
           "total": "Totaal aan boetes",
-          "details": "Details van het boete-uitreikingsevenement"
+          "details": "Details van het boete uitdeel moment"
         }
       },
       "invoice": {
