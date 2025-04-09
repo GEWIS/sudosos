@@ -29,12 +29,8 @@
                 https://github.com/GEWIS/sudosos-backend
             </a><br>
             <a class="text-color"
-                href="https://github.com/GEWIS/sudosos-frontend-vue3">
+                href="https://github.com/GEWIS/sudosos-frontend">
                 https://github.com/GEWIS/sudosos-frontend
-            </a><br>
-            <a class="text-color"
-                href="https://github.com/GEWIS/sudosos-pos-vue3">
-                https://github.com/GEWIS/sudosos-pos
             </a><br>
 
         </div>
