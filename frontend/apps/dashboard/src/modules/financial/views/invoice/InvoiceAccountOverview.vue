@@ -1,6 +1,9 @@
 <template>
   <div class="full-width my-4">
     <CardComponent :header="t('modules.financial.invoice.account.header')" class="full-width">
+      <template #topAction>
+        <Button :label="t('common.create')" icon="pi pi-plus" @click="showDialog = true" />
+      </template>
       <DataTable
           :value="records"
           :loading="isLoading"
@@ -8,11 +11,6 @@
           :sortOrder="sortOrder"
           @sort="onSort"
       >
-        <template #header>
-          <div class="flex flex-row align-items-center justify-content-end">
-            <Button :label="t('common.create')" icon="pi pi-plus" @click="showDialog = true" />
-          </div>
-        </template>
         <Column
             field="firstName"
             :header="t('common.name')"
