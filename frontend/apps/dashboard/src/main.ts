@@ -86,7 +86,7 @@ app.component('Steps', Steps);
 app.component('Calendar', Calendar);
 app.component('ConfirmDialog', ConfirmDialog);
 app.component('Divider', Divider);
-app.component('Column', Column)
+app.component('Column', Column);
 
 beforeLoad().then(() => {
   app.use(router);

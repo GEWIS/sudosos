@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import type {
+    BalanceResponse,
     BaseInvoiceResponse,
     InvoiceResponse,
     PaginatedInvoiceResponse,
@@ -12,6 +13,7 @@ import { InvoiceStatusResponseStateEnum } from "@sudosos/sudosos-client/src/api"
 export const useInvoiceStore = defineStore('invoice', {
     state: () => ({
       invoices: {} as Record<number, InvoiceResponse>,
+      negativeInvoiceUsers: {} as Record<number, BalanceResponse>,
     }),
     getters: {
         getInvoice: (state) => (id: number): InvoiceResponse | undefined => {
@@ -19,6 +21,9 @@ export const useInvoiceStore = defineStore('invoice', {
         },
         getAll(state): Record<number, InvoiceResponse> {
             return state.invoices;
+        },
+        getNegativeInvoiceUsers(state): Record<number, BalanceResponse> {
+            return state.negativeInvoiceUsers;
         },
     },
     actions: {
@@ -87,6 +92,23 @@ export const useInvoiceStore = defineStore('invoice', {
                     this.invoices[invoice.id] = invoice;
                 });
                 return this.invoices;
+            });
+        },
+        async fetchUsersIfEmpty() {
+            if (Object.keys(this.negativeInvoiceUsers).length === 0) {
+                await this.fetchAllNegativeInvoiceUsers();
+            }
+        },
+        async fetchAllNegativeInvoiceUsers(): Promise<Record<number, BalanceResponse>> {
+            return fetchAllPages<BalanceResponse>(
+              // @ts-ignore
+              (take, skip) => ApiService.balance.getAllBalance(null, null, -1, null, null, null,
+                  "INVOICE", null, null, false, take, skip)
+            ).then((users) => {
+                users.forEach((user: BalanceResponse) => {
+                    this.negativeInvoiceUsers[user.id] = user;
+                });
+                return this.negativeInvoiceUsers;
             });
         },
     }

@@ -63,6 +63,7 @@
           "warning": "Controleer de factuur voordat je deze aanmaakt."
         },
         "account": {
+          "lastTransaction": "Laatste transactie",
           "title": "Facturen Account Overzicht",
           "header": "Facturen Account Overzicht",
           "balance": "Saldo",

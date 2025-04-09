@@ -102,7 +102,6 @@ const handleLogout = () => {
 };
 
 const { pendingPayouts } = usePendingPayouts();
-
 const { openInvoiceAccounts } = useOpenInvoiceAccounts();
 const getFinancialNotifications = () => isAllowed('update', ['all'], 'SellerPayout', ['any']) && pendingPayouts?.value + openInvoiceAccounts?.value;
 

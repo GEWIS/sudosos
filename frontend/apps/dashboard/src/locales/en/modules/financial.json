@@ -63,6 +63,7 @@
           "warning": "Make sure to check the invoice before creating it."
         },
         "account": {
+          "lastTransaction": "Last transaction",
           "title": "Invoice Account Overview",
           "header": "Invoice Account Overview",
           "balance": "Balance",
