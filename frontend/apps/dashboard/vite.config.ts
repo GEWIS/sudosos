@@ -2,7 +2,7 @@ import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 
-const PROXY_URL = 'https://sudosos.test.gewis.nl';
+const PROXY_URL = 'https://sudosos.gewis.nl';
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {

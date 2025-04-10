@@ -21,8 +21,11 @@ declare module 'vue-router' {
   }
 }
 
+// check if first url part is /beta then create web history for /
+const base = window.location.pathname.split('/')[1];
+
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(base === 'beta' ? '/beta' : '/'),
   routes: [
     ...authRoutes(),
     ...adminRoutes(),
@@ -67,6 +70,11 @@ const router = createRouter({
           name: 'maintenance',
         },
       ]
+    },
+    // Catch-all route to home
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: { name: 'home' },
     },
   ]
 });
