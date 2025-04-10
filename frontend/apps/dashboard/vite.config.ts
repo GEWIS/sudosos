@@ -7,6 +7,7 @@ const PROXY_URL = 'https://sudosos.test.gewis.nl';
 // https://vitejs.dev/config/
 export default defineConfig(() => {
   return {
+    base: './',
     plugins: [
       vue(),
     ],
