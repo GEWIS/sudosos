@@ -7,6 +7,7 @@
   <div v-else class="main-content">
     <div class="wrapper">
       <div class="pos-wrapper">
+        <TopUpWarningComponent></TopUpWarningComponent>
         <UserSearchComponent v-if="currentState === PointOfSaleState.SEARCH_USER" @cancel-search="cancelSearch()"/>
         <PointOfSaleDisplayComponent :point-of-sale="currentPos" v-if="currentState === PointOfSaleState.DISPLAY_POS"/>
         <BuyerSelectionComponent v-if="currentState === PointOfSaleState.SELECT_CREATOR"
@@ -24,7 +25,7 @@
 </template>
 <script setup lang="ts">
 import { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
-import { onMounted, onUnmounted, PropType, Ref, ref, watch } from 'vue';
+import { onMounted, Ref, ref, watch } from 'vue';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import PointOfSaleDisplayComponent from '@/components/PointOfSaleDisplay/PointOfSaleDisplayComponent.vue';
 import SettingsIconComponent from '@/components/SettingsIconComponent.vue';
@@ -38,6 +39,7 @@ import NfcSearchComponent from "@/components/NfcSearchComponent.vue";
 import { useAuthStore } from "@sudosos/sudosos-frontend-common";
 import apiService from "@/services/ApiService";
 import { useCartStore } from "@/stores/cart.store";
+import TopUpWarningComponent from "@/components/TopUpWarningComponent.vue";
 
 const authStore = useAuthStore();
 const posNotLoaded = ref(true);

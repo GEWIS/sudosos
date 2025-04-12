@@ -85,6 +85,15 @@ export const useCartStore = defineStore('cart', {
         this.products.push(cartProduct);
       }
     },
+    checkBuyerInDebt(): boolean {
+      const buyer = this.buyer;
+      if (buyer) {
+        if (!this.buyerBalance) return false;
+
+        return (this.buyerBalance.amount < 0);
+      }
+      return false;
+    },
     checkUnallowedUserInDebt(): boolean{
       const buyer = this.buyer;
       if (buyer) {
