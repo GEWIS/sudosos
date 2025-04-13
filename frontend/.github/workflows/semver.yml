@@ -55,6 +55,12 @@ jobs:
         with:
           path: .
 
+      - name: Safe directory
+        run: git config --global --add safe.directory '*'
+
+      - name: Get short commit SHA
+        run: echo "GIT_COMMIT_SHA=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
+
       - name: Set up environment
         env:
           ENV_FILE: ${{ matrix.env_file_main }}
@@ -94,4 +100,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            GIT_COMMIT_BRANCH=${{ github.head_ref || github.ref_name }} 
+            GIT_COMMIT_SHA=${{ env.GIT_COMMIT_SHA }}
           file: ${{ matrix.dockerfile_path }}
