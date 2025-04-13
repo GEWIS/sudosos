@@ -1,6 +1,6 @@
 <template>
   <div class="main-content">
-    <div v-if="loggingIn" class="flex align-items-center justify-content-center h-full">
+    <div v-if="loggingIn" class="align-items-center flex h-full justify-content-center">
       <div>
         <ProgressSpinner aria-label="Loading" />
       </div>
@@ -9,31 +9,28 @@
       <div class="keypad-container m-auto pt-6">
         <div class="display-container" :class="displayContainerClasses">
           <KeypadDisplayComponent
-            :userId="userId"
-            :pinCode="pinCode"
-            :wrong-pin="wrongPin"
-            :isActive="enteringUserId"
             :external="external"
+            :is-active="enteringUserId"
+            :pin-code="pinCode"
+            :user-id="userId"
+            :wrong-pin="wrongPin"
             @focus:passcode="focusPasscode"
             @focus:userid="focusUserId"
           />
         </div>
         <KeypadComponent
-          @input="handleInput"
           @backspace="handleBackspace"
           @continue="handleContinue"
           @external="handleExternal"
+          @input="handleInput"
         />
       </div>
       <BannerComponent v-if="shouldShowBanner" />
     </div>
   </div>
   <SettingsIconComponent />
-  <GitInfo/>
-  <ScannersLoginComponent
-    :handle-nfc-login="nfcLogin"
-    :handle-ean-login="eanLogin"
-  />
+  <GitInfo />
+  <ScannersLoginComponent :handle-ean-login="eanLogin" :handle-nfc-login="nfcLogin" />
 </template>
 
 <script setup lang="ts">
@@ -46,9 +43,9 @@ import router from '@/router';
 import { useCartStore } from '@/stores/cart.store';
 import apiService from '@/services/ApiService';
 import BannerComponent from '@/components/Banner/BannerComponent.vue';
-import ScannersLoginComponent from "@/components/ScannersLoginComponent.vue";
+import ScannersLoginComponent from '@/components/ScannersLoginComponent.vue';
 
-import GitInfo from "@/components/GitInfo.vue";
+import GitInfo from '@/components/GitInfo.vue';
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
@@ -70,7 +67,7 @@ const handleInput = (value: string) => {
   if (enteringUserId.value) {
     if (userId.value.length >= maxUserIdLength) return;
     userId.value += value;
-    if (userId.value.length === maxUserIdLength || Number(userId.value) * 10 > maxUserId && !external.value) {
+    if (userId.value.length === maxUserIdLength || (Number(userId.value) * 10 > maxUserId && !external.value)) {
       switchInput();
     }
   } else {
@@ -84,7 +81,7 @@ const handleInput = (value: string) => {
 
 const handleBackspace = () => {
   wrongPin.value = false;
-  if(userId.value.length == 0 && enteringUserId.value && external.value) external.value = false;
+  if (userId.value.length == 0 && enteringUserId.value && external.value) external.value = false;
 
   if (pinCode.value.length === 0 && !enteringUserId.value) {
     switchInput();
@@ -118,16 +115,16 @@ const displayContainerClasses = computed(() => ({
   to: enteringUserId.value,
   from: !enteringUserId.value,
   animating: animateSwitch.value,
-  switched: !enteringUserId.value && !animateSwitch.value
+  switched: !enteringUserId.value && !animateSwitch.value,
 }));
 
 const loginSucces = async () => {
   const user = authStore.getUser;
   if (user === null) return;
 
-  if (userStore.getActiveUsers.length === 0) await userStore.fetchUsers;
+  if (userStore.getActiveUsers.length === 0) void userStore.fetchUsers(apiService);
   await useCartStore().setBuyer(user);
-  userStore.fetchCurrentUserBalance(user.id, apiService);
+  void userStore.fetchCurrentUserBalance(user.id, apiService);
 
   await router.push({ path: '/cashier' });
   userId.value = '';
@@ -179,7 +176,6 @@ const nfcLogin = async (nfcCode: string) => {
 };
 
 const eanLogin = async (eanCode: string) => {
-
   try {
     await authStore.eanLogin(eanCode, apiService).then(async () => {
       await loginSucces();

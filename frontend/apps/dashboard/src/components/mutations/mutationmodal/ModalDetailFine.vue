@@ -1,48 +1,41 @@
 <template>
   <div class="flex flex-column">
     <span>
-    {{ dateString }}
+      {{ dateString }}
     </span>
-      <span>{{ t("components.mutations.modal.fineDescription") }}</span>
-      <br>
-      <DataTable
-        :value="[{
+    <span>{{ t('components.mutations.modal.fineDescription') }}</span>
+    <br />
+    <DataTable
+      :pt="{
+        tfoot: 'font-bold',
+      }"
+      :value="[
+        {
           amount: amount,
           firstName: firstName,
           lastName: lastName,
-          description: description
-        }]"
-        :pt="{
-          tfoot: 'font-bold'
-        }"
-      >
-        <Column field="description" :header="t('common.description')" class="p-1">
-        </Column>
-        <Column
-          field="totalPriceInclVat"
-          :header="t('common.amount')"
-          class="p-1"
-          footerClass="font-bold"
-          >
-          <template #body="product">
-              {{ formatPrice(product.data.amount) }}
-          </template>
-        </Column>
-      </DataTable>
+          description: description,
+        },
+      ]"
+    >
+      <Column class="p-1" field="description" :header="t('common.description')"> </Column>
+      <Column class="p-1" field="totalPriceInclVat" footer-class="font-bold" :header="t('common.amount')">
+        <template #body="product">
+          {{ formatPrice(product.data.amount) }}
+        </template>
+      </Column>
+    </DataTable>
   </div>
 </template>
 
 <script setup lang="ts">
-import { formatPrice } from "@/utils/formatterUtils";
-import { onMounted, type Ref, ref, computed } from "vue";
-import Column from "primevue/column";
-import DataTable from "primevue/datatable";
-import type {
-  DineroObjectResponse,
-  TransferResponse
-} from "@sudosos/sudosos-client";
-import router from "@/router";
-import { useI18n } from "vue-i18n";
+import { onMounted, type Ref, ref, computed } from 'vue';
+import Column from 'primevue/column';
+import DataTable from 'primevue/datatable';
+import type { DineroObjectResponse, TransferResponse } from '@sudosos/sudosos-client';
+import { useI18n } from 'vue-i18n';
+import router from '@/router';
+import { formatPrice } from '@/utils/formatterUtils';
 
 const { t } = useI18n();
 
@@ -55,7 +48,7 @@ const props = defineProps({
   fine: {
     type: Object as () => TransferResponse,
     required: true,
-  }
+  },
 });
 
 onMounted(async () => {
@@ -70,14 +63,11 @@ onMounted(async () => {
 });
 
 const dateString = computed(() => {
-  return new Date(props.fine.createdAt!!).toLocaleString('nl-NL', {
+  return new Date(props.fine.createdAt!).toLocaleString('nl-NL', {
     dateStyle: 'short',
-    timeStyle: 'short'
+    timeStyle: 'short',
   });
 });
-
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

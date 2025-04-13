@@ -1,13 +1,13 @@
-@use "sass:list";
-@use "../../../themes/sudosos-light/variables_light";
+@use 'sass:list';
+@use '../../../themes/sudosos-light/variables_light';
 
 .p-inputotp {
-    display: flex;
-    align-items: center;
-    gap: variables_light.$inlineSpacing;
+  display: flex;
+  align-items: center;
+  gap: variables_light.$inlineSpacing;
 }
 
 .p-inputotp-input {
-    text-align: center;
-    width: 2 * list.nth(variables_light.$inputPadding, 2) + 1rem;
+  text-align: center;
+  width: 2 * list.nth(variables_light.$inputPadding, 2) + 1rem;
 }

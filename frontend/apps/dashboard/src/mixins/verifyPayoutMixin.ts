@@ -1,8 +1,9 @@
-import { computed, ref } from "vue";
-import { useToast } from "primevue/usetoast";
-import { formatPrice } from "@/utils/formatterUtils";
-import ApiService from "@/services/ApiService";
-import { useI18n } from "vue-i18n";
+import { computed, ref } from 'vue';
+import { useToast } from 'primevue/usetoast';
+import { useI18n } from 'vue-i18n';
+import type { SellerPayoutResponse } from '@sudosos/sudosos-client';
+import { formatPrice } from '@/utils/formatterUtils';
+import ApiService from '@/services/ApiService';
 
 export const verifyPayoutMixin = {
   setup() {
@@ -12,7 +13,7 @@ export const verifyPayoutMixin = {
     const toast = useToast();
     const { t } = useI18n();
 
-    const verifyPayout = async (payout: any) => {
+    const verifyPayout = async (payout: SellerPayoutResponse) => {
       if (!payout) return;
 
       verifying.value = true;
@@ -27,7 +28,7 @@ export const verifyPayoutMixin = {
         const result = await ApiService.user.getUsersSalesReport(
           payout.requestedBy.id,
           startDate.toISOString(),
-          endDate.toISOString()
+          endDate.toISOString(),
         );
 
         verifyAmount.value = result.data.totalInclVat.amount;
@@ -44,12 +45,14 @@ export const verifyPayoutMixin = {
           toast.add({
             severity: 'error',
             summary: t('common.toast.failed.failed'),
-            detail: t('common.toast.failed.payout.details', { amount: formatPrice(payout.amount),
-              totalInclVat: formatPrice(result.data.totalInclVat) }),
+            detail: t('common.toast.failed.payout.details', {
+              amount: formatPrice(payout.amount),
+              totalInclVat: formatPrice(result.data.totalInclVat),
+            }),
             life: 3000,
           });
         }
-      } catch (error) {
+      } catch {
         verifySuccess.value = false;
         toast.add({
           severity: 'error',
@@ -64,24 +67,32 @@ export const verifyPayoutMixin = {
 
     const verifyButtonLabel = computed(() => {
       if (verifying.value) return '';
-      return verifySuccess.value === true ? t('common.verified') : verifySuccess.value === false ?
-        t('common.failed') : t('common.verify');
+      return verifySuccess.value === true
+        ? t('common.verified')
+        : verifySuccess.value === false
+          ? t('common.failed')
+          : t('common.verify');
     });
 
     const verifyButtonIcon = computed(() => {
       if (verifying.value) return 'pi pi-spin pi-spinner';
-      return verifySuccess.value === true ? 'pi pi-check' : verifySuccess.value === false ?
-        'pi pi-times' : 'pi pi-check';
+      return verifySuccess.value === true
+        ? 'pi pi-check'
+        : verifySuccess.value === false
+          ? 'pi pi-times'
+          : 'pi pi-check';
     });
 
     const verifyButtonSeverity = computed(() => {
-      return verifySuccess.value === true ? 'success' : verifySuccess.value === false ?
-        'danger' : 'info';
+      return verifySuccess.value === true ? 'success' : verifySuccess.value === false ? 'danger' : 'info';
     });
 
     const verifyButtonClass = computed(() => {
-      return verifySuccess.value === false ? 'p-button-danger' : verifySuccess.value === true ?
-        'p-button-success' : 'p-button-info';
+      return verifySuccess.value === false
+        ? 'p-button-danger'
+        : verifySuccess.value === true
+          ? 'p-button-success'
+          : 'p-button-info';
     });
 
     return {

@@ -1,49 +1,39 @@
 <template>
-  <div class="container-grid-wrapper flex-1 h-full mb-3 pr-6 mr-0 pl-1" ref="wrapper">
+  <div ref="wrapper" class="container-grid-wrapper flex-1 h-full mb-3 mr-0 pl-1 pr-6">
     <div class="container gap-2">
       <ProductComponent
-          v-for="product in sortedProducts"
-          :key="`${product.product.id}-${product.container.id}`"
-          :product="product.product"
-          :container="product.container"
+        v-for="product in sortedProducts"
+        :key="`${product.product.id}-${product.container.id}`"
+        :container="product.container"
+        :product="product.product"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import {
-  PointOfSaleWithContainersResponse
-} from "@sudosos/sudosos-client";
-import Fuse from "fuse.js";
-import ProductComponent from "@/components/ProductComponent.vue";
+import { computed, ref, watch } from 'vue';
+import { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
+import Fuse from 'fuse.js';
+import ProductComponent from '@/components/ProductComponent.vue';
 
-const props = defineProps({
-  isProductSearch: {
-    type: Boolean,
-    required: true,
-  },
-  pointOfSale: {
-    type: Object as () => PointOfSaleWithContainersResponse | undefined,
-    required: true,
-  },
-  selectedCategoryId: {
-    type: String,
-    required: false,
-  },
-  searchQuery: {
-    type: String,
-    required: true,
-  },
-});
+const props = defineProps<{
+  isProductSearch: boolean;
+  pointOfSale?: PointOfSaleWithContainersResponse;
+  selectedCategoryId?: string;
+  searchQuery: string;
+}>();
 
 const searchQuery = ref(props.searchQuery);
 const wrapper = ref();
 
-watch(() => props.searchQuery, (newValue) => {
-  searchQuery.value = newValue;
-}, { immediate: true });
+watch(
+  () => props.searchQuery,
+  (newValue) => {
+    searchQuery.value = newValue;
+  },
+  { immediate: true },
+);
 
 const getFilteredProducts = () => {
   if (!props.pointOfSale) return [];
@@ -52,7 +42,7 @@ const getFilteredProducts = () => {
   let filteredProducts = props.pointOfSale.containers.flatMap((container) => {
     return container.products.map((product) => ({
       product,
-      container
+      container,
     }));
   });
 
@@ -70,10 +60,10 @@ const getFilteredProducts = () => {
         keys: ['product.name'],
         isCaseSensitive: false,
         shouldSort: true,
-        threshold: 0.2
+        threshold: 0.2,
       })
-          .search(searchQuery.value)
-          .map((r) => r.item);
+        .search(searchQuery.value)
+        .map((r) => r.item);
     }
   }
 
@@ -83,7 +73,6 @@ const getFilteredProducts = () => {
 const filteredProducts = computed(() => {
   return getFilteredProducts();
 });
-
 
 const sortedProducts = computed(() => {
   const products = [...filteredProducts.value];

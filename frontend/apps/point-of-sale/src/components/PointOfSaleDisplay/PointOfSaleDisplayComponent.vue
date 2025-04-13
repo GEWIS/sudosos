@@ -3,66 +3,69 @@
     <div class="header">
       <div v-show="isSearchViewVisible">
         <div class="header-row">
-          <div class="c-btn square active icon-large search-close" @click="closeSearchView">
-            <i class="pi pi-times text-4xl"/>
+          <div class="active c-btn icon-large search-close square" @click="closeSearchView">
+            <i class="pi pi-times text-4xl" />
           </div>
           <input
-            type="text"
-            ref="searchInput"
             id="searchInput"
+            ref="searchInput"
             v-model="searchQuery"
+            autocomplete="off"
             placeholder="Search..."
-            autocomplete="off"/>
+            type="text"
+          />
         </div>
       </div>
       <div v-show="!isSearchViewVisible">
-        <div class="flex w-full justify-content-between">
+        <div class="flex justify-content-between w-full">
           <div class="flex flex-wrap gap-2">
-            <label for="searchInput" class="c-btn icon-md search-close" @click="openSearchView">
-              <i class="pi pi-search text-4xl"/>
+            <label class="c-btn icon-md search-close" for="searchInput" @click="openSearchView">
+              <i class="pi pi-search text-4xl" />
             </label>
             <div
-                class="c-btn square px-4 font-size-lg shadow-1"
-                v-for="category in computedCategories"
-                :key="category.id"
-                :class="{ 'active': category.id === selectedCategoryId }"
-                @click="selectCategory(category.id)"
+              v-for="category in computedCategories"
+              :key="category.id"
+              class="c-btn font-size-lg px-4 shadow-1 square"
+              :class="{ active: category.id === selectedCategoryId }"
+              @click="selectCategory(category.id)"
             >
               {{ category.name }}
             </div>
           </div>
-      </div>
+        </div>
       </div>
     </div>
-    <Message v-if="isCategoryAlcoholic && !useSettingStore().isAlcoholTime" severity="warn" class="mr-4">
+    <Message v-if="isCategoryAlcoholic && !useSettingStore().isAlcoholTime" class="mr-4" severity="warn">
       Please note that today, alcoholic drinks are only allowed to be served after
-      {{ new Date(useSettingStore().alcoholTimeToday)
-      .toLocaleTimeString('nl-NL', { hour: "2-digit", minute: "2-digit" }) }}.
-      This also applies to non-alcoholic alternatives on this page.
+      {{
+        new Date(useSettingStore().alcoholTimeToday).toLocaleTimeString('nl-NL', {
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      }}. This also applies to non-alcoholic alternatives on this page.
     </Message>
     <PointOfSaleProductsComponent
-        :search-query="searchQuery"
-        :is-product-search="isSearchViewVisible"
-        :point-of-sale="pointOfSale"
-        :selected-category-id="selectedCategoryId"/>
+      :is-product-search="isSearchViewVisible"
+      :point-of-sale="pointOfSale"
+      :search-query="searchQuery"
+      :selected-category-id="selectedCategoryId"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import {
-  PointOfSaleWithContainersResponse
-} from '@sudosos/sudosos-client';
-import { useCartStore } from "@/stores/cart.store";
-import PointOfSaleProductsComponent from "@/components/PointOfSaleDisplay/PointOfSaleProductsComponent.vue";
-import { usePointOfSaleStore } from "@/stores/pos.store";
-import { useSettingStore } from "@/stores/settings.store";
+import { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
+import { useCartStore } from '@/stores/cart.store';
+import PointOfSaleProductsComponent from '@/components/PointOfSaleDisplay/PointOfSaleProductsComponent.vue';
+import { usePointOfSaleStore } from '@/stores/pos.store';
+import { useSettingStore } from '@/stores/settings.store';
 
 const props = defineProps({
   pointOfSale: {
     type: Object as () => PointOfSaleWithContainersResponse | undefined,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const cartStore = useCartStore();
@@ -101,7 +104,7 @@ function getDefaultCategoryId(): string | undefined {
   // Different target category based on borrelmode or not.
   const target = useSettingStore().getTargetCategory;
   const nonAlcoholicCategory = usePointOfSaleStore().allProductCategories.find(
-      (category: {name: string, id: string}) => category.name.toLowerCase() === target
+    (category: { name: string; id: string }) => category.name.toLowerCase() === target,
   );
   if (shouldShowAllCategory.value) return 'all';
   return nonAlcoholicCategory ? nonAlcoholicCategory.id : undefined;
@@ -126,25 +129,23 @@ const closeSearchView = () => {
 };
 
 watch(
-    () => cartStore.cartTotalCount,
-    (newCount, oldCount) => {
-      if (newCount > oldCount) {
-        if (isSearchViewVisible.value && searchInput.value) {
-          const len = searchInput.value.value.length;
-          searchInput.value.setSelectionRange(0, len);
-        }
+  () => cartStore.cartTotalCount,
+  (newCount, oldCount) => {
+    if (newCount > oldCount) {
+      if (isSearchViewVisible.value && searchInput.value) {
+        const len = searchInput.value.value.length;
+        searchInput.value.setSelectionRange(0, len);
       }
     }
+  },
 );
 
 watch(
-    () => props.pointOfSale,
-    (newPos) => {
-      if (newPos) selectedCategoryId.value = getDefaultCategoryId();
-    }
+  () => props.pointOfSale,
+  (newPos) => {
+    if (newPos) selectedCategoryId.value = getDefaultCategoryId();
+  },
 );
-
 </script>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

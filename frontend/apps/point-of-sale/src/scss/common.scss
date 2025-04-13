@@ -54,7 +54,7 @@
 }
 
 .content-body-contrast {
-  background-color: var(--accent-color);;
+  background-color: var(--accent-color);
   border-radius: $border-radius-sm;
 }
 
@@ -134,8 +134,6 @@
   }
 }
 
-
-
 .product-image {
   object-fit: contain;
   width: $cart-product-image-size;
@@ -148,10 +146,10 @@ input,
 input:focus {
   border: none;
   border-radius: $border-radius-sm;
-  color: var(--accent-color);;
+  color: var(--accent-color);
   font-size: $font-size-lg;
   height: $search-height;
-  outline-color: var(--accent-color);;
+  outline-color: var(--accent-color);
   padding: 10px;
 }
 

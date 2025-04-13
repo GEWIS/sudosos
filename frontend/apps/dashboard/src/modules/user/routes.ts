@@ -1,9 +1,9 @@
-import type { RouteRecordRaw } from "vue-router";
-import DashboardLayout from "@/layout/DashboardLayout.vue";
-import UserLandingView from "@/modules/user/views/UserLandingView.vue";
-import UserTransactionsView from "@/modules/user/views/UserTransactionsView.vue";
-import ProfileView from "@/modules/user/views/UserProfileView.vue";
-import { isAllowed } from "@/utils/permissionUtils";
+import type { RouteRecordRaw } from 'vue-router';
+import DashboardLayout from '@/layout/DashboardLayout.vue';
+import UserLandingView from '@/modules/user/views/UserLandingView.vue';
+import UserTransactionsView from '@/modules/user/views/UserTransactionsView.vue';
+import ProfileView from '@/modules/user/views/UserProfileView.vue';
+import { isAllowed } from '@/utils/permissionUtils';
 
 export function userRoutes(): RouteRecordRaw[] {
   return [
@@ -18,8 +18,8 @@ export function userRoutes(): RouteRecordRaw[] {
           name: 'home',
           meta: {
             requiresAuth: true,
-            isAllowed: () => isAllowed('get', ['own'], 'User', ['any'])
-          }
+            isAllowed: () => isAllowed('get', ['own'], 'User', ['any']),
+          },
         },
         {
           path: '/transaction',
@@ -27,8 +27,8 @@ export function userRoutes(): RouteRecordRaw[] {
           name: 'transactions',
           meta: {
             requiresAuth: true,
-            isAllowed: () => isAllowed('get', ['own'], 'Transaction', ['any'])
-          }
+            isAllowed: () => isAllowed('get', ['own'], 'Transaction', ['any']),
+          },
         },
         {
           path: '/profile',
@@ -36,10 +36,10 @@ export function userRoutes(): RouteRecordRaw[] {
           name: 'profile',
           meta: {
             requiresAuth: true,
-            isAllowed: () => isAllowed('get', ['own'], 'User', ['any'])
-          }
+            isAllowed: () => isAllowed('get', ['own'], 'User', ['any']),
+          },
         },
-      ]
-    }
+      ],
+    },
   ];
 }

@@ -1,102 +1,102 @@
-@use "../../../themes/sudosos-light/variables_light";
-@use "../../mixins";
+@use '../../../themes/sudosos-light/variables_light';
+@use '../../mixins';
 
 @use 'sass:math';
 
 // core
 .p-inputswitch {
-    display: inline-block;
+  display: inline-block;
 }
 
 .p-inputswitch-input {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .p-inputswitch-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border: 1px solid transparent;
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 1px solid transparent;
 }
 
 .p-inputswitch-slider:before {
-    position: absolute;
-    content: '';
-    top: 50%;
+  position: absolute;
+  content: '';
+  top: 50%;
 }
 
 // theme
 .p-inputswitch {
-    width: variables_light.$inputSwitchWidth;
-    height: variables_light.$inputSwitchHeight;
+  width: variables_light.$inputSwitchWidth;
+  height: variables_light.$inputSwitchHeight;
 
-    .p-inputswitch-input {
-        appearance: none;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        padding: 0;
-        margin: 0;
-        opacity: 0;
-        z-index: 1;
-        outline: 0 none;
-        border-radius: variables_light.$inputSwitchBorderRadius;
+  .p-inputswitch-input {
+    appearance: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+    z-index: 1;
+    outline: 0 none;
+    border-radius: variables_light.$inputSwitchBorderRadius;
+  }
+
+  .p-inputswitch-slider {
+    background: variables_light.$inputSwitchSliderOffBg;
+    transition: variables_light.$formElementTransition;
+    border-radius: variables_light.$inputSwitchBorderRadius;
+    outline-color: transparent;
+
+    &:before {
+      background: variables_light.$inputSwitchHandleOffBg;
+      width: variables_light.$inputSwitchHandleWidth;
+      height: variables_light.$inputSwitchHandleHeight;
+      left: variables_light.$inputSwitchSliderPadding;
+      margin-top: math.div(-1 * variables_light.$inputSwitchHandleHeight, 2);
+      border-radius: variables_light.$inputSwitchHandleBorderRadius;
+      transition-duration: variables_light.$transitionDuration;
     }
+  }
 
+  &.p-highlight {
     .p-inputswitch-slider {
-        background: variables_light.$inputSwitchSliderOffBg;
-        transition: variables_light.$formElementTransition;
-        border-radius: variables_light.$inputSwitchBorderRadius;
-        outline-color: transparent;
+      background: variables_light.$inputSwitchSliderOnBg;
 
-        &:before {
-            background: variables_light.$inputSwitchHandleOffBg;
-            width: variables_light.$inputSwitchHandleWidth;
-            height: variables_light.$inputSwitchHandleHeight;
-            left: variables_light.$inputSwitchSliderPadding;
-            margin-top: math.div(-1 * variables_light.$inputSwitchHandleHeight, 2);
-            border-radius: variables_light.$inputSwitchHandleBorderRadius;
-            transition-duration: variables_light.$transitionDuration;
-        }
+      &:before {
+        background: variables_light.$inputSwitchHandleOnBg;
+        transform: translateX(variables_light.$inputSwitchHandleWidth);
+      }
     }
+  }
 
-    &.p-highlight {
+  &:not(.p-disabled) {
+    &:has(.p-inputswitch-input:hover) {
+      .p-inputswitch-slider {
+        background: variables_light.$inputSwitchSliderOffHoverBg;
+      }
+
+      &.p-highlight {
         .p-inputswitch-slider {
-            background: variables_light.$inputSwitchSliderOnBg;
-
-            &:before {
-                background: variables_light.$inputSwitchHandleOnBg;
-                transform: translateX(variables_light.$inputSwitchHandleWidth);
-            }
+          background: variables_light.$inputSwitchSliderOnHoverBg;
         }
+      }
     }
 
-    &:not(.p-disabled) {
-        &:has(.p-inputswitch-input:hover) {
-            .p-inputswitch-slider {
-                background: variables_light.$inputSwitchSliderOffHoverBg;
-            }
-
-            &.p-highlight {
-                .p-inputswitch-slider {
-                    background: variables_light.$inputSwitchSliderOnHoverBg;
-                }
-            }
-        }
-
-        &:has(.p-inputswitch-input:focus-visible) {
-            .p-inputswitch-slider {
-                @include mixins.focused();
-            }
-        }
+    &:has(.p-inputswitch-input:focus-visible) {
+      .p-inputswitch-slider {
+        @include mixins.focused();
+      }
     }
+  }
 
-    &.p-invalid > .p-inputswitch-slider {
-        @include mixins.invalid-input();
-    }
+  &.p-invalid > .p-inputswitch-slider {
+    @include mixins.invalid-input();
+  }
 }

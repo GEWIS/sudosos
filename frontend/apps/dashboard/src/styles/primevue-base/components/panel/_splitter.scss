@@ -1,90 +1,90 @@
-@use "../../../themes/sudosos-light/variables_light";
-@use "../../mixins";
+@use '../../../themes/sudosos-light/variables_light';
+@use '../../mixins';
 
 // core
 .p-splitter {
-    display: flex;
-    flex-wrap: nowrap;
+  display: flex;
+  flex-wrap: nowrap;
 }
 
 .p-splitter-vertical {
-    flex-direction: column;
+  flex-direction: column;
 }
 
 .p-splitter-gutter {
-    flex-grow: 0;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: col-resize;
+  flex-grow: 0;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: col-resize;
 }
 
 .p-splitter-horizontal.p-splitter-resizing {
-    cursor: col-resize;
-    user-select: none;
+  cursor: col-resize;
+  user-select: none;
 }
 
 .p-splitter-horizontal > .p-splitter-gutter > .p-splitter-gutter-handle {
-    height: 24px;
-    width: 100%;
+  height: 24px;
+  width: 100%;
 }
 
 .p-splitter-horizontal > .p-splitter-gutter {
-    cursor: col-resize;
+  cursor: col-resize;
 }
 
 .p-splitter-vertical.p-splitter-resizing {
-    cursor: row-resize;
-    user-select: none;
+  cursor: row-resize;
+  user-select: none;
 }
 
 .p-splitter-vertical > .p-splitter-gutter {
-    cursor: row-resize;
+  cursor: row-resize;
 }
 
 .p-splitter-vertical > .p-splitter-gutter > .p-splitter-gutter-handle {
-    width: 24px;
-    height: 100%;
+  width: 24px;
+  height: 100%;
 }
 
 .p-splitter-panel {
-    flex-grow: 1;
-    overflow: hidden;
+  flex-grow: 1;
+  overflow: hidden;
 }
 
 .p-splitter-panel-nested {
-    display: flex;
+  display: flex;
 }
 
 .p-splitter-panel .p-splitter {
-    flex-grow: 1;
-    border: 0 none;
+  flex-grow: 1;
+  border: 0 none;
 }
 
 // theme
 .p-splitter {
-    border: variables_light.$panelContentBorder;
-    background: variables_light.$panelContentBg;
-    border-radius: variables_light.$borderRadius;
-    color: variables_light.$panelContentTextColor;
+  border: variables_light.$panelContentBorder;
+  background: variables_light.$panelContentBg;
+  border-radius: variables_light.$borderRadius;
+  color: variables_light.$panelContentTextColor;
 
-    .p-splitter-gutter {
-        transition: variables_light.$actionIconTransition;
-        background: variables_light.$splitterGutterBg;
-        
-        .p-splitter-gutter-handle {
-            background: variables_light.$splitterGutterHandleBg;
-            transition: variables_light.$formElementTransition;
-            outline-color: transparent;
-            
-            &:focus-visible {
-                @include mixins.focused();
-            }
-        }
-    }
+  .p-splitter-gutter {
+    transition: variables_light.$actionIconTransition;
+    background: variables_light.$splitterGutterBg;
 
-    .p-splitter-gutter-resizing {
-        background: variables_light.$splitterGutterHandleBg;
+    .p-splitter-gutter-handle {
+      background: variables_light.$splitterGutterHandleBg;
+      transition: variables_light.$formElementTransition;
+      outline-color: transparent;
+
+      &:focus-visible {
+        @include mixins.focused();
+      }
     }
+  }
+
+  .p-splitter-gutter-resizing {
+    background: variables_light.$splitterGutterHandleBg;
+  }
 }

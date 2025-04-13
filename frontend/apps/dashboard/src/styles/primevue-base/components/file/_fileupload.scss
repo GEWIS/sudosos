@@ -1,132 +1,132 @@
-@use "../../../themes/sudosos-light/variables_light";
-@use "../../../themes/variables";
-@use "../../mixins";
+@use '../../../themes/sudosos-light/variables_light';
+@use '../../../themes/variables';
+@use '../../mixins';
 
 // core
 .p-fileupload-content {
-    position: relative;
+  position: relative;
 }
 
 .p-fileupload-content .p-progressbar {
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .p-button.p-fileupload-choose {
-    position: relative;
-    overflow: hidden;
+  position: relative;
+  overflow: hidden;
 }
 
 .p-fileupload-buttonbar {
-    display: flex;
-    flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .p-fileupload > input[type='file'],
 .p-fileupload-basic input[type='file'] {
-    display: none;
+  display: none;
 }
 
 .p-fluid .p-fileupload .p-button {
-    width: auto;
+  width: auto;
 }
 
 .p-fileupload-file {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .p-fileupload-file-thumbnail {
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 .p-fileupload-file-actions {
-    margin-left: auto;
+  margin-left: auto;
 }
 
 // theme
 .p-fileupload {
-    .p-fileupload-buttonbar {
-        background: variables_light.$panelHeaderBg;
-        padding: variables_light.$panelHeaderPadding;
-        border: variables_light.$panelHeaderBorder;
-        color: variables_light.$panelHeaderTextColor;
-        border-bottom: 0 none;
-        border-top-right-radius: variables_light.$borderRadius;
-        border-top-left-radius: variables_light.$borderRadius;
-        gap: variables_light.$inlineSpacing;
+  .p-fileupload-buttonbar {
+    background: variables_light.$panelHeaderBg;
+    padding: variables_light.$panelHeaderPadding;
+    border: variables_light.$panelHeaderBorder;
+    color: variables_light.$panelHeaderTextColor;
+    border-bottom: 0 none;
+    border-top-right-radius: variables_light.$borderRadius;
+    border-top-left-radius: variables_light.$borderRadius;
+    gap: variables_light.$inlineSpacing;
 
-        .p-button {
-            &.p-fileupload-choose.p-focus {
-                @include mixins.focused();
-            }
-        }
+    .p-button {
+      &.p-fileupload-choose.p-focus {
+        @include mixins.focused();
+      }
     }
+  }
 
-    .p-fileupload-content {
-        background: variables_light.$panelContentBg;
-        padding: variables_light.$fileUploadContentPadding;
-        border: variables_light.$panelContentBorder;
-        color: variables_light.$panelContentTextColor;
-        border-bottom-right-radius: variables_light.$borderRadius;
-        border-bottom-left-radius: variables_light.$borderRadius;
+  .p-fileupload-content {
+    background: variables_light.$panelContentBg;
+    padding: variables_light.$fileUploadContentPadding;
+    border: variables_light.$panelContentBorder;
+    color: variables_light.$panelContentTextColor;
+    border-bottom-right-radius: variables_light.$borderRadius;
+    border-bottom-left-radius: variables_light.$borderRadius;
 
-        &.p-fileupload-highlight {
-            border: variables_light.$fileUploadContentHoverBorder;
-            background-color: variables.$highlightBg;
-        }
+    &.p-fileupload-highlight {
+      border: variables_light.$fileUploadContentHoverBorder;
+      background-color: variables.$highlightBg;
     }
+  }
 
-    .p-fileupload-file {
-        padding: variables_light.$fileUploadFilePadding;
-        border: variables_light.$fileUploadFileBorder;
-        border-radius: variables_light.$borderRadius;
-        gap: variables_light.$inlineSpacing;
-        margin-bottom: variables_light.$inlineSpacing;
+  .p-fileupload-file {
+    padding: variables_light.$fileUploadFilePadding;
+    border: variables_light.$fileUploadFileBorder;
+    border-radius: variables_light.$borderRadius;
+    gap: variables_light.$inlineSpacing;
+    margin-bottom: variables_light.$inlineSpacing;
 
-        &:last-child {
-            margin-bottom: 0;
-        }
+    &:last-child {
+      margin-bottom: 0;
     }
+  }
 
-    .p-fileupload-file-name {
-        margin-bottom: variables_light.$inlineSpacing;
-    }
+  .p-fileupload-file-name {
+    margin-bottom: variables_light.$inlineSpacing;
+  }
 
-    .p-fileupload-file-size {
-        margin-right: variables_light.$inlineSpacing;
-    }
+  .p-fileupload-file-size {
+    margin-right: variables_light.$inlineSpacing;
+  }
 
-    .p-progressbar {
-        height: variables_light.$fileUploadProgressBarHeight;
-    }
+  .p-progressbar {
+    height: variables_light.$fileUploadProgressBarHeight;
+  }
 
-    .p-fileupload-row {
-        >div {
-            padding: variables_light.$tableBodyCellPadding;
-        }
+  .p-fileupload-row {
+    > div {
+      padding: variables_light.$tableBodyCellPadding;
     }
+  }
 
-    &.p-fileupload-advanced {
-        .p-message {
-            margin-top: 0;
-        }
+  &.p-fileupload-advanced {
+    .p-message {
+      margin-top: 0;
     }
+  }
 }
 
 .p-fileupload-choose {
-    &:not(.p-disabled):hover {
-        background: variables_light.$buttonHoverBg;
-        color: variables_light.$buttonTextHoverColor;
-        border-color: variables_light.$buttonHoverBorderColor;
-    }
+  &:not(.p-disabled):hover {
+    background: variables_light.$buttonHoverBg;
+    color: variables_light.$buttonTextHoverColor;
+    border-color: variables_light.$buttonHoverBorderColor;
+  }
 
-    &:not(.p-disabled):active {
-        background: variables_light.$buttonActiveBg;
-        color: variables_light.$buttonTextActiveColor;
-        border-color: variables_light.$buttonActiveBorderColor;
-    }
+  &:not(.p-disabled):active {
+    background: variables_light.$buttonActiveBg;
+    color: variables_light.$buttonTextActiveColor;
+    border-color: variables_light.$buttonActiveBorderColor;
+  }
 }

@@ -1,15 +1,14 @@
 <template>
   <div>
-    <span :class="['flex justify-content-between',
-     column ? 'flex-column gap-1' : 'flex-row align-items-center gap-3']">
+    <span :class="['flex justify-content-between', column ? 'flex-column gap-1' : 'flex-row align-items-center gap-3']">
       <span class="my-0">{{ label }}</span>
       <Dropdown
-          v-model="selectedOption"
-          :options="options"
-          :optionLabel="optionLabel"
-          :placeholder="placeholder"
-          class="w-full md:w-15rem"
-          :disabled="disabled"
+        v-model="selectedOption"
+        class="md:w-15rem w-full"
+        :disabled="disabled"
+        :option-label="optionLabel"
+        :options="options"
+        :placeholder="placeholder"
       >
         <template #option="slotProps">
           {{ slotProps.option[optionLabel] }}
@@ -17,54 +16,33 @@
       </Dropdown>
     </span>
     <div class="flex justify-content-end">
-      <ErrorSpan :error="errors"/>
+      <ErrorSpan :error="errors" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts" generic="T">
-import ErrorSpan from "@/components/ErrorSpan.vue";
-import { type PropType } from "vue";
+import ErrorSpan from '@/components/ErrorSpan.vue';
 
-defineProps({
-  label: {
-    type: String,
-    required: true
+withDefaults(
+  defineProps<{
+    label: string;
+    errors?: string;
+    placeholder?: string;
+    disabled?: boolean;
+    column?: boolean;
+    options: T[];
+    optionLabel: string;
+  }>(),
+  {
+    placeholder: '',
+    disabled: false,
+    column: false,
+    errors: undefined,
   },
-  errors: {
-    type: Object as PropType<any>,
-    required: false,
-  },
-  placeholder: {
-    type: String,
-    required: false,
-    default: ''
-  },
-  disabled: {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  column: {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  options: {
-    type: Object as PropType<T[]>,
-    required: true
-  },
-  optionLabel: {
-    type: String,
-    required: true
-  }
-});
+);
 
 const selectedOption = defineModel<T>('selectedOption');
-
-
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

@@ -1,11 +1,11 @@
-import type { RouteRecordRaw } from "vue-router";
-import DashboardLayout from "@/layout/DashboardLayout.vue";
-import ProductsContainersView from "@/modules/seller/views/ProductsContainersView.vue";
-import { UserRole } from "@/utils/rbacUtils";
-import POSOverviewView from "@/modules/seller/views/POSOverviewView.vue";
-import POSInfoView from "@/modules/seller/views/POSInfoView.vue";
-import SellerPayoutsView from "@/modules/seller/views/SellerPayoutsView.vue";
-import { isAllowed } from "@/utils/permissionUtils";
+import type { RouteRecordRaw } from 'vue-router';
+import DashboardLayout from '@/layout/DashboardLayout.vue';
+import ProductsContainersView from '@/modules/seller/views/ProductsContainersView.vue';
+import { UserRole } from '@/utils/rbacUtils';
+import POSOverviewView from '@/modules/seller/views/POSOverviewView.vue';
+import POSInfoView from '@/modules/seller/views/POSInfoView.vue';
+import SellerPayoutsView from '@/modules/seller/views/SellerPayoutsView.vue';
+import { isAllowed } from '@/utils/permissionUtils';
 
 export function sellerRoutes(): RouteRecordRaw[] {
   return [
@@ -22,8 +22,8 @@ export function sellerRoutes(): RouteRecordRaw[] {
           meta: {
             requiresAuth: true,
             rolesAllowed: [UserRole.SELLER],
-            isAllowed: () => isAllowed('get', ['own', 'organ'], 'SellerPayout', ['any'])
-          }
+            isAllowed: () => isAllowed('get', ['own', 'organ'], 'SellerPayout', ['any']),
+          },
         },
         {
           path: '/product',
@@ -31,8 +31,8 @@ export function sellerRoutes(): RouteRecordRaw[] {
           name: 'products',
           meta: {
             requiresAuth: true,
-            isAllowed: () => isAllowed('get', ['own', 'organ'], 'Product', ['any'])
-          }
+            isAllowed: () => isAllowed('get', ['own', 'organ'], 'Product', ['any']),
+          },
         },
         {
           path: '/point-of-sale',
@@ -40,8 +40,8 @@ export function sellerRoutes(): RouteRecordRaw[] {
           component: POSOverviewView,
           meta: {
             requiresAuth: true,
-            isAllowed: () => isAllowed('get', ['own', 'organ'], 'PointOfSale', ['any'])
-          }
+            isAllowed: () => isAllowed('get', ['own', 'organ'], 'PointOfSale', ['any']),
+          },
         },
         {
           path: '/point-of-sale/:id',
@@ -50,10 +50,10 @@ export function sellerRoutes(): RouteRecordRaw[] {
           props: true,
           meta: {
             requiresAuth: true,
-            isAllowed: () => isAllowed('get', ['own', 'organ'], 'PointOfSale', ['any'])
-          }
-        }
-      ]
-    }
+            isAllowed: () => isAllowed('get', ['own', 'organ'], 'PointOfSale', ['any']),
+          },
+        },
+      ],
+    },
   ];
 }

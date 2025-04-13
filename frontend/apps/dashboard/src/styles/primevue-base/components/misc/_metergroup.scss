@@ -1,119 +1,119 @@
-@use "../../../themes/sudosos-light/variables_light";
+@use '../../../themes/sudosos-light/variables_light';
 
-@use "sass:math";
+@use 'sass:math';
 
 // core
 .p-metergroup {
-    display: flex;
+  display: flex;
 }
 
 .p-metergroup-meters {
-    display: flex;
+  display: flex;
 }
 
 .p-metergroup-vertical .p-metergroup-meters {
-    flex-direction: column;
+  flex-direction: column;
 }
 
 .p-metergroup-labels {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
 }
 
 .p-metergroup-vertical .p-metergroup-labels {
-    align-items: start;
+  align-items: start;
 }
 
 .p-metergroup-labels-vertical {
-    flex-direction: column;
+  flex-direction: column;
 }
 
 .p-metergroup-label {
-    display: inline-flex;
-    align-items: center;
+  display: inline-flex;
+  align-items: center;
 }
 
 .p-metergroup-label-marker {
-    display: inline-flex;
+  display: inline-flex;
 }
 
 // theme
 .p-metergroup {
-    gap: variables_light.$inlineSpacing * 2;
+  gap: variables_light.$inlineSpacing * 2;
+
+  .p-metergroup-meters {
+    background: variables_light.$progressBarBg;
+    border-radius: variables_light.$borderRadius;
+  }
+
+  .p-metergroup-meter {
+    border: variables_light.$progressBarBorder;
+    background: variables_light.$progressBarValueBg;
+  }
+
+  .p-metergroup-labels {
+    .p-metergroup-label {
+      gap: variables_light.$inlineSpacing;
+    }
+
+    .p-metergroup-label-marker {
+      background: variables_light.$progressBarValueBg;
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 100%;
+    }
+
+    .p-metergroup-label-icon {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    &.p-metergroup-labels-vertical {
+      gap: variables_light.$inlineSpacing;
+    }
+
+    &.p-metergroup-labels-horizontal {
+      gap: variables_light.$inlineSpacing * 2;
+    }
+  }
+
+  &.p-metergroup-horizontal {
+    flex-direction: column;
 
     .p-metergroup-meters {
-        background: variables_light.$progressBarBg;
-        border-radius: variables_light.$borderRadius;
+      height: 0.5rem;
     }
 
-    .p-metergroup-meter {
-        border: variables_light.$progressBarBorder;
-        background: variables_light.$progressBarValueBg;
+    .p-metergroup-meter:first-of-type {
+      border-top-left-radius: variables_light.$borderRadius;
+      border-bottom-left-radius: variables_light.$borderRadius;
     }
 
-    .p-metergroup-labels {
-        .p-metergroup-label {
-            gap: variables_light.$inlineSpacing;
-        }
+    .p-metergroup-meter:last-of-type {
+      border-top-right-radius: variables_light.$borderRadius;
+      border-bottom-right-radius: variables_light.$borderRadius;
+    }
+  }
 
-        .p-metergroup-label-marker {
-            background: variables_light.$progressBarValueBg;
-            width: 0.5rem;
-            height: 0.5rem;
-            border-radius: 100%;
-        }
+  &.p-metergroup-vertical {
+    flex-direction: row;
 
-        .p-metergroup-label-icon {
-            width: 1rem;
-            height: 1rem;
-        }
-
-        &.p-metergroup-labels-vertical {
-            gap: variables_light.$inlineSpacing;
-        }
-
-        &.p-metergroup-labels-horizontal {
-            gap: variables_light.$inlineSpacing * 2;
-        }
+    .p-metergroup-meters {
+      width: 0.5rem;
+      height: 100%;
     }
 
-    &.p-metergroup-horizontal {
-        flex-direction: column;
-
-        .p-metergroup-meters {
-            height: 0.5rem;
-        }
-
-        .p-metergroup-meter:first-of-type {
-            border-top-left-radius: variables_light.$borderRadius;
-            border-bottom-left-radius: variables_light.$borderRadius;
-        }
-
-        .p-metergroup-meter:last-of-type {
-            border-top-right-radius: variables_light.$borderRadius;
-            border-bottom-right-radius: variables_light.$borderRadius;
-        }
+    .p-metergroup-meter:first-of-type {
+      border-top-left-radius: variables_light.$borderRadius;
+      border-top-right-radius: variables_light.$borderRadius;
     }
 
-    &.p-metergroup-vertical {
-        flex-direction: row;
-
-        .p-metergroup-meters {
-            width: 0.5rem;
-            height: 100%;
-        }
-
-        .p-metergroup-meter:first-of-type {
-            border-top-left-radius: variables_light.$borderRadius;
-            border-top-right-radius: variables_light.$borderRadius;
-        }
-
-        .p-metergroup-meter:last-of-type {
-            border-bottom-left-radius: variables_light.$borderRadius;
-            border-bottom-right-radius: variables_light.$borderRadius;
-        }
+    .p-metergroup-meter:last-of-type {
+      border-bottom-left-radius: variables_light.$borderRadius;
+      border-bottom-right-radius: variables_light.$borderRadius;
     }
+  }
 }

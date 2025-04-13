@@ -1,92 +1,92 @@
-@use "../../../themes/sudosos-light/variables_light";
+@use '../../../themes/sudosos-light/variables_light';
 
 // core
 .p-tooltip {
-    position:absolute;
-    display:none;
-    padding: .25em .5rem;
-    max-width: 12.5rem;
+  position: absolute;
+  display: none;
+  padding: 0.25em 0.5rem;
+  max-width: 12.5rem;
 }
 
 .p-tooltip.p-tooltip-right,
 .p-tooltip.p-tooltip-left {
-    padding: 0 .25rem;
+  padding: 0 0.25rem;
 }
 
 .p-tooltip.p-tooltip-top,
 .p-tooltip.p-tooltip-bottom {
-    padding:.25em 0;
+  padding: 0.25em 0;
 }
 
 .p-tooltip .p-tooltip-text {
-    white-space: pre-line;
-    word-break: break-word;
+  white-space: pre-line;
+  word-break: break-word;
 }
 
 .p-tooltip-arrow {
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-color: transparent;
-    border-style: solid;
-    scale: 2;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  scale: 2;
 }
 
 .p-tooltip-right .p-tooltip-arrow {
-    margin-top: -.25rem;
-    border-width: .25em .25em .25em 0;
+  margin-top: -0.25rem;
+  border-width: 0.25em 0.25em 0.25em 0;
 }
 
 .p-tooltip-left .p-tooltip-arrow {
-    margin-top: -.25rem;
-    border-width: .25em 0 .25em .25rem;
+  margin-top: -0.25rem;
+  border-width: 0.25em 0 0.25em 0.25rem;
 }
 
 .p-tooltip.p-tooltip-top {
-    padding: .25em 0;
+  padding: 0.25em 0;
 }
 
 .p-tooltip-top .p-tooltip-arrow {
-    margin-left: -.25rem;
-    border-width: .25em .25em 0;
+  margin-left: -0.25rem;
+  border-width: 0.25em 0.25em 0;
 }
 
 .p-tooltip-bottom .p-tooltip-arrow {
-    margin-left: -.25rem;
-    border-width: 0 .25em .25rem;
+  margin-left: -0.25rem;
+  border-width: 0 0.25em 0.25rem;
 }
 
 // theme
 .p-tooltip {
-    .p-tooltip-text {
-        background: variables_light.$tooltipBg;
-        color: variables_light.$tooltipTextColor;
-        padding: variables_light.$tooltipPadding;
-        box-shadow: variables_light.$inputOverlayShadow;
-        border-radius: variables_light.$borderRadius;
-    }
+  .p-tooltip-text {
+    background: variables_light.$tooltipBg;
+    color: variables_light.$tooltipTextColor;
+    padding: variables_light.$tooltipPadding;
+    box-shadow: variables_light.$inputOverlayShadow;
+    border-radius: variables_light.$borderRadius;
+  }
 
-    &.p-tooltip-right {
-        .p-tooltip-arrow {
-            border-right-color: variables_light.$tooltipBg;
-        }
+  &.p-tooltip-right {
+    .p-tooltip-arrow {
+      border-right-color: variables_light.$tooltipBg;
     }
+  }
 
-    &.p-tooltip-left {
-        .p-tooltip-arrow {
-            border-left-color: variables_light.$tooltipBg;
-        }
+  &.p-tooltip-left {
+    .p-tooltip-arrow {
+      border-left-color: variables_light.$tooltipBg;
     }
+  }
 
-    &.p-tooltip-top {
-        .p-tooltip-arrow {
-            border-top-color: variables_light.$tooltipBg;
-        }
+  &.p-tooltip-top {
+    .p-tooltip-arrow {
+      border-top-color: variables_light.$tooltipBg;
     }
+  }
 
-    &.p-tooltip-bottom {
-        .p-tooltip-arrow {
-            border-bottom-color: variables_light.$tooltipBg;
-        }
+  &.p-tooltip-bottom {
+    .p-tooltip-arrow {
+      border-bottom-color: variables_light.$tooltipBg;
     }
+  }
 }

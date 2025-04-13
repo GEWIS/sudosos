@@ -10,9 +10,10 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
-    "lint": "eslint . --ext .vue,.js,.jsx,.mjs,.ts,.tsx,.cts,.mts,.json --ignore-path .gitignore",
-    "lint-fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts,.json --fix --ignore-path .gitignore --fix",
-    "format": "prettier --write src/"
+    "lint": "eslint src",
+    "lint-fix": "eslint src --fix",
+    "format": "prettier --ignore-path .gitignore --check .",
+    "format-fix": "prettier --ignore-path .gitignore --write ."
   },
   "dependencies": {
     "@stripe/stripe-js": "^5.2.0",
@@ -24,5 +25,9 @@
     "vue-i18n": "^9.14.1",
     "vue3-pdf-app": "^1.0.3",
     "yup": "^1.4.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.24.0",
+    "vue-tsc": "^2.2.8"
   }
 }

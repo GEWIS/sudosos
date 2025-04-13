@@ -5,8 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import { useActivityStore } from '@/stores/activity.store';
 import { onMounted, onUnmounted } from 'vue';
+import { useActivityStore } from '@/stores/activity.store';
 
 const activityStore = useActivityStore();
 

@@ -21,14 +21,14 @@ export default defineConfig({
         // for externalized deps
         globals: {
           vue: 'Vue',
-          pinia: 'pinia'
-        }
-      }
+          pinia: 'pinia',
+        },
+      },
     },
-    watch: process.env.WATCH ? {} : undefined
+    watch: process.env.WATCH ? {} : undefined,
   },
   server: {
-    port: 5175
+    port: 5175,
   },
   plugins: [dts(), vue()],
 });

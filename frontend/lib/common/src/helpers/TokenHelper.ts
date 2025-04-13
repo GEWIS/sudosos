@@ -1,39 +1,39 @@
-import { AxiosHeaders, AxiosResponse } from "axios/index";
-import { ApiService } from "../services/ApiService";
-import { useAuthStore } from "../stores/auth.store";
-import { useUserStore } from "../stores/user.store";
-import { jwtDecode, JwtPayload } from "jwt-decode";
+import { AxiosHeaders, AxiosResponse } from 'axios';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { ApiService } from '../services/ApiService';
+import { useAuthStore } from '../stores/auth.store';
+import { useUserStore } from '../stores/user.store';
 
-type Token = { token: string, expires: string };
+type Token = { token: string; expires: string };
 
 export function updateTokenIfNecessary(response: AxiosResponse) {
-    if ((response.headers as AxiosHeaders).has('Set-Authorization')) {
-        const newToken = (response.headers as AxiosHeaders).get('Set-Authorization') as string;
-        if (newToken) setTokenInStorage(newToken);
-    }
+  if ((response.headers as AxiosHeaders).has('Set-Authorization')) {
+    const newToken = (response.headers as AxiosHeaders).get('Set-Authorization') as string;
+    if (newToken) setTokenInStorage(newToken);
+  }
 }
 
 export function clearTokenInStorage() {
-    localStorage.clear();
+  localStorage.clear();
 }
 
 export function parseToken(rawToken: string): Token {
-    const expires = String(jwtDecode<JwtPayload>(rawToken).exp);
-    return { token: rawToken, expires };
+  const expires = String(jwtDecode<JwtPayload>(rawToken).exp);
+  return { token: rawToken, expires };
 }
 
 export function setTokenInStorage(jwtToken: string) {
-    localStorage.setItem('jwt_token', JSON.stringify(parseToken(jwtToken)));
+  localStorage.setItem('jwt_token', JSON.stringify(parseToken(jwtToken)));
 }
 
 export function getTokenFromStorage(): Token {
-    const rawToken = localStorage.getItem('jwt_token') as string;
-    let token = {} as Token;
-    if (rawToken !== null) token = JSON.parse(rawToken);
+  const rawToken = localStorage.getItem('jwt_token') as string;
+  let token = {} as Token;
+  if (rawToken !== null) token = JSON.parse(rawToken);
 
-    return {
-        ...token,
-    };
+  return {
+    ...token,
+  };
 }
 
 export function isTokenExpired(tokenEpochTimestamp: number): boolean {
@@ -49,26 +49,26 @@ export function isTokenExpired(tokenEpochTimestamp: number): boolean {
  * Returns True if there is a token in the LocalStorage and if it hasn't expired yet.
  */
 export function isAuthenticated(): boolean {
-    const token = getTokenFromStorage();
-    if (!token.token || !token.expires) return false;
-    return !isTokenExpired(Number(token.expires));
+  const token = getTokenFromStorage();
+  if (!token.token || !token.expires) return false;
+  return !isTokenExpired(Number(token.expires));
 }
 
 /**
  * Populates the auth and userStore from the token stored in the localStorage, resolves when the user roles are loaded.
  */
 export async function populateStoresFromToken(apiService: ApiService) {
-    const isAuth = isAuthenticated();
+  const isAuth = isAuthenticated();
 
-    if (isAuth) {
-        const authStore = useAuthStore();
-        authStore.extractStateFromToken();
-        const user = authStore.getUser;
-        if (user) {
-            const userStore = useUserStore();
-            userStore.setCurrentUser(user);
-            userStore.fetchCurrentUserBalance(user.id, apiService);
-            return await userStore.fetchUserRolesWithPermissions(user.id, apiService);
-        }
+  if (isAuth) {
+    const authStore = useAuthStore();
+    authStore.extractStateFromToken();
+    const user = authStore.getUser;
+    if (user) {
+      const userStore = useUserStore();
+      userStore.setCurrentUser(user);
+      void userStore.fetchCurrentUserBalance(user.id, apiService);
+      return await userStore.fetchUserRolesWithPermissions(user.id, apiService);
     }
+  }
 }

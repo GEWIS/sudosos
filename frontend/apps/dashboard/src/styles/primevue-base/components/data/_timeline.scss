@@ -1,153 +1,150 @@
-@use "../../../themes/sudosos-light/variables_light";
+@use '../../../themes/sudosos-light/variables_light';
 
 // core
 .p-timeline {
-    display: flex;
-    flex-grow: 1;
-    flex-direction: column;
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
 }
 
 .p-timeline-left .p-timeline-event-opposite {
-    text-align: right;
+  text-align: right;
 }
 
 .p-timeline-left .p-timeline-event-content {
-    text-align: left;
+  text-align: left;
 }
 
 .p-timeline-right .p-timeline-event {
-    flex-direction: row-reverse;
+  flex-direction: row-reverse;
 }
 
 .p-timeline-right .p-timeline-event-opposite {
-    text-align: left;
+  text-align: left;
 }
 
 .p-timeline-right .p-timeline-event-content {
-    text-align: right;
+  text-align: right;
 }
 
 .p-timeline-vertical.p-timeline-alternate .p-timeline-event:nth-child(even) {
-    flex-direction: row-reverse;
+  flex-direction: row-reverse;
 }
 
 .p-timeline-vertical.p-timeline-alternate .p-timeline-event:nth-child(odd) .p-timeline-event-opposite {
-    text-align: right;
+  text-align: right;
 }
 
 .p-timeline-vertical.p-timeline-alternate .p-timeline-event:nth-child(odd) .p-timeline-event-content {
-    text-align: left;
+  text-align: left;
 }
 
 .p-timeline-vertical.p-timeline-alternate .p-timeline-event:nth-child(even) .p-timeline-event-opposite {
-    text-align: left;
+  text-align: left;
 }
 
 .p-timeline-vertical.p-timeline-alternate .p-timeline-event:nth-child(even) .p-timeline-event-content {
-    text-align: right;
+  text-align: right;
 }
 
 .p-timeline-event {
-    display: flex;
-    position: relative;
-    min-height: 70px;
+  display: flex;
+  position: relative;
+  min-height: 70px;
 }
 
 .p-timeline-event:last-child {
-    min-height: 0;
+  min-height: 0;
 }
 
 .p-timeline-event-opposite {
-    flex: 1;
-    padding: 0 1rem;
+  flex: 1;
+  padding: 0 1rem;
 }
 
 .p-timeline-event-content {
-    flex: 1;
-    padding: 0 1rem;
+  flex: 1;
+  padding: 0 1rem;
 }
 
 .p-timeline-event-separator {
-    flex: 0;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
+  flex: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 
 .p-timeline-event-marker {
-    display: flex;
-    align-self: baseline;
+  display: flex;
+  align-self: baseline;
 }
 
 .p-timeline-event-connector {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 .p-timeline-horizontal {
-    flex-direction: row;
+  flex-direction: row;
 }
 
 .p-timeline-horizontal .p-timeline-event {
-    flex-direction: column;
-    flex: 1;
+  flex-direction: column;
+  flex: 1;
 }
 
 .p-timeline-horizontal .p-timeline-event:last-child {
-    flex: 0;
+  flex: 0;
 }
 
 .p-timeline-horizontal .p-timeline-event-separator {
-    flex-direction: row;
+  flex-direction: row;
 }
 
 .p-timeline-horizontal .p-timeline-event-connector {
-    width: 100%;
+  width: 100%;
 }
 
 .p-timeline-bottom .p-timeline-event {
-    flex-direction: column-reverse;
+  flex-direction: column-reverse;
 }
 
 .p-timeline-horizontal.p-timeline-alternate .p-timeline-event:nth-child(even) {
-    flex-direction: column-reverse;
+  flex-direction: column-reverse;
 }
 
 // theme
 .p-timeline {
-    .p-timeline-event-marker {
-        border: variables_light.$timelineEventMarkerBorder; 
-        border-radius: variables_light.$timelineEventMarkerBorderRadius;
-        width: variables_light.$timelineEventMarkerWidth;
-        height: variables_light.$timelineEventMarkerHeight;
-        background-color: variables_light.$timelineEventMarkerBackground;
+  .p-timeline-event-marker {
+    border: variables_light.$timelineEventMarkerBorder;
+    border-radius: variables_light.$timelineEventMarkerBorderRadius;
+    width: variables_light.$timelineEventMarkerWidth;
+    height: variables_light.$timelineEventMarkerHeight;
+    background-color: variables_light.$timelineEventMarkerBackground;
+  }
+
+  .p-timeline-event-connector {
+    background-color: variables_light.$timelineEventColor;
+  }
+
+  &.p-timeline-vertical {
+    .p-timeline-event-opposite,
+    .p-timeline-event-content {
+      padding: variables_light.$timelineVerticalEventContentPadding;
     }
 
     .p-timeline-event-connector {
-        background-color: variables_light.$timelineEventColor;
+      width: variables_light.$timelineEventConnectorSize;
+    }
+  }
+
+  &.p-timeline-horizontal {
+    .p-timeline-event-opposite,
+    .p-timeline-event-content {
+      padding: variables_light.$timelineHorizontalEventContentPadding;
     }
 
-    &.p-timeline-vertical {
-        .p-timeline-event-opposite,
-        .p-timeline-event-content  {
-            padding: variables_light.$timelineVerticalEventContentPadding;
-        }
-
-        .p-timeline-event-connector {
-            width: variables_light.$timelineEventConnectorSize;
-        }
+    .p-timeline-event-connector {
+      height: variables_light.$timelineEventConnectorSize;
     }
-
-    &.p-timeline-horizontal {
-        .p-timeline-event-opposite,
-        .p-timeline-event-content  {
-            padding: variables_light.$timelineHorizontalEventContentPadding;
-        }
-
-        .p-timeline-event-connector {
-            height: variables_light.$timelineEventConnectorSize;
-        }
-    }
+  }
 }
-
-
-

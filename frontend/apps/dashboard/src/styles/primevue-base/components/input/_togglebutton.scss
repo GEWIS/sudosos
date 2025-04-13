@@ -1,103 +1,103 @@
-@use "../../../themes/sudosos-light/variables_light";
-@use "../../mixins";
+@use '../../../themes/sudosos-light/variables_light';
+@use '../../mixins';
 
 // core
 .p-togglebutton {
-    position: relative;
-    display: inline-flex;
-    user-select: none;
-    vertical-align: bottom;
+  position: relative;
+  display: inline-flex;
+  user-select: none;
+  vertical-align: bottom;
 }
 
 .p-togglebutton-input {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .p-togglebutton .p-button {
-    flex: 1 1 auto;
+  flex: 1 1 auto;
 }
 
 // theme
 .p-togglebutton {
-    .p-togglebutton-input {
-        appearance: none;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        padding: 0;
-        margin: 0;
-        opacity: 0;
-        z-index: 1;
-        outline: 0 none;
-        border: variables_light.$toggleButtonBorder;
-        border-radius: variables_light.$borderRadius;
-    }
+  .p-togglebutton-input {
+    appearance: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+    z-index: 1;
+    outline: 0 none;
+    border: variables_light.$toggleButtonBorder;
+    border-radius: variables_light.$borderRadius;
+  }
 
+  .p-button {
+    background: variables_light.$toggleButtonBg;
+    border: variables_light.$toggleButtonBorder;
+    color: variables_light.$toggleButtonTextColor;
+    transition: variables_light.$formElementTransition;
+    outline-color: transparent;
+
+    .p-button-icon-left,
+    .p-button-icon-right {
+      color: variables_light.$toggleButtonIconColor;
+    }
+  }
+
+  &.p-highlight {
     .p-button {
-        background: variables_light.$toggleButtonBg;
-        border: variables_light.$toggleButtonBorder;
-        color: variables_light.$toggleButtonTextColor;
-        transition: variables_light.$formElementTransition;
-        outline-color: transparent;
+      background: variables_light.$toggleButtonActiveBg;
+      border-color: variables_light.$toggleButtonActiveBorderColor;
+      color: variables_light.$toggleButtonTextActiveColor;
 
-        .p-button-icon-left,
-        .p-button-icon-right {
-            color: variables_light.$toggleButtonIconColor;
-        }
+      .p-button-icon-left,
+      .p-button-icon-right {
+        color: variables_light.$toggleButtonIconActiveColor;
+      }
     }
+  }
 
-    &.p-highlight {
+  &:not(.p-disabled) {
+    &:has(.p-togglebutton-input:hover) {
+      &:not(.p-highlight) {
         .p-button {
-            background: variables_light.$toggleButtonActiveBg;
-            border-color: variables_light.$toggleButtonActiveBorderColor;
-            color: variables_light.$toggleButtonTextActiveColor;
+          background: variables_light.$toggleButtonHoverBg;
+          border-color: variables_light.$toggleButtonHoverBorderColor;
+          color: variables_light.$toggleButtonTextHoverColor;
 
-            .p-button-icon-left,
-            .p-button-icon-right {
-                color: variables_light.$toggleButtonIconActiveColor;
-            }
+          .p-button-icon-left,
+          .p-button-icon-right {
+            color: variables_light.$toggleButtonIconHoverColor;
+          }
         }
+      }
+
+      &.p-highlight {
+        .p-button {
+          background: variables_light.$toggleButtonActiveHoverBg;
+          border-color: variables_light.$toggleButtonActiveHoverBorderColor;
+          color: variables_light.$toggleButtonTextActiveHoverColor;
+
+          .p-button-icon-left,
+          .p-button-icon-right {
+            color: variables_light.$toggleButtonIconActiveHoverColor;
+          }
+        }
+      }
     }
 
-    &:not(.p-disabled) {
-        &:has(.p-togglebutton-input:hover) {
-            &:not(.p-highlight) {
-                .p-button {
-                    background: variables_light.$toggleButtonHoverBg;
-                    border-color: variables_light.$toggleButtonHoverBorderColor;
-                    color: variables_light.$toggleButtonTextHoverColor;
-
-                    .p-button-icon-left,
-                    .p-button-icon-right {
-                        color: variables_light.$toggleButtonIconHoverColor;
-                    }
-                }
-            }
-
-            &.p-highlight {
-                .p-button {
-                    background: variables_light.$toggleButtonActiveHoverBg;
-                    border-color: variables_light.$toggleButtonActiveHoverBorderColor;
-                    color: variables_light.$toggleButtonTextActiveHoverColor;
-
-                    .p-button-icon-left,
-                    .p-button-icon-right {
-                        color: variables_light.$toggleButtonIconActiveHoverColor;
-                    }
-                }
-            }
-        }
-
-        &:has(.p-togglebutton-input:focus-visible) {
-            .p-button {
-                @include mixins.focused-input();
-            }
-        }
+    &:has(.p-togglebutton-input:focus-visible) {
+      .p-button {
+        @include mixins.focused-input();
+      }
     }
+  }
 
-    &.p-invalid > .p-button {
-        @include mixins.invalid-input();
-    }
+  &.p-invalid > .p-button {
+    @include mixins.invalid-input();
+  }
 }

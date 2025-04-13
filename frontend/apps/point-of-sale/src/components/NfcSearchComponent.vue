@@ -3,14 +3,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, PropType } from "vue";
-import { UserResponse } from "@sudosos/sudosos-client";
+import { onMounted, onUnmounted, PropType } from 'vue';
+import { UserResponse } from '@sudosos/sudosos-client';
 
 const props = defineProps({
   handleNfcSearch: {
     type: Function as PropType<(nfcCode: string) => Promise<UserResponse>>,
-    required: true
-  }
+    required: true,
+  },
 });
 
 let captures: KeyboardEvent[] = [];
@@ -23,7 +23,7 @@ let captures: KeyboardEvent[] = [];
 const onInput = (event: KeyboardEvent): void => {
   if (event.code === 'Enter') {
     const capturedCode = captures.reduce((input, e) => input + e.key, '');
-    props.handleNfcSearch(capturedCode.substring(3));
+    void props.handleNfcSearch(capturedCode.substring(3));
     captures = [];
   } else {
     captures.push(event);
@@ -38,6 +38,4 @@ onUnmounted(() => {
   document.removeEventListener('keydown', onInput);
 });
 </script>
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

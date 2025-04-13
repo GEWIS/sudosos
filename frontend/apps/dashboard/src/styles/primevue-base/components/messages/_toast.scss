@@ -1,207 +1,217 @@
-@use "sass:meta";
-@use "../../../themes/sudosos-light/variables_light";
-@use "../../mixins";
+@use 'sass:meta';
+@use '../../../themes/sudosos-light/variables_light';
+@use '../../mixins';
 
 // core
 .p-toast {
-    width: 25rem;
-    white-space: pre-line;
-    word-break: break-word;
+  width: 25rem;
+  white-space: pre-line;
+  word-break: break-word;
 }
 
 .p-toast-message-icon {
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 .p-toast-message-content {
-    display: flex;
-    align-items: flex-start;
+  display: flex;
+  align-items: flex-start;
 }
 
 .p-toast-message-text {
-    flex: 1 1 auto;
+  flex: 1 1 auto;
 }
 
 .p-toast-top-center {
-    transform: translateX(-50%);
+  transform: translateX(-50%);
 }
 
 .p-toast-bottom-center {
-    transform: translateX(-50%);
+  transform: translateX(-50%);
 }
 
 .p-toast-center {
-    min-width: 20vw;
-    transform: translate(-50%, -50%);
+  min-width: 20vw;
+  transform: translate(-50%, -50%);
 }
 
 .p-toast-icon-close {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
 }
 
 .p-toast-icon-close.p-link {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 /* Animations */
 .p-toast-message-enter-from {
-    opacity: 0;
-    -webkit-transform: translateY(50%);
-    -ms-transform: translateY(50%);
-    transform: translateY(50%);
+  opacity: 0;
+  -webkit-transform: translateY(50%);
+  -ms-transform: translateY(50%);
+  transform: translateY(50%);
 }
 
 .p-toast-message-leave-from {
-    max-height: 1000px;
+  max-height: 1000px;
 }
 
 .p-toast .p-toast-message.p-toast-message-leave-to {
-    max-height: 0;
-    opacity: 0;
-    margin-bottom: 0;
-    overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  margin-bottom: 0;
+  overflow: hidden;
 }
 
 .p-toast-message-enter-active {
-    -webkit-transition: transform 0.3s, opacity 0.3s;
-    transition: transform 0.3s, opacity 0.3s;
+  -webkit-transition:
+    transform 0.3s,
+    opacity 0.3s;
+  transition:
+    transform 0.3s,
+    opacity 0.3s;
 }
 
 .p-toast-message-leave-active {
-    -webkit-transition: max-height 0.45s cubic-bezier(0, 1, 0, 1), opacity 0.3s, margin-bottom 0.3s;
-    transition: max-height 0.45s cubic-bezier(0, 1, 0, 1), opacity 0.3s, margin-bottom 0.3s;
+  -webkit-transition:
+    max-height 0.45s cubic-bezier(0, 1, 0, 1),
+    opacity 0.3s,
+    margin-bottom 0.3s;
+  transition:
+    max-height 0.45s cubic-bezier(0, 1, 0, 1),
+    opacity 0.3s,
+    margin-bottom 0.3s;
 }
 
 // theme
 .p-toast {
-    opacity: variables_light.$toastOpacity;
+  opacity: variables_light.$toastOpacity;
 
-    .p-toast-message {
-        margin: variables_light.$toastMargin;
-        box-shadow: variables_light.$toastShadow;
-        border-radius: variables_light.$borderRadius;
+  .p-toast-message {
+    margin: variables_light.$toastMargin;
+    box-shadow: variables_light.$toastShadow;
+    border-radius: variables_light.$borderRadius;
 
-        .p-toast-message-content {
-            padding: variables_light.$toastPadding;
-            border-width: variables_light.$toastBorderWidth;
+    .p-toast-message-content {
+      padding: variables_light.$toastPadding;
+      border-width: variables_light.$toastBorderWidth;
 
-            .p-toast-message-text {
-                margin: variables_light.$toastMessageTextMargin;
-            }
+      .p-toast-message-text {
+        margin: variables_light.$toastMessageTextMargin;
+      }
 
-            .p-toast-message-icon {
-                font-size: variables_light.$toastIconFontSize;
+      .p-toast-message-icon {
+        font-size: variables_light.$toastIconFontSize;
 
-                &.p-icon {
-                    width: variables_light.$toastIconFontSize;
-                    height: variables_light.$toastIconFontSize;
-                }
-            }
-
-            .p-toast-summary {
-                font-weight: variables_light.$toastTitleFontWeight;
-            }
-
-            .p-toast-detail {
-                margin: variables_light.$toastDetailMargin;
-            }
+        &.p-icon {
+          width: variables_light.$toastIconFontSize;
+          height: variables_light.$toastIconFontSize;
         }
+      }
 
-        .p-toast-icon-close {
-            width: variables_light.$toastIconFontSize;
-            height: variables_light.$toastIconFontSize;
-            border-radius: variables_light.$actionIconBorderRadius;
-            background: transparent;
-            transition: variables_light.$actionIconTransition;
-            outline-color: transparent;
+      .p-toast-summary {
+        font-weight: variables_light.$toastTitleFontWeight;
+      }
 
-            &:hover {
-                background: rgba(255, 255, 255, 0.5);
-            }
-
-            &:focus-visible {
-                @include mixins.focused();
-            }
-        }
-
-        &.p-toast-message-info {
-            background: variables_light.$infoMessageBg;
-            border: variables_light.$infoMessageBorder;
-            border-width: variables_light.$messageBorderWidth;
-            color: variables_light.$infoMessageTextColor;
-
-            .p-toast-message-icon,
-            .p-toast-icon-close {
-                color: variables_light.$infoMessageIconColor;
-            }
-        }
-
-        &.p-toast-message-success {
-            background: variables_light.$successMessageBg;
-            border: variables_light.$successMessageBorder;
-            border-width: variables_light.$messageBorderWidth;
-            color: variables_light.$successMessageTextColor;
-
-            .p-toast-message-icon,
-            .p-toast-icon-close {
-                color: variables_light.$successMessageIconColor;
-            }
-        }
-
-        &.p-toast-message-warn {
-            background: variables_light.$warningMessageBg;
-            border: variables_light.$warningMessageBorder;
-            border-width: variables_light.$messageBorderWidth;
-            color: variables_light.$warningMessageTextColor;
-
-            .p-toast-message-icon,
-            .p-toast-icon-close {
-                color: variables_light.$warningMessageIconColor;
-            }
-        }
-
-        &.p-toast-message-error {
-            background: variables_light.$errorMessageBg;
-            border: variables_light.$errorMessageBorder;
-            border-width: variables_light.$messageBorderWidth;
-            color: variables_light.$errorMessageTextColor;
-
-            .p-toast-message-icon,
-            .p-toast-icon-close {
-                color: variables_light.$errorMessageIconColor;
-            }
-        }
-
-        @if meta.variable-exists(secondaryMessageBg) {
-            &.p-toast-message-secondary {
-                background: $secondaryMessageBg;
-                border: $secondaryMessageBorder;
-                border-width: variables_light.$messageBorderWidth;
-                color: $secondaryMessageTextColor;
-
-                .p-toast-message-icon,
-                .p-toast-icon-close {
-                    color: $secondaryMessageIconColor;
-                }
-            }
-        }
-
-        @if meta.variable-exists(contrastMessageBg) {
-            &.p-toast-message-contrast {
-                background: $contrastMessageBg;
-                border: $contrastMessageBorder;
-                border-width: variables_light.$messageBorderWidth;
-                color: $contrastMessageTextColor;
-
-                .p-toast-message-icon,
-                .p-toast-icon-close {
-                    color: $contrastMessageIconColor;
-                }
-            }
-        }
+      .p-toast-detail {
+        margin: variables_light.$toastDetailMargin;
+      }
     }
+
+    .p-toast-icon-close {
+      width: variables_light.$toastIconFontSize;
+      height: variables_light.$toastIconFontSize;
+      border-radius: variables_light.$actionIconBorderRadius;
+      background: transparent;
+      transition: variables_light.$actionIconTransition;
+      outline-color: transparent;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      &:focus-visible {
+        @include mixins.focused();
+      }
+    }
+
+    &.p-toast-message-info {
+      background: variables_light.$infoMessageBg;
+      border: variables_light.$infoMessageBorder;
+      border-width: variables_light.$messageBorderWidth;
+      color: variables_light.$infoMessageTextColor;
+
+      .p-toast-message-icon,
+      .p-toast-icon-close {
+        color: variables_light.$infoMessageIconColor;
+      }
+    }
+
+    &.p-toast-message-success {
+      background: variables_light.$successMessageBg;
+      border: variables_light.$successMessageBorder;
+      border-width: variables_light.$messageBorderWidth;
+      color: variables_light.$successMessageTextColor;
+
+      .p-toast-message-icon,
+      .p-toast-icon-close {
+        color: variables_light.$successMessageIconColor;
+      }
+    }
+
+    &.p-toast-message-warn {
+      background: variables_light.$warningMessageBg;
+      border: variables_light.$warningMessageBorder;
+      border-width: variables_light.$messageBorderWidth;
+      color: variables_light.$warningMessageTextColor;
+
+      .p-toast-message-icon,
+      .p-toast-icon-close {
+        color: variables_light.$warningMessageIconColor;
+      }
+    }
+
+    &.p-toast-message-error {
+      background: variables_light.$errorMessageBg;
+      border: variables_light.$errorMessageBorder;
+      border-width: variables_light.$messageBorderWidth;
+      color: variables_light.$errorMessageTextColor;
+
+      .p-toast-message-icon,
+      .p-toast-icon-close {
+        color: variables_light.$errorMessageIconColor;
+      }
+    }
+
+    @if meta.variable-exists(secondaryMessageBg) {
+      &.p-toast-message-secondary {
+        background: $secondaryMessageBg;
+        border: $secondaryMessageBorder;
+        border-width: variables_light.$messageBorderWidth;
+        color: $secondaryMessageTextColor;
+
+        .p-toast-message-icon,
+        .p-toast-icon-close {
+          color: $secondaryMessageIconColor;
+        }
+      }
+    }
+
+    @if meta.variable-exists(contrastMessageBg) {
+      &.p-toast-message-contrast {
+        background: $contrastMessageBg;
+        border: $contrastMessageBorder;
+        border-width: variables_light.$messageBorderWidth;
+        color: $contrastMessageTextColor;
+
+        .p-toast-message-icon,
+        .p-toast-icon-close {
+          color: $contrastMessageIconColor;
+        }
+      }
+    }
+  }
 }

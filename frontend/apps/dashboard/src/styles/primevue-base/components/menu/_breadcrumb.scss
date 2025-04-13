@@ -1,80 +1,80 @@
-@use "../../../themes/sudosos-light/variables_light";
-@use "../../mixins";
+@use '../../../themes/sudosos-light/variables_light';
+@use '../../mixins';
 
 // core
 .p-breadcrumb {
-    overflow-x: auto;
+  overflow-x: auto;
 }
 
 .p-breadcrumb .p-breadcrumb-list {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-    display: flex;
-    align-items: center;
-    flex-wrap: nowrap;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
 }
 
 .p-breadcrumb .p-menuitem-text {
-    line-height: 1;
+  line-height: 1;
 }
 
 .p-breadcrumb .p-menuitem-link {
-    text-decoration: none;
-    display: flex;
-    align-items: center;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
 }
 
 .p-breadcrumb .p-menuitem-separator {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .p-breadcrumb::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 // theme
 .p-breadcrumb {
-    background: variables_light.$breadcrumbBg;
-    border: variables_light.$breadcrumbBorder;
-    border-radius: variables_light.$borderRadius;
-    padding: variables_light.$breadcrumbPadding;
+  background: variables_light.$breadcrumbBg;
+  border: variables_light.$breadcrumbBorder;
+  border-radius: variables_light.$borderRadius;
+  padding: variables_light.$breadcrumbPadding;
 
-    .p-breadcrumb-list {
-        li {
-            .p-menuitem-link {
-                transition: variables_light.$listItemTransition;
-                border-radius: variables_light.$borderRadius;
-                outline-color: transparent;
+  .p-breadcrumb-list {
+    li {
+      .p-menuitem-link {
+        transition: variables_light.$listItemTransition;
+        border-radius: variables_light.$borderRadius;
+        outline-color: transparent;
 
-                &:focus-visible {
-                    @include mixins.focused();
-                }
-
-                .p-menuitem-text {
-                    color: variables_light.$breadcrumbItemTextColor;
-                }
-
-                .p-menuitem-icon {
-                    color: variables_light.$breadcrumbItemIconColor;
-                }
-            }
-
-            &.p-menuitem-separator {
-                margin: 0 variables_light.$inlineSpacing 0 variables_light.$inlineSpacing;
-                color: variables_light.$breadcrumbSeparatorColor;
-            }
-
-            &:last-child {
-                .p-menuitem-text {
-                    color: variables_light.$breadcrumbLastItemTextColor;
-                }
-
-                .p-menuitem-icon {
-                    color: variables_light.$breadcrumbLastItemIconColor;
-                }
-            }
+        &:focus-visible {
+          @include mixins.focused();
         }
+
+        .p-menuitem-text {
+          color: variables_light.$breadcrumbItemTextColor;
+        }
+
+        .p-menuitem-icon {
+          color: variables_light.$breadcrumbItemIconColor;
+        }
+      }
+
+      &.p-menuitem-separator {
+        margin: 0 variables_light.$inlineSpacing 0 variables_light.$inlineSpacing;
+        color: variables_light.$breadcrumbSeparatorColor;
+      }
+
+      &:last-child {
+        .p-menuitem-text {
+          color: variables_light.$breadcrumbLastItemTextColor;
+        }
+
+        .p-menuitem-icon {
+          color: variables_light.$breadcrumbLastItemIconColor;
+        }
+      }
     }
+  }
 }

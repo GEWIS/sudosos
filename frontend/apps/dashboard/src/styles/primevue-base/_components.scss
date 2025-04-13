@@ -1,113 +1,113 @@
-@use "sass:meta";
-@use "_mixins";
-@use "_colors";
+@use 'sass:meta';
+@use '_mixins';
+@use '_colors';
 
-@use "components/input/_editor";
+@use 'components/input/_editor';
 
 @layer primevue {
-    @include meta.load-css("_common");
+  @include meta.load-css('_common');
 
-    //Input
-    @include meta.load-css("components/input/_autocomplete");
-    @include meta.load-css("components/input/_calendar");
-    @include meta.load-css("components/input/_cascadeselect");
-    @include meta.load-css("components/input/_checkbox");
-    @include meta.load-css("components/input/_chips");
-    @include meta.load-css("components/input/_colorpicker");
-    @include meta.load-css("components/input/_dropdown");
-    @include meta.load-css("components/input/_floatlabel");
-    @include meta.load-css("components/input/_iconfield");
-    @include meta.load-css("components/input/_inputotp");
-    @include meta.load-css("components/input/_inputgroup");
-    @include meta.load-css("components/input/_inputicon");
-    @include meta.load-css("components/input/_inputnumber");
-    @include meta.load-css("components/input/_inputswitch");
-    @include meta.load-css("components/input/_inputtext");
-    @include meta.load-css("components/input/_knob");
-    @include meta.load-css("components/input/_listbox");
-    @include meta.load-css("components/input/_multiselect");
-    @include meta.load-css("components/input/_password");
-    @include meta.load-css("components/input/_radiobutton");
-    @include meta.load-css("components/input/_rating");
-    @include meta.load-css("components/input/_selectbutton");
-    @include meta.load-css("components/input/_slider");
-    @include meta.load-css("components/input/_textarea");
-    @include meta.load-css("components/input/_treeselect");
-    @include meta.load-css("components/input/_togglebutton");
+  //Input
+  @include meta.load-css('components/input/_autocomplete');
+  @include meta.load-css('components/input/_calendar');
+  @include meta.load-css('components/input/_cascadeselect');
+  @include meta.load-css('components/input/_checkbox');
+  @include meta.load-css('components/input/_chips');
+  @include meta.load-css('components/input/_colorpicker');
+  @include meta.load-css('components/input/_dropdown');
+  @include meta.load-css('components/input/_floatlabel');
+  @include meta.load-css('components/input/_iconfield');
+  @include meta.load-css('components/input/_inputotp');
+  @include meta.load-css('components/input/_inputgroup');
+  @include meta.load-css('components/input/_inputicon');
+  @include meta.load-css('components/input/_inputnumber');
+  @include meta.load-css('components/input/_inputswitch');
+  @include meta.load-css('components/input/_inputtext');
+  @include meta.load-css('components/input/_knob');
+  @include meta.load-css('components/input/_listbox');
+  @include meta.load-css('components/input/_multiselect');
+  @include meta.load-css('components/input/_password');
+  @include meta.load-css('components/input/_radiobutton');
+  @include meta.load-css('components/input/_rating');
+  @include meta.load-css('components/input/_selectbutton');
+  @include meta.load-css('components/input/_slider');
+  @include meta.load-css('components/input/_textarea');
+  @include meta.load-css('components/input/_treeselect');
+  @include meta.load-css('components/input/_togglebutton');
 
-    //Button
-    @include meta.load-css("components/button/_button");
-    @include meta.load-css("components/button/_speeddial");
-    @include meta.load-css("components/button/_splitbutton");
+  //Button
+  @include meta.load-css('components/button/_button');
+  @include meta.load-css('components/button/_speeddial');
+  @include meta.load-css('components/button/_splitbutton');
 
-    //Data
-    @include meta.load-css("components/data/_carousel");
-    @include meta.load-css("components/data/_datatable");
-    @include meta.load-css("components/data/_dataview");
-    @include meta.load-css("components/data/_filter");
-    @include meta.load-css("components/data/_orderlist");
-    @include meta.load-css("components/data/_organizationchart");
-    @include meta.load-css("components/data/_paginator");
-    @include meta.load-css("components/data/_picklist");
-    @include meta.load-css("components/data/_timeline");
-    @include meta.load-css("components/data/_tree");
-    @include meta.load-css("components/data/_treetable");
+  //Data
+  @include meta.load-css('components/data/_carousel');
+  @include meta.load-css('components/data/_datatable');
+  @include meta.load-css('components/data/_dataview');
+  @include meta.load-css('components/data/_filter');
+  @include meta.load-css('components/data/_orderlist');
+  @include meta.load-css('components/data/_organizationchart');
+  @include meta.load-css('components/data/_paginator');
+  @include meta.load-css('components/data/_picklist');
+  @include meta.load-css('components/data/_timeline');
+  @include meta.load-css('components/data/_tree');
+  @include meta.load-css('components/data/_treetable');
 
-    //Panel
-    @include meta.load-css("components/panel/_accordion");
-    @include meta.load-css("components/panel/_card");
-    @include meta.load-css("components/panel/_fieldset");
-    @include meta.load-css("components/panel/_divider");
-    @include meta.load-css("components/panel/_panel");
-    @include meta.load-css("components/panel/_scrollpanel");
-    @include meta.load-css("components/panel/_splitter");
-    @include meta.load-css("components/panel/_stepper");
-    @include meta.load-css("components/panel/_tabview");
-    @include meta.load-css("components/panel/_toolbar");
+  //Panel
+  @include meta.load-css('components/panel/_accordion');
+  @include meta.load-css('components/panel/_card');
+  @include meta.load-css('components/panel/_fieldset');
+  @include meta.load-css('components/panel/_divider');
+  @include meta.load-css('components/panel/_panel');
+  @include meta.load-css('components/panel/_scrollpanel');
+  @include meta.load-css('components/panel/_splitter');
+  @include meta.load-css('components/panel/_stepper');
+  @include meta.load-css('components/panel/_tabview');
+  @include meta.load-css('components/panel/_toolbar');
 
-    //Overlay
-    @include meta.load-css("components/overlay/_confirmpopup");
-    @include meta.load-css("components/overlay/_dialog");
-    @include meta.load-css("components/overlay/_overlaypanel");
-    @include meta.load-css("components/overlay/_sidebar");
-    @include meta.load-css("components/overlay/_tooltip");
+  //Overlay
+  @include meta.load-css('components/overlay/_confirmpopup');
+  @include meta.load-css('components/overlay/_dialog');
+  @include meta.load-css('components/overlay/_overlaypanel');
+  @include meta.load-css('components/overlay/_sidebar');
+  @include meta.load-css('components/overlay/_tooltip');
 
-    //File
-    @include meta.load-css("components/file/_fileupload");
+  //File
+  @include meta.load-css('components/file/_fileupload');
 
-    //Menu
-    @include meta.load-css("components/menu/_breadcrumb");
-    @include meta.load-css("components/menu/_contextmenu");
-    @include meta.load-css("components/menu/_dock");
-    @include meta.load-css("components/menu/_megamenu");
-    @include meta.load-css("components/menu/_menu");
-    @include meta.load-css("components/menu/_menubar");
-    @include meta.load-css("components/menu/_panelmenu");
-    @include meta.load-css("components/menu/_steps");
-    @include meta.load-css("components/menu/_tabmenu");
-    @include meta.load-css("components/menu/_tieredmenu");
+  //Menu
+  @include meta.load-css('components/menu/_breadcrumb');
+  @include meta.load-css('components/menu/_contextmenu');
+  @include meta.load-css('components/menu/_dock');
+  @include meta.load-css('components/menu/_megamenu');
+  @include meta.load-css('components/menu/_menu');
+  @include meta.load-css('components/menu/_menubar');
+  @include meta.load-css('components/menu/_panelmenu');
+  @include meta.load-css('components/menu/_steps');
+  @include meta.load-css('components/menu/_tabmenu');
+  @include meta.load-css('components/menu/_tieredmenu');
 
-    //Messages
-    @include meta.load-css("components/messages/_inlinemessage");
-    @include meta.load-css("components/messages/_message");
-    @include meta.load-css("components/messages/toast");
+  //Messages
+  @include meta.load-css('components/messages/_inlinemessage');
+  @include meta.load-css('components/messages/_message');
+  @include meta.load-css('components/messages/toast');
 
-    //MultiMedia
-    @include meta.load-css("components/multimedia/_galleria");
-    @include meta.load-css("components/multimedia/_image");
+  //MultiMedia
+  @include meta.load-css('components/multimedia/_galleria');
+  @include meta.load-css('components/multimedia/_image');
 
-    //Misc
-    @include meta.load-css("components/misc/_avatar");
-    @include meta.load-css("components/misc/_badge");
-    @include meta.load-css("components/misc/_blockui");
-    @include meta.load-css("components/misc/_chip");
-    @include meta.load-css("components/misc/_inplace");
-    @include meta.load-css("components/misc/_metergroup");
-    @include meta.load-css("components/misc/_progressbar");
-    @include meta.load-css("components/misc/_progressspinner");
-    @include meta.load-css("components/misc/_ripple");
-    @include meta.load-css("components/misc/_scrolltop");
-    @include meta.load-css("components/misc/_skeleton");
-    @include meta.load-css("components/misc/_tag");
-    @include meta.load-css("components/misc/_terminal");
+  //Misc
+  @include meta.load-css('components/misc/_avatar');
+  @include meta.load-css('components/misc/_badge');
+  @include meta.load-css('components/misc/_blockui');
+  @include meta.load-css('components/misc/_chip');
+  @include meta.load-css('components/misc/_inplace');
+  @include meta.load-css('components/misc/_metergroup');
+  @include meta.load-css('components/misc/_progressbar');
+  @include meta.load-css('components/misc/_progressspinner');
+  @include meta.load-css('components/misc/_ripple');
+  @include meta.load-css('components/misc/_scrolltop');
+  @include meta.load-css('components/misc/_skeleton');
+  @include meta.load-css('components/misc/_tag');
+  @include meta.load-css('components/misc/_terminal');
 }

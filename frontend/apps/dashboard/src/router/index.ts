@@ -1,23 +1,22 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import PublicLayout from "@/layout/PublicLayout.vue";
-import DashboardLayout from "@/layout/DashboardLayout.vue";
-import { isAuthenticated, useAuthStore } from "@sudosos/sudosos-frontend-common";
-import 'vue-router';
-import ErrorView from "@/views/ErrorView.vue";
-import { authRoutes } from "@/modules/auth/routes";
-import { adminRoutes } from "@/modules/admin/routes";
-import { financialRoutes } from "@/modules/financial/routes";
-import { sellerRoutes } from "@/modules/seller/routes";
-import { userRoutes } from "@/modules/user/routes";
+import { isAuthenticated, useAuthStore } from '@sudosos/sudosos-frontend-common';
+import PublicLayout from '@/layout/PublicLayout.vue';
+import DashboardLayout from '@/layout/DashboardLayout.vue';
+import ErrorView from '@/views/ErrorView.vue';
+import { authRoutes } from '@/modules/auth/routes';
+import { adminRoutes } from '@/modules/admin/routes';
+import { financialRoutes } from '@/modules/financial/routes';
+import { sellerRoutes } from '@/modules/seller/routes';
+import { userRoutes } from '@/modules/user/routes';
 import MaintenanceView from '@/views/MaintenanceView.vue';
 import { useSettingsStore } from '@/stores/settings.store';
-import WrappedView from "@/views/WrappedView.vue";
+import WrappedView from '@/views/WrappedView.vue';
 
 declare module 'vue-router' {
   interface RouteMeta {
     // must be declared by every route
-    requiresAuth: boolean
-    isAllowed?: () => boolean
+    requiresAuth: boolean;
+    isAllowed?: () => boolean;
   }
 }
 
@@ -38,7 +37,7 @@ const router = createRouter({
           component: ErrorView,
           name: 'error',
         },
-      ]
+      ],
     },
     {
       path: '',
@@ -55,7 +54,7 @@ const router = createRouter({
           component: WrappedView,
           name: 'wrapped',
         },
-      ]
+      ],
     },
     {
       path: '',
@@ -66,14 +65,14 @@ const router = createRouter({
           component: MaintenanceView,
           name: 'maintenance',
         },
-      ]
+      ],
     },
     // Catch-all route to home
     {
       path: '/:pathMatch(.*)*',
       redirect: { name: 'home' },
     },
-  ]
+  ],
 });
 
 router.beforeEach((to, from, next) => {
@@ -105,7 +104,7 @@ router.beforeEach((to, from, next) => {
     next({ name: 'home' });
   } else if (to.meta?.isAllowed) {
     // Permission guard present, so let's test is
-    if(to.meta?.isAllowed()) {
+    if (to.meta?.isAllowed()) {
       next();
     } else {
       next({ name: 'home' });

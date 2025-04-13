@@ -1,55 +1,62 @@
 <template>
-  <CardComponent :header="t('modules.seller.posOverview.list.header')" class="w-full">
+  <CardComponent class="w-full" :header="t('modules.seller.posOverview.list.header')">
     <template #topAction>
-      <div class="flex flex-row align-items-center justify-content-end">
+      <div class="align-items-center flex flex-row justify-content-end">
         <Button
-            :label="t('common.create')"
-            icon="pi pi-plus"
-            @click="openCreatePOSModal"
-            v-if="isAllowed('create', ['own', 'organ'], 'PointOfSale', ['any'])"
+          v-if="isAllowed('create', ['own', 'organ'], 'PointOfSale', ['any'])"
+          icon="pi pi-plus"
+          :label="t('common.create')"
+          @click="openCreatePOSModal"
         />
       </div>
     </template>
-    <DataTable :rows="rows" :value="pointOfSales" :rowsPerPageOptions="[5, 10, 25, 50, 100]" paginator lazy
-               @page="onPage($event)" :totalRecords="totalRecords">
+    <DataTable
+      lazy
+      paginator
+      :rows="rows"
+      :rows-per-page-options="[5, 10, 25, 50, 100]"
+      :total-records="totalRecords"
+      :value="pointOfSales"
+      @page="onPage($event)"
+    >
       <Column field="name" :header="t('modules.seller.posOverview.list.posName')">
-        <template #body v-if="isLoading">
-          <Skeleton class="w-6 mr-8 my-1 h-2rem surface-300"/>
+        <template v-if="isLoading" #body>
+          <Skeleton class="h-2rem mr-8 my-1 surface-300 w-6" />
         </template>
       </Column>
       <Column field="owner.firstName" :header="t('common.owner')">
-        <template #body v-if="isLoading">
-          <Skeleton class="w-6 my-1 h-2rem surface-300"/>
+        <template v-if="isLoading" #body>
+          <Skeleton class="h-2rem my-1 surface-300 w-6" />
         </template>
       </Column>
-      <Column headerStyle="width: 3rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
-        <template #body v-if="isLoading">
-          <Skeleton class="w-6 my-1 h-2rem surface-300"/>
+      <Column body-style="text-align: center; overflow: visible" header-style="width: 3rem; text-align: center">
+        <template v-if="isLoading" #body>
+          <Skeleton class="h-2rem my-1 surface-300 w-6" />
         </template>
-        <template #body="slotProps" v-else>
+        <template v-else #body="slotProps">
           <Button
-              @click="router.push({name: 'pointOfSaleInfo', params: {id: slotProps.data.id}})"
-              type="button"
-              icon="pi pi-info-circle"
-              outlined
+            icon="pi pi-info-circle"
+            outlined
+            type="button"
+            @click="router.push({ name: 'pointOfSaleInfo', params: { id: slotProps.data.id } })"
           />
         </template>
       </Column>
     </DataTable>
   </CardComponent>
-  <POSCreateModal v-model:is-visible="isCreateModalVisible"/>
+  <POSCreateModal v-model:is-visible="isCreateModalVisible" />
 </template>
 <script setup lang="ts">
-import CardComponent from "@/components/CardComponent.vue";
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
-import { onMounted, type Ref, ref } from "vue";
-import type { PaginatedPointOfSaleResponse, PointOfSaleResponse } from "@sudosos/sudosos-client";
-import Skeleton from "primevue/skeleton";
-import router from "@/router";
-import POSCreateModal from "@/modules/seller/components/POSCreateModal.vue";
-import { useI18n } from "vue-i18n";
-import { isAllowed } from "@/utils/permissionUtils";
+import { onMounted, type Ref, ref } from 'vue';
+import type { PaginatedPointOfSaleResponse, PointOfSaleResponse } from '@sudosos/sudosos-client';
+import Skeleton from 'primevue/skeleton';
+import { useI18n } from 'vue-i18n';
+import router from '@/router';
+import POSCreateModal from '@/modules/seller/components/POSCreateModal.vue';
+import CardComponent from '@/components/CardComponent.vue';
+import { isAllowed } from '@/utils/permissionUtils';
 
 const { t } = useI18n();
 
@@ -59,13 +66,13 @@ const rows: Ref<number> = ref(10);
 const isLoading: Ref<boolean> = ref(true);
 
 const props = defineProps<{
-  getPointsOfSale: (take: number, skip: number) => Promise<PaginatedPointOfSaleResponse | undefined>,
+  getPointsOfSale: (take: number, skip: number) => Promise<PaginatedPointOfSaleResponse | undefined>;
 }>();
 
 onMounted(async () => {
   const initialPointOfSales = await props.getPointsOfSale(rows.value, 0);
 
-  if(!initialPointOfSales) return;
+  if (!initialPointOfSales) return;
 
   pointOfSales.value = initialPointOfSales.records;
 
@@ -76,7 +83,7 @@ onMounted(async () => {
 
 async function onPage(event: DataTablePageEvent) {
   const newPointOfSales = await props.getPointsOfSale(event.rows, event.first);
-  if(!newPointOfSales) {
+  if (!newPointOfSales) {
     isLoading.value = true;
     return;
   }
@@ -88,8 +95,6 @@ const isCreateModalVisible = ref(false);
 function openCreatePOSModal() {
   isCreateModalVisible.value = true;
 }
-
 </script>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

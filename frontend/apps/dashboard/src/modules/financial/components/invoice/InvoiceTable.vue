@@ -1,23 +1,23 @@
 <template>
   <div class="flex flex-col gap-5">
     <DataTable
-        :rows="rows"
-        :value="invoices"
-        :rows-per-page-options="[5, 10, 25, 50, 100]"
-        :paginator="true"
-        lazy
-        @page="onPage"
-        :total-records="totalRecords"
-        :filters="filters"
-        data-key="id"
-        class="w-full"
-        tableStyle="min-width: 50rem"
-        filterDisplay="menu"
+      class="w-full"
+      data-key="id"
+      filter-display="menu"
+      :filters="filters"
+      lazy
+      :paginator="true"
+      :rows="rows"
+      :rows-per-page-options="[5, 10, 25, 50, 100]"
+      table-style="min-width: 50rem"
+      :total-records="totalRecords"
+      :value="invoices"
+      @page="onPage"
     >
       <Column field="date" :header="t('common.date')">
         <template #body="slotProps">
           <div class="cell-content">
-            <Skeleton v-if="isLoading" class="skeleton-fixed w-6 surface-300" />
+            <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
             <span v-else>
               {{ formatDateFromString(slotProps.data.createdAt) }}
             </span>
@@ -26,27 +26,27 @@
       </Column>
 
       <Column
-          field="currentState.state"
-          :header="t('common.status')"
-          filter
-          filterMatchMode="equals"
-          :showFilterMatchModes="false"
-          :showApplyButton="false"
-          :showClearButton="false"
+        field="currentState.state"
+        filter
+        filter-match-mode="equals"
+        :header="t('common.status')"
+        :show-apply-button="false"
+        :show-clear-button="false"
+        :show-filter-match-modes="false"
       >
         <template #filter="{ filterModel }">
           <Dropdown
-              v-model="filterModel.value"
-              @change="stateFilterChange"
-              :options="states"
-              optionLabel="name"
-              optionValue="value"
-              :placeholder="t('common.placeholders.selectType')"
+            v-model="filterModel.value"
+            option-label="name"
+            option-value="value"
+            :options="states"
+            :placeholder="t('common.placeholders.selectType')"
+            @change="stateFilterChange"
           />
         </template>
         <template #body="slotProps">
           <div class="cell-content">
-            <Skeleton v-if="isLoading" class="skeleton-fixed w-6 surface-300" />
+            <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
             <span v-else>
               {{ slotProps.data.currentState.state }}
             </span>
@@ -54,10 +54,10 @@
         </template>
       </Column>
 
-      <Column field="to.firstName" :header="t('common.for')" style="max-width: 10rem;">
+      <Column field="to.firstName" :header="t('common.for')" style="max-width: 10rem">
         <template #body="slotProps">
           <div class="cell-content">
-            <Skeleton v-if="isLoading" class="skeleton-fixed w-6 surface-300" />
+            <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
             <span v-else class="truncate">
               {{ slotProps.data.to.firstName }}
             </span>
@@ -65,10 +65,10 @@
         </template>
       </Column>
 
-      <Column field="description" :header="t('common.description')" style="max-width: 15rem;">
+      <Column field="description" :header="t('common.description')" style="max-width: 15rem">
         <template #body="slotProps">
           <div class="cell-content">
-            <Skeleton v-if="isLoading" class="skeleton-fixed w-6 surface-300" />
+            <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
             <span v-else class="truncate">
               {{ slotProps.data.description }}
             </span>
@@ -79,7 +79,7 @@
       <Column field="transfer.amount" :header="t('common.amount')">
         <template #body="slotProps">
           <div class="cell-content">
-            <Skeleton v-if="isLoading" class="skeleton-fixed w-3 surface-300" />
+            <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-3" />
             <span v-else>
               {{ formatPrice(slotProps.data.transfer?.amount) }}
             </span>
@@ -90,13 +90,13 @@
       <Column :header="t('common.actions')" style="width: 10%">
         <template #body="slotProps">
           <div class="cell-content">
-            <Skeleton v-if="isLoading" class="skeleton-fixed w-3 surface-300" />
+            <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-3" />
             <span v-else>
               <Button
-                  type="button"
-                  icon="pi pi-eye"
-                  class="p-button-rounded p-button-text p-button-plain"
-                  @click="() => viewInvoice(slotProps.data.id)"
+                class="p-button-plain p-button-rounded p-button-text"
+                icon="pi pi-eye"
+                type="button"
+                @click="() => viewInvoice(slotProps.data.id)"
               />
             </span>
           </div>
@@ -107,64 +107,63 @@
 </template>
 
 <script setup lang="ts">
-import DataTable from 'primevue/datatable';
+import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import Skeleton from 'primevue/skeleton';
 import Button from 'primevue/button';
-import Dropdown from 'primevue/dropdown';
+import Dropdown, { type DropdownChangeEvent } from 'primevue/dropdown';
 import { useI18n } from 'vue-i18n';
-import { formatPrice, formatDateFromString } from "@/utils/formatterUtils";
-import router from "@/router";
-import { InvoiceStatusResponseStateEnum } from "@sudosos/sudosos-client/src/api";
-import { type Ref, ref } from "vue";
+import { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client/src/api';
+import { type Ref, ref } from 'vue';
+import { formatPrice, formatDateFromString } from '@/utils/formatterUtils';
+import router from '@/router';
 
-const props = defineProps({
+defineProps({
   invoices: {
     type: Array,
-    required: true
+    required: true,
   },
   totalRecords: {
     type: Number,
-    required: true
+    required: true,
   },
   isLoading: {
     type: Boolean,
-    required: true
+    required: true,
   },
   rows: {
     type: Number,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const emit = defineEmits(['page', 'stateFilterChange']);
 
 const { t } = useI18n();
 
-function onPage(event: any) {
+function onPage(event: DataTablePageEvent) {
   emit('page', event);
 }
 
-function stateFilterChange(e: any) {
-  console.log(e);
+function stateFilterChange(e: DropdownChangeEvent) {
   emit('stateFilterChange', e);
 }
 
-const states: Ref<Array<{name: string, value: string | null}>> = ref([
+const states: Ref<Array<{ name: string; value: string | null }>> = ref([
   { name: InvoiceStatusResponseStateEnum.Created, value: InvoiceStatusResponseStateEnum.Created },
   { name: InvoiceStatusResponseStateEnum.Sent, value: InvoiceStatusResponseStateEnum.Sent },
   { name: InvoiceStatusResponseStateEnum.Paid, value: InvoiceStatusResponseStateEnum.Paid },
   { name: InvoiceStatusResponseStateEnum.Deleted, value: InvoiceStatusResponseStateEnum.Deleted },
-  { name: 'ALL', value: null }
+  { name: 'ALL', value: null },
 ]);
 
-async function viewInvoice(id: number) {
-  let route = router.resolve({ name: 'invoiceInfo', params: { id } });
+function viewInvoice(id: number) {
+  const route = router.resolve({ name: 'invoiceInfo', params: { id } });
   window.open(route.href, '_blank');
 }
 
 const filters = ref({
-  'currentState.state': { value: null, matchMode: 'equals' }
+  'currentState.state': { value: null, matchMode: 'equals' },
 });
 </script>
 
@@ -183,7 +182,6 @@ const filters = ref({
   padding: 0 0.5rem;
   box-sizing: border-box;
 }
-
 
 .skeleton-fixed {
   height: 1rem;

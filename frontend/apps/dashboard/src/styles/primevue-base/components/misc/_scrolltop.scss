@@ -1,62 +1,62 @@
-@use "../../../themes/sudosos-light/variables_light";
+@use '../../../themes/sudosos-light/variables_light';
 
 // core
 .p-scrolltop {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .p-scrolltop-sticky {
-    position: sticky;
+  position: sticky;
 }
 
 .p-scrolltop-sticky.p-link {
-    margin-left: auto;
+  margin-left: auto;
 }
 
 .p-scrolltop-enter-from {
-    opacity: 0;
+  opacity: 0;
 }
 
 .p-scrolltop-enter-active {
-    transition: opacity 0.15s;
+  transition: opacity 0.15s;
 }
 
 .p-scrolltop.p-scrolltop-leave-to {
-    opacity: 0;
+  opacity: 0;
 }
 
 .p-scrolltop-leave-active {
-    transition: opacity 0.15s;
+  transition: opacity 0.15s;
 }
 
 // theme
 .p-scrolltop {
-    width: variables_light.$scrollTopWidth;
-    height: variables_light.$scrollTopHeight;
-    border-radius: variables_light.$scrollTopBorderRadius;
-    box-shadow: variables_light.$inputOverlayShadow;
-    transition: variables_light.$actionIconTransition;
+  width: variables_light.$scrollTopWidth;
+  height: variables_light.$scrollTopHeight;
+  border-radius: variables_light.$scrollTopBorderRadius;
+  box-shadow: variables_light.$inputOverlayShadow;
+  transition: variables_light.$actionIconTransition;
 
-    &.p-link {
-        background: variables_light.$scrollTopBg;
+  &.p-link {
+    background: variables_light.$scrollTopBg;
 
-        &:hover {
-            background: variables_light.$scrollTopHoverBg;
-        }
+    &:hover {
+      background: variables_light.$scrollTopHoverBg;
     }
+  }
 
-    .p-scrolltop-icon {
-        font-size: variables_light.$scrollTopFontSize;
-        color: variables_light.$scrollTopTextColor;
+  .p-scrolltop-icon {
+    font-size: variables_light.$scrollTopFontSize;
+    color: variables_light.$scrollTopTextColor;
 
-        &.p-icon {
-            width: variables_light.$scrollTopFontSize;
-            height: variables_light.$scrollTopFontSize;
-        }
+    &.p-icon {
+      width: variables_light.$scrollTopFontSize;
+      height: variables_light.$scrollTopFontSize;
     }
+  }
 }

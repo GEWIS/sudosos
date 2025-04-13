@@ -1,18 +1,15 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/javascript-node
 {
-    "name": "SudoSOS",
-    "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
-    // Configure tool-specific properties.
-    "customizations": {
-        // Configure properties specific to VS Code.
-        "vscode": {
-            "settings": {},
-            "extensions": [
-                "Vue.volar"
-            ]
-        }
-    },
-    "postCreateCommand": "./.devcontainer/postCreateCommands.sh"
-    
+  "name": "SudoSOS",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  // Configure tool-specific properties.
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      "settings": {},
+      "extensions": ["Vue.volar"]
+    }
+  },
+  "postCreateCommand": "./.devcontainer/postCreateCommands.sh"
 }

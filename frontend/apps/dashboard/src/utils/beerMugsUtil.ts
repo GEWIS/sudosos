@@ -1,7 +1,7 @@
 // Copied and adapted from https://www.kirupa.com/html5/the_falling_snow_effect.htm
 
 // Array to store our BeerMug objects
-const beerMugsUtil: any[] = [];
+const beerMugsUtil: BeerMug[] = [];
 
 // Global variables to store our browser's window size
 let browserWidth;
@@ -42,12 +42,7 @@ function setResetFlag() {
 //
 // A performant way to set your beerMug's position and size
 //
-function setTransform(
-  xPos: number,
-  yPos: number,
-  scale: any,
-  el: { style: { transform: string; }; },
-) {
+function setTransform(xPos: number, yPos: number, scale: number, el: { style: { transform: string } }) {
   el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0) scale(${scale}, ${scale})`;
 }
 
@@ -59,9 +54,9 @@ class BeerMug {
 
   private readonly speed: number;
 
-  private xPos: number;
+  xPos: number;
 
-  private yPos: number;
+  yPos: number;
 
   private scale: number;
 
@@ -90,7 +85,7 @@ class BeerMug {
     this.counter += this.speed / 5000;
     this.xPos += (this.sign * this.speed * Math.cos(this.counter)) / 40;
     this.yPos += Math.sin(this.counter) / 40 + this.speed / 30;
-    this.scale = 0.5 + (Math.abs(10 * Math.cos(this.counter)) / 20);
+    this.scale = 0.5 + Math.abs(10 * Math.cos(this.counter)) / 20;
 
     // setting our beerMug's position
     setTransform(Math.round(this.xPos), Math.round(this.yPos), this.scale, this.element);
@@ -164,11 +159,7 @@ function generateBeerMugs() {
     const speed = 5 + Math.random() * 40;
 
     // create our BeerMug object
-    // @ts-ignore
-    const beerMugObject = new BeerMug(beerMugClone,
-      speed,
-      initialXPos,
-      initialYPos);
+    const beerMugObject = new BeerMug(beerMugClone as unknown as HTMLElement, speed, initialXPos, initialYPos);
     beerMugsUtil.push(beerMugObject);
   }
 

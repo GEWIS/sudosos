@@ -30,7 +30,7 @@ export async function fetchAllPages<T>(
   let skip = 0;
   const take = Number.MAX_SAFE_INTEGER;
   let allData: T[] = [];
-  // eslint-disable-next-line no-constant-condition
+
   while (true) {
     const response = await fetchPage(take, skip);
     const { records, _pagination } = response.data;

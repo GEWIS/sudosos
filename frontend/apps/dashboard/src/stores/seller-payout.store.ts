@@ -1,20 +1,22 @@
-import { defineStore } from "pinia";
-import ApiService from "@/services/ApiService";
+import { defineStore } from 'pinia';
 import type {
   CreateSellerPayoutRequest,
   PaginatedSellerPayoutResponse,
-  SellerPayoutResponse
-} from "@sudosos/sudosos-client";
-import { fetchAllPages } from "@sudosos/sudosos-frontend-common";
+  SellerPayoutResponse,
+} from '@sudosos/sudosos-client';
+import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
+import ApiService from '@/services/ApiService';
 
 export const useSellerPayoutStore = defineStore('seller-payout', {
   state: () => ({
     payouts: {} as Record<number, SellerPayoutResponse>,
   }),
   getters: {
-    getPayout: (state) => (id: number): SellerPayoutResponse | undefined => {
-      return state.payouts[id];
-    },
+    getPayout:
+      (state) =>
+      (id: number): SellerPayoutResponse | undefined => {
+        return state.payouts[id];
+      },
     getAll(state): Record<number, SellerPayoutResponse> {
       return state.payouts;
     },
@@ -29,19 +31,20 @@ export const useSellerPayoutStore = defineStore('seller-payout', {
     },
     async fetchPayouts(take: number, skip: number): Promise<PaginatedSellerPayoutResponse> {
       return await ApiService.sellerPayouts
-        .getAllSellerPayouts(undefined, undefined, undefined, take, skip).then((res) => {
-          const payouts = res.data.records as SellerPayoutResponse[];
+        .getAllSellerPayouts(undefined, undefined, undefined, take, skip)
+        .then((res) => {
+          const payouts = res.data.records;
           payouts.forEach((payout) => {
             this.payouts[payout.id] = payout;
           });
           return res.data;
         });
     },
-    async fetchPayoutsBy(requestedById: number, take: number, skip: number)
-      : Promise<PaginatedSellerPayoutResponse> {
+    async fetchPayoutsBy(requestedById: number, take: number, skip: number): Promise<PaginatedSellerPayoutResponse> {
       return await ApiService.sellerPayouts
-        .getAllSellerPayouts(requestedById, undefined, undefined, take, skip).then((res) => {
-          const payouts = res.data.records as SellerPayoutResponse[];
+        .getAllSellerPayouts(requestedById, undefined, undefined, take, skip)
+        .then((res) => {
+          const payouts = res.data.records;
           payouts.forEach((payout) => {
             this.payouts[payout.id] = payout;
           });
@@ -54,9 +57,8 @@ export const useSellerPayoutStore = defineStore('seller-payout', {
       }
     },
     async fetchAll(): Promise<Record<number, SellerPayoutResponse>> {
-      return fetchAllPages<SellerPayoutResponse>(
-        (take, skip) => ApiService.sellerPayouts
-          .getAllSellerPayouts(undefined, undefined, undefined, take, skip)
+      return fetchAllPages<SellerPayoutResponse>((take, skip) =>
+        ApiService.sellerPayouts.getAllSellerPayouts(undefined, undefined, undefined, take, skip),
       ).then((payouts) => {
         payouts.forEach((payout: SellerPayoutResponse) => {
           this.payouts[payout.id] = payout;
@@ -65,7 +67,7 @@ export const useSellerPayoutStore = defineStore('seller-payout', {
       });
     },
     async createPayout(c: CreateSellerPayoutRequest) {
-      return await ApiService.sellerPayouts.createSellerPayout(c).then(resp => {
+      return await ApiService.sellerPayouts.createSellerPayout(c).then((resp) => {
         const payout = resp.data;
         this.payouts[payout.id] = payout;
         return payout;
@@ -78,16 +80,18 @@ export const useSellerPayoutStore = defineStore('seller-payout', {
       });
     },
     async updatePayoutAmount(id: number, amount: number): Promise<boolean> {
-      return await ApiService.sellerPayouts.updateSellerPayout(id, {
-        amount: {
-          amount: Math.round(amount * 100),
-          currency: 'EUR',
-          precision: 2
-        }
-      }).then((res) => {
-        this.payouts[id] = res.data;
-        return true;
-      });
+      return await ApiService.sellerPayouts
+        .updateSellerPayout(id, {
+          amount: {
+            amount: Math.round(amount * 100),
+            currency: 'EUR',
+            precision: 2,
+          },
+        })
+        .then((res) => {
+          this.payouts[id] = res.data;
+          return true;
+        });
     },
-  }
+  },
 });

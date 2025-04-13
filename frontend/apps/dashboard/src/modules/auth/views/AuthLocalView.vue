@@ -1,78 +1,73 @@
 <template>
   <div>
-      <img class="max-h-9rem block mx-auto my-0" src="../../../assets/img/bier.png" alt="logo"/>
-      <div class="text-900 text-5xl mt-0 mx-auto mb-2 w-full">{{ t('modules.auth.login.sudosos') }}</div>
-      <form class="flex flex-column" @submit="loginHandler">
-        <span class="p-float-label with-error">
-          <InputText
-              type="text"
-              v-bind="username"
-              size="large"
-              name="username"
-              class="w-full pt-2 pb-0 cinput h-4rem"
-              :class="{ 'p-invalid': loginForm.errors.value.username }"
-          />
-          <label :class="{ 'contains-text': username.modelValue }" for="username"
+    <img alt="logo" class="block max-h-9rem mx-auto my-0" src="../../../assets/img/bier.png" />
+    <div class="mb-2 mt-0 mx-auto text-5xl text-900 w-full">{{ t('modules.auth.login.sudosos') }}</div>
+    <form class="flex flex-column" @submit="loginHandler">
+      <span class="p-float-label with-error">
+        <InputText
+          v-bind="username"
+          class="cinput h-4rem pb-0 pt-2 w-full"
+          :class="{ 'p-invalid': loginForm.errors.value.username }"
+          name="username"
+          size="large"
+          type="text"
+        />
+        <label :class="{ 'contains-text': username.modelValue }" for="username"
           >{{ t('modules.auth.login.username') }}
-          </label>
-          <small class="p-error">
-            <i v-if="loginForm.errors.value.username" class="pi pi-exclamation-circle"/>
-            {{ loginForm.errors.value.username }}
-          </small>
-        </span>
-        <span class="p-float-label with-error">
-          <InputText
-              type="password"
-              v-bind="password"
-              size="large"
-              name="password"
-              class="w-full pt-2 pb-0 cinput h-4rem"
-              :class="{ 'p-invalid': loginForm.errors.value.password }"
-          />
-          <label :class="{ 'contains-text': password.modelValue }" for="password"
+        </label>
+        <small class="p-error">
+          <i v-if="loginForm.errors.value.username" class="pi pi-exclamation-circle" />
+          {{ loginForm.errors.value.username }}
+        </small>
+      </span>
+      <span class="p-float-label with-error">
+        <InputText
+          v-bind="password"
+          class="cinput h-4rem pb-0 pt-2 w-full"
+          :class="{ 'p-invalid': loginForm.errors.value.password }"
+          name="password"
+          size="large"
+          type="password"
+        />
+        <label :class="{ 'contains-text': password.modelValue }" for="password"
           >{{ t('modules.auth.login.password') }}
-          </label>
-          <small class="p-error">
-            <i v-if="loginForm.errors.value.password" class="pi pi-exclamation-circle"/>
-            {{ loginForm.errors.value.password }}
-          </small>
-        </span>
-        <Button
-            type="submit"
-            id="login-button"
-            class="mx-auto w-full flex justify-content-center align-items-center"
-        >
-          {{ t('modules.auth.login.login') }}
-        </Button>
-        <Button
-            @click="toHomeView"
-            :outlined="true"
-            class="my-3 mx-auto w-full flex justify-content-center align-items-center"
-        >
-          {{ t('common.back') }}
-        </Button>
-        <div class="text-900 underline cursor-pointer" @click="resetPassword">
-          {{ t('modules.auth.reset.passwordReset') }}
-        </div>
-      </form>
+        </label>
+        <small class="p-error">
+          <i v-if="loginForm.errors.value.password" class="pi pi-exclamation-circle" />
+          {{ loginForm.errors.value.password }}
+        </small>
+      </span>
+      <Button id="login-button" class="align-items-center flex justify-content-center mx-auto w-full" type="submit">
+        {{ t('modules.auth.login.login') }}
+      </Button>
+      <Button
+        class="align-items-center flex justify-content-center mx-auto my-3 w-full"
+        :outlined="true"
+        @click="toHomeView"
+      >
+        {{ t('common.back') }}
+      </Button>
+      <div class="cursor-pointer text-900 underline" @click="resetPassword">
+        {{ t('modules.auth.reset.passwordReset') }}
+      </div>
+    </form>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useRoute } from "vue-router";
-import { onBeforeMount } from "vue";
-import { useUserStore, useAuthStore } from "@sudosos/sudosos-frontend-common";
-import apiService from "@/services/ApiService";
-import router from "@/router";
+import { useRoute } from 'vue-router';
+import { onBeforeMount } from 'vue';
+import { useUserStore, useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/yup';
 import * as yup from 'yup';
 import InputText from 'primevue/inputtext';
 import { useToast } from 'primevue/usetoast';
 import type { AxiosError } from 'axios';
-import { handleError } from "@/utils/errorUtils";
-import { useI18n } from "vue-i18n";
-
+import { useI18n } from 'vue-i18n';
+import { handleError } from '@/utils/errorUtils';
+import router from '@/router';
+import apiService from '@/services/ApiService';
 
 const { t } = useI18n();
 
@@ -81,13 +76,13 @@ const userStore = useUserStore();
 const toast = useToast();
 
 const schema = toTypedSchema(
-    yup.object({
-      username: yup.string().required(),
-      password: yup.string().required()
-    })
+  yup.object({
+    username: yup.string().required(),
+    password: yup.string().required(),
+  }),
 );
 const loginForm = useForm({
-  validationSchema: schema
+  validationSchema: schema,
 });
 
 const username = loginForm.defineComponentBinds('username');
@@ -99,22 +94,23 @@ onBeforeMount(() => {
   if (route.query.token !== undefined) {
     const token = route.query.token as string;
     authStore.gewisWebLogin(crypto.randomUUID(), token, apiService).catch(() => {
-      router.replace({ path: "/error" });
+      void router.replace({ path: '/error' });
     });
   }
 });
 
 const loginHandler = loginForm.handleSubmit(async (values) => {
-
   // Send toHomeView either with or without ToS,
   // router will handle correct routing based on that,
   // but fetching user will result in error.
   try {
     if (values.username.includes('@')) {
-      await apiService.authenticate.localAuthentication({
-        accountMail: values.username,
-        password: values.password
-      }).then((res) => authStore.handleResponse(res.data));
+      await apiService.authenticate
+        .localAuthentication({
+          accountMail: values.username,
+          password: values.password,
+        })
+        .then((res) => authStore.handleResponse(res.data));
       if (authStore.getToS == 'ACCEPTED' && authStore.getUser) {
         await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
       } else {
@@ -136,11 +132,11 @@ const loginHandler = loginForm.handleSubmit(async (values) => {
 });
 
 const resetPassword = () => {
-  router.push({ name: 'passwordreset' });
+  void router.push({ name: 'passwordreset' });
 };
 
 const toHomeView = () => {
-  router.push(sessionStorage.getItem('fromPath') || { name: 'home' });
+  void router.push(sessionStorage.getItem('fromPath') || { name: 'home' });
   sessionStorage.removeItem('fromPath');
 };
 </script>

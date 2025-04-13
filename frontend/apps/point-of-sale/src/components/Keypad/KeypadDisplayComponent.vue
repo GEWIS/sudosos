@@ -1,56 +1,67 @@
 <template>
-  <LoginInfoComponent/>
-  <div class="wrapper user accent-text" :class="{ inactive: !isActive }">
-    <i class="pi pi-user text-6xl text-center w-full"/>
-    <div class="display-value pl-3 shadow-1" @click="() => { emits('focus:userid') }">
+  <LoginInfoComponent />
+  <div class="accent-text user wrapper" :class="{ inactive: !isActive }">
+    <i class="pi pi-user text-6xl text-center w-full" />
+    <div
+      class="display-value pl-3 shadow-1"
+      @click="
+        () => {
+          emits('focus:userid');
+        }
+      "
+    >
       {{ external ? 'E' : '' }}
       <span v-for="char in userId" :key="char">
         {{ char }}
       </span>
     </div>
   </div>
-  <div class="wrapper pincode accent-text" :class="{ inactive: isActive }">
-    <i class="pi pi-key text-6xl text-center w-full"/>
+  <div class="accent-text pincode wrapper" :class="{ inactive: isActive }">
+    <i class="pi pi-key text-6xl text-center w-full" />
     <div class="passcode-wrapper" :class="{ wrong: wrongPin }">
-      <div class="text-5xl" v-if="wrongPin">
-        WRONG PIN
-      </div>
-      <div class="flex w-full h-full justify-content-between align-items-center" v-else
-        @click="() => { emits('focus:passcode') }">
-        <span class="passcode-span shadow-1" v-for="char in displayCode" :key="char">{{ char }}</span>
+      <div v-if="wrongPin" class="text-5xl">WRONG PIN</div>
+      <div
+        v-else
+        class="align-items-center flex h-full justify-content-between w-full"
+        @click="
+          () => {
+            emits('focus:passcode');
+          }
+        "
+      >
+        <span v-for="char in displayCode" :key="char" class="passcode-span shadow-1">{{ char }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-
-import { computed } from "vue";
-import LoginInfoComponent from "@/components/LoginInfoComponent.vue";
+import { computed } from 'vue';
+import LoginInfoComponent from '@/components/LoginInfoComponent.vue';
 
 const emits = defineEmits(['focus:passcode', 'focus:userid']);
 
 const props = defineProps({
   userId: {
     type: String,
-    required: true
+    required: true,
   },
   pinCode: {
     type: String,
-    required: true
+    required: true,
   },
   isActive: {
     type: Boolean,
-    required: true
+    required: true,
   },
   wrongPin: {
     type: Boolean,
-    required: true
+    required: true,
   },
   external: {
     type: Boolean,
     required: true,
-  }
+  },
 });
 
 const displayCode = computed<string[]>(() => {

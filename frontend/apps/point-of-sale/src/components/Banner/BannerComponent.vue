@@ -1,23 +1,19 @@
-/**
-* This component handles the display and rotation of banners.
-* It fetches banners from the store and switches to the next banner
-* at a specified interval. It also updates the banner and interval
-* when new banners are fetched. The interval is cleaned up when
-* the component is unmounted.
-*/
+/** * This component handles the display and rotation of banners. * It fetches banners from the store and switches to
+the next banner * at a specified interval. It also updates the banner and interval * when new banners are fetched. The
+interval is cleaned up when * the component is unmounted. */
 <template>
   <BannerDisplayComponent v-if="currentBanner" :banner="currentBanner" />
 </template>
 
 <script setup lang="ts">
 import { StoreGeneric, storeToRefs } from 'pinia';
-import { onUnmounted, ref, watch } from 'vue';
+import { onBeforeMount, onUnmounted, ref, watch } from 'vue';
 import { useBannerStore } from '@/stores/banner.store';
 import BannerDisplayComponent from '@/components/Banner/BannerDisplayComponent.vue';
 
 // Extract banners from the store
 const bannerStore = useBannerStore();
-bannerStore.fetchBanners();
+
 const { activeBanners } = storeToRefs(bannerStore as StoreGeneric);
 
 // Initialize the index and currentBanner with the first active banner
@@ -46,6 +42,10 @@ watch(activeBanners, (newBanners) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(switchToNextBanner, currentBanner.value.duration * 1000);
   }
+});
+
+onBeforeMount(() => {
+  void bannerStore.fetchBanners();
 });
 
 // Cleanup the interval when the component is unmounted

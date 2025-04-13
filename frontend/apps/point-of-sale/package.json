@@ -11,14 +11,15 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore --fix",
+    "lint": "eslint src",
+    "lint-fix": "eslint src --fix",
     "format": "prettier --write src/"
   },
   "dependencies": {
     "@sudosos/sudosos-frontend-common": "workspace:^"
   },
   "devDependencies": {
+    "eslint": "^9.24.0",
     "lint-staged": "^15.2.10"
   }
 }

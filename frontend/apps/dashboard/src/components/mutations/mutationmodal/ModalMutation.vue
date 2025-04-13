@@ -1,36 +1,33 @@
 <template>
   <Dialog
-    @show="addListenerOnDialogueOverlay(dialog)"
-    :visible="visible"
-    modal
-    :header="t('components.mutations.modal.header', {id} )"
-    class="w-auto flex w-11 md:w-4"
     ref="dialog"
+    class="flex md:w-4 w-11 w-auto"
+    :header="t('components.mutations.modal.header', { id })"
+    modal
+    :visible="visible"
+    @show="addListenerOnDialogueOverlay(dialog)"
   >
     <div v-if="isLoading">
-      <Skeleton class="surface-300 my-1 w-5 h-2rem"/>
-      <Skeleton class="surface-300 my-1 w-10 h-2rem"/>
-      <br>
-      <Skeleton class="surface-300 my-1 w-11 h-2rem"/>
-      <Skeleton class="surface-300 my-1 w-11 h-2rem"/>
+      <Skeleton class="h-2rem my-1 surface-300 w-5" />
+      <Skeleton class="h-2rem my-1 surface-300 w-10" />
+      <br />
+      <Skeleton class="h-2rem my-1 surface-300 w-11" />
+      <Skeleton class="h-2rem my-1 surface-300 w-11" />
     </div>
 
     <TransactionDetailModal
       v-else-if="shouldShowTransaction"
-      :transactionInfo="transactionsDetails[props.id]"
-      :productsInfo="transactionProducts[props.id]"
+      :products-info="transactionProducts[props.id]"
+      :transaction-info="transactionsDetails[props.id]"
     />
-    <InvoiceDetailModal v-else-if="shouldShowInvoice" :invoiceInfo="transferDetails[props.id]" />
-    <DepositDetailModal v-else-if="shouldShowDeposit" :depositInfo="transferDetails[props.id]" />
+    <InvoiceDetailModal v-else-if="shouldShowInvoice" :invoice-info="transferDetails[props.id]" />
+    <DepositDetailModal v-else-if="shouldShowDeposit" :deposit-info="transferDetails[props.id]" />
     <FineDetailModal v-else-if="shouldShowFine" :fine="transferDetails[props.id]" />
-    <PayoutRequestDetailModal v-else-if="shouldShowPayoutRequest" :payoutRequest="transferDetails[props.id]" />
-    <WaivedFineDetailModal v-else-if="shouldShowWaivedFine" :waivedFines="transferDetails[props.id]" />
-    <template #footer v-if="
-      !shouldShowDeposit &&
-      !shouldShowInvoice &&
-      shouldShowDeleteButton">
-      <div class="flex flex-column align-items-end">
-        <Button @click="deleteMutation" severity="danger">
+    <PayoutRequestDetailModal v-else-if="shouldShowPayoutRequest" :payout-request="transferDetails[props.id]" />
+    <WaivedFineDetailModal v-else-if="shouldShowWaivedFine" :waived-fines="transferDetails[props.id]" />
+    <template v-if="!shouldShowDeposit && !shouldShowInvoice && shouldShowDeleteButton" #footer>
+      <div class="align-items-end flex flex-column">
+        <Button severity="danger" @click="deleteMutation">
           {{ t('common.delete').toUpperCase() }}
         </Button>
       </div>
@@ -41,12 +38,14 @@
 <script setup lang="ts">
 import { onMounted, type Ref } from 'vue';
 import { computed, ref, watch } from 'vue';
-import { useTransactionStore } from '@/stores/transaction.store';
 import type { TransactionResponse, TransferResponse } from '@sudosos/sudosos-client';
-import type {
-  SubTransactionResponse,
-  SubTransactionRowResponse
-} from '@sudosos/sudosos-client/src/api';
+import type { SubTransactionResponse, SubTransactionRowResponse } from '@sudosos/sudosos-client/src/api';
+import { addListenerOnDialogueOverlay, useUserStore } from '@sudosos/sudosos-frontend-common';
+import { useI18n } from 'vue-i18n';
+import { useToast } from 'primevue/usetoast';
+import type { AxiosError } from 'axios';
+import Skeleton from 'primevue/skeleton';
+import { useTransactionStore } from '@/stores/transaction.store';
 import { useTransferStore } from '@/stores/transfer.store';
 import apiService from '@/services/ApiService';
 import TransactionDetailModal from '@/components/mutations/mutationmodal/ModalDetailTransaction.vue';
@@ -54,21 +53,15 @@ import PayoutRequestDetailModal from '@/components/mutations/mutationmodal/Modal
 import DepositDetailModal from '@/components/mutations/mutationmodal/ModalDetailDeposit.vue';
 import InvoiceDetailModal from '@/components/mutations/mutationmodal/ModalDetailInvoice.vue';
 import FineDetailModal from '@/components/mutations/mutationmodal/ModalDetailFine.vue';
-import WaivedFineDetailModal from "@/components/mutations/mutationmodal/ModalDetailWaivedFine.vue";
+import WaivedFineDetailModal from '@/components/mutations/mutationmodal/ModalDetailWaivedFine.vue';
 import router from '@/router';
-import { addListenerOnDialogueOverlay } from '@/utils/dialogUtil';
-import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
-import type { AxiosError } from 'axios';
 import { handleError } from '@/utils/errorUtils';
 import { FinancialMutationType } from '@/utils/mutationUtils';
 import { UserRole } from '@/utils/rbacUtils';
-import { useUserStore } from '@sudosos/sudosos-frontend-common';
-import Skeleton from "primevue/skeleton";
 
 const props = defineProps<{
-    type: FinancialMutationType,
-    id: number
+  type: FinancialMutationType;
+  id: number;
 }>();
 
 const { t } = useI18n();
@@ -79,7 +72,7 @@ const transactionsDetails: Ref<{ [id: number]: TransactionResponse }> = ref({});
 const transactionProducts: Ref<{ [id: number]: Array<SubTransactionRowResponse> }> = ref({});
 const transferStore = useTransferStore();
 const transferDetails: Ref<{ [id: number]: TransferResponse }> = ref({});
-const dialog: Ref<null | any> = ref(null);
+const dialog = ref();
 const toast = useToast();
 const userStore = useUserStore();
 const isLoading: Ref<boolean> = ref(false);
@@ -87,7 +80,9 @@ const isLoading: Ref<boolean> = ref(false);
 const shouldShowDeleteButton = computed(() => {
   // If the transfer is not loaded yet, do not show the delete button.
   if (!transferDetails.value[props.id]) return false;
-  return userStore.current.rolesWithPermissions.findIndex(r => r.name == UserRole.BAC_PM || r.name == UserRole.BOARD);
+  return userStore.current.rolesWithPermissions.findIndex(
+    (r) => (r.name as UserRole) == UserRole.BAC_PM || (r.name as UserRole) == UserRole.BOARD,
+  );
 });
 
 const shouldShowInvoice = computed(() => {
@@ -107,20 +102,17 @@ const shouldShowDeposit = computed(() => {
 
 const shouldShowFine = computed(() => {
   if (!transferDetails.value[props.id]) return false;
-  return (
-    props.type === FinancialMutationType.FINE);
+  return props.type === FinancialMutationType.FINE;
 });
 
 const shouldShowWaivedFine = computed(() => {
   if (!transferDetails.value[props.id]) return false;
-  return (
-    props.type === FinancialMutationType.WAIVED_FINE);
+  return props.type === FinancialMutationType.WAIVED_FINE;
 });
 
 const shouldShowPayoutRequest = computed(() => {
   if (!transferDetails.value[props.id]) return false;
-  return (
-    props.type === FinancialMutationType.PAYOUT_REQUEST);
+  return props.type === FinancialMutationType.PAYOUT_REQUEST;
 });
 async function fetchTransferInfo() {
   if (transferDetails.value[props.id]) return; // We already have content!
@@ -129,21 +121,26 @@ async function fetchTransferInfo() {
   });
 }
 
-async function fetchTransactionInfo() {
+function fetchTransactionInfo() {
   if (transactionsDetails.value[props.id]) return; // We already have content!
-  transactionStore.fetchIndividualTransaction(props.id, apiService).then(() => {
-    if (!transactionStore.transaction) {
-      router.replace({ path: '/error' });
-      return;
-    }
-    transactionsDetails.value[props.id] = transactionStore.transaction;
-    getProductsOfTransaction(transactionStore.transaction); // Process subtransactions
-  });
+  transactionStore
+    .fetchIndividualTransaction(props.id, apiService)
+    .then(() => {
+      if (!transactionStore.transaction) {
+        void router.replace({ path: '/error' });
+        return;
+      }
+      transactionsDetails.value[props.id] = transactionStore.transaction;
+      getProductsOfTransaction(transactionStore.transaction); // Process subtransactions
+    })
+    .catch((err) => {
+      handleError(err, toast);
+    });
 }
 
 function getProductsOfTransaction(transactionResponse: TransactionResponse): void {
   if (transactionProducts.value[transactionResponse.id]) return; // We already have content!
-  let result: Array<SubTransactionRowResponse> = [];
+  const result: Array<SubTransactionRowResponse> = [];
   transactionResponse.subTransactions.forEach((subTransaction: SubTransactionResponse) => {
     subTransaction.subTransactionRows.forEach((subTransactionRow: SubTransactionRowResponse) => {
       result.push(subTransactionRow);
@@ -153,30 +150,26 @@ function getProductsOfTransaction(transactionResponse: TransactionResponse): voi
 }
 
 async function fetchMutation(): Promise<void> {
-
-  if (props.type == FinancialMutationType.TRANSACTION) await fetchTransactionInfo();
+  if (props.type == FinancialMutationType.TRANSACTION) fetchTransactionInfo();
   else await fetchTransferInfo();
 }
 
 // Load on first mount
-onMounted(
+onMounted(async () => {
+  isLoading.value = true;
+  await fetchMutation();
+  isLoading.value = false;
+});
+
+// Reload when closing and opening another
+watch(
+  () => props.id || props.type,
   async () => {
     isLoading.value = true;
     await fetchMutation();
     isLoading.value = false;
-  }
+  },
 );
-
-// Reload when closing and opening another
-watch(
-    () => props.id || props.type,
-    async () => {
-        isLoading.value = true;
-        await fetchMutation();
-        isLoading.value = false;
-    }
-);
-
 
 const deleteMutation = async () => {
   if (shouldShowFine.value) {
@@ -194,7 +187,7 @@ const deleteMutation = async () => {
           summary: t('common.toast.success.success'),
           detail: t('common.toast.success.fineDeleted'),
           severity: 'success',
-          life: 3000
+          life: 3000,
         });
         router.go(0);
       })
@@ -216,7 +209,7 @@ const deleteMutation = async () => {
           summary: t('common.toast.success.success'),
           detail: t('common.toast.success.transactionDeleted'),
           severity: 'success',
-          life: 3000
+          life: 3000,
         });
         router.go(0);
       })

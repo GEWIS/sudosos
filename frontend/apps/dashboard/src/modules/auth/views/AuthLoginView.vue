@@ -1,34 +1,33 @@
 <template>
   <div>
-        <img class="max-h-9rem block mx-auto my-0" src="../../../assets/img/bier.png" alt="logo"/>
-        <div class="text-900 text-5xl mt-0 mx-auto mb-2 w-full">{{ t('modules.auth.login.sudosos') }}</div>
-        <Button
-            id="login-gewis-button"
-            @click="loginViaGEWIS"
-            class="my-3 mx-auto w-full flex justify-content-center align-items-center"
-        >
-          <img class="mr-3 h-18" src="../../../assets/img/gewis-branding.svg" alt="GEWIS"/>
-          {{ t('modules.auth.login.gewis') }}
-        </Button>
-        <Button
-            id="login-gewis-button"
-            @click="navigateToLocal"
-            class="my-3 mx-auto w-full flex justify-content-center align-items-center"
-        >
-          {{ t('modules.auth.login.localAccount') }}
-        </Button>
-      </div>
+    <img alt="logo" class="block max-h-9rem mx-auto my-0" src="../../../assets/img/bier.png" />
+    <div class="mb-2 mt-0 mx-auto text-5xl text-900 w-full">{{ t('modules.auth.login.sudosos') }}</div>
+    <Button
+      id="login-gewis-button"
+      class="align-items-center flex justify-content-center mx-auto my-3 w-full"
+      @click="loginViaGEWIS"
+    >
+      <img alt="GEWIS" class="h-18 mr-3" src="../../../assets/img/gewis-branding.svg" />
+      {{ t('modules.auth.login.gewis') }}
+    </Button>
+    <Button
+      id="login-gewis-button"
+      class="align-items-center flex justify-content-center mx-auto my-3 w-full"
+      @click="navigateToLocal"
+    >
+      {{ t('modules.auth.login.localAccount') }}
+    </Button>
+  </div>
 </template>
 
-
 <script setup lang="ts">
-import { useRoute } from "vue-router";
-import { onBeforeMount, ref } from "vue";
-import { useAuthStore } from "@sudosos/sudosos-frontend-common";
-import apiService from "@/services/ApiService";
-import router from "@/router";
-import { useI18n } from "vue-i18n";
-import { useSettingsStore } from "@/stores/settings.store";
+import { useRoute } from 'vue-router';
+import { onBeforeMount, ref } from 'vue';
+import { useAuthStore } from '@sudosos/sudosos-frontend-common';
+import { useI18n } from 'vue-i18n';
+import apiService from '@/services/ApiService';
+import router from '@/router';
+import { useSettingsStore } from '@/stores/settings.store';
 
 const { t } = useI18n();
 
@@ -38,25 +37,26 @@ const route = useRoute();
 const returning = ref();
 
 const navigateToLocal = () => {
-  router.push('/local');
+  void router.push('/local');
 };
 
 const hasToken = () => {
   const rawToken = localStorage.getItem('jwt_token') as string;
-  return (rawToken !== null);
+  return rawToken !== null;
 };
 
 onBeforeMount(() => {
   if (route.query.token !== undefined) {
     const token = route.query.token as string;
-    authStore.gewisWebLogin(crypto.randomUUID(), token, apiService)
-    .then(() => {
-      router.push(sessionStorage.getItem('fromPath') || '/');
-      sessionStorage.removeItem('fromPath');
-    })
-    .catch(() => {
-      router.replace({ path: "/error" });
-    });
+    authStore
+      .gewisWebLogin(crypto.randomUUID(), token, apiService)
+      .then(() => {
+        void router.push(sessionStorage.getItem('fromPath') || '/');
+        sessionStorage.removeItem('fromPath');
+      })
+      .catch(() => {
+        void router.replace({ path: '/error' });
+      });
   }
   returning.value = hasToken();
 });

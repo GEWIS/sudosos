@@ -28,6 +28,7 @@
       "banners": {
         "title": "Banners",
         "noBannerFound": "No banner found, please upload one!",
+        "till": "till",
         "list": {
           "header": "Banner overview",
           "filterActive": "Filter active",

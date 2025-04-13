@@ -1,206 +1,206 @@
-@use "sass:meta";
-@use "../../../themes/sudosos-light/variables_light";
-@use "../../../themes/variables";
-@use "../../mixins";
+@use 'sass:meta';
+@use '../../../themes/sudosos-light/variables_light';
+@use '../../../themes/variables';
+@use '../../mixins';
 
 @use 'sass:math';
 
 //core
 .p-stepper .p-stepper-nav {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-    overflow-x: auto;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  overflow-x: auto;
 }
 
 .p-stepper-vertical .p-stepper-nav {
-    flex-direction: column;
+  flex-direction: column;
 }
 
 .p-stepper-header {
-    position: relative;
-    display: flex;
-    flex: 1 1 auto;
-    align-items: center;
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
 
-    &:last-of-type {
-        flex: initial;
-    }
+  &:last-of-type {
+    flex: initial;
+  }
 }
 
 .p-stepper-header .p-stepper-action {
-    border: 0 none;
-    display: inline-flex;
-    align-items: center;
-    text-decoration: none;
-    cursor: pointer;
+  border: 0 none;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
 
-    &:focus-visible {
-        @include mixins.focused();
-    }
+  &:focus-visible {
+    @include mixins.focused();
+  }
 }
 
 .p-stepper.p-stepper-readonly .p-stepper-header {
-    cursor: auto;
+  cursor: auto;
 }
 
 .p-stepper-header.p-highlight .p-stepper-action {
-    cursor: default;
+  cursor: default;
 }
 
 .p-stepper-title {
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .p-stepper-number {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .p-stepper-separator {
-    flex: 1 1 0;
+  flex: 1 1 0;
 }
 
 //theme
 .p-stepper {
-    .p-stepper-nav {
-        display: flex;
-        justify-content: space-between;
-        margin: 0;
-        padding: 0;
-        list-style-type: none;
-    }
-    
-    .p-stepper-header {
-        padding: variables_light.$inlineSpacing;
+  .p-stepper-nav {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
 
-        .p-stepper-action {
-            transition: variables_light.$listItemTransition;
-            border-radius: variables_light.$borderRadius;
-            background: variables_light.$stepsItemBg;
-            outline-color: transparent;
-            
-            .p-stepper-number {
-                color: variables_light.$stepsItemNumberColor;
-                border: variables_light.$stepsItemBorder;
-                border-width: 2px;
-                background: variables_light.$stepsItemBg;
-                min-width: variables_light.$stepsItemNumberWidth;
-                height: variables_light.$stepsItemNumberHeight;
-                line-height: variables_light.$stepsItemNumberHeight;
-                font-size: variables_light.$stepsItemNumberFontSize;
-                border-radius: variables_light.$stepsItemNumberBorderRadius;
-                transition: variables_light.$actionIconTransition;
-            }
-            
-            .p-stepper-title {
-                margin-left: variables_light.$inlineSpacing;
-                color: variables_light.$stepsItemTextColor;
-                font-weight: variables_light.$stepsItemActiveFontWeight;
-                transition: variables_light.$actionIconTransition;
-            }
+  .p-stepper-header {
+    padding: variables_light.$inlineSpacing;
 
-            &:not(.p-disabled):focus-visible {
-                @include mixins.focused();
-            }
-        }
+    .p-stepper-action {
+      transition: variables_light.$listItemTransition;
+      border-radius: variables_light.$borderRadius;
+      background: variables_light.$stepsItemBg;
+      outline-color: transparent;
 
-        &.p-highlight {
-            .p-stepper-number {
-                background: variables.$highlightBg;
-                color: variables.$highlightTextColor;
-            }
+      .p-stepper-number {
+        color: variables_light.$stepsItemNumberColor;
+        border: variables_light.$stepsItemBorder;
+        border-width: 2px;
+        background: variables_light.$stepsItemBg;
+        min-width: variables_light.$stepsItemNumberWidth;
+        height: variables_light.$stepsItemNumberHeight;
+        line-height: variables_light.$stepsItemNumberHeight;
+        font-size: variables_light.$stepsItemNumberFontSize;
+        border-radius: variables_light.$stepsItemNumberBorderRadius;
+        transition: variables_light.$actionIconTransition;
+      }
 
-            .p-stepper-title {
-                color: variables_light.$textColor;
-            }
-        }
+      .p-stepper-title {
+        margin-left: variables_light.$inlineSpacing;
+        color: variables_light.$stepsItemTextColor;
+        font-weight: variables_light.$stepsItemActiveFontWeight;
+        transition: variables_light.$actionIconTransition;
+      }
 
-        &:not(.p-disabled):focus-visible {
-            @include mixins.focused();
-        }
-
-        &:has(~ .p-highlight) {
-            @if meta.variable-exists(primaryColor) {
-                .p-stepper-separator {
-                    background-color: variables.$primaryColor;
-                }
-            }
-        }
+      &:not(.p-disabled):focus-visible {
+        @include mixins.focused();
+      }
     }
 
-    .p-stepper-panels {
-        background: variables_light.$tabviewContentBg;
-        padding: variables_light.$tabviewContentPadding;
-        color: variables_light.$tabviewContentTextColor;
+    &.p-highlight {
+      .p-stepper-number {
+        background: variables.$highlightBg;
+        color: variables.$highlightTextColor;
+      }
+
+      .p-stepper-title {
+        color: variables_light.$textColor;
+      }
     }
 
-    .p-stepper-separator {
-        background-color: variables_light.$timelineEventColor;
+    &:not(.p-disabled):focus-visible {
+      @include mixins.focused();
+    }
+
+    &:has(~ .p-highlight) {
+      @if meta.variable-exists(primaryColor) {
+        .p-stepper-separator {
+          background-color: variables.$primaryColor;
+        }
+      }
+    }
+  }
+
+  .p-stepper-panels {
+    background: variables_light.$tabviewContentBg;
+    padding: variables_light.$tabviewContentPadding;
+    color: variables_light.$tabviewContentTextColor;
+  }
+
+  .p-stepper-separator {
+    background-color: variables_light.$timelineEventColor;
+    width: 100%;
+    height: 2px;
+    margin-inline-start: calc(variables_light.$inlineSpacing * 2);
+    transition: variables_light.$listItemTransition;
+  }
+
+  &.p-stepper-vertical {
+    display: flex;
+    flex-direction: column;
+
+    .p-stepper-toggleable-content {
+      display: flex;
+      flex: 1 1 auto;
+      background: variables_light.$tabviewContentBg;
+      color: variables_light.$tabviewContentTextColor;
+    }
+
+    .p-stepper-panel {
+      display: flex;
+      flex-direction: column;
+      flex: initial;
+
+      &.p-stepper-panel-active {
+        flex: 1 1 auto;
+      }
+
+      .p-stepper-header {
+        flex: initial;
+      }
+
+      .p-stepper-content {
         width: 100%;
-        height: 2px;
-        margin-inline-start: calc(variables_light.$inlineSpacing * 2);
-        transition: variables_light.$listItemTransition;
-    }
+        padding-left: calc(variables_light.$inlineSpacing * 2);
+      }
 
-    &.p-stepper-vertical {
-        display: flex;
-        flex-direction: column;
+      .p-stepper-separator {
+        flex: 0 0 auto;
+        width: 2px;
+        height: auto;
+        margin-inline-start: calc(variables_light.$inlineSpacing * 7 / 2 + 2px);
+      }
 
-        .p-stepper-toggleable-content {
-            display: flex;
-            flex: 1 1 auto;
-            background: variables_light.$tabviewContentBg;
-            color: variables_light.$tabviewContentTextColor;
+      &:has(~ .p-stepper-panel-active) {
+        @if meta.variable-exists(primaryColor) {
+          .p-stepper-separator {
+            background-color: variables.$primaryColor;
+          }
         }
+      }
 
-        .p-stepper-panel {
-            display: flex;
-            flex-direction: column;
-            flex: initial;
-            
-            &.p-stepper-panel-active {
-                flex: 1 1 auto;
-            }
-
-            .p-stepper-header {
-                flex: initial;
-            }
-
-            .p-stepper-content {
-                width: 100%;
-                padding-left: calc(variables_light.$inlineSpacing * 2);
-            }
-
-            .p-stepper-separator {
-                flex: 0 0 auto;
-                width: 2px;
-                height: auto;
-                margin-inline-start: calc(variables_light.$inlineSpacing * 7 / 2 + 2px);
-            }
-
-            &:has(~ .p-stepper-panel-active) {
-                @if meta.variable-exists(primaryColor) {
-                    .p-stepper-separator {
-                        background-color: variables.$primaryColor;
-                    }
-                }
-            }
-
-            &:last-of-type {
-                .p-stepper-content {
-                    padding-left: calc(variables_light.$inlineSpacing * 6);
-                }
-            }
+      &:last-of-type {
+        .p-stepper-content {
+          padding-left: calc(variables_light.$inlineSpacing * 6);
         }
+      }
     }
+  }
 }

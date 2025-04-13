@@ -1,57 +1,57 @@
 <template>
-  <div class="flex flex-column justify-content-between gap-2">
+  <div class="flex flex-column gap-2 justify-content-between">
     <InputSpan
-        :value="form.model.name.value.value"
-        :attributes="form.model.name.attr.value"
-        @update:value="form.context.setFieldValue('name', $event)"
-        :errors="form.context.errors.value.name"
-        id="name" :placeholder="t('common.name')"
-        :label="t('common.name')"
-        :disabled="!isEditable"
+      id="name"
+      :attributes="form.model.name.attr.value"
+      :disabled="!isEditable"
+      :errors="form.context.errors.value.name"
+      :label="t('common.name')"
+      :placeholder="t('common.name')"
+      :value="form.model.name.value.value"
+      @update:value="form.context.setFieldValue('name', $event)"
     />
 
     <InputOrganSpan
-        :organ="form.model.owner.value.value"
-        :organs="!isOrganEditable
-                        ? [form.model.owner.value.value]
-                        : undefined"
-        :disabled="!isEditable || !isOrganEditable"
-        :attributes="form.model.owner.attr.value"
-        @update:organ="form.context.setFieldValue('owner', $event)"
-        :errors="form.context.errors.value.owner"
-        id="owner" :placeholder="t('modules.seller.forms.common.selectOwner')"
-        :label="t('common.owner')"/>
+      id="owner"
+      :attributes="form.model.owner.attr.value"
+      :disabled="!isEditable || !isOrganEditable"
+      :errors="form.context.errors.value.owner"
+      :label="t('common.owner')"
+      :organ="form.model.owner.value.value"
+      :organs="!isOrganEditable ? [form.model.owner.value.value] : undefined"
+      :placeholder="t('modules.seller.forms.common.selectOwner')"
+      @update:organ="form.context.setFieldValue('owner', $event!)"
+    />
 
     <InputSpan
-        :value="form.model.public.value.value"
-        :attributes="form.model.public.attr.value"
-        @update:value="form.context.setFieldValue('public', $event)"
-        :errors="form.context.errors.value.public"
-        id="public" :placeholder="t('modules.seller.productContainers.containers.public')"
-        :label="t('modules.seller.productContainers.containers.public')" type="boolean"
-        :disabled="!isEditable"
-      />
+      id="public"
+      :attributes="form.model.public.attr.value"
+      :disabled="!isEditable"
+      :errors="form.context.errors.value.public"
+      :label="t('modules.seller.productContainers.containers.public')"
+      :placeholder="t('modules.seller.productContainers.containers.public')"
+      type="boolean"
+      :value="form.model.public.value.value"
+      @update:value="form.context.setFieldValue('public', $event)"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import InputSpan from "@/components/InputSpan.vue";
-import type { Form } from "@/utils/formUtils";
-import * as yup from "yup";
-import { containerActionSchema } from "@/utils/validation-schema";
-import InputOrganSpan from "@/components/InputOrganSpan.vue";
-import { useI18n } from "vue-i18n";
+import * as yup from 'yup';
+import { useI18n } from 'vue-i18n';
+import InputSpan from '@/components/InputSpan.vue';
+import type { Form } from '@/utils/formUtils';
+import { containerActionSchema } from '@/utils/validation-schema';
+import InputOrganSpan from '@/components/InputOrganSpan.vue';
 
 const { t } = useI18n();
 
 defineProps<{
-  form: Form<yup.InferType<typeof containerActionSchema>>,
-  isOrganEditable?: boolean,
-  isEditable: boolean
+  form: Form<yup.InferType<typeof containerActionSchema>>;
+  isOrganEditable?: boolean;
+  isEditable: boolean;
 }>();
-
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

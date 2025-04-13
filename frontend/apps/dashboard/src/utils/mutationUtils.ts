@@ -1,76 +1,85 @@
-import type { BaseTransactionResponse, BaseUserResponse, FinancialMutationResponse,
-  PaginatedFinancialMutationResponse, TransferResponse } from "@sudosos/sudosos-client";
-import type { Dinero } from "@sudosos/sudosos-client";
-import type { PaginatedBaseTransactionResponse } from "@sudosos/sudosos-client";
+import type {
+  BaseTransactionResponse,
+  BaseUserResponse,
+  FinancialMutationResponse,
+  PaginatedFinancialMutationResponse,
+  TransferResponse,
+  Dinero,
+  PaginatedBaseTransactionResponse,
+} from '@sudosos/sudosos-client';
 
 import i18n from '@/utils/i18nUtils';
 
 const t = i18n.global.t;
 
 export enum FinancialMutationType {
-    INVOICE,
-    DEPOSIT,
-    PAYOUT_REQUEST,
-    FINE,
-    WAIVED_FINE,
-    TRANSACTION
+  INVOICE,
+  DEPOSIT,
+  PAYOUT_REQUEST,
+  FINE,
+  WAIVED_FINE,
+  TRANSACTION,
 }
 
 export interface FinancialMutation {
-    amount: Dinero,
-    to: BaseUserResponse | undefined,
-    from: BaseUserResponse | undefined,
-    type: FinancialMutationType,
-    moment: Date,
-    id: number,
-    pos?: String,
-    createdBy?: BaseUserResponse | undefined,
+  amount: Dinero;
+  to: BaseUserResponse | undefined;
+  from: BaseUserResponse | undefined;
+  type: FinancialMutationType;
+  moment: Date;
+  id: number;
+  pos?: string;
+  createdBy?: BaseUserResponse | undefined;
 }
 
 export function parseTransaction(transaction: BaseTransactionResponse): FinancialMutation {
-    return {
-        amount: transaction.value,
-        to: undefined,
-        from: transaction.from,
-        type: FinancialMutationType.TRANSACTION,
-        moment: new Date(transaction.updatedAt!!),
-        id: transaction.id,
-        pos: transaction.pointOfSale.name,
-        createdBy: transaction.createdBy,
-    };
+  return {
+    amount: transaction.value,
+    to: undefined,
+    from: transaction.from,
+    type: FinancialMutationType.TRANSACTION,
+    moment: new Date(transaction.updatedAt!),
+    id: transaction.id,
+    pos: transaction.pointOfSale.name,
+    createdBy: transaction.createdBy,
+  };
 }
 
 export function parseTransfer(transfer: TransferResponse): FinancialMutation {
-    let type = FinancialMutationType.DEPOSIT;
+  let type = FinancialMutationType.DEPOSIT;
 
-    if(transfer.invoice) {
-        type = FinancialMutationType.INVOICE;
-    } else if(transfer.deposit) {
-        type = FinancialMutationType.DEPOSIT;
-    } else if(transfer.payoutRequest) {
-        type = FinancialMutationType.PAYOUT_REQUEST;
-    } else if(transfer.fine) {
-        type = FinancialMutationType.FINE;
-    } else if(transfer.waivedFines) {
-        type = FinancialMutationType.WAIVED_FINE;
-    }
+  if (transfer.invoice) {
+    type = FinancialMutationType.INVOICE;
+  } else if (transfer.deposit) {
+    type = FinancialMutationType.DEPOSIT;
+  } else if (transfer.payoutRequest) {
+    type = FinancialMutationType.PAYOUT_REQUEST;
+  } else if (transfer.fine) {
+    type = FinancialMutationType.FINE;
+  } else if (transfer.waivedFines) {
+    type = FinancialMutationType.WAIVED_FINE;
+  }
 
-    return {
-        amount: transfer.amount,
-        to: transfer.to,
-        from: transfer.from,
-        type: type,
-        moment: new Date(transfer.updatedAt!!),
-        id: transfer.id
-    };
+  return {
+    amount: transfer.amount,
+    to: transfer.to,
+    from: transfer.from,
+    type: type,
+    moment: new Date(transfer.updatedAt!),
+    id: transfer.id,
+  };
 }
 
-export function isPaginatedBaseTransactionResponse(obj: any): obj is PaginatedBaseTransactionResponse {
-  return obj.records && obj.records.length > 0 && 'id' in obj.records[0];
+export function isPaginatedBaseTransactionResponse(obj: unknown): obj is PaginatedBaseTransactionResponse {
+  return (
+    (obj as PaginatedBaseTransactionResponse).records &&
+    (obj as PaginatedBaseTransactionResponse).records.length > 0 &&
+    'id' in (obj as PaginatedBaseTransactionResponse).records[0]
+  );
 }
 
 export function parseFinancialMutations(
-  mutations: PaginatedFinancialMutationResponse | PaginatedBaseTransactionResponse
+  mutations: PaginatedFinancialMutationResponse | PaginatedBaseTransactionResponse,
 ): FinancialMutation[] {
   const result: FinancialMutation[] = [];
   if (isPaginatedBaseTransactionResponse(mutations)) {
@@ -115,11 +124,13 @@ export function getDescription(mutation: FinancialMutation) {
 }
 
 export function isIncreasingTransfer(mutationType: FinancialMutationType): boolean {
-    return mutationType == FinancialMutationType.DEPOSIT ||
-        mutationType == FinancialMutationType.INVOICE ||
-        mutationType == FinancialMutationType.WAIVED_FINE;
+  return (
+    mutationType == FinancialMutationType.DEPOSIT ||
+    mutationType == FinancialMutationType.INVOICE ||
+    mutationType == FinancialMutationType.WAIVED_FINE
+  );
 }
 
 export function isFine(mutationType: FinancialMutationType): boolean {
-    return mutationType == FinancialMutationType.FINE;
+  return mutationType == FinancialMutationType.FINE;
 }

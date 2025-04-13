@@ -1,9 +1,9 @@
-import type { RouteRecordRaw } from "vue-router";
-import DashboardLayout from "@/layout/DashboardLayout.vue";
-import AdminUserOverView from "@/modules/admin/views/AdminUserOverView.vue";
-import AdminBannersView from "@/modules/admin/views/AdminBannersView.vue";
-import AdminSingleUserView from "@/modules/admin/views/AdminSingleUserView.vue";
-import { isAllowed } from "@/utils/permissionUtils";
+import type { RouteRecordRaw } from 'vue-router';
+import DashboardLayout from '@/layout/DashboardLayout.vue';
+import AdminUserOverView from '@/modules/admin/views/AdminUserOverView.vue';
+import AdminBannersView from '@/modules/admin/views/AdminBannersView.vue';
+import AdminSingleUserView from '@/modules/admin/views/AdminSingleUserView.vue';
+import { isAllowed } from '@/utils/permissionUtils';
 
 export function adminRoutes(): RouteRecordRaw[] {
   return [
@@ -19,8 +19,8 @@ export function adminRoutes(): RouteRecordRaw[] {
           meta: {
             requiresAuth: true,
             // TODO: Change to `action: get` after https://github.com/GEWIS/sudosos-backend/issues/62 is fully finished
-            isAllowed: () => isAllowed('update', ['all'], 'User', ['any'])
-          }
+            isAllowed: () => isAllowed('update', ['all'], 'User', ['any']),
+          },
         },
         {
           path: '/banner',
@@ -28,8 +28,8 @@ export function adminRoutes(): RouteRecordRaw[] {
           name: 'banners',
           meta: {
             requiresAuth: true,
-            isAllowed: () => isAllowed('get', ['own', 'organ'], 'Banner', ['any'])
-          }
+            isAllowed: () => isAllowed('get', ['own', 'organ'], 'Banner', ['any']),
+          },
         },
         {
           path: '/user/:userId',
@@ -38,10 +38,10 @@ export function adminRoutes(): RouteRecordRaw[] {
           props: true,
           meta: {
             requiresAuth: true,
-            isAllowed: () => isAllowed('get', ['all'], 'User', ['any'])
-          }
+            isAllowed: () => isAllowed('get', ['all'], 'User', ['any']),
+          },
         },
       ],
-    }
+    },
   ];
 }

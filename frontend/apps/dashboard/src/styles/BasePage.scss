@@ -12,7 +12,8 @@
   margin-bottom: 1.5rem;
 }
 
-.page-container, .page-container-wide {
+.page-container,
+.page-container-wide {
   max-width: 1700px;
   width: 100%;
   padding-left: 15px;
@@ -40,7 +41,6 @@
 .full-width {
   width: 100%;
 }
-
 
 @media (min-width: 60rem) {
   .page-container {

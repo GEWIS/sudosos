@@ -1,130 +1,132 @@
-@use "../../../themes/sudosos-light/variables_light";
-@use "../../../themes/variables";
-@use "../../mixins";
+@use '../../../themes/sudosos-light/variables_light';
+@use '../../../themes/variables';
+@use '../../mixins';
 
 // core
 .p-picklist {
-    display: flex;
+  display: flex;
 }
 
 .p-picklist-buttons {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .p-picklist-list-wrapper {
-    flex: 1 1 50%;
+  flex: 1 1 50%;
 }
 
 .p-picklist-list {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: auto;
-    min-height: 12rem;
-    max-height: 24rem;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  min-height: 12rem;
+  max-height: 24rem;
 }
 
 .p-picklist-item {
-    cursor: pointer;
-    overflow: hidden;
-    position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
 }
 
 .p-picklist-item.p-picklist-flip-enter-active.p-picklist-flip-enter-to,
 .p-picklist-item.p-picklist-flip-leave-active.p-picklist-flip-leave-to {
-    transition: none;
+  transition: none;
 }
 
 // theme
 .p-picklist {
-    .p-picklist-buttons {
-        padding: variables_light.$panelContentPadding;
+  .p-picklist-buttons {
+    padding: variables_light.$panelContentPadding;
 
-        .p-button {
-            margin-bottom: variables_light.$inlineSpacing;
-        }
+    .p-button {
+      margin-bottom: variables_light.$inlineSpacing;
+    }
+  }
+
+  .p-picklist-list-wrapper {
+    background: variables_light.$panelContentBg;
+    border: variables_light.$panelContentBorder;
+    border-radius: variables_light.$borderRadius;
+    transition: variables_light.$formElementTransition;
+    outline-color: transparent;
+
+    &.p-focus {
+      @include mixins.focused-input();
+    }
+  }
+
+  .p-picklist-header {
+    color: variables_light.$panelHeaderTextColor;
+    padding: variables_light.$panelHeaderPadding;
+    font-weight: variables_light.$panelHeaderFontWeight;
+  }
+
+  .p-picklist-list {
+    color: variables_light.$panelContentTextColor;
+    padding: variables_light.$inputListPadding;
+    outline: 0 none;
+
+    &:not(:first-child) {
+      border-top: variables_light.$panelContentBorder;
     }
 
-    .p-picklist-list-wrapper {
-        background: variables_light.$panelContentBg;
-        border: variables_light.$panelContentBorder;
-        border-radius: variables_light.$borderRadius;
-        transition: variables_light.$formElementTransition;
-        outline-color: transparent;
+    .p-picklist-item {
+      padding: variables_light.$inputListItemPadding;
+      margin: variables_light.$inputListItemMargin;
+      border: variables_light.$inputListItemBorder;
+      color: variables_light.$inputListItemTextColor;
+      background: variables_light.$inputListItemBg;
+      transition:
+        transform variables_light.$transitionDuration,
+        variables_light.$listItemTransition;
+
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      &:not(.p-highlight):hover {
+        background: variables_light.$inputListItemHoverBg;
+        color: variables_light.$inputListItemTextHoverColor;
 
         &.p-focus {
-            @include mixins.focused-input();
+          color: variables_light.$inputListItemTextHoverColor;
+          background: variables_light.$inputListItemHoverBg;
         }
-    }
+      }
 
-    .p-picklist-header {
-        color: variables_light.$panelHeaderTextColor;
-        padding: variables_light.$panelHeaderPadding;
-        font-weight: variables_light.$panelHeaderFontWeight;
-    }
+      &.p-focus {
+        color: variables_light.$inputListItemTextHoverColor;
+        background: variables_light.$inputListItemHoverBg;
+      }
 
+      &.p-highlight {
+        color: variables.$highlightTextColor;
+        background: variables.$highlightBg;
+
+        &.p-focus {
+          background: variables.$highlightFocusBg;
+        }
+      }
+    }
+  }
+
+  &.p-picklist-striped {
     .p-picklist-list {
-        color: variables_light.$panelContentTextColor;
-        padding: variables_light.$inputListPadding;
-        outline: 0 none;
+      .p-picklist-item:nth-child(even) {
+        background: variables_light.$panelContentEvenRowBg;
 
-        &:not(:first-child) {
-            border-top: variables_light.$panelContentBorder;
+        &:hover {
+          background: variables_light.$inputListItemHoverBg;
         }
-
-        .p-picklist-item {
-            padding: variables_light.$inputListItemPadding;
-            margin: variables_light.$inputListItemMargin;
-            border: variables_light.$inputListItemBorder;
-            color: variables_light.$inputListItemTextColor;
-            background: variables_light.$inputListItemBg;
-            transition: transform variables_light.$transitionDuration, variables_light.$listItemTransition;
-
-            &:first-child {
-                margin-top: 0;
-            }
-
-            &:last-child {
-                margin-bottom: 0;
-            }
-
-            &:not(.p-highlight):hover {
-                background: variables_light.$inputListItemHoverBg;
-                color: variables_light.$inputListItemTextHoverColor;
-
-                &.p-focus {
-                    color: variables_light.$inputListItemTextHoverColor;
-                    background: variables_light.$inputListItemHoverBg;
-                }
-            }
-
-            &.p-focus {
-                color: variables_light.$inputListItemTextHoverColor;
-                background: variables_light.$inputListItemHoverBg;
-            }
-
-            &.p-highlight {
-                color: variables.$highlightTextColor;
-                background: variables.$highlightBg;
-
-                &.p-focus {
-                    background: variables.$highlightFocusBg;
-                }
-            }
-        }
+      }
     }
-
-    &.p-picklist-striped {
-        .p-picklist-list {
-            .p-picklist-item:nth-child(even) {
-                background: variables_light.$panelContentEvenRowBg;
-
-                &:hover {
-                    background: variables_light.$inputListItemHoverBg;
-                }
-            }
-        }
-    }
+  }
 }

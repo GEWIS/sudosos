@@ -3,17 +3,20 @@
     <span>
       {{ dateString }}
     </span>
-    <span>{{ t("components.mutations.modal.invoiceDescription") }}</span>
-    <br>
-    <DataTable :value="[invoiceInfo]" :pt="{
-          tfoot: 'font-bold'
-        }">
-      <Column field="description" :header="t('common.id')" class="p-1">
+    <span>{{ t('components.mutations.modal.invoiceDescription') }}</span>
+    <br />
+    <DataTable
+      :pt="{
+        tfoot: 'font-bold',
+      }"
+      :value="[invoiceInfo]"
+    >
+      <Column class="p-1" field="description" :header="t('common.id')">
         <template #body="">
           <span class="text-sm xl:text-base">{{ invoiceInfo.description }}</span>
         </template>
       </Column>
-      <Column field="totalPriceInclVat" :header="t('common.amount')" class="p-1" footerClass="font-bold">
+      <Column class="p-1" field="totalPriceInclVat" footer-class="font-bold" :header="t('common.amount')">
         <template #body="">
           {{ formatPrice(invoiceInfo.amount) }}
         </template>
@@ -22,12 +25,12 @@
   </div>
 </template>
 <script setup lang="ts">
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
-import { computed } from "vue";
-import { formatPrice } from "@/utils/formatterUtils";
-import type { TransferResponse } from "@sudosos/sudosos-client";
-import { useI18n } from "vue-i18n";
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import { computed } from 'vue';
+import type { TransferResponse } from '@sudosos/sudosos-client';
+import { useI18n } from 'vue-i18n';
+import { formatPrice } from '@/utils/formatterUtils';
 
 const { t } = useI18n();
 
@@ -35,16 +38,14 @@ const { invoiceInfo } = defineProps({
   invoiceInfo: {
     type: Object as () => TransferResponse,
     required: true,
-  }
+  },
 });
 
 const dateString = computed(() => {
-  return new Date(invoiceInfo.createdAt!!).toLocaleString('nl-NL', {
+  return new Date(invoiceInfo.createdAt!).toLocaleString('nl-NL', {
     dateStyle: 'short',
-    timeStyle: 'short'
+    timeStyle: 'short',
   });
 });
-
 </script>
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

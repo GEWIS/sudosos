@@ -3,14 +3,13 @@ name: NGINX - Dockerize
 on:
   workflow_dispatch:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
     paths:
-        - 'lib/nginx/**'
+      - 'lib/nginx/**'
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
     paths:
-        - 'lib/nginx/**'
-
+      - 'lib/nginx/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -57,7 +56,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: "lib/nginx"
+          context: 'lib/nginx'
           platforms: linux/amd64 #SudoSOS does not run on linux/arm64
           push: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
           tags: ${{ steps.meta.outputs.tags }}

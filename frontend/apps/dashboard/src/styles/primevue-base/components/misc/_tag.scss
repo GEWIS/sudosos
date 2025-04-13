@@ -1,76 +1,76 @@
-@use "sass:meta";
-@use "../../../themes/sudosos-light/variables_light";
+@use 'sass:meta';
+@use '../../../themes/sudosos-light/variables_light';
 
-@use "sass:math";
+@use 'sass:math';
 
 // core
 .p-tag {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .p-tag-icon,
 .p-tag-value,
 .p-tag-icon.pi {
-    line-height: 1.5;
+  line-height: 1.5;
 }
 
 .p-tag.p-tag-rounded {
-    border-radius: 10rem;
+  border-radius: 10rem;
 }
 
 // theme
 .p-tag {
-    background: variables_light.$badgeBg;
-    color: variables_light.$badgeTextColor;
+  background: variables_light.$badgeBg;
+  color: variables_light.$badgeTextColor;
+  font-size: variables_light.$badgeFontSize;
+  font-weight: variables_light.$badgeFontWeight;
+  padding: variables_light.$tagPadding;
+  border-radius: variables_light.$borderRadius;
+
+  &.p-tag-success {
+    background-color: variables_light.$successButtonBg;
+    color: variables_light.$successButtonTextColor;
+  }
+
+  &.p-tag-info {
+    background-color: variables_light.$infoButtonBg;
+    color: variables_light.$infoButtonTextColor;
+  }
+
+  &.p-tag-warning {
+    background-color: variables_light.$warningButtonBg;
+    color: variables_light.$warningButtonTextColor;
+  }
+
+  &.p-tag-danger {
+    background-color: variables_light.$dangerButtonBg;
+    color: variables_light.$dangerButtonTextColor;
+  }
+
+  @if meta.variable-exists(secondaryMessageBg) {
+    &.p-tag-secondary {
+      background-color: variables_light.$secondaryButtonBg;
+      color: variables_light.$secondaryButtonTextColor;
+    }
+
+    &.p-tag-contrast {
+      background-color: variables_light.$contrastButtonBg;
+      color: variables_light.$contrastButtonTextColor;
+    }
+  }
+
+  .p-tag-icon {
     font-size: variables_light.$badgeFontSize;
-    font-weight: variables_light.$badgeFontWeight;
-    padding: variables_light.$tagPadding;
-    border-radius: variables_light.$borderRadius;
 
-    &.p-tag-success {
-        background-color: variables_light.$successButtonBg;
-        color: variables_light.$successButtonTextColor;
+    &:not(:last-child) {
+      margin-right: math.div(variables_light.$inlineSpacing, 2);
     }
 
-    &.p-tag-info {
-        background-color: variables_light.$infoButtonBg;
-        color: variables_light.$infoButtonTextColor;
+    &.p-icon {
+      width: variables_light.$badgeFontSize;
+      height: variables_light.$badgeFontSize;
     }
-
-    &.p-tag-warning {
-        background-color: variables_light.$warningButtonBg;
-        color: variables_light.$warningButtonTextColor;
-    }
-
-    &.p-tag-danger {
-        background-color: variables_light.$dangerButtonBg;
-        color: variables_light.$dangerButtonTextColor;
-    }
-
-    @if meta.variable-exists(secondaryMessageBg) {
-        &.p-tag-secondary {
-            background-color: variables_light.$secondaryButtonBg;
-            color: variables_light.$secondaryButtonTextColor;
-        }
-    
-        &.p-tag-contrast {
-            background-color: variables_light.$contrastButtonBg;
-            color: variables_light.$contrastButtonTextColor;
-        }
-    }
-
-    .p-tag-icon {
-        font-size: variables_light.$badgeFontSize;
-
-        &:not(:last-child) {
-            margin-right: math.div(variables_light.$inlineSpacing, 2);
-        }
-
-        &.p-icon {
-            width: variables_light.$badgeFontSize;
-            height: variables_light.$badgeFontSize;
-        }
-    }
+  }
 }

@@ -1,20 +1,22 @@
 <template>
   <InvoiceTable
-      :invoices="invoices"
-      :totalRecords="totalRecords"
-      :isLoading="isLoading"
-      :rows="rows"
-      @page="onPage"
-      @stateFilterChange="onStateFilterChange"
+    :invoices="invoices"
+    :is-loading="isLoading"
+    :rows="rows"
+    :total-records="totalRecords"
+    @page="onPage"
+    @state-filter-change="onStateFilterChange"
   />
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, type PropType } from "vue";
-import InvoiceTable from "@/modules/financial/components/invoice/InvoiceTable.vue";
-import type { InvoiceResponse } from "@sudosos/sudosos-client";
-import { InvoiceStatusResponseStateEnum } from "@sudosos/sudosos-client/src/api";
-import { useInvoiceStore } from "@/stores/invoice.store";
+import { ref, onMounted } from 'vue';
+import type { InvoiceResponse } from '@sudosos/sudosos-client';
+import { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client/src/api';
+import type { DropdownChangeEvent } from 'primevue/dropdown';
+import type { DataTablePageEvent } from 'primevue/datatable';
+import InvoiceTable from '@/modules/financial/components/invoice/InvoiceTable.vue';
+import { useInvoiceStore } from '@/stores/invoice.store';
 
 const invoiceStore = useInvoiceStore();
 
@@ -25,15 +27,10 @@ const rows = ref<number>(10);
 const page = ref<number>(0);
 const filterState = ref<InvoiceStatusResponseStateEnum | null>(null);
 
-const props = defineProps({
-  state: {
-    type: String as PropType<InvoiceStatusResponseStateEnum>,
-  },
-  year: {
-    type: Number,
-    required: true,
-  }
-});
+const props = defineProps<{
+  state?: InvoiceStatusResponseStateEnum;
+  year: number;
+}>();
 
 onMounted(async () => {
   await loadInvoices();
@@ -44,7 +41,7 @@ async function loadInvoices() {
 
   // If a year is provided, compute the date range based on the year.
   // Example: for year 2025, fromDate = "2024-07-01" and tillDate = "2025-07-01"
-  let queryParams: Record<string, any> = { };
+  const queryParams: Record<string, string> = {};
   if (props.year) {
     queryParams.fromDate = `${props.year - 1}-07-01T00:00:00.000Z`;
     queryParams.tillDate = `${props.year}-07-01T00:00:00.000Z`;
@@ -62,15 +59,14 @@ async function loadInvoices() {
   isLoading.value = false;
 }
 
-async function onPage(event: any) {
+async function onPage(event: DataTablePageEvent) {
   rows.value = event.rows;
   page.value = event.first;
   await loadInvoices();
 }
 
-function onStateFilterChange(e: any) {
-  filterState.value = e.value;
-  console.log(filterState.value);
-  loadInvoices();
+function onStateFilterChange(e: DropdownChangeEvent) {
+  filterState.value = e.value as InvoiceStatusResponseStateEnum;
+  void loadInvoices();
 }
 </script>

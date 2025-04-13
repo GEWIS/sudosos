@@ -1,19 +1,19 @@
 <template>
-  <FormCard :header="t('modules.financial.invoice.transfer')"  @cancel="form.context.resetForm" :create="true">
-    <div class="flex flex-column justify-content-between gap-2">
-      <InvoiceTransactionsForm :form="form"/>
+  <FormCard :create="true" :header="t('modules.financial.invoice.transfer')" @cancel="form.context.resetForm">
+    <div class="flex flex-column gap-2 justify-content-between">
+      <InvoiceTransactionsForm :form="form" />
     </div>
   </FormCard>
 </template>
 
 <script setup lang="ts">
-import FormCard from "@/components/FormCard.vue";
-import InvoiceTransactionsForm from "@/modules/financial/components/invoice/forms/InvoiceTransactionsForm.vue";
-import { createInvoiceObject } from "@/utils/validation-schema";
-import { type Form } from "@/utils/formUtils";
-import { useI18n } from "vue-i18n";
-import type { PropType } from "vue";
-import * as yup from "yup";
+import { useI18n } from 'vue-i18n';
+import type { PropType } from 'vue';
+import * as yup from 'yup';
+import FormCard from '@/components/FormCard.vue';
+import InvoiceTransactionsForm from '@/modules/financial/components/invoice/forms/InvoiceTransactionsForm.vue';
+import { createInvoiceObject } from '@/utils/validation-schema';
+import { type Form } from '@/utils/formUtils';
 
 const { t } = useI18n();
 
@@ -25,6 +25,4 @@ defineProps({
 });
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

@@ -1,44 +1,37 @@
 <template>
   <Calendar
-      v-if="type === 'date'"
-      :placeholder="placeholder"
-      v-model="internalDate"
-      v-bind="attributes"
-      :disabled="disabled"
-      @input="updateStringValue"
+    v-if="type === 'date'"
+    v-model="internalDate"
+    v-bind="attributes"
+    :disabled="disabled"
+    :placeholder="placeholder"
+    @input="updateStringValue"
   />
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import type { BaseFieldProps, GenericObject } from 'vee-validate';
 
 // Define the component's props
-const props = defineProps({
-  modelValue: {
-    type: String,
-    default: ''
+const props = withDefaults(
+  defineProps<{
+    modelValue?: string;
+    placeholder?: string;
+    attributes?: BaseFieldProps & GenericObject;
+    disabled?: boolean;
+    type?: string;
+    dateFormat?: string;
+  }>(),
+  {
+    modelValue: '',
+    placeholder: '',
+    attributes: undefined,
+    disabled: false,
+    type: 'date',
+    dateFormat: 'yyyy-MM-dd',
   },
-  placeholder: {
-    type: String,
-    default: ''
-  },
-  attributes: {
-    type: Object,
-    default: () => ({})
-  },
-  disabled: {
-    type: Boolean,
-    default: false
-  },
-  type: {
-    type: String,
-    default: 'date'
-  },
-  dateFormat: {
-    type: String,
-    default: 'yyyy-MM-dd' // Default format, can be customized
-  }
-});
+);
 
 // Define the component's events
 const emit = defineEmits(['update:modelValue']);
@@ -48,12 +41,12 @@ const internalDate = ref<Date | null>(stringToDate(props.modelValue));
 
 // Watch for changes in modelValue and update internalDate accordingly
 watch(
-    () => props.modelValue,
-    (newValue) => {
-      if (newValue !== dateToString(internalDate.value)) {
-        internalDate.value = stringToDate(newValue);
-      }
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue !== dateToString(internalDate.value)) {
+      internalDate.value = stringToDate(newValue);
     }
+  },
 );
 
 // Watch for changes in internalDate and emit updates to the modelValue
@@ -83,8 +76,8 @@ function dateToString(date: Date | null): string {
 }
 
 // Function to emit the updated string representation of the date
-function updateStringValue(newDate: any) {
-  const newString = dateToString(newDate);
+function updateStringValue(newDate: Event) {
+  const newString = dateToString(newDate as unknown as Date);
   emit('update:modelValue', newString); // Emit the string representation
 }
 </script>

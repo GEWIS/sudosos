@@ -5,8 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
-import setupBeerMugs from "@/utils/beerMugsUtil";
+import { onMounted } from 'vue';
+import setupBeerMugs from '@/utils/beerMugsUtil';
 
 onMounted(() => {
   setupBeerMugs();
@@ -27,7 +27,7 @@ onMounted(() => {
     pointer-events: none;
     width: 50px;
     height: 50px;
-    background-image: url("@/assets/img/bier.png");
+    background-image: url('@/assets/img/bier.png');
     background-size: 100%;
   }
 }

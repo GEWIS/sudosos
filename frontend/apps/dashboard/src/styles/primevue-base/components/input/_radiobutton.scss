@@ -1,174 +1,174 @@
-@use "../../../themes/sudosos-light/variables_light";
-@use "../../../themes/variables";
-@use "../../mixins";
+@use '../../../themes/sudosos-light/variables_light';
+@use '../../../themes/variables';
+@use '../../mixins';
 
 // core
 .p-radiobutton {
-    position: relative;
-    display: inline-flex;
-    user-select: none;
-    vertical-align: bottom;
+  position: relative;
+  display: inline-flex;
+  user-select: none;
+  vertical-align: bottom;
 }
 
 .p-radiobutton-input {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .p-radiobutton-box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .p-radiobutton-icon {
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    transform: translateZ(0) scale(.1);
-    border-radius: 50%;
-    visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0) scale(0.1);
+  border-radius: 50%;
+  visibility: hidden;
 }
 
 .p-radiobutton.p-highlight .p-radiobutton-icon {
-    transform: translateZ(0) scale(1.0, 1.0);
-    visibility: visible;
+  transform: translateZ(0) scale(1, 1);
+  visibility: visible;
 }
 
 // theme
 .p-radiobutton {
+  width: variables_light.$radiobuttonWidth;
+  height: variables_light.$radiobuttonHeight;
+
+  .p-radiobutton-input {
+    appearance: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+    z-index: 1;
+    outline: 0 none;
+    border: variables_light.$radiobuttonBorder;
+    border-radius: 50%;
+  }
+
+  .p-radiobutton-box {
+    border: variables_light.$radiobuttonBorder;
+    background: variables_light.$inputBg;
     width: variables_light.$radiobuttonWidth;
     height: variables_light.$radiobuttonHeight;
+    color: variables_light.$textColor;
+    border-radius: 50%;
+    transition: variables_light.$formElementTransition;
+    outline-color: transparent;
 
-    .p-radiobutton-input {
-        appearance: none;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        padding: 0;
-        margin: 0;
-        opacity: 0;
-        z-index: 1;
-        outline: 0 none;
-        border: variables_light.$radiobuttonBorder;
-        border-radius: 50%;
+    .p-radiobutton-icon {
+      width: variables_light.$radiobuttonIconSize;
+      height: variables_light.$radiobuttonIconSize;
+      transition-duration: variables_light.$transitionDuration;
+      background-color: variables_light.$radiobuttonIconActiveColor;
+    }
+  }
+
+  &.p-highlight {
+    .p-radiobutton-box {
+      border-color: variables_light.$radiobuttonActiveBorderColor;
+      background: variables_light.$radiobuttonActiveBg;
+    }
+  }
+
+  &:not(.p-disabled) {
+    &:has(.p-radiobutton-input:hover) {
+      .p-radiobutton-box {
+        border-color: variables_light.$inputHoverBorderColor;
+      }
+
+      &.p-highlight {
+        .p-radiobutton-box {
+          border-color: variables_light.$radiobuttonActiveHoverBorderColor;
+          background: variables_light.$radiobuttonActiveHoverBg;
+
+          .p-radiobutton-icon {
+            background-color: variables_light.$radiobuttonIconActiveHoverColor;
+          }
+        }
+      }
     }
 
-    .p-radiobutton-box {
-        border: variables_light.$radiobuttonBorder;
-        background: variables_light.$inputBg;
-        width: variables_light.$radiobuttonWidth;
-        height: variables_light.$radiobuttonHeight;
-        color: variables_light.$textColor;
-        border-radius: 50%;
-        transition: variables_light.$formElementTransition;
-        outline-color: transparent;
+    &:has(.p-radiobutton-input:focus-visible) {
+      .p-radiobutton-box {
+        @include mixins.focused-input();
+      }
+    }
+  }
 
-        .p-radiobutton-icon {
-            width: variables_light.$radiobuttonIconSize;
-            height: variables_light.$radiobuttonIconSize;
-            transition-duration: variables_light.$transitionDuration;
-            background-color: variables_light.$radiobuttonIconActiveColor;
-        }
+  &.p-invalid > .p-radiobutton-box {
+    @include mixins.invalid-input();
+  }
+
+  &.p-variant-filled {
+    .p-radiobutton-box {
+      background-color: variables_light.$inputFilledBg;
     }
 
     &.p-highlight {
-        .p-radiobutton-box {
-            border-color: variables_light.$radiobuttonActiveBorderColor;
-            background: variables_light.$radiobuttonActiveBg;
-        }
+      .p-radiobutton-box {
+        background: variables_light.$radiobuttonActiveBg;
+      }
     }
 
     &:not(.p-disabled) {
-        &:has(.p-radiobutton-input:hover) {
-            .p-radiobutton-box {
-                border-color: variables_light.$inputHoverBorderColor;
-            }
-
-            &.p-highlight {
-                .p-radiobutton-box {
-                    border-color: variables_light.$radiobuttonActiveHoverBorderColor;
-                    background: variables_light.$radiobuttonActiveHoverBg;
-
-                    .p-radiobutton-icon {
-                        background-color: variables_light.$radiobuttonIconActiveHoverColor;
-                    }
-                }
-            }
-        }
-
-        &:has(.p-radiobutton-input:focus-visible) {
-            .p-radiobutton-box {
-                @include mixins.focused-input();
-            }
-        }
-    }
-
-    &.p-invalid > .p-radiobutton-box {
-        @include mixins.invalid-input();
-    }
-
-    &.p-variant-filled {
+      &:has(.p-radiobutton-input:hover) {
         .p-radiobutton-box {
-            background-color: variables_light.$inputFilledBg;
+          background-color: variables_light.$inputFilledHoverBg;
         }
 
         &.p-highlight {
-            .p-radiobutton-box {
-                background: variables_light.$radiobuttonActiveBg;
-            }
+          .p-radiobutton-box {
+            background: variables_light.$radiobuttonActiveHoverBg;
+          }
         }
-
-        &:not(.p-disabled) {
-            &:has(.p-radiobutton-input:hover) {
-                .p-radiobutton-box {
-                    background-color: variables_light.$inputFilledHoverBg;
-                }
-
-                &.p-highlight {
-                    .p-radiobutton-box {
-                        background: variables_light.$radiobuttonActiveHoverBg;
-                    }
-                }
-            }
-        }
+      }
     }
+  }
 }
 
 .p-input-filled {
-    .p-radiobutton {
+  .p-radiobutton {
+    .p-radiobutton-box {
+      background-color: variables_light.$inputFilledBg;
+    }
+
+    &.p-highlight {
+      .p-radiobutton-box {
+        background: variables_light.$radiobuttonActiveBg;
+      }
+    }
+
+    &:not(.p-disabled) {
+      &:has(.p-radiobutton-input:hover) {
         .p-radiobutton-box {
-            background-color: variables_light.$inputFilledBg;
+          background-color: variables_light.$inputFilledHoverBg;
         }
 
         &.p-highlight {
-            .p-radiobutton-box {
-                background: variables_light.$radiobuttonActiveBg;
-            }
+          .p-radiobutton-box {
+            background: variables_light.$radiobuttonActiveHoverBg;
+          }
         }
-
-        &:not(.p-disabled) {
-            &:has(.p-radiobutton-input:hover) {
-                .p-radiobutton-box {
-                    background-color: variables_light.$inputFilledHoverBg;
-                }
-
-                &.p-highlight {
-                    .p-radiobutton-box {
-                        background: variables_light.$radiobuttonActiveHoverBg;
-                    }
-                }
-            }
-        }
+      }
     }
+  }
 }
 
 @if (variables.$highlightBg == variables_light.$radiobuttonActiveBg) {
-    .p-highlight {
-        .p-radiobutton {
-            .p-radiobutton-box {
-                border-color: variables_light.$radiobuttonIconActiveColor;
-            }
-        }
+  .p-highlight {
+    .p-radiobutton {
+      .p-radiobutton-box {
+        border-color: variables_light.$radiobuttonIconActiveColor;
+      }
     }
+  }
 }

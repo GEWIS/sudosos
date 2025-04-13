@@ -1,11 +1,5 @@
 <template>
-  <Button
-      :label="label"
-      :icon="buttonIcon"
-      :severity="buttonSeverity"
-      :loading="submitting"
-      @click="$emit('click')"
-  />
+  <Button :icon="buttonIcon" :label="label" :loading="submitting" :severity="buttonSeverity" @click="$emit('click')" />
 </template>
 
 <script setup lang="ts">
@@ -42,18 +36,23 @@ const updateResult = () => {
   }
 };
 
-watch(() => props.result, () => {
-  updateResult();
-});
+watch(
+  () => props.result,
+  () => {
+    updateResult();
+  },
+);
 
-watch(() => props.submitting, () => {
-  console.error('submitting', props.submitting, props.result);
-  updateResult();
-  if (props.submitting) {
-    buttonIcon.value = 'pi pi-spin pi-spinner';
-  }
-});
+watch(
+  () => props.submitting,
+  () => {
+    console.error('submitting', props.submitting, props.result);
+    updateResult();
+    if (props.submitting) {
+      buttonIcon.value = 'pi pi-spin pi-spinner';
+    }
+  },
+);
 </script>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

@@ -2,51 +2,54 @@
   <div class="page-container">
     <div class="page-title">{{ t('modules.financial.payout.title') }}</div>
     <div class="content-wrapper flex flex-column">
-      <div class="flex flex-row justify-content-end w-full -mb-5">
+      <div class="-mb-5 flex flex-row justify-content-end w-full">
         <Button
-            type="button"
-            severity="primary"
-            class="z-5"
-            :label="t('modules.financial.payout.create')"
-            icon="pi pi-plus"
-            @click="showDialog = true"
+          class="z-5"
+          icon="pi pi-plus"
+          :label="t('modules.financial.payout.create')"
+          severity="primary"
+          type="button"
+          @click="showDialog = true"
         />
       </div>
       <TabView class="w-full">
         <TabPanel v-for="state in states" :key="state" :header="state">
-          <PayoutTable :state="state"/>
+          <PayoutTable :state="state" />
         </TabPanel>
       </TabView>
     </div>
     <FormDialog v-model="showDialog" :form="form" :header="t('modules.financial.payout.create')" :is-editable="false">
       <template #form="slotProps">
-        <PayoutCreateForm :form="slotProps.form" @submit:success="showDialog = false"/>
+        <PayoutCreateForm :form="slotProps.form" @submit:success="showDialog = false" />
       </template>
     </FormDialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { PayoutRequestStatusRequestStateEnum } from "@sudosos/sudosos-client";
-import { type Ref, ref } from "vue";
-import TabView from "primevue/tabview";
-import TabPanel from "primevue/tabpanel";
-import PayoutTable from "@/modules/financial/components/payout/PayoutTable.vue";
-import Button from "primevue/button";
-import { schemaToForm } from "@/utils/formUtils";
-import { createPayoutSchema } from "@/utils/validation-schema";
-import FormDialog from "@/components/FormDialog.vue";
-import PayoutCreateForm from "@/modules/financial/components/payout/forms/PayoutCreateForm.vue";
-import { useI18n } from "vue-i18n";
+import { PayoutRequestStatusRequestStateEnum } from '@sudosos/sudosos-client';
+import { type Ref, ref } from 'vue';
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
+import Button from 'primevue/button';
+import { useI18n } from 'vue-i18n';
+import PayoutTable from '@/modules/financial/components/payout/PayoutTable.vue';
+import { schemaToForm } from '@/utils/formUtils';
+import { createPayoutSchema } from '@/utils/validation-schema';
+import FormDialog from '@/components/FormDialog.vue';
+import PayoutCreateForm from '@/modules/financial/components/payout/forms/PayoutCreateForm.vue';
 
 const { t } = useI18n();
 
-const states = [PayoutRequestStatusRequestStateEnum.Created, PayoutRequestStatusRequestStateEnum.Approved,
-  PayoutRequestStatusRequestStateEnum.Denied, PayoutRequestStatusRequestStateEnum.Cancelled];
+const states = [
+  PayoutRequestStatusRequestStateEnum.Created,
+  PayoutRequestStatusRequestStateEnum.Approved,
+  PayoutRequestStatusRequestStateEnum.Denied,
+  PayoutRequestStatusRequestStateEnum.Cancelled,
+];
 
 const showDialog: Ref<boolean> = ref(false);
 const form = schemaToForm(createPayoutSchema);
 </script>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

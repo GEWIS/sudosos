@@ -13,8 +13,8 @@
  * </Dialog>
  * ```
  */
-export function addListenerOnDialogueOverlay(ref: any) {
-    ref.mask.addEventListener('click', function (event: any) {
-        if (event.target === ref.mask) ref.close();
-    });
+export function addListenerOnDialogueOverlay(ref: { mask: HTMLElement; close: () => void }) {
+  ref.mask.addEventListener('click', function (event: MouseEvent) {
+    if (event.target === ref.mask) ref.close();
+  });
 }

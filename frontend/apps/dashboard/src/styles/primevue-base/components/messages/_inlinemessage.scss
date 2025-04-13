@@ -1,115 +1,115 @@
-@use "sass:meta";
-@use "../../../themes/sudosos-light/variables_light";
+@use 'sass:meta';
+@use '../../../themes/sudosos-light/variables_light';
 
 // core
 .p-inline-message {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    vertical-align: top;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: top;
 }
 
 .p-inline-message-icon {
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 .p-inline-message-icon-only .p-inline-message-text {
-    visibility: hidden;
-    width: 0;
+  visibility: hidden;
+  width: 0;
 }
 
 .p-fluid .p-inline-message {
-    display: flex;
+  display: flex;
 }
 
 // theme
 .p-inline-message {
-    padding: variables_light.$inlineMessagePadding;
-    margin: variables_light.$inlineMessageMargin;
-    border-radius: variables_light.$borderRadius;
+  padding: variables_light.$inlineMessagePadding;
+  margin: variables_light.$inlineMessageMargin;
+  border-radius: variables_light.$borderRadius;
 
-    &.p-inline-message-info {
-        background: variables_light.$infoMessageBg;
-        border: variables_light.$infoMessageBorder;
-        border-width: variables_light.$inlineMessageBorderWidth;
-        color: variables_light.$infoMessageTextColor;
-
-        .p-inline-message-icon {
-            color: variables_light.$infoMessageIconColor;
-        }
-    }
-
-    &.p-inline-message-success {
-        background: variables_light.$successMessageBg;
-        border: variables_light.$successMessageBorder;
-        border-width: variables_light.$inlineMessageBorderWidth;
-        color: variables_light.$successMessageTextColor;
-
-        .p-inline-message-icon {
-            color: variables_light.$successMessageIconColor;
-        }
-    }
-
-    &.p-inline-message-warn {
-        background: variables_light.$warningMessageBg;
-        border: variables_light.$warningMessageBorder;
-        border-width: variables_light.$inlineMessageBorderWidth;
-        color: variables_light.$warningMessageTextColor;
-
-        .p-inline-message-icon {
-            color: variables_light.$warningMessageIconColor;
-        }
-    }
-
-    &.p-inline-message-error {
-        background: variables_light.$errorMessageBg;
-        border: variables_light.$errorMessageBorder;
-        border-width: variables_light.$inlineMessageBorderWidth;
-        color: variables_light.$errorMessageTextColor;
-
-        .p-inline-message-icon {
-            color: variables_light.$errorMessageIconColor;
-        }
-    }
-
-    @if meta.variable-exists(secondaryMessageBg) {
-        &.p-inline-message-secondary {
-            background: $secondaryMessageBg;
-            border: $secondaryMessageBorder;
-            border-width: variables_light.$inlineMessageBorderWidth;
-            color: $secondaryMessageTextColor;
-
-            .p-inline-message-icon {
-                color: $secondaryMessageIconColor;
-            }
-        }
-    }
-
-    @if meta.variable-exists(contrastMessageBg) {
-        &.p-inline-message-contrast {
-            background: $contrastMessageBg;
-            border: $contrastMessageBorder;
-            border-width: variables_light.$inlineMessageBorderWidth;
-            color: $contrastMessageTextColor;
-
-            .p-inline-message-icon {
-                color: $contrastMessageIconColor;
-            }
-        }
-    }
+  &.p-inline-message-info {
+    background: variables_light.$infoMessageBg;
+    border: variables_light.$infoMessageBorder;
+    border-width: variables_light.$inlineMessageBorderWidth;
+    color: variables_light.$infoMessageTextColor;
 
     .p-inline-message-icon {
-        font-size: variables_light.$inlineMessageIconFontSize;
-        margin-right: variables_light.$inlineSpacing;
+      color: variables_light.$infoMessageIconColor;
     }
+  }
 
-    .p-inline-message-text {
-        font-size: variables_light.$inlineMessageTextFontSize;
-    }
+  &.p-inline-message-success {
+    background: variables_light.$successMessageBg;
+    border: variables_light.$successMessageBorder;
+    border-width: variables_light.$inlineMessageBorderWidth;
+    color: variables_light.$successMessageTextColor;
 
-    &.p-inline-message-icon-only {
-        .p-inline-message-icon {
-            margin-right: 0;
-        }
+    .p-inline-message-icon {
+      color: variables_light.$successMessageIconColor;
     }
+  }
+
+  &.p-inline-message-warn {
+    background: variables_light.$warningMessageBg;
+    border: variables_light.$warningMessageBorder;
+    border-width: variables_light.$inlineMessageBorderWidth;
+    color: variables_light.$warningMessageTextColor;
+
+    .p-inline-message-icon {
+      color: variables_light.$warningMessageIconColor;
+    }
+  }
+
+  &.p-inline-message-error {
+    background: variables_light.$errorMessageBg;
+    border: variables_light.$errorMessageBorder;
+    border-width: variables_light.$inlineMessageBorderWidth;
+    color: variables_light.$errorMessageTextColor;
+
+    .p-inline-message-icon {
+      color: variables_light.$errorMessageIconColor;
+    }
+  }
+
+  @if meta.variable-exists(secondaryMessageBg) {
+    &.p-inline-message-secondary {
+      background: $secondaryMessageBg;
+      border: $secondaryMessageBorder;
+      border-width: variables_light.$inlineMessageBorderWidth;
+      color: $secondaryMessageTextColor;
+
+      .p-inline-message-icon {
+        color: $secondaryMessageIconColor;
+      }
+    }
+  }
+
+  @if meta.variable-exists(contrastMessageBg) {
+    &.p-inline-message-contrast {
+      background: $contrastMessageBg;
+      border: $contrastMessageBorder;
+      border-width: variables_light.$inlineMessageBorderWidth;
+      color: $contrastMessageTextColor;
+
+      .p-inline-message-icon {
+        color: $contrastMessageIconColor;
+      }
+    }
+  }
+
+  .p-inline-message-icon {
+    font-size: variables_light.$inlineMessageIconFontSize;
+    margin-right: variables_light.$inlineSpacing;
+  }
+
+  .p-inline-message-text {
+    font-size: variables_light.$inlineMessageTextFontSize;
+  }
+
+  &.p-inline-message-icon-only {
+    .p-inline-message-icon {
+      margin-right: 0;
+    }
+  }
 }

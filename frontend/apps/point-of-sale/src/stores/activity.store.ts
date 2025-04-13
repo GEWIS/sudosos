@@ -1,12 +1,12 @@
 // activityStore.js
 import { defineStore } from 'pinia';
-import { useCartStore } from "@/stores/cart.store";
-import { logoutService } from "@/services/logoutService";
-import { useSettingStore } from "@/stores/settings.store";
+import { useCartStore } from '@/stores/cart.store';
+import { logoutService } from '@/services/logoutService';
+import { useSettingStore } from '@/stores/settings.store';
 
 interface ActivityState {
-  duration: number
-  isActive: boolean
+  duration: number;
+  isActive: boolean;
 }
 
 let timerId: null | number = null;
@@ -15,7 +15,7 @@ const TIME_OUT = 30;
 export const useActivityStore = defineStore('activity', {
   state: (): ActivityState => ({
     duration: TIME_OUT,
-    isActive: false
+    isActive: false,
   }),
   getters: {
     getDuration(): number {
@@ -23,7 +23,7 @@ export const useActivityStore = defineStore('activity', {
     },
     getActive(): boolean {
       return this.isActive;
-    }
+    },
   },
   actions: {
     startTimer() {
@@ -34,7 +34,7 @@ export const useActivityStore = defineStore('activity', {
 
         if (this.duration <= 0) {
           this.stopTimer();
-          this.onTimerEnd();
+          void this.onTimerEnd();
         }
       }, 1000); // Timer tick every 1 second
     },
@@ -55,7 +55,7 @@ export const useActivityStore = defineStore('activity', {
 
           if (this.duration <= 0) {
             this.stopTimer();
-            this.onTimerEnd();
+            void this.onTimerEnd();
           }
         }, 1000);
       }
@@ -81,8 +81,8 @@ export const useActivityStore = defineStore('activity', {
       const cartStore = useCartStore();
       if (cartStore.checkUnallowedUserInDebt()) return logoutService();
       if (useSettingStore().isBorrelmode) return;
-      if (cartStore.cartTotalCount > 0 ) await useCartStore().checkout();
+      if (cartStore.cartTotalCount > 0) await useCartStore().checkout();
       await logoutService();
-    }
-  }
+    },
+  },
 });

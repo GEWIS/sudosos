@@ -1,8 +1,8 @@
-import { usePointOfSaleStore } from "@/stores/pos.store";
-import { PointOfSaleResponse } from "@sudosos/sudosos-client";
-import { useCartStore } from "@/stores/cart.store";
-import { useAuthStore } from "@sudosos/sudosos-frontend-common";
-import { useActivityStore } from "@/stores/activity.store";
+import { PointOfSaleResponse } from '@sudosos/sudosos-client';
+import { useAuthStore } from '@sudosos/sudosos-frontend-common';
+import { usePointOfSaleStore } from '@/stores/pos.store';
+import { useCartStore } from '@/stores/cart.store';
+import { useActivityStore } from '@/stores/activity.store';
 
 let originalColor: string = '';
 
@@ -20,15 +20,18 @@ export class PointOfSaleSwitchService {
 
     // Guard to check fi we are actually switching
     if (!currentPos || (currentPos && target.id !== currentPos.id)) {
-
-      posStore.fetchPointOfSale(target.id);
+      void posStore.fetchPointOfSale(target.id);
 
       // Switch buyer back to user if authentication
       const cartStore = useCartStore();
-      cartStore.setBuyer(target.useAuthentication ? useAuthStore().getUser : null).then(() => {});
+      void cartStore.setBuyer(target.useAuthentication ? useAuthStore().getUser : null).then(() => {});
       cartStore.setLockedIn(null);
 
-      target.useAuthentication ? activityStore.resetTimer() : activityStore.disableTimer();
+      if (target.useAuthentication) {
+        activityStore.resetTimer();
+      } else {
+        activityStore.disableTimer();
+      }
 
       this.switchColor(target);
     }

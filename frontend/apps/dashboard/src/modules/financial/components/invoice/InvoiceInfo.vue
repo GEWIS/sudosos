@@ -1,46 +1,51 @@
 <template>
-  <CardComponent :header="t('common.info')" v-if="invoice" >
+  <CardComponent v-if="invoice" :header="t('common.info')">
     <template #topAction>
       <Button
-          v-if="notDeleted"
-          severity="primary"
-          :label="t('common.delete')"
-          icon="pi pi-exclamation-triangle"
-          @click="visible = true"
+        v-if="notDeleted"
+        icon="pi pi-exclamation-triangle"
+        :label="t('common.delete')"
+        severity="primary"
+        @click="visible = true"
       />
     </template>
     <div class="flex flex-column justify-content-between">
-      <InfoSpan :label="t('common.id')"
-                :value="String(invoice.id)"/>
+      <InfoSpan :label="t('common.id')" :value="String(invoice.id)" />
 
-      <InfoSpan :label="t('common.for')"
-                :value="invoice.to.firstName + ' ' + invoice.to.lastName + ' (' + invoice.to.id + ')'"/>
+      <InfoSpan
+        :label="t('common.for')"
+        :value="invoice.to.firstName + ' ' + invoice.to.lastName + ' (' + invoice.to.id + ')'"
+      />
 
-      <InfoSpan :label="t('common.createdAt')"
-                :value="formatDateTime(new Date(invoice.createdAt ? invoice.createdAt.toString() : ''))"/>
+      <InfoSpan
+        :label="t('common.createdAt')"
+        :value="formatDateTime(new Date(invoice.createdAt ? invoice.createdAt.toString() : ''))"
+      />
 
-      <InfoSpan :label="t('common.updatedAt')"
-                :value="formatDateTime(new Date(invoice.updatedAt ? invoice.updatedAt.toString() : ''))"/>
+      <InfoSpan
+        :label="t('common.updatedAt')"
+        :value="formatDateTime(new Date(invoice.updatedAt ? invoice.updatedAt.toString() : ''))"
+      />
     </div>
     <Dialog
-        v-model:visible="visible"
-        :header="t('modules.financial.invoice.delete')"
-        :draggable="false"
-        modal
-        :close-on-escape="true"
-        ref="dialog"
-        @show="openDialog"
+      ref="dialog"
+      v-model:visible="visible"
+      :close-on-escape="true"
+      :draggable="false"
+      :header="t('modules.financial.invoice.delete')"
+      modal
+      @show="openDialog"
     >
-      <div class="flex flex-column justify-content-between gap-3">
+      <div class="flex flex-column gap-3 justify-content-between">
         <div>
           {{ t('modules.financial.invoice.confirmDelete') }}
-          <br>
+          <br />
           {{ t('modules.financial.invoice.creditNoteWarning') }}
-          <br>
-          <br>
-          {{  t('modules.financial.invoice.unrecoverable') }}
+          <br />
+          <br />
+          {{ t('modules.financial.invoice.unrecoverable') }}
         </div>
-        <div class="flex gap-3 flex-row justify-content-end align-items-end">
+        <div class="align-items-end flex flex-row gap-3 justify-content-end">
           <Button severity="secondary" @click="dialog.close()">{{ t('common.cancel') }}</Button>
           <Button @click="deleteInvoice">{{ t('common.delete') }}</Button>
         </div>
@@ -50,17 +55,17 @@
 </template>
 
 <script setup lang="ts">
-import { formatDateTime } from "@/utils/formatterUtils";
-import CardComponent from "@/components/CardComponent.vue";
-import InfoSpan from "@/components/InfoSpan.vue";
-import { computed, ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { addListenerOnDialogueOverlay } from "@/utils/dialogUtil";
-import Dialog from "primevue/dialog";
-import { InvoiceStatusResponseStateEnum } from "@sudosos/sudosos-client/src/api";
-import { useToast } from "primevue/usetoast";
-import { useInvoiceStore } from "@/stores/invoice.store";
-import { handleError } from "@/utils/errorUtils";
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import Dialog from 'primevue/dialog';
+import { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client/src/api';
+import { useToast } from 'primevue/usetoast';
+import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
+import InfoSpan from '@/components/InfoSpan.vue';
+import CardComponent from '@/components/CardComponent.vue';
+import { formatDateTime } from '@/utils/formatterUtils';
+import { useInvoiceStore } from '@/stores/invoice.store';
+import { handleError } from '@/utils/errorUtils';
 
 const { t } = useI18n();
 
@@ -74,7 +79,7 @@ const invoice = computed(() => invoiceStore.getInvoice(props.invoiceId));
 const props = defineProps({
   invoiceId: {
     type: Number,
-    required: true
+    required: true,
   },
 });
 
@@ -83,21 +88,23 @@ const openDialog = () => {
 };
 
 const deleteInvoice = async () => {
-  await invoiceStore.deleteInvoice(props.invoiceId).then(() => {
-    toast.add({
-      summary: t('common.toast.success.success'),
-      detail: t('common.toast.success.invoiceDeleted'),
-      severity: 'success',
-      life: 3000
+  await invoiceStore
+    .deleteInvoice(props.invoiceId)
+    .then(() => {
+      toast.add({
+        summary: t('common.toast.success.success'),
+        detail: t('common.toast.success.invoiceDeleted'),
+        severity: 'success',
+        life: 3000,
+      });
+    })
+    .catch((err) => {
+      handleError(err, toast);
+    })
+    .finally(() => {
+      dialog.value.close();
     });
-  }).catch((err) => {
-    handleError(err, toast);
-  }).finally(() => {
-    dialog.value.close();
-  });
 };
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

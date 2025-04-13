@@ -1,12 +1,12 @@
 version: 2
 updates:
-  - package-ecosystem: "npm" # Specify npm as the package manager
+  - package-ecosystem: 'npm' # Specify npm as the package manager
     directories:
-      - "apps/point-of-sale"
-      - "apps/dashboard"
-      - "lib/common"
+      - 'apps/point-of-sale'
+      - 'apps/dashboard'
+      - 'lib/common'
     schedule:
-      interval: "weekly" # Set the update schedule to weekly
+      interval: 'weekly' # Set the update schedule to weekly
     ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"] # Ignore major updates
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major'] # Ignore major updates

@@ -1,19 +1,19 @@
-@use "../../../themes/sudosos-light/variables_light";
+@use '../../../themes/sudosos-light/variables_light';
 
 // core
 .p-blockui-container {
-    position: relative;
+  position: relative;
 }
 
 .p-blockui.p-component-overlay {
-    position: absolute;
+  position: absolute;
 }
 
 .p-blockui-document.p-component-overlay {
-    position: fixed;
+  position: fixed;
 }
 
 // theme
 .p-blockui {
-    border-radius: variables_light.$borderRadius;
+  border-radius: variables_light.$borderRadius;
 }

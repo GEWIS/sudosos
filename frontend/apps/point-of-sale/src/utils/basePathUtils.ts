@@ -1,4 +1,4 @@
 export function getBasePath(): string {
-  // @ts-ignore
+  // @ts-expect-error it might exist, otherwise we have the fallback
   return window.__BASE_URL__ || '/';
 }

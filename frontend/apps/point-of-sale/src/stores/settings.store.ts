@@ -1,10 +1,10 @@
 // setting.js (SettingStore module)
 import { defineStore } from 'pinia';
-import { usePointOfSaleStore } from "@/stores/pos.store";
+import { usePointOfSaleStore } from '@/stores/pos.store';
 
 export const useSettingStore = defineStore('setting', {
   state: () => ({
-    alcoholTimeToday: Date.now()+24*60*60*1000, // Should always be recalculated
+    alcoholTimeToday: Date.now() + 24 * 60 * 60 * 1000, // Should always be recalculated
   }),
   getters: {
     isAuthenticatedPos(): boolean {
@@ -33,7 +33,7 @@ export const useSettingStore = defineStore('setting', {
       } else {
         return this.isAlcoholTime ? 'alcoholic' : 'non-alcoholic';
       }
-    }
+    },
   },
   actions: {
     /**
@@ -48,23 +48,22 @@ export const useSettingStore = defineStore('setting', {
       const alcTimeRes = await fetch('https://infoscherm.gewis.nl/backoffice/api.php?query=alcoholtijd');
 
       // Default alcohol time is 16:30
-      let alcTime = "16:30";
+      let alcTime = '16:30';
 
-      if(alcTimeRes.ok) {
+      if (alcTimeRes.ok) {
         const alcTimeResText = await alcTimeRes.text();
 
         // If time matches XX:XX regex
-        if(alcTimeResText.match(/^[0-2]?[0-9]:[0-6][0-9]$/)) {
+        if (alcTimeResText.match(/^[0-2]?[0-9]:[0-6][0-9]$/)) {
           alcTime = alcTimeResText;
         }
       }
 
       // This code only works for timezones that are whole hours apart from UTC.
       // Do not deploy SudoSOS POS in some parts of India, Australia and other countries.
-      const timezoneOffset = new Date().getTimezoneOffset()*60*1000;
-      this.alcoholTimeToday = Date.parse(`${date}T${alcTime}:00.000Z`)+timezoneOffset;
-      console.log(this.alcoholTimeToday);
+      const timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000;
+      this.alcoholTimeToday = Date.parse(`${date}T${alcTime}:00.000Z`) + timezoneOffset;
       return this.alcoholTimeToday;
-    }
+    },
   },
 });

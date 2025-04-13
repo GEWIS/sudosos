@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex flex-column align-items-center">
+  <div class="align-items-center flex flex-column h-screen">
     <TopNavbar class="flex-none" />
     <RouterView class="flex-grow-1" />
     <Footer class="flex-none" />
@@ -7,13 +7,10 @@
 </template>
 
 <script setup lang="ts">
-import { RouterView } from "vue-router";
-import Footer from "@/components/footer/FooterBar.vue";
-import TopNavbar from "@/components/TopNavbar.vue";
-import "@/styles/BasePage.scss";
-
+import { RouterView } from 'vue-router';
+import Footer from '@/components/footer/FooterBar.vue';
+import TopNavbar from '@/components/TopNavbar.vue';
+import '@/styles/BasePage.scss';
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

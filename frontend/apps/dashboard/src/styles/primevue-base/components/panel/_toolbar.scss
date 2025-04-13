@@ -1,35 +1,35 @@
-@use "../../../themes/sudosos-light/variables_light";
+@use '../../../themes/sudosos-light/variables_light';
 
 // core
 .p-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .p-toolbar-group-start,
 .p-toolbar-group-center,
 .p-toolbar-group-end {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .p-toolbar-group-left,
 .p-toolbar-group-right {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 // theme
 .p-toolbar {
-    background: variables_light.$panelHeaderBg;
-    border: variables_light.$panelHeaderBorder;
-    padding: variables_light.$panelHeaderPadding;
-    border-radius: variables_light.$borderRadius;
-    gap: variables_light.$inlineSpacing;
+  background: variables_light.$panelHeaderBg;
+  border: variables_light.$panelHeaderBorder;
+  padding: variables_light.$panelHeaderPadding;
+  border-radius: variables_light.$borderRadius;
+  gap: variables_light.$inlineSpacing;
 
-    .p-toolbar-separator {
-        margin: 0 variables_light.$inlineSpacing;
-    }
+  .p-toolbar-separator {
+    margin: 0 variables_light.$inlineSpacing;
+  }
 }

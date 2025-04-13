@@ -1,106 +1,106 @@
-@use "sass:list";
-@use "../../../themes/sudosos-light/variables_light";
-@use "../../mixins";
+@use 'sass:list';
+@use '../../../themes/sudosos-light/variables_light';
+@use '../../mixins';
 
-@use "sass:math";
+@use 'sass:math';
 
 // core
 .p-chips {
-    display: inline-flex;
+  display: inline-flex;
 }
 
 .p-chips-multiple-container {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-    cursor: text;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  cursor: text;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .p-chips-token {
-    cursor: default;
-    display: inline-flex;
-    align-items: center;
-    flex: 0 0 auto;
+  cursor: default;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
 }
 
 .p-chips-input-token {
-    flex: 1 1 auto;
-    display: inline-flex;
+  flex: 1 1 auto;
+  display: inline-flex;
 }
 
 .p-chips-token-icon {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .p-chips-input-token input {
-    border: 0 none;
-    outline: 0 none;
-    background-color: transparent;
-    margin: 0;
-    padding: 0;
-    box-shadow: none;
-    border-radius: 0;
-    width: 100%;
+  border: 0 none;
+  outline: 0 none;
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+  border-radius: 0;
+  width: 100%;
 }
 
 .p-fluid .p-chips {
-    display: flex;
+  display: flex;
 }
 
 // theme
 .p-chips {
-    &:not(.p-disabled):hover {
-        .p-chips-multiple-container {
-            border-color: variables_light.$inputHoverBorderColor;
-        }
-    }
-
-    &:not(.p-disabled).p-focus {
-        .p-chips-multiple-container {
-            @include mixins.focused-input();
-        }
-    }
-
+  &:not(.p-disabled):hover {
     .p-chips-multiple-container {
-        padding: math.div(list.nth(variables_light.$inputPadding, 1), 2) list.nth(variables_light.$inputPadding, 2);
-        outline-color: transparent;
+      border-color: variables_light.$inputHoverBorderColor;
+    }
+  }
 
-        .p-chips-token {
-            padding: math.div(list.nth(variables_light.$inputPadding, 1), 2) list.nth(variables_light.$inputPadding, 2);
-            margin-right: variables_light.$inlineSpacing;
-            background: variables_light.$chipBg;
-            color: variables_light.$chipTextColor;
-            border-radius: variables_light.$chipBorderRadius;
+  &:not(.p-disabled).p-focus {
+    .p-chips-multiple-container {
+      @include mixins.focused-input();
+    }
+  }
 
-            &.p-focus {
-                background: variables_light.$chipFocusBg;
-                color: variables_light.$chipFocusTextColor;
-            }
+  .p-chips-multiple-container {
+    padding: math.div(list.nth(variables_light.$inputPadding, 1), 2) list.nth(variables_light.$inputPadding, 2);
+    outline-color: transparent;
 
-            .p-chips-token-icon {
-                margin-left: variables_light.$inlineSpacing;
-            }
-        }
+    .p-chips-token {
+      padding: math.div(list.nth(variables_light.$inputPadding, 1), 2) list.nth(variables_light.$inputPadding, 2);
+      margin-right: variables_light.$inlineSpacing;
+      background: variables_light.$chipBg;
+      color: variables_light.$chipTextColor;
+      border-radius: variables_light.$chipBorderRadius;
 
-        .p-chips-input-token {
-            padding: math.div(list.nth(variables_light.$inputPadding, 1), 2) 0;
+      &.p-focus {
+        background: variables_light.$chipFocusBg;
+        color: variables_light.$chipFocusTextColor;
+      }
 
-            input {
-                font-family: var(--font-family);
-                font-feature-settings: var(--font-feature-settings, normal);
-                font-size: variables_light.$inputTextFontSize;
-                color: variables_light.$textColor;
-                padding: 0;
-                margin: 0;
-            }
-        }
+      .p-chips-token-icon {
+        margin-left: variables_light.$inlineSpacing;
+      }
     }
 
-    &.p-invalid.p-component > .p-inputtext {
-        @include mixins.invalid-input();
+    .p-chips-input-token {
+      padding: math.div(list.nth(variables_light.$inputPadding, 1), 2) 0;
+
+      input {
+        font-family: var(--font-family);
+        font-feature-settings: var(--font-feature-settings, normal);
+        font-size: variables_light.$inputTextFontSize;
+        color: variables_light.$textColor;
+        padding: 0;
+        margin: 0;
+      }
     }
+  }
+
+  &.p-invalid.p-component > .p-inputtext {
+    @include mixins.invalid-input();
+  }
 }

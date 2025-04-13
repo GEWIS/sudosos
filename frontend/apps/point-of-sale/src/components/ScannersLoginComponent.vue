@@ -3,17 +3,17 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, PropType } from "vue";
+import { onMounted, onUnmounted, PropType } from 'vue';
 
 const props = defineProps({
   handleNfcLogin: {
     type: Function as PropType<(nfcCode: string) => Promise<void>>,
-    required: true
+    required: true,
   },
   handleEanLogin: {
     type: Function as PropType<(eanCode: string) => Promise<void>>,
-    required: true
-  }
+    required: true,
+  },
 });
 
 let captures: KeyboardEvent[] = [];
@@ -24,20 +24,20 @@ let captures: KeyboardEvent[] = [];
  * functions. The captures are then reset.
  */
 const onInput = (event: KeyboardEvent): void => {
-    if (event.code === 'Enter') {
-      const capturedCode = captures.reduce((input, e) => input + e.key, '');
-      const checkCode = capturedCode.substring(0, 3);
-      switch (checkCode) {
-        case 'nfc':
-          props.handleNfcLogin(capturedCode.substring(3));
-          break;
-        case 'ean':
-          // capturedCode.substring(3)
-          break;
-        default:
-          //TODO toast error for user
-      }
-      captures = [];
+  if (event.code === 'Enter') {
+    const capturedCode = captures.reduce((input, e) => input + e.key, '');
+    const checkCode = capturedCode.substring(0, 3);
+    switch (checkCode) {
+      case 'nfc':
+        void props.handleNfcLogin(capturedCode.substring(3));
+        break;
+      case 'ean':
+        // capturedCode.substring(3)
+        break;
+      default:
+      //TODO toast error for user
+    }
+    captures = [];
   } else {
     captures.push(event);
   }
@@ -52,6 +52,4 @@ onUnmounted(() => {
 });
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

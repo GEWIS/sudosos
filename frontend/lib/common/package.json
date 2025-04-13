@@ -9,7 +9,8 @@
     "test": "echo \"No tests specified\" && exit 0",
     "build": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.json --composite false",
-    "lint": "eslint ./src/**/* --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+    "lint": "eslint src",
+    "lint-fix": "eslint src --fix"
   },
   "main": "./dist/sudosos-frontend-common.umd.cjs",
   "module": "./dist/sudosos-frontend-common.js",
@@ -36,5 +37,8 @@
   "bugs": {
     "url": "https://gitlab.com/sudosos/sudosos-frontend-common/issues"
   },
-  "homepage": "https://gitlab.com/sudosos/sudosos-frontend-common#readme"
+  "homepage": "https://gitlab.com/sudosos/sudosos-frontend-common#readme",
+  "devDependencies": {
+    "eslint": "^9.24.0"
+  }
 }

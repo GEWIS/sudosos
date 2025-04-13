@@ -1,26 +1,26 @@
 <template>
   <BalanceTopupModal v-model:visible="visible" :amount="topupAmount!!" />
-  <CardComponent :header="t('modules.user.balance.balance')" class="w-full sm:w-full">
+  <CardComponent class="sm:w-full w-full" :header="t('modules.user.balance.balance')">
     <div class="flex flex-row justify-content-center">
       <div class="flex flex-column justify-content-center w-6">
-        <Skeleton v-if="loading" class="h-4rem w-5 mx-auto" />
-        <h1 v-else class="text-center font-medium text-5xl sm:text-7xl my-0">{{ displayBalance }}</h1>
-        <p class="text-center text-base font-semibold text-red-500" v-if="userBalance && userBalance.fine">
+        <Skeleton v-if="loading" class="h-4rem mx-auto w-5" />
+        <h1 v-else class="font-medium my-0 sm:text-7xl text-5xl text-center">{{ displayBalance }}</h1>
+        <p v-if="userBalance && userBalance.fine" class="font-semibold text-base text-center text-red-500">
           {{
-          isAllFine
-          ? t('modules.user.balance.allIsFines')
-          : t('modules.user.balance.someIsFines', { fine: displayFine })
+            isAllFine
+              ? t('modules.user.balance.allIsFines')
+              : t('modules.user.balance.someIsFines', { fine: displayFine })
           }}
         </p>
-        <div v-show="displayBalanceAfterTopup" class="text-center text-600 font-italic">
+        <div v-show="displayBalanceAfterTopup" class="font-italic text-600 text-center">
           {{ t('modules.user.balance.after') }}
           <span v-if="displayBalanceAfterTopup">{{
             formatPrice(
-            Dinero(userBalance?.amount!! as Dinero.Options)
-            .add(Dinero({ amount: Math.round(topupAmount!! * 100), currency: 'EUR' }))
-            .toObject()
+              Dinero(userBalance?.amount!! as Dinero.Options)
+                .add(Dinero({ amount: Math.round(topupAmount!! * 100), currency: 'EUR' }))
+                .toObject(),
             )
-            }}</span>
+          }}</span>
         </div>
       </div>
       <Divider layout="vertical" />
@@ -28,36 +28,33 @@
       <div class="flex flex-column w-6">
         <div>
           <p class="font-bold">{{ t('modules.user.balance.increaseAmount') }}</p>
-          <div class="w-full flex-1">
+          <div class="flex-1 w-full">
             <InputNumber
-                mode="currency"
-                currency="EUR"
-                locale="nl-NL"
-                :placeholder="t('modules.user.balance.price')"
-                :min="0.0"
-                :min-fraction-digits="0"
-                :max-fraction-digits="2"
-                v-model="topupAmount"
-                inputId="amount"
-                @input="
+              v-model="topupAmount"
+              currency="EUR"
+              input-id="amount"
+              :input-props="{
+                inputmode: 'decimal',
+                class: 'w-full',
+              }"
+              locale="nl-NL"
+              :max-fraction-digits="2"
+              :min="0.0"
+              :min-fraction-digits="0"
+              mode="currency"
+              :placeholder="t('modules.user.balance.price')"
+              @input="
                 (data) => {
-                  setFieldValue(
-                    'Top up amount',
-                    data.value as number,
-                    errors['Top up amount'] !== undefined
-                  );
+                  setFieldValue('Top up amount', data.value as number, errors['Top up amount'] !== undefined);
                   setTouched(true);
                 }
               "
-              :inputProps="{
-                inputmode: 'decimal',
-                class: 'w-full'
-              }" />
+            />
           </div>
           <span class="font-bold text-red-500">{{ errors['Top up amount'] }}</span>
         </div>
         <div class="flex justify-content-end my-2">
-          <Button @click="onSubmit" class="w-full sm:w-4 justify-content-center">
+          <Button class="justify-content-center sm:w-4 w-full" @click="onSubmit">
             {{ t('modules.user.balance.topUp') }}
           </Button>
         </div>
@@ -67,21 +64,22 @@
 </template>
 
 <script setup lang="ts">
-import CardComponent from '@/components/CardComponent.vue';
-import BalanceTopupModal from '@/modules/user/components/balance/BalanceTopupModal.vue';
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
 import { computed, ref, onMounted, type Ref, watch } from 'vue';
 import type { BalanceResponse } from '@sudosos/sudosos-client';
-import apiService from '@/services/ApiService';
-import { formatPrice } from '@/utils/formatterUtils';
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { toTypedSchema } from '@vee-validate/yup';
 import Divider from 'primevue/divider';
+// eslint-disable-next-line import/no-named-as-default
 import Dinero from 'dinero.js';
 import InputNumber from 'primevue/inputnumber';
-import { useRouter } from "vue-router";
-import { useI18n } from "vue-i18n";
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import { formatPrice } from '@/utils/formatterUtils';
+import apiService from '@/services/ApiService';
+import BalanceTopupModal from '@/modules/user/components/balance/BalanceTopupModal.vue';
+import CardComponent from '@/components/CardComponent.vue';
 
 const { t } = useI18n();
 
@@ -91,34 +89,25 @@ const productSchema = toTypedSchema(
     'Top up amount': yup
       .number()
       .required()
-      .test(
-        'is-min10-or-balance',
-        `Top up should be more than €10 or settle debt exactly.`,
-        (value) => {
-          return value >= 10 || Math.round(value * -100) == userBalance.value?.amount.amount;
-        }
-      )
-      .test(
-        'is-total-less-than-150',
-        `Your new balance cannot surpass €150.`,
-        (value) => {
-          return userBalance.value!!.amount.amount + value*100 <= 15000;
-        }
-      )
-  })
+      .test('is-min10-or-balance', `Top up should be more than €10 or settle debt exactly.`, (value) => {
+        return value >= 10 || Math.round(value * -100) == userBalance.value?.amount.amount;
+      })
+      .test('is-total-less-than-150', `Your new balance cannot surpass €150.`, (value) => {
+        return userBalance.value!.amount.amount + value * 100 <= 15000;
+      }),
+  }),
 );
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const { values, errors, defineField, meta, setFieldValue, setTouched, handleSubmit, validate } =
-  useForm({
-    validationSchema: productSchema
-  });
+const { values, errors, defineField, meta, setFieldValue, setTouched, handleSubmit, validate } = useForm({
+  validationSchema: productSchema,
+});
 
 const [topupAmount] = defineField('Top up amount', {
   validateOnChange: false,
   validateOnInput: false,
   validateOnModelUpdate: false,
-  validateOnBlur: false
+  validateOnBlur: false,
 });
 
 const onSubmit = handleSubmit(() => {
@@ -166,9 +155,7 @@ const displayBalance = computed(() => {
 });
 
 const displayBalanceAfterTopup = computed(() => {
-  return (
-    meta.value.touched && userBalance.value?.amount != undefined && topupAmount.value != undefined
-  );
+  return meta.value.touched && userBalance.value?.amount != undefined && topupAmount.value != undefined;
 });
 
 // Define the 'visible' ref variable to control dialog visibility

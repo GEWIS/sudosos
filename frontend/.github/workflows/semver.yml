@@ -38,16 +38,16 @@ jobs:
       image: docker:dind
     strategy:
       matrix:
-        app: [ dashboard, point-of-sale ]
+        app: [dashboard, point-of-sale]
         include:
           - app: dashboard
             env_file_main: ${{ vars.ENV_FILE_PRODUCTION }}
             docker_tag: ${{ vars.DOCKER_TAG_DASHBOARD }}
-            dockerfile_path: "apps/dashboard/Dockerfile"
+            dockerfile_path: 'apps/dashboard/Dockerfile'
           - app: point-of-sale
             env_file_main: ${{ vars.ENV_FILE_PRODUCTION }}
             docker_tag: ${{ vars.DOCKER_TAG_POS }}
-            dockerfile_path: "apps/point-of-sale/Dockerfile"
+            dockerfile_path: 'apps/point-of-sale/Dockerfile'
 
     steps:
       - name: Checkout repository

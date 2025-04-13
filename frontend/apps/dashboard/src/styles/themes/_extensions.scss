@@ -1,14 +1,27 @@
-@use "sudosos-light/variables_light";
-@use "variables";
+@use 'sudosos-light/variables_light';
+@use 'variables';
 
 /* Customizations to the primevue base theme should be defined here */
 
 body {
   min-height: 100vh;
-  transition: color 0.5s, background-color 0.5s;
+  transition:
+    color 0.5s,
+    background-color 0.5s;
   line-height: 1.6;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;
   font-size: 15px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -19,9 +32,7 @@ body {
 /* Fix menubar color to GEWIS red */
 .p-menubar {
   background: variables.$primaryColor;
-  
 }
-
 
 /* Fix original font */
 .p-component {
@@ -33,14 +44,14 @@ body {
 
 /* Remove the borders from the datatables */
 .p-datatable {
-  .p-datatable-thead>tr>th {
+  .p-datatable-thead > tr > th {
     border-top: none;
     text-transform: uppercase;
   }
 
   &.p-datatable-striped {
     .p-datatable-tbody {
-      >tr:nth-child(even) {
+      > tr:nth-child(even) {
         background: variables_light.$tableBodyRowEvenBg;
 
         &.p-highlight {
@@ -78,8 +89,6 @@ body {
   }
 }
 
-
-
 /* Fixing submenuitem link colors */
 .p-menubar {
   .p-submenu-list {
@@ -88,22 +97,20 @@ body {
         .p-menuitem-link {
           .p-menuitem-text {
             color: variables_light.$submenuTextColor;
-
-            
           }
         }
 
         &:hover {
           .p-menuitem-link {
-              .p-menuitem-text {
-                color: variables_light.$submenuitemTextHoverColor;
-              }
+            .p-menuitem-text {
+              color: variables_light.$submenuitemTextHoverColor;
             }
+          }
         }
       }
 
       &.p-highlight {
-        >.p-menuitem-content {
+        > .p-menuitem-content {
           color: variables_light.$menuitemTextActiveColor;
           background: variables_light.$menuitemActiveBg;
 
@@ -120,7 +127,7 @@ body {
         }
 
         &.p-focus {
-          >.p-menuitem-content {
+          > .p-menuitem-content {
             background: variables_light.$menuitemActiveFocusBg;
           }
         }
@@ -128,7 +135,7 @@ body {
 
       &:not(.p-highlight):not(.p-disabled) {
         &.p-focus {
-          >.p-menuitem-content {
+          > .p-menuitem-content {
             color: variables_light.$submenuitemTextFocusColor;
             background: variables_light.$submenuitemFocusBg;
 
@@ -145,7 +152,7 @@ body {
           }
         }
 
-        >.p-menuitem-content {
+        > .p-menuitem-content {
           &:hover {
             color: variables_light.$submenuitemTextHoverColor;
             background: variables_light.$submenuitemFocusBg;
@@ -169,7 +176,7 @@ body {
 
 /* Fix mobile menubar */
 @mixin mobilemenuitem {
-  >.p-menuitem-content {
+  > .p-menuitem-content {
     color: variables_light.$menuitemTextColor;
     transition: variables_light.$listItemTransition;
     border-radius: variables_light.$menuitemBorderRadius;
@@ -194,11 +201,10 @@ body {
         color: variables_light.$menuitemIconColor;
       }
     }
-
   }
 
   &.p-highlight {
-    >.p-menuitem-content {
+    > .p-menuitem-content {
       color: variables_light.$menuitemTextActiveColor;
       background: variables_light.$menuitemActiveBg;
 
@@ -218,7 +224,7 @@ body {
     }
 
     &.p-focus {
-      >.p-menuitem-content {
+      > .p-menuitem-content {
         background: transparent;
       }
     }
@@ -226,7 +232,7 @@ body {
 
   &:not(.p-highlight):not(.p-disabled) {
     &.p-focus {
-      >.p-menuitem-content {
+      > .p-menuitem-content {
         color: variables_light.$menuitemTextFocusColor;
         background: transparent;
 
@@ -247,7 +253,7 @@ body {
       }
     }
 
-    >.p-menuitem-content {
+    > .p-menuitem-content {
       &:hover {
         color: variables_light.$menuitemTextHoverColor;
         background: transparent;
@@ -286,7 +292,6 @@ body {
         color: variables_light.$submenuitemTextColor;
         font-family: variables_light.$fontFamily;
         font-weight: 500;
-
       }
 
       .p-menuitem-icon {
@@ -301,7 +306,7 @@ body {
   }
 
   &.p-highlight {
-    >.p-menuitem-content {
+    > .p-menuitem-content {
       color: variables_light.$submenuitemTextActiveColor;
       background: variables_light.$submenuitemActiveBg;
 
@@ -321,7 +326,7 @@ body {
     }
 
     &.p-focus {
-      >.p-menuitem-content {
+      > .p-menuitem-content {
         background: variables_light.$submenuitemActiveFocusBg;
       }
     }
@@ -329,7 +334,7 @@ body {
 
   &:not(.p-highlight):not(.p-disabled) {
     &.p-focus {
-      >.p-menuitem-content {
+      > .p-menuitem-content {
         color: variables_light.$submenuitemTextFocusColor;
 
         .p-menuitem-link {
@@ -349,7 +354,7 @@ body {
       }
     }
 
-    >.p-menuitem-content {
+    > .p-menuitem-content {
       &:hover {
         color: variables_light.$submenuitemTextHoverColor;
 
@@ -396,14 +401,10 @@ body {
       overflow: hidden;
       max-height: 0;
       transition: max-height 0.5s ease-in-out;
-
-     
-
     }
 
     &.p-menubar-mobile-active {
       top: 0;
-
     }
 
     &.p-menubar-mobile-active .p-menubar-root-list {
@@ -414,10 +415,9 @@ body {
       max-height: fit-content !important;
       transition: max-height 0.5s ease-in-out;
 
-      >.p-menuitem {
+      > .p-menuitem {
         @include mobilemenuitem();
       }
-
     }
 
     &.p-menubar-mobile .p-menubar-root-list {
@@ -427,15 +427,13 @@ body {
   }
 }
 
-
 /**
  * Style cards more like the GEWIS website
  */
-.p-panel  {
+.p-panel {
   .p-panel-header {
     border-radius: 0;
     border: 0;
-
 
     .p-panel-title {
       font-weight: 600;
@@ -454,7 +452,7 @@ body {
 
     background-color: variables_light.$panelFooterBg;
     button {
-      background-color: rgba(0,0,0,0); /* transparent */
+      background-color: rgba(0, 0, 0, 0); /* transparent */
       padding: 1.25rem;
       color: variables_light.$panelFooterTextColor;
     }
@@ -463,5 +461,3 @@ body {
     }
   }
 }
-
-

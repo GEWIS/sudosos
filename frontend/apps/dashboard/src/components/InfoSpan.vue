@@ -1,7 +1,7 @@
 <template>
-  <span class="flex flex-row gap-3 flex-wrap justify-content-between">
-    <p class="my-0"> {{ label }} </p>
-    <p class="my-0"> {{ value }} </p>
+  <span class="flex flex-row flex-wrap gap-3 justify-content-between">
+    <p class="my-0">{{ label }}</p>
+    <p class="my-0">{{ value }}</p>
   </span>
 </template>
 
@@ -9,15 +9,13 @@
 defineProps({
   label: {
     type: String,
-    required: true
+    required: true,
   },
   value: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 });
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

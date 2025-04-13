@@ -28,6 +28,7 @@
       "banners": {
         "title": "Banners",
         "noBannerFound": "Geen banner gevonden, upload er een!",
+        "till": "totdat",
         "list": {
           "header": "Banner overzicht",
           "filterActive": "Filter actief",

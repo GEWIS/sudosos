@@ -1,22 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-      <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
-      <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-      <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
-      <link rel="manifest" href="favicon/manifest.json">
-      <script>
-          // @ts-ignore
-          window.__BASE_URL__ = ((path) => path !== '' ? `/${path}/` : '')
-          (window.location.pathname.split('/')[1] || '');
-      </script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
+    <link rel="manifest" href="favicon/manifest.json" />
+    <script>
+      // @ts-ignore
+      window.__BASE_URL__ = ((path) => (path !== '' ? `/${path}/` : ''))(window.location.pathname.split('/')[1] || '');
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <title>SudoSOS Point Of Sale</title>
     <!-- For OpenGraph -->
-    <meta property="og:title" content="SudoSOS Point of Sale">
-    <meta property="og:description" content="Wie dit leest trekt een bak">
-    <meta property="og:image" content="/bier_margin_green.png">
+    <meta property="og:title" content="SudoSOS Point of Sale" />
+    <meta property="og:description" content="Wie dit leest trekt een bak" />
+    <meta property="og:image" content="/bier_margin_green.png" />
   </head>
   <body>
     <div id="app"></div>

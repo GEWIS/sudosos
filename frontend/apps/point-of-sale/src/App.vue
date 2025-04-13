@@ -4,8 +4,8 @@ import Toast from 'primevue/toast';
 
 <template>
   <Toast />
-  <RouterView/>
-  <img class="image-underlay" src="@/assets/splash.svg" alt="Overlay Image" />
+  <RouterView />
+  <img alt="Overlay Image" class="image-underlay" src="@/assets/splash.svg" />
 </template>
 
 <style lang="scss">

@@ -1,210 +1,210 @@
 {
-    "common": {
-        "sudosos": "SudoSOS",
-        "title": "Title",
-        "total": "Total",
-        "amount": "Amount",
-        "actions": "Actions",
-        "gewisId": "GEWIS ID",
-        "downloadPdf": "Download PDF",
-        "pdf": "PDF",
-        "till": "till",
-        "description": "Description",
-        "id": "ID",
-        "vat": "VAT",
-        "loading": "Loading",
-        "failed": "Failed",
-        "excl": "Excl VAT",
-        "incl": "Incl VAT",
-        "firstName": "First name",
-        "lastName": "Last name",
-        "name": "Name",
-        "for": "For",
-        "type": "Type",
-        "date": "Date",
-        "ofAge": "18+",
+  "common": {
+    "sudosos": "SudoSOS",
+    "title": "Title",
+    "total": "Total",
+    "amount": "Amount",
+    "actions": "Actions",
+    "gewisId": "GEWIS ID",
+    "downloadPdf": "Download PDF",
+    "pdf": "PDF",
+    "till": "till",
+    "description": "Description",
+    "id": "ID",
+    "vat": "VAT",
+    "loading": "Loading",
+    "failed": "Failed",
+    "excl": "Excl VAT",
+    "incl": "Incl VAT",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "name": "Name",
+    "for": "For",
+    "type": "Type",
+    "date": "Date",
+    "ofAge": "18+",
+    "info": "Info",
+    "price": "Price",
+    "status": "Status",
+    "active": "Active",
+    "create": "Create",
+    "verify": "Verify",
+    "verified": "Verified",
+    "edit": "Edit",
+    "search": "Search",
+    "save": "Save",
+    "close": "Close",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "areYouSure": "Are you sure?",
+    "owner": "Owner",
+    "back": "Back",
+    "na": "N/A",
+    "signOut": "Sign out",
+    "createdAt": "Created at",
+    "updatedAt": "Updated at",
+    "selected": "Selected",
+    "users": "Users",
+    "count": "Count",
+    "confirm": "Confirm",
+    "placeholders": {
+      "selectType": "Select Type",
+      "email": "example@example.com",
+      "bankAccountNumber": "NL69 ABNA 0012 3456 78",
+      "fullName": "John Doe",
+      "addressee": "John & Co.",
+      "street": "Grote Kerkplein 15",
+      "postalCode": "8011 PK",
+      "city": "Zwolle",
+      "country": "Netherlands",
+      "product": "Ice cream",
+      "pos": "GELIMBO"
+    },
+    "tooltip": {
+      "productOwner": "Note: Container owner gets the revenue, not the product owner. Owner cannot be edited after creation."
+    },
+    "nickname": "Nickname",
+    "email": "Email address",
+    "usertype": "Usertype",
+    "toast": {
+      "info": {
         "info": "Info",
-        "price": "Price",
-        "status": "Status",
-        "active": "Active",
-        "create": "Create",
-        "verify": "Verify",
-        "verified": "Verified",
-        "edit": "Edit",
-        "search": "Search",
-        "save": "Save",
-        "close": "Close",
-        "cancel": "Cancel",
-        "delete": "Delete",
-        "areYouSure": "Are you sure?",
-        "owner": "Owner",
-        "back": "Back",
-        "na": "N/A",
-        "signOut": "Sign out",
-        "createdAt": "Created at",
-        "updatedAt": "Updated at",
-        "selected": "Selected",
-        "users": "Users",
-        "count": "Count",
-        "confirm": "Confirm",
-        "placeholders": {
-            "selectType": "Select Type",
-            "email": "example@example.com",
-            "bankAccountNumber": "NL69 ABNA 0012 3456 78",
-            "fullName": "John Doe",
-            "addressee": "John & Co.",
-            "street": "Grote Kerkplein 15",
-            "postalCode": "8011 PK",
-            "city": "Zwolle",
-            "country": "Netherlands",
-            "product": "Ice cream",
-            "pos": "GELIMBO"
-        },
-        "tooltip": {
-            "productOwner": "Note: Container owner gets the revenue, not the product owner. Owner cannot be edited after creation."
-        },
-        "nickname": "Nickname",
-        "email": "Email address",
-        "usertype": "Usertype",
-        "toast": {
-            "info": {
-                "info": "Info",
-                "scanStarted": "NFC Scan started, please hold your NFC card to your phone!"
-            },
-            "success": {
-                "success": "Success",
-                "userUpdated": "Successfully updated user.",
-                "userCreated": "Successfully created user.",
-                "waiveFinesSuccess": "Successfully waived fines.",
-                "resetPasswordSuccess": "Successfully reset password.",
-                "dataAnalysis": "Successfully changed data analysis preference.",
-                "apiKeyChanged": "Successfully changed API key.",
-                "apiKeyDeleted": "Successfully deleted API key.",
-                "passwordUpdated": "Successfully updated password.",
-                "nfcCodeUpdated": "Successfully updated NFC code.",
-                "nfcCodeDeleted": "Successfully deleted NFC code.",
-                "pinUpdated": "Successfully updated PIN.",
-                "finesNotified": "Successfully notified users.",
-                "finesHandedOut": "Successfully handed out fines.",
-                "finesCannotGoIntoDebt": "Successfully disabled the ability to go into debt.",
-                "payoutCreated": "Successfully created payout.",
-                "invoiceDeleted": "Successfully deleted invoice.",
-                "invoiceCreated": "Successfully created invoice.",
-                "invoiceUpdated": "Successfully updated invoice.",
-                "invoiceAmountUpdated": "Successfully updated invoice amount.",
-                "pointOfSaleDeleted": "Successfully deleted POS.",
-                "pointOfSaleUpdated": "Successfully updated POS.",
-                "pointOfSaleCreated": "Successfully created POS.",
-                "containerUpdated": "Successfully updated container.",
-                "containerCreated": "Successfully created container.",
-                "containerDeleted": "Successfully deleted container.",
-                "fineDeleted": "Successfully deleted fine.",
-                "transactionDeleted": "Successfully deleted transaction.",
-                "productCreated": "Successfully created product.",
-                "productUpdated": "Successfully updated product.",
-                "productContainerDeleted": "Successfully deleted product from container.",
-                "productDeleted": "Successfully deleted product.",
-                "payoutDeleted": "Successfully deleted payout.",
-                "payoutUpdated": "Successfully updated payout.",
-                "payout": {
-                    "verify": "Verification Success",
-                    "details": "Payout is verified."
-                }
-            },
-            "error": {
-                "error": "Error",
-                "scanNotStarted": "NFC scan not started, please check permissions regarding NFC.",
-                "desktopUnsupported": "NFC scans can only be done using a mobile phone.",
-                "androidUnsupported": "Only Chrome browsers support Web NFC.",
-                "iosUnsupported": "iOS does not support Web NFC."
-            },
-            "canceled": "Canceled",
-            "reject": {
-                "waiveFinesRejected": "Canceled waiving fines."
-            },
-            "failed": {
-                "failed": "Failed",
-                "payout": {
-                    "verify": "Verification Failed",
-                    "details": "Payout amount does not match the amount of purchases. {amount} vs. {totalInclVat}",
-                    "unable": "Unable to verify the payout."
-                },
-                "topUp": {
-                    "unable": "Unable to complete the top-up. Please try again later."
-                }
-            }
-        },
-        "navigation": {
-            "transactions": "Transactions",
-            "admin": "Admin",
-            "financial": "Financial",
-            "seller": "Seller",
-            "profile": "Profile",
-            "signOut": "Sign out",
-            "dutch": "Dutch",
-            "english": "English",
-            "users": "Users",
-            "banners": "Banners",
-            "socialDrinkCards": "Social drink cards",
-            "invoices": "Invoices",
-            "payouts": "Payouts",
-            "productsContainers": "Products & containers",
-            "pos": "Points of sale",
-            "flaggedTransactions": "Flagged transactions",
-            "debtors": "Debtors",
-            "invoiceAccounts": "Invoice Account Overview",
-            "fines": "Fines"
-        },
-        "validation": {
-            "number": {
-                "min": "This field must be greater than {min}"
-            },
-            "password": {
-                "match": "Passwords must match."
-            },
-            "pin": {
-                "match": "PINs must match.",
-                "onlyDigits": "PIN must be only digits."
-            },
-            "required": "This field is required",
-            "string": {
-                "exact": "This field must be exactly {len} characters",
-                "max": "This field can't be greater than {max} characters",
-                "min": "This field must be at least {min} characters"
-            }
-        },
-        "apiError": "Error",
-        "errorMessage": "Something is going wrong, please open an issue on {link} describing the issue.",
-        "permissionMessages": {
-          "transactions": "You are not allowed to view these transactions."
-        },
-        "time": {
-            "today": "Today",
-            "yesterday": "Yesterday",
-            "yearsAgo": " year(s) ago",
-            "daysAgo": " days ago",
-            "hoursAgo": " hours ago",
-            "minutesAgo": " minutes ago",
-            "secondsAgo": " seconds ago",
-            "justNow": "just now",
-            "sunday": "Sunday",
-            "monday": "Monday",
-            "tuesday": "Tuesday",
-            "wednesday": "Wednesday",
-            "thursday": "Thursday",
-            "friday": "Friday",
-            "saturday": "Saturday"
-        },
-        "wrapped": {
-            "lastYear": "In the last year:",
-            "total": "You spent in total:",
-            "totalBorrel": "You spent in total at borrels:",
-            "depth": "But more in depth:",
-            "totalAlc": "On alcohol (incl. 0.0) you spent:",
-            "totalSoda": "On soda you spent:",
-            "totalSnacks": "On snacks you spent:",
-            "fav": "Lastly your favourites were:",
-            "christmas": "Merry christmas and a happy new year from the ABC!"
+        "scanStarted": "NFC Scan started, please hold your NFC card to your phone!"
+      },
+      "success": {
+        "success": "Success",
+        "userUpdated": "Successfully updated user.",
+        "userCreated": "Successfully created user.",
+        "waiveFinesSuccess": "Successfully waived fines.",
+        "resetPasswordSuccess": "Successfully reset password.",
+        "dataAnalysis": "Successfully changed data analysis preference.",
+        "apiKeyChanged": "Successfully changed API key.",
+        "apiKeyDeleted": "Successfully deleted API key.",
+        "passwordUpdated": "Successfully updated password.",
+        "nfcCodeUpdated": "Successfully updated NFC code.",
+        "nfcCodeDeleted": "Successfully deleted NFC code.",
+        "pinUpdated": "Successfully updated PIN.",
+        "finesNotified": "Successfully notified users.",
+        "finesHandedOut": "Successfully handed out fines.",
+        "finesCannotGoIntoDebt": "Successfully disabled the ability to go into debt.",
+        "payoutCreated": "Successfully created payout.",
+        "invoiceDeleted": "Successfully deleted invoice.",
+        "invoiceCreated": "Successfully created invoice.",
+        "invoiceUpdated": "Successfully updated invoice.",
+        "invoiceAmountUpdated": "Successfully updated invoice amount.",
+        "pointOfSaleDeleted": "Successfully deleted POS.",
+        "pointOfSaleUpdated": "Successfully updated POS.",
+        "pointOfSaleCreated": "Successfully created POS.",
+        "containerUpdated": "Successfully updated container.",
+        "containerCreated": "Successfully created container.",
+        "containerDeleted": "Successfully deleted container.",
+        "fineDeleted": "Successfully deleted fine.",
+        "transactionDeleted": "Successfully deleted transaction.",
+        "productCreated": "Successfully created product.",
+        "productUpdated": "Successfully updated product.",
+        "productContainerDeleted": "Successfully deleted product from container.",
+        "productDeleted": "Successfully deleted product.",
+        "payoutDeleted": "Successfully deleted payout.",
+        "payoutUpdated": "Successfully updated payout.",
+        "payout": {
+          "verify": "Verification Success",
+          "details": "Payout is verified."
         }
+      },
+      "error": {
+        "error": "Error",
+        "scanNotStarted": "NFC scan not started, please check permissions regarding NFC.",
+        "desktopUnsupported": "NFC scans can only be done using a mobile phone.",
+        "androidUnsupported": "Only Chrome browsers support Web NFC.",
+        "iosUnsupported": "iOS does not support Web NFC."
+      },
+      "canceled": "Canceled",
+      "reject": {
+        "waiveFinesRejected": "Canceled waiving fines."
+      },
+      "failed": {
+        "failed": "Failed",
+        "payout": {
+          "verify": "Verification Failed",
+          "details": "Payout amount does not match the amount of purchases. {amount} vs. {totalInclVat}",
+          "unable": "Unable to verify the payout."
+        },
+        "topUp": {
+          "unable": "Unable to complete the top-up. Please try again later."
+        }
+      }
+    },
+    "navigation": {
+      "transactions": "Transactions",
+      "admin": "Admin",
+      "financial": "Financial",
+      "seller": "Seller",
+      "profile": "Profile",
+      "signOut": "Sign out",
+      "dutch": "Dutch",
+      "english": "English",
+      "users": "Users",
+      "banners": "Banners",
+      "socialDrinkCards": "Social drink cards",
+      "invoices": "Invoices",
+      "payouts": "Payouts",
+      "productsContainers": "Products & containers",
+      "pos": "Points of sale",
+      "flaggedTransactions": "Flagged transactions",
+      "debtors": "Debtors",
+      "invoiceAccounts": "Invoice Account Overview",
+      "fines": "Fines"
+    },
+    "validation": {
+      "number": {
+        "min": "This field must be greater than {min}"
+      },
+      "password": {
+        "match": "Passwords must match."
+      },
+      "pin": {
+        "match": "PINs must match.",
+        "onlyDigits": "PIN must be only digits."
+      },
+      "required": "This field is required",
+      "string": {
+        "exact": "This field must be exactly {len} characters",
+        "max": "This field can't be greater than {max} characters",
+        "min": "This field must be at least {min} characters"
+      }
+    },
+    "apiError": "Error",
+    "errorMessage": "Something is going wrong, please open an issue on {link} describing the issue.",
+    "permissionMessages": {
+      "transactions": "You are not allowed to view these transactions."
+    },
+    "time": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "yearsAgo": " year(s) ago",
+      "daysAgo": " days ago",
+      "hoursAgo": " hours ago",
+      "minutesAgo": " minutes ago",
+      "secondsAgo": " seconds ago",
+      "justNow": "just now",
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday"
+    },
+    "wrapped": {
+      "lastYear": "In the last year:",
+      "total": "You spent in total:",
+      "totalBorrel": "You spent in total at borrels:",
+      "depth": "But more in depth:",
+      "totalAlc": "On alcohol (incl. 0.0) you spent:",
+      "totalSoda": "On soda you spent:",
+      "totalSnacks": "On snacks you spent:",
+      "fav": "Lastly your favourites were:",
+      "christmas": "Merry christmas and a happy new year from the ABC!"
     }
+  }
 }

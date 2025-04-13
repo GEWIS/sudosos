@@ -1,4 +1,4 @@
-import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
+import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
 
 /**
  * Performs an access check for the given parameters.
@@ -19,49 +19,47 @@ import { useAuthStore, useUserStore } from "@sudosos/sudosos-frontend-common";
  *    'any' can be used if there is any attribute that can be edited.
  * @returns {boolean} - True if access is allowed, false otherwise.
  */
-export function isAllowed(
-    action: string,
-    relations: string | string[],
-    entity: string,
-    attributes?: string[] | undefined
-) {
-    const userStore = useUserStore();
+export function isAllowed(action: string, relations: string | string[], entity: string, attributes?: string[]) {
+  const userStore = useUserStore();
 
-    // Convert relations to array if a single relation is given.
-    let relationsArray: string[];
-    if (typeof relations === 'string') {
-        relationsArray = [relations];
-    } else {
-        relationsArray = relations;
-    }
-    // Add the relation "all" to the relations, because if you have permission to access "all",
-    // it does not matter what the given relation is.
-    if (relationsArray.indexOf('all') === -1) {
-        relationsArray.push('all');
-    }
+  // Convert relations to array if a single relation is given.
+  let relationsArray: string[];
+  if (typeof relations === 'string') {
+    relationsArray = [relations];
+  } else {
+    relationsArray = relations;
+  }
+  // Add the relation "all" to the relations, because if you have permission to access "all",
+  // it does not matter what the given relation is.
+  if (relationsArray.indexOf('all') === -1) {
+    relationsArray.push('all');
+  }
 
-    // If no attributes are specified, any attribute is fine.
-    if (!attributes) attributes = ['any'];
+  // If no attributes are specified, any attribute is fine.
+  if (!attributes) attributes = ['any'];
 
-    // For all found permission records, get a single list of all attributes the user is allowed to access
-    const allPermissions = userStore.current.rolesWithPermissions.flatMap(r => r.permissions);
+  // For all found permission records, get a single list of all attributes the user is allowed to access
+  const allPermissions = userStore.current.rolesWithPermissions.flatMap((r) => r.permissions);
 
-    const applicableAttributes = allPermissions
-        .filter(p => p.entity == entity).flatMap(p => p.actions)
-        .filter(a => a.action == action).flatMap(a => a.relations)
-        .filter(r => relations.includes(r.relation)).flatMap(r => r.attributes);
+  const applicableAttributes = allPermissions
+    .filter((p) => p.entity == entity)
+    .flatMap((p) => p.actions)
+    .filter((a) => a.action == action)
+    .flatMap((a) => a.relations)
+    .filter((r) => relations.includes(r.relation))
+    .flatMap((r) => r.attributes);
 
-    // If the user has a wildcard as attribute, they are allowed to access everything, so return true.
-    const hasStar = applicableAttributes.some((a) => a === '*');
-    if (hasStar) return true;
+  // If the user has a wildcard as attribute, they are allowed to access everything, so return true.
+  const hasStar = applicableAttributes.some((a) => a === '*');
+  if (hasStar) return true;
 
-    // If there just needs to be any attribute at least, then return true when there is atleast one applicable attribute
-    if (attributes.includes('any') && applicableAttributes.length > 0) return true;
+  // If there just needs to be any attribute at least, then return true when there is atleast one applicable attribute
+  if (attributes.includes('any') && applicableAttributes.length > 0) return true;
 
-    // Find all attributes that the user should have, but the current set of permissions does not provide
-    const disallowedAttributes = attributes.filter((a) => !applicableAttributes.includes(a));
-    // Return whether the user is allowed to access all attributes
-    return disallowedAttributes.length === 0;
+  // Find all attributes that the user should have, but the current set of permissions does not provide
+  const disallowedAttributes = attributes.filter((a) => !applicableAttributes.includes(a));
+  // Return whether the user is allowed to access all attributes
+  return disallowedAttributes.length === 0;
 }
 
 /**
@@ -70,12 +68,12 @@ export function isAllowed(
  * @returns {string} - The relation, usually own if self, organ if part of organ, and all if there is no relation
  */
 export function getRelation(userid: number): string {
-    const authStore = useAuthStore();
+  const authStore = useAuthStore();
 
-    if (authStore.getUser?.id == userid) return 'own';
+  if (authStore.getUser?.id == userid) return 'own';
 
-    const roles = authStore.getOrgans?.map(r => r.id);
-    if (!roles) return 'all';
-    if (roles.includes(userid)) return 'organ';
-    return 'all'; // No relation means the all relation
+  const roles = authStore.getOrgans?.map((r) => r.id);
+  if (!roles) return 'all';
+  if (roles.includes(userid)) return 'organ';
+  return 'all'; // No relation means the all relation
 }

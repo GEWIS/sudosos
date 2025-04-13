@@ -1,18 +1,18 @@
-@use "sass:list";
-@use "../../../themes/sudosos-light/variables_light";
+@use 'sass:list';
+@use '../../../themes/sudosos-light/variables_light';
 
 // core
 .p-fluid .p-icon-field-left,
 .p-fluid .p-icon-field-right {
-    width: 100%;
+  width: 100%;
 }
 
 .p-icon-field-left > .p-input-icon:first-of-type {
-    left: list.nth(variables_light.$inputPadding, 2);
-    color: variables_light.$inputIconColor;
+  left: list.nth(variables_light.$inputPadding, 2);
+  color: variables_light.$inputIconColor;
 }
 
-.p-icon-field-right > .p-input-icon:last-of-type  {
-    right: list.nth(variables_light.$inputPadding, 2);
-    color: variables_light.$inputIconColor;
+.p-icon-field-right > .p-input-icon:last-of-type {
+  right: list.nth(variables_light.$inputPadding, 2);
+  color: variables_light.$inputIconColor;
 }

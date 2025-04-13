@@ -1,192 +1,192 @@
-@use "../../../themes/sudosos-light/variables_light";
-@use "../../mixins";
+@use '../../../themes/sudosos-light/variables_light';
+@use '../../mixins';
 
 // core
 .p-panelmenu .p-panelmenu-header-action {
-    display: flex;
-    align-items: center;
-    user-select: none;
-    cursor: pointer;
-    position: relative;
-    text-decoration: none;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  cursor: pointer;
+  position: relative;
+  text-decoration: none;
 }
 
 .p-panelmenu .p-panelmenu-header-action:focus {
-    z-index: 1;
+  z-index: 1;
 }
 
 .p-panelmenu .p-submenu-list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .p-panelmenu .p-menuitem-link {
-    display: flex;
-    align-items: center;
-    user-select: none;
-    cursor: pointer;
-    text-decoration: none;
-    position: relative;
-    overflow: hidden;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
 }
 
 .p-panelmenu .p-menuitem-text {
-    line-height: 1;
+  line-height: 1;
 }
 
 // theme
 .p-panelmenu {
-    .p-panelmenu-header {
-        outline: 0 none;
+  .p-panelmenu-header {
+    outline: 0 none;
 
+    .p-panelmenu-header-content {
+      border: variables_light.$accordionHeaderBorder;
+      color: variables_light.$accordionHeaderTextColor;
+      background: variables_light.$accordionHeaderBg;
+      border-radius: variables_light.$borderRadius;
+      transition: variables_light.$listItemTransition;
+      outline-color: transparent;
+
+      .p-panelmenu-header-action {
+        color: variables_light.$accordionHeaderTextColor;
+        padding: variables_light.$accordionHeaderPadding;
+        font-weight: variables_light.$accordionHeaderFontWeight;
+
+        .p-submenu-icon {
+          margin-right: variables_light.$inlineSpacing;
+        }
+
+        .p-menuitem-icon {
+          margin-right: variables_light.$inlineSpacing;
+        }
+      }
+    }
+
+    &:not(.p-disabled) {
+      &:focus-visible {
         .p-panelmenu-header-content {
-            border: variables_light.$accordionHeaderBorder;
-            color: variables_light.$accordionHeaderTextColor;
-            background: variables_light.$accordionHeaderBg;
-            border-radius: variables_light.$borderRadius;
-            transition: variables_light.$listItemTransition;
-            outline-color: transparent;
-
-            .p-panelmenu-header-action {
-                color: variables_light.$accordionHeaderTextColor;
-                padding: variables_light.$accordionHeaderPadding;
-                font-weight: variables_light.$accordionHeaderFontWeight;
-
-                .p-submenu-icon {
-                    margin-right: variables_light.$inlineSpacing;
-                }
-
-                .p-menuitem-icon {
-                    margin-right: variables_light.$inlineSpacing;
-                }
-            }
+          @include mixins.focused-inset();
         }
+      }
+    }
 
-        &:not(.p-disabled) {
-            &:focus-visible {
-                .p-panelmenu-header-content {
-                    @include mixins.focused-inset();
-                }
-            }
+    &:not(.p-highlight):not(.p-disabled):hover {
+      .p-panelmenu-header-content {
+        background: variables_light.$accordionHeaderHoverBg;
+        border-color: variables_light.$accordionHeaderHoverBorderColor;
+        color: variables_light.$accordionHeaderTextHoverColor;
+      }
+    }
+
+    &:not(.p-disabled).p-highlight {
+      .p-panelmenu-header-content {
+        background: variables_light.$accordionHeaderActiveBg;
+        border-color: variables_light.$accordionHeaderActiveBorderColor;
+        color: variables_light.$accordionHeaderTextActiveColor;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+        margin-bottom: 0;
+      }
+
+      &:hover {
+        .p-panelmenu-header-content {
+          border-color: variables_light.$accordionHeaderActiveHoverBorderColor;
+          background: variables_light.$accordionHeaderActiveHoverBg;
+          color: variables_light.$accordionHeaderTextActiveHoverColor;
         }
+      }
+    }
+  }
 
-        &:not(.p-highlight):not(.p-disabled):hover {
+  .p-panelmenu-content {
+    padding: variables_light.$verticalMenuPadding;
+    border: variables_light.$accordionContentBorder;
+    background: variables_light.$accordionContentBg;
+    color: variables_light.$accordionContentTextColor;
+    border-top: 0;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    border-bottom-right-radius: variables_light.$borderRadius;
+    border-bottom-left-radius: variables_light.$borderRadius;
+
+    .p-panelmenu-root-list {
+      outline: 0 none;
+    }
+
+    .p-menuitem {
+      @include mixins.menuitem();
+
+      .p-menuitem-content {
+        .p-menuitem-link {
+          .p-submenu-icon {
+            margin-right: variables_light.$inlineSpacing;
+          }
+        }
+      }
+    }
+
+    .p-menuitem-separator {
+      border-top: variables_light.$divider;
+      margin: variables_light.$menuSeparatorMargin;
+    }
+
+    .p-submenu-list:not(.p-panelmenu-root-list) {
+      padding: variables_light.$treeNodeChildrenPadding;
+    }
+  }
+
+  .p-panelmenu-panel {
+    margin-bottom: variables_light.$accordionSpacing;
+
+    @if variables_light.$accordionSpacing == 0 {
+      .p-panelmenu-header {
+        .p-panelmenu-header-content {
+          border-radius: 0;
+        }
+      }
+
+      .p-panelmenu-content {
+        border-radius: 0;
+      }
+
+      &:not(:first-child) {
+        .p-panelmenu-header {
+          .p-panelmenu-header-content {
+            border-top: 0 none;
+          }
+
+          &:not(.p-highlight):not(.p-disabled):hover,
+          &:not(.p-disabled).p-highlight:hover {
             .p-panelmenu-header-content {
-                background: variables_light.$accordionHeaderHoverBg;
-                border-color: variables_light.$accordionHeaderHoverBorderColor;
-                color: variables_light.$accordionHeaderTextHoverColor;
+              border-top: 0 none;
             }
+          }
+        }
+      }
+
+      &:first-child {
+        .p-panelmenu-header {
+          .p-panelmenu-header-content {
+            border-top-right-radius: variables_light.$borderRadius;
+            border-top-left-radius: variables_light.$borderRadius;
+          }
+        }
+      }
+
+      &:last-child {
+        .p-panelmenu-header:not(.p-highlight) {
+          .p-panelmenu-header-content {
+            border-bottom-right-radius: variables_light.$borderRadius;
+            border-bottom-left-radius: variables_light.$borderRadius;
+          }
         }
 
-        &:not(.p-disabled).p-highlight {
-            .p-panelmenu-header-content {
-                background: variables_light.$accordionHeaderActiveBg;
-                border-color: variables_light.$accordionHeaderActiveBorderColor;
-                color: variables_light.$accordionHeaderTextActiveColor;
-                border-bottom-right-radius: 0;
-                border-bottom-left-radius: 0;
-                margin-bottom: 0;
-            }
-
-            &:hover {
-                .p-panelmenu-header-content {
-                    border-color: variables_light.$accordionHeaderActiveHoverBorderColor;
-                    background: variables_light.$accordionHeaderActiveHoverBg;
-                    color: variables_light.$accordionHeaderTextActiveHoverColor;
-                }
-            }
+        .p-panelmenu-content {
+          border-bottom-right-radius: variables_light.$borderRadius;
+          border-bottom-left-radius: variables_light.$borderRadius;
         }
+      }
     }
-
-    .p-panelmenu-content {
-        padding: variables_light.$verticalMenuPadding;
-        border: variables_light.$accordionContentBorder;
-        background: variables_light.$accordionContentBg;
-        color: variables_light.$accordionContentTextColor;
-        border-top: 0;
-        border-top-right-radius: 0;
-        border-top-left-radius: 0;
-        border-bottom-right-radius: variables_light.$borderRadius;
-        border-bottom-left-radius: variables_light.$borderRadius;
-
-        .p-panelmenu-root-list {
-            outline: 0 none;
-        }
-
-        .p-menuitem {
-            @include mixins.menuitem();
-
-            .p-menuitem-content {
-                .p-menuitem-link { 
-                    .p-submenu-icon {
-                        margin-right: variables_light.$inlineSpacing;
-                    }
-                }
-            }
-        }
-
-        .p-menuitem-separator {
-            border-top: variables_light.$divider;
-            margin: variables_light.$menuSeparatorMargin;
-        }
-
-        .p-submenu-list:not(.p-panelmenu-root-list) {
-            padding: variables_light.$treeNodeChildrenPadding;
-        }
-    }
-
-    .p-panelmenu-panel {
-        margin-bottom: variables_light.$accordionSpacing;
-
-        @if variables_light.$accordionSpacing == 0 {
-            .p-panelmenu-header {
-                .p-panelmenu-header-content {
-                    border-radius: 0;
-                }
-            }
-
-            .p-panelmenu-content {
-                border-radius: 0;
-            }
-
-            &:not(:first-child) {
-                .p-panelmenu-header {
-                    .p-panelmenu-header-content {
-                        border-top: 0 none;
-                    }
-
-                    &:not(.p-highlight):not(.p-disabled):hover,
-                    &:not(.p-disabled).p-highlight:hover {
-                        .p-panelmenu-header-content {
-                            border-top: 0 none;
-                        }
-                    }
-                }
-            }
-
-            &:first-child {
-                .p-panelmenu-header {
-                    .p-panelmenu-header-content {
-                        border-top-right-radius: variables_light.$borderRadius;
-                        border-top-left-radius: variables_light.$borderRadius;
-                    }
-                }
-            }
-
-            &:last-child {
-                .p-panelmenu-header:not(.p-highlight) {
-                    .p-panelmenu-header-content {
-                        border-bottom-right-radius: variables_light.$borderRadius;
-                        border-bottom-left-radius: variables_light.$borderRadius;
-                    }
-                }
-
-                .p-panelmenu-content {
-                    border-bottom-right-radius: variables_light.$borderRadius;
-                    border-bottom-left-radius: variables_light.$borderRadius;
-                }
-            }
-        } 
-    }
+  }
 }

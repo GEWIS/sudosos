@@ -9,17 +9,17 @@ import '@gewis/splash';
 
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
-import Panel from "primevue/panel";
-import Dialog from "primevue/dialog";
-import OverlayPanel from "primevue/overlaypanel";
-import Dropdown from "primevue/dropdown";
-import Toast from "primevue/toast";
+import Panel from 'primevue/panel';
+import Dialog from 'primevue/dialog';
+import OverlayPanel from 'primevue/overlaypanel';
+import Dropdown from 'primevue/dropdown';
+import Toast from 'primevue/toast';
 
+import Message from 'primevue/message';
+import ToastService from 'primevue/toastservice';
 import router from '@/router';
 import App from '@/App.vue';
-import { useSettingStore } from "@/stores/settings.store";
-import Message from "primevue/message";
-import ToastService from "primevue/toastservice";
+import { useSettingStore } from '@/stores/settings.store';
 
 const app = createApp(App);
 
@@ -45,8 +45,9 @@ app.use(createPinia());
 app.mount('#app');
 
 // Refresh alcohol time every hour.
-setInterval(() => {
-  useSettingStore().fetchAlcoholTimeToday();
-}, 1000*60*60);
-
-
+setInterval(
+  () => {
+    void useSettingStore().fetchAlcoholTimeToday();
+  },
+  1000 * 60 * 60,
+);

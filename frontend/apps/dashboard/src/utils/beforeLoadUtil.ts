@@ -1,9 +1,8 @@
-import { useSettingsStore } from '@/stores/settings.store';
 import { clearTokenInStorage, populateStoresFromToken, useAuthStore } from '@sudosos/sudosos-frontend-common';
+import { useSettingsStore } from '@/stores/settings.store';
 import apiService from '@/services/ApiService';
 
 export default async function beforeLoad() {
-
   const settingsStore = useSettingsStore();
   try {
     await settingsStore.fetchMaintenanceMode();

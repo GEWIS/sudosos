@@ -1,65 +1,55 @@
 <template>
   <Dropdown
-      v-model="selectedUser"
-      :options="users"
-      optionLabel="fullName"
-      :loading="loading"
-      :filter="true"
-      autoFilterFocus
-      :filter-fields="['fullName']"
-      :placeholder="placeholder"
-      class="w-full md:w-15rem"
-      @filter="filterUsers"
+    v-model="selectedUser"
+    auto-filter-focus
+    class="md:w-15rem w-full"
+    :filter="true"
+    :filter-fields="['fullName']"
+    :loading="loading"
+    option-label="fullName"
+    :options="users"
+    :placeholder="placeholder"
+    @filter="filterUsers"
   >
-  <template #option="slotProps" >
-    <span :class="{'text-gray-500': isNegative(slotProps.option) === true}">
-      {{ slotProps.option.fullName }} {{ slotProps.option.gewisId ? `(${slotProps.option.gewisId})` : '' }}
-    </span>
-  </template>
+    <template #option="slotProps">
+      <span :class="{ 'text-gray-500': isNegative(slotProps.option) === true }">
+        {{ slotProps.option.fullName }} {{ slotProps.option.gewisId ? `(${slotProps.option.gewisId})` : '' }}
+      </span>
+    </template>
   </Dropdown>
 </template>
 
 <script setup lang="ts">
-import { onMounted, type PropType, ref, watch } from "vue";
-import type { Ref } from "vue";
-import apiService from "@/services/ApiService";
-import { debounce } from "lodash";
-import { type BaseUserResponse, GetAllUsersTypeEnum, type UserResponse } from "@sudosos/sudosos-client";
-import { useUserStore } from "@sudosos/sudosos-frontend-common";
+import { onMounted, ref, watch, type Ref } from 'vue';
+import { debounce } from 'lodash';
+import { type BaseUserResponse, GetAllUsersTypeEnum, type UserResponse } from '@sudosos/sudosos-client';
+import { useUserStore } from '@sudosos/sudosos-frontend-common';
+import { useToast } from 'primevue/usetoast';
+import type { DropdownFilterEvent } from 'primevue/dropdown';
+import apiService from '@/services/ApiService';
+import { handleError } from '@/utils/errorUtils';
 
 const emits = defineEmits(['update:user']);
 
-const props = defineProps({
-  user: {
-    type: Object as PropType<UserResponse>,
+const props = withDefaults(
+  defineProps<{
+    user?: UserResponse;
+    default?: BaseUserResponse;
+    placeholder?: string;
+    type?: GetAllUsersTypeEnum;
+    take?: number;
+    showPositive?: boolean;
+  }>(),
+  {
+    user: undefined,
+    default: undefined,
+    placeholder: '',
+    type: undefined,
+    take: 10,
+    showPositive: true,
   },
-  default: {
-    type: Object as PropType<BaseUserResponse>,
-    required: false,
-  },
-  placeholder: {
-    type: String,
-    required: false,
-    default: ''
-  },
-  type: {
-    type: String as PropType<GetAllUsersTypeEnum>,
-    required: false,
-    default: undefined
-  },
-  take: {
-    type: Number,
-    required: false,
-    default: 10,
-  },
-  showPositive: {
-    type: Boolean,
-    required: false,
-    default: true
-  }
-});
-
-const lastQuery = ref("");
+);
+const lastQuery = ref('');
 const selectedUser: Ref<BaseUserResponse | undefined> = ref(undefined);
 const userStore = useUserStore();
 
@@ -80,10 +70,9 @@ const compareBalance = (a: BaseUserResponse, b: BaseUserResponse) => {
 };
 
 const transformUsers = (userData: BaseUserResponse[]) => {
-  const usersData: (BaseUserResponse & { fullName: string})[]
-      = userData.map((user) => ({
+  const usersData: (BaseUserResponse & { fullName: string })[] = userData.map((user) => ({
     ...user,
-    fullName: `${user.firstName} ${user.lastName}`
+    fullName: `${user.firstName} ${user.lastName}`,
   }));
 
   usersData.sort((a, b) => {
@@ -96,17 +85,23 @@ const transformUsers = (userData: BaseUserResponse[]) => {
   return usersData;
 };
 
-const debouncedSearch = debounce((e: any) => {
+const debouncedSearch = debounce((e: DropdownFilterEvent) => {
   loading.value = true;
-  apiService.user.getAllUsers(props.take, 0, e.value, undefined, undefined, undefined, props.type).then((res) => {
-    users.value = transformUsers(res.data.records);
-  }).finally(() => {
-    loading.value = false;
-  });
+  apiService.user
+    .getAllUsers(props.take, 0, e.value, undefined, undefined, undefined, props.type)
+    .then((res) => {
+      users.value = transformUsers(res.data.records);
+    })
+    .catch((err) => {
+      handleError(err, useToast());
+    })
+    .finally(() => {
+      loading.value = false;
+    });
   lastQuery.value = e.value;
 }, 500);
 
-const filterUsers = (e: any) => {
+const filterUsers = (e: DropdownFilterEvent) => {
   if (e.value.split(' ')[0] !== lastQuery.value) {
     if (e.value.length < 3) return;
     debouncedSearch(e);
@@ -119,31 +114,33 @@ function isNegative(user: BaseUserResponse) {
   else return balance.amount.amount < 0;
 }
 
-onMounted(async () => {
-  apiService.user.getAllUsers(props.take, 0, undefined, undefined, undefined, undefined, props.type).then((res) => {
-    userStore.addUsers(res.data.records);
-    let selected = undefined;
-    if (props.default) {
-      selected = transformUsers([props.default])[0];
-    }
-    userStore.fetchUserBalances(res.data.records, apiService).then(() => {
-      const transformed = transformUsers(res.data.records);
-      if (selected) {
-        users.value = [...transformed, selected];
-        selectedUser.value = selected;
-      } else {
-        users.value = transformed;
+onMounted(() => {
+  apiService.user
+    .getAllUsers(props.take, 0, undefined, undefined, undefined, undefined, props.type)
+    .then((res) => {
+      userStore.addUsers(res.data.records);
+      let selected = undefined;
+      if (props.default) {
+        selected = transformUsers([props.default])[0];
       }
+      void userStore.fetchUserBalances(res.data.records, apiService).then(() => {
+        const transformed = transformUsers(res.data.records);
+        if (selected) {
+          users.value = [...transformed, selected];
+          selectedUser.value = selected;
+        } else {
+          users.value = transformed;
+        }
+      });
+    })
+    .catch((err) => {
+      handleError(err, useToast());
     });
-  });
 });
 
 watch(selectedUser, () => {
   emits('update:user', selectedUser.value);
 });
-
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

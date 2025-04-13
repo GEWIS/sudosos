@@ -1,13 +1,12 @@
-import type { RouteRecordRaw } from "vue-router";
-import DashboardLayout from "@/layout/DashboardLayout.vue";
-import PayoutsView from "@/modules/financial/views/payouts/PayoutsView.vue";
-import InvoiceOverview from "@/modules/financial/views/invoice/InvoiceOverview.vue";
-import InvoiceInfoView from "@/modules/financial/views/invoice/InvoiceInfoView.vue";
-import { isAllowed } from "@/utils/permissionUtils";
-import InvoiceCreateView from "@/modules/financial/views/invoice/InvoiceCreateView.vue";
-import DebtorView from "@/modules/financial/views/debtor/DebtorView.vue";
-import InvoiceAccountOverview from "@/modules/financial/views/invoice/InvoiceAccountOverview.vue";
-import DebtorHandoutView from "@/modules/financial/views/debtor/DebtorHandoutView.vue";
+import type { RouteRecordRaw } from 'vue-router';
+import DashboardLayout from '@/layout/DashboardLayout.vue';
+import PayoutsView from '@/modules/financial/views/payouts/PayoutsView.vue';
+import InvoiceOverview from '@/modules/financial/views/invoice/InvoiceOverview.vue';
+import InvoiceInfoView from '@/modules/financial/views/invoice/InvoiceInfoView.vue';
+import { isAllowed } from '@/utils/permissionUtils';
+import InvoiceCreateView from '@/modules/financial/views/invoice/InvoiceCreateView.vue';
+import DebtorView from '@/modules/financial/views/debtor/DebtorView.vue';
+import DebtorHandoutView from '@/modules/financial/views/debtor/DebtorHandoutView.vue';
 
 export function financialRoutes(): RouteRecordRaw[] {
   return [
@@ -22,8 +21,8 @@ export function financialRoutes(): RouteRecordRaw[] {
           name: 'Debtors',
           meta: {
             requiresAuth: true,
-            isAllowed: () => isAllowed('get', ['own', 'organ'], 'Fine', ['any'])
-          }
+            isAllowed: () => isAllowed('get', ['own', 'organ'], 'Fine', ['any']),
+          },
         },
         {
           path: '/debtor/:id',
@@ -31,8 +30,8 @@ export function financialRoutes(): RouteRecordRaw[] {
           name: 'debtorSingleHandout',
           meta: {
             requiresAuth: true,
-            isAllowed: () => isAllowed('get', ['own', 'organ'], 'Fine', ['any'])
-          }
+            isAllowed: () => isAllowed('get', ['own', 'organ'], 'Fine', ['any']),
+          },
         },
         {
           path: '/invoice',
@@ -40,28 +39,28 @@ export function financialRoutes(): RouteRecordRaw[] {
           name: 'invoices',
           meta: {
             requiresAuth: true,
-            isAllowed: () => isAllowed('get', ['own', 'organ'], 'Invoice', ['any'])
-          }
+            isAllowed: () => isAllowed('get', ['own', 'organ'], 'Invoice', ['any']),
+          },
         },
         {
           path: '/invoice/create',
           component: InvoiceCreateView,
           name: 'invoiceCreate',
           meta: {
-              requiresAuth: true,
-              isAllowed: () => isAllowed('create', ['own', 'organ'], 'Invoice', ['any'])
-          }
+            requiresAuth: true,
+            isAllowed: () => isAllowed('create', ['own', 'organ'], 'Invoice', ['any']),
+          },
         },
         {
           path: '/invoice/:id',
-          redirect: to => {
-              const { id } = to.params;
-              return `/invoice/${id}/info`;
+          redirect: (to) => {
+            const { id } = to.params;
+            return `/invoice/${id as string}/info`;
           },
           meta: {
             requiresAuth: true,
-            isAllowed: () => isAllowed('get', ['own', 'organ'], 'Invoice', ['any'])
-          }
+            isAllowed: () => isAllowed('get', ['own', 'organ'], 'Invoice', ['any']),
+          },
         },
         {
           path: '/invoice/:id/info',
@@ -70,8 +69,8 @@ export function financialRoutes(): RouteRecordRaw[] {
           props: true,
           meta: {
             requiresAuth: true,
-            isAllowed: () => isAllowed('get', ['own', 'organ'], 'Invoice', ['any'])
-          }
+            isAllowed: () => isAllowed('get', ['own', 'organ'], 'Invoice', ['any']),
+          },
         },
         {
           path: '/payout',
@@ -79,10 +78,10 @@ export function financialRoutes(): RouteRecordRaw[] {
           name: 'payouts',
           meta: {
             requiresAuth: true,
-            isAllowed: () => isAllowed('get', ['own', 'organ'], 'SellerPayout', ['any'])
-          }
-        }
-      ]
-    }
+            isAllowed: () => isAllowed('get', ['own', 'organ'], 'SellerPayout', ['any']),
+          },
+        },
+      ],
+    },
   ];
 }

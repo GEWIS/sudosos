@@ -3,88 +3,58 @@
     <template #topAction>
       <div v-if="showEdit" class="mx-2">
         <div v-if="!edit">
-          <Button
-              severity="primary"
-              :label="t('common.edit')"
-              icon="pi pi-pencil"
-              @click="toggleEdit(true)"
-          />
+          <Button icon="pi pi-pencil" :label="t('common.edit')" severity="primary" @click="toggleEdit(true)" />
         </div>
         <div v-else class="flex flex-row gap-2">
-          <Button
-              severity="primary"
-              :label="t('common.save')"
-              icon="pi pi-check"
-              @click="handleSave"
-          />
-          <Button
-              severity="secondary"
-              :label="t('common.close')"
-              icon="pi pi-times"
-              @click="cancel"
-          />
+          <Button icon="pi pi-check" :label="t('common.save')" severity="primary" @click="handleSave" />
+          <Button icon="pi pi-times" :label="t('common.close')" severity="secondary" @click="cancel" />
         </div>
       </div>
     </template>
     <slot :edit="edit"></slot>
-    <div v-if="create && form" class="flex flex-row gap-2 justify-content-end w-full mt-3">
-      <div class="flex flex-row gap-2 justify-content-end w-full mt-3">
+    <div v-if="create && form" class="flex flex-row gap-2 justify-content-end mt-3 w-full">
+      <div class="flex flex-row gap-2 justify-content-end mt-3 w-full">
         <ActionButton
-            type="submit"
-            :disabled="!props.form?.context.meta.value.valid"
-            :label="t('common.create')"
-            :submitting="form.context.isSubmitting.value"
-            :result="form.success?.value != null"
-            @click="form.submit"
+          :disabled="!props.form?.context.meta.value.valid"
+          :label="t('common.create')"
+          :result="form.success?.value != null"
+          :submitting="form.context.isSubmitting.value"
+          type="submit"
+          @click="form.submit"
         />
-        <Button
-            type="button"
-            severity="secondary"
-            icon="pi pi-times"
-            @click="cancel"
-            :label="t('common.cancel')"
-        />
+        <Button icon="pi pi-times" :label="t('common.cancel')" severity="secondary" type="button" @click="cancel" />
       </div>
     </div>
   </CardComponent>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, type PropType } from 'vue';
-import CardComponent from "@/components/CardComponent.vue";
+<script setup lang="ts" generic="T extends AnyObject">
+import { ref, computed } from 'vue';
 import Button from 'primevue/button';
-import { useI18n } from "vue-i18n";
-import { type Form, setSuccess } from "@/utils/formUtils";
-import ActionButton from "@/components/ActionButton.vue";
+import { useI18n } from 'vue-i18n';
+import { type AnyObject } from 'yup';
+import CardComponent from '@/components/CardComponent.vue';
+import { type Form, setSuccess } from '@/utils/formUtils';
+import ActionButton from '@/components/ActionButton.vue';
 
 const { t } = useI18n();
 
 const showEdit = computed(() => props.enableEdit && !props.create);
 
-const props = defineProps({
-  header: {
-    type: String,
-    required: true
+const props = withDefaults(
+  defineProps<{
+    header: string;
+    modelValue?: boolean;
+    enableEdit?: boolean;
+    create?: boolean;
+    form?: Form<T>;
+  }>(),
+  {
+    enableEdit: true,
+    create: false,
+    form: undefined,
   },
-  modelValue: {
-    type: Boolean,
-    required: false,
-  },
-  enableEdit: {
-    type: Boolean,
-    required: false,
-    default: true,
-  },
-  create: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
-  form: {
-    type: Object as PropType<Form<any>>,
-    required: false,
-  },
-});
+);
 
 const emit = defineEmits(['update:modelValue', 'save', 'cancel']);
 
@@ -104,9 +74,6 @@ const handleSave = () => {
   emit('save');
   toggleEdit(false);
 };
-
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

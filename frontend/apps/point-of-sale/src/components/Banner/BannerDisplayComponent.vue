@@ -1,6 +1,6 @@
 <template>
-  <div class="banner-content absolute bottom-0 flex flex-row justify-content-center">
-    <img style="object-fit: contain;" class="w-full h-full" :src="getBannerImageSrc(banner)" :alt="banner.name" />
+  <div class="absolute banner-content bottom-0 flex flex-row justify-content-center">
+    <img :alt="banner.name" class="h-full w-full" :src="getBannerImageSrc(banner)" style="object-fit: contain" />
   </div>
 </template>
 
@@ -10,8 +10,8 @@ import { getBannerImageSrc } from '@/utils/imageUtils';
 defineProps({
   banner: {
     type: Object as () => BannerResponse,
-    required: true
-  }
+    required: true,
+  },
 });
 </script>
 

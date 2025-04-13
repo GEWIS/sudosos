@@ -1,73 +1,79 @@
 <template>
   <div class="flex flex-column">
     <span>
-      {{ new Date(transactionInfo.createdAt!!).toLocaleString('nl-NL', {
-        dateStyle: 'short',
-        timeStyle: 'short'
-      }) }}
+      {{
+        new Date(transactionInfo.createdAt!!).toLocaleString('nl-NL', {
+          dateStyle: 'short',
+          timeStyle: 'short',
+        })
+      }}
     </span>
     <span v-if="transactionInfo.from.id == userStore.current.user!!.id">
-      {{ t('components.mutations.userBoughtAt', {pos: transactionInfo.pointOfSale.name}) }}
+      {{ t('components.mutations.userBoughtAt', { pos: transactionInfo.pointOfSale.name }) }}
     </span>
     <span v-if="transactionInfo.from.id != userStore.current.user!!.id">
-      {{ t('components.mutations.otherBoughtAt',
-        {user: `${transactionInfo.from.firstName} ${transactionInfo.from.lastName}`,
-          pos: transactionInfo.pointOfSale.name}) }}
+      {{
+        t('components.mutations.otherBoughtAt', {
+          user: `${transactionInfo.from.firstName} ${transactionInfo.from.lastName}`,
+          pos: transactionInfo.pointOfSale.name,
+        })
+      }}
     </span>
-    <span v-if="
-        transactionInfo.createdBy
-        && transactionInfo.createdBy.id != transactionInfo.from.id
-      ">
-      {{ t('components.mutations.putInBy',
-        {createdBy: `${transactionInfo.createdBy.firstName} ${transactionInfo.createdBy.lastName}`}) }}
+    <span v-if="transactionInfo.createdBy && transactionInfo.createdBy.id != transactionInfo.from.id">
+      {{
+        t('components.mutations.putInBy', {
+          createdBy: `${transactionInfo.createdBy.firstName} ${transactionInfo.createdBy.lastName}`,
+        })
+      }}
     </span>
 
-    <br>
+    <br />
     <DataTable
-      :value="productsInfo"
       :pt="{
-        tfoot: 'font-bold'
+        tfoot: 'font-bold',
       }"
+      :value="productsInfo"
     >
-      <Column field="amount" header="#" class="p-1"></Column>
-      <Column field="product.name" :header="t('common.title')" class="p-1"></Column>
+      <Column class="p-1" field="amount" header="#"></Column>
+      <Column class="p-1" field="product.name" :header="t('common.title')"></Column>
       <Column
-        field="product.priceInclVat"
-        :header="t('common.price')"
         class="p-1"
-        footerClass="font-bold"
+        field="product.priceInclVat"
         :footer="t('common.total')"
+        footer-class="font-bold"
+        :header="t('common.price')"
       >
         <template #body="product">
-            {{ formatPrice(product.data.product.priceInclVat) }}
-        </template></Column>
+          {{ formatPrice(product.data.product.priceInclVat) }}
+        </template></Column
+      >
       <Column
-        field="totalPriceInclVat"
-        :header="t('common.amount')"
         class="p-1"
-        footerClass="font-bold"
+        field="totalPriceInclVat"
         :footer="formatPrice(transactionInfo.totalPriceInclVat)"
-        >
+        footer-class="font-bold"
+        :header="t('common.amount')"
+      >
         <template #body="product">
-            {{ formatPrice(product.data.totalPriceInclVat) }}
+          {{ formatPrice(product.data.totalPriceInclVat) }}
         </template>
       </Column>
     </DataTable>
 
-    <a @click="sendEmail(transactionInfo, productsInfo)" class="underline text-right cursor-pointer ">
+    <a class="cursor-pointer text-right underline" @click="sendEmail(transactionInfo, productsInfo)">
       {{ t('components.mutations.notYou') }}
     </a>
   </div>
 </template>
 <script setup lang="ts">
-import { formatPrice } from "@/utils/formatterUtils";
-import { sendEmail } from "@/utils/mailUtil";
-import type { SubTransactionRowResponse } from "@sudosos/sudosos-client/src/api";
-import type { TransactionResponse } from "@sudosos/sudosos-client";
+import type { SubTransactionRowResponse } from '@sudosos/sudosos-client/src/api';
+import type { TransactionResponse } from '@sudosos/sudosos-client';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
-import { useI18n } from "vue-i18n";
+import { useI18n } from 'vue-i18n';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import { sendEmail } from '@/utils/mailUtil';
+import { formatPrice } from '@/utils/formatterUtils';
 
 const { t } = useI18n();
 
@@ -80,7 +86,7 @@ defineProps({
   },
   productsInfo: {
     type: Object as () => Array<SubTransactionRowResponse>,
-      required: true
-    }
+    required: true,
+  },
 });
 </script>

@@ -1,116 +1,116 @@
-@use "../../../themes/sudosos-light/variables_light";
-@use "../../../themes/variables";
-@use "../../mixins";
+@use '../../../themes/sudosos-light/variables_light';
+@use '../../../themes/variables';
+@use '../../mixins';
 
 @use 'sass:math';
 
 // core
 .p-steps {
-    position: relative;
+  position: relative;
 }
 
 .p-steps .p-steps-list {
-    padding: 0;
-    margin: 0;
-    list-style-type: none;
-    display: flex;
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+  display: flex;
 }
 
 .p-steps-item {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    flex: 1 1 auto;
-    overflow: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 
 .p-steps-item .p-menuitem-link {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    overflow: hidden;
-    text-decoration: none;
-    cursor: pointer;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .p-steps.p-steps-readonly .p-steps-item {
-    cursor: auto;
+  cursor: auto;
 }
 
 .p-steps-item.p-steps-current .p-menuitem-link {
-    cursor: default;
+  cursor: default;
 }
 
 .p-steps-title {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .p-steps-number {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .p-steps-title {
-    display: block;
+  display: block;
 }
 
 // theme
 .p-steps {
-    .p-steps-item {
-        .p-menuitem-link {
-            background: transparent;
-            transition: variables_light.$listItemTransition;
-            border-radius: variables_light.$borderRadius;
-            background: variables_light.$stepsItemBg;
-            outline-color: transparent;
+  .p-steps-item {
+    .p-menuitem-link {
+      background: transparent;
+      transition: variables_light.$listItemTransition;
+      border-radius: variables_light.$borderRadius;
+      background: variables_light.$stepsItemBg;
+      outline-color: transparent;
 
-            .p-steps-number {
-                color: variables_light.$stepsItemNumberColor;
-                border: variables_light.$stepsItemBorder;
-                background: variables_light.$stepsItemBg;
-                min-width: variables_light.$stepsItemNumberWidth;
-                height: variables_light.$stepsItemNumberHeight;
-                line-height: variables_light.$stepsItemNumberHeight;
-                font-size: variables_light.$stepsItemNumberFontSize;
-                z-index: 1;
-                border-radius: variables_light.$stepsItemNumberBorderRadius;
-            }
+      .p-steps-number {
+        color: variables_light.$stepsItemNumberColor;
+        border: variables_light.$stepsItemBorder;
+        background: variables_light.$stepsItemBg;
+        min-width: variables_light.$stepsItemNumberWidth;
+        height: variables_light.$stepsItemNumberHeight;
+        line-height: variables_light.$stepsItemNumberHeight;
+        font-size: variables_light.$stepsItemNumberFontSize;
+        z-index: 1;
+        border-radius: variables_light.$stepsItemNumberBorderRadius;
+      }
 
-            .p-steps-title {
-                margin-top: variables_light.$inlineSpacing;
-                color: variables_light.$stepsItemTextColor;
-            }
+      .p-steps-title {
+        margin-top: variables_light.$inlineSpacing;
+        color: variables_light.$stepsItemTextColor;
+      }
 
-            &:not(.p-disabled):focus-visible {
-                @include mixins.focused();
-            }
-        }
-
-        &.p-highlight {
-            .p-steps-number {
-                background: variables.$highlightBg;
-                color: variables.$highlightTextColor;
-            }
-
-            .p-steps-title {
-                font-weight: variables_light.$stepsItemActiveFontWeight;
-                color: variables_light.$textColor;
-            }
-        }
-
-        &:before {
-            content:' ';
-            border-top: variables_light.$divider;
-            width: 100%;
-            top: 50%;
-            left: 0;
-            display: block;
-            position: absolute;
-            margin-top: math.div(-1 * variables_light.$stepsItemNumberHeight, 2);
-        }
+      &:not(.p-disabled):focus-visible {
+        @include mixins.focused();
+      }
     }
+
+    &.p-highlight {
+      .p-steps-number {
+        background: variables.$highlightBg;
+        color: variables.$highlightTextColor;
+      }
+
+      .p-steps-title {
+        font-weight: variables_light.$stepsItemActiveFontWeight;
+        color: variables_light.$textColor;
+      }
+    }
+
+    &:before {
+      content: ' ';
+      border-top: variables_light.$divider;
+      width: 100%;
+      top: 50%;
+      left: 0;
+      display: block;
+      position: absolute;
+      margin-top: math.div(-1 * variables_light.$stepsItemNumberHeight, 2);
+    }
+  }
 }

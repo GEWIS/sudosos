@@ -1,35 +1,34 @@
-name: "✨ Feature Request"
+name: '✨ Feature Request'
 description: Suggest a feature or enhancement to improve SudoSOS frontend. Please make sure that this a feature for the frontend and not the backend.
-labels: ["Type: Idea"]
+labels: ['Type: Idea']
 body:
-    -   type: dropdown
-        id: browsers
-        attributes:
-            label: Is this a feature for the SudoSOS point of sale or for the SudoSOS dashboard?
-            multiple: true
-            options:
-                - Point of sale
-                - Dashboard
-                - Both
-        validations:
-            required: true
-    -   type: textarea
-        id: feature
-        attributes:
-            label: What would you like?
-            description: A clear description of the feature or enhancement wanted on the SudoSOS frontend.
-            placeholder: I'd like to be able to...
-        validations:
-            required: true
-    -   type: textarea
-        id: reason
-        attributes:
-            label: Why is this needed?
-            description: A clear description of why this would be useful to have in the SudoSOS frontend. 
-            placeholder: I want this because...
-    -   type: textarea
-        id: other
-        attributes:
-            label: Other information
-            placeholder: Any other details?
-
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: Is this a feature for the SudoSOS point of sale or for the SudoSOS dashboard?
+      multiple: true
+      options:
+        - Point of sale
+        - Dashboard
+        - Both
+    validations:
+      required: true
+  - type: textarea
+    id: feature
+    attributes:
+      label: What would you like?
+      description: A clear description of the feature or enhancement wanted on the SudoSOS frontend.
+      placeholder: I'd like to be able to...
+    validations:
+      required: true
+  - type: textarea
+    id: reason
+    attributes:
+      label: Why is this needed?
+      description: A clear description of why this would be useful to have in the SudoSOS frontend.
+      placeholder: I want this because...
+  - type: textarea
+    id: other
+    attributes:
+      label: Other information
+      placeholder: Any other details?

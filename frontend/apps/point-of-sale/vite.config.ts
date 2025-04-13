@@ -8,13 +8,11 @@ const PROXY_URL = 'https://sudosos.test.gewis.nl';
 export default defineConfig(() => {
   return {
     base: './',
-    plugins: [
-      vue(),
-    ],
+    plugins: [vue()],
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
-      }
+      },
     },
     optimizeDeps: {
       exclude: ['ToastService'],
@@ -24,9 +22,9 @@ export default defineConfig(() => {
         scss: {
           additionalData: `
               @import "./src/scss/styles.scss";
-            `
-        }
-      }
+            `,
+        },
+      },
     },
     server: {
       port: 5174,
@@ -37,11 +35,11 @@ export default defineConfig(() => {
           rewrite: (path) => path.replace(/^\/api\/v1/, ''),
         },
         '/static': {
-          target:  PROXY_URL + '/static',
+          target: PROXY_URL + '/static',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/static/, ''),
-        }
-      }
-    }
+        },
+      },
+    },
   };
 });

@@ -1,22 +1,21 @@
-@use "sass:list";
-@use "../themes/sudosos-light/variables_light";
-@use "mixins";
+@use 'sass:list';
+@use '../themes/sudosos-light/variables_light';
+@use 'mixins';
 
 :root {
-    @if list.length(variables_light.$colors) > 0 {
-        @each $name, $color in variables_light.$colors {
-            @for $i from 0 through 5 {
-                @if ($i == 0) {
-                    --#{$name}-50:#{mixins.tint($color, (5 - $i) * 19%)};
-                }
-                @else {
-                    --#{$name}-#{$i * 100}:#{mixins.tint($color, (5 - $i) * 19%)};
-                }
-            }
-            
-            @for $i from 1 through 4 {
-                --#{$name}-#{($i + 5) * 100}:#{mixins.shade($color, $i * 15%)};
-            }
+  @if list.length(variables_light.$colors) > 0 {
+    @each $name, $color in variables_light.$colors {
+      @for $i from 0 through 5 {
+        @if ($i == 0) {
+          --#{$name}-50: #{mixins.tint($color, (5 - $i) * 19%)};
+        } @else {
+          --#{$name}-#{$i * 100}: #{mixins.tint($color, (5 - $i) * 19%)};
         }
+      }
+
+      @for $i from 1 through 4 {
+        --#{$name}-#{($i + 5) * 100}: #{mixins.shade($color, $i * 15%)};
+      }
     }
+  }
 }

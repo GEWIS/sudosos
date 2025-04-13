@@ -1,119 +1,106 @@
 <template>
   <div class="page-container">
     <div class="page-title">{{ t('modules.admin.userOverview.title') }}</div>
-    <CardComponent :header="t('modules.admin.userOverview.list.header')" class="full-width">
+    <CardComponent class="full-width" :header="t('modules.admin.userOverview.list.header')">
       <DataTable
         v-model:filters="filters"
-        :value="sortedUsers.length > 0 ? sortedUsers : allUsersWithFullName"
+        filter-display="menu"
+        :global-filter-fields="['type', 'firstName', 'lastName', 'fullName']"
+        lazy
+        :loading="isLoading"
         paginator
         :rows="10"
-        :rowsPerPageOptions="[5, 10, 25, 50, 100]"
-        filterDisplay="menu"
-        :globalFilterFields="['type', 'firstName', 'lastName', 'fullName']"
-        lazy
-        :totalRecords="searchQuery.split(' ').length > 1 ? sortedUsers.length : totalRecords"
-        :loading="isLoading"
+        :rows-per-page-options="[5, 10, 25, 50, 100]"
+        :total-records="searchQuery.split(' ').length > 1 ? sortedUsers.length : totalRecords"
+        :value="sortedUsers.length > 0 ? sortedUsers : allUsersWithFullName"
+        @filter="onFilter"
         @page="onPage($event)"
         @sort="onSort"
-        @filter="onFilter"
       >
         <template #header>
-          <div class="flex flex-row align-items-center justify-content-between">
-            <IconField iconPosition="left">
+          <div class="align-items-center flex flex-row justify-content-between">
+            <IconField icon-position="left">
               <InputIcon class="pi pi-search"> </InputIcon>
               <InputText v-model="searchQuery" :placeholder="t('common.search')" />
             </IconField>
-            <Button :label="t('common.create')" icon="pi pi-plus" @click="showDialog = true" />
+            <Button icon="pi pi-plus" :label="t('common.create')" @click="showDialog = true" />
           </div>
         </template>
         <Column field="gewisId" :header="t('common.gewisId')">
-          <template #body v-if="isLoading">
-            <Skeleton class="w-6 my-1 h-1rem surface-300"/>
+          <template v-if="isLoading" #body>
+            <Skeleton class="h-1rem my-1 surface-300 w-6" />
           </template>
         </Column>
         <Column field="firstName" :header="t('common.firstName')">
-          <template #body v-if="isLoading">
-            <Skeleton class="w-8 my-1 h-1rem surface-300"/>
+          <template v-if="isLoading" #body>
+            <Skeleton class="h-1rem my-1 surface-300 w-8" />
           </template>
         </Column>
         <Column field="lastName" :header="t('common.lastName')">
-          <template #body v-if="isLoading">
-            <Skeleton class="w-8 my-1 h-1rem surface-300"/>
+          <template v-if="isLoading" #body>
+            <Skeleton class="h-1rem my-1 surface-300 w-8" />
           </template>
         </Column>
-        <Column field="type" :header="t('common.type')" :showFilterMatchModes="false">
+        <Column field="type" :header="t('common.type')" :show-filter-match-modes="false">
           <template #filter="{ filterModel, filterCallback }">
             <Dropdown
               v-model="filterModel.value"
-              @change="filterCallback()"
+              option-label="name"
+              option-value="name"
               :options="userTypes"
-              optionLabel="name"
-              optionValue="name"
               :placeholder="t('common.placeholders.selectType')"
+              @change="filterCallback()"
             />
           </template>
-          <template #body v-if="isLoading">
-            <Skeleton class="w-5 my-1 h-1rem surface-300"/>
+          <template v-if="isLoading" #body>
+            <Skeleton class="h-1rem my-1 surface-300 w-5" />
           </template>
         </Column>
-        <Column field="active" :showFilterMatchModes="false">
+        <Column field="active" :show-filter-match-modes="false">
           <template #header>
-            <div class="flex flex-row gap-2 align-items-center">
-              {{ t("common.active") }}
-              <Checkbox
-                v-model="isActiveFilter"
-                @change="onFilter()"
-                binary
-              />
+            <div class="align-items-center flex flex-row gap-2">
+              {{ t('common.active') }}
+              <Checkbox v-model="isActiveFilter" binary @change="onFilter()" />
             </div>
           </template>
-          <template #body v-if="isLoading">
-            <Skeleton class="w-2 my-1 h-1rem surface-300"/>
+          <template v-if="isLoading" #body>
+            <Skeleton class="h-1rem my-1 surface-300 w-2" />
           </template>
         </Column>
 
         <Column field="ofAge">
           <template #header>
-            <div class="flex flex-row gap-2 align-items-center">
+            <div class="align-items-center flex flex-row gap-2">
               {{ t('common.ofAge') }}
-              <Checkbox
-                v-model="ofAgeFilter"
-                @change="onFilter()"
-                binary
-              />
+              <Checkbox v-model="ofAgeFilter" binary @change="onFilter()" />
             </div>
           </template>
-          <template #body v-if="isLoading">
-            <Skeleton class="w-3 my-1 h-1rem surface-300"/>
+          <template v-if="isLoading" #body>
+            <Skeleton class="h-1rem my-1 surface-300 w-3" />
           </template>
         </Column>
-        <Column
-          headerStyle="width: 3rem; text-align: center"
-          bodyStyle="text-align: center; overflow: visible"
-        >
-          <template #body v-if="isLoading">
-            <Skeleton class="w-4 my-1 h-1rem surface-300"/>
+        <Column body-style="text-align: center; overflow: visible" header-style="width: 3rem; text-align: center">
+          <template v-if="isLoading" #body>
+            <Skeleton class="h-1rem my-1 surface-300 w-4" />
           </template>
-          <template #body="slotProps" v-else>
-            <Button
-              @click="handleInfoPush(slotProps.data.id)"
-              type="button"
-              icon="pi pi-info-circle"
-              outlined
-            />
+          <template v-else #body="slotProps">
+            <Button icon="pi pi-info-circle" outlined type="button" @click="handleInfoPush(slotProps.data.id)" />
           </template>
-
         </Column>
       </DataTable>
     </CardComponent>
-    <FormDialog :header="t('modules.admin.forms.user.header')" v-model:modelValue="showDialog"
-                :form="form" :is-editable="true">
+    <FormDialog
+      v-model:model-value="showDialog"
+      :form="form"
+      :header="t('modules.admin.forms.user.header')"
+      :is-editable="true"
+    >
       <template #form="slotProps">
         <UserCreateForm
-            :form="slotProps.form"
-            v-model:isVisible="showDialog"
-            :edit="true"
-            @submit:success="showDialog = false"
+          v-model:is-visible="showDialog"
+          :edit="true"
+          :form="slotProps.form"
+          @submit:success="showDialog = false"
         />
       </template>
     </FormDialog>
@@ -121,27 +108,27 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, type Ref, watch } from "vue";
-import apiService, { DEFAULT_PAGINATION_MAX } from '@/services/ApiService';
-import type { GewisUserResponse, UserResponse } from "@sudosos/sudosos-client";
-import DataTable from 'primevue/datatable';
+import { computed, onMounted, ref, type Ref, watch } from 'vue';
+import type { GewisUserResponse, UserResponse } from '@sudosos/sudosos-client';
+import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import { FilterMatchMode } from 'primevue/api';
-import Checkbox from "primevue/checkbox";
+import Checkbox from 'primevue/checkbox';
 import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
-import { createUserSchema, userTypes } from "@/utils/validation-schema";
 import Fuse from 'fuse.js';
+import Skeleton from 'primevue/skeleton';
+import IconField from 'primevue/iconfield';
+import InputIcon from 'primevue/inputicon';
+import { useI18n } from 'vue-i18n';
+import { useUserStore } from '@sudosos/sudosos-frontend-common';
+import FormDialog from '@/components/FormDialog.vue';
+import UserCreateForm from '@/modules/admin/components/users/forms/UserCreateForm.vue';
+import { schemaToForm } from '@/utils/formUtils';
 import CardComponent from '@/components/CardComponent.vue';
-import Skeleton from "primevue/skeleton";
-import IconField from "primevue/iconfield";
-import InputIcon from "primevue/inputicon";
-import { useI18n } from "vue-i18n";
-import FormDialog from "@/components/FormDialog.vue";
-import UserCreateForm from "@/modules/admin/components/users/forms/UserCreateForm.vue";
-import { schemaToForm } from "@/utils/formUtils";
-import { useUserStore } from "@sudosos/sudosos-frontend-common";
-import router from "@/router";
+import { createUserSchema, userTypes } from '@/utils/validation-schema';
+import apiService, { DEFAULT_PAGINATION_MAX } from '@/services/ApiService';
+import router from '@/router';
 
 const { t } = useI18n();
 const userStore = useUserStore();
@@ -150,7 +137,6 @@ const searchQuery: Ref<string> = ref('');
 
 const showDialog: Ref<boolean> = ref(false);
 const form = schemaToForm(createUserSchema);
-
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -166,50 +152,50 @@ const allUsersWithFullName: Ref<GewisUserResponse[]> = computed(() => {
   return allUsers.value.map((user) => {
     return {
       ...user,
-      fullName: `${user.firstName} ${user.lastName}`
+      fullName: `${user.firstName} ${user.lastName}`,
     };
   });
 });
 
 onMounted(() => {
   isLoading.value = true;
-  delayedAPICall(0);
+  void delayedAPICall(0);
   isLoading.value = false;
 });
 
-function debounce(func: (skip: number) => Promise<void>, delay: number): (skip: number) => Promise<void> {
+function debounce(func: (skip: number) => Promise<void>, delay: number): (skip: number) => void {
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
-  return async function(...args: [number]) {
+  return function (...args: [number]) {
     if (debounceTimer !== null) {
       clearTimeout(debounceTimer);
     }
     debounceTimer = setTimeout(() => {
-      func(...args);
+      void func(...args);
     }, delay);
   };
 }
 
 const apiCall: (skip: number) => Promise<void> = async (skip: number) => {
   await apiService.user
-      .getAllUsers(
-          DEFAULT_PAGINATION_MAX,
-          skip,
-          searchQuery.value.split(' ')[0] || '',
-          isActiveFilter.value ? isActiveFilter.value : undefined,
-          ofAgeFilter.value,
-          undefined,
-          filters.value.type.value || undefined
-      )
-      .then((response) => {
-        totalRecords.value = response.data._pagination.count || 0;
-        allUsers.value = response.data.records;
-      });
+    .getAllUsers(
+      DEFAULT_PAGINATION_MAX,
+      skip,
+      searchQuery.value.split(' ')[0] || '',
+      isActiveFilter.value ? isActiveFilter.value : undefined,
+      ofAgeFilter.value,
+      undefined,
+      filters.value.type.value || undefined,
+    )
+    .then((response) => {
+      totalRecords.value = response.data._pagination.count || 0;
+      allUsers.value = response.data.records;
+    });
 };
 
 const delayedAPICall = debounce(apiCall, 250);
 
-const onPage = (event: any) => {
-  delayedAPICall(event.originalEvent.first);
+const onPage = (event: DataTablePageEvent) => {
+  delayedAPICall(event.first);
 };
 // TODO: Fix sorting
 // See: https://github.com/GEWIS/sudosos-frontend-vue3/issues/19
@@ -234,22 +220,19 @@ const sortedUsers = computed(() => {
     keys: ['fullName'],
     isCaseSensitive: false,
     shouldSort: true,
-    threshold: 0.2
+    threshold: 0.2,
   })
     .search(searchQuery.value || '')
     .map((r) => r.item);
   return fuzzed;
 });
 
-async function handleInfoPush(userId: number) {
-  const clickedUser: UserResponse | undefined = allUsers.value.find(
-      (record) => record.id == userId
-  );
+function handleInfoPush(userId: number) {
+  const clickedUser: UserResponse | undefined = allUsers.value.find((record) => record.id == userId);
   if (clickedUser) userStore.addUser(clickedUser);
   const route = router.resolve({ name: 'user', params: { userId } });
   window.open(route.href, '_blank');
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

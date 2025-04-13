@@ -1,5 +1,5 @@
 <template>
-  <div v-if="posNotLoaded" class="flex justify-content-center align-items-center h-full">
+  <div v-if="posNotLoaded" class="align-items-center flex h-full justify-content-center">
     <div>
       <ProgressSpinner aria-label="Loading" />
     </div>
@@ -8,38 +8,40 @@
     <div class="wrapper">
       <div class="pos-wrapper">
         <TopUpWarningComponent></TopUpWarningComponent>
-        <UserSearchComponent v-if="currentState === PointOfSaleState.SEARCH_USER" @cancel-search="cancelSearch()"/>
-        <PointOfSaleDisplayComponent :point-of-sale="currentPos" v-if="currentState === PointOfSaleState.DISPLAY_POS"/>
-        <BuyerSelectionComponent v-if="currentState === PointOfSaleState.SELECT_CREATOR"
-                                 @cancel-select-creator="cancelSelectCreator()"/>
+        <UserSearchComponent v-if="currentState === PointOfSaleState.SEARCH_USER" @cancel-search="cancelSearch()" />
+        <PointOfSaleDisplayComponent v-if="currentState === PointOfSaleState.DISPLAY_POS" :point-of-sale="currentPos" />
+        <BuyerSelectionComponent
+          v-if="currentState === PointOfSaleState.SELECT_CREATOR"
+          @cancel-select-creator="cancelSelectCreator()"
+        />
         <ActivityComponent />
       </div>
       <div class="cart-wrapper">
-        <CartComponent @select-user="selectUser()" @select-creator="selectCreator()"/>
+        <CartComponent @select-creator="selectCreator()" @select-user="selectUser()" />
       </div>
     </div>
   </div>
   <SettingsIconComponent />
-  <ScannersUpdateComponent :handle-nfc-update="nfcUpdate"/>
-  <NfcSearchComponent :handle-nfc-search="cartStore.setBuyerFromNfc"/>
+  <ScannersUpdateComponent :handle-nfc-update="nfcUpdate" />
+  <NfcSearchComponent :handle-nfc-search="cartStore.setBuyerFromNfc" />
 </template>
 <script setup lang="ts">
 import { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
 import { onMounted, Ref, ref, watch } from 'vue';
+import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import PointOfSaleDisplayComponent from '@/components/PointOfSaleDisplay/PointOfSaleDisplayComponent.vue';
 import SettingsIconComponent from '@/components/SettingsIconComponent.vue';
 import CartComponent from '@/components/Cart/CartComponent.vue';
 import { useActivityStore } from '@/stores/activity.store';
 import ActivityComponent from '@/components/ActivityComponent.vue';
-import UserSearchComponent from "@/components/UserSearch/UserSearchComponent.vue";
-import BuyerSelectionComponent from "@/components/BuyerSelect/BuyerSelectionComponent.vue";
-import ScannersUpdateComponent from "@/components/ScannersUpdateComponent.vue";
-import NfcSearchComponent from "@/components/NfcSearchComponent.vue";
-import { useAuthStore } from "@sudosos/sudosos-frontend-common";
-import apiService from "@/services/ApiService";
-import { useCartStore } from "@/stores/cart.store";
-import TopUpWarningComponent from "@/components/TopUpWarningComponent.vue";
+import UserSearchComponent from '@/components/UserSearch/UserSearchComponent.vue';
+import BuyerSelectionComponent from '@/components/BuyerSelect/BuyerSelectionComponent.vue';
+import ScannersUpdateComponent from '@/components/ScannersUpdateComponent.vue';
+import NfcSearchComponent from '@/components/NfcSearchComponent.vue';
+import apiService from '@/services/ApiService';
+import { useCartStore } from '@/stores/cart.store';
+import TopUpWarningComponent from '@/components/TopUpWarningComponent.vue';
 
 const authStore = useAuthStore();
 const posNotLoaded = ref(true);
@@ -47,7 +49,6 @@ const currentPos: Ref<PointOfSaleWithContainersResponse | undefined> = ref(undef
 const pointOfSaleStore = usePointOfSaleStore();
 const activityStore = useActivityStore();
 const cartStore = useCartStore();
-
 
 enum PointOfSaleState {
   SEARCH_USER,
@@ -61,15 +62,18 @@ const fetchPointOfSale = async () => {
   const storedPos = pointOfSaleStore.getPos;
   const target = storedPos ? storedPos.id : 1;
 
-  await pointOfSaleStore.fetchPointOfSale(target).catch(async () => {
-    await pointOfSaleStore.fetchPointOfSale(1);
-  }).finally(() => {
-    if (pointOfSaleStore.pointOfSale) {
-      currentPos.value = pointOfSaleStore.pointOfSale;
-    }
-    posNotLoaded.value = false;
-    activityStore.restartTimer();
-  });
+  await pointOfSaleStore
+    .fetchPointOfSale(target)
+    .catch(async () => {
+      await pointOfSaleStore.fetchPointOfSale(1);
+    })
+    .finally(() => {
+      if (pointOfSaleStore.pointOfSale) {
+        currentPos.value = pointOfSaleStore.pointOfSale;
+      }
+      posNotLoaded.value = false;
+      activityStore.restartTimer();
+    });
 };
 
 onMounted(fetchPointOfSale);
@@ -94,7 +98,7 @@ watch(
   () => pointOfSaleStore.pointOfSale,
   (newPos) => {
     if (newPos) currentPos.value = newPos;
-  }
+  },
 );
 
 const nfcUpdate = async (nfcCode: string) => {
@@ -102,13 +106,11 @@ const nfcUpdate = async (nfcCode: string) => {
     const userId = authStore.user?.id;
     if (!userId) return;
 
-    await apiService.user.updateUserNfc(userId, { nfcCode: nfcCode }).then(async () => {
-    });
+    await apiService.user.updateUserNfc(userId, { nfcCode: nfcCode }).then(async () => {});
   } catch (error) {
     console.error(error);
   }
 };
-
 </script>
 <style scoped lang="scss">
 .wrapper {

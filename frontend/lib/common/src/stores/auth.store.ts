@@ -1,23 +1,29 @@
 import { defineStore } from 'pinia';
 import {
-  AuthenticationEanRequest, AuthenticationKeyRequest,
-  AuthenticationLDAPRequest, AuthenticationPinRequest,
+  AuthenticationEanRequest,
+  AuthenticationKeyRequest,
+  AuthenticationLDAPRequest,
+  AuthenticationPinRequest,
   AuthenticationResponse,
-  GEWISAuthenticationPinRequest, GewiswebAuthenticationRequest, UpdatePinRequest,
+  GEWISAuthenticationPinRequest,
+  GewiswebAuthenticationRequest,
+  UpdatePinRequest,
   UpdateLocalRequest,
-  UserResponse, UpdateNfcRequest, AcceptTosRequest, AuthenticationNfcRequest
-} from "@sudosos/sudosos-client";
-import { useUserStore } from "./user.store";
-import { jwtDecode, JwtPayload } from "jwt-decode";
-import { ApiService } from "../services/ApiService";
-import { clearTokenInStorage, getTokenFromStorage, setTokenInStorage } from "../helpers/TokenHelper";
+  UserResponse,
+  UpdateNfcRequest,
+  AcceptTosRequest,
+  AuthenticationNfcRequest,
+} from '@sudosos/sudosos-client';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { ApiService } from '../services/ApiService';
+import { clearTokenInStorage, getTokenFromStorage, setTokenInStorage } from '../helpers/TokenHelper';
+import { useUserStore } from './user.store';
 
 interface AuthStoreState {
-  user: UserResponse | null,
-  organs: UserResponse[],
-  token: string | null,
-  acceptedToS: string | null,
-
+  user: UserResponse | null;
+  organs: UserResponse[];
+  token: string | null;
+  acceptedToS: string | null;
 }
 export const useAuthStore = defineStore({
   id: 'auth',
@@ -39,18 +45,18 @@ export const useAuthStore = defineStore({
     },
     getOrgans(): UserResponse[] | null {
       return this.organs;
-    }
+    },
   },
   actions: {
     handleResponse(res: AuthenticationResponse) {
-      const { user, token, rolesWithPermissions,organs, acceptedToS } = res;
-      if ( !user || !token || !rolesWithPermissions || !organs || !acceptedToS) return;
+      const { user, token, rolesWithPermissions, organs, acceptedToS } = res;
+      if (!user || !token || !rolesWithPermissions || !organs || !acceptedToS) return;
       this.user = user;
       this.token = token;
       setTokenInStorage(this.token);
       this.organs = organs;
       this.acceptedToS = acceptedToS;
-      if (this.acceptedToS === "ACCEPTED") {
+      if (this.acceptedToS === 'ACCEPTED') {
         const userStore = useUserStore();
         userStore.setCurrentUser(user);
         userStore.setCurrentRolesWithPermissions(rolesWithPermissions);
@@ -70,7 +76,7 @@ export const useAuthStore = defineStore({
     async ldapLogin(accountName: string, password: string, service: ApiService) {
       const req: AuthenticationLDAPRequest = {
         accountName,
-        password
+        password,
       };
       await service.authenticate.ldapAuthentication(req).then((res) => {
         this.handleResponse(res.data);
@@ -78,7 +84,8 @@ export const useAuthStore = defineStore({
     },
     async gewisWebLogin(nonce: string, token: string, service: ApiService) {
       const req: GewiswebAuthenticationRequest = {
-        nonce, token
+        nonce,
+        token,
       };
       await service.authenticate.gewisWebAuthentication(req).then((res) => {
         this.handleResponse(res.data);
@@ -86,7 +93,8 @@ export const useAuthStore = defineStore({
     },
     async externalPinLogin(userId: number, pin: string, service: ApiService) {
       const req: AuthenticationPinRequest = {
-        pin, userId
+        pin,
+        userId,
       };
       await service.authenticate.pinAuthentication(req).then((res) => {
         this.handleResponse(res.data);
@@ -94,7 +102,7 @@ export const useAuthStore = defineStore({
     },
     async nfcLogin(nfcCode: string, service: ApiService) {
       const req: AuthenticationNfcRequest = {
-        nfcCode
+        nfcCode,
       };
       await service.authenticate.nfcAuthentication(req).then((res) => {
         this.handleResponse(res.data);
@@ -102,7 +110,7 @@ export const useAuthStore = defineStore({
     },
     async eanLogin(eanCode: string, service: ApiService) {
       const req: AuthenticationEanRequest = {
-        eanCode
+        eanCode,
       };
       await service.authenticate.eanAuthentication(req).then((res) => {
         this.handleResponse(res.data);
@@ -110,7 +118,8 @@ export const useAuthStore = defineStore({
     },
     async apiKeyLogin(key: string, userId: number, service: ApiService) {
       const req: AuthenticationKeyRequest = {
-        key, userId
+        key,
+        userId,
       };
 
       await service.authenticate.keyAuthentication(req).then((res) => {
@@ -120,7 +129,7 @@ export const useAuthStore = defineStore({
     async gewisLdapLogin(accountName: string, password: string, service: ApiService) {
       const req: AuthenticationLDAPRequest = {
         accountName,
-        password
+        password,
       };
       await service.authenticate.gewisLDAPAuthentication(req).then((res) => {
         this.handleResponse(res.data);
@@ -129,21 +138,21 @@ export const useAuthStore = defineStore({
     async updateUserPin(pin: string, service: ApiService) {
       if (!this.user) return;
       const req: UpdatePinRequest = {
-        pin
+        pin,
       };
       await service.user.updateUserPin(this.user.id, req);
     },
     async updateUserLocalPassword(password: string, service: ApiService) {
       if (!this.user) return;
       const req: UpdateLocalRequest = {
-        password
+        password,
       };
       await service.user.updateUserLocalPassword(this.user.id, req);
     },
     async updateUserNfc(nfcCode: string, service: ApiService) {
       if (!this.user) return;
       const req: UpdateNfcRequest = {
-        nfcCode
+        nfcCode,
       };
       await service.user.updateUserNfc(this.user.id, req);
     },
@@ -154,7 +163,7 @@ export const useAuthStore = defineStore({
     async updateUserToSAccepted(extensiveDataProcessing: boolean, service: ApiService) {
       if (!this.user) return;
       const req: AcceptTosRequest = {
-        extensiveDataProcessing: extensiveDataProcessing
+        extensiveDataProcessing: extensiveDataProcessing,
       };
       await service.user.acceptTos(req);
       const res = await service.authenticate.refreshToken();
@@ -177,6 +186,6 @@ export const useAuthStore = defineStore({
       this.acceptedToS = null;
 
       clearTokenInStorage();
-    }
-  }
+    },
+  },
 });

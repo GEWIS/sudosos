@@ -1,76 +1,76 @@
-@use "../../../themes/sudosos-light/variables_light";
-@use "../../mixins";
+@use '../../../themes/sudosos-light/variables_light';
+@use '../../mixins';
 
 // core
 .p-fieldset-legend > a,
 .p-fieldset-legend > span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .p-fieldset-toggleable .p-fieldset-legend a {
-    cursor: pointer;
-    user-select: none;
-    overflow: hidden;
-    position: relative;
-    text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+  position: relative;
+  text-decoration: none;
 }
 
 .p-fieldset-legend-text {
-    line-height: 1;
+  line-height: 1;
 }
 
 // theme
 .p-fieldset {
-    border: variables_light.$panelContentBorder;
-    background: variables_light.$panelContentBg;
-    color: variables_light.$panelContentTextColor;
+  border: variables_light.$panelContentBorder;
+  background: variables_light.$panelContentBg;
+  color: variables_light.$panelContentTextColor;
+  border-radius: variables_light.$borderRadius;
+
+  .p-fieldset-legend {
+    padding: variables_light.$panelHeaderPadding;
+    border: variables_light.$panelHeaderBorder;
+    color: variables_light.$panelHeaderTextColor;
+    background: variables_light.$panelHeaderBg;
+    font-weight: variables_light.$panelHeaderFontWeight;
     border-radius: variables_light.$borderRadius;
+  }
 
+  &.p-fieldset-toggleable {
     .p-fieldset-legend {
+      padding: 0;
+      transition: variables_light.$actionIconTransition;
+
+      a {
         padding: variables_light.$panelHeaderPadding;
-        border: variables_light.$panelHeaderBorder;
         color: variables_light.$panelHeaderTextColor;
-        background: variables_light.$panelHeaderBg;
-        font-weight: variables_light.$panelHeaderFontWeight;
         border-radius: variables_light.$borderRadius;
-    }
+        transition: variables_light.$listItemTransition;
+        outline-color: transparent;
 
-    &.p-fieldset-toggleable {
-        .p-fieldset-legend {
-            padding: 0;
-            transition: variables_light.$actionIconTransition;
-
-            a {
-                padding: variables_light.$panelHeaderPadding;
-                color: variables_light.$panelHeaderTextColor;
-                border-radius: variables_light.$borderRadius;
-                transition: variables_light.$listItemTransition;
-                outline-color: transparent;
-
-                .p-fieldset-toggler {
-                    margin-right: variables_light.$inlineSpacing;
-                }
-
-                &:focus-visible {
-                    @include mixins.focused();
-                }
-
-                &:hover {
-                    color: variables_light.$panelHeaderTextHoverColor;
-                }
-            }
-
-            &:hover {
-                background: variables_light.$panelHeaderHoverBg;
-                border-color: variables_light.$panelHeaderHoverBorderColor;
-                color: variables_light.$panelHeaderTextHoverColor;
-            }
+        .p-fieldset-toggler {
+          margin-right: variables_light.$inlineSpacing;
         }
-    }
 
-    .p-fieldset-content {
-        padding: variables_light.$panelContentPadding;
+        &:focus-visible {
+          @include mixins.focused();
+        }
+
+        &:hover {
+          color: variables_light.$panelHeaderTextHoverColor;
+        }
+      }
+
+      &:hover {
+        background: variables_light.$panelHeaderHoverBg;
+        border-color: variables_light.$panelHeaderHoverBorderColor;
+        color: variables_light.$panelHeaderTextHoverColor;
+      }
     }
+  }
+
+  .p-fieldset-content {
+    padding: variables_light.$panelContentPadding;
+  }
 }

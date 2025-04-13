@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <span @click="showVersion = !showVersion" class="copyright">
+    <span class="copyright" @click="showVersion = !showVersion">
       <b v-if="!showVersion">{{ t('components.footer.copyright') }}</b>
       <b v-else>{{ localBuild ? t('components.footer.localBuild') : `${branch}#${commit}` }}</b>
     </span>
@@ -13,22 +13,21 @@
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import FooterTermsOfServiceModal from '@/components/footer/FooterTermsOfServiceModal.vue';
 import FooterContactModal from '@/components/footer/FooterContactModal.vue';
-import { computed, ref } from 'vue';
-import { useI18n } from "vue-i18n";
 
-const branch: string | undefined =  import.meta.env.VITE_GIT_COMMIT_BRANCH;
-const commit: string | undefined =  import.meta.env.VITE_GIT_COMMIT_SHA;
+const branch: string | undefined = import.meta.env.VITE_GIT_COMMIT_BRANCH;
+const commit: string | undefined = import.meta.env.VITE_GIT_COMMIT_SHA;
 const showVersion = ref(false);
 const { t } = useI18n();
 
-const localBuild = computed (() => {
+const localBuild = computed(() => {
   if (typeof branch !== 'string' || branch.length === 0) return true;
   if (typeof commit !== 'string' || commit.length === 0) return true;
   return false;
 });
-
 </script>
 
 <style scoped>
@@ -49,5 +48,4 @@ b {
   color: black;
   margin: 0 1rem;
 }
-
 </style>
