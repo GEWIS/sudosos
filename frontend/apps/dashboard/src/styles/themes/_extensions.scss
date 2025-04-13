@@ -29,9 +29,8 @@ body {
   margin: 0;
 }
 
-/* Fix menubar color to GEWIS red */
 .p-menubar {
-  background: variables.$primaryColor;
+  background: inherit;
 }
 
 /* Fix original font */

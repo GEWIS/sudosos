@@ -1,5 +1,5 @@
 <template>
-  <nav class="bg-primary flex justify-content-around w-full">
+  <nav class="bg-primary flex justify-content-around w-full" :class="isBeta ? 'bg-green-500' : 'bg-primary'">
     <Menubar class="hidden mb:flex" :model="navItems">
       <template #start>
         <router-link class="align-items-center flex flex-row font-bold no-underline py-1 text-white" to="/">
@@ -84,6 +84,7 @@ import apiService from '@/services/ApiService';
 
 import { useOpenInvoiceAccounts } from '@/mixins/openInvoiceAccountsMixin';
 import { isAllowed } from '@/utils/permissionUtils';
+import { isBetaEnabled } from '@/utils/betaUitl';
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const router = useRouter();
@@ -97,6 +98,8 @@ const handleLogout = () => {
   authStore.logout();
   void router.push('/');
 };
+
+const isBeta = isBetaEnabled();
 
 const { pendingPayouts } = usePendingPayouts();
 const { openInvoiceAccounts } = useOpenInvoiceAccounts();
