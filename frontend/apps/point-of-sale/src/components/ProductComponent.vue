@@ -5,7 +5,9 @@
            class="product-card-image" :src="image" :alt="product.name" @click="addToCart"/>
       <div v-if="product.featured" class="promo-tag">PROMO</div>
     </div>
-    <p class="product-name text-overflow font-size-md font-semibold m-0 px-2" >{{ product.name }}</p>
+    <div class="product-name-wrapper">
+      <p class="product-name font-size-md font-semibold m-0 px-2" >{{ product.name }}</p>
+    </div>
     <p class="product-price font-size-sm m-0">€{{ productPrice }}</p>
   </div>
 </template>
@@ -103,7 +105,6 @@ const startFlyingAnimation = async () => {
 </script>
 
 <style scoped lang="scss">
-
 .product-card-image {
   width: $product-card-size;
   height: $product-card-size;
@@ -123,11 +124,8 @@ const startFlyingAnimation = async () => {
 
 .product-card {
   padding: 0 0 8px 0;
-  height: fit-content;
   border-radius: $border-radius;
-  overflow: hidden;
   width: var(--product-card-width);
-  text-align: center;
 
   &.pulsing {
     animation: pulse 0.5s infinite;
@@ -150,6 +148,25 @@ const startFlyingAnimation = async () => {
   text-align: center;
   font-size: 1.2em;
   padding: 5px 0;
+}
+
+.product-name-wrapper {
+  height: calc(1.2em * 2.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.product-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1;
+  padding-bottom: 0.1em;
 }
 
 .product-price {
