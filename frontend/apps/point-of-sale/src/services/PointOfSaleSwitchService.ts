@@ -1,3 +1,4 @@
+import { ref } from 'vue';
 import { PointOfSaleResponse } from '@sudosos/sudosos-client';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { usePointOfSaleStore } from '@/stores/pos.store';
@@ -5,6 +6,7 @@ import { useCartStore } from '@/stores/cart.store';
 import { useActivityStore } from '@/stores/activity.store';
 
 let originalColor: string = '';
+export const rowBackground = ref('bg-red-100');
 
 /**
  * Class to keep all logic regarding switching of the Point of Sale in one place.
@@ -42,8 +44,10 @@ export class PointOfSaleSwitchService {
     if (target.owner?.id === 18214 && !target.useAuthentication) {
       originalColor = document.documentElement.style.getPropertyValue('--accent-color');
       document.documentElement.style.setProperty('--accent-color', '#0f492e');
+      rowBackground.value = 'bg-green-100';
     } else {
       document.documentElement.style.setProperty('--accent-color', originalColor);
+      rowBackground.value = 'bg-red-100';
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div
-    class="bg-red-100 border-round-xl flex-container font-semibold font-size-lg my-1 my-3 py-3 shadow-1 text-center user-row"
-    :class="{ inactive: !active }"
+    class="border-round-xl flex-container font-semibold font-size-lg my-1 my-3 py-3 shadow-1 text-center user-row"
+    :class="[rowBackground, { inactive: !active }]"
     @click="selectUser"
   >
     {{ displayName() }}
@@ -12,6 +12,7 @@
 <script setup lang="ts">
 import { GewisUserResponse, UserResponse } from '@sudosos/sudosos-client';
 import { useCartStore } from '@/stores/cart.store';
+import { rowBackground } from '@/services/PointOfSaleSwitchService';
 
 const props = defineProps({
   user: {
