@@ -1,5 +1,5 @@
 <template>
-  <nav class="bg-primary flex justify-content-around w-full" :class="isBeta ? 'bg-green-500' : 'bg-primary'">
+  <nav class="flex justify-content-around w-full" :class="isBeta ? 'bg-green-500' : 'bg-primary'">
     <Menubar class="hidden mb:flex" :model="navItems">
       <template #start>
         <router-link class="align-items-center flex flex-row font-bold no-underline py-1 text-white" to="/">
