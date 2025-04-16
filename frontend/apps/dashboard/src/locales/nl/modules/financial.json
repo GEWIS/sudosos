@@ -68,7 +68,8 @@
           "header": "Facturen Account Overzicht",
           "balance": "Saldo",
           "type": "INVOICE"
-        }
+        },
+        "backDate": "Factuur transactie is in andere financiële jaar."
       },
       "payout": {
         "title": "Uitbetalingsoverzicht",

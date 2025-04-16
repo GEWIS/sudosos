@@ -14,12 +14,26 @@
       :value="invoices"
       @page="onPage"
     >
-      <Column field="date" :header="t('common.date')">
+      <Column field="id" :header="t('common.id')">
         <template #body="slotProps">
           <div class="cell-content">
             <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
             <span v-else>
-              {{ formatDateFromString(slotProps.data.createdAt) }}
+              {{ slotProps.data.id }}
+            </span>
+          </div>
+        </template>
+      </Column>
+
+      <Column field="date" :header="t('common.date')">
+        <template #body="{ data }">
+          <div class="cell-content">
+            <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
+            <span v-else-if="isBackDate(data)" v-tooltip="t('modules.financial.invoice.backDate')" class="text-red-500">
+              {{ formatDateFromString(data.date) }}
+            </span>
+            <span v-else>
+              {{ formatDateFromString(data.date) }}
             </span>
           </div>
         </template>
@@ -117,6 +131,7 @@ import { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client/src/api'
 import { type Ref, ref } from 'vue';
 import { formatPrice, formatDateFromString } from '@/utils/formatterUtils';
 import router from '@/router';
+import type { InvoiceResponse } from '@sudosos/sudosos-client';
 
 defineProps({
   invoices: {
@@ -165,6 +180,19 @@ function viewInvoice(id: number) {
 const filters = ref({
   'currentState.state': { value: null, matchMode: 'equals' },
 });
+
+// isBackDate should check if the createdAt date is in the same 202Y-07-01 202(Y+1)-07-01 range
+function isBackDate(invoice: InvoiceResponse): boolean {
+  if (!invoice.createdAt || !invoice.date) return false;
+
+  const year = new Date(invoice.date).getFullYear();
+  const from = new Date(year, 6, 1); // 202Y-07-01
+  const to = new Date(year + 1, 6, 1); // 202(Y+1)-07-01
+
+  const createdAt = new Date(invoice.createdAt);
+
+  return !(createdAt >= from && createdAt < to);
+}
 </script>
 
 <style scoped lang="scss">

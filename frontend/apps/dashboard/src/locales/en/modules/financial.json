@@ -68,7 +68,8 @@
           "header": "Invoice Account Overview",
           "balance": "Balance",
           "type": "INVOICE"
-        }
+        },
+        "backDate": "Invoice transaction is in different financial year."
       },
       "payout": {
         "title": "Payout overview",

@@ -15,7 +15,7 @@
       </div>
       <TabView class="w-full">
         <TabPanel v-for="year in years" :key="year" :header="year.toString()">
-          <InvoiceTableState :year="year" />
+          <InvoiceTableYear :year="year" />
         </TabPanel>
       </TabView>
     </div>
@@ -27,7 +27,7 @@ import TabPanel from 'primevue/tabpanel';
 import TabView from 'primevue/tabview';
 import { useI18n } from 'vue-i18n';
 import Button from 'primevue/button';
-import InvoiceTableState from '@/modules/financial/components/invoice/InvoiceTableState.vue';
+import InvoiceTableYear from '@/modules/financial/components/invoice/InvoiceTableYear.vue';
 import router from '@/router';
 import InvoiceAccountOverview from '@/modules/financial/views/invoice/InvoiceAccountOverview.vue';
 
