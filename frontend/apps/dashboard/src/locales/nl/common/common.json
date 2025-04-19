@@ -108,7 +108,8 @@
         "payout": {
           "verify": "Verificatie succesvol",
           "details": "Uitbetaling is geverifieerd."
-        }
+        },
+        "writeOffCreated": "Succesvol een afschrijving gemaakt."
       },
       "error": {
         "error": "Error",
@@ -152,7 +153,8 @@
       "flaggedTransactions": "Gemarkeerde transacties",
       "debtors": "Schuldigen",
       "invoiceAccounts": "Facturen Account Overzicht",
-      "fines": "Boetes"
+      "fines": "Boetes",
+      "writeOffs": "Afschrijvingen"
     },
     "validation": {
       "number": {

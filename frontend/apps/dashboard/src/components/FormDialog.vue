@@ -31,8 +31,17 @@
             emits('close');
           "
         />
+        <ConfirmButton
+          v-if="isEditable && confirm"
+          :confirm-label="t('common.confirm')"
+          :disabled="!props.form.context.meta.value.valid"
+          icon="pi pi-check"
+          :initial-label="t('common.save')"
+          type="submit"
+          @confirm="props.form.submit"
+        />
         <Button
-          v-if="isEditable"
+          v-if="isEditable && !confirm"
           :disabled="!props.form.context.meta.value.valid"
           icon="pi pi-check"
           :label="t('common.save')"
@@ -51,6 +60,7 @@ import { useI18n } from 'vue-i18n';
 import { type AnyObject } from 'yup';
 import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
 import type { Form } from '@/utils/formUtils';
+import ConfirmButton from '@/components/ConfirmButton.vue';
 
 const { t } = useI18n();
 
@@ -62,6 +72,7 @@ const props = withDefaults(
     isEditable: boolean;
     deletable?: boolean;
     deleteLabel?: string;
+    confirm?: boolean;
   }>(),
   {
     header: '',

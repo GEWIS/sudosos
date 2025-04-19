@@ -115,14 +115,18 @@ function isNegative(user: BaseUserResponse) {
 }
 
 onMounted(() => {
+  let selected = undefined;
+  if (props.default) {
+    // Quick load the default user
+    selected = transformUsers([props.default])[0];
+    users.value = [selected];
+    selectedUser.value = selected;
+  }
+
   apiService.user
     .getAllUsers(props.take, 0, undefined, undefined, undefined, undefined, props.type)
     .then((res) => {
       userStore.addUsers(res.data.records);
-      let selected = undefined;
-      if (props.default) {
-        selected = transformUsers([props.default])[0];
-      }
       void userStore.fetchUserBalances(res.data.records, apiService).then(() => {
         const transformed = transformUsers(res.data.records);
         if (selected) {

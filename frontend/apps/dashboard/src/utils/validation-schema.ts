@@ -158,3 +158,8 @@ export const createInvoiceObject = yup.object({
   date: yup.string().required(),
   attention: yup.string(),
 });
+
+export const createWriteOffSchema = yup.object({
+  user: yup.mixed<BaseUserResponse>().required(),
+  balance: yup.number().required().default(0).max(0, t('modules.financial.forms.write-off.negative')),
+});

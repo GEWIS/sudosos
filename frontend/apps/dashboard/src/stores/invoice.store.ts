@@ -105,7 +105,22 @@ export const useInvoiceStore = defineStore('invoice', {
     async fetchAllNegativeInvoiceUsers(): Promise<Record<number, BalanceResponse>> {
       return fetchAllPages<BalanceResponse>((take, skip) =>
         // @ts-expect-error PaginatedBalanceResponse is the same as PaginatedResult<BalanceResponse>
-        ApiService.balance.getAllBalance(null, null, -1, null, null, null, 'INVOICE', null, null, false, take, skip),
+        ApiService.balance.getAllBalance(
+          undefined,
+          undefined,
+          -1,
+          undefined,
+          undefined,
+          undefined,
+          // @ts-expect-error not sure why typescript thinks this is wrong
+          'INVOICE',
+          undefined,
+          undefined,
+          false,
+          undefined,
+          take,
+          skip,
+        ),
       ).then((users) => {
         users.forEach((user: BalanceResponse) => {
           this.negativeInvoiceUsers[user.id] = user;

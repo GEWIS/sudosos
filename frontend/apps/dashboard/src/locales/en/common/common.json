@@ -109,7 +109,8 @@
         "payout": {
           "verify": "Verification Success",
           "details": "Payout is verified."
-        }
+        },
+        "writeOffCreated": "Successfully created write-off."
       },
       "error": {
         "error": "Error",
@@ -153,7 +154,8 @@
       "flaggedTransactions": "Flagged transactions",
       "debtors": "Debtors",
       "invoiceAccounts": "Invoice Account Overview",
-      "fines": "Fines"
+      "fines": "Fines",
+      "writeOffs": "Write-Offs"
     },
     "validation": {
       "number": {

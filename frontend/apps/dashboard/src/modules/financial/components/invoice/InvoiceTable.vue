@@ -129,9 +129,9 @@ import Dropdown, { type DropdownChangeEvent } from 'primevue/dropdown';
 import { useI18n } from 'vue-i18n';
 import { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client/src/api';
 import { type Ref, ref } from 'vue';
+import type { InvoiceResponse } from '@sudosos/sudosos-client';
 import { formatPrice, formatDateFromString } from '@/utils/formatterUtils';
 import router from '@/router';
-import type { InvoiceResponse } from '@sudosos/sudosos-client';
 
 defineProps({
   invoices: {

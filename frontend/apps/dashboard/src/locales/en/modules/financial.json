@@ -98,6 +98,28 @@
           "postalCode": "Postal code",
           "city": "City",
           "country": "Country"
+        },
+        "write-off": {
+          "negative": "Can only create a write-off if the balance is negative.",
+          "warning": "Creating a write-off will also delete the user's account."
+        }
+      },
+      "write-offs": {
+        "title": "Write-offs",
+        "fine": "Fine",
+        "table": {
+          "header": "Write-offs overview"
+        },
+        "overview": {
+          "header": "Inactive debtors overview"
+        },
+        "delete": {
+          "delete": "Delete write-off",
+          "not-possible": "Write offs cannot be deleted."
+        },
+        "create": "Create write-off",
+        "downloadPdf": {
+          "not-possible": "This is not yet possible."
         }
       }
     }

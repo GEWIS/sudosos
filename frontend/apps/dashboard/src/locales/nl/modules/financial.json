@@ -80,6 +80,24 @@
         "approve": "Goedkeuren",
         "deny": "Afwijzen"
       },
+      "write-offs": {
+        "title": "Afschrijvingen",
+        "fine": "Boeten",
+        "table": {
+          "header": "Afschrijvingen overzicht"
+        },
+        "overview": {
+          "header": "Inactieve debiteuren overzicht"
+        },
+        "delete": {
+          "delete": "Afschrijving verwijderen",
+          "not-possible": "Afschrijvingen kunnen niet worden verwijderd."
+        },
+        "create": "Afschrijving aanmaken",
+        "downloadPdf": {
+          "not-possible": "Dit is nog niet mogelijk."
+        }
+      },
       "forms": {
         "payout": {
           "for": "Voor",
@@ -98,6 +116,10 @@
           "postalCode": "Postcode",
           "city": "Stad",
           "country": "Land"
+        },
+        "write-offs": {
+          "negative": "Kan alleen een negatieve afschrijving maken.",
+          "warning": "Het maken van een afschrijving zal ook de gebruiker verwijderen."
         }
       }
     }

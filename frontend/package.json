@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@gewis/splash": "^2.4.0",
-    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#a42a71ab23845ab2d661e89a3800f4fc16297294",
+    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#d434de83b43a13603e6fa1a129546d4321e3562c",
     "axios": "^1.7.7",
     "dinero.js": "^1.9.1",
     "fuse.js": "^7.0.0",
