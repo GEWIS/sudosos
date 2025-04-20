@@ -84,7 +84,7 @@ import apiService from '@/services/ApiService';
 
 import { useOpenInvoiceAccounts } from '@/mixins/openInvoiceAccountsMixin';
 import { isAllowed } from '@/utils/permissionUtils';
-import { isBetaEnabled } from '@/utils/betaUitl';
+import { isBetaEnabled } from '@/utils/betaUtil';
 import { useInactiveDebtors } from '@/mixins/inactiveDebtorsMixin';
 const userStore = useUserStore();
 const authStore = useAuthStore();
