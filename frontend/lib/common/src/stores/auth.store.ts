@@ -160,14 +160,18 @@ export const useAuthStore = defineStore({
       if (!this.user) return;
       return (await service.user.updateUserKey(this.user.id)).data;
     },
+    async refreshToken(service: ApiService) {
+      return service.authenticate.refreshToken().then((res) => {
+        this.handleResponse(res.data);
+      });
+    },
     async updateUserToSAccepted(extensiveDataProcessing: boolean, service: ApiService) {
       if (!this.user) return;
       const req: AcceptTosRequest = {
         extensiveDataProcessing: extensiveDataProcessing,
       };
       await service.user.acceptTos(req);
-      const res = await service.authenticate.refreshToken();
-      this.handleResponse(res.data);
+      await this.refreshToken(service);
       return;
     },
     extractStateFromToken() {

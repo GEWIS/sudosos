@@ -17,6 +17,7 @@ import Toast from 'primevue/toast';
 
 import Message from 'primevue/message';
 import ToastService from 'primevue/toastservice';
+import { setupWebSocket } from '@sudosos/sudosos-frontend-common';
 import router from '@/router';
 import App from '@/App.vue';
 import { useSettingStore } from '@/stores/settings.store';
@@ -43,6 +44,8 @@ app.component('Message', Message);
 app.component('Toast', Toast);
 app.use(createPinia());
 app.mount('#app');
+
+setupWebSocket();
 
 // Refresh alcohol time every hour.
 setInterval(
