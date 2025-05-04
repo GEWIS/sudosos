@@ -7,7 +7,11 @@
   <div v-else class="main-content">
     <div class="wrapper">
       <div class="pos-wrapper">
-        <TopUpWarningComponent></TopUpWarningComponent>
+        <TopUpWarningComponent
+          v-if="shouldShowTopUpWarning"
+          :show="showTopUpWarning"
+          @update:show="handleTopUpWarningUpdate"
+        />
         <UserSearchComponent v-if="currentState === PointOfSaleState.SEARCH_USER" @cancel-search="cancelSearch()" />
         <PointOfSaleDisplayComponent v-if="currentState === PointOfSaleState.DISPLAY_POS" :point-of-sale="currentPos" />
         <BuyerSelectionComponent
@@ -27,7 +31,7 @@
 </template>
 <script setup lang="ts">
 import { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
-import { onMounted, Ref, ref, watch } from 'vue';
+import { computed, onMounted, Ref, ref, watch } from 'vue';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import PointOfSaleDisplayComponent from '@/components/PointOfSaleDisplay/PointOfSaleDisplayComponent.vue';
@@ -58,6 +62,21 @@ enum PointOfSaleState {
 
 const currentState = ref(PointOfSaleState.DISPLAY_POS);
 
+const showTopUpWarning = ref(false);
+const hasShownTopUpWarning = ref(false);
+
+const shouldShowTopUpWarning = computed(() => {
+  const inDebt = cartStore.checkBuyerInDebt();
+  return inDebt && !hasShownTopUpWarning.value;
+});
+
+const handleTopUpWarningUpdate = (value: boolean) => {
+  showTopUpWarning.value = value;
+  if (!value) {
+    hasShownTopUpWarning.value = true;
+  }
+};
+
 const fetchPointOfSale = async () => {
   const storedPos = pointOfSaleStore.getPos;
   const target = storedPos ? storedPos.id : 1;
@@ -73,6 +92,10 @@ const fetchPointOfSale = async () => {
       }
       posNotLoaded.value = false;
       activityStore.restartTimer();
+
+      if (shouldShowTopUpWarning.value) {
+        showTopUpWarning.value = true;
+      }
     });
 };
 

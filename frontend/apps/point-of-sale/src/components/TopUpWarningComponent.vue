@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    v-model:visible="showTopUpWarningDialog"
+    v-model:visible="visible"
     :closable="false"
     :content-style="{ width: '35rem' }"
     :dismissable-mask="false"
@@ -34,12 +34,21 @@ import { computed, onMounted, ref } from 'vue';
 import { useCartStore } from '@/stores/cart.store';
 import { formatPrice } from '@/utils/FormatUtils';
 
-const cartStore = useCartStore();
-
-const showTopUpWarning = ref(true);
-const showTopUpWarningDialog = computed(() => {
-  return checkUserInDebt.value && showTopUpWarning.value;
+const props = defineProps({
+  show: {
+    type: Boolean,
+    required: true,
+  },
 });
+
+const emit = defineEmits(['update:show']);
+
+const visible = computed({
+  get: () => props.show,
+  set: (value) => emit('update:show', value),
+});
+
+const cartStore = useCartStore();
 
 const checkUserInDebt = computed(() => cartStore.checkBuyerInDebt());
 
@@ -50,11 +59,12 @@ const formattedBuyerBalance = computed(() => {
 });
 
 const topUpProgress = ref(5);
+
 let topUpInterval: number | undefined;
+
 const showConfirmButton = ref(false);
 
 const startTopUpCountdown = () => {
-  showTopUpWarning.value = true;
   topUpProgress.value = 5;
   showConfirmButton.value = false;
 
@@ -71,7 +81,7 @@ const startTopUpCountdown = () => {
 };
 
 const closeDialog = () => {
-  showTopUpWarning.value = false;
+  visible.value = false;
 };
 
 onMounted(() => {
