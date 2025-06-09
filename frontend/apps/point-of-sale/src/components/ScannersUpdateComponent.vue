@@ -1,6 +1,6 @@
 <template>
   <div class="nfc-icon" @click="() => (nfcModalVisible = true)">
-    <div class="pi pi-id-card text-6xl" />
+    <div class="pi pi-id-card" style="font-size: 3rem" />
   </div>
   <Dialog
     ref="nfcModal"
@@ -14,7 +14,7 @@
     :style="{ width: '30vw', class: ['container'] }"
     @show="addListenerOnDialogueOverlay(nfcModal!)"
   >
-    <div class="align-items-center flex flex-column">
+    <div class="items-center flex flex-col">
       <div id="scanners" class="scanners" />
       <ProgressSpinner
         animation-duration="1s"

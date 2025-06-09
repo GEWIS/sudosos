@@ -1,5 +1,5 @@
 <template>
-  <div class="align-items-center flex flex-column gap-3">
+  <div class="items-center flex flex-col gap-3">
     <div class="p-3 picture-container">
       <img v-if="imageSrc" alt="Product" class="product-image" :src="imageSrc" />
       <img v-else alt="Default product" class="product-image" src="../../../assets/img/bier.png" />

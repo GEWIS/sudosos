@@ -11,20 +11,20 @@
       @update:value="updateUser($event)"
     />
 
-    <div class="flex flex-row justify-content-between">
+    <div class="flex flex-row justify-between">
       <span>{{ t('modules.financial.invoice.create.userBalance') }}</span>
       <span v-if="userBalance">{{ formatPrice(userBalance) }}</span>
       <span v-else>{{ t('common.na') }}</span>
     </div>
 
-    <div class="flex flex-row justify-content-between">
+    <div class="flex flex-row justify-between">
       <span>{{ t('modules.financial.invoice.create.invocieAmount') }}</span>
       <span>{{ formatPrice(transactionTotal) }}</span>
     </div>
 
     <Divider />
 
-    <div class="flex flex-row font-bold justify-content-between">
+    <div class="flex flex-row font-bold justify-between">
       <span>{{ t('modules.financial.invoice.create.balanceAfter') }}</span>
       <span>{{ formatPrice(balanceAfterInvoice) }}</span>
     </div>

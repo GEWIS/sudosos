@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span :class="['flex justify-content-between', column ? 'flex-column gap-1' : 'flex-row align-items-center gap-2']">
+    <span :class="['flex justify-between', column ? 'flex-col gap-1' : 'flex-row items-center gap-2']">
       <p class="my-0">{{ label }}</p>
       <InputText
         v-if="type === 'text'"
@@ -62,7 +62,7 @@
       <InputText
         v-if="type === 'pin'"
         v-model="internalValue as string"
-        class="w-3"
+        class="w-20"
         v-bind="attributes"
         :disabled="disabled"
         :placeholder="placeholder"
@@ -79,7 +79,7 @@
         type="password"
       />
     </span>
-    <div class="flex justify-content-end">
+    <div class="flex justify-end">
       <ErrorSpan :error="errors" />
     </div>
   </div>

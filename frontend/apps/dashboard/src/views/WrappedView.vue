@@ -1,5 +1,5 @@
 <template>
-  <div class="align-content-center flex flex-column">
+  <div class="align-content-center flex flex-col">
     <div class="font-bold py-4 text-center text-xl">
       {{ t('common.wrapped.lastYear') }}
     </div>
@@ -34,7 +34,7 @@
       {{ t('common.wrapped.fav') }}
     </div>
 
-    <div class="align-items-center flex flex-column">
+    <div class="items-center flex flex-col">
       <div v-for="p in topProducts" :key="p.product.id" class="w-7">
         {{ p.count + 'x' }} {{ p.product.name + ' - ' }} {{ formatPrice(p.totalInclVat) }}
       </div>

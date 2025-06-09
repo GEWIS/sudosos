@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-column page-container">
+  <div class="flex flex-col page-container">
     <div class="page-title">{{ user?.firstName }} {{ t('modules.seller.payouts.title') }}</div>
-    <div class="flex flex-column gap-5 justify-content-between">
-      <div class="flex flex-row gap-3 justify-content-between">
+    <div class="flex flex-col gap-5 justify-between">
+      <div class="flex flex-row gap-3 justify-between">
         <FormCard
           class="flex-grow-1"
           :create="!zeroBalance"

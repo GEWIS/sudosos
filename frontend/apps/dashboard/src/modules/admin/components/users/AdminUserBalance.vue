@@ -7,7 +7,7 @@
     :router-link="getRouterLink"
     :router-params="getRouterParams"
   >
-    <div class="flex flex-column justify-content-center">
+    <div class="flex flex-col justify-center">
       <div v-if="userBalance === null">
         <Skeleton class="h-4rem mx-1rem my-6 w-10rem" />
       </div>

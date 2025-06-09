@@ -4,7 +4,7 @@
   "compilerOptions": {
     "composite": true,
     "target": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     "strict": true,
     "jsx": "preserve",
     "resolveJsonModule": true,

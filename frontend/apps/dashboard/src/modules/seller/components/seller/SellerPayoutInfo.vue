@@ -1,7 +1,7 @@
 <template>
   <div class="w-full">
-    <div class="flex flex-column gap-2">
-      <div v-if="payout" class="flex flex-column">
+    <div class="flex flex-col gap-2">
+      <div v-if="payout" class="flex flex-col">
         <span
           ><strong>{{ `${t('modules.seller.payouts.payout.id')}:` }}</strong> {{ `SDS-SP-${payout.id}` }}</span
         >
@@ -31,7 +31,7 @@
         >
       </div>
 
-      <div class="flex flex-row gap-2 justify-content-between mt-3 w-full">
+      <div class="flex flex-row gap-2 justify-between mt-3 w-full">
         <div>
           <Button
             icon="pi pi-trash"
@@ -41,7 +41,7 @@
             @click="deletePayout"
           />
         </div>
-        <div class="flex flex-row gap-2 justify-content-end w-full">
+        <div class="flex flex-row gap-2 justify-end w-full">
           <ActionButton
             v-if="touched"
             :label="t('modules.seller.payouts.payout.update')"

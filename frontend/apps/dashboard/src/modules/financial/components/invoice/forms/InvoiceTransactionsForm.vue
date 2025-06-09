@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-column gap-3">
+  <div class="flex flex-col gap-3">
     <Calendar
       :key="transactionCalendar"
       v-model="dates"

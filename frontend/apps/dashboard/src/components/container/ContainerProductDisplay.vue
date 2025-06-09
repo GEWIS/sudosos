@@ -1,15 +1,18 @@
 <template>
   <div
-    class="border-1 border-300 border-round-sm cursor-pointer flex flex-column h-12rem overflow-hidden relative w-8rem"
+    class="border border-gray-300 rounded-sm cursor-pointer flex flex-col h-48 overflow-hidden relative w-32 hover:shadow-md transition-shadow"
     @click="visible = true"
   >
-    <div class="align-items-center background-white flex h-8rem justify-content-center">
-      <img :alt="product.name" class="h-8rem p-1" :src="imageSrc" />
+    <div class="bg-white flex items-center justify-center h-32">
+      <img :alt="product.name" class="h-full object-contain p-1" :src="imageSrc" />
     </div>
-    <div v-if="product.featured" class="promo-tag uppercase">
+    <div
+      v-if="product.featured"
+      class="absolute top-0 left-0 bg-red-500 text-white text-xs font-bold px-2 py-1 uppercase"
+    >
       {{ t('modules.seller.productContainers.products.promo') }}
     </div>
-    <p class="font-bold m-2 text-base text-center text-overflow-ellipsis">{{ product.name }}</p>
+    <p class="font-bold mx-2 my-1 text-base text-center truncate">{{ product.name }}</p>
   </div>
   <ProductActionDialog
     v-model:visible="visible"

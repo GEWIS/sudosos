@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-column justify-content-between gap-2">
+  <div class="flex flex-col justify-content-between gap-2">
     <InputUserSpan
       id="name"
       :default="form.model.user.value.value"

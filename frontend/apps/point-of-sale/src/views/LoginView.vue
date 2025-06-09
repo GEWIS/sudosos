@@ -1,6 +1,6 @@
 <template>
   <div class="main-content">
-    <div v-if="loggingIn" class="align-items-center flex h-full justify-content-center">
+    <div v-if="loggingIn" class="items-center flex h-full justify-center">
       <div>
         <ProgressSpinner aria-label="Loading" />
       </div>

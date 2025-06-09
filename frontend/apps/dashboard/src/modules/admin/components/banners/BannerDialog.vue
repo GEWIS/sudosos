@@ -2,7 +2,7 @@
   <Dialog
     ref="dialog"
     v-model:visible="visible"
-    class="md:w-6 w-full"
+    class="w-1/2"
     :draggable="false"
     :header="
       banner != undefined ? t('modules.admin.forms.banner.headerEdit') : t('modules.admin.forms.banner.headerCreate')
@@ -62,7 +62,7 @@
       {{ t('modules.admin.banners.till') }}<br />
       <InputSwitch v-model="active" />
     </div>
-    <div class="align-items-end flex flex-column justify-content-end">
+    <div class="items-end flex flex-col justify-end">
       <Button @click="onSubmit">{{ t('common.save') }}</Button>
     </div>
   </Dialog>

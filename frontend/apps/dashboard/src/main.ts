@@ -2,7 +2,7 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import '@gewis/splash';
-
+import './assets/tailwind.css';
 import PrimeVue from 'primevue/config';
 import Button from 'primevue/button';
 import './styles/themes/sudosos-light/theme.scss';
@@ -25,7 +25,6 @@ import ScrollPanel from 'primevue/scrollpanel';
 import FileUpload from 'primevue/fileupload';
 import Tooltip from 'primevue/tooltip';
 import SelectButton from 'primevue/selectbutton';
-import 'primeflex/primeflex.css';
 import ToastService from 'primevue/toastservice';
 import Toast from 'primevue/toast';
 import Accordion from 'primevue/accordion';

@@ -10,15 +10,15 @@
         />
       </div>
       <div class>
-        <h4 class="font-bold m-0 text-base text-overflow w-5rem" style="max-width: 100px">{{ product.name }}</h4>
+        <h4 class="!font-bold m-0 text-base text-overflow w-5rem" style="max-width: 100px">{{ product.name }}</h4>
         <p class="font-size-sm m-0">{{ product.category.name }}</p>
       </div>
       <div class="flex-container gap-2 ml-auto">
-        <button class="active c-btn min-w-34 shadow-1 squarer" @click="decreaseQuantity">-</button>
-        <span class="font-bold min-w-24 text-center">{{ cartProduct.count }}</span>
-        <button class="active c-btn min-w-34 shadow-1 squarer" @click="increaseQuantity">+</button>
+        <button class="active c-btn min-w-34 shadow-sm squarer" @click="decreaseQuantity">-</button>
+        <span class="!font-bold min-w-24 text-center">{{ cartProduct.count }}</span>
+        <button class="active c-btn min-w-34 shadow-sm squarer" @click="increaseQuantity">+</button>
       </div>
-      <p class="font-bold fs-6 min-w-70 ps-3 text-right">€{{ totalPrice }}</p>
+      <p class="!font-bold fs-6 min-w-70 ps-3 text-right">€{{ totalPrice }}</p>
     </div>
   </div>
 </template>

@@ -7,7 +7,7 @@
     @save="formSubmit"
     @update:model-value="edit = $event"
   >
-    <div class="flex flex-column gap-2 justify-content-between">
+    <div class="flex flex-col gap-2 justify-between">
       <InvoiceSettingsForm :edit="edit" :form="form" :invoice="invoice" @update:edit="edit = $event" />
     </div>
   </FormCard>

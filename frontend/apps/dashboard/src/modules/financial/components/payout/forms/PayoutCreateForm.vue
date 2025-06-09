@@ -1,14 +1,16 @@
 <template>
-  <div class="flex flex-column gap-2 justify-content-between">
-    <InputUserSpan
-      id="name"
-      :errors="form.context.errors.value.user"
-      :label="t('modules.financial.forms.payout.for')"
-      placeholder="John Doe"
-      :show-positive="true"
-      :value="form.model.user.value.value"
-      @update:value="form.context.setFieldValue('user', $event)"
-    />
+  <div class="flex flex-col gap-4">
+    <div class="input-field-container">
+      <InputUserSpan
+        id="name"
+        :errors="form.context.errors.value.user"
+        :label="t('modules.financial.forms.payout.for')"
+        placeholder="John Doe"
+        :show-positive="true"
+        :value="form.model.user.value.value"
+        @update:value="form.context.setFieldValue('user', $event)"
+      />
+    </div>
 
     <!-- TODO think about turning this into a component? -->
     <skeleton v-if="userBalance === null && form.model.user.value.value" class="h-0.5rem my-1 surface-300 w-6" />
@@ -55,7 +57,7 @@
       @update:value="form.context.setFieldValue('amount', $event)"
     />
 
-    <div class="flex justify-content-end w-full">
+    <div class="flex justify-end w-full">
       <ErrorSpan :error="balanceError" />
     </div>
   </div>

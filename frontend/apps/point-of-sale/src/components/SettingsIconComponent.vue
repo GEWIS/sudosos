@@ -1,6 +1,6 @@
 <template>
   <div class="settings-icon" @click="openSettings">
-    <div class="pi pi-cog text-6xl" />
+    <div class="pi pi-cog" style="font-size: 3rem" />
   </div>
   <Dialog
     ref="settings"
@@ -33,7 +33,7 @@
           </template>
         </Dropdown>
         <div class="mt-2">
-          <button class="active border-round-md c-btn font-medium p-2 text-base" @click="forceExit">
+          <button class="active rounded-md c-btn font-medium p-2 text-base" @click="forceExit">
             Force logout and exit POS
           </button>
         </div>

@@ -1,7 +1,7 @@
 <template>
   <div class="col-12">
-    <div class="flex flex-column md:flex-row py-3" :class="{ 'border-top-1 surface-border': index !== 0 }">
-      <div class="md:pr-2 md:w-5 relative w-full">
+    <div class="flex flex-col md:flex-row py-3" :class="{ 'border-top-1 surface-border': index !== 0 }">
+      <div class="md:pr-4 md:w-1/2 relative">
         <Image
           v-if="banner.image"
           class="w-full"
@@ -27,16 +27,16 @@
           :value="banner.active ? t('modules.admin.banners.list.active') : t('modules.admin.banners.list.notActive')"
         />
       </div>
-      <div class="flex flex-row justify-content-between md:w-7 w-full">
-        <div class="flex flex-column pr-3">
+      <div class="flex flex-row justify-between w-1/2">
+        <div class="flex flex-col pr-3">
           <span class="text-xl">{{ banner.name }}</span
           ><br />
-          <span class="align-items-center flex flex-row font-italic">
+          <span class="items-center flex flex-row font-italic">
             <i class="mr-1 pi pi-clock"></i>
             {{ displaySeconds }}
           </span>
         </div>
-        <div class="align-items-end flex flex-column justify-content-between">
+        <div class="items-end flex flex-col justify-between">
           <!-- Text will be grey when time is in the past -->
           <div class="text-right" :class="{ 'text-600 font-italic': isExpired }">
             <span v-tooltip.top="startDate.toLocaleString()" class="font-semibold">

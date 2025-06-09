@@ -1,7 +1,7 @@
 <template>
   <CardComponent class="p-0" :header="t('modules.seller.productContainers.containers.header')">
     <template #topAction>
-      <div v-if="showCreate || associatedPos" class="flex gap-2 justify-content-endg">
+      <div v-if="showCreate || associatedPos" class="flex gap-2 justify-end">
         <Button v-if="posEditAllowed && associatedPos" outlined @click="openContainerAdd()">{{
           t('modules.seller.productContainers.containers.addExisting')
         }}</Button>
@@ -18,7 +18,7 @@
     >
       <AccordionTab v-for="container in containers" :key="container.id">
         <template #header>
-          <div class="flex justify-content-between w-full">
+          <div class="flex justify-between">
             <span>
               {{ container.name }}
             </span>

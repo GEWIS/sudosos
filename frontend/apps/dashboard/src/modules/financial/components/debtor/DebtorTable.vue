@@ -122,7 +122,7 @@
       </Column>
     </DataTable>
     <Divider />
-    <div class="flex flex-row justify-content-between">
+    <div class="flex flex-row justify-between">
       <table>
         <thead>
           <tr>
@@ -173,10 +173,10 @@
           </tr>
         </tbody>
       </table>
-      <div v-if="isEditable && isAllowed('update', ['all'], 'Fine', ['any'])" class="grid w-20rem">
-        <div class="col-6">
+      <div v-if="isEditable && isAllowed('update', ['all'], 'Fine', ['any'])" class="grid w-80">
+        <div class="col-span-6 mr-2">
           <Button
-            class="flex flex-row h-full items-center justify-center justify-content-center w-full"
+            class="flex flex-row h-full items-center justify-center w-full"
             :disabled="debtorStore.isDebtorsLoading || debtorStore.isNotifyLoading || selectedUsers.length === 0"
             outlined
             @click="startNotify"
@@ -188,9 +188,9 @@
             <ProgressSpinner v-else class="h-1rem w-1rem" stroke-width="10" />
           </Button>
         </div>
-        <div class="col-6">
+        <div class="col-span-6 ml-2">
           <Button
-            class="flex flex-row h-full items-center justify-center justify-content-center w-full"
+            class="flex flex-row h-full items-center justify-center w-full"
             :disabled="debtorStore.isDebtorsLoading || debtorStore.isHandoutLoading || selectedUsers.length === 0"
             @click="startHandout"
           >
@@ -201,10 +201,10 @@
             <ProgressSpinner v-else class="h-1rem w-1rem" stroke-width="10" />
           </Button>
         </div>
-        <Divider class="col-12 my-0" />
-        <div class="col-12">
+        <Divider class="col-span-12 my-0" />
+        <div class="col-span-12">
           <Button
-            class="flex flex-row h-full items-center justify-center justify-content-center w-full"
+            class="flex flex-row h-full items-center justify-center w-full"
             :disabled="debtorStore.isDebtorsLoading || debtorStore.isLockLoading || selectedUsers.length === 0"
             severity="contrast"
             @click="startCannotInDebt"

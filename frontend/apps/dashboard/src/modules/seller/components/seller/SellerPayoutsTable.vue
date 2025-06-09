@@ -39,7 +39,7 @@
       <Column :header="t('common.actions')" style="width: 10%">
         <template #body="slotProps">
           <Skeleton v-if="isLoading" class="h-1rem my-1 surface-300 w-3" />
-          <span v-else class="align-items-center flex flex-row">
+          <span v-else class="items-center flex flex-row">
             <Button
               class="p-button-plain p-button-rounded p-button-text"
               icon="pi pi-eye"
@@ -70,7 +70,7 @@
     <Dialog
       ref="dialog"
       v-model:visible="showModal"
-      class="flex md:w-4 w-9 w-auto"
+      class="flex"
       :draggable="false"
       :header="t('modules.seller.payouts.payout.details')"
       modal

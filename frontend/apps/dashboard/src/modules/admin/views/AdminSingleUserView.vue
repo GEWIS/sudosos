@@ -3,8 +3,8 @@
     <div class="page-title">
       {{ t('modules.admin.singleUser.profile', { user: currentUser ? currentUser.firstName : '' }) }}
     </div>
-    <div class="flex flex-column gap-5">
-      <div class="flex flex-column gap-8 justify-content-between md:flex-row">
+    <div class="flex flex-col gap-5">
+      <div class="flex flex-col gap-8 justify-between md:flex-row">
         <AdminUserInfoCard v-if="currentUser" class="flex-grow-1" :user="currentUser" />
         <AdminUserBalance v-if="currentUser" :user="currentUser" @update-mutations="() => mutations?.refresh()" />
       </div>

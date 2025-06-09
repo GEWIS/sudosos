@@ -1,18 +1,18 @@
 <template>
-  <div class="flex flex-column page-container">
+  <div class="flex flex-col page-container">
     <div class="page-title">{{ posName }}</div>
-    <div class="flex flex-column gap-5">
-      <div class="align-items-stretch flex flex-column gap-5 justify-content-between md:flex-row w-12">
+    <div class="flex flex-col gap-5">
+      <div class="align-items-stretch flex flex-col gap-5 justify-between md:flex-row">
         <POSSettingsCard class="flex-1 h-12" :pos-id="id!" />
         <CardComponent class="flex-1" :header="t('modules.seller.singlePos.sales')">
-          <div v-if="canLoadTransactions" class="h-12 pb-3 text-5xl text-center">{{ formattedTotalSales }}</div>
+          <div v-if="canLoadTransactions" class="h-22 pb-3 text-5xl text-center">{{ formattedTotalSales }}</div>
           <div v-else>{{ t('common.permissionMessages.transactions') }}</div>
         </CardComponent>
       </div>
       <ContainerCard
         v-if="posContainers"
         :associated-pos="pointsOfSaleWithContainers[id!]"
-        class="container-card"
+        class="mt-20"
         :containers="posContainers"
         :pos-edit-allowed="canEditPos"
         show-create
@@ -20,7 +20,6 @@
       <CardComponent :header="t('components.mutations.recent')">
         <MutationPOSCard
           v-if="canLoadTransactions"
-          class="pos-transactions"
           :get-mutations="getPOSTransactions"
           paginator
           style="width: 100% !important"

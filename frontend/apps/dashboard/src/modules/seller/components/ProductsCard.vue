@@ -28,7 +28,7 @@
       :value="products"
     >
       <template #header>
-        <div class="flex flex-row justify-content-between">
+        <div class="flex flex-row justify-between">
           <IconField icon-position="left">
             <InputIcon class="pi pi-search"></InputIcon>
             <InputText v-model="filters['global'].value" placeholder="Search" />
@@ -38,7 +38,7 @@
       <Column field="image" :header="t('modules.seller.productContainers.products.image')">
         <template v-if="!loading" #body="rowDataImg">
           <Image
-            class="h-4rem image-preview-container w-4rem"
+            class="h-16 w-16 object-contain"
             preview
             :pt="{
               image: {

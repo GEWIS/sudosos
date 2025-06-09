@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute banner-content bottom-0 flex flex-row justify-content-center">
+  <div class="absolute banner-content bottom-0 flex flex-row justify-center">
     <img :alt="banner.name" class="h-full w-full" :src="getBannerImageSrc(banner)" style="object-fit: contain" />
   </div>
 </template>

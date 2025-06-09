@@ -5,7 +5,7 @@
     </template>
     <slot />
     <template v-if="action" #footer>
-      <Button id="bottom-left-button" class="border-none border-noround font-normal w-full" @click="handleClick">
+      <Button id="bottom-left-button" class="w-full rounded-none border-0! font-normal text-base" @click="handleClick">
         {{ action.toUpperCase() }}
       </Button>
     </template>

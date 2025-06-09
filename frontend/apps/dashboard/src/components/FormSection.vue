@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-column gap-2">
-    <div class="align-items-center flex flex-row">
+  <div class="flex flex-col gap-2">
+    <div class="items-center flex flex-row">
       <h4 class="flex-grow-1">{{ header }}</h4>
       <div class="flex flex-row">
         <Button v-if="simpleSave" class="my-0" icon="pi pi-save" label="Save" @click="handleSave()"></Button>

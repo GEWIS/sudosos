@@ -1,9 +1,9 @@
 <template>
-  <div class="flex flex-column h-full">
-    <div class="flex-container flex-row flex-wrap justify-content-between">
-      <p class="accent-text font-bold font-size-lg mb-0">Current order for</p>
-      <div class="active c-btn px-3 py-1 square text-2xl" @click="selectUser">
-        <i class="pi pi-user pr-2 text-2xl" />
+  <div class="flex flex-col h-full">
+    <div class="flex-container flex-row flex-wrap justify-between">
+      <p class="text-accent !font-bold font-size-lg mb-0">Current order for</p>
+      <div class="active c-btn px-5 py-2 square rounded-none text-2xl" @click="selectUser">
+        <i class="pi pi-user pr-2" style="font-size: 1.5rem" />
         {{ displayName() }}
       </div>
       <button
@@ -15,26 +15,23 @@
         <i class="text-4xl" :class="lockIcon" />
       </button>
     </div>
-    <div v-if="!shouldShowTransactions || !showHistory" class="flex-column flex-grow-1 gap-2 mt-4 overflow-y-auto">
+    <div v-if="!shouldShowTransactions || !showHistory" class="flex-col flex-grow-1 gap-2 mt-4 overflow-y-auto">
       <div v-for="item in cartItems" :key="item.product.id">
         <CartItemComponent :cart-product="item" />
       </div>
     </div>
     <TransactionHistoryComponent v-else-if="shouldShowTransactions" :transactions="transactions" />
-    <div class="content-body font-size-lg mt-3 px-3 py-2 shadow-1">
+    <div class="content-body font-size-lg mt-3 px-3 py-2 shadow-sm">
       <div class="flex-between w-full">
-        <div class="font-semibold">Total</div>
-        <div class="font-bold font-size-lg">€{{ formatPrice(totalPrice) }}</div>
+        <div class="!font-semibold">Total</div>
+        <div class="!font-bold font-size-lg">€{{ formatPrice(totalPrice) }}</div>
       </div>
-      <div
-        v-if="cartStore.buyerBalance != null"
-        class="align-items-end flex-container font-size-md justify-content-between pt-2"
-      >
+      <div v-if="cartStore.buyerBalance != null" class="items-end flex-container font-size-md justify-between pt-2">
         <span><i class="pi pi-exclamation-triangle" /> Debit after purchase: </span>
         €{{ formattedBalanceAfter }}
       </div>
     </div>
-    <div class="flex-column mt-3">
+    <div class="flex-col mt-3">
       <CartActionsComponent @select-creator="emit('selectCreator')" />
     </div>
   </div>

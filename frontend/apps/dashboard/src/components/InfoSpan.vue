@@ -1,5 +1,5 @@
 <template>
-  <span class="flex flex-row flex-wrap gap-3 justify-content-between">
+  <span class="flex flex-row flex-wrap gap-3 justify-between">
     <p class="my-0">{{ label }}</p>
     <p class="my-0">{{ value }}</p>
   </span>

@@ -4,7 +4,7 @@
     style="color: #d40000; margin-left: -60px; font-size: 35px; margin-top: 80px; margin-right: 28px"
     @click="() => (howToModalVisible = true)"
   >
-    <i class="pi pi-question-circle text-4xl" />
+    <i class="pi pi-question-circle" style="font-size: 2rem" />
   </div>
 
   <Dialog
@@ -15,7 +15,7 @@
     modal
     @show="addListenerOnDialogueOverlay(howToModal!)"
   >
-    <div class="align-items-center flex flex-column">
+    <div class="items-center flex flex-col">
       <div>
         <b style="font-weight: bold !important">User id:</b> You can use your GEWIS number as user id. <br />
         <b style="font-weight: bold !important">Pin:</b> You can (re)set your pin at https://sudosos.gewis.nl/

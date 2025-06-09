@@ -7,9 +7,9 @@
     @save="formSubmit"
     @update:model-value="edit = $event"
   >
-    <div class="flex flex-column gap-2 justify-content-between">
+    <div class="flex flex-col gap-2 justify-between">
       <POSSettingsForm :edit="edit" :form="form" :point-of-sale="pointOfSale" @update:edit="edit = $event" />
-      <div class="flex flex-row justify-content-end">
+      <div class="flex flex-row justify-end">
         <Button
           v-if="isAllowed('delete', ['own', 'organ'], 'PointOfSale', ['any'])"
           :disabled="!edit"

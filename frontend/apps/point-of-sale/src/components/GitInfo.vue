@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute font-bold opacity-80 tag text-white">
+  <div class="absolute !font-bold opacity-80 tag text-white">
     <b>{{ localBuild ? `Local build` : `${branch}#${commit}` }}</b>
   </div>
 </template>
@@ -12,8 +12,7 @@ const commit: string | undefined = import.meta.env.VITE_GIT_COMMIT_SHA;
 
 const localBuild = computed(() => {
   if (typeof branch !== 'string' || branch.length === 0) return true;
-  if (typeof commit !== 'string' || commit.length === 0) return true;
-  return false;
+  return typeof commit !== 'string' || commit.length === 0;
 });
 </script>
 

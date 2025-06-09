@@ -1,9 +1,9 @@
 <template>
   <LoginInfoComponent />
   <div class="accent-text user wrapper" :class="{ inactive: !isActive }">
-    <i class="pi pi-user text-6xl text-center w-full" />
+    <i class="pi pi-user text-center w-full" style="font-size: 3rem" />
     <div
-      class="display-value pl-3 shadow-1"
+      class="display-value pl-3 shadow-sm"
       @click="
         () => {
           emits('focus:userid');
@@ -17,19 +17,19 @@
     </div>
   </div>
   <div class="accent-text pincode wrapper" :class="{ inactive: isActive }">
-    <i class="pi pi-key text-6xl text-center w-full" />
+    <i class="pi pi-key text-center w-full" style="font-size: 3rem" />
     <div class="passcode-wrapper" :class="{ wrong: wrongPin }">
       <div v-if="wrongPin" class="text-5xl">WRONG PIN</div>
       <div
         v-else
-        class="align-items-center flex h-full justify-content-between w-full"
+        class="items-center flex h-full justify-between w-full"
         @click="
           () => {
             emits('focus:passcode');
           }
         "
       >
-        <span v-for="char in displayCode" :key="char" class="passcode-span shadow-1">{{ char }}</span>
+        <span v-for="char in displayCode" :key="char" class="passcode-span shadow-sm">{{ char }}</span>
       </div>
     </div>
   </div>

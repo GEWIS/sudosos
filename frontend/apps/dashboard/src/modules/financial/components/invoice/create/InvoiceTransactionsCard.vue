@@ -1,6 +1,6 @@
 <template>
   <FormCard :create="true" :header="t('modules.financial.invoice.transfer')" @cancel="form.context.resetForm">
-    <div class="flex flex-column gap-2 justify-content-between">
+    <div class="flex flex-col gap-2 justify-between">
       <InvoiceTransactionsForm :form="form" />
     </div>
   </FormCard>

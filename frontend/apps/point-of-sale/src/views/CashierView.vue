@@ -1,5 +1,5 @@
 <template>
-  <div v-if="posNotLoaded" class="align-items-center flex h-full justify-content-center">
+  <div v-if="posNotLoaded" class="items-center flex h-full justify-center">
     <div>
       <ProgressSpinner aria-label="Loading" />
     </div>

@@ -16,7 +16,7 @@
       Please remove items before you can continue.
     </Message>
   </Dialog>
-  <div class="flex justify-content-between w-full">
+  <div class="flex justify-between w-full">
     <button
       class="c-btn checkout font-medium rounder text-3xl"
       :class="{ countdown: checkingOut, disabled: !enabled, borrelMode }"
@@ -24,9 +24,15 @@
     >
       {{ checkoutText }}
     </button>
-    <button v-if="!borrelMode" class="border-circle c-btn clear icon-larger" @click="logout">
-      <i class="pi pi-times text-4xl" />
-    </button>
+    <div class="flex justify-center items-center">
+      <button
+        v-if="!borrelMode"
+        class="rounded-full p-3 text-2xl bg-red-500 text-white flex items-center justify-center w-16 h-16"
+        @click="logout"
+      >
+        <i class="pi pi-times" style="font-size: 2rem" />
+      </button>
+    </div>
     <audio ref="sound" />
   </div>
 </template>

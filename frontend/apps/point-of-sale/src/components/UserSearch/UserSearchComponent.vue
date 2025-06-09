@@ -3,7 +3,7 @@
     <div class="header">
       <div class="header-row">
         <div class="active c-btn icon-large search-close square" @click="cancelSearch()">
-          <i class="pi pi-times text-4xl" />
+          <i class="pi pi-times" style="font-size: 2rem" />
         </div>
         <input
           ref="searchInput"

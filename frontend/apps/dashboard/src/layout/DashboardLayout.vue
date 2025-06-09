@@ -1,5 +1,5 @@
 <template>
-  <div class="align-items-center flex flex-column h-screen">
+  <div class="items-center flex flex-col h-screen">
     <TopNavbar class="flex-none" />
     <RouterView class="flex-grow-1" />
     <Footer class="flex-none" />

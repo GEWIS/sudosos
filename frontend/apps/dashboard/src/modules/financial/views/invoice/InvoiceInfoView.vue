@@ -1,8 +1,8 @@
 <template>
-  <div v-if="invoice" class="align-items-center flex flex-column gap-5 page-container-wide">
+  <div v-if="invoice" class="items-center flex flex-col gap-5 page-container-wide">
     <div>
       <div class="flex flex-row page-title">
-        <div class="flex flex-column">
+        <div class="flex flex-col">
           <span>{{ t('modules.financial.invoice.invoice') }}</span>
           <small class="text-base">
             {{ invoice.reference + ': ' }} <i>{{ invoice.description }}</i>
@@ -13,8 +13,8 @@
           </span>
         </div>
       </div>
-      <div class="flex flex-grow flex-row flex-wrap gap-5 justify-content-center">
-        <div class="flex flex-column gap-5">
+      <div class="flex flex-grow flex-row flex-wrap gap-5 justify-center">
+        <div class="flex flex-col gap-5">
           <InvoiceAmountCard v-if="dirty" :invoice-id="invoice.id" />
           <InvoiceStepsCard v-else :invoice-id="invoice.id" />
           <InvoiceSettingsCard :invoice-id="invoice.id" />
@@ -25,7 +25,7 @@
       </div>
     </div>
   </div>
-  <Skeleton v-else class="align-items-center flex flex-column gap-5 page-container" />
+  <Skeleton v-else class="items-center flex flex-col gap-5 page-container" />
 </template>
 
 <script setup lang="ts">

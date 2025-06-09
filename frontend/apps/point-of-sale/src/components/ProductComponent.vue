@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center product-card shadow-2 mb-2">
+  <div class="text-center product-card shadow-lg mb-2 py-2">
     <div class="image-container">
       <img
         ref="productImage"
@@ -12,7 +12,7 @@
       <div v-if="product.featured" class="promo-tag">PROMO</div>
     </div>
     <div class="product-name-wrapper">
-      <p class="product-name font-size-md font-semibold m-0 px-2">{{ product.name }}</p>
+      <p class="product-name font-size-md !font-bold m-0 px-2">{{ product.name }}</p>
     </div>
     <p class="product-price font-size-sm m-0">€{{ productPrice }}</p>
   </div>

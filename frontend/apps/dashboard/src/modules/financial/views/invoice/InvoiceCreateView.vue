@@ -2,11 +2,11 @@
   <div class="page-container">
     <div class="page-title">{{ t('modules.financial.invoice.create.create') }}</div>
     <div class="content-wrapper flex flex-wrap gap-3">
-      <div class="flex flex-column gap-3">
+      <div class="flex flex-col gap-3">
         <InvoiceCreateUserCard :form="form" />
         <InvoiceTransactionsCard :form="form" />
       </div>
-      <div class="flex flex-column gap-3">
+      <div class="flex flex-col gap-3">
         <InvoiceCreateAddressingCard :form="form" />
         <InvoiceCreateSettingsCard :form="form" />
         <InvoiceCreate :form="form" />

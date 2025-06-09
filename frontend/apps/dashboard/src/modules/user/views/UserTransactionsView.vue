@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <div class="page-title">{{ t('modules.user.transactions.title') }}</div>
-    <div class="content-wrapper flex flex-column gap-5 md:flex-column">
+    <div class="content-wrapper flex flex-col gap-5 md:flex-col">
       <MutationsUserTabs
         class="transactions-table"
         :get-balance-mutations="getUserMutations"

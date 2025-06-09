@@ -1,5 +1,5 @@
 <template>
-  <div ref="wrapper" class="container-grid-wrapper flex-1 h-full mb-3 mr-0 pl-1 pr-6">
+  <div ref="wrapper" class="container-grid-wrapper flex-1 h-full mb-2 mr-0 pl-1 pr-6">
     <div class="container gap-2">
       <ProductComponent
         v-for="product in sortedProducts"

@@ -7,22 +7,22 @@
     </template>
     <div>
       <b>{{ t('components.footer.mainContact') }}:</b><br />
-      <a class="text-color" href="mailto:sudosos@gewis.nl"> sudosos@gewis.nl </a> <br /><br />
+      <a class="text-color underline" href="mailto:sudosos@gewis.nl"> sudosos@gewis.nl </a> <br /><br />
 
       <b>{{ t('components.footer.incorrectTransactions') }}:</b><br />
-      <a class="text-color" href="mailto:bacpm@gewis.nl"> bacpm@gewis.nl </a> <br /><br />
+      <a class="text-color underline" href="mailto:bacpm@gewis.nl"> bacpm@gewis.nl </a> <br /><br />
 
       <b>{{ t('components.footer.security') }}:</b><br />
-      <a class="text-color" href="https://gewis.nl/.well-known/security.txt">
+      <a class="text-color underline" href="https://gewis.nl/.well-known/security.txt">
         https://gewis.nl/.well-known/security.txt
       </a>
       <br /><br />
 
       <b>{{ t('components.footer.featureRequests') }}:</b><br />
-      <a class="text-color" href="https://github.com/GEWIS/sudosos-backend">
+      <a class="text-color underline" href="https://github.com/GEWIS/sudosos-backend">
         https://github.com/GEWIS/sudosos-backend </a
       ><br />
-      <a class="text-color" href="https://github.com/GEWIS/sudosos-frontend">
+      <a class="text-color underline" href="https://github.com/GEWIS/sudosos-frontend">
         https://github.com/GEWIS/sudosos-frontend </a
       ><br />
     </div>

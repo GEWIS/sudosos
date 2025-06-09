@@ -1,11 +1,6 @@
 <template>
   <div>
-    <span
-      :class="[
-        'flex flex-wrap justify-content-between',
-        column ? 'flex-column gap-1' : 'flex-row align-items-center gap-3',
-      ]"
-    >
+    <span :class="['flex flex-wrap justify-between', column ? 'flex-col gap-1' : 'flex-row items-center gap-3']">
       <span class="my-0">{{ label }}</span>
       <FindUser
         v-model:user="internalValue"
@@ -16,7 +11,7 @@
         :type="type"
       />
     </span>
-    <div class="flex justify-content-end">
+    <div class="flex justify-end">
       <ErrorSpan :error="errors" />
     </div>
   </div>

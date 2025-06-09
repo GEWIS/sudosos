@@ -8,7 +8,7 @@
       :value="displayedBanners"
     >
       <template #header>
-        <div class="align-items-center flex flex-column justify-content-between md:flex-row">
+        <div class="items-center flex flex-col justify-between md:flex-row">
           <SelectButton v-model="filters" multiple option-label="name" :options="options" />
           <Button
             class="md:mt-0 mt-2"
@@ -19,7 +19,7 @@
         </div>
       </template>
       <template #list="slotProps">
-        <div class="grid grid-nogutter">
+        <div class="grid gap-0">
           <BannerItem v-for="(item, index) in slotProps.items" :key="index" :banner="item" :index="index" />
         </div>
       </template>

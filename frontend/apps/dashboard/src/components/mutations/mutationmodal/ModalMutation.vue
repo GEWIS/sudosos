@@ -1,9 +1,11 @@
 <template>
   <Dialog
     ref="dialog"
-    class="flex md:w-4 w-11 w-auto"
     :header="t('components.mutations.modal.header', { id })"
     modal
+    :pt="{
+      root: { class: 'w-full max-w-[90vw] md:max-w-[33rem]' },
+    }"
     :visible="visible"
     @show="addListenerOnDialogueOverlay(dialog)"
   >
@@ -26,7 +28,7 @@
     <PayoutRequestDetailModal v-else-if="shouldShowPayoutRequest" :payout-request="transferDetails[props.id]" />
     <WaivedFineDetailModal v-else-if="shouldShowWaivedFine" :waived-fines="transferDetails[props.id]" />
     <template v-if="!shouldShowDeposit && !shouldShowInvoice && shouldShowDeleteButton" #footer>
-      <div class="align-items-end flex flex-column">
+      <div class="items-end flex flex-col">
         <Button severity="danger" @click="deleteMutation">
           {{ t('common.delete').toUpperCase() }}
         </Button>

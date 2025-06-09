@@ -4,7 +4,7 @@
     class="fixed top-0 left-0 w-screen h-screen bg-red flex align-items-center justify-content-center z-5"
   >
     <main
-      class="align-items-center flex flex-column flex-grow h-full justify-content-center max-w-30rem mx-auto my-7 text-center"
+      class="align-items-center flex flex-col flex-grow h-full justify-content-center max-w-30rem mx-auto my-7 text-center"
     >
       <img alt="logo" class="block max-h-9rem mb-5 mx-auto" src="../assets/bier_grayscale.png" />
       <div class="font-bold text-3xl text-center text-white">SudoSOS is under maintenance.</div>

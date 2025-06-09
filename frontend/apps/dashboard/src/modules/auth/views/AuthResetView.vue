@@ -1,8 +1,8 @@
 <template>
   <div>
-    <img alt="logo" class="block max-h-9rem mx-auto my-0" src="../../../assets/img/bier.png" />
+    <img alt="logo" class="block max-h-[9rem] mx-auto my-0" src="../../../assets/img/bier.png" />
     <div class="mb-2 mt-0 mx-auto text-5xl text-900 w-full">{{ t('modules.auth.reset.reset') }}</div>
-    <form v-if="passwordResetMode === 0" class="flex flex-column" @submit="resetPasswordRequest">
+    <form v-if="passwordResetMode === 0" class="flex flex-col" @submit="resetPasswordRequest">
       <span class="p-float-label with-error">
         <InputText
           v-bind="email"

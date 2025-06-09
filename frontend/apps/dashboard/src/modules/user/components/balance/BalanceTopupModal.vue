@@ -9,7 +9,9 @@
     @hide="cancelPay"
     @show="pay"
   >
-    <p>{{ `${t('modules.user.balance.topUp')} ${formatPrice(dinero)}` }}</p>
+    <div class="mb-4 mt-4">
+      <p>{{ `${t('modules.user.balance.topUp')} ${formatPrice(dinero)}` }}</p>
+    </div>
     <form v-show="!loading" id="payment-form" ref="payment">
       <div id="payment-element">
         <!--Stripe.js injects the Payment Element-->
@@ -17,7 +19,7 @@
     </form>
 
     <template #footer>
-      <Button :disabled="loading" :label="t('modules.user.balance.pay').toUpperCase()" @click="submitPay" />
+      <Button class="h-9" :disabled="loading" :label="t('modules.user.balance.pay').toUpperCase()" @click="submitPay" />
     </template>
   </Dialog>
 </template>

@@ -18,7 +18,7 @@
         @sort="onSort"
       >
         <template #header>
-          <div class="align-items-center flex flex-row justify-content-between">
+          <div class="items-center flex flex-row justify-between">
             <IconField icon-position="left">
               <InputIcon class="pi pi-search"> </InputIcon>
               <InputText v-model="searchQuery" :placeholder="t('common.search')" />
@@ -58,7 +58,7 @@
         </Column>
         <Column field="active" :show-filter-match-modes="false">
           <template #header>
-            <div class="align-items-center flex flex-row gap-2">
+            <div class="items-center flex flex-row gap-2">
               {{ t('common.active') }}
               <Checkbox v-model="isActiveFilter" binary @change="onFilter()" />
             </div>
@@ -70,7 +70,7 @@
 
         <Column field="ofAge">
           <template #header>
-            <div class="align-items-center flex flex-row gap-2">
+            <div class="items-center flex flex-row gap-2">
               {{ t('common.ofAge') }}
               <Checkbox v-model="ofAgeFilter" binary @change="onFilter()" />
             </div>

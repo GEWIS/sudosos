@@ -1,6 +1,6 @@
 <template>
   <div v-if="payout">
-    <div class="flex flex-column gap-2">
+    <div class="flex flex-col gap-2">
       <span>
         {{ t('modules.financial.payout.requestedBy') }}
         <UserLink :user="payout.requestedBy" />
@@ -40,7 +40,7 @@
           </tr>
         </tbody>
       </table>
-      <div class="flex flex-column">
+      <div class="flex flex-col">
         <span>{{ t('common.createdAt') + ': ' }}{{ formatDateFromString(payout.createdAt) }}</span>
         <span>{{ t('common.updatedAt') + ': ' }}{{ formatDateFromString(payout.updatedAt) }}</span>
       </div>
@@ -54,7 +54,7 @@
         }}
       </span>
     </div>
-    <div class="flex flex-row gap-2 justify-content-end mt-3 w-full">
+    <div class="flex flex-row gap-2 justify-end mt-3 w-full">
       <div v-if="isCreated" class="flex flex-row gap-2">
         <Button
           icon="pi pi-check"

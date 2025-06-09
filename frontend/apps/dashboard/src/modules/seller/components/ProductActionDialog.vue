@@ -11,20 +11,20 @@
     @show="openDialog()"
   >
     <template #form>
-      <div class="flex flex-column gap-1">
+      <div class="flex flex-col gap-1">
         <ProductActionExistingProductForm
           v-if="state.addToContainer"
           v-model:select-product="selectExistingProduct"
           :products="dropdownProducts"
         />
         <hr v-if="state.addToContainer" class="opacity-50 w-full" />
-        <div class="flex flex-column gap-4 md:flex-row">
+        <div class="flex flex-col gap-4 md:flex-row">
           <ProductActionImageForm
             :image-src="imageSrc"
             :is-editable="isProductEditable"
             @upload="onImageUpload($event)"
           />
-          <div class="flex flex-column gap-3">
+          <div class="flex flex-col gap-3">
             <ProductActionForm
               v-model:existing-product="selectExistingProduct"
               :form="form"
@@ -35,10 +35,10 @@
               :vat-groups="vatGroups"
               @submit:success="visible = false"
             />
-            <div class="flex flex-row gap-1 justify-content-end"></div>
+            <div class="flex flex-row gap-1 justify-end"></div>
             <div>
               <!-- Row for Added on -->
-              <div v-if="state.displayProduct" class="flex flex-row flex-wrap justify-content-between">
+              <div v-if="state.displayProduct" class="flex flex-row flex-wrap justify-between">
                 <h4 class="my-0">{{ t('common.createdAt') }}</h4>
                 <p v-if="props.product" class="my-0">
                   {{ formatDateTime(new Date(props.product.createdAt ? props.product.createdAt.toString() : '')) }}
@@ -46,7 +46,7 @@
               </div>
 
               <!-- Row for Updated on -->
-              <div v-if="state.displayProduct" class="flex flex-row flex-wrap justify-content-between">
+              <div v-if="state.displayProduct" class="flex flex-row flex-wrap justify-between">
                 <h4 class="my-0">{{ t('common.updatedAt') }}</h4>
                 <p v-if="props.product" class="my-0">
                   {{ formatDateTime(new Date(props.product.updatedAt ? props.product.updatedAt.toString() : '')) }}

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="border-round-xl flex-container font-semibold font-size-lg my-1 my-3 py-3 shadow-1 text-center user-row"
+    class="bg-red-100 rounded-xl flex items-center font-semibold text-lg my-1 md:my-3 py-3 shadow-sm text-center user-row"
     :class="[rowBackground, { inactive: !active }]"
     @click="selectUser"
   >

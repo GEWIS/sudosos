@@ -1,7 +1,7 @@
 <template>
   <CardComponent class="w-full" :header="t('modules.seller.posOverview.list.header')">
     <template #topAction>
-      <div class="align-items-center flex flex-row justify-content-end">
+      <div class="items-center flex flex-row justify-end">
         <Button
           v-if="isAllowed('create', ['own', 'organ'], 'PointOfSale', ['any'])"
           icon="pi pi-plus"

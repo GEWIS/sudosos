@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-column">
+  <div class="flex flex-col">
     <span>
       {{ dateString }}
     </span>

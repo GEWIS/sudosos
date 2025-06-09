@@ -1,10 +1,10 @@
 <template>
-  <div v-if="transaction" class="shadow-1">
-    <div class="content-body flex-column px-3 py-1" @click="toggleOpen">
-      <div class="flex font-medium font-size-lg justify-content-between w-full">
+  <div v-if="transaction" class="shadow-sm">
+    <div class="content-body flex-col px-3 py-1" @click="toggleOpen">
+      <div class="flex font-medium font-size-lg justify-between w-full">
         <div>{{ formattedDate }}</div>
         <div>{{ formattedTime }}</div>
-        <div class="inline-flex justify-content-between">
+        <div class="inline-flex justify-between">
           €
           <div class="min-w-65 text-right">{{ formattedValue }}</div>
         </div>
@@ -20,11 +20,7 @@
         <div v-if="products && open" ref="bottomDiv" class="bottom">
           <hr class="border-1 opacity-30" />
           <div v-for="subTransaction in products.subTransactions" :key="subTransaction.id">
-            <div
-              v-for="row in subTransaction.subTransactionRows"
-              :key="row.product.id"
-              class="flex justify-content-between"
-            >
+            <div v-for="row in subTransaction.subTransactionRows" :key="row.product.id" class="flex justify-between">
               <div class="flex gap-2">
                 {{ row.amount }}x
                 <div class="product-name text-overflow" style="max-width: 150px">{{ row.product.name }}</div>

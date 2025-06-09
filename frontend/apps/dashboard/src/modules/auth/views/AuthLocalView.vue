@@ -1,8 +1,8 @@
 <template>
   <div>
-    <img alt="logo" class="block max-h-9rem mx-auto my-0" src="../../../assets/img/bier.png" />
+    <img alt="logo" class="block max-h-[9rem] mx-auto my-0" src="../../../assets/img/bier.png" />
     <div class="mb-2 mt-0 mx-auto text-5xl text-900 w-full">{{ t('modules.auth.login.sudosos') }}</div>
-    <form class="flex flex-column" @submit="loginHandler">
+    <form class="flex flex-col" @submit="loginHandler">
       <span class="p-float-label with-error">
         <InputText
           v-bind="username"
@@ -37,14 +37,10 @@
           {{ loginForm.errors.value.password }}
         </small>
       </span>
-      <Button id="login-button" class="align-items-center flex justify-content-center mx-auto w-full" type="submit">
+      <Button id="login-button" class="items-center flex justify-center mx-auto w-full" type="submit">
         {{ t('modules.auth.login.login') }}
       </Button>
-      <Button
-        class="align-items-center flex justify-content-center mx-auto my-3 w-full"
-        :outlined="true"
-        @click="toHomeView"
-      >
+      <Button class="items-center flex justify-center mx-auto my-3 w-full" :outlined="true" @click="toHomeView">
         {{ t('common.back') }}
       </Button>
       <div class="cursor-pointer text-900 underline" @click="resetPassword">

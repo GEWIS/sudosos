@@ -3,8 +3,8 @@ It takes an array of transactions as a * prop and generates a TransactionHistory
 array. * The TransactionHistoryRowComponent displays the details of each transaction and provides an * option to show
 more information when clicked. */
 <template>
-  <div class="flex-column gap-2 h-full mt-2 overflow-y-auto">
-    <h1 v-if="transactions.length > 0" class="font-medium text-xl">Recent Purchases:</h1>
+  <div class="flex-col gap-2 h-full mt-2 overflow-y-auto">
+    <h1 v-if="transactions.length > 0" class="font-medium text-xl mb-2">Recent Purchases:</h1>
     <TransactionHistoryRowComponent
       v-for="transaction in transactions"
       :key="transaction.id"

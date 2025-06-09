@@ -17,15 +17,15 @@
         </div>
       </div>
       <div v-show="!isSearchViewVisible">
-        <div class="flex justify-content-between w-full">
+        <div class="flex justify-between w-full">
           <div class="flex flex-wrap gap-2">
             <label class="c-btn icon-md search-close" for="searchInput" @click="openSearchView">
-              <i class="pi pi-search text-4xl" />
+              <i class="pi pi-search" style="font-size: 2rem" />
             </label>
             <div
               v-for="category in computedCategories"
               :key="category.id"
-              class="c-btn font-size-lg px-4 shadow-1 square"
+              class="c-btn font-size-lg px-5 shadow-sm square"
               :class="{ active: category.id === selectedCategoryId }"
               @click="selectCategory(category.id)"
             >
@@ -35,21 +35,25 @@
         </div>
       </div>
     </div>
-    <Message v-if="isCategoryAlcoholic && !useSettingStore().isAlcoholTime" class="mr-4" severity="warn">
-      Please note that today, alcoholic drinks are only allowed to be served after
-      {{
-        new Date(useSettingStore().alcoholTimeToday).toLocaleTimeString('nl-NL', {
-          hour: '2-digit',
-          minute: '2-digit',
-        })
-      }}. This also applies to non-alcoholic alternatives on this page.
-    </Message>
-    <PointOfSaleProductsComponent
-      :is-product-search="isSearchViewVisible"
-      :point-of-sale="pointOfSale"
-      :search-query="searchQuery"
-      :selected-category-id="selectedCategoryId"
-    />
+    <div class="mr-6">
+      <Message v-if="isCategoryAlcoholic && !useSettingStore().isAlcoholTime" severity="warn">
+        Please note that today, alcoholic drinks are only allowed to be served after
+        {{
+          new Date(useSettingStore().alcoholTimeToday).toLocaleTimeString('nl-NL', {
+            hour: '2-digit',
+            minute: '2-digit',
+          })
+        }}. This also applies to non-alcoholic alternatives on this page.
+      </Message>
+    </div>
+    <div class="mr-6 h-full overflow-auto">
+      <PointOfSaleProductsComponent
+        :is-product-search="isSearchViewVisible"
+        :point-of-sale="pointOfSale"
+        :search-query="searchQuery"
+        :selected-category-id="selectedCategoryId"
+      />
+    </div>
   </div>
 </template>
 
