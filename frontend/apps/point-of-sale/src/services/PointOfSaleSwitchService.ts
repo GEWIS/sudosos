@@ -20,7 +20,7 @@ export class PointOfSaleSwitchService {
     const activityStore = useActivityStore();
     const currentPos = posStore.getPos;
 
-    // Guard to check fi we are actually switching
+    // Guard to check if we are actually switching
     if (!currentPos || (currentPos && target.id !== currentPos.id)) {
       void posStore.fetchPointOfSale(target.id);
 

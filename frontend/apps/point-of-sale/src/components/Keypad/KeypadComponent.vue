@@ -41,6 +41,7 @@ const handleKeyClick = (key: string) => {
 .keypad {
   gap: var(--key-gap-size);
   border-radius: $border-radius;
+  user-select: none;
 }
 
 .key {
@@ -49,10 +50,6 @@ const handleKeyClick = (key: string) => {
   height: var(--key-size);
   font-weight: bold;
   font-size: $font-size-larger;
-
-  > * {
-    user-select: none;
-  }
 
   &-row {
     gap: var(--key-gap-size);
