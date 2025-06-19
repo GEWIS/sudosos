@@ -22,8 +22,8 @@
       <Divider />
       <h4 class="mt-0">{{ t('modules.user.settings.nfc') }}</h4>
       <div class="items-center flex flex-row w-full">
-        <p class="my-1">{{ t('modules.user.settings.changeNFC') }}</p>
-        <i class="cursor-pointer pi pi-arrow-up-right text-gray-500" @click="startScan()" />
+        <p class="flex-grow-1 my-1">{{ t('modules.user.settings.changeNFC') }}</p>
+        <i class="items-center cursor-pointer flex pi pi-arrow-up-right text-gray-500" @click="startScan()" />
       </div>
       <div class="items-center flex flex-row w-full">
         <p class="flex-grow-1 my-1">{{ t('modules.user.settings.deleteNFC') }}</p>
@@ -45,7 +45,7 @@
         <p class="flex-grow-1 my-1">{{ t('modules.user.settings.dataAnalysis') }}</p>
         <InputSwitch v-model="dataAnalysis" @update:model-value="handleChangeDataAnalysis" />
       </div>
-      <div class="align-items-center flex flex-row w-11">
+      <div class="align-items-center flex flex-row w-full">
         <p class="flex-grow-1 my-1">{{ t('modules.user.settings.enableBeta') }}</p>
         <InputSwitch v-model="betaEnabled" @update:model-value="handleChangeEnableBeta" />
       </div>
