@@ -5,7 +5,7 @@
     </div>
     <Button
       v-if="isAllowed('create', ['own', 'organ'], 'Product', ['any'])"
-      class="border !border-gray-300 rounded-sm flex flex-col h-40 overflow-hidden w-32 hover:bg-gray-50 transition-colors"
+      class="border border-gray-300 rounded-sm flex flex-col h-40 overflow-hidden w-32 hover:bg-gray-50 transition-colors"
       :outlined="true"
       @click="visible = true"
     >

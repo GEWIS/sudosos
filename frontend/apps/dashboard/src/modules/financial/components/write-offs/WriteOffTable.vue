@@ -23,7 +23,7 @@
               @keyup.enter="searchId()"
             />
           </IconField>
-          <Button icon="pi pi-plus" :label="t('common.create')" @click="showDialog = true" />
+          <Button class="ml-2" icon="pi pi-plus" :label="t('common.create')" @click="showDialog = true" />
         </div>
       </template>
       <Column field="id" :header="t('common.id')">

@@ -1,6 +1,6 @@
 <template>
-  <nav class="flex justify-around w-full" :class="isBeta ? 'bg-green-500' : 'bg-primary'">
-    <Menubar class="hidden! lg:flex!" :model="navItems">
+  <nav class="flex justify-around w-full" :class="isBeta ? 'bg-green-500' : 'navbar-background'">
+    <Menubar class="hidden lg:flex" :model="navItems">
       <template #start>
         <router-link class="items-center flex flex-row font-bold no-underline py-1 text-white" to="/">
           {{ t('common.sudosos') }}
@@ -25,7 +25,7 @@
         </a>
       </template>
     </Menubar>
-    <Menubar class="hidden! lg:flex!" :model="profileItems">
+    <Menubar class="hidden lg:flex" :model="profileItems">
       <template #start>
         <img alt="beer" class="h-4" src="../assets/img/bier.png" />
       </template>
@@ -43,7 +43,7 @@
       </template>
     </Menubar>
     <Menubar
-      class="flex! flex-row flex-wrap justify-between lg:hidden! mx-2 my-4 transition-all w-full"
+      class="flex flex-row flex-wrap justify-between lg:hidden mx-2 my-4 transition-all w-full"
       :model="mobileItems"
     >
       <template #start>
@@ -266,7 +266,7 @@ const mobileItems = computed(() => [...navItems.value, ...profileItems.value]);
   }
 }
 
-.bg-primary {
-  background-color: #d40000;
+.navbar-background {
+  background-color: var(--p-menubar-background);
 }
 </style>

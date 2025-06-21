@@ -1,7 +1,7 @@
 <template>
-  <div v-if="invoice" class="items-center flex flex-col gap-5 page-container-wide">
+  <PageContainer v-if="invoice" class="items-center flex flex-col gap-5 max-w-[100rem]">
     <div>
-      <div class="flex flex-row page-title">
+      <div class="flex flex-row text-4xl mb-4">
         <div class="flex flex-col">
           <span>{{ t('modules.financial.invoice.invoice') }}</span>
           <small class="text-base">
@@ -24,8 +24,10 @@
         <InvoicePdf v-if="invoice" :invoice-id="invoice.id" />
       </div>
     </div>
-  </div>
-  <Skeleton v-else class="items-center flex flex-col gap-5 page-container" />
+  </PageContainer>
+  <PageContainer v-else>
+    <Skeleton class="items-center flex flex-col gap-5" />
+  </PageContainer>
 </template>
 
 <script setup lang="ts">
@@ -46,6 +48,7 @@ import InvoicePdf from '@/modules/financial/components/invoice/InvoicePdf.vue';
 import InvoiceInfo from '@/modules/financial/components/invoice/InvoiceInfo.vue';
 import InvoiceAmountCard from '@/modules/financial/components/invoice/InvoiceAmountCard.vue';
 import { isDirty } from '@/utils/invoiceUtil';
+import PageContainer from '@/layout/PageContainer.vue';
 
 const { t } = useI18n();
 const toast = useToast();

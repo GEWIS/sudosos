@@ -8,6 +8,7 @@
     "common:dev": "yarn dev",
     "test": "echo \"No tests specified\" && exit 0",
     "build": "vite build",
+    "common:build": "yarn build",
     "type-check": "vue-tsc --noEmit -p tsconfig.json --composite false",
     "lint": "eslint src",
     "lint-fix": "eslint src --fix"

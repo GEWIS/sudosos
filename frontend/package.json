@@ -4,13 +4,14 @@
   "workspaces": [
     "apps/point-of-sale",
     "apps/dashboard",
-    "lib/common"
+    "lib/common",
+    "lib/themes"
   ],
   "scripts": {
-    "dev-libraries": "concurrently --kill-others \"yarn common:dev\"",
+    "dev-libraries": "concurrently --kill-others \"yarn common:dev\" \"yarn themes:dev\"",
     "dev-dashboard": "concurrently --kill-others \"yarn dashboard:dev\" \"yarn dev-libraries\"",
     "dev-pos": "concurrently --kill-others \"yarn point-of-sale:dev\" \"yarn dev-libraries\"",
-    "build-libraries": "yarn workspace @sudosos/sudosos-frontend-common run build",
+    "build-libraries": "concurrently \"yarn common:build\" \"yarn themes:build\"",
     "build-dashboard": "yarn workspaces foreach -Rpt --from 'sudosos-dashboard' run build",
     "build-pos": "yarn workspaces foreach -Rpt --from 'sudosos-point-of-sale' run build",
     "build": "yarn workspaces foreach -Rpt --from '{sudosos-point-of-sale,sudosos-dashboard}' run build",
@@ -24,6 +25,7 @@
   },
   "dependencies": {
     "@gewis/splash": "^2.4.0",
+    "@primeuix/themes": "^1.1.1",
     "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#d434de83b43a13603e6fa1a129546d4321e3562c",
     "@tailwindcss/vite": "^4.1.3",
     "axios": "^1.7.7",
@@ -33,9 +35,10 @@
     "lodash": "^4.17.21",
     "pinia": "^2.1.3",
     "primeicons": "^6.0.1",
-    "primevue": "^3.49.0",
+    "primevue": "^4.3.5",
     "sass": "^1.63.6",
     "tailwindcss": "^4.1.3",
+    "tailwindcss-primeui": "^0.6.1",
     "vue": "^3.3.4",
     "vue-router": "^4.2.2"
   },

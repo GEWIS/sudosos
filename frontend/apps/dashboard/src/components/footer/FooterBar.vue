@@ -36,16 +36,16 @@ footer {
   padding: 0 1rem;
   height: 60px;
   line-height: 60px;
-  background-color: #f5f5f5;
+  background-color: var(--p-content-background);
 }
 
 b {
   font-weight: bolder;
-  color: black;
+  color: var(--p-content-color);
 }
 
 .separator {
-  color: black;
+  color: var(--p-content-color);
   margin: 0 1rem;
 }
 </style>

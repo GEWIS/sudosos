@@ -1,0 +1,6 @@
+@import 'tailwindcss';
+@import 'tailwindcss-primeui';
+
+body {
+  background-color: var(--p-body-background);
+}

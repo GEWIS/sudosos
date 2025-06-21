@@ -49,7 +49,7 @@
         :show-filter-match-modes="false"
       >
         <template #filter="{ filterModel }">
-          <Dropdown
+          <Select
             v-model="filterModel.value"
             option-label="name"
             option-value="value"
@@ -125,7 +125,7 @@ import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import Skeleton from 'primevue/skeleton';
 import Button from 'primevue/button';
-import Dropdown, { type DropdownChangeEvent } from 'primevue/dropdown';
+import { type SelectChangeEvent } from 'primevue/select';
 import { useI18n } from 'vue-i18n';
 import { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client/src/api';
 import { type Ref, ref } from 'vue';
@@ -160,7 +160,7 @@ function onPage(event: DataTablePageEvent) {
   emit('page', event);
 }
 
-function stateFilterChange(e: DropdownChangeEvent) {
+function stateFilterChange(e: SelectChangeEvent) {
   emit('stateFilterChange', e);
 }
 

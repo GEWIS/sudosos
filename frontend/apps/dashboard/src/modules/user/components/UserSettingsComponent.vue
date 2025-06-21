@@ -43,11 +43,11 @@
       <h4 class="mt-0">{{ t('modules.user.settings.preferences') }}</h4>
       <div class="items-center flex flex-row w-full">
         <p class="flex-grow-1 my-1">{{ t('modules.user.settings.dataAnalysis') }}</p>
-        <InputSwitch v-model="dataAnalysis" @update:model-value="handleChangeDataAnalysis" />
+        <ToggleSwitch v-model="dataAnalysis" @update:model-value="handleChangeDataAnalysis" />
       </div>
       <div class="align-items-center flex flex-row w-full">
         <p class="flex-grow-1 my-1">{{ t('modules.user.settings.enableBeta') }}</p>
-        <InputSwitch v-model="betaEnabled" @update:model-value="handleChangeEnableBeta" />
+        <ToggleSwitch v-model="betaEnabled" @update:model-value="handleChangeEnableBeta" />
       </div>
     </div>
   </CardComponent>
@@ -70,7 +70,6 @@ import { ref, defineProps } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { UserResponse } from '@sudosos/sudosos-client';
 import Divider from 'primevue/divider';
-import InputSwitch from 'primevue/inputswitch';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';

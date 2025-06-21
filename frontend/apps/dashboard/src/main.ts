@@ -2,25 +2,25 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import '@gewis/splash';
-import './assets/tailwind.css';
+import './assets/main.css';
 import PrimeVue from 'primevue/config';
 import Button from 'primevue/button';
-import './styles/themes/sudosos-light/theme.scss';
 import Image from 'primevue/image';
 import InputText from 'primevue/inputtext';
 import Menubar from 'primevue/menubar';
 import Message from 'primevue/message';
 import Panel from 'primevue/panel';
 import DataTable from 'primevue/datatable';
-import Calendar from 'primevue/calendar';
 import DataView from 'primevue/dataview';
+import DatePicker from 'primevue/datepicker';
 import InputNumber from 'primevue/inputnumber';
 import Dialog from 'primevue/dialog';
 import Steps from 'primevue/steps';
 import 'primeicons/primeicons.css';
-import Dropdown from 'primevue/dropdown';
+import Select from 'primevue/select';
 import Checkbox from 'primevue/checkbox';
-import TabView from 'primevue/tabview';
+import Tabs from 'primevue/tabs';
+import TabList from 'primevue/tablist';
 import ScrollPanel from 'primevue/scrollpanel';
 import FileUpload from 'primevue/fileupload';
 import Tooltip from 'primevue/tooltip';
@@ -35,9 +35,19 @@ import ProgressSpinner from 'primevue/progressspinner';
 import ToggleButton from 'primevue/togglebutton';
 import ConfirmDialog from 'primevue/confirmdialog';
 import ConfirmationService from 'primevue/confirmationservice';
-import InputSwitch from 'primevue/inputswitch';
+import ToggleSwitch from 'primevue/toggleswitch';
 import Divider from 'primevue/divider';
 import Column from 'primevue/column';
+import Tab from 'primevue/tab';
+import TabPanels from 'primevue/tabpanels';
+import TabPanel from 'primevue/tabpanel';
+import Stepper from 'primevue/stepper';
+import Step from 'primevue/step';
+import StepList from 'primevue/steplist';
+import Card from 'primevue/card';
+
+import { SudososRed } from '@sudosos/themes';
+
 import App from './App.vue';
 import router from './router';
 import i18n from './utils/i18nUtils';
@@ -47,7 +57,20 @@ const app = createApp(App);
 
 app.use(i18n);
 app.use(createPinia());
-app.use(PrimeVue);
+app.use(PrimeVue, {
+  theme: {
+    preset: SudososRed,
+    options: {
+      darkModeSelector: '.dark-mode',
+      cssLayer: {
+        name: 'primevue',
+        // First "basic" tailwind stuff, then overwrite that with primevue, then overwrite that with utility classes
+        // See: https://tailwindcss.com/docs/preflight & https://primevue.org/theming/styled/#csslayer
+        order: 'theme, base, component, primevue, utilities',
+      },
+    },
+  },
+});
 
 app.use(ToastService);
 app.use(ConfirmationService);
@@ -55,7 +78,7 @@ app.use(ConfirmationService);
 // eslint-disable-next-line vue/no-reserved-component-names
 app.component('Button', Button);
 app.component('InputText', InputText);
-app.component('InputSwitch', InputSwitch);
+app.component('ToggleSwitch', ToggleSwitch);
 app.component('Menubar', Menubar);
 app.component('Message', Message);
 app.component('Panel', Panel);
@@ -66,9 +89,9 @@ app.component('InputNumber', InputNumber);
 app.component('Image', Image);
 // eslint-disable-next-line vue/no-reserved-component-names
 app.component('Dialog', Dialog);
-app.component('Dropdown', Dropdown);
+// eslint-disable-next-line vue/no-reserved-component-names
+app.component('Select', Select);
 app.component('Checkbox', Checkbox);
-app.component('TabView', TabView);
 app.component('ScrollPanel', ScrollPanel);
 app.component('FileUpload', FileUpload);
 app.component('Toast', Toast);
@@ -81,10 +104,19 @@ app.component('SelectButton', SelectButton);
 app.directive('tooltip', Tooltip);
 app.component('ToggleButton', ToggleButton);
 app.component('Steps', Steps);
-app.component('Calendar', Calendar);
+app.component('DatePicker', DatePicker);
 app.component('ConfirmDialog', ConfirmDialog);
 app.component('Divider', Divider);
 app.component('Column', Column);
+app.component('Tabs', Tabs);
+app.component('Tab', Tab);
+app.component('TabList', TabList);
+app.component('TabPanels', TabPanels);
+app.component('TabPanel', TabPanel);
+app.component('Stepper', Stepper);
+app.component('StepList', StepList);
+app.component('Step', Step);
+app.component('Card', Card);
 
 void beforeLoad().then(() => {
   app.use(router);

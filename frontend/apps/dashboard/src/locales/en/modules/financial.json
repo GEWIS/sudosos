@@ -2,7 +2,7 @@
   "modules": {
     "financial": {
       "debtor": {
-        "title": "Debtor overview",
+        "title": "Debtors",
         "debtorUsers": {
           "header": "Debtors",
           "currentBalance": "Current balance",
@@ -38,7 +38,7 @@
         }
       },
       "invoice": {
-        "title": "Invoice overview",
+        "header": "Invoices",
         "invoice": "Invoice",
         "transfer": "Transfer amount",
         "credit": "Credit invoice",
@@ -64,15 +64,15 @@
         },
         "account": {
           "lastTransaction": "Last transaction",
-          "title": "Invoice Account Overview",
-          "header": "Invoice Account Overview",
+          "title": "Invoice Accounts",
+          "header": "Invoice Accounts",
           "balance": "Balance",
           "type": "INVOICE"
         },
         "backDate": "Invoice transaction is in different financial year."
       },
       "payout": {
-        "title": "Payout overview",
+        "title": "Payouts",
         "create": "Create payout",
         "requestedBy": "Requested by",
         "details": "Payout details #{payoutId}",
@@ -108,10 +108,10 @@
         "title": "Write-offs",
         "fine": "Fine",
         "table": {
-          "header": "Write-offs overview"
+          "header": "Write-offs"
         },
         "overview": {
-          "header": "Inactive debtors overview"
+          "header": "Inactive debtors"
         },
         "delete": {
           "delete": "Delete write-off",

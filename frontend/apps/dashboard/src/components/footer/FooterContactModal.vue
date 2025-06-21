@@ -42,7 +42,7 @@ const { t } = useI18n();
 </script>
 <style>
 .tosLink {
-  color: red;
+  color: var(--p-primary-color);
 }
 
 .tosLink:hover {

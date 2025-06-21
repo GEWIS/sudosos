@@ -13,7 +13,6 @@
         "confirmDelete": "Are you sure you want to delete this POS?"
       },
       "productContainers": {
-        "title": "Manage products",
         "containers": {
           "header": "Containers",
           "addExisting": "Add existing container",
@@ -24,7 +23,7 @@
           "view": "View container"
         },
         "products": {
-          "header": "All products",
+          "header": "Products",
           "promo": "Promo",
           "addExisting": "Add existing product",
           "category": "Category",

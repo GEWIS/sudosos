@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col page-container">
-    <div class="page-title">{{ posName }}</div>
+  <PageContainer>
+    <div class="text-4xl mb-4">{{ posName }}</div>
     <div class="flex flex-col gap-5">
       <div class="align-items-stretch flex flex-col gap-5 justify-between md:flex-row">
         <POSSettingsCard class="flex-1 h-12" :pos-id="id!" />
@@ -27,7 +27,7 @@
         <div v-else>{{ t('common.permissionMessages.transactions') }}</div>
       </CardComponent>
     </div>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup lang="ts">
@@ -50,6 +50,7 @@ import POSSettingsCard from '@/modules/seller/components/POSSettingsCard.vue';
 import { useTransactionStore } from '@/stores/transaction.store';
 import { formatPrice } from 'sudosos-dashboard/src/utils/formatterUtils';
 import { getRelation, isAllowed } from '@/utils/permissionUtils';
+import PageContainer from '@/layout/PageContainer.vue';
 
 const route = useRoute(); // Use the useRoute function to access the current route
 const id = ref<number>();

@@ -52,7 +52,7 @@
           {{ data.controlBalance }}
         </template>
         <template v-if="isEditable" #filter>
-          <Calendar
+          <DatePicker
             id="firstDate"
             v-model="controlBalanceDate"
             hour-format="24"
@@ -77,7 +77,7 @@
           {{ data.referenceBalance }}
         </template>
         <template v-if="isEditable" #filter>
-          <Calendar
+          <DatePicker
             id="firstDate"
             v-model="referenceBalanceDate"
             hour-format="24"
@@ -225,10 +225,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { computed, type ComputedRef, onMounted, ref, watch } from 'vue';
-import Calendar from 'primevue/calendar';
-import Column from 'primevue/column';
-import DataTable, { type DataTableSortEvent } from 'primevue/datatable';
-import Skeleton from 'primevue/skeleton';
+import { type DataTableSortEvent } from 'primevue/datatable';
 import { debounce } from 'lodash';
 import type { FineHandoutEventResponse } from '@sudosos/sudosos-client';
 import { useConfirm } from 'primevue/useconfirm';

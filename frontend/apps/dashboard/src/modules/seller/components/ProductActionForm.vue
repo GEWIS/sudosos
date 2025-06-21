@@ -18,7 +18,7 @@
     >
       {{ t('modules.seller.forms.product.closeTo', { name: closeTo.name }) }}</span
     >
-    <InputDropdownSpan
+    <InputSelectSpan
       :disabled="!isEditable"
       :label="t('modules.seller.productContainers.products.category')"
       option-label="name"
@@ -27,7 +27,7 @@
       :selected-option="form.model.category.value.value"
       @update:selected-option="form.context.setFieldValue('category', $event!)"
     />
-    <InputDropdownSpan
+    <InputSelectSpan
       :disabled="!isEditable"
       :label="t('modules.seller.productContainers.products.vat')"
       option-label="name"
@@ -119,7 +119,7 @@ import InputSpan from '@/components/InputSpan.vue';
 import type { createProductSchema } from '@/utils/validation-schema';
 import { type Form } from '@/utils/formUtils';
 import InputOrganSpan from '@/components/InputOrganSpan.vue';
-import InputDropdownSpan from '@/components/InputDropdownSpan.vue';
+import InputSelectSpan from '@/components/InputSelectSpan.vue';
 
 const { t } = useI18n();
 

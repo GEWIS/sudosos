@@ -13,7 +13,7 @@
 import { ref, onMounted } from 'vue';
 import type { InvoiceResponse } from '@sudosos/sudosos-client';
 import { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client/src/api';
-import type { DropdownChangeEvent } from 'primevue/dropdown';
+import type { SelectChangeEvent } from 'primevue/select';
 import type { DataTablePageEvent } from 'primevue/datatable';
 import InvoiceTable from '@/modules/financial/components/invoice/InvoiceTable.vue';
 import { useInvoiceStore } from '@/stores/invoice.store';
@@ -65,7 +65,7 @@ async function onPage(event: DataTablePageEvent) {
   await loadInvoices();
 }
 
-function onStateFilterChange(e: DropdownChangeEvent) {
+function onStateFilterChange(e: SelectChangeEvent) {
   filterState.value = e.value as InvoiceStatusResponseStateEnum;
   void loadInvoices();
 }

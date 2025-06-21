@@ -16,7 +16,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@sudosos/sudosos-frontend-common": "workspace:^"
+    "@sudosos/sudosos-frontend-common": "workspace:^",
+    "primevue": "^3.53.1"
   },
   "devDependencies": {
     "eslint": "^9.24.0",

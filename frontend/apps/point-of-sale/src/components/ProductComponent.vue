@@ -12,7 +12,7 @@
       <div v-if="product.featured" class="promo-tag">PROMO</div>
     </div>
     <div class="product-name-wrapper">
-      <p class="product-name font-size-md !font-bold m-0 px-2">{{ product.name }}</p>
+      <p class="product-name font-size-md font-bold m-0 px-2">{{ product.name }}</p>
     </div>
     <p class="product-price font-size-sm m-0">€{{ productPrice }}</p>
   </div>

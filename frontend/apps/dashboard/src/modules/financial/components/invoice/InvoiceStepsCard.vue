@@ -1,6 +1,18 @@
 <template>
   <CardComponent v-if="invoice" :header="t('common.status')">
-    <Steps v-if="!deleted" :active-step="activeStep" :model="stepItems" :readonly="false"></Steps>
+    <Stepper v-if="!deleted" :value="activeStep + 1">
+      <StepList>
+        <Step
+          v-for="stepItem in stepItems"
+          :key="stepItem.label"
+          :disabled="stepItem.disabled()"
+          :value="stepItem.index + 1"
+          @click="() => void updateStep(stepItem.label)"
+        >
+          {{ stepItem.label }}
+        </Step>
+      </StepList>
+    </Stepper>
     <div v-else class="items-center flex flex-col justify-center">
       <i class="pi pi-exclamation-triangle text-5xl"></i>
       <p class="text-2xl">{{ t('modules.financial.invoice.deleted') }}</p>
@@ -32,15 +44,16 @@ const loading = ref(false);
 
 const stepItems = steps.slice(0, 3).map((value, index) => {
   return {
+    index: index,
     label: value,
     disabled: () => activeStep.value >= index || loading.value,
     command: () => {
-      void updateStep(index, value);
+      void updateStep(value);
     },
   };
 });
 
-const updateStep = async (index: number, value: InvoiceStatusResponseStateEnum) => {
+const updateStep = async (value: InvoiceStatusResponseStateEnum) => {
   loading.value = true;
   await invoiceStore.updateInvoice(invoice.value.id, { state: value });
   loading.value = false;

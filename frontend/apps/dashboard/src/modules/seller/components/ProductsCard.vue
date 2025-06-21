@@ -124,7 +124,7 @@ import DataTable from 'primevue/datatable';
 import InputText from 'primevue/inputtext';
 import { computed, onBeforeMount, type Ref, ref } from 'vue';
 import type { ProductResponse } from '@sudosos/sudosos-client';
-import { FilterMatchMode } from 'primevue/api';
+import { FilterMatchMode } from '@primevue/core/api';
 import { useI18n } from 'vue-i18n';
 import { useProductStore } from '@/stores/product.store';
 import ProductActionDialog from '@/modules/seller/components/ProductActionDialog.vue';

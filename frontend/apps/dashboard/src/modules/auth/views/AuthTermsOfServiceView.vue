@@ -1,6 +1,6 @@
 <template>
-  <div class="page-container">
-    <h1 class="page-title">{{ t('modules.auth.tos.acceptFirst') }}</h1>
+  <PageContainer>
+    <h1 class="text-4xl mb-4">{{ t('modules.auth.tos.acceptFirst') }}</h1>
     <p>{{ t('modules.auth.tos.description') }}</p>
     <hr />
     <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
@@ -19,7 +19,7 @@
         {{ t('modules.auth.tos.agreeToS') }}
       </Button>
     </div>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup lang="ts">
@@ -32,6 +32,7 @@ import termsOfService from '@/locales/termsOfService.md?raw';
 import router from '@/router';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
+import PageContainer from '@/layout/PageContainer.vue';
 
 const { t } = useI18n();
 

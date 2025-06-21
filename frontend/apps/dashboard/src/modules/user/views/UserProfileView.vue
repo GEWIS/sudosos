@@ -1,6 +1,6 @@
 <template>
-  <div class="page-container">
-    <div class="page-title">{{ t('modules.user.profile.title') }}</div>
+  <PageContainer>
+    <div class="text-4xl mb-4">{{ t('modules.user.profile.title') }}</div>
     <div class="flex flex-col">
       <div class="flex flex-col justify-between md:flex-row">
         <!-- Adjusted width -->
@@ -8,7 +8,7 @@
         <UserInfo :user="gewisUser || (current.user as GewisUserResponse)" />
       </div>
     </div>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup lang="ts">
@@ -21,6 +21,7 @@ import apiService from '@/services/ApiService';
 import router from '@/router';
 import UserSettingsComponent from '@/modules/user/components/UserSettingsComponent.vue';
 import UserInfo from '@/modules/user/components/UserInfo.vue';
+import PageContainer from '@/layout/PageContainer.vue';
 
 const userStore = useUserStore();
 const dataAnalysis: Ref<boolean> = ref(false);

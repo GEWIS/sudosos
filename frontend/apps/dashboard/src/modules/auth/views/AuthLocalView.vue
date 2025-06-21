@@ -1,52 +1,56 @@
 <template>
   <div>
-    <img alt="logo" class="block max-h-[9rem] mx-auto my-0" src="../../../assets/img/bier.png" />
-    <div class="mb-2 mt-0 mx-auto text-5xl text-900 w-full">{{ t('modules.auth.login.sudosos') }}</div>
-    <form class="flex flex-col" @submit="loginHandler">
-      <span class="p-float-label with-error">
-        <InputText
-          v-bind="username"
-          class="cinput h-4rem pb-0 pt-2 w-full"
-          :class="{ 'p-invalid': loginForm.errors.value.username }"
-          name="username"
-          size="large"
-          type="text"
-        />
-        <label :class="{ 'contains-text': username.modelValue }" for="username"
-          >{{ t('modules.auth.login.username') }}
-        </label>
-        <small class="p-error">
-          <i v-if="loginForm.errors.value.username" class="pi pi-exclamation-circle" />
-          {{ loginForm.errors.value.username }}
-        </small>
-      </span>
-      <span class="p-float-label with-error">
-        <InputText
-          v-bind="password"
-          class="cinput h-4rem pb-0 pt-2 w-full"
-          :class="{ 'p-invalid': loginForm.errors.value.password }"
-          name="password"
-          size="large"
-          type="password"
-        />
-        <label :class="{ 'contains-text': password.modelValue }" for="password"
-          >{{ t('modules.auth.login.password') }}
-        </label>
-        <small class="p-error">
-          <i v-if="loginForm.errors.value.password" class="pi pi-exclamation-circle" />
-          {{ loginForm.errors.value.password }}
-        </small>
-      </span>
-      <Button id="login-button" class="items-center flex justify-center mx-auto w-full" type="submit">
-        {{ t('modules.auth.login.login') }}
-      </Button>
-      <Button class="items-center flex justify-center mx-auto my-3 w-full" :outlined="true" @click="toHomeView">
-        {{ t('common.back') }}
-      </Button>
-      <div class="cursor-pointer text-900 underline" @click="resetPassword">
-        {{ t('modules.auth.reset.passwordReset') }}
-      </div>
-    </form>
+    <img alt="logo" class="block max-h-[14rem] mx-auto my-0" src="../../../assets/img/bier.png" />
+    <div class="my-6 mx-auto text-5xl text-900 w-full">{{ t('modules.auth.login.sudosos') }}</div>
+    <Card>
+      <template #content>
+        <form class="flex flex-col" @submit="loginHandler">
+          <span class="p-float-label with-error">
+            <InputText
+              v-bind="username"
+              class="cinput h-4rem pb-0 pt-2 w-full"
+              :class="{ 'p-invalid': loginForm.errors.value.username }"
+              name="username"
+              size="large"
+              type="text"
+            />
+            <label :class="{ 'contains-text': username.modelValue }" for="username"
+              >{{ t('modules.auth.login.username') }}
+            </label>
+            <small class="p-error">
+              <i v-if="loginForm.errors.value.username" class="pi pi-exclamation-circle" />
+              {{ loginForm.errors.value.username }}
+            </small>
+          </span>
+          <span class="p-float-label with-error">
+            <InputText
+              v-bind="password"
+              class="cinput h-4rem pb-0 pt-2 w-full"
+              :class="{ 'p-invalid': loginForm.errors.value.password }"
+              name="password"
+              size="large"
+              type="password"
+            />
+            <label :class="{ 'contains-text': password.modelValue }" for="password"
+              >{{ t('modules.auth.login.password') }}
+            </label>
+            <small class="p-error">
+              <i v-if="loginForm.errors.value.password" class="pi pi-exclamation-circle" />
+              {{ loginForm.errors.value.password }}
+            </small>
+          </span>
+          <Button id="login-button" class="items-center flex justify-center mx-auto w-full" type="submit">
+            {{ t('modules.auth.login.login') }}
+          </Button>
+          <Button class="items-center flex justify-center mx-auto my-3 w-full" :outlined="true" @click="toHomeView">
+            {{ t('common.back') }}
+          </Button>
+          <div class="cursor-pointer text-900 underline" @click="resetPassword">
+            {{ t('modules.auth.reset.passwordReset') }}
+          </div>
+        </form>
+      </template>
+    </Card>
   </div>
 </template>
 

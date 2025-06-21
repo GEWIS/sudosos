@@ -2,7 +2,7 @@
   <div>
     <span :class="['flex flex-wrap justify-between', column ? 'flex-col gap-1' : 'flex-row items-center gap-3']">
       <span class="my-0">{{ label }}</span>
-      <Dropdown
+      <Select
         v-model="container"
         class="md:w-15rem w-full"
         option-label="name"
@@ -12,7 +12,7 @@
         <template #option="slotProps">
           {{ slotProps.option.name }}
         </template>
-      </Dropdown>
+      </Select>
     </span>
     <div class="flex justify-end">
       <ErrorSpan :error="errors" />

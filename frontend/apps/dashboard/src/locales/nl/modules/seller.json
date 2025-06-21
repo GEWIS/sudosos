@@ -13,7 +13,6 @@
         "confirmDelete": "Weet je zeker dat je dit verkooppunt wilt verwijderen?"
       },
       "productContainers": {
-        "title": "Producten beheren",
         "containers": {
           "header": "Containers",
           "addExisting": "Bestaande container toevoegen",
@@ -24,7 +23,7 @@
           "view": "Container bekijken"
         },
         "products": {
-          "header": "Alle producten",
+          "header": "Producten",
           "promo": "Promotie",
           "addExisting": "Bestaand product toevoegen",
           "category": "Categorie",

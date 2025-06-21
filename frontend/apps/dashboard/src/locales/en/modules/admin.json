@@ -2,9 +2,9 @@
   "modules": {
     "admin": {
       "userOverview": {
-        "title": "User overview",
+        "title": "Users",
         "list": {
-          "header": "User overview"
+          "header": "Users"
         }
       },
       "singleUser": {
@@ -30,7 +30,7 @@
         "noBannerFound": "No banner found, please upload one!",
         "till": "till",
         "list": {
-          "header": "Banner overview",
+          "header": "Banners",
           "filterActive": "Filter active",
           "filterNotExpired": "Filter not expired",
           "active": "Active",

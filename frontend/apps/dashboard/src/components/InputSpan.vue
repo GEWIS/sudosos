@@ -19,7 +19,7 @@
         :placeholder="placeholder"
       />
 
-      <CalendarString
+      <DatePickerString
         v-if="type === 'date'"
         v-model="internalValue as string"
         v-bind="attributes"
@@ -48,8 +48,8 @@
         :placeholder="placeholder"
         suffix="%"
       />
-      <InputSwitch v-if="type === 'boolean'" v-model="internalValue as boolean" :disabled="disabled" />
-      <Dropdown
+      <ToggleSwitch v-if="type === 'boolean'" v-model="internalValue as boolean" :disabled="disabled" />
+      <Select
         v-if="type === 'usertype'"
         v-model="internalValue as number"
         :disabled="disabled"
@@ -90,14 +90,12 @@ import { ref, watch, onMounted } from 'vue';
 import type { Ref } from 'vue';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
-import type { HintedString } from 'primevue/ts-helpers';
+import type { HintedString } from '@primevue/core';
 import InputNumber from 'primevue/inputnumber';
 import type { BaseFieldProps, GenericObject } from 'vee-validate';
 import ErrorSpan from '@/components/ErrorSpan.vue';
-import CalendarString from '@/components/CalendarString.vue';
-
+import DatePickerString from '@/components/DatePickerString.vue';
 import { userTypes } from '@/utils/validation-schema';
-
 type InputType = HintedString<'text' | 'textarea' | 'date' | 'currency' | 'percentage'>;
 
 const props = withDefaults(

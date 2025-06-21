@@ -2,12 +2,12 @@
 import { io } from 'socket.io-client';
 import { useWebSocketStore } from '../stores/websocket.store';
 
-const socket = io({
-  path: '/ws/socket.io',
-  transports: ['websocket'], // optional: skip polling fallback
-});
-
 export const setupWebSocket = () => {
+  const socket = io({
+    path: '/ws/socket.io',
+    transports: ['websocket'], // optional: skip polling fallback
+  });
+
   const websocketStore = useWebSocketStore();
   socket.emit('subscribe', 'system');
 

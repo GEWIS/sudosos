@@ -2,7 +2,7 @@
   "modules": {
     "financial": {
       "debtor": {
-        "title": "Debiteuren overzicht",
+        "title": "Debiteuren",
         "debtorUsers": {
           "header": "Debiteuren",
           "currentBalance": "Huidig saldo",
@@ -38,7 +38,7 @@
         }
       },
       "invoice": {
-        "title": "Factuuroverzicht",
+        "header": "Facturen",
         "invoice": "Factuur",
         "transfer": "Overboeking",
         "credit": "Creditfactuur",
@@ -64,15 +64,15 @@
         },
         "account": {
           "lastTransaction": "Laatste transactie",
-          "title": "Facturen Account Overzicht",
-          "header": "Facturen Account Overzicht",
+          "title": "Factuur accounts",
+          "header": "Factuur accounts",
           "balance": "Saldo",
           "type": "INVOICE"
         },
         "backDate": "Factuur transactie is in andere financiële jaar."
       },
       "payout": {
-        "title": "Uitbetalingsoverzicht",
+        "title": "Uitbetalingen",
         "create": "Uitbetaling aanmaken",
         "requestedBy": "Aangevraagd door",
         "details": "Uitbetalingsdetails #{payoutId}",
@@ -84,10 +84,10 @@
         "title": "Afschrijvingen",
         "fine": "Boeten",
         "table": {
-          "header": "Afschrijvingen overzicht"
+          "header": "Afschrijvingen"
         },
         "overview": {
-          "header": "Inactieve debiteuren overzicht"
+          "header": "Inactieve debiteuren"
         },
         "delete": {
           "delete": "Afschrijving verwijderen",

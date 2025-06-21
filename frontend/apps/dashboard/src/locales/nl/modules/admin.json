@@ -2,9 +2,9 @@
   "modules": {
     "admin": {
       "userOverview": {
-        "title": "Gebruikersoverzicht",
+        "title": "Gebruikers",
         "list": {
-          "header": "Gebruikersoverzicht"
+          "header": "Gebruikers"
         }
       },
       "singleUser": {
@@ -30,7 +30,7 @@
         "noBannerFound": "Geen banner gevonden, upload er een!",
         "till": "totdat",
         "list": {
-          "header": "Banner overzicht",
+          "header": "Banners",
           "filterActive": "Filter actief",
           "filterNotExpired": "Filter niet verlopen",
           "active": "Actief",

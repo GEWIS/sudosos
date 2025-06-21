@@ -1,10 +1,10 @@
 <template>
   <BalanceTopupModal v-model:visible="visible" :amount="topupAmount!!" />
   <CardComponent class="sm:w-full w-full" :header="t('modules.user.balance.balance')">
-    <div class="flex flex-row justify-center">
-      <div class="flex flex-col justify-center w-1/2">
-        <Skeleton v-if="loading" class="h-16! mx-auto w-5/12!" />
-        <h1 v-else class="font-medium my-0 sm:text-7xl text-5xl text-center">{{ displayBalance }}</h1>
+    <div class="flex flex-col sm:flex-row justify-center">
+      <div class="flex flex-col justify-center w-full sm:w-1/2">
+        <Skeleton v-if="loading" class="h-16 mx-auto w-5/12" />
+        <h1 v-else class="font-medium my-0 sm:text-7xl text-3xl text-center">{{ displayBalance }}</h1>
         <p v-if="userBalance && userBalance.fine" class="font-semibold text-base text-center text-red-500">
           {{
             isAllFine
@@ -23,9 +23,10 @@
           }}</span>
         </div>
       </div>
-      <Divider layout="vertical" />
+      <Divider class="block sm:hidden" layout="horizontal" />
+      <Divider class="hidden sm:block" layout="vertical" />
 
-      <div class="flex flex-col w-1/2">
+      <div class="flex flex-col w-full sm:w-1/2">
         <div>
           <p class="font-bold">{{ t('modules.user.balance.increaseAmount') }}</p>
           <div class="flex-1 w-full">

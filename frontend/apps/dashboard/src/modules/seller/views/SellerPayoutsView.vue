@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col page-container">
-    <div class="page-title">{{ user?.firstName }} {{ t('modules.seller.payouts.title') }}</div>
+  <PageContainer>
+    <div class="text-4xl mb-4">{{ user?.firstName }} {{ t('modules.seller.payouts.title') }}</div>
     <div class="flex flex-col gap-5 justify-between">
       <div class="flex flex-row gap-3 justify-between">
         <FormCard
@@ -20,7 +20,7 @@
       </CardComponent>
       <Skeleton v-else class="h-20rem w-full" />
     </div>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup lang="ts">
@@ -37,6 +37,7 @@ import { createSellerPayoutObject } from '@/utils/validation-schema';
 import FormCard from '@/components/FormCard.vue';
 import SellerPayoutCreateForm from '@/modules/seller/components/seller/forms/SellerPayoutCreateForm.vue';
 import router from '@/router';
+import PageContainer from '@/layout/PageContainer.vue';
 
 const { t } = useI18n();
 const route = useRoute();

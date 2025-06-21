@@ -1,5 +1,5 @@
 <template>
-  <Dropdown
+  <Select
     v-model="selectedUser"
     auto-filter-focus
     class="md:w-15rem w-full"
@@ -16,7 +16,7 @@
         {{ slotProps.option.fullName }} {{ slotProps.option.gewisId ? `(${slotProps.option.gewisId})` : '' }}
       </span>
     </template>
-  </Dropdown>
+  </Select>
 </template>
 
 <script setup lang="ts">
@@ -25,7 +25,7 @@ import { debounce } from 'lodash';
 import { type BaseUserResponse, GetAllUsersTypeEnum, type UserResponse } from '@sudosos/sudosos-client';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import { useToast } from 'primevue/usetoast';
-import type { DropdownFilterEvent } from 'primevue/dropdown';
+import type { SelectFilterEvent } from 'primevue/select';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
 
@@ -85,7 +85,7 @@ const transformUsers = (userData: BaseUserResponse[]) => {
   return usersData;
 };
 
-const debouncedSearch = debounce((e: DropdownFilterEvent) => {
+const debouncedSearch = debounce((e: SelectFilterEvent) => {
   loading.value = true;
   apiService.user
     .getAllUsers(props.take, 0, e.value, undefined, undefined, undefined, props.type)
@@ -101,7 +101,7 @@ const debouncedSearch = debounce((e: DropdownFilterEvent) => {
   lastQuery.value = e.value;
 }, 500);
 
-const filterUsers = (e: DropdownFilterEvent) => {
+const filterUsers = (e: SelectFilterEvent) => {
   if (e.value.split(' ')[0] !== lastQuery.value) {
     if (e.value.length < 3) return;
     debouncedSearch(e);

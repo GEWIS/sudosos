@@ -1,7 +1,7 @@
 <template>
   <div class="flex gap-5 justify-end">
     <p class="prop">{{ t('modules.seller.productContainers.products.addExisting') }}</p>
-    <Dropdown
+    <Select
       v-model="selectProduct"
       class="items-center w-15rem"
       :filter="true"
@@ -13,7 +13,6 @@
 </template>
 
 <script setup lang="ts">
-import Dropdown from 'primevue/dropdown';
 import type { BaseProductResponse } from '@sudosos/sudosos-client';
 import { useI18n } from 'vue-i18n';
 

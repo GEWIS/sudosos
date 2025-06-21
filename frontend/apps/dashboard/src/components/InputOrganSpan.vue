@@ -1,5 +1,5 @@
 <template>
-  <InputDropdownSpan
+  <InputSelectSpan
     v-model:selected-option="organ"
     :disabled="disabled"
     :errors="errors"
@@ -13,7 +13,7 @@
 import { computed } from 'vue';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import type { BaseUserResponse } from '@sudosos/sudosos-client';
-import InputDropdownSpan from '@/components/InputDropdownSpan.vue';
+import InputSelectSpan from '@/components/InputSelectSpan.vue';
 
 const authStore = useAuthStore();
 

@@ -1,39 +1,45 @@
 <template>
-  <div class="flex flex-col page-container">
-    <div class="page-title">{{ t('modules.user.landing.title') }}</div>
-    <div class="content-wrapper flex flex-col gap-5">
+  <PageContainer>
+    <div class="text-4xl mb-4">{{ t('modules.user.landing.welcome') + userFirstName }}</div>
+    <div class="flex flex-col gap-5">
       <UserInfo class="md:hidden" :user="gewisUser || (authStore.user as GewisUserResponse)" />
       <BalanceWithTopupComponent />
-      <MutationsBalanceCard
-        :get-mutations="getUserMutations"
+      <CardComponent
+        :action="t('components.mutations.all')"
+        class="w-full"
         :header="t('components.mutations.recent')"
-        :modal="false"
-        :paginator="false"
-        :rows-amount="6"
-        :simple="false"
-      />
+        router-link="transactions"
+      >
+        <MutationsBalance :get-mutations="getUserMutations" :modal="false" :paginator="false" :rows-amount="6" />
+      </CardComponent>
     </div>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup lang="ts">
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
 import type { GewisUserResponse, PaginatedFinancialMutationResponse } from '@sudosos/sudosos-client';
 import { useToast } from 'primevue/usetoast';
-import { onMounted, ref, type Ref } from 'vue';
+import { computed, onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import BalanceWithTopupComponent from '@/modules/user/components/balance/BalanceWithTopup.vue';
-import MutationsBalanceCard from '@/components/mutations/MutationsBalance.vue';
 import apiService from '@/services/ApiService';
 import router from '@/router';
 import { handleError } from '@/utils/errorUtils';
 import UserInfo from '@/modules/user/components/UserInfo.vue';
+import CardComponent from '@/components/CardComponent.vue';
+import MutationsBalance from '@/components/mutations/MutationsBalance.vue';
+import PageContainer from '@/layout/PageContainer.vue';
 
 const { t } = useI18n();
 
 const authStore = useAuthStore();
 const userStore = useUserStore();
 const toast = useToast();
+
+const userFirstName = computed(() => {
+  return authStore.getUser?.firstName;
+});
 
 const getUserMutations = async (
   take: number,

@@ -1,15 +1,20 @@
 <template>
-  <Panel :header="header.toUpperCase()">
-    <template #icons>
-      <slot name="topAction" />
+  <Card>
+    <template #header>
+      <div class="flex flex-row w-full justify-between p-5 pb-0">
+        <div class="font-semibold text-primary">{{ header.toUpperCase() }}</div>
+        <div><slot name="topAction" /></div>
+      </div>
     </template>
-    <slot />
+    <template #content>
+      <slot />
+    </template>
     <template v-if="action" #footer>
-      <Button id="bottom-left-button" class="w-full rounded-none border-0! font-normal text-base" @click="handleClick">
+      <Button id="bottom-left-button" class="w-full" outlined @click="handleClick">
         {{ action.toUpperCase() }}
       </Button>
     </template>
-  </Panel>
+  </Card>
 </template>
 
 <script setup lang="ts">

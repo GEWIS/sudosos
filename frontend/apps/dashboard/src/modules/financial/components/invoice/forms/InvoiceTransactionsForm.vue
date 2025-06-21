@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-3">
-    <Calendar
+    <DatePicker
       :key="transactionCalendar"
       v-model="dates"
       :disabled="disabled"

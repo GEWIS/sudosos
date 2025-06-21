@@ -1,6 +1,6 @@
 <template>
-  <div class="full-width my-4">
-    <CardComponent class="full-width" :header="t('modules.financial.invoice.account.header')">
+  <div class="w-full my-4">
+    <CardComponent class="w-full" :header="t('modules.financial.invoice.account.header')">
       <template #topAction>
         <Button icon="pi pi-plus" :label="t('common.create')" @click="showDialog = true" />
       </template>

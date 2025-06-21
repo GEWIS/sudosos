@@ -1,10 +1,9 @@
 <template>
-  <div class="flex flex-col page-container-wide">
-    <div class="page-title">{{ t('modules.financial.debtor.handoutEvents.title') }}</div>
-    <div class="content-wrapper flex flex-col gap-5">
+  <PageContainer class="max-w-[100rem]">
+    <div class="flex flex-col gap-5">
       <DebtorTable v-if="handout" :handout-event="handout" />
     </div>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup lang="ts">
@@ -12,15 +11,14 @@ import { onMounted, ref } from 'vue';
 import type { FineHandoutEventResponse } from '@sudosos/sudosos-client';
 import { useRoute } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
-import { useI18n } from 'vue-i18n';
 import DebtorTable from '@/modules/financial/components/debtor/DebtorTable.vue';
 import { useDebtorStore } from '@/stores/debtor.store';
 import { handleError } from '@/utils/errorUtils';
+import PageContainer from '@/layout/PageContainer.vue';
 
 const debtorStore = useDebtorStore();
 const route = useRoute();
 const toast = useToast();
-const { t } = useI18n();
 
 const handout = ref<FineHandoutEventResponse>();
 

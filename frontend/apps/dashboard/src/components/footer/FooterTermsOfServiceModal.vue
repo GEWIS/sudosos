@@ -30,7 +30,7 @@ const visible = ref(false);
 </script>
 <style>
 .tosLink {
-  color: red;
+  color: var(--p-primary-color);
 }
 
 .tosLink:hover {

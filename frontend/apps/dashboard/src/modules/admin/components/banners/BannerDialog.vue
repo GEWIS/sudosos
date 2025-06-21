@@ -51,16 +51,16 @@
     </div>
     <div class="py-2">
       {{ t('modules.admin.forms.banner.timespan') }}<br />
-      <Calendar v-model="startDate" hour-format="24" show-time />
+      <DatePicker v-model="startDate" hour-format="24" show-time />
       {{ t('modules.admin.banners.till') }}
-      <Calendar v-model="endDate" class="md:pt-0 pt-1" hour-format="24" show-time /><br />
+      <DatePicker v-model="endDate" class="md:pt-0 pt-1" hour-format="24" show-time /><br />
       <span class="font-bold text-red-500">{{ errors['Start date'] }}</span
       ><br />
       <span class="font-bold text-red-500">{{ errors['End date'] }}</span>
     </div>
     <div class="py-2">
       {{ t('modules.admin.banners.till') }}<br />
-      <InputSwitch v-model="active" />
+      <ToggleSwitch v-model="active" />
     </div>
     <div class="items-end flex flex-col justify-end">
       <Button @click="onSubmit">{{ t('common.save') }}</Button>
@@ -68,14 +68,6 @@
   </Dialog>
 </template>
 <script setup lang="ts">
-import Dialog from 'primevue/dialog';
-import Divider from 'primevue/divider';
-import InputText from 'primevue/inputtext';
-import InputNumber from 'primevue/inputnumber';
-import InputSwitch from 'primevue/inputswitch';
-import Calendar from 'primevue/calendar';
-import Button from 'primevue/button';
-
 import type { BannerRequest, BannerResponse } from '@sudosos/sudosos-client';
 import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
 
