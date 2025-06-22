@@ -3,6 +3,7 @@ FROM node:20 AS build
 RUN corepack enable && yarn set version berry
 WORKDIR /app
 COPY lib/common/ lib/common/
+COPY lib/themes/ lib/themes/
 COPY apps/dashboard/package.json apps/dashboard/
 COPY ./package.json ./yarn.lock .yarnrc.yml ./
 RUN yarn install
