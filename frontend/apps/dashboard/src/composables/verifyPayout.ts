@@ -5,7 +5,7 @@ import type { SellerPayoutResponse } from '@sudosos/sudosos-client';
 import { formatPrice } from '@/utils/formatterUtils';
 import ApiService from '@/services/ApiService';
 
-export const verifyPayoutMixin = {
+export const useVerifyPayout = {
   setup() {
     const verifying = ref<boolean>(false);
     const verifySuccess = ref<boolean | null>(null);

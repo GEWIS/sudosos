@@ -3,7 +3,7 @@
     <div class="text-4xl mb-4">{{ posName }}</div>
     <div class="flex flex-col gap-5">
       <div class="align-items-stretch flex flex-col gap-5 justify-between md:flex-row">
-        <POSSettingsCard class="flex-1 h-12" :pos-id="id!" />
+        <POSSettingsCard class="flex-1" :pos-id="id!" />
         <CardComponent class="flex-1" :header="t('modules.seller.singlePos.sales')">
           <div v-if="canLoadTransactions" class="h-22 pb-3 text-5xl text-center">{{ formattedTotalSales }}</div>
           <div v-else>{{ t('common.permissionMessages.transactions') }}</div>

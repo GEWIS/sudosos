@@ -1,4 +1,3 @@
-// src/mixins/pendingPayoutsMixin.ts
 import { computed, watch } from 'vue';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import { usePayoutStore } from '@/stores/payout.store';

@@ -1,7 +1,7 @@
 <template>
   <CardComponent :header="header">
     <template #topAction>
-      <div v-if="showEdit" class="mx-2">
+      <div v-if="showEdit" class="mx-2 min-w-[200px] flex justify-end">
         <div v-if="!edit">
           <Button icon="pi pi-pencil" :label="t('common.edit')" severity="primary" @click="toggleEdit(true)" />
         </div>

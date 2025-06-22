@@ -96,9 +96,9 @@ import { getSellerPayoutPdfSrc } from '@/utils/urlUtils';
 import SellerPayoutInfo from '@/modules/seller/components/seller/SellerPayoutInfo.vue';
 import { useSellerPayoutStore } from '@/stores/seller-payout.store';
 import { handleError } from '@/utils/errorUtils';
-import { verifyPayoutMixin } from '@/mixins/verifyPayoutMixin';
+import { useVerifyPayout } from '@/composables/verifyPayout';
 
-const { verifyPayout, verifying } = verifyPayoutMixin.setup();
+const { verifyPayout, verifying } = useVerifyPayout.setup();
 const toast = useToast();
 const { t } = useI18n();
 const sellerPayoutStore = useSellerPayoutStore();

@@ -6,7 +6,12 @@
     <div class="flex flex-col gap-5">
       <div class="flex flex-col gap-8 justify-between md:flex-row">
         <AdminUserInfoCard v-if="currentUser" class="flex-grow-1" :user="currentUser" />
-        <AdminUserBalance v-if="currentUser" :user="currentUser" @update-mutations="() => mutations?.refresh()" />
+        <AdminUserBalance
+          v-if="currentUser"
+          class="flex-grow-0 self-start"
+          :user="currentUser"
+          @update-mutations="() => mutations?.refresh()"
+        />
       </div>
       <CardComponent class="w-full" :header="t('components.mutations.user')">
         <MutationsBalance ref="mutations" :get-mutations="getUserMutations" modal paginator />

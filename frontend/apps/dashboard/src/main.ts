@@ -45,6 +45,7 @@ import Stepper from 'primevue/stepper';
 import Step from 'primevue/step';
 import StepList from 'primevue/steplist';
 import Card from 'primevue/card';
+import Badge from 'primevue/badge';
 
 import { SudososRed } from '@sudosos/themes';
 
@@ -117,6 +118,7 @@ app.component('Stepper', Stepper);
 app.component('StepList', StepList);
 app.component('Step', Step);
 app.component('Card', Card);
+app.component('Badge', Badge);
 
 void beforeLoad().then(() => {
   app.use(router);

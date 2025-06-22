@@ -82,7 +82,7 @@ import type { SellerPayoutResponse } from '@sudosos/sudosos-client';
 import InputNumber from 'primevue/inputnumber';
 import { useSellerPayoutStore } from '@/stores/seller-payout.store';
 import { formatDateFromString, formatPrice } from '@/utils/formatterUtils';
-import { verifyPayoutMixin } from '@/mixins/verifyPayoutMixin';
+import { useVerifyPayout } from '@/composables/verifyPayout';
 import { getSellerPayoutPdfSrc } from '@/utils/urlUtils';
 import { handleError } from '@/utils/errorUtils';
 import ApiService from '@/services/ApiService';
@@ -97,7 +97,7 @@ const {
   verifyButtonSeverity,
   verifySuccess,
   verifyAmount,
-} = verifyPayoutMixin.setup();
+} = useVerifyPayout.setup();
 const { t } = useI18n();
 const toast = useToast();
 const sellerPayoutStore = useSellerPayoutStore();

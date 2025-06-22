@@ -1,5 +1,5 @@
 <template>
-  <nav class="flex justify-around w-full" :class="isBeta ? 'bg-green-500' : 'navbar-background'">
+  <nav class="flex justify-around w-full navbar-background">
     <Menubar class="hidden lg:flex" :model="navItems">
       <template #start>
         <router-link class="items-center flex flex-row font-bold no-underline py-1 text-white" to="/">
@@ -11,15 +11,13 @@
         <router-link v-if="item.route" v-slot="{ href, navigate }" custom :to="item.route">
           <a v-bind="props.action" class="items-center flex justify-between" :href="href" @click="navigate">
             <span class="p-menuitem-text">{{ item.label }}</span>
-            <span v-if="item.notifications" class="p-badge p-badge-danger">{{ item.notifications }}</span>
+            <Badge v-if="item.notifications" class="ml-2" severity="secondary" :value="item.notifications" />
           </a>
         </router-link>
         <a v-else :href="item.url" :target="item.target" v-bind="props.action">
           <div class="items-center flex justify-between">
             <span class="p-menuitem-text">{{ item.label }}</span>
-            <span v-if="item.notifications" class="ml-2 p-badge p-badge-danger-inverse p-badge-no-gutter">
-              {{ item.notifications }}
-            </span>
+            <Badge v-if="item.notifications" class="ml-2" severity="secondary" :value="item.notifications" />
             <span v-else-if="hasSubmenu" class="ml-2 pi pi-angle-down pi-fw" />
           </div>
         </a>
@@ -74,13 +72,12 @@ import { computed, onBeforeMount, ref, type Ref } from 'vue';
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { usePendingPayouts } from '@/mixins/pendingPayoutsMixin';
+import { usePendingPayouts } from '@/composables/pendingPayouts';
 import apiService from '@/services/ApiService';
 
-import { useOpenInvoiceAccounts } from '@/mixins/openInvoiceAccountsMixin';
+import { useOpenInvoiceAccounts } from '@/composables/openInvoiceAccounts';
 import { isAllowed } from '@/utils/permissionUtils';
-import { isBetaEnabled } from '@/utils/betaUtil';
-import { useInactiveDebtors } from '@/mixins/inactiveDebtorsMixin';
+import { useInactiveDebtors } from '@/composables/inactiveDebtors';
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const router = useRouter();
@@ -94,8 +91,6 @@ const handleLogout = () => {
   authStore.logout();
   void router.push('/');
 };
-
-const isBeta = isBetaEnabled();
 
 const { pendingPayouts } = usePendingPayouts();
 const { openInvoiceAccounts } = useOpenInvoiceAccounts();
