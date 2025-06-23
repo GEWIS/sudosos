@@ -3,9 +3,8 @@
     <div class="text-4xl mb-4">{{ t('modules.user.profile.title') }}</div>
     <div class="flex flex-col">
       <div class="flex flex-col justify-between md:flex-row">
-        <!-- Adjusted width -->
         <UserSettingsComponent class="flex-grow-1" :user="current.user as UserResponse" />
-        <UserInfo :user="gewisUser || (current.user as GewisUserResponse)" />
+        <UserInfo class="self-start shrink-0" :user="gewisUser || (current.user as GewisUserResponse)" />
       </div>
     </div>
   </PageContainer>

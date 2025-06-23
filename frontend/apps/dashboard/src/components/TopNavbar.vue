@@ -34,8 +34,8 @@
           </a>
         </router-link>
         <a v-else :href="item.url" :target="item.target" v-bind="props.action">
-          <span class="p-menuitem-text">{{ item.label }}</span>
-          <span v-if="item.icon" :class="item.icon" />
+          <span v-if="item.label" :aria-label="item.aria || item.label" class="p-menuitem-text">{{ item.label }}</span>
+          <span v-if="item.icon" :aria-label="item.aria || item.label || 'icon'" :class="item.icon" />
           <span v-if="hasSubmenu" class="ml-2 pi pi-angle-down pi-fw" />
         </a>
       </template>
@@ -78,10 +78,12 @@ import apiService from '@/services/ApiService';
 import { useOpenInvoiceAccounts } from '@/composables/openInvoiceAccounts';
 import { isAllowed } from '@/utils/permissionUtils';
 import { useInactiveDebtors } from '@/composables/inactiveDebtors';
+import { useDarkMode } from '@/composables/darkMode';
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const router = useRouter();
 const { t, locale } = useI18n();
+const { isDark, toggle } = useDarkMode();
 
 const firstName = computed((): string | undefined => {
   return userStore.getCurrentUser.user ? userStore.getCurrentUser.user.firstName : undefined;
@@ -245,6 +247,12 @@ const profileItems = computed(() => [
         },
       },
     ],
+  },
+  {
+    label: '',
+    aria: 'toggle dark mode',
+    command: toggle,
+    icon: isDark.value ? 'pi pi-sun' : 'pi pi-moon',
   },
 ]);
 

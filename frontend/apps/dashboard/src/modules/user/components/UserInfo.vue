@@ -1,7 +1,7 @@
 <template>
   <CardComponent :header="t('components.general.quickOverview.header')">
     <p class="text-gray-700">{{ t('components.general.quickOverview.message') }}</p>
-    <h1 class="text-center text-2xl font-bold text-gray-800 my-4">
+    <h1 class="text-center text-2xl font-bold my-4">
       {{ isGewisUser(props.user) ? props.user.gewisId : `E${props.user.id}` }} <br />
       {{ props.user.firstName }} {{ props.user.lastName }}
     </h1>
