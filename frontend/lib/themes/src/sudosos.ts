@@ -64,5 +64,11 @@ export const SudososPreset = definePreset(Aura, {
         color: '{primary.inverseColor}',
       },
     },
+    datepicker: {
+      date: {
+        rangeSelectedBackground: '{primary.color}',
+        rangeSelectedColor: '{primary.inverseColor}',
+      },
+    },
   },
 });

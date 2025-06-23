@@ -36,7 +36,7 @@
  * Component used to select the invoiced user and display the balance before and after the invoice.
  */
 
-import { computed, onMounted, type PropType, type Ref, ref, watch } from 'vue';
+import { computed, onBeforeMount, type PropType, type Ref, ref, watch } from 'vue';
 import * as yup from 'yup';
 import {
   type BaseUserResponse,
@@ -109,7 +109,6 @@ const updateUser = (event: UserResponse) => {
 watch(
   () => props.form.model.forId.value.value,
   () => {
-    console.error('forId changed', props.form.model.forId.value.value);
     if (props.form.model.forId.value.value === undefined) {
       selectedUser.value = undefined;
       userBalance.value = { precision: 2, currency: 'EUR', amount: 0 };
@@ -156,14 +155,15 @@ const updateDefaultUser = (forId: number) => {
 
 const queryUser: Ref<BaseUserResponse | undefined> = ref(undefined);
 
-onMounted(() => {
-  console.error(route.query.userId);
+onBeforeMount(() => {
   if (route.query.userId) {
     const userId = route.query.userId as unknown as number;
     props.form.context.setFieldValue('forId', userId);
 
     const user = userStore.getUserById(userId);
-    queryUser.value = user;
+    if (user) {
+      queryUser.value = user;
+    }
 
     updateUserBalance();
     updateDefaultUser(userId);

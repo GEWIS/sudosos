@@ -18,7 +18,7 @@
       }"
       selection-mode="range"
       show-button-bar
-      @clear-click="form.context.resetForm()"
+      @clear-click="handleClear"
       @month-change="monthChange($event)"
     />
 
@@ -106,6 +106,12 @@ const getTransactions = () => {
     });
 };
 
+function handleClear() {
+  dates.value = [];
+  props.form.context.resetField('transactionIDs');
+  props.form.context.resetField('transactionTotal');
+}
+
 /**
  * Show transactions if the form context has a forId and the dates are set.
  */
@@ -118,7 +124,7 @@ const showTransactions = () => {
  * Clear the transactions and reset the heatmap when the selected user changes.
  */
 watch(selectedUser, () => {
-  clear();
+  clearHeatmap();
 
   if (selectedUser.value) {
     const now = new Date();
@@ -181,7 +187,7 @@ const monthChange = (event: { month: number; year: number }) => {
 /**
  * Reset the heatmap.
  */
-const clear = () => {
+const clearHeatmap = () => {
   transactionsPerDay.value = {};
 };
 
@@ -196,14 +202,14 @@ const includedPOSString = computed(() => {
 </script>
 
 <style lang="scss">
-.p-datepicker table td.transaction-day-selected > span {
-  background-color: rgba(11, 114, 0, 0.89) !important;
-  color: white !important;
-  font-weight: bold;
+.p-datepicker-day.transaction-day-selected {
+  background-color: var(--p-badge-info-background) !important;
+  color: var(--p-badge-info-color) !important;
 }
 
-.p-datepicker table td.transaction-day-selected > span.p-highlight {
-  border-color: #d40000 !important;
-  border-width: 3px !important;
+.p-datepicker-day.transaction-day-selected.p-datepicker-day-selected-range,
+.p-datepicker-day.p-datepicker-day-selected.transaction-day-selected {
+  background-color: var(--p-badge-success-background) !important;
+  color: var(--p-badge-success-color) !important;
 }
 </style>
