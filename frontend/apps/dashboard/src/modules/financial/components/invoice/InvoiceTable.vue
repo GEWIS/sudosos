@@ -29,7 +29,13 @@
         <template #body="{ data }">
           <div class="cell-content">
             <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
-            <span v-else-if="isBackDate(data)" v-tooltip="t('modules.financial.invoice.backDate')" class="text-red-500">
+            <span
+              v-else-if="isBackDate(data)"
+              v-tooltip="
+                t('modules.financial.invoice.backDate', { date: formatDateFromString(data.transfer.createdAt) })
+              "
+              class="text-red-500"
+            >
               {{ formatDateFromString(data.date) }}
             </span>
             <span v-else>
@@ -185,13 +191,15 @@ const filters = ref({
 function isBackDate(invoice: InvoiceResponse): boolean {
   if (!invoice.createdAt || !invoice.date) return false;
 
-  const year = new Date(invoice.date).getFullYear();
-  const from = new Date(year, 6, 1); // 202Y-07-01
-  const to = new Date(year + 1, 6, 1); // 202(Y+1)-07-01
+  const fiscalYear = (d: Date) => {
+    const year = d.getFullYear();
+    return d >= new Date(year, 6, 1) ? year : year - 1;
+  };
 
   const createdAt = new Date(invoice.createdAt);
+  const date = new Date(invoice.date);
 
-  return !(createdAt >= from && createdAt < to);
+  return fiscalYear(createdAt) !== fiscalYear(date);
 }
 </script>
 

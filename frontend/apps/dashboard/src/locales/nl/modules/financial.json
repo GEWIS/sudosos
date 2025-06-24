@@ -69,7 +69,7 @@
           "balance": "Saldo",
           "type": "INVOICE"
         },
-        "backDate": "Factuur transactie is in andere financiële jaar."
+        "backDate": "Factuur transactie ({date}) is in andere financiële jaar."
       },
       "payout": {
         "title": "Uitbetalingen",

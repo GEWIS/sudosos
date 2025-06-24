@@ -69,7 +69,7 @@
           "balance": "Balance",
           "type": "INVOICE"
         },
-        "backDate": "Invoice transaction is in different financial year."
+        "backDate": "Invoice transaction ({date}) is in a different financial year."
       },
       "payout": {
         "title": "Payouts",
