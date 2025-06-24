@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-2 justify-between">
     <InputSpan
       id="name"
-      :attributes="form.model.addressee.attr.value"
+      v-bind="form.model.addressee.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.addressee"
       :label="t('modules.financial.forms.invoice.addressee')"
@@ -14,7 +14,7 @@
 
     <InputSpan
       id="name"
-      :attributes="form.model.attention?.attr.value"
+      v-bind="form.model.attention?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.attention"
       :label="t('modules.financial.forms.invoice.attention')"
@@ -26,7 +26,7 @@
 
     <InputSpan
       id="name"
-      :attributes="form.model.street.attr.value"
+      v-bind="form.model.street.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.street"
       :label="t('modules.financial.forms.invoice.street')"
@@ -38,7 +38,7 @@
 
     <InputSpan
       id="name"
-      :attributes="form.model.postalCode.attr.value"
+      v-bind="form.model.postalCode.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.postalCode"
       :label="t('modules.financial.forms.invoice.postalCode')"
@@ -50,7 +50,7 @@
 
     <InputSpan
       id="name"
-      :attributes="form.model.city.attr.value"
+      v-bind="form.model.city.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.city"
       :label="t('modules.financial.forms.invoice.city')"
@@ -62,7 +62,7 @@
 
     <InputSpan
       id="name"
-      :attributes="form.model.country.attr.value"
+      v-bind="form.model.country.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.country"
       :label="t('modules.financial.forms.invoice.country')"

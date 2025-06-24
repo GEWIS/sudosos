@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-2 justify-between">
     <InputSpan
       id="name"
-      :attributes="form.model.name.attr.value"
+      v-bind="form.model.name.attr.value"
       :errors="form.context.errors.value.name"
       :label="t('common.name')"
       :placeholder="t('common.placeholders.pos')"
@@ -12,7 +12,7 @@
     />
     <InputSpan
       id="useAuthentication"
-      :attributes="form.model.useAuthentication.attr.value"
+      v-bind="form.model.useAuthentication.attr.value"
       :errors="form.context.errors.value.useAuthentication"
       :label="t('modules.seller.forms.pos.useAuthentication')"
       type="boolean"

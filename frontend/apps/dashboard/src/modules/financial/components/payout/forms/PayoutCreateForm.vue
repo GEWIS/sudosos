@@ -26,7 +26,7 @@
 
     <InputSpan
       id="name"
-      :attributes="form.model.bankAccountNumber.attr.value"
+      v-bind="form.model.bankAccountNumber.attr.value"
       :errors="form.context.errors.value.bankAccountNumber"
       :label="t('modules.financial.forms.payout.bankAccountNumber')"
       :placeholder="t('common.placeholders.bankAccountNumber')"
@@ -37,7 +37,7 @@
 
     <InputSpan
       id="name"
-      :attributes="form.model.bankAccountName.attr.value"
+      v-bind="form.model.bankAccountName.attr.value"
       :errors="form.context.errors.value.bankAccountName"
       :label="t('modules.financial.forms.payout.bankAccountName')"
       :placeholder="t('common.placeholders.fullName')"
@@ -48,7 +48,7 @@
 
     <InputSpan
       id="name"
-      :attributes="form.model.amount.attr.value"
+      v-bind="form.model.amount.attr.value"
       :errors="form.context.errors.value.amount"
       :label="t('common.amount')"
       :placeholder="t('common.amount')"

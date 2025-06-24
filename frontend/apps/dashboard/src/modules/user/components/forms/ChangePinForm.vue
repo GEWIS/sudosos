@@ -2,8 +2,8 @@
   <div class="flex flex-col gap-2 justify-between">
     <InputSpan
       id="pin"
-      :attributes="form.model.pin.attr.value"
-      autocomplete="new-password"
+      v-bind="form.model.pin.attr.value"
+      autocomplete="off"
       :disabled="!edit"
       :errors="form.context.errors.value.pin"
       :label="t('modules.user.profile.pinNew')"
@@ -13,7 +13,7 @@
     />
     <InputSpan
       id="pinConfirm"
-      :attributes="form.model.pinConfirm.attr.value"
+      v-bind="form.model.pinConfirm.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.pinConfirm"
       :label="t('modules.user.profile.pinConfirm')"

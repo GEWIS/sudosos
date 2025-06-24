@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-2 justify-between">
     <InputSpan
       id="name"
-      :attributes="form.model.reference.attr.value"
+      v-bind="form.model.reference.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.reference"
       :label="t('modules.financial.forms.invoice.reference')"
@@ -13,7 +13,7 @@
     />
 
     <InputSpan
-      :attributes="form.model.date.attr.value"
+      v-bind="form.model.date.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.date"
       :label="t('common.date')"
@@ -24,7 +24,7 @@
 
     <InputSpan
       id="name"
-      :attributes="form.model.description.attr.value"
+      v-bind="form.model.description.attr.value"
       column
       :disabled="!edit"
       :errors="form.context.errors.value.description"

@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-2 justify-between">
     <InputSpan
       id="password"
-      :attributes="form.model.password.attr.value"
+      v-bind="form.model.password.attr.value"
       :errors="form.context.errors.value.password"
       :label="t('modules.user.profile.passwordNew')"
       type="password"
@@ -11,7 +11,7 @@
     />
     <InputSpan
       id="passwordConfirm"
-      :attributes="form.model.passwordConfirm.attr.value"
+      v-bind="form.model.passwordConfirm.attr.value"
       :errors="form.context.errors.value.passwordConfirm"
       :label="t('modules.user.profile.passwordConfirm')"
       type="password"

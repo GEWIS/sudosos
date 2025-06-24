@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-2 justify-between">
     <InputSpan
       id="name"
-      :attributes="form.model.name.attr.value"
+      v-bind="form.model.name.attr.value"
       :disabled="!isEditable"
       :errors="form.context.errors.value.name"
       :label="t('common.name')"
@@ -13,7 +13,7 @@
 
     <InputOrganSpan
       id="owner"
-      :attributes="form.model.owner.attr.value"
+      v-bind="form.model.owner.attr.value"
       :disabled="!isEditable || !isOrganEditable"
       :errors="form.context.errors.value.owner"
       :label="t('common.owner')"
@@ -25,7 +25,7 @@
 
     <InputSpan
       id="public"
-      :attributes="form.model.public.attr.value"
+      v-bind="form.model.public.attr.value"
       :disabled="!isEditable"
       :errors="form.context.errors.value.public"
       :label="t('modules.seller.productContainers.containers.public')"

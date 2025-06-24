@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-2 justify-between">
     <InputSpan
       id="name"
-      :attributes="form.model.amount.attr.value"
+      v-bind="form.model.amount.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.amount"
       :label="t('modules.financial.invoice.transfer')"

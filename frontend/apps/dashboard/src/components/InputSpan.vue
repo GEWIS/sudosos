@@ -2,10 +2,11 @@
   <div>
     <span :class="['flex justify-between', column ? 'flex-col gap-1' : 'flex-row items-center gap-2']">
       <p class="my-0">{{ label }}</p>
+
       <InputText
         v-if="type === 'text'"
         v-model="internalValue as string"
-        v-bind="attributes"
+        v-bind="attrs"
         :disabled="disabled"
         :placeholder="placeholder"
       />
@@ -13,7 +14,7 @@
       <Textarea
         v-if="type === 'textarea'"
         v-model="internalValue as string"
-        v-bind="attributes"
+        v-bind="attrs"
         auto-resize
         :disabled="disabled"
         :placeholder="placeholder"
@@ -22,7 +23,7 @@
       <DatePickerString
         v-if="type === 'date'"
         v-model="internalValue as string"
-        v-bind="attributes"
+        v-bind="attrs"
         :disabled="disabled"
         :placeholder="placeholder"
       />
@@ -36,7 +37,9 @@
         :min="0.0"
         mode="currency"
         :placeholder="placeholder"
+        v-bind="attrs"
       />
+
       <InputNumber
         v-if="type === 'percentage'"
         v-model="internalValue as number"
@@ -47,8 +50,11 @@
         mode="decimal"
         :placeholder="placeholder"
         suffix="%"
+        v-bind="attrs"
       />
-      <ToggleSwitch v-if="type === 'boolean'" v-model="internalValue as boolean" :disabled="disabled" />
+
+      <ToggleSwitch v-if="type === 'boolean'" v-model="internalValue as boolean" :disabled="disabled" v-bind="attrs" />
+
       <Select
         v-if="type === 'usertype'"
         v-model="internalValue as number"
@@ -57,26 +63,28 @@
         option-value="value"
         :options="userTypes"
         :placeholder="placeholder"
+        v-bind="attrs"
       />
 
       <InputText
         v-if="type === 'pin'"
         v-model="internalValue as string"
         class="w-20"
-        v-bind="attributes"
         :disabled="disabled"
         :placeholder="placeholder"
         size="small"
         type="password"
+        v-bind="attrs"
       />
+
       <InputText
         v-if="type === 'password'"
         v-model="internalValue as string"
         class="w-5"
-        v-bind="attributes"
         :disabled="disabled"
         :placeholder="placeholder"
         type="password"
+        v-bind="attrs"
       />
     </span>
     <div class="flex justify-end">
@@ -86,23 +94,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, useAttrs } from 'vue';
 import type { Ref } from 'vue';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
-import type { HintedString } from '@primevue/core';
 import InputNumber from 'primevue/inputnumber';
-import type { BaseFieldProps, GenericObject } from 'vee-validate';
+import type { HintedString } from '@primevue/core';
 import ErrorSpan from '@/components/ErrorSpan.vue';
 import DatePickerString from '@/components/DatePickerString.vue';
 import { userTypes } from '@/utils/validation-schema';
-type InputType = HintedString<'text' | 'textarea' | 'date' | 'currency' | 'percentage'>;
+
+defineOptions({ inheritAttrs: false });
+const attrs = useAttrs();
+
+type InputType = HintedString<
+  'text' | 'textarea' | 'date' | 'currency' | 'percentage' | 'pin' | 'password' | 'boolean' | 'usertype'
+>;
 
 const props = withDefaults(
   defineProps<{
     label: string;
     value?: string | number | boolean;
-    attributes?: BaseFieldProps & GenericObject;
     errors?: string;
     placeholder?: string;
     type?: InputType;
@@ -112,7 +124,6 @@ const props = withDefaults(
   {
     value: undefined,
     errors: undefined,
-    attributes: undefined,
     placeholder: '',
     type: 'text',
     disabled: false,
@@ -123,7 +134,6 @@ const props = withDefaults(
 const emit = defineEmits(['update:value']);
 
 const stringInputs = ['text', 'textarea', 'pin', 'password'];
-
 const numberInputs = ['currency', 'number', 'usertype', 'percentage'];
 const booleanInputs = ['boolean'];
 

@@ -2,7 +2,7 @@
   <div class="flex flex-col">
     <InputSpan
       id="name"
-      :attributes="form.model.amount.attr.value"
+      v-bind="form.model.amount.attr.value"
       :errors="form.context.errors.value.amount"
       :label="t('common.amount')"
       :placeholder="t('common.amount')"

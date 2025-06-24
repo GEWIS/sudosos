@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-1">
     <InputSpan
       id="name"
-      :attributes="form.model.name.attr.value"
+      v-bind="form.model.name.attr.value"
       :disabled="!isEditable"
       :errors="form.context.errors.value.name"
       :label="t('common.name')"
@@ -39,7 +39,7 @@
 
     <InputSpan
       id="alcoholPercentage"
-      :attributes="form.model.alcoholPercentage.attr.value"
+      v-bind="form.model.alcoholPercentage.attr.value"
       :disabled="!isEditable"
       :errors="form.context.errors.value.alcoholPercentage"
       :label="t('modules.seller.productContainers.products.alcoholPercentage')"
@@ -50,7 +50,7 @@
 
     <InputSpan
       id="priceInclVat"
-      :attributes="form.model.priceInclVat.attr.value"
+      v-bind="form.model.priceInclVat.attr.value"
       :disabled="!isEditable"
       :errors="form.context.errors.value.priceInclVat"
       :label="t('common.price')"
@@ -78,7 +78,7 @@
     <div class="flex flex-col gap-1 justify-between">
       <InputSpan
         id="preferred"
-        :attributes="form.model.preferred.attr.value"
+        v-bind="form.model.preferred.attr.value"
         :disabled="!isEditable"
         :errors="form.context.errors.value.preferred"
         :label="t('modules.seller.productContainers.products.preferred')"
@@ -88,7 +88,7 @@
       />
       <InputSpan
         id="featured"
-        :attributes="form.model.featured.attr.value"
+        v-bind="form.model.featured.attr.value"
         :disabled="!isEditable"
         :errors="form.context.errors.value.featured"
         :label="t('modules.seller.productContainers.products.featured')"
@@ -98,7 +98,7 @@
       />
       <InputSpan
         id="priceList"
-        :attributes="form.model.priceList.attr.value"
+        v-bind="form.model.priceList.attr.value"
         :disabled="!isEditable"
         :errors="form.context.errors.value.priceList"
         :label="t('modules.seller.productContainers.products.priceList')"

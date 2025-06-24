@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-2">
     <InputSpan
       id="name"
-      :attributes="form.model.firstName.attr.value"
+      v-bind="form.model.firstName.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.firstName"
       :label="t('common.firstName')"
@@ -13,7 +13,7 @@
     />
     <InputSpan
       id="name"
-      :attributes="form.model.lastName?.attr.value"
+      v-bind="form.model.lastName?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.lastName"
       :label="t('common.lastName')"
@@ -24,7 +24,7 @@
     />
     <InputSpan
       id="name"
-      :attributes="form.model.nickname?.attr.value"
+      v-bind="form.model.nickname?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.nickname"
       :label="t('common.nickname')"
@@ -36,7 +36,7 @@
     <InputSpan
       v-if="!(props.user?.type === 'MEMBER')"
       id="name"
-      :attributes="form.model.email?.attr.value"
+      v-bind="form.model.email?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.email"
       :label="t('common.email')"
@@ -47,7 +47,7 @@
     />
     <InputSpan
       id="name"
-      :attributes="form.model.userType?.attr.value"
+      v-bind="form.model.userType?.attr.value"
       disabled
       :errors="form.context.errors.value.userType"
       :label="t('common.usertype')"
@@ -58,7 +58,7 @@
     />
     <InputSpan
       id="name"
-      :attributes="form.model.isActive?.attr.value"
+      v-bind="form.model.isActive?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.isActive"
       :label="t('common.active')"
@@ -68,7 +68,7 @@
     />
     <InputSpan
       id="name"
-      :attributes="form.model.ofAge?.attr.value"
+      v-bind="form.model.ofAge?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.ofAge"
       :label="t('modules.admin.forms.user.ofAge')"
@@ -78,7 +78,7 @@
     />
     <InputSpan
       id="name"
-      :attributes="form.model.canGoIntoDebt?.attr.value"
+      v-bind="form.model.canGoIntoDebt?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.canGoIntoDebt"
       :label="t('modules.admin.forms.user.canGoIntoDebt')"

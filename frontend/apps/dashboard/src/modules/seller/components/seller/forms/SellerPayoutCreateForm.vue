@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-3">
     <InputSpan
       id="name"
-      :attributes="form.model.fromDate.attr.value"
+      v-bind="form.model.fromDate.attr.value"
       :disabled="disabled"
       :errors="form.context.errors.value.fromDate"
       :label="t('modules.seller.payouts.payout.startDate')"
@@ -14,7 +14,7 @@
 
     <InputSpan
       id="name"
-      :attributes="form.model.toDate.attr.value"
+      v-bind="form.model.toDate.attr.value"
       :disabled="disabled"
       :errors="form.context.errors.value.toDate"
       :label="t('modules.seller.payouts.payout.endDate')"
@@ -26,7 +26,7 @@
 
     <InputSpan
       id="name"
-      :attributes="form.model.reference.attr.value"
+      v-bind="form.model.reference.attr.value"
       column
       :disabled="disabled"
       :errors="form.context.errors.value.reference"

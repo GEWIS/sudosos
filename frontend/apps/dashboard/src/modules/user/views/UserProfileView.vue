@@ -23,9 +23,9 @@ import UserInfo from '@/modules/user/components/UserInfo.vue';
 import PageContainer from '@/layout/PageContainer.vue';
 
 const userStore = useUserStore();
-const dataAnalysis: Ref<boolean> = ref(false);
-const { current } = storeToRefs(userStore as StoreGeneric);
 const { t } = useI18n();
+
+const { current } = storeToRefs(userStore as StoreGeneric);
 const gewisUser: Ref<GewisUserResponse | undefined> = ref(undefined);
 
 onMounted(async () => {
@@ -34,7 +34,6 @@ onMounted(async () => {
     return;
   }
   gewisUser.value = await userStore.fetchGewisUser(userStore.current.user.id, apiService);
-  dataAnalysis.value = userStore.getUserById(userStore.current.user.id)?.extensiveDataProcessing || false;
 });
 </script>
 <style scoped lang="scss"></style>
