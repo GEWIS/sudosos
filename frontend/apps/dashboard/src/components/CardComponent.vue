@@ -1,5 +1,10 @@
 <template>
-  <Card>
+  <Card
+    :pt="{
+      body: center ? 'flex-1' : '',
+      content: center ? 'h-full pb-[2rem]' : '',
+    }"
+  >
     <template #header>
       <div class="flex flex-row w-full justify-between p-5 pb-0">
         <div class="font-semibold text-primary">{{ header.toUpperCase() }}</div>
@@ -27,12 +32,14 @@ const props = withDefaults(
     routerParams?: RouteParamsRawGeneric;
     action?: string;
     func?: () => void;
+    center?: boolean;
   }>(),
   {
     routerLink: undefined,
     routerParams: undefined,
     action: undefined,
     func: undefined,
+    center: false,
   },
 );
 
