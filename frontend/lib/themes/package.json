@@ -1,7 +1,7 @@
 {
   "name": "@sudosos/themes",
   "version": "1.0.0",
-  "description": "Primevue themes",
+  "description": "SudoSOS Primevue themes",
   "scripts": {
     "dev": "WATCH=true vite build",
     "themes:dev": "yarn dev",

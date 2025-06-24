@@ -7,8 +7,9 @@
         v-if="type === 'text'"
         v-model="internalValue as string"
         v-bind="attrs"
+        :class="errors ? 'p-invalid' : ''"
         :disabled="disabled"
-        :placeholder="placeholder"
+        :placeholder="showInline ? errors : placeholder"
       />
 
       <Textarea
@@ -16,14 +17,16 @@
         v-model="internalValue as string"
         v-bind="attrs"
         auto-resize
+        :class="errors ? 'p-invalid' : ''"
         :disabled="disabled"
-        :placeholder="placeholder"
+        :placeholder="showInline ? errors : placeholder"
       />
 
       <DatePickerString
         v-if="type === 'date'"
         v-model="internalValue as string"
         v-bind="attrs"
+        :class="errors ? 'p-invalid' : ''"
         :disabled="disabled"
         :placeholder="placeholder"
       />
@@ -31,6 +34,7 @@
       <InputNumber
         v-if="type === 'currency'"
         v-model="internalValue as number"
+        :class="errors ? 'p-invalid' : ''"
         currency="EUR"
         :disabled="disabled"
         locale="nl-NL"
@@ -43,6 +47,7 @@
       <InputNumber
         v-if="type === 'percentage'"
         v-model="internalValue as number"
+        :class="errors ? 'p-invalid' : ''"
         :disabled="disabled"
         :max-fraction-digits="2"
         :min="0.0"
@@ -58,6 +63,7 @@
       <Select
         v-if="type === 'usertype'"
         v-model="internalValue as number"
+        :class="errors ? 'p-invalid' : ''"
         :disabled="disabled"
         option-label="name"
         option-value="value"
@@ -69,9 +75,9 @@
       <InputText
         v-if="type === 'pin'"
         v-model="internalValue as string"
-        class="w-20"
+        :class="errors ? 'p-invalid' : ''"
         :disabled="disabled"
-        :placeholder="placeholder"
+        :placeholder="showInline ? errors : placeholder"
         size="small"
         type="password"
         v-bind="attrs"
@@ -80,29 +86,30 @@
       <InputText
         v-if="type === 'password'"
         v-model="internalValue as string"
-        class="w-5"
-        :disabled="disabled"
-        :placeholder="placeholder"
-        type="password"
         v-bind="attrs"
+        :class="errors ? 'p-invalid' : ''"
+        :disabled="disabled"
+        :placeholder="showInline ? errors : placeholder"
+        type="password"
       />
+
       <InputNumber
         v-if="type === 'number'"
         v-model="internalValue as number"
         :disabled="disabled"
-        :placeholder="placeholder"
+        :placeholder="showInline ? errors : placeholder"
         :suffix="suffix"
         v-bind="attrs"
       />
     </span>
-    <div class="flex justify-end">
+    <div v-if="!inlineError" class="flex justify-end">
       <ErrorSpan :error="errors" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, useAttrs } from 'vue';
+import { ref, watch, onMounted, useAttrs, computed } from 'vue';
 import type { Ref } from 'vue';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
@@ -128,6 +135,7 @@ const props = withDefaults(
     type?: InputType;
     disabled?: boolean;
     column?: boolean;
+    inlineError?: boolean;
     suffix?: string;
   }>(),
   {
@@ -137,6 +145,7 @@ const props = withDefaults(
     type: 'text',
     disabled: false,
     column: false,
+    inlineError: false,
     suffix: '',
   },
 );
@@ -155,6 +164,11 @@ const initialValue = () => {
 };
 
 const internalValue: Ref<string | number | boolean | undefined> = ref(initialValue());
+
+const showInline = computed(() => {
+  if (!props.inlineError || !props.errors) return false;
+  return !!(props.errors && !internalValue.value);
+});
 
 onMounted(() => {
   internalValue.value = props.value ?? '';

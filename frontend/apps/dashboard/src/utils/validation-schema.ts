@@ -42,6 +42,11 @@ export const updateInvoiceSettingsObject = yup.object({
   description: yup.string().required(),
 });
 
+export const localAuthForm = yup.object({
+  username: yup.string().required(),
+  password: yup.string().required(),
+});
+
 export const updateInvoiceAddressingObject = yup.object({
   addressee: yup.string().required(),
   attention: yup.string(),

@@ -13,6 +13,7 @@ import {
   UpdateNfcRequest,
   AcceptTosRequest,
   AuthenticationNfcRequest,
+  AuthenticationLocalRequest,
 } from '@sudosos/sudosos-client';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { ApiService } from '../services/ApiService';
@@ -132,6 +133,15 @@ export const useAuthStore = defineStore({
         password,
       };
       await service.authenticate.gewisLDAPAuthentication(req).then((res) => {
+        this.handleResponse(res.data);
+      });
+    },
+    async localLogin(accountMail: string, password: string, service: ApiService) {
+      const req: AuthenticationLocalRequest = {
+        accountMail,
+        password,
+      };
+      await service.authenticate.localAuthentication(req).then((res) => {
         this.handleResponse(res.data);
       });
     },
