@@ -163,3 +163,31 @@ export const createWriteOffSchema = yup.object({
   user: yup.mixed<BaseUserResponse>().required(),
   balance: yup.number().required().default(0).max(0, t('modules.financial.forms.write-off.negative')),
 });
+
+export const bannerSchema = yup.object({
+  name: yup.string().required(),
+  duration: yup.number().required().moreThan(0).default(0),
+  startDate: yup
+    .string()
+    .required()
+    .test('is-valid-date', 'Start date must be a valid date', (value) => !isNaN(Date.parse(value || ''))),
+  endDate: yup
+    .string()
+    .required()
+    .test('is-valid-date', 'End date must be a valid date', (value) => !isNaN(Date.parse(value || '')))
+    .test('not-in-past', 'End date cannot be in the past', (value) => {
+      if (!value) return true;
+      const now = new Date();
+      const end = new Date(value);
+      return end >= now;
+    })
+    .test('is-after-start', "End date can't be before start date", function (value) {
+      const { startDate } = this.parent;
+      if (!value || !startDate) return true;
+      return new Date(value) >= new Date(startDate);
+    }),
+  active: yup.boolean().required(),
+  image: yup.string().nullable().optional(),
+  file: yup.mixed<File>().nullable().optional(),
+  id: yup.number().nullable().optional(),
+});

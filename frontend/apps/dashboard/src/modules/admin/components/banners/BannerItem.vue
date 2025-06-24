@@ -4,10 +4,11 @@
       <div class="md:pr-4 md:w-1/2 relative">
         <Image
           v-if="banner.image"
-          class="w-full"
+          :key="banner.image"
+          class="w-full max-h-[6.25rem]"
           preview
           :pt="{
-            image: 'w-full',
+            image: 'w-full object-cover',
           }"
           :pt:image:alt="banner.name"
           :src="getBannerImageSrc(banner)"
@@ -47,25 +48,24 @@
               {{ formatDateTime(endDate) }}
             </span>
           </div>
-          <!-- Add icon and delete button here -->
-          <Button @click="openDialog">{{ t('common.edit') }}</Button>
+          <Button @click="handeClick">{{ t('common.edit') }}</Button>
         </div>
       </div>
     </div>
   </div>
-  <BannerDialog v-model:banner="banner" v-model:visible="isEditDialogVisible" />
 </template>
 <script setup lang="ts">
 import Image from 'primevue/image';
 import Tag from 'primevue/tag';
 
 import type { BannerResponse } from '@sudosos/sudosos-client';
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import BannerDialog from '@/modules/admin/components/banners/BannerDialog.vue';
 
 import { getBannerImageSrc } from '@/utils/urlUtils';
 import { formatDateTime } from '@/utils/formatterUtils';
+
+const emit = defineEmits(['select:banner']);
 
 defineProps<{
   index: number;
@@ -92,9 +92,7 @@ const isExpired = computed(() => {
   return Date.now() > Date.parse(banner.value.endDate);
 });
 
-const isEditDialogVisible = ref<boolean>(false);
-
-const openDialog = () => {
-  isEditDialogVisible.value = true;
+const handeClick = () => {
+  emit('select:banner', banner.value);
 };
 </script>

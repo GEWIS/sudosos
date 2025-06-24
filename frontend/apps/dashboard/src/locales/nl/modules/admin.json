@@ -43,7 +43,24 @@
           "headerCreate": "Banner aanmaken",
           "headerEdit": "Banner bewerken",
           "duration": "Duur",
-          "timespan": "Tijdsbestek"
+          "timespan": "Tijdsbestek",
+          "startDate": "Startdatum",
+          "endDate": "Einddatum",
+          "active": "Actief",
+          "toast": {
+            "success": {
+              "success": "Banner aangemaakt",
+              "bannerCreated": "Banner aangemaakt",
+              "bannerUpdated": "Banner bijgewerkt",
+              "bannerDeleted": "Banner verwijderd"
+            },
+            "error": {
+              "error": "Fout bij aanmaken banner",
+              "bannerCreated": "Fout bij aanmaken banner",
+              "bannerUpdated": "Fout bij bijwerken banner",
+              "bannerDeleted": "Fout bij verwijderen banner"
+            }
+          }
         },
         "user": {
           "header": "Gebruiker aanmaken",

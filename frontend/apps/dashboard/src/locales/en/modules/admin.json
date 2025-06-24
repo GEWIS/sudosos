@@ -43,7 +43,24 @@
           "headerCreate": "Create banner",
           "headerEdit": "Edit banner",
           "duration": "Duration",
-          "timespan": "Timespan"
+          "timespan": "Timespan",
+          "startDate": "Start date",
+          "endDate": "End date",
+          "active": "Active",
+          "toast": {
+            "success": {
+              "success": "Banner created successfully",
+              "bannerCreated": "Banner created",
+              "bannerUpdated": "Banner updated",
+              "bannerDeleted": "Banner deleted"
+            },
+            "error": {
+              "error": "Error creating banner",
+              "bannerCreated": "Error creating banner",
+              "bannerUpdated": "Error updating banner",
+              "bannerDeleted": "Error deleting banner"
+            }
+          }
         },
         "user": {
           "header": "Create user",

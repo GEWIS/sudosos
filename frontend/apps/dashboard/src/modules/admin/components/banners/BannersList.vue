@@ -14,18 +14,24 @@
             class="md:mt-0 mt-2"
             icon="pi pi-plus"
             :label="t('common.create')"
-            @click="isCreateDialogVisible = true"
+            @click="() => selectBanner(undefined)"
           />
         </div>
       </template>
       <template #list="slotProps">
         <div class="grid gap-0">
-          <BannerItem v-for="(item, index) in slotProps.items" :key="index" :banner="item" :index="index" />
+          <BannerItem
+            v-for="(item, index) in slotProps.items"
+            :key="index"
+            :banner="item"
+            :index="index"
+            @select:banner="selectBanner"
+          />
         </div>
       </template>
     </DataView>
   </CardComponent>
-  <BannerDialog v-model:visible="isCreateDialogVisible" />
+  <BannerDialog v-model:visible="dialogVisible" :banner="banner" />
 </template>
 <script setup lang="ts">
 import DataView from 'primevue/dataview';
@@ -46,7 +52,13 @@ const props = defineProps<{
   take?: number | undefined;
 }>();
 
-const isCreateDialogVisible = ref<boolean>();
+const dialogVisible = ref<boolean>(false);
+
+const banner = ref<BannerResponse | undefined>();
+const selectBanner = (b?: BannerResponse) => {
+  banner.value = b;
+  dialogVisible.value = true;
+};
 
 // Filtering the banners
 const filters = ref<FilterOption[]>();

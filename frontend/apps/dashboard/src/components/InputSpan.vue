@@ -86,6 +86,14 @@
         type="password"
         v-bind="attrs"
       />
+      <InputNumber
+        v-if="type === 'number'"
+        v-model="internalValue as number"
+        :disabled="disabled"
+        :placeholder="placeholder"
+        :suffix="suffix"
+        v-bind="attrs"
+      />
     </span>
     <div class="flex justify-end">
       <ErrorSpan :error="errors" />
@@ -108,7 +116,7 @@ defineOptions({ inheritAttrs: false });
 const attrs = useAttrs();
 
 type InputType = HintedString<
-  'text' | 'textarea' | 'date' | 'currency' | 'percentage' | 'pin' | 'password' | 'boolean' | 'usertype'
+  'text' | 'textarea' | 'date' | 'currency' | 'percentage' | 'pin' | 'password' | 'boolean' | 'usertype' | 'number'
 >;
 
 const props = withDefaults(
@@ -120,6 +128,7 @@ const props = withDefaults(
     type?: InputType;
     disabled?: boolean;
     column?: boolean;
+    suffix?: string;
   }>(),
   {
     value: undefined,
@@ -128,6 +137,7 @@ const props = withDefaults(
     type: 'text',
     disabled: false,
     column: false,
+    suffix: '',
   },
 );
 

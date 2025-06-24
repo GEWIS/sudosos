@@ -1,23 +1,24 @@
 import type { BannerResponse, ProductResponse } from '@sudosos/sudosos-client';
 
-export function getProductImageSrc(product: ProductResponse): string {
-  if (!product.image) {
-    return 'https://imgur.com/CS0aauU.png';
-  } else {
-    // Regular expression to check if product.image is a URL
-    // This allows for instant updating of the image locally
-    const urlRegex = /(http|https):\/\/[^ "]+$/;
-    if (urlRegex.test(product.image)) {
-      // If product.image is a URL, return it directly
-      return product.image;
-    } else {
-      // If product.image is not a URL, construct the URL
-      return `${window.location.origin}/static/products/${product.image}`;
-    }
-  }
+export function resolveImageUrl(
+  image: string | null | undefined,
+  fallbackPath: string,
+  defaultFallbackUrl: string,
+): string {
+  if (!image) return defaultFallbackUrl;
+
+  const isUrl = /^(blob:|http:\/\/|https:\/\/)[^ "]+$/.test(image);
+  if (isUrl) return image;
+
+  return `${window.location.origin}${fallbackPath}/${image}`;
 }
+
+export function getProductImageSrc(product: ProductResponse): string {
+  return resolveImageUrl(product.image, '/static/products', 'https://imgur.com/CS0aauU.png');
+}
+
 export function getBannerImageSrc(banner: BannerResponse): string {
-  return `${window.location.origin}/static/banners/${banner.image}`;
+  return resolveImageUrl(banner.image, '/static/banners', 'https://imgur.com/CS0aauU.png');
 }
 
 export function getInvoicePdfSrc(pdf: string): string {

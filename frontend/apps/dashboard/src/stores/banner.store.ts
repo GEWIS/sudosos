@@ -5,51 +5,75 @@ import apiService from '@/services/ApiService';
 
 export const useBannersStore = defineStore('banners', {
   state: () => ({
-    banners: [] as BannerResponse[],
+    banners: {} as Record<number, BannerResponse>,
   }),
-  actions: {
-    async fetchBanners() {
-      // TODO: Not fetch all banners (see #51)
-      this.banners = await fetchAllPages<BannerResponse>((take, skip) =>
-        // @ts-expect-error PaginatedBannerResponse is the same as PaginatedResult<BannerResponse>
-        apiService.openBanner.getAllOpenBanners(take, skip),
+  getters: {
+    /**
+     * All banners as a list.
+     */
+    allBanners(state): BannerResponse[] {
+      return Object.values(state.banners);
+    },
+    /**
+     * Only active or currently valid banners.
+     */
+    activeBanners(state): BannerResponse[] {
+      const now = new Date().toISOString();
+      return Object.values(state.banners).filter(
+        (banner) => banner.active || (banner.startDate <= now && banner.endDate >= now),
       );
     },
-
     /**
-     * Updates the banner information, excluding the image
-     *
-     * @param bannerid Id of the banner
-     * @param banner The content of the banner
+     * Get a banner by ID.
      */
-    async updateBanner(bannerid: number, banner: BannerRequest) {
-      return await apiService.banner.update(bannerid, banner);
+    getBanner:
+      (state) =>
+      (id: number): BannerResponse | null => {
+        return state.banners[id] ?? null;
+      },
+  },
+  actions: {
+    /**
+     * Fetches all banners and stores them by ID.
+     */
+    async fetchBanners() {
+      const all = await fetchAllPages<BannerResponse>((take, skip) =>
+        // @ts-expect-error: PaginatedBannerResponse is the same as PaginatedResult<BannerResponse>
+        apiService.openBanner.getAllOpenBanners(take, skip),
+      );
+
+      for (const banner of all) {
+        this.banners[banner.id] = banner;
+      }
     },
 
     /**
-     * Updates the image of the banner.
-     *
-     * @param bannerid The banner id
-     * @param image The image file
+     * Updates a banner by ID (excluding image).
      */
-    async updateBannerImage(bannerid: number, image: File) {
-      return await apiService.banner.updateImage(bannerid, image);
+    async updateBanner(bannerId: number, banner: BannerRequest) {
+      const updated = await apiService.banner.update(bannerId, banner);
+      this.banners[bannerId] = { ...this.banners[bannerId], ...banner };
+      return updated;
     },
 
     /**
-     * Create a new banner.
-     *
-     * @param banner The banner request.
+     * Updates only the image of a banner.
+     */
+    async updateBannerImage(bannerId: number, image: File) {
+      const banner = this.banners[bannerId];
+      if (!banner) return;
+      banner.image = URL.createObjectURL(image);
+      this.banners[banner.id] = { ...banner };
+      await apiService.banner.updateImage(bannerId, image);
+    },
+
+    /**
+     * Creates a new banner and adds it to the store.
      */
     async createBanner(bannerRequest: BannerRequest) {
-      return await apiService.banner.create(bannerRequest);
-    },
-  },
-  getters: {
-    activeBanners(): BannerResponse[] {
-      // Filter banners that are currently active based on their start and end dates
-      const now = new Date().toISOString();
-      return this.banners.filter((banner) => banner.active || (banner.startDate <= now && banner.endDate >= now));
+      const resp = await apiService.banner.create(bannerRequest);
+      this.banners[resp.data.id] = resp.data;
+      return resp;
     },
   },
 });
