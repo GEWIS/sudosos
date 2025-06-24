@@ -14,7 +14,10 @@
  * ```
  */
 export function addListenerOnDialogueOverlay(ref: { mask: HTMLElement; close: () => void }) {
-  ref.mask.addEventListener('click', function (event: MouseEvent) {
-    if (event.target === ref.mask) ref.close();
-  });
+  if (!ref.mask.hasAttribute('data-overlay-listener')) {
+    ref.mask.setAttribute('data-overlay-listener', 'true');
+    ref.mask.addEventListener('click', function (event: MouseEvent) {
+      if (event.target === ref.mask) ref.close();
+    });
+  }
 }
