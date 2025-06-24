@@ -7,7 +7,7 @@
         :header="t('modules.user.settings.changePin')"
         :simple-save="true"
         @cancel="pinForm.context.resetForm"
-        @save="pinForm.submit"
+        @save="() => pinForm.submit()"
         @update:model-value="editPin = $event"
       >
         <ChangePinForm :edit="editPin" :form="pinForm" />

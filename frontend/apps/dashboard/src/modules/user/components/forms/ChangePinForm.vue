@@ -4,6 +4,7 @@
       id="pin"
       v-bind="form.model.pin.attr.value"
       autocomplete="off"
+      class="max-w-[3.5rem]"
       :disabled="!edit"
       :errors="form.context.errors.value.pin"
       :label="t('modules.user.profile.pinNew')"
@@ -14,6 +15,7 @@
     <InputSpan
       id="pinConfirm"
       v-bind="form.model.pinConfirm.attr.value"
+      class="max-w-[3.5rem]"
       :disabled="!edit"
       :errors="form.context.errors.value.pinConfirm"
       :label="t('modules.user.profile.pinConfirm')"
