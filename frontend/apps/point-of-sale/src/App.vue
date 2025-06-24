@@ -8,8 +8,8 @@ import MaintenanceModeOverlay from '@/components/MaintenanceModeOverlay.vue';
 <template>
   <Toast />
   <MaintenanceModeOverlay />
-<!--  TODO fix when WS works again -->
-<!--  <ConnectionLostOverlay />-->
+  <!--  TODO fix when WS works again -->
+  <!--  <ConnectionLostOverlay />-->
   <RouterView />
   <SplashComponent />
 </template>
