@@ -17,9 +17,10 @@
           v-model:select-product="selectExistingProduct"
           :products="dropdownProducts"
         />
-        <hr v-if="state.addToContainer" class="opacity-50 w-full" />
-        <div class="flex flex-col gap-4 md:flex-row">
+        <Divider v-if="state.addToContainer" />
+        <div class="flex flex-col gap-5 md:flex-row justify-center items-center">
           <ProductActionImageForm
+            class="flex-grow"
             :image-src="imageSrc"
             :is-editable="isProductEditable"
             @upload="onImageUpload($event)"
@@ -55,7 +56,7 @@
             </div>
           </div>
         </div>
-        <ConfirmDialog ref="deleteConfirm"></ConfirmDialog>
+        <ConfirmDialog ref="deleteConfirm" />
       </div>
     </template>
   </FormDialog>
@@ -317,7 +318,8 @@ async function deleteProduct() {
       .catch((err) => handleError(err, toast));
   } else {
     confirm.require({
-      message: t('modules.seller.productContainers.products.confirmProductContainerDelete'),
+      header: t('common.delete'),
+      message: t('modules.seller.productContainers.products.confirmDelete'),
       target: deleteConfirm.value,
       acceptLabel: t('common.delete'),
       rejectLabel: t('common.close'),

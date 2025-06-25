@@ -1,8 +1,9 @@
 <template>
-  <div class="flex flex-col gap-1">
+  <div class="flex flex-col gap-2">
     <InputSpan
       id="name"
       v-bind="form.model.name.attr.value"
+      class="max-w-[14rem]"
       :disabled="!isEditable"
       :errors="form.context.errors.value.name"
       :label="t('common.name')"
@@ -19,6 +20,7 @@
       {{ t('modules.seller.forms.product.closeTo', { name: closeTo.name }) }}</span
     >
     <InputSelectSpan
+      class="max-w-[14rem]"
       :disabled="!isEditable"
       :label="t('modules.seller.productContainers.products.category')"
       option-label="name"
@@ -28,6 +30,7 @@
       @update:selected-option="form.context.setFieldValue('category', $event!)"
     />
     <InputSelectSpan
+      class="max-w-[14rem]"
       :disabled="!isEditable"
       :label="t('modules.seller.productContainers.products.vat')"
       option-label="name"
@@ -39,6 +42,7 @@
 
     <InputSpan
       id="alcoholPercentage"
+      class="min-w-[14rem]"
       v-bind="form.model.alcoholPercentage.attr.value"
       :disabled="!isEditable"
       :errors="form.context.errors.value.alcoholPercentage"
@@ -51,6 +55,7 @@
     <InputSpan
       id="priceInclVat"
       v-bind="form.model.priceInclVat.attr.value"
+      class="max-w-[14rem]"
       :disabled="!isEditable"
       :errors="form.context.errors.value.priceInclVat"
       :label="t('common.price')"
@@ -59,21 +64,16 @@
       @update:value="form.context.setFieldValue('priceInclVat', $event)"
     />
 
-    <div class="items-center flex flex-row gap-1 justify-between">
-      <i
-        v-tooltip.top="t('common.tooltip.productOwner')"
-        class="cursor-pointer pi pi-exclamation-circle text-red-500"
-      />
-      <InputOrganSpan
-        class="input-field w-76 justify-center"
-        :disabled="!isOrganEditable || !isEditable"
-        :errors="form.context.errors.value.owner"
-        :label="t('modules.seller.productContainers.products.owner')"
-        :organ="form.model.owner.value.value"
-        :organs="!isOrganEditable ? [form.model.owner.value.value] : undefined"
-        @update:organ="form.context.setFieldValue('owner', $event!)"
-      />
-    </div>
+    <InputOrganSpan
+      v-tooltip.top="t('common.tooltip.productOwner')"
+      class="max-w-[14rem]"
+      :disabled="!isOrganEditable || !isEditable"
+      :errors="form.context.errors.value.owner"
+      :label="t('modules.seller.productContainers.products.owner')"
+      :organ="form.model.owner.value.value"
+      :organs="!isOrganEditable ? [form.model.owner.value.value] : undefined"
+      @update:organ="form.context.setFieldValue('owner', $event!)"
+    />
 
     <div class="flex flex-col gap-1 justify-between">
       <InputSpan

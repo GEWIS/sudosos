@@ -1,9 +1,9 @@
 <template>
-  <div class="flex gap-5 justify-end">
-    <p class="prop">{{ t('modules.seller.productContainers.products.addExisting') }}</p>
+  <div class="flex items-center gap-5 justify-end">
+    <span class="text-base">{{ t('modules.seller.productContainers.products.addExisting') }}</span>
     <Select
       v-model="selectProduct"
-      class="items-center w-15rem"
+      class="max-w-[15rem]"
       :filter="true"
       option-label="name"
       :options="products"

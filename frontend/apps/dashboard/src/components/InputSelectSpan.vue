@@ -4,11 +4,12 @@
       <span class="my-0">{{ label }}</span>
       <Select
         v-model="selectedOption"
-        class="md:w-15rem w-full"
+        class="flex-grow"
         :disabled="disabled"
         :option-label="optionLabel"
         :options="options"
         :placeholder="placeholder"
+        v-bind="attrs"
       >
         <template #option="slotProps">
           {{ slotProps.option[optionLabel] }}
@@ -23,6 +24,10 @@
 
 <script setup lang="ts" generic="T">
 import ErrorSpan from '@/components/ErrorSpan.vue';
+import { useAttrs } from 'vue';
+
+defineOptions({ inheritAttrs: false });
+const attrs = useAttrs();
 
 withDefaults(
   defineProps<{

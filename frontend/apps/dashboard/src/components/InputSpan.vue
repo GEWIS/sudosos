@@ -7,6 +7,7 @@
         v-if="type === 'text'"
         v-model="internalValue as string"
         v-bind="attrs"
+        class="flex-grow"
         :class="errors ? 'p-invalid' : ''"
         :disabled="disabled"
         :placeholder="showInline ? errors : placeholder"
@@ -17,6 +18,7 @@
         v-model="internalValue as string"
         v-bind="attrs"
         auto-resize
+        class="flex-grow"
         :class="errors ? 'p-invalid' : ''"
         :disabled="disabled"
         :placeholder="showInline ? errors : placeholder"
@@ -26,6 +28,7 @@
         v-if="type === 'date'"
         v-model="internalValue as string"
         v-bind="attrs"
+        class="flex-grow"
         :class="errors ? 'p-invalid' : ''"
         :disabled="disabled"
         :placeholder="placeholder"
@@ -34,6 +37,7 @@
       <InputNumber
         v-if="type === 'currency'"
         v-model="internalValue as number"
+        class="flex-grow"
         :class="errors ? 'p-invalid' : ''"
         currency="EUR"
         :disabled="disabled"
@@ -47,6 +51,7 @@
       <InputNumber
         v-if="type === 'percentage'"
         v-model="internalValue as number"
+        class="flex-grow"
         :class="errors ? 'p-invalid' : ''"
         :disabled="disabled"
         :max-fraction-digits="2"
@@ -63,6 +68,7 @@
       <Select
         v-if="type === 'usertype'"
         v-model="internalValue as number"
+        class="flex-grow"
         :class="errors ? 'p-invalid' : ''"
         :disabled="disabled"
         option-label="name"
@@ -75,6 +81,7 @@
       <InputText
         v-if="type === 'pin'"
         v-model="internalValue as string"
+        class="flex-grow"
         :class="errors ? 'p-invalid' : ''"
         :disabled="disabled"
         :placeholder="showInline ? errors : placeholder"
@@ -87,6 +94,7 @@
         v-if="type === 'password'"
         v-model="internalValue as string"
         v-bind="attrs"
+        class="flex-grow"
         :class="errors ? 'p-invalid' : ''"
         :disabled="disabled"
         :placeholder="showInline ? errors : placeholder"
@@ -96,6 +104,8 @@
       <InputNumber
         v-if="type === 'number'"
         v-model="internalValue as number"
+        class="flex-grow"
+        :class="errors ? 'p-invalid' : ''"
         :disabled="disabled"
         :placeholder="showInline ? errors : placeholder"
         :suffix="suffix"
