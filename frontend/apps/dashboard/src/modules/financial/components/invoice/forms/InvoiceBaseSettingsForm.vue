@@ -2,6 +2,7 @@
   <div class="flex flex-col gap-2 justify-between">
     <InputSpan
       id="name"
+      class="max-w-[15rem]"
       v-bind="form.model.reference.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.reference"
@@ -13,6 +14,7 @@
     />
 
     <InputSpan
+      class="max-w-[15rem]"
       v-bind="form.model.date.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.date"

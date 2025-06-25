@@ -1,14 +1,16 @@
 <template>
   <PageContainer>
     <div class="flex flex-wrap gap-3">
-      <div class="flex flex-col gap-3">
-        <InvoiceCreateUserCard :form="form" />
-        <InvoiceTransactionsCard :form="form" />
-      </div>
-      <div class="flex flex-col gap-3">
-        <InvoiceCreateAddressingCard :form="form" />
-        <InvoiceCreateSettingsCard :form="form" />
-        <InvoiceCreate :form="form" />
+      <div class="flex flex-col md:flex-row gap-3 flex-grow">
+        <div class="flex flex-col gap-3 flex-grow">
+          <InvoiceCreateUserCard class="flex-grow" :form="form" />
+          <InvoiceTransactionsCard class="flex-grow" :form="form" />
+        </div>
+        <div class="flex flex-col gap-3 flex-grow">
+          <InvoiceCreateAddressingCard class="flex-grow" :form="form" />
+          <InvoiceCreateSettingsCard class="flex-grow" :form="form" />
+          <InvoiceCreate class="flex-grow" :form="form" />
+        </div>
       </div>
     </div>
   </PageContainer>

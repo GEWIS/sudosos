@@ -2,6 +2,7 @@
   <div class="flex flex-col gap-2 justify-between">
     <InputSpan
       id="name"
+      class="max-w-[15rem]"
       v-bind="form.model.addressee.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.addressee"
@@ -14,6 +15,7 @@
 
     <InputSpan
       id="name"
+      class="max-w-[15rem]"
       v-bind="form.model.attention?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.attention"
@@ -26,6 +28,7 @@
 
     <InputSpan
       id="name"
+      class="max-w-[15rem]"
       v-bind="form.model.street.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.street"
@@ -38,6 +41,7 @@
 
     <InputSpan
       id="name"
+      class="max-w-[15rem]"
       v-bind="form.model.postalCode.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.postalCode"
@@ -50,6 +54,7 @@
 
     <InputSpan
       id="name"
+      class="max-w-[15rem]"
       v-bind="form.model.city.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.city"
@@ -62,6 +67,7 @@
 
     <InputSpan
       id="name"
+      class="max-w-[15rem]"
       v-bind="form.model.country.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.country"
