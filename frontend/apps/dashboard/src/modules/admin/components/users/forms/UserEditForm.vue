@@ -1,7 +1,8 @@
 <template>
   <div class="flex flex-col gap-2">
     <InputSpan
-      id="name"
+      id="firstName"
+      class="max-w-[13rem]"
       v-bind="form.model.firstName.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.firstName"
@@ -12,7 +13,8 @@
       @update:value="form.context.setFieldValue('firstName', $event)"
     />
     <InputSpan
-      id="name"
+      id="lastName"
+      class="max-w-[13rem]"
       v-bind="form.model.lastName?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.lastName"
@@ -23,7 +25,9 @@
       @update:value="form.context.setFieldValue('lastName', $event)"
     />
     <InputSpan
-      id="name"
+      v-if="showNickname"
+      id="nickname"
+      class="max-w-[13rem]"
       v-bind="form.model.nickname?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.nickname"
@@ -34,8 +38,9 @@
       @update:value="form.context.setFieldValue('nickname', $event)"
     />
     <InputSpan
-      v-if="!(props.user?.type === 'MEMBER')"
-      id="name"
+      v-if="showEmail"
+      id="email"
+      class="max-w-[13rem]"
       v-bind="form.model.email?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.email"
@@ -46,8 +51,9 @@
       @update:value="form.context.setFieldValue('email', $event)"
     />
     <InputSpan
-      id="name"
+      id="usertype"
       v-bind="form.model.userType?.attr.value"
+      class="max-w-[13rem]"
       disabled
       :errors="form.context.errors.value.userType"
       :label="t('common.usertype')"
@@ -57,7 +63,7 @@
       @update:value="updateType($event)"
     />
     <InputSpan
-      id="name"
+      id="active"
       v-bind="form.model.isActive?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.isActive"
@@ -67,7 +73,7 @@
       @update:value="form.context.setFieldValue('isActive', $event)"
     />
     <InputSpan
-      id="name"
+      id="ofAge"
       v-bind="form.model.ofAge?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.ofAge"
@@ -77,7 +83,7 @@
       @update:value="form.context.setFieldValue('ofAge', $event)"
     />
     <InputSpan
-      id="name"
+      id="canGoIntoDebt"
       v-bind="form.model.canGoIntoDebt?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.canGoIntoDebt"
@@ -100,6 +106,7 @@ import { type Form, setSubmit } from '@/utils/formUtils';
 import InputSpan from '@/components/InputSpan.vue';
 import { updateUserDetailsObject } from '@/utils/validation-schema';
 import { handleError } from '@/utils/errorUtils';
+import { UserRole } from '@/utils/rbacUtils';
 
 const { t } = useI18n();
 const toast = useToast();
@@ -121,6 +128,9 @@ const props = defineProps({
     default: false,
   },
 });
+
+const showEmail = [UserRole.LOCAL_USER, UserRole.LOCAL_ADMIN, UserRole.INVOICE].includes(props.user.type);
+const showNickname = [UserRole.USER, UserRole.LOCAL_USER, 'MEMBER'].includes(props.user.type);
 
 const updateType = (event: string) => {
   if (event) props.form.context.setFieldValue('userType', event);

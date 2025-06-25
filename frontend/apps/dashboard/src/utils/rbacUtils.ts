@@ -1,6 +1,7 @@
 export enum UserRole {
   USER = 'User',
   LOCAL_USER = 'Local User',
+  LOCAL_ADMIN = 'Local Admin',
   BUYER = 'Buyer',
   INVOICE = 'Invoice',
   AUTHORIZED_BUYER = 'AuthorizedBuyer',
