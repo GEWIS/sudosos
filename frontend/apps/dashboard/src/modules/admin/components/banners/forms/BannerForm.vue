@@ -2,10 +2,11 @@
   <div>
     <BannerImageForm class="max-w-[50rem]" :form="form" />
     <Divider />
-    <div class="flex flex-col gap-5">
+    <div class="flex flex-col gap-3">
       <InputSpan
         id="name"
-        :attributes="form.model.name.attr.value"
+        v-bind="form.model.name.attr.value"
+        class="max-w-[15rem]"
         :errors="form.context.errors.value.name"
         :label="t('common.name')"
         :placeholder="t('common.placeholders.fullName')"
@@ -15,7 +16,8 @@
       />
       <InputSpan
         id="duration"
-        :attributes="form.model.duration.attr.value"
+        v-bind="form.model.duration.attr.value"
+        class="max-w-[15rem]"
         :errors="form.context.errors.value.duration"
         :label="t('modules.admin.forms.banner.duration')"
         suffix=" Seconds"
@@ -23,26 +25,26 @@
         :value="form.model.duration.value.value"
         @update:value="form.context.setFieldValue('duration', $event)"
       />
-      <div class="flex flex-col gap-3">
-        <InputSpan
-          id="startDate"
-          :attributes="form.model.startDate.attr.value"
-          :errors="form.context.errors.value.startDate"
-          :label="t('modules.admin.forms.banner.startDate')"
-          type="date"
-          :value="form.model.startDate.value.value"
-          @update:value="form.context.setFieldValue('startDate', $event)"
-        />
-        <InputSpan
-          id="endDate"
-          :attributes="form.model.endDate.attr.value"
-          :errors="form.context.errors.value.endDate"
-          :label="t('modules.admin.forms.banner.endDate')"
-          type="date"
-          :value="form.model.endDate.value.value"
-          @update:value="form.context.setFieldValue('endDate', $event)"
-        />
-      </div>
+      <InputSpan
+        id="startDate"
+        v-bind="form.model.startDate.attr.value"
+        class="max-w-[15rem]"
+        :errors="form.context.errors.value.startDate"
+        :label="t('modules.admin.forms.banner.startDate')"
+        type="date"
+        :value="form.model.startDate.value.value"
+        @update:value="form.context.setFieldValue('startDate', $event)"
+      />
+      <InputSpan
+        id="endDate"
+        v-bind="form.model.endDate.attr.value"
+        class="max-w-[15rem]"
+        :errors="form.context.errors.value.endDate"
+        :label="t('modules.admin.forms.banner.endDate')"
+        type="date"
+        :value="form.model.endDate.value.value"
+        @update:value="form.context.setFieldValue('endDate', $event)"
+      />
       <InputSpan
         id="active"
         :attributes="form.model.active.attr.value"
