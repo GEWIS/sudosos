@@ -76,7 +76,7 @@
   <Dialog
     ref="dialog"
     v-model:visible="showWarningModal"
-    class="w-auto flex w-9 md:w-4"
+    class="w-auto flex"
     :draggable="false"
     :header="t('modules.financial.write-offs.delete.delete')"
     modal
