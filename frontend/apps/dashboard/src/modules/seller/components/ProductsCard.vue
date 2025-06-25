@@ -58,7 +58,7 @@
           <Skeleton class="h-4rem my-1 surface-300 w-8" />
         </template>
       </Column>
-      <Column field="name" :header="t('common.name')" style="width: 30%">
+      <Column field="name" :header="t('common.name')" style="width: 40%">
         <template v-if="loading" #body>
           <Skeleton class="h-2rem my-1 surface-300 w-6" />
         </template>
@@ -74,18 +74,6 @@
       <Column field="priceInclVat" :header="t('common.price')" style="width: 17%">
         <template v-if="!loading" #body="rowData">
           {{ formatPrice(rowData.data.priceInclVat) }}
-        </template>
-        <template v-else #body>
-          <Skeleton class="h-2rem my-1 surface-300 w-6" />
-        </template>
-      </Column>
-      <Column
-        field="alcoholPercentage"
-        :header="t('modules.seller.productContainers.products.alcoholPercentage')"
-        style="width: 10%"
-      >
-        <template v-if="!loading" #body="rowData">
-          {{ `${rowData.data.alcoholPercentage} %` }}
         </template>
         <template v-else #body>
           <Skeleton class="h-2rem my-1 surface-300 w-6" />
