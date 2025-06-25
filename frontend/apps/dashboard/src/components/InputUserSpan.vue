@@ -9,6 +9,7 @@
         :placeholder="placeholder"
         :show-positive="props.showPositive"
         :type="type"
+        v-bind="attrs"
       />
     </span>
     <div class="flex justify-end">
@@ -18,12 +19,15 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, useAttrs, watch } from 'vue';
 import { type BaseUserResponse, GetAllUsersTypeEnum } from '@sudosos/sudosos-client';
 import ErrorSpan from '@/components/ErrorSpan.vue';
 import FindUser from '@/components/FindUser.vue';
 
 const emit = defineEmits(['update:value']);
+
+defineOptions({ inheritAttrs: false });
+const attrs = useAttrs();
 
 const props = withDefaults(
   defineProps<{

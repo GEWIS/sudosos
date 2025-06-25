@@ -3,7 +3,7 @@
     <!-- TODO: Improve two way binding such that resetting the form will also reset the user selection -->
     <InputUserSpan
       v-model:value="selectedUser"
-      class="mb-3"
+      class="mb-3 max-w-[15rem]"
       :default="queryUser"
       :label="t('modules.financial.invoice.for')"
       :show-positive="false"
