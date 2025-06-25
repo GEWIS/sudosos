@@ -1,7 +1,8 @@
 <template>
   <div class="flex flex-col gap-3">
     <InputSpan
-      id="name"
+      id="fromDate"
+      class="max-w-[15rem]"
       v-bind="form.model.fromDate.attr.value"
       :disabled="disabled"
       :errors="form.context.errors.value.fromDate"
@@ -13,7 +14,8 @@
     />
 
     <InputSpan
-      id="name"
+      id="endDate"
+      class="max-w-[15rem]"
       v-bind="form.model.toDate.attr.value"
       :disabled="disabled"
       :errors="form.context.errors.value.toDate"
@@ -25,7 +27,7 @@
     />
 
     <InputSpan
-      id="name"
+      id="description"
       v-bind="form.model.reference.attr.value"
       column
       :disabled="disabled"
@@ -110,7 +112,11 @@ const payoutAmount: Ref<number | null> = ref(null);
 const sellerPayoutStore = useSellerPayoutStore();
 
 const datesSelected = computed(() => {
-  return props.form.model.fromDate.value.value !== undefined && props.form.model.toDate.value.value !== undefined;
+  return (
+    props.form.model.fromDate.value.value !== undefined &&
+    props.form.model.toDate.value.value !== undefined &&
+    props.form.context.meta.value.valid
+  );
 });
 
 watch(

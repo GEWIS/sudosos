@@ -21,9 +21,7 @@ export const useVerifyPayout = {
 
       try {
         const startDate = new Date(payout.startDate);
-        startDate.setUTCHours(0, 0, 0, 0);
         const endDate = new Date(payout.endDate);
-        endDate.setUTCHours(23, 59, 59, 999);
 
         const result = await ApiService.user.getUsersSalesReport(
           payout.requestedBy.id,
