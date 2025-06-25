@@ -4,7 +4,7 @@
     <div class="flex flex-col sm:flex-row justify-center">
       <div class="flex flex-col justify-center w-full sm:w-1/2">
         <Skeleton v-if="loading" class="h-16 mx-auto w-5/12" />
-        <h1 v-else class="font-medium my-0 sm:text-7xl text-3xl text-center">{{ displayBalance }}</h1>
+        <h1 v-else class="font-medium my-0 sm:text-7xl text-5xl text-center">{{ displayBalance }}</h1>
         <p v-if="userBalance && userBalance.fine" class="font-semibold text-base text-center text-red-500">
           {{
             isAllFine
