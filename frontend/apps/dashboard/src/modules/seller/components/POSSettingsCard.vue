@@ -77,6 +77,7 @@ function handleDelete() {
   confirm.require({
     message: t('modules.seller.singlePos.confirmDelete'),
     target: deleteConfirm.value,
+    header: t('common.delete'),
     acceptLabel: t('common.delete'),
     rejectLabel: t('common.close'),
     acceptIcon: 'pi pi-trash',

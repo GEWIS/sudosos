@@ -56,6 +56,30 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
         return this.pointsOfSaleWithContainers[pointOfSaleWithContainers.id];
       });
     },
+    async removeContainerFromPos(posId: number, containerId: number) {
+      const pos = this.pointsOfSaleWithContainers[posId];
+      if (!pos) {
+        throw new Error(`Point of sale with id ${posId} not found`);
+      }
+
+      if (!pos.containers || !pos.containers.length) {
+        throw new Error(`Point of sale with id ${posId} does not have containers loaded`);
+      }
+
+      if (pos.containers.findIndex((e) => e.id === containerId) === -1) {
+        throw new Error(`Container with id ${containerId} not found in point of sale with id ${posId}`);
+      }
+
+      const containers = pos.containers.filter((e) => e.id !== containerId).map((e) => e.id);
+
+      const updatePointOfSaleRequest: UpdatePointOfSaleRequest = {
+        name: pos.name,
+        useAuthentication: pos.useAuthentication,
+        containers,
+        id: posId,
+      };
+      return this.updatePointOfSale(posId, updatePointOfSaleRequest);
+    },
     async deletePointOfSale(id: number) {
       delete this.pointsOfSale[id];
       delete this.pointsOfSaleWithContainers[id];

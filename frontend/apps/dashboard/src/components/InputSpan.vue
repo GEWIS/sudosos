@@ -1,7 +1,7 @@
 <template>
   <div>
-    <span :class="['flex justify-between', column ? 'flex-col gap-1' : 'flex-row items-center gap-2']">
-      <p class="my-0">{{ label }}</p>
+    <span :class="['flex justify-between', column ? 'flex-col gap-1' : 'flex-row items-center gap-3']">
+      <span class="my-0">{{ label }}</span>
 
       <InputText
         v-if="type === 'text'"

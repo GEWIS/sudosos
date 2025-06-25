@@ -10,7 +10,7 @@
     @show="openDialog()"
   >
     <slot :form="form" name="form" />
-    <div class="flex flex-row gap-2 justify-between mt-3 w-full">
+    <div class="flex flex-row gap-2 justify-between mt-6 w-full">
       <Button
         v-if="isEditable && deletable"
         icon="pi pi-trash"

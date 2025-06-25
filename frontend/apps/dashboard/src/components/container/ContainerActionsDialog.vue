@@ -6,12 +6,17 @@
     :header="header"
     :is-editable="state.edit || state.create"
     @close="closeDialog()"
-    @delete="deleteProduct()"
+    @delete="() => deleteContainer(props.container!)"
     @show="openDialog()"
   >
     <template #form>
-      <ContainerActionsForm :form="form" :is-editable="state.edit || state.create" :is-organ-editable="state.create" />
-      <ConfirmDialog group="containerDelete" />
+      <ContainerActionsForm
+        class="min-w-[20rem]"
+        :form="form"
+        :is-editable="state.edit || state.create"
+        :is-organ-editable="state.create"
+      />
+      <ConfirmDialog :group="`containerDelete-${props.container?.id}`" />
     </template>
   </FormDialog>
 </template>
@@ -134,18 +139,18 @@ const updateFieldValues = (p: ContainerWithProductsResponse) => {
 
 const confirm = useConfirm();
 
-function deleteProduct() {
-  if (props.container == undefined) return;
+function deleteContainer(c: ContainerWithProductsResponse) {
   confirm.require({
-    message: t('modules.seller.productContainers.products.confirmDelete'),
+    header: t('common.delete'),
+    message: t('modules.seller.productContainers.containers.confirmDelete'),
     acceptLabel: t('common.delete'),
     rejectLabel: t('common.close'),
     acceptIcon: 'pi pi-trash',
     rejectIcon: 'pi pi-times',
-    group: 'containerDelete',
+    group: `containerDelete-${c.id}`,
     accept: () => {
       containerStore
-        .deleteContainer(props.container!.id)
+        .deleteContainer(c.id)
         .then(() => {
           toast.add({
             summary: t('common.toast.success.success'),
@@ -159,7 +164,6 @@ function deleteProduct() {
         .catch((err) => {
           handleError(err, toast);
           confirm.close();
-          closeDialog();
         });
     },
   });

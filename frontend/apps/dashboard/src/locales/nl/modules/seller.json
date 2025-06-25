@@ -10,17 +10,20 @@
       },
       "singlePos": {
         "sales": "Verkopen in de afgelopen week",
-        "confirmDelete": "Weet je zeker dat je dit verkooppunt wilt verwijderen?"
+        "confirmDelete": "Weet je zeker dat je dit verkooppunt wilt verwijderen?",
+        "confirmRemoveContainer": "Weet je zeker dat je deze container uit dit verkooppunt wilt verwijderen?"
       },
       "productContainers": {
         "containers": {
           "header": "Containers",
           "addExisting": "Bestaande container toevoegen",
           "public": "Openbaar",
+          "private": "Privé",
           "container": "Container",
           "create": "Container aanmaken",
           "edit": "Container bewerken",
-          "view": "Container bekijken"
+          "view": "Container bekijken",
+          "confirmDelete": "Weet je zeker dat je deze container wilt verwijderen?"
         },
         "products": {
           "header": "Producten",

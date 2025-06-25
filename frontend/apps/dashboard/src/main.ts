@@ -49,6 +49,7 @@ import Badge from 'primevue/badge';
 
 import { SudososRed } from '@sudosos/themes';
 
+import { AccordionContent, AccordionHeader, AccordionPanel } from 'primevue';
 import App from './App.vue';
 import router from './router';
 import i18n from './utils/i18nUtils';
@@ -97,6 +98,9 @@ app.component('ScrollPanel', ScrollPanel);
 app.component('FileUpload', FileUpload);
 app.component('Toast', Toast);
 app.component('Accordion', Accordion);
+app.component('AccordionPanel', AccordionPanel);
+app.component('AccordionHeader', AccordionHeader);
+app.component('AccordionContent', AccordionContent);
 app.component('Skeleton', Skeleton);
 app.component('InputIcon', InputIcon);
 app.component('IconField', IconField);
