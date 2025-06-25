@@ -62,7 +62,7 @@
     <Dialog
       ref="dialog"
       v-model:visible="showModal"
-      class="flex w-1/3"
+      class="flex max-w-[40rem] w-full"
       :draggable="false"
       :header="t('modules.financial.payout.details', { payoutId })"
       modal

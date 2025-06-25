@@ -5,6 +5,7 @@ import type { BaseUserResponse, BaseVatGroupResponse, ProductCategoryResponse } 
 import type { DineroObject } from 'dinero.js';
 import i18n from './i18nUtils';
 import type { ContainerInStore } from '@/stores/container.store';
+import { formatPrice } from '@/utils/formatterUtils';
 
 const t = i18n.global.t;
 
@@ -95,7 +96,34 @@ export const userTypes: Ref<Array<{ name: string; value: string }>> = ref([
 ]);
 
 export const createPayoutSchema = yup.object({
-  amount: yup.number().required().default(0),
+  amount: yup
+    .number()
+    .required()
+    .default(0)
+    .test('is-less-than-balance', function (value) {
+      const { balance } = this.parent;
+      if (value && balance != null && value > balance) {
+        return this.createError({
+          message: t('modules.financial.forms.payout.amountTooHigh', {
+            balance: formatPrice({ amount: balance * 100, currency: 'EUR', precision: 2 }),
+          }),
+        });
+      }
+      return true;
+    }),
+  balance: yup
+    .number()
+    .required()
+    .default(0)
+    .test(
+      'is-not-negative',
+      (params) => {
+        return t('modules.financial.forms.payout.currentBalance', {
+          balance: formatPrice({ amount: Math.abs(params.value * 100), currency: 'EUR', precision: 2 }, true),
+        });
+      },
+      (value) => value >= 0,
+    ),
   bankAccountNumber: yup.string().required(),
   bankAccountName: yup.string().required(),
   user: yup.mixed<BaseUserResponse>().required(),

@@ -1,31 +1,43 @@
 <template>
   <div class="flex flex-col gap-4">
-    <div class="input-field-container">
-      <InputUserSpan
-        id="name"
-        :errors="form.context.errors.value.user"
-        :label="t('modules.financial.forms.payout.for')"
-        placeholder="John Doe"
-        :show-positive="true"
-        :value="form.model.user.value.value"
-        @update:value="form.context.setFieldValue('user', $event)"
-      />
-    </div>
-
-    <!-- TODO think about turning this into a component? -->
-    <skeleton v-if="userBalance === null && form.model.user.value.value" class="h-0.5rem my-1 surface-300 w-6" />
-    <div
-      v-else-if="userBalance"
-      class="flex flex-row gap-1"
-      :class="{ 'text-gray-700': !balanceError, 'text-red-500 font-bold': balanceError }"
-    >
-      <span>
-        {{ t('modules.financial.forms.payout.currentBalance', { balance: formatPrice(userBalance.amount) }) }}</span
-      >
-    </div>
+    <InputUserSpan
+      id="name"
+      column
+      :errors="form.context.errors.value.user"
+      label=""
+      placeholder="John Doe"
+      :show-positive="true"
+      :value="form.model.user.value.value"
+      @update:value="form.context.setFieldValue('user', $event)"
+    />
 
     <InputSpan
       id="name"
+      class="max-w-[13rem]"
+      v-bind="form.model.balance.attr.value"
+      :disabled="true"
+      :errors="form.context.errors.value.balance"
+      :label="t('modules.user.balance.balance')"
+      :placeholder="t('modules.user.balance.balance')"
+      type="currency"
+      :value="form.model.balance.value.value"
+    />
+
+    <InputSpan
+      id="name"
+      class="max-w-[13rem]"
+      v-bind="form.model.amount.attr.value"
+      :errors="form.context.errors.value.amount"
+      :label="t('common.amount')"
+      :placeholder="t('common.amount')"
+      type="currency"
+      :value="form.model.amount.value.value"
+      @update:value="form.context.setFieldValue('amount', $event)"
+    />
+
+    <InputSpan
+      id="bankAccountNumber"
+      class="max-w-[13rem]"
       v-bind="form.model.bankAccountNumber.attr.value"
       :errors="form.context.errors.value.bankAccountNumber"
       :label="t('modules.financial.forms.payout.bankAccountNumber')"
@@ -36,7 +48,8 @@
     />
 
     <InputSpan
-      id="name"
+      id="bankAccountName"
+      class="max-w-[13rem]"
       v-bind="form.model.bankAccountName.attr.value"
       :errors="form.context.errors.value.bankAccountName"
       :label="t('modules.financial.forms.payout.bankAccountName')"
@@ -45,37 +58,20 @@
       :value="form.model.bankAccountName.value.value"
       @update:value="form.context.setFieldValue('bankAccountName', $event)"
     />
-
-    <InputSpan
-      id="name"
-      v-bind="form.model.amount.attr.value"
-      :errors="form.context.errors.value.amount"
-      :label="t('common.amount')"
-      :placeholder="t('common.amount')"
-      type="currency"
-      :value="form.model.amount.value.value"
-      @update:value="form.context.setFieldValue('amount', $event)"
-    />
-
-    <div class="flex justify-end w-full">
-      <ErrorSpan :error="balanceError" />
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { type PropType, ref, type Ref, watch } from 'vue';
+import { type PropType, watch } from 'vue';
 import * as yup from 'yup';
 import { useI18n } from 'vue-i18n';
-import type { BalanceResponse, PayoutRequestRequest } from '@sudosos/sudosos-client';
+import type { PayoutRequestRequest } from '@sudosos/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import { usePayoutStore } from '@/stores/payout.store';
 import apiService from '@/services/ApiService';
 import type { createPayoutSchema } from '@/utils/validation-schema';
 import type { Form } from '@/utils/formUtils';
 import { setSubmit } from '@/utils/formUtils';
-import { formatPrice } from '@/utils/formatterUtils';
-import ErrorSpan from '@/components/ErrorSpan.vue';
 import InputSpan from '@/components/InputSpan.vue';
 import InputUserSpan from '@/components/InputUserSpan.vue';
 import { handleError } from '@/utils/errorUtils';
@@ -93,31 +89,6 @@ const props = defineProps({
   },
 });
 
-const userBalance: Ref<BalanceResponse | null | undefined> = ref(null);
-const balanceError = ref<string>('');
-
-const validateAmount = () => {
-  if (userBalance.value && props.form.model.amount.value.value > userBalance.value.amount.amount / 100) {
-    balanceError.value = `${t('modules.financial.forms.payout.amountTooHigh')}`;
-  } else {
-    balanceError.value = ''; // Clear error if valid
-  }
-};
-
-watch(
-  () => userBalance.value,
-  () => {
-    validateAmount();
-  },
-);
-
-watch(
-  () => props.form.model.amount.value.value,
-  () => {
-    validateAmount();
-  },
-);
-
 // fetch user balance when selected user changes
 watch(
   () => props.form.model.user.value.value,
@@ -126,10 +97,11 @@ watch(
       apiService.balance
         .getBalanceId(props.form.model.user.value.value.id)
         .then((res) => {
-          userBalance.value = res.data;
+          const numericBalance = res.data.amount.amount / 100;
+          props.form.context.setFieldValue('balance', numericBalance);
         })
         .catch(() => {
-          userBalance.value = undefined;
+          props.form.context.setFieldValue('balance', 0);
         });
     }
   },

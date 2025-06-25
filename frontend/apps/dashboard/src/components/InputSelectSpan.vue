@@ -23,8 +23,8 @@
 </template>
 
 <script setup lang="ts" generic="T">
-import ErrorSpan from '@/components/ErrorSpan.vue';
 import { useAttrs } from 'vue';
+import ErrorSpan from '@/components/ErrorSpan.vue';
 
 defineOptions({ inheritAttrs: false });
 const attrs = useAttrs();
