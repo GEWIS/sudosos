@@ -1,7 +1,8 @@
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="flex flex-col gap-2 md:min-w-[25rem]">
     <InputSpan
       id="name"
+      class="max-w-[13rem]"
       v-bind="form.model.firstName.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.firstName"
@@ -13,6 +14,7 @@
     />
     <InputSpan
       id="name"
+      class="max-w-[13rem]"
       v-bind="form.model.lastName?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.lastName"
@@ -24,6 +26,7 @@
     />
     <InputSpan
       id="name"
+      class="max-w-[13rem]"
       v-bind="form.model.nickname?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.nickname"
@@ -35,6 +38,7 @@
     />
     <InputSpan
       id="name"
+      class="max-w-[13rem]"
       v-bind="form.model.email?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.email"
@@ -46,6 +50,7 @@
     />
     <InputSpan
       id="name"
+      class="max-w-[13rem]"
       v-bind="form.model.userType?.attr.value"
       :errors="form.context.errors.value.userType"
       :label="t('common.usertype')"
@@ -56,6 +61,7 @@
     />
     <InputSpan
       id="name"
+      class="max-w-[13rem]"
       v-bind="form.model.ofAge?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.ofAge"
@@ -66,6 +72,7 @@
     />
     <InputSpan
       id="name"
+      class="max-w-[13rem]"
       v-bind="form.model.canGoIntoDebt?.attr.value"
       :disabled="!edit"
       :errors="form.context.errors.value.canGoIntoDebt"
