@@ -129,7 +129,7 @@ const props = defineProps({
   },
 });
 
-const showEmail = [UserRole.LOCAL_USER, UserRole.LOCAL_ADMIN, UserRole.INVOICE].includes(props.user.type);
+const showEmail = ([UserRole.LOCAL_USER, UserRole.LOCAL_ADMIN, UserRole.INVOICE] as string[]).includes(props.user.type);
 const showNickname = [UserRole.USER, UserRole.LOCAL_USER, 'MEMBER'].includes(props.user.type);
 
 const updateType = (event: string) => {
