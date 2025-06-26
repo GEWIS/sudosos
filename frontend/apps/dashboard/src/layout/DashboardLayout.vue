@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 import Footer from '@/components/footer/FooterBar.vue';
-import TopNavbar from '@/components/TopNavbar.vue';
+import TopNavbar from '@/components/NavbarTop.vue';
 </script>
 
 <style scoped></style>
