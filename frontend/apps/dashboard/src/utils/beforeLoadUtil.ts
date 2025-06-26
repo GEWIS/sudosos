@@ -1,11 +1,16 @@
 import { clearTokenInStorage, populateStoresFromToken, useAuthStore } from '@sudosos/sudosos-frontend-common';
-import { GrolschGreen, BetaBlue } from '@sudosos/themes';
+import { GrolschGreen, BetaBlue, AthenaPinkBlue } from '@sudosos/themes';
 import { computed } from 'vue';
 import { useSettingsStore } from '@/stores/settings.store';
 import apiService from '@/services/ApiService';
 import { useConditionalPreset } from '@/composables/conditionalPreset';
 import { useOrganMember } from '@/composables/organMember';
 import { isBetaEnabled } from '@/utils/betaUtil';
+
+const ORGANS = {
+  BAC: 'BAC',
+  ATHENA: 'ATHENA',
+};
 
 export default async function beforeLoad() {
   const settingsStore = useSettingsStore();
@@ -27,7 +32,8 @@ export default async function beforeLoad() {
   });
 
   useConditionalPreset([
-    { condition: useOrganMember(18214), preset: GrolschGreen },
+    { condition: useOrganMember(ORGANS.BAC), preset: GrolschGreen },
+    { condition: useOrganMember(ORGANS.ATHENA), preset: AthenaPinkBlue },
     { condition: computed(() => isBetaEnabled()), preset: BetaBlue },
   ]);
 }
