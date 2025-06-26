@@ -224,3 +224,19 @@ export const bannerSchema = yup.object({
   file: yup.mixed<File>().nullable().optional(),
   id: yup.number().nullable().optional(),
 });
+
+export const topupSchema = yup.object({
+  balance: yup.number().required().default(0),
+  amount: yup
+    .number()
+    .required()
+    .default(0)
+    .test('is-min10-or-balance', 'Top up should be more than €10 or settle debt exactly.', function (value) {
+      const balance = this.parent.balance;
+      return value >= 10 || Math.round(value * -100) === balance;
+    })
+    .test('is-total-less-than-150', 'Your new balance cannot surpass €150.', function (value) {
+      const balance = this.parent.balance;
+      return balance + value * 100 <= 15000;
+    }),
+});

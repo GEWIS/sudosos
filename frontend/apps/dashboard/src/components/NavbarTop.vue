@@ -66,7 +66,7 @@ const mobileItems = computed(() => [...navItems.value, ...profileNav.value]);
 <style scoped lang="scss">
 .navbar-background {
   background-color: var(--p-menubar-background);
-  z-index: 9999;
+  z-index: 5;
   position: relative;
 }
 </style>
