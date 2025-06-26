@@ -3,17 +3,27 @@ import type { TransferResponse } from '@sudosos/sudosos-client';
 import type { ApiService } from '@sudosos/sudosos-frontend-common';
 
 interface TransferStoreModuleState {
-  transfer: TransferResponse | null;
+  transfers: Record<number, TransferResponse>;
 }
 
 export const useTransferStore = defineStore('transfer', {
   state: (): TransferStoreModuleState => ({
-    transfer: null,
+    transfers: {} as Record<number, TransferResponse>,
   }),
-  getters: {},
+  getters: {
+    getTransfer:
+      (state) =>
+      (id: number): TransferResponse | null => {
+        return state.transfers[id] || null;
+      },
+  },
   actions: {
-    async fetchIndividualTransfer(id: number, service: ApiService): Promise<void> {
-      this.transfer = (await service.transfers.getSingleTransfer(id)).data;
+    async fetchIndividualTransfer(id: number, service: ApiService): Promise<TransferResponse> {
+      if (this.transfers[id]) return this.transfers[id];
+      return service.transfers.getSingleTransfer(id).then((res) => {
+        this.transfers[id] = res.data;
+        return res.data;
+      });
     },
   },
 });

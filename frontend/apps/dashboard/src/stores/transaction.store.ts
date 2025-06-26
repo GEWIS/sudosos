@@ -3,21 +3,27 @@ import type { TransactionResponse } from '@sudosos/sudosos-client';
 import type { ApiService } from '@sudosos/sudosos-frontend-common';
 
 interface TransactionModuleState {
-  transaction: TransactionResponse | null;
+  transactions: Record<number, TransactionResponse>;
 }
 
 export const useTransactionStore = defineStore('transaction', {
   state: (): TransactionModuleState => ({
-    transaction: null,
+    transactions: {} as Record<number, TransactionResponse>,
   }),
   getters: {
-    getTransaction(): TransactionModuleState {
-      return this;
-    },
+    getTransaction:
+      (state) =>
+      (id: number): TransactionResponse | null => {
+        return state.transactions[id] || null;
+      },
   },
   actions: {
-    async fetchIndividualTransaction(id: number, service: ApiService) {
-      this.transaction = (await service.transaction.getSingleTransaction(id)).data;
+    async fetchIndividualTransaction(id: number, service: ApiService): Promise<TransactionResponse> {
+      if (this.transactions[id]) return this.transactions[id];
+      return service.transaction.getSingleTransaction(id).then((res) => {
+        this.transactions[id] = res.data;
+        return res.data;
+      });
     },
     async fetchTransactionsFromPointOfSale(
       service: ApiService,

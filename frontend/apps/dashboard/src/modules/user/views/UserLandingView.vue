@@ -10,7 +10,7 @@
         :header="t('components.mutations.recent')"
         router-link="transactions"
       >
-        <MutationsBalance :get-mutations="getUserMutations" :modal="false" :paginator="false" :rows-amount="6" />
+        <MutationsBalance :get-mutations="getUserMutations" :paginator="false" :rows-amount="6" />
       </CardComponent>
     </div>
   </PageContainer>
