@@ -18,7 +18,7 @@
             dateStyle: 'full',
           })
         }}</span>
-        <span class="sm:hidden"
+        <span class="sm:hidden whitespace-nowrap"
           >{{
             mutation.data.moment.toLocaleDateString('nl-NL', {
               dateStyle: 'short',
@@ -28,7 +28,7 @@
       </template>
     </Column>
 
-    <Column field="createdBy" :header="t('components.mutations.createdBy')">
+    <Column field="createdBy" :header="t(`components.mutations.${isMd ? 'createdBy' : 'By'}`)">
       <template v-if="isLoading" #body>
         <Skeleton class="h-1rem my-1 surface-300 w-6" />
       </template>
@@ -99,10 +99,11 @@ import { formatPrice } from '@/utils/formatterUtils';
 import { type FinancialMutation, FinancialMutationType, parseFinancialMutations } from '@/utils/mutationUtils';
 import ModalMutation from '@/components/mutations/mutationmodal/ModalMutation.vue';
 import { isIncreasingTransfer, isFine } from '@/utils/mutationUtils';
+import { useSizeBreakpoints } from '@/composables/sizeBreakpoints';
 
 const { t, locale } = useI18n();
-
 const userStore = useUserStore();
+const { isMd } = useSizeBreakpoints();
 
 const props = defineProps<{
   getMutations: (take: number, skip: number) => Promise<PaginatedFinancialMutationResponse | undefined>;
