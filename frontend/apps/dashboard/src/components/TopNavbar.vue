@@ -25,7 +25,7 @@
     </Menubar>
     <Menubar class="hidden lg:flex" :model="profileItems">
       <template #start>
-        <img alt="beer" class="h-4" src="../assets/img/bier.png" />
+        <img alt="beer" class="h-4" src="@/assets/img/bier.png" />
       </template>
       <template #item="{ item, props, hasSubmenu }">
         <router-link v-if="item.route" v-slot="{ href, navigate }" custom :to="item.route">
@@ -47,7 +47,7 @@
       <template #start>
         <router-link class="items-center flex flex-row font-bold no-underline py-1 text-white" to="/">
           {{ t('common.sudosos') }}
-          <img alt="SudoSOS" class="h-4 py-2" src="../assets/img/gewis-branding.svg" />
+          <img alt="SudoSOS" class="h-4 py-2" src="@/assets/img/gewis-branding.svg" />
         </router-link>
       </template>
       <template #item="{ item, props, hasSubmenu }">
