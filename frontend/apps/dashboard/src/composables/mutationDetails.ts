@@ -8,7 +8,7 @@ import { FinancialMutationType } from '@/utils/mutationUtils';
 import { getProductsOfTransaction } from '@/utils/transactionUtil';
 import { UserRole } from '@/utils/rbacUtils';
 
-export function useMutationDetails(type: Ref<FinancialMutationType>, id: Ref<number>) {
+export function useMutationDetails(type: Ref<FinancialMutationType>, id: Ref<number>, immediate: boolean = true) {
   const transactionStore = useTransactionStore();
   const transferStore = useTransferStore();
   const { current } = storeToRefs(useUserStore());
@@ -56,7 +56,7 @@ export function useMutationDetails(type: Ref<FinancialMutationType>, id: Ref<num
   });
 
   // Fetch on mount & whenever id/type change
-  watch([type, id], fetchMutation, { immediate: true });
+  watch([type, id], fetchMutation, { immediate });
 
   return {
     isLoading,

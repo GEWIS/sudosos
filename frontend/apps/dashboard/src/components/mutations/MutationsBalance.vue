@@ -100,15 +100,18 @@ import { type FinancialMutation, FinancialMutationType, parseFinancialMutations 
 import ModalMutation from '@/components/mutations/mutationmodal/ModalMutation.vue';
 import { isIncreasingTransfer, isFine } from '@/utils/mutationUtils';
 import { useSizeBreakpoints } from '@/composables/sizeBreakpoints';
+import { usePrefetchMutationDetails } from '@/composables/preloadMutationDetails';
 
 const { t, locale } = useI18n();
 const userStore = useUserStore();
 const { isMd } = useSizeBreakpoints();
+const pl = usePrefetchMutationDetails().preload;
 
 const props = defineProps<{
   getMutations: (take: number, skip: number) => Promise<PaginatedFinancialMutationResponse | undefined>;
   paginator?: boolean;
   rowsAmount?: number;
+  preload?: boolean;
 }>();
 const mutations = ref<FinancialMutation[]>(new Array(10));
 const totalRecords = ref<number>(0);
@@ -130,7 +133,11 @@ async function refresh() {
   isLoading.value = false;
 }
 
-onMounted(refresh);
+onMounted(async () => {
+  await refresh().then(() => {
+    if (props.preload) void pl(mutations.value);
+  });
+});
 
 async function onPage(event: DataTablePageEvent) {
   const newTransactions = await props.getMutations(event.rows, event.first);
