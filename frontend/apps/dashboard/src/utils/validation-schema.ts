@@ -240,3 +240,29 @@ export const topupSchema = yup.object({
       return balance + value * 100 <= 15000;
     }),
 });
+
+export const authRequestSchema = yup.object({
+  email: yup.string().email().required(),
+});
+
+const atLeastOneUppercase = /^(?=.*[A-Z])/;
+const atLeastOneLowercase = /^(?=.*[a-z])/;
+const atLeastOneDigit = /^(?=.*\d)/;
+const atLeastOneSpecialChar = /^(?=.*[@$!%*?&])/;
+const allowedCharacters = /^[A-Za-z\d@$!%*?& ]{8,}$/;
+export const authResetSchema = yup.object({
+  password: yup
+    .string()
+    .required('This is a required field')
+    .matches(atLeastOneUppercase, 'At least one uppercase letter is required')
+    .matches(atLeastOneLowercase, 'At least one lowercase letter is required')
+    .matches(atLeastOneDigit, 'At least one digit is required')
+    .matches(atLeastOneSpecialChar, 'At least one special character is required')
+    .matches(allowedCharacters, 'Password must be at least 8 characters long and only contain allowed characters'),
+  passwordConfirm: yup
+    .string()
+    .required('This is a required field')
+    .oneOf([yup.ref('password')], 'Passwords do not match'),
+  token: yup.string().required(),
+  email: yup.string().email().required(),
+});
