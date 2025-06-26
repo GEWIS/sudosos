@@ -1,7 +1,16 @@
 <template>
   <CardComponent :header="header">
     <template #topAction>
-      <div v-if="showEdit" class="mx-2 min-w-[200px] flex justify-end">
+      <div v-if="simpleSave" class="min-w-[120px] flex justify-end">
+        <Button
+          :disabled="form && !form.context.meta.value.valid"
+          icon="pi pi-check"
+          :label="t('common.save')"
+          severity="primary"
+          @click="handleSimpleSave"
+        />
+      </div>
+      <div v-else-if="showEdit" class="min-w-[200px] flex justify-end">
         <div v-if="!edit">
           <Button icon="pi pi-pencil" :label="t('common.edit')" severity="primary" @click="toggleEdit(true)" />
         </div>
@@ -11,19 +20,19 @@
         </div>
       </div>
     </template>
-    <slot :edit="edit"></slot>
+
+    <slot :edit="simpleSave ? true : edit"></slot>
+
     <div v-if="create && form" class="flex flex-row gap-2 justify-end mt-3 w-full">
-      <div class="flex flex-row gap-2 justify-end mt-3 w-full">
-        <ActionButton
-          :disabled="!props.form?.context.meta.value.valid"
-          :label="t('common.create')"
-          :result="form.success?.value != null"
-          :submitting="form.context.isSubmitting.value"
-          type="submit"
-          @click="form.submit"
-        />
-        <Button icon="pi pi-times" :label="t('common.cancel')" severity="secondary" type="button" @click="cancel" />
-      </div>
+      <ActionButton
+        :disabled="!form?.context.meta.value.valid"
+        :label="t('common.create')"
+        :result="form.success?.value != null"
+        :submitting="form.context.isSubmitting.value"
+        type="submit"
+        @click="form.submit"
+      />
+      <Button icon="pi pi-times" :label="t('common.cancel')" severity="secondary" type="button" @click="cancel" />
     </div>
   </CardComponent>
 </template>
@@ -39,8 +48,6 @@ import ActionButton from '@/components/ActionButton.vue';
 
 const { t } = useI18n();
 
-const showEdit = computed(() => props.enableEdit && !props.create);
-
 const props = withDefaults(
   defineProps<{
     header: string;
@@ -48,17 +55,22 @@ const props = withDefaults(
     enableEdit?: boolean;
     create?: boolean;
     form?: Form<T>;
+    simpleSave?: boolean;
   }>(),
   {
     enableEdit: true,
     create: false,
     form: undefined,
+    simpleSave: false,
   },
 );
 
 const emit = defineEmits(['update:modelValue', 'save', 'cancel']);
 
+const showEdit = computed(() => props.enableEdit && !props.create && !props.simpleSave);
+
 const edit = ref(props.modelValue);
+
 const toggleEdit = (value: boolean) => {
   edit.value = value;
   emit('update:modelValue', value);
@@ -73,6 +85,14 @@ const cancel = () => {
 const handleSave = () => {
   emit('save');
   toggleEdit(false);
+};
+
+const handleSimpleSave = () => {
+  if (props.form) {
+    void props.form.submit();
+  } else {
+    emit('save');
+  }
 };
 </script>
 

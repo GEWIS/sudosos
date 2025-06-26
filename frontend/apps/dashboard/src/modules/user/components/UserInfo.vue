@@ -1,13 +1,16 @@
 <template>
   <CardComponent :header="t('components.general.quickOverview.header')">
-    <p class="text-gray-700">{{ t('components.general.quickOverview.message') }}</p>
-    <h1 class="text-center text-2xl font-bold my-4">
-      {{ isGewisUser(props.user) ? props.user.gewisId : `E${props.user.id}` }} <br />
-      {{ props.user.firstName }} {{ props.user.lastName }}
-    </h1>
-    <p v-if="!props.user.ofAge" class="font-bold text-center text-red-500">
-      {{ t('components.general.quickOverview.underAge') }}
-    </p>
+    <div class="@container">
+      <div class="flex flex-col-reverse @sm:flex-row @sm:justify-center items-center gap-2">
+        <span class="text-2xl font-bold text-center"> {{ props.user.firstName }} {{ props.user.lastName }} </span>
+        <span class="text-2xl text-center font-mono font-semibold text-gray-500">
+          {{ isGewisUser(props.user) ? props.user.gewisId : `E${props.user.id}` }}
+        </span>
+      </div>
+      <p v-if="!props.user.ofAge" class="font-bold text-center text-red-500 mt-2">
+        {{ t('components.general.quickOverview.underAge') }}
+      </p>
+    </div>
   </CardComponent>
 </template>
 
@@ -30,7 +33,3 @@ function isGewisUser(user: UserResponse | GewisUserResponse): user is GewisUserR
   return (user as GewisUserResponse).gewisId !== undefined;
 }
 </script>
-
-<style scoped lang="scss">
-// Your styles here
-</style>

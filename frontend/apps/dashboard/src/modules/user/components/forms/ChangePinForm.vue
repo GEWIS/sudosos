@@ -1,5 +1,7 @@
 <template>
-  <div class="flex flex-col gap-2 justify-between">
+  <form autocomplete="new-password" class="flex flex-col gap-2 justify-between" @submit.prevent="() => form.submit()">
+    <!-- Prevent aggressive firefox autocomplete -->
+    <input hidden type="password" />
     <InputSpan
       id="pin"
       v-bind="form.model.pin.attr.value"
@@ -23,7 +25,8 @@
       :value="form.model.pinConfirm.value.value"
       @update:value="form.context.setFieldValue('pinConfirm', $event)"
     />
-  </div>
+    <button class="hidden" type="submit" />
+  </form>
 </template>
 
 <script setup lang="ts">

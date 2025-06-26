@@ -1,17 +1,6 @@
 <template>
   <CardComponent :action="undefined" :func="undefined" :header="t('modules.user.settings.header')">
-    <div class="flex flex-col gap-2 justify-between w-90">
-      <FormSection
-        divider
-        :enable-edit="true"
-        :header="t('modules.user.settings.changePin')"
-        :simple-save="true"
-        @cancel="pinForm.context.resetForm"
-        @save="() => pinForm.submit()"
-        @update:model-value="editPin = $event"
-      >
-        <ChangePinForm :edit="editPin" :form="pinForm" />
-      </FormSection>
+    <div class="flex flex-col gap-2 justify-between">
       <div class="items-center flex flex-row w-full">
         <p class="flex-grow-1 my-1">{{ t('modules.user.settings.changePassword') }}</p>
         <i
@@ -76,11 +65,9 @@ import { useUserStore } from '@sudosos/sudosos-frontend-common';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as yup from 'yup';
 import CardComponent from '@/components/CardComponent.vue';
-import ChangePinForm from '@/modules/user/components/forms/ChangePinForm.vue';
 import FormDialog from '@/components/FormDialog.vue';
-import { editPasswordSchema, editPinSchema } from '@/utils/validation-schema';
+import { editPasswordSchema } from '@/utils/validation-schema';
 import { schemaToForm } from '@/utils/formUtils';
-import FormSection from '@/components/FormSection.vue';
 import ChangePasswordForm from '@/modules/user/components/forms/ChangePasswordForm.vue';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
@@ -145,9 +132,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 const showPasswordDialog = ref(false);
-const pinForm = schemaToForm(editPinSchema);
 const passwordForm = schemaToForm(editPasswordSchema);
-const editPin = ref(true);
 const confirm = useConfirm();
 const toast = useToast();
 const dataAnalysis = ref(props.user.extensiveDataProcessing);
