@@ -75,6 +75,7 @@
         "success": "Succes",
         "userUpdated": "Gebruiker succesvol bijgewerkt.",
         "userCreated": "Gebruiker succesvol aangemaakt.",
+        "userDeleted": "Gebruiker succesvol verwijderd.",
         "waiveFinesSuccess": "Boetes succesvol kwijtgescholden.",
         "resetPasswordSuccess": "Wachtwoord succesvol gereset.",
         "dataAnalysis": "Voorkeur gegevensanalyse succesvol gewijzigd.",

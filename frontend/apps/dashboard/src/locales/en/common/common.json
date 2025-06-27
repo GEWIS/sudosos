@@ -76,6 +76,7 @@
         "success": "Success",
         "userUpdated": "Successfully updated user.",
         "userCreated": "Successfully created user.",
+        "userDeleted": "Successfully deleted user.",
         "waiveFinesSuccess": "Successfully waived fines.",
         "resetPasswordSuccess": "Successfully reset password.",
         "dataAnalysis": "Successfully changed data analysis preference.",

@@ -5,14 +5,18 @@
     </div>
     <div class="flex flex-col gap-5">
       <div class="flex flex-col gap-8 justify-between md:flex-row">
-        <AdminUserInfoCard v-if="currentUser" class="flex-grow-1" :user="currentUser" />
+        <div class="flex flex-col gap-8">
+          <AdminUserEditCard :user="currentUser" />
+          <AdminUserInfoCard v-if="currentUser" :user="currentUser" />
+        </div>
         <AdminUserBalance
           v-if="currentUser"
-          class="flex-grow-0 self-start"
+          class="flex-grow flex-grow-1 md:flex-grow-0 md:self-start"
           :user="currentUser"
           @update-mutations="() => mutations?.refresh()"
         />
       </div>
+
       <CardComponent class="w-full" :header="t('components.mutations.user')">
         <MutationsBalance ref="mutations" :get-mutations="getUserMutations" modal paginator />
       </CardComponent>
@@ -37,6 +41,7 @@ import MutationsBalance from '@/components/mutations/MutationsBalance.vue';
 import AdminUserInfoCard from '@/modules/admin/components/users/AdminUserInfoCard.vue';
 import CardComponent from '@/components/CardComponent.vue';
 import PageContainer from '@/layout/PageContainer.vue';
+import AdminUserEditCard from '@/modules/admin/components/users/AdminUserEditCard.vue';
 
 const { t } = useI18n();
 

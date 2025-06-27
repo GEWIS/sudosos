@@ -66,14 +66,14 @@
       <ToggleSwitch v-if="type === 'boolean'" v-model="internalValue as boolean" :disabled="disabled" v-bind="attrs" />
 
       <Select
-        v-if="type === 'usertype'"
+        v-if="type === 'usertype' || type === 'usertypecreate'"
         v-model="internalValue as number"
         class="flex-grow"
         :class="errors ? 'p-invalid' : ''"
         :disabled="disabled"
         option-label="name"
         option-value="value"
-        :options="userTypes"
+        :options="type === 'usertype' ? userTypes : userTypesCreate"
         :placeholder="placeholder"
         v-bind="attrs"
       />
@@ -127,13 +127,23 @@ import InputNumber from 'primevue/inputnumber';
 import type { HintedString } from '@primevue/core';
 import ErrorSpan from '@/components/ErrorSpan.vue';
 import DatePickerString from '@/components/DatePickerString.vue';
-import { userTypes } from '@/utils/validation-schema';
+import { userTypes, userTypesCreate } from '@/utils/validation-schema';
 
 defineOptions({ inheritAttrs: false });
 const attrs = useAttrs();
 
 type InputType = HintedString<
-  'text' | 'textarea' | 'date' | 'currency' | 'percentage' | 'pin' | 'password' | 'boolean' | 'usertype' | 'number'
+  | 'text'
+  | 'textarea'
+  | 'date'
+  | 'currency'
+  | 'percentage'
+  | 'pin'
+  | 'password'
+  | 'boolean'
+  | 'usertype'
+  | 'number'
+  | 'usertypecreate'
 >;
 
 const props = withDefaults(

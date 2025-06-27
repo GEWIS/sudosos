@@ -30,7 +30,7 @@
         :result="form.success?.value != null"
         :submitting="form.context.isSubmitting.value"
         type="submit"
-        @click="form.submit"
+        @click="() => form.submit()"
       />
       <Button icon="pi pi-times" :label="t('common.cancel')" severity="secondary" type="button" @click="cancel" />
     </div>
@@ -78,12 +78,16 @@ const toggleEdit = (value: boolean) => {
 
 const cancel = () => {
   emit('cancel');
-  if (props.form) setSuccess(props.form, null);
+  if (props.form) {
+    setSuccess(props.form, null);
+    props.form.context.resetForm();
+  }
   toggleEdit(false);
 };
 
 const handleSave = () => {
-  emit('save');
+  const dirty = props.form?.context.meta.value.dirty;
+  if (dirty) emit('save');
   toggleEdit(false);
 };
 

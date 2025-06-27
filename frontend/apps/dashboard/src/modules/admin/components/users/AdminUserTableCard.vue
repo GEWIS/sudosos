@@ -12,7 +12,7 @@
       :user-types="userTypes"
       :users="sortedUsers"
       @filter="onFilter"
-      @info="handleInfoPush"
+      @info="(u) => navigateUser(u.id, true)"
       @page="onPage"
       @show-create="showDialog = true"
       @sort="onSort"
@@ -22,43 +22,28 @@
       @update:search-query="(v) => (searchQuery = v)"
     />
 
-    <FormDialog
+    <AdminUserCreateDialog
       v-model:model-value="showDialog"
-      :form="form"
-      :header="t('modules.admin.forms.user.header')"
-      :is-editable="true"
-    >
-      <template #form="slotProps">
-        <UserCreateForm
-          v-model:is-visible="showDialog"
-          :edit="true"
-          :form="slotProps.form"
-          @submit:success="showDialog = false"
-        />
-      </template>
-    </FormDialog>
+      :pre-typed="false"
+      @submit="(u) => navigateUser(u.id, false)"
+    />
   </CardComponent>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useUserStore } from '@sudosos/sudosos-frontend-common';
-import type { UserResponse } from '@sudosos/sudosos-client';
-import router from '@/router';
 import CardComponent from '@/components/CardComponent.vue';
 import AdminUserTable from '@/modules/admin/components/users/AdminUserTable.vue';
-import FormDialog from '@/components/FormDialog.vue';
-import UserCreateForm from '@/modules/admin/components/users/forms/UserCreateForm.vue';
-import { schemaToForm } from '@/utils/formUtils';
-import { createUserSchema, userTypes } from '@/utils/validation-schema';
+import AdminUserCreateDialog from '@/modules/admin/components/users/AdminUserCreateDialog.vue';
 import { usePaginatedUsers } from '@/composables/paginatedUsers';
+import { useNavigateUser } from '@/composables/navigateUser';
+import { userTypes } from '@/utils/validation-schema';
 
 const { t } = useI18n();
-const userStore = useUserStore();
+const { navigateUser } = useNavigateUser();
 
 const showDialog = ref(false);
-const form = schemaToForm(createUserSchema);
 
 const {
   searchQuery,
@@ -67,7 +52,6 @@ const {
   ofAgeFilter,
   isLoading,
   totalRecords,
-  allUsers,
   rows,
   rowsPerPageOptions,
   sortedUsers,
@@ -75,11 +59,4 @@ const {
   onSort,
   onFilter,
 } = usePaginatedUsers();
-
-function handleInfoPush(userId: number) {
-  const clickedUser: UserResponse | undefined = allUsers.value.find((record) => record.id == userId);
-  if (clickedUser) userStore.addUser(clickedUser);
-  const route = router.resolve({ name: 'user', params: { userId } });
-  window.open(route.href, '_blank');
-}
 </script>

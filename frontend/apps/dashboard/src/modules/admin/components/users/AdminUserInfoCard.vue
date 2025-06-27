@@ -1,13 +1,6 @@
 <template>
-  <FormCard
-    :enable-edit="true"
-    :header="t('modules.admin.singleUser.userInfo.header')"
-    @save="formSubmit"
-    @update:model-value="edit = $event"
-  >
+  <CardComponent :header="t('modules.user.settings.header')">
     <div class="flex flex-col gap-2 justify-between">
-      <UserEditForm :edit="edit" :form="form" :user="props.user" @update:edit="edit = $event" />
-      <Divider />
       <h4 class="mt-0">{{ t('modules.user.settings.nfc') }}</h4>
       <div class="items-center flex flex-row w-full">
         <p class="flex-grow-1 my-1">{{ t('modules.user.settings.changeNFC') }}</p>
@@ -29,23 +22,20 @@
         <i class="items-center cursor-pointer flex pi pi-arrow-up-right text-gray-500" @click="confirmDeleteApiKey()" />
       </div>
     </div>
-  </FormCard>
+  </CardComponent>
   <ConfirmDialog />
 </template>
 
 <script setup lang="ts">
-import { onMounted, type PropType, ref, watch } from 'vue';
+import { type PropType } from 'vue';
 import type { UserResponse } from '@sudosos/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { useConfirm } from 'primevue/useconfirm';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import { useToast } from 'primevue/usetoast';
-import FormCard from '@/components/FormCard.vue';
-import { schemaToForm } from '@/utils/formUtils';
-import { updateUserDetailsObject } from '@/utils/validation-schema';
-import UserEditForm from '@/modules/admin/components/users/forms/UserEditForm.vue';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
+import CardComponent from '@/components/CardComponent.vue';
 
 const { t } = useI18n();
 const confirm = useConfirm();
@@ -110,37 +100,6 @@ const props = defineProps({
     type: Object as PropType<UserResponse>,
     required: true,
   },
-});
-
-const edit = ref(false);
-
-const form = schemaToForm(updateUserDetailsObject);
-
-const formSubmit = () => {
-  void form.submit();
-};
-
-const updateFieldValues = (p: UserResponse) => {
-  if (!p) return;
-  const values = {
-    ...p,
-    userType: p.type,
-    isActive: p.active,
-  };
-  form.context.resetForm({ values });
-};
-
-watch(
-  () => props.user,
-  (newValue: UserResponse) => {
-    updateFieldValues(newValue);
-  },
-);
-
-onMounted(() => {
-  if (props.user) {
-    updateFieldValues(props.user);
-  }
 });
 
 const confirmChangeApiKey = () => {

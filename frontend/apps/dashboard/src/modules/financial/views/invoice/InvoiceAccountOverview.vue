@@ -51,51 +51,46 @@
         </Column>
       </DataTable>
     </CardComponent>
-    <FormDialog
+    <AdminUserCreateDialog
       v-model:model-value="showDialog"
       :form="form"
-      :header="t('modules.admin.forms.user.header')"
-      :is-editable="false"
-    >
-      <template #form="slotProps">
-        <UserCreateForm
-          v-model:is-visible="showDialog"
-          :edit="true"
-          :form="slotProps.form"
-          @submit:success="showDialog = false"
-        />
-      </template>
-    </FormDialog>
+      :pre-typed="true"
+      @submit="(u) => navigateUser(u.id, false)"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, type Ref } from 'vue';
+import { computed, onBeforeMount, onMounted, ref, type Ref } from 'vue';
 import type { BalanceResponse } from '@sudosos/sudosos-client';
 import DataTable, { type DataTableSortEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import Skeleton from 'primevue/skeleton';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
-import { createUserSchema } from '@/utils/validation-schema';
+import { USER_TYPES, userUpsertSchema } from '@/utils/validation-schema';
 import CardComponent from '@/components/CardComponent.vue';
-import FormDialog from '@/components/FormDialog.vue';
-import UserCreateForm from '@/modules/admin/components/users/forms/UserCreateForm.vue';
 import { schemaToForm } from '@/utils/formUtils';
 import router from '@/router';
 import { formatDateFromString, formatPrice } from '@/utils/formatterUtils';
 import UserLink from '@/components/UserLink.vue';
 import { useInvoiceStore } from '@/stores/invoice.store';
 import { handleError } from '@/utils/errorUtils';
+import AdminUserCreateDialog from '@/modules/admin/components/users/AdminUserCreateDialog.vue';
+import { useNavigateUser } from '@/composables/navigateUser';
 
 const { t } = useI18n();
 const invoiceStore = useInvoiceStore();
 
 const showDialog: Ref<boolean> = ref(false);
-const form = schemaToForm(createUserSchema);
+const form = schemaToForm(userUpsertSchema);
 
 const isLoading = ref(true);
 const records: Ref<BalanceResponse[]> = computed(() => Object.values(invoiceStore.negativeInvoiceUsers));
+
+onBeforeMount(() => {
+  form.context.resetForm({ values: { userType: USER_TYPES.INVOICE } });
+});
 
 onMounted(() => {
   isLoading.value = true;
@@ -118,6 +113,8 @@ function onSort(event: DataTableSortEvent) {
   sortField.value = event.sortField as string;
   sortOrder.value = event.sortOrder || 0;
 }
+
+const { navigateUser } = useNavigateUser();
 </script>
 
 <style scoped></style>

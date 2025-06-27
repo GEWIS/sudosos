@@ -7,6 +7,8 @@ import {
   RoleWithPermissionsResponse,
   GewisUserResponse,
   DineroObjectRequest,
+  CreateUserRequest,
+  UpdateUserRequest,
 } from '@sudosos/sudosos-client';
 import { ApiService } from '../services/ApiService';
 import { fetchAllPages } from '../helpers/PaginationHelper';
@@ -169,6 +171,20 @@ export const useUserStore = defineStore('user', {
     },
     deleteUser(id: number) {
       delete this.users[id];
+    },
+    async removeUser(id: number, service: ApiService) {
+      await service.user.deleteUser(id);
+      this.deleteUser(id);
+    },
+    async createUser(user: CreateUserRequest, service: ApiService): Promise<UserResponse> {
+      const createdUser: UserResponse = (await service.user.createUser(user)).data;
+      this.addUser(createdUser);
+      return createdUser;
+    },
+    async updateUser(id: number, u: UpdateUserRequest, service: ApiService): Promise<UserResponse> {
+      const updatedUser: UserResponse = (await service.user.updateUser(id, u)).data;
+      this.addUser(updatedUser);
+      return updatedUser;
     },
   },
 });
