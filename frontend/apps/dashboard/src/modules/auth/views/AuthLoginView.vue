@@ -1,9 +1,9 @@
 <template>
   <div class="max-w-[24rem] mx-auto">
-    <img alt="logo" class="block max-h-[9rem] mx-auto my-0" src="../../../assets/img/bier.png" />
+    <img alt="logo" class="block max-h-[9rem] mx-auto my-0" src="@/assets/img/bier.png" />
     <div class="text-900 text-5xl mt-2 mx-auto mb-2 w-full">{{ t('modules.auth.login.sudosos') }}</div>
     <Button id="login-gewis-button" class="items-center flex justify-center mx-auto my-3 w-64" @click="loginViaGEWIS">
-      <img alt="GEWIS" class="h-18 mr-3" src="../../../assets/img/gewis-branding.svg" />
+      <img alt="GEWIS" class="h-18 mr-3" src="@/assets/img/gewis-branding.svg" />
       {{ t('modules.auth.login.gewis') }}
     </Button>
     <Button id="login-gewis-button" class="items-center flex justify-center mx-auto my-3 w-64" @click="navigateToLocal">

@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col gap-7 mb-7 w-full">
+  <form autocomplete="off" class="flex flex-col gap-7" @submit.prevent="() => form.submit()">
     <InputSpan
       id="username"
-      :attributes="form.model.username.attr.value"
+      v-bind="form.model.username.attr.value"
       column
       :disabled="false"
       :errors="form.context.errors.value.username"
@@ -16,7 +16,7 @@
 
     <InputSpan
       id="password"
-      :attributes="form.model.password.attr.value"
+      v-bind="form.model.password.attr.value"
       column
       :disabled="false"
       :errors="form.context.errors.value.password"
@@ -27,7 +27,10 @@
       :value="form.model.password.value.value"
       @update:value="form.context.setFieldValue('password', $event)"
     />
-  </div>
+    <Button id="login-button" class="items-center flex justify-center mx-auto w-full" type="submit">
+      {{ t('modules.auth.login.login') }}
+    </Button>
+  </form>
 </template>
 
 <script setup lang="ts">

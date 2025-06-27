@@ -1,16 +1,18 @@
 <template>
-  <div>
-    <img alt="logo" class="block max-h-[9rem] mx-auto my-0" src="../../../assets/img/bier.png" />
-    <div class="mb-2 mt-0 mx-auto text-5xl text-900 w-full">{{ t('modules.auth.reset.reset') }}</div>
-    <AuthRequestForm v-if="passwordResetMode === 0" :form="requestForm" @success="passwordResetMode = 1" />
-    <div v-else-if="passwordResetMode === 1">
-      <div class="text-900">{{ t('modules.auth.reset.emailSent') }}</div>
-    </div>
-    <AuthResetForm v-if="passwordResetMode === 2" :form="resetForm" @success="backToLogin" />
-    <div class="cursor-pointer text-900 underline" @click="backToLogin">
+  <AuthLocalCard :header="t('modules.auth.reset.reset')">
+    <template v-if="passwordResetMode === ResetMode.Request">
+      <AuthRequestForm :form="requestForm" @success="passwordResetMode = ResetMode.EmailSent" />
+    </template>
+    <template v-else-if="passwordResetMode === ResetMode.EmailSent">
+      <div class="text-900 my-7">{{ t('modules.auth.reset.emailSent') }}</div>
+    </template>
+    <template v-else-if="passwordResetMode === ResetMode.SetNew">
+      <AuthResetForm :form="resetForm" @success="backToLogin" />
+    </template>
+    <div class="cursor-pointer text-900 underline my-3" @click="backToLogin">
       {{ t('modules.auth.reset.backToLogin') }}
     </div>
-  </div>
+  </AuthLocalCard>
 </template>
 
 <script setup lang="ts">
@@ -22,14 +24,21 @@ import AuthRequestForm from '@/modules/auth/components/forms/AuthRequestForm.vue
 import { authRequestSchema, authResetSchema } from '@/utils/validation-schema';
 import { schemaToForm } from '@/utils/formUtils';
 import AuthResetForm from '@/modules/auth/components/forms/AuthResetForm.vue';
+import AuthLocalCard from '@/modules/auth/components/AuthLocalCard.vue';
 
 const { t } = useI18n();
+const route = useRoute();
 
 const requestForm = schemaToForm(authRequestSchema);
 const resetForm = schemaToForm(authResetSchema);
-const passwordResetMode = ref(0);
 
-const route = useRoute();
+enum ResetMode {
+  Request,
+  EmailSent,
+  SetNew,
+}
+
+const passwordResetMode = ref<ResetMode>(ResetMode.Request);
 
 onBeforeMount(() => {
   const token = Array.isArray(route.query.token) ? route.query.token[0] : route.query.token;
@@ -38,7 +47,7 @@ onBeforeMount(() => {
   if (token && email) {
     resetForm.context.setFieldValue('token', token);
     resetForm.context.setFieldValue('email', email);
-    passwordResetMode.value = 2;
+    passwordResetMode.value = ResetMode.SetNew;
   }
 });
 

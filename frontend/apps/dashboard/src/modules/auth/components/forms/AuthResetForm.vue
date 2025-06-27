@@ -1,10 +1,9 @@
 <template>
-  <form class="flex flex-col gap-2" @submit.prevent="() => form.submit()">
+  <form autocomplete="off" class="flex flex-col gap-7" @submit.prevent="() => form.submit()">
     <input hidden type="password" />
     <InputSpan
       id="password"
       v-bind="form.model.password.attr.value"
-      class="max-w-[15rem]"
       column
       :errors="form.context.errors.value.password"
       :label="t('modules.auth.reset.newPassword')"
@@ -17,7 +16,6 @@
     <InputSpan
       id="passwordConfirm"
       v-bind="form.model.passwordConfirm.attr.value"
-      class="max-w-[15rem]"
       column
       :errors="form.context.errors.value.passwordConfirm"
       :label="t('modules.auth.reset.confirmPassword')"
@@ -26,7 +24,11 @@
       :value="form.model.passwordConfirm.value.value"
       @update:value="form.context.setFieldValue('passwordConfirm', $event)"
     />
-    <Button class="w-full" :label="t('modules.auth.reset.reset')" type="submit" />
+    <Button
+      class="items-center flex justify-center mx-auto w-full"
+      :label="t('modules.auth.reset.reset')"
+      type="submit"
+    />
   </form>
 </template>
 

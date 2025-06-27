@@ -1,19 +1,22 @@
 <template>
-  <form class="flex flex-col gap-2" @submit.prevent="() => form.submit()">
+  <form autocomplete="off" class="flex flex-col" @submit.prevent="() => form.submit()">
     <InputSpan
       id="email"
       v-bind="form.model.email.attr.value"
-      class="max-w-[15rem]"
       column
       :errors="form.context.errors.value.email"
       inline-error
-      :label="t('modules.auth.reset.enterEmail')"
+      :label="t('common.email')"
       :placeholder="t('modules.auth.reset.enterEmail')"
       type="text"
       :value="form.model.email.value.value"
       @update:value="form.context.setFieldValue('email', $event)"
     />
-    <Button :label="t('modules.auth.reset.reset')" type="submit" />
+    <Button
+      class="items-center flex justify-center mx-auto my-3 w-full"
+      :label="t('modules.auth.reset.reset')"
+      type="submit"
+    />
   </form>
 </template>
 
