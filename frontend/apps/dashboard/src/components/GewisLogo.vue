@@ -1,10 +1,5 @@
 <template>
-  <svg
-    class="h-16 py-2 ml-2"
-    fill="currentColor"
-    viewBox="47.822 22.952 52.396 104.15"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg fill="currentColor" viewBox="47.822 22.952 52.396 104.15" xmlns="http://www.w3.org/2000/svg">
     <g>
       <path
         d="M76.533,99.883l7.488-24.293H65.016l7.469,24.293H76.533L76.533,99.883z M84.631,73.555l7.49-24.294h-9.504
