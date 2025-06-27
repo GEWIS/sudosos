@@ -35,7 +35,11 @@
         {{ t('modules.financial.invoice.missingPdf') }}
       </div>
       <Skeleton v-if="!pdfLoaded" class="h-full w-full" />
-      <vue-pdf-app v-if="showPdf" class="h-full w-full" :pdf="getInvoicePdfSrc(invoice.pdf ? invoice.pdf : '')" />
+      <vue-pdf-app
+        v-if="showPdf"
+        class="h-full w-full z-index"
+        :pdf="getInvoicePdfSrc(invoice.pdf ? invoice.pdf : '')"
+      />
     </div>
     <div class="overflow-scroll pdf-display" :class="{ hidden: !showTable }">
       <InvoiceEntriesTable :invoice="invoice" />
@@ -96,5 +100,13 @@ const reloadPdf = () => {
 .pdf-display {
   height: 80vh;
   width: 40vw;
+}
+
+:deep(.pdf-app .toolbar) {
+  z-index: 3 !important;
+}
+
+:deep(.pdf-app #sidebarContainer) {
+  z-index: 3 !important;
 }
 </style>
