@@ -1,5 +1,5 @@
 import { clearTokenInStorage, populateStoresFromToken, useAuthStore } from '@sudosos/sudosos-frontend-common';
-import { GrolschGreen, BetaBlue, AthenaPinkBlue, IvvNavy } from '@sudosos/themes';
+import { GrolschGreen, BetaBlue, AthenaPinkBlue, IvvNavy, BoomMango } from '@sudosos/themes';
 import { computed } from 'vue';
 import { useSettingsStore } from '@/stores/settings.store';
 import apiService from '@/services/ApiService';
@@ -11,6 +11,7 @@ const ORGANS = {
   BAC: 'BAC',
   ATHENA: 'ATHENA',
   IVV: 'I.V.V',
+  BOOM: 'B.O.O.M.',
 };
 
 export default async function beforeLoad() {
@@ -36,6 +37,7 @@ export default async function beforeLoad() {
     { condition: useOrganMember(ORGANS.BAC), preset: GrolschGreen },
     { condition: useOrganMember(ORGANS.ATHENA), preset: AthenaPinkBlue },
     { condition: useOrganMember(ORGANS.IVV), preset: IvvNavy },
+    { condition: useOrganMember(ORGANS.BOOM), preset: BoomMango },
     { condition: computed(() => isBetaEnabled()), preset: BetaBlue },
   ]);
 }

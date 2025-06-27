@@ -1,0 +1,14 @@
+.p-card-header .text-primary,
+.p-card-header .p-card-caption {
+  color: var(--p-secondary-color) !important;
+}
+.p-dialog-header .p-dialog-title {
+  color: var(--p-secondary-color) !important;
+}
+.p-tab.p-tab-active {
+  color: var(--p-secondary-color) !important;
+  border-color: var(--p-secondary-color) !important;
+}
+.p-tablist-active-bar {
+  background-color: var(--p-secondary-color) !important;
+}

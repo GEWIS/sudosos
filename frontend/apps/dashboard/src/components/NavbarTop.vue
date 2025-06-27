@@ -2,9 +2,9 @@
   <nav class="flex justify-around w-full navbar-background" role="navigation">
     <NavbarMenu v-if="isLg" :model="navItems">
       <template #start>
-        <router-link class="items-center flex flex-row font-bold no-underline py-1 text-white" to="/">
+        <router-link class="items-center flex flex-row font-bold no-underline py-1" to="/">
           {{ t('common.sudosos') }}
-          <img alt="SudoSOS" class="h-16 py-2" src="@/assets/img/gewis-branding.svg" />
+          <Logo />
         </router-link>
       </template>
     </NavbarMenu>
@@ -19,7 +19,7 @@
       :model="mobileItems"
     >
       <template #start>
-        <router-link class="items-center flex flex-row font-bold no-underline py-1 text-white" to="/">
+        <router-link class="items-center flex flex-row font-bold no-underline py-1" to="/">
           {{ t('common.sudosos') }}
           <img alt="SudoSOS" class="h-4 py-2" src="@/assets/img/gewis-branding.svg" />
         </router-link>
@@ -38,6 +38,7 @@ import { useSellerNav } from '@/modules/seller/navbar';
 import NavbarMenu from '@/components/NavbarMenu.vue';
 import { useProfileNav } from '@/composables/profileNavbar';
 import { useSizeBreakpoints } from '@/composables/sizeBreakpoints';
+import Logo from '@/components/GewisLogo.vue';
 
 const { t } = useI18n();
 const { isLg } = useSizeBreakpoints();

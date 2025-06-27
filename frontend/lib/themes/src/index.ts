@@ -3,3 +3,4 @@ export * from './color-themes/grolsch-green';
 export * from './color-themes/beta-blue';
 export * from './color-themes/athena-pink-blue';
 export * from './color-themes/ivv-navy';
+export * from './color-themes/boom-mango';

@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import 'tailwindcss-primeui';
 @plugin "@tailwindcss/typography";
+@import './theme-overrides.css';
 
 body {
   background-color: var(--p-body-background);

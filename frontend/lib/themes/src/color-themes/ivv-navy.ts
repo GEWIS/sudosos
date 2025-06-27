@@ -11,6 +11,9 @@ export const IvvNavy = definePreset(SudososPreset, {
           hoverColor: '#23325b', // slightly lighter navy for hover
           activeColor: '#14213d',
         },
+        secondary: {
+          color: '#800020',
+        },
         highlight: {
           background: 'rgba(0,0,0,0)',
           color: '#800020', // bordeaux red as accent/highlight
@@ -23,6 +26,9 @@ export const IvvNavy = definePreset(SudososPreset, {
           contrastColor: '#ffffff',
           hoverColor: '#23325b',
           activeColor: '#14213d',
+        },
+        secondary: {
+          color: '#800020',
         },
         highlight: {
           background: 'rgba(0,0,0,0)',
