@@ -49,7 +49,7 @@ export const useAuthStore = defineStore({
     },
   },
   actions: {
-    handleResponse(res: AuthenticationResponse) {
+    handleResponse(res: AuthenticationResponse, service: ApiService) {
       const { user, token, rolesWithPermissions, organs, acceptedToS } = res;
       if (!user || !token || !rolesWithPermissions || !organs || !acceptedToS) return;
       this.user = user;
@@ -59,6 +59,7 @@ export const useAuthStore = defineStore({
       this.acceptedToS = acceptedToS;
       if (this.acceptedToS === 'ACCEPTED') {
         const userStore = useUserStore();
+        void userStore.fetchCurrentUserBalance(user.id, service);
         userStore.setCurrentUser(user);
         userStore.setCurrentRolesWithPermissions(rolesWithPermissions);
       }
@@ -71,7 +72,7 @@ export const useAuthStore = defineStore({
       };
 
       await service.authenticate.gewisPinAuthentication(userDetails).then((res) => {
-        this.handleResponse(res.data);
+        this.handleResponse(res.data, service);
       });
     },
     async ldapLogin(accountName: string, password: string, service: ApiService) {
@@ -80,7 +81,7 @@ export const useAuthStore = defineStore({
         password,
       };
       await service.authenticate.ldapAuthentication(req).then((res) => {
-        this.handleResponse(res.data);
+        this.handleResponse(res.data, service);
       });
     },
     async gewisWebLogin(nonce: string, token: string, service: ApiService) {
@@ -89,7 +90,7 @@ export const useAuthStore = defineStore({
         token,
       };
       await service.authenticate.gewisWebAuthentication(req).then((res) => {
-        this.handleResponse(res.data);
+        this.handleResponse(res.data, service);
       });
     },
     async externalPinLogin(userId: number, pin: string, service: ApiService) {
@@ -98,7 +99,7 @@ export const useAuthStore = defineStore({
         userId,
       };
       await service.authenticate.pinAuthentication(req).then((res) => {
-        this.handleResponse(res.data);
+        this.handleResponse(res.data, service);
       });
     },
     async nfcLogin(nfcCode: string, service: ApiService) {
@@ -106,7 +107,7 @@ export const useAuthStore = defineStore({
         nfcCode,
       };
       await service.authenticate.nfcAuthentication(req).then((res) => {
-        this.handleResponse(res.data);
+        this.handleResponse(res.data, service);
       });
     },
     async eanLogin(eanCode: string, service: ApiService) {
@@ -114,7 +115,7 @@ export const useAuthStore = defineStore({
         eanCode,
       };
       await service.authenticate.eanAuthentication(req).then((res) => {
-        this.handleResponse(res.data);
+        this.handleResponse(res.data, service);
       });
     },
     async apiKeyLogin(key: string, userId: number, service: ApiService) {
@@ -124,7 +125,7 @@ export const useAuthStore = defineStore({
       };
 
       await service.authenticate.keyAuthentication(req).then((res) => {
-        this.handleResponse(res.data);
+        this.handleResponse(res.data, service);
       });
     },
     async gewisLdapLogin(accountName: string, password: string, service: ApiService) {
@@ -133,7 +134,7 @@ export const useAuthStore = defineStore({
         password,
       };
       await service.authenticate.gewisLDAPAuthentication(req).then((res) => {
-        this.handleResponse(res.data);
+        this.handleResponse(res.data, service);
       });
     },
     async localLogin(accountMail: string, password: string, service: ApiService) {
@@ -142,7 +143,7 @@ export const useAuthStore = defineStore({
         password,
       };
       await service.authenticate.localAuthentication(req).then((res) => {
-        this.handleResponse(res.data);
+        this.handleResponse(res.data, service);
       });
     },
     async updateUserPin(pin: string, service: ApiService) {
@@ -172,7 +173,7 @@ export const useAuthStore = defineStore({
     },
     async refreshToken(service: ApiService) {
       return service.authenticate.refreshToken().then((res) => {
-        this.handleResponse(res.data);
+        this.handleResponse(res.data, service);
       });
     },
     async updateUserToSAccepted(extensiveDataProcessing: boolean, service: ApiService) {

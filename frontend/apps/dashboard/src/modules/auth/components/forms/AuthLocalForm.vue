@@ -38,7 +38,7 @@ import * as yup from 'yup';
 import { type PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
-import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
+import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import type { AxiosError } from 'axios';
 import { type Form, setSubmit } from '@/utils/formUtils';
 import InputSpan from '@/components/InputSpan.vue';
@@ -49,7 +49,6 @@ import apiService from '@/services/ApiService';
 
 const { t } = useI18n();
 const authStore = useAuthStore();
-const userStore = useUserStore();
 const toast = useToast();
 
 const props = defineProps({
@@ -66,7 +65,6 @@ const toHomeView = async () => {
 
 const onSuccess = async () => {
   if (authStore.getToS === 'ACCEPTED' && authStore.getUser) {
-    await userStore.fetchCurrentUserBalance(authStore.getUser.id, apiService);
     await toHomeView();
   } else {
     await router.replace({ path: '/error' });
