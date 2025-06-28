@@ -29,8 +29,12 @@
         "unknown": "Unknown transaction"
       },
       "userBoughtAt": "You bought at {pos}",
-      "otherBoughtAt": "{user} bought at {pos}",
-      "putInBy": "Transaction put in by {createdBy}"
+      "otherBoughtAt": {
+        "suffix": " bought at {pos}"
+      },
+      "putInBy": {
+        "prefix": "Transaction put in by "
+      }
     }
   }
 }

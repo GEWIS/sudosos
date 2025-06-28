@@ -12,19 +12,16 @@
       {{ t('components.mutations.userBoughtAt', { pos: transactionInfo.pointOfSale.name }) }}
     </span>
     <span v-if="transactionInfo.from.id != userStore.current.user!!.id">
+      <UserLink :new-tab="true" :user="transactionInfo.from" />
       {{
-        t('components.mutations.otherBoughtAt', {
-          user: `${transactionInfo.from.firstName} ${transactionInfo.from.lastName}`,
+        t('components.mutations.otherBoughtAt.suffix', {
           pos: transactionInfo.pointOfSale.name,
         })
       }}
     </span>
     <span v-if="transactionInfo.createdBy && transactionInfo.createdBy.id != transactionInfo.from.id">
-      {{
-        t('components.mutations.putInBy', {
-          createdBy: `${transactionInfo.createdBy.firstName} ${transactionInfo.createdBy.lastName}`,
-        })
-      }}
+      {{ t('components.mutations.putInBy.prefix') }}
+      <UserLink :new-tab="true" :user="transactionInfo.createdBy" />
     </span>
 
     <br />
@@ -74,6 +71,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { sendEmail } from '@/utils/mailUtil';
 import { formatPrice } from '@/utils/formatterUtils';
+import UserLink from '@/components/UserLink.vue';
 
 const { t } = useI18n();
 

@@ -29,8 +29,12 @@
         "unknown": "Onbekende transactie"
       },
       "userBoughtAt": "Je hebt gekocht bij {pos}",
-      "otherBoughtAt": "{user} heeft gekocht bij {pos}",
-      "putInBy": "Transactie ingevoerd door {createdBy}"
+      "otherBoughtAt": {
+        "suffix": " heeft gekocht bij {pos}"
+      },
+      "putInBy": {
+        "prefix": "Transactie geplaatst door "
+      }
     }
   }
 }
