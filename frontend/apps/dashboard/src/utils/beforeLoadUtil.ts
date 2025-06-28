@@ -1,5 +1,5 @@
 import { clearTokenInStorage, populateStoresFromToken, useAuthStore } from '@sudosos/sudosos-frontend-common';
-import { GrolschGreen, BetaBlue, AthenaPinkBlue, IvvNavy, BoomMango, DefiLilac } from '@sudosos/themes';
+import { GrolschGreen, BetaBlue, AthenaPinkBlue, IvvNavy, BoomMango, DefiLilac, GepwnageYellow } from '@sudosos/themes';
 import { computed } from 'vue';
 import { useSettingsStore } from '@/stores/settings.store';
 import apiService from '@/services/ApiService';
@@ -13,6 +13,7 @@ const ORGANS = {
   IVV: 'I.V.V',
   BOOM: 'B.O.O.M.',
   DEFI: 'Défi',
+  GEPWNAGE: 'GEPWNAGE',
 };
 
 export default async function beforeLoad() {
@@ -40,6 +41,7 @@ export default async function beforeLoad() {
     { condition: useOrganMember(ORGANS.IVV), preset: IvvNavy },
     { condition: useOrganMember(ORGANS.BOOM), preset: BoomMango },
     { condition: useOrganMember(ORGANS.DEFI), preset: DefiLilac },
+    { condition: useOrganMember(ORGANS.GEPWNAGE), preset: GepwnageYellow },
     { condition: computed(() => isBetaEnabled()), preset: BetaBlue },
   ]);
 }
