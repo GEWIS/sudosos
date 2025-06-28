@@ -1,5 +1,6 @@
 <template>
   <FormCard
+    :enable-edit="canEdit"
     :form="form"
     :header="t('modules.admin.singleUser.userInfo.header')"
     @save="() => form.submit()"
@@ -32,6 +33,7 @@ import FormCard from '@/components/FormCard.vue';
 import ConfirmButton from '@/components/ConfirmButton.vue';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
+import { isAllowed } from '@/utils/permissionUtils';
 
 const { t } = useI18n();
 const form = schemaToForm(userUpsertSchema);
@@ -43,7 +45,10 @@ const props = defineProps<{
 
 const edit = ref(false);
 
+const canEdit = isAllowed('update', ['all'], 'User', ['*']);
+
 const showDelete = computed(() => {
+  if (!isAllowed('delete', ['all'], 'User', ['*'])) return false;
   if (!props.user) return false;
   return [USER_TYPES.LOCAL_USER, USER_TYPES.LOCAL_ADMIN, USER_TYPES.INVOICE, USER_TYPES.AUTOMATIC_INVOICE].includes(
     props.user.type as USER_TYPES,
