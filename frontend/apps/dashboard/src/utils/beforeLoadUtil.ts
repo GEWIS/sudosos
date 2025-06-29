@@ -11,7 +11,7 @@ const ORGANS = {
   BAC: 'BAC',
   ATHENA: 'ATHENA',
   IVV: 'I.V.V',
-  BOOM: 'B.O.O.M.',
+  BOOM: 'B.O.O.M',
   DEFI: 'Défi',
   GEPWNAGE: 'GEPWNAGE',
 };
