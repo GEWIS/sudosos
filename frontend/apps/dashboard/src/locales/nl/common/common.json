@@ -49,7 +49,7 @@
     "confirm": "Akkoord",
     "placeholders": {
       "selectType": "Selecteer Type",
-      "email": "voorbeeld@voorbeeld.com",
+      "email": "voorbeeld(at)voorbeeld.com",
       "bankAccountNumber": "NL69 ABNA 0012 3456 78",
       "fullName": "Jan Jansen",
       "addressee": "Jan & Co.",
