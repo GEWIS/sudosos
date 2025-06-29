@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import Divider from 'primevue/divider';
 // eslint-disable-next-line import/no-named-as-default
 import Dinero from 'dinero.js';
@@ -59,6 +59,12 @@ const displayBalanceAfterTopup = computed(() => {
     form.model.amount.value.value != undefined &&
     form.model.amount.value.value != 0
   );
+});
+
+watch(userBalance, () => {
+  if (userBalance.value) {
+    form.context.setFieldValue('balance', userBalance.value.amount.amount);
+  }
 });
 </script>
 <style scoped lang="scss">
