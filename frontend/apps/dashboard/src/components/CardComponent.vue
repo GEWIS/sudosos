@@ -15,7 +15,7 @@
       <slot />
     </template>
     <template v-if="action" #footer>
-      <Button id="bottom-left-button" class="w-full" outlined @click="handleClick">
+      <Button id="bottom-left-button" class="w-full font-semibold" outlined @click="handleClick">
         {{ action.toUpperCase() }}
       </Button>
     </template>

@@ -28,7 +28,7 @@ export const GrolschGreen = definePreset(SudososPreset, {
       colorScheme: {
         dark: {
           root: {
-            background: '#35831a',
+            background: '#004b31',
           },
         },
       },
