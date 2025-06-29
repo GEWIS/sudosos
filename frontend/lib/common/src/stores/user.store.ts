@@ -122,20 +122,21 @@ export const useUserStore = defineStore('user', {
       ).data;
     },
     async fetchUserCreatedTransactions(id: number, service: ApiService, take?: number, skip?: number) {
-      this.current.createdTransactions = (
-        await service.user.getUsersTransactions(
-          id,
-          undefined,
-          id,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          take,
-          skip,
-        )
-      ).data;
+      const res = await service.transaction.getAllTransactions(
+        undefined,
+        id,
+        undefined,
+        undefined,
+        id,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        take,
+        skip,
+      );
+      this.current.createdTransactions = res.data;
     },
     async fetchGewisUser(id: number, service: ApiService): Promise<GewisUserResponse> {
       return service.user.getIndividualUser(id).then((res) => {

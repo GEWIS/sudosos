@@ -38,6 +38,7 @@ export const useTransactionStore = defineStore('transaction', {
         undefined,
         undefined,
         undefined,
+        undefined,
         pointOfSaleId,
         undefined,
         undefined,
