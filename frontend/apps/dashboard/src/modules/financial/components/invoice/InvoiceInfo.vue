@@ -11,17 +11,14 @@
     </template>
     <div class="flex flex-col justify-between">
       <InfoSpan :label="t('common.id')" :value="String(invoice.id)" />
-
       <InfoSpan
         :label="t('common.for')"
         :value="invoice.to.firstName + ' ' + invoice.to.lastName + ' (' + invoice.to.id + ')'"
       />
-
       <InfoSpan
         :label="t('common.createdAt')"
         :value="formatDateTime(new Date(invoice.createdAt ? invoice.createdAt.toString() : ''))"
       />
-
       <InfoSpan
         :label="t('common.updatedAt')"
         :value="formatDateTime(new Date(invoice.updatedAt ? invoice.updatedAt.toString() : ''))"
@@ -38,11 +35,8 @@
     >
       <div class="flex flex-col gap-3 justify-between">
         <div>
-          {{ t('modules.financial.invoice.confirmDelete') }}
-          <br />
-          {{ t('modules.financial.invoice.creditNoteWarning') }}
-          <br />
-          <br />
+          {{ t('modules.financial.invoice.confirmDelete') }}<br />
+          {{ t('modules.financial.invoice.creditNoteWarning') }}<br /><br />
           {{ t('modules.financial.invoice.unrecoverable') }}
         </div>
         <div class="items-end flex flex-row gap-3 justify-end">
@@ -58,7 +52,6 @@
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Dialog from 'primevue/dialog';
-import { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client/src/api';
 import { useToast } from 'primevue/usetoast';
 import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
 import InfoSpan from '@/components/InfoSpan.vue';
@@ -66,45 +59,37 @@ import CardComponent from '@/components/CardComponent.vue';
 import { formatDateTime } from '@/utils/formatterUtils';
 import { useInvoiceStore } from '@/stores/invoice.store';
 import { handleError } from '@/utils/errorUtils';
+import { useInvoiceCard } from '@/composables/invoiceCard';
 
 const { t } = useI18n();
-
 const toast = useToast();
-const invoiceStore = useInvoiceStore();
-const dialog = ref();
+const props = defineProps<{ invoiceId: number }>();
+
+const { invoice, deleted } = useInvoiceCard(props.invoiceId);
+const notDeleted = computed(() => !deleted.value);
+
 const visible = ref(false);
-const notDeleted = computed(() => invoice.value?.currentState.state !== InvoiceStatusResponseStateEnum.Deleted);
-const invoice = computed(() => invoiceStore.getInvoice(props.invoiceId));
+const dialog = ref();
 
-const props = defineProps({
-  invoiceId: {
-    type: Number,
-    required: true,
-  },
-});
-
-const openDialog = () => {
+function openDialog() {
   addListenerOnDialogueOverlay(dialog.value);
-};
+}
 
-const deleteInvoice = async () => {
-  await invoiceStore
-    .deleteInvoice(props.invoiceId)
-    .then(() => {
-      toast.add({
-        summary: t('common.toast.success.success'),
-        detail: t('common.toast.success.invoiceDeleted'),
-        severity: 'success',
-        life: 3000,
+async function deleteInvoice() {
+  try {
+    await useInvoiceStore()
+      .deleteInvoice(props.invoiceId)
+      .catch((err) => {
+        handleError(err, toast);
       });
-    })
-    .catch((err) => {
-      handleError(err, toast);
-    })
-    .finally(() => {
-      dialog.value.close();
+    toast.add({
+      summary: t('common.toast.success.success'),
+      detail: t('common.toast.success.invoiceDeleted'),
+      severity: 'success',
+      life: 3000,
     });
-};
+  } finally {
+    dialog.value.close();
+  }
+}
 </script>
-
-<style scoped lang="scss"></style>

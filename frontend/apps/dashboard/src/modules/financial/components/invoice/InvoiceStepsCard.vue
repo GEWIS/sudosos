@@ -21,16 +21,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import type { InvoiceResponse } from '@sudosos/sudosos-client';
-import { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client/src/api';
+import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useInvoiceStore } from '@/stores/invoice.store';
+import { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client';
 import CardComponent from '@/components/CardComponent.vue';
+import { useInvoiceCard } from '@/composables/invoiceCard';
+import { useInvoiceStore } from '@/stores/invoice.store';
 
 const { t } = useI18n();
+const props = defineProps<{ invoiceId: number }>();
 
 const invoiceStore = useInvoiceStore();
+const { invoice, deleted } = useInvoiceCard(props.invoiceId);
 
 const steps = [
   InvoiceStatusResponseStateEnum.Created,
@@ -38,34 +40,25 @@ const steps = [
   InvoiceStatusResponseStateEnum.Paid,
   InvoiceStatusResponseStateEnum.Deleted,
 ];
-const activeStep = computed(() => steps.indexOf(invoice.value.currentState.state));
-const deleted = computed(() => invoice.value.currentState.state === InvoiceStatusResponseStateEnum.Deleted);
+
+const activeStep = computed(() => (invoice.value ? steps.indexOf(invoice.value.currentState.state) : 0));
+
 const loading = ref(false);
 
-const stepItems = steps.slice(0, 3).map((value, index) => {
-  return {
-    index: index,
+const stepItems = computed(() =>
+  steps.slice(0, 3).map((value, index) => ({
+    index,
     label: value,
     disabled: () => activeStep.value >= index || loading.value,
     command: () => {
       void updateStep(value);
     },
-  };
-});
+  })),
+);
 
-const updateStep = async (value: InvoiceStatusResponseStateEnum) => {
+async function updateStep(value: InvoiceStatusResponseStateEnum) {
   loading.value = true;
   await invoiceStore.updateInvoice(invoice.value.id, { state: value });
   loading.value = false;
-};
-
-const invoice = computed(() => invoiceStore.getInvoice(props.invoiceId) as InvoiceResponse);
-const props = defineProps({
-  invoiceId: {
-    type: Number,
-    required: true,
-  },
-});
+}
 </script>
-
-<style scoped lang="scss"></style>

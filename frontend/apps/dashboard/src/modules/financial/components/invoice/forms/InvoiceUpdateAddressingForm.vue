@@ -49,7 +49,7 @@ setSubmit(
         toast.add({
           severity: 'success',
           summary: t('common.toast.success.success'),
-          detail: values,
+          detail: t('common.toast.success.invoiceUpdated'),
           life: 3000,
         });
         emit('update:edit', false);
