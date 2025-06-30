@@ -32,3 +32,7 @@ export function getPayoutPdfSrc(pdf: string): string {
 export function getSellerPayoutPdfSrc(pdf: string): string {
   return `${window.location.origin}/static/sellerPayouts/${pdf}`;
 }
+
+export function getWriteOffPdfSrc(pdf: string): string {
+  return `${window.location.origin}/static/writeOffs/${pdf}`;
+}

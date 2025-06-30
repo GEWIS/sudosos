@@ -9,7 +9,7 @@ import apiService from '@/services/ApiService';
 
 export const useWriteOffStore = defineStore('writeoff', {
   state: () => ({
-    writeOffs: {} as Record<number, WriteOffResponse>,
+    writeOffs: {} as Record<number, WriteOffResponse & { pdf?: string }>,
     updatedAt: 0,
     inactiveUsers: [] as BalanceResponse[],
     count: 0,
@@ -44,6 +44,13 @@ export const useWriteOffStore = defineStore('writeoff', {
       return apiService.writeOffs.getSingleWriteOff(id).then((res) => {
         this.writeOffs[id] = res.data;
         return res.data;
+      });
+    },
+    async fetchPdf(id: number): Promise<string | undefined> {
+      return apiService.writeOffs.getWriteOffPdf(id).then((res) => {
+        const pdf = res.data.pdf;
+        this.writeOffs[id].pdf = pdf;
+        return pdf;
       });
     },
     async createWriteOff(values: WriteOffRequest): Promise<WriteOffResponse> {

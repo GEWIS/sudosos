@@ -64,6 +64,7 @@
             <Button
               v-tooltip.top="t('common.downloadPdf')"
               class="p-button-rounded p-button-text p-button-plain"
+              :disabled="downloadingPdf"
               icon="pi pi-file-export"
               type="button"
               @click="() => downloadPdf(slotProps.data.id)"
@@ -112,6 +113,7 @@ import FormDialog from '@/components/FormDialog.vue';
 import { schemaToForm } from '@/utils/formUtils';
 import { createWriteOffSchema } from '@/utils/validation-schema';
 import WriteOffCreateForm from '@/modules/financial/components/write-offs/forms/WriteOffCreateForm.vue';
+import { getWriteOffPdfSrc } from '@/utils/urlUtils';
 
 const { t } = useI18n();
 const toast = useToast();
@@ -186,14 +188,26 @@ const getName = (writeOff: WriteOffResponse) => {
   return writeOff.to.firstName + ' ' + writeOff.to.lastName;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const downloadingPdf = ref<boolean>(false);
+
 const downloadPdf = (id: number) => {
-  toast.add({
-    severity: 'warn',
-    summary: t('common.toast.info.info'),
-    detail: t('modules.financial.write-offs.downloadPdf.not-possible'),
-    life: 3000,
-  });
+  downloadingPdf.value = true;
+  writeOffStore
+    .fetchPdf(id)
+    .then((url) => {
+      if (url) window.location.href = getWriteOffPdfSrc(url);
+    })
+    .catch(() => {
+      toast.add({
+        severity: 'warn',
+        summary: t('common.toast.info.info'),
+        detail: t('modules.financial.write-offs.downloadPdf.not-possible'),
+        life: 3000,
+      });
+    })
+    .finally(() => {
+      downloadingPdf.value = false;
+    });
 };
 </script>
 
