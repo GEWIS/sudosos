@@ -8,10 +8,7 @@
         })
       }}
     </span>
-    <span v-if="transactionInfo.from.id == userStore.current.user!!.id">
-      {{ t('components.mutations.userBoughtAt', { pos: transactionInfo.pointOfSale.name }) }}
-    </span>
-    <span v-if="transactionInfo.from.id != userStore.current.user!!.id">
+    <span>
       <UserLink :new-tab="true" :user="transactionInfo.from" />
       {{
         t('components.mutations.otherBoughtAt.suffix', {
@@ -65,7 +62,6 @@
 <script setup lang="ts">
 import type { SubTransactionRowResponse } from '@sudosos/sudosos-client/src/api';
 import type { TransactionResponse } from '@sudosos/sudosos-client';
-import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import { useI18n } from 'vue-i18n';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -74,8 +70,6 @@ import { formatPrice } from '@/utils/formatterUtils';
 import UserLink from '@/components/UserLink.vue';
 
 const { t } = useI18n();
-
-const userStore = useUserStore();
 
 defineProps({
   transactionInfo: {
