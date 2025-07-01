@@ -11,6 +11,9 @@ export const BetaBlue = definePreset(SudososPreset, {
           hoverColor: '#1e40af',
           activeColor: '#1e3a8a',
         },
+        secondary: {
+          color: '#193ded',
+        },
       },
       dark: {
         primary: {
