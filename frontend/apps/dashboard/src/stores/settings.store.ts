@@ -1,26 +1,16 @@
 import { defineStore } from 'pinia';
-import type { ServerStatusResponse } from '@sudosos/sudosos-client';
 import apiService from '@/services/ApiService';
 
 export const useSettingsStore = defineStore('settings', {
   state: () => ({
-    status: {} as Partial<ServerStatusResponse>,
     token: '',
     stripe: '',
   }),
   actions: {
-    async fetchMaintenanceMode() {
-      this.status.maintenanceMode = (await apiService.rootApi.ping()).data.maintenanceMode;
-    },
     async fetchToken() {
-      await apiService.authenticate
-        .getGEWISWebPublic()
-        .then((res) => {
-          this.token = res.data;
-        })
-        .catch(() => {
-          this.status.maintenanceMode = true;
-        });
+      await apiService.authenticate.getGEWISWebPublic().then((res) => {
+        this.token = res.data;
+      });
     },
     async fetchStripe() {
       await apiService.stripe.getStripePublicKey().then((res) => {
@@ -34,9 +24,6 @@ export const useSettingsStore = defineStore('settings', {
     },
   },
   getters: {
-    activeSettings(): Partial<ServerStatusResponse> {
-      return this.status;
-    },
     getToken(): string {
       return this.token;
     },

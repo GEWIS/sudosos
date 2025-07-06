@@ -209,6 +209,11 @@
       "totalSnacks": "Aan snacks heb je uitgegeven:",
       "fav": "Je absolute favorieten waren:",
       "christmas": "Fijne kerst en een gelukkig nieuw jaar van de ABC!"
+    },
+    "maintenanceMode": {
+      "title": "SudoSOS is onder onderhoud.",
+      "subtitle": "Probeer het later nog eens...",
+      "footer": "ONDERHOUD GEACTIVEERD"
     }
   }
 }

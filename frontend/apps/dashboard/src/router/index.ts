@@ -8,8 +8,6 @@ import { adminRoutes } from '@/modules/admin/routes';
 import { financialRoutes } from '@/modules/financial/routes';
 import { sellerRoutes } from '@/modules/seller/routes';
 import { userRoutes } from '@/modules/user/routes';
-import MaintenanceView from '@/views/MaintenanceView.vue';
-import { useSettingsStore } from '@/stores/settings.store';
 import WrappedView from '@/views/WrappedView.vue';
 
 declare module 'vue-router' {
@@ -56,17 +54,6 @@ const router = createRouter({
         },
       ],
     },
-    {
-      path: '',
-      component: PublicLayout,
-      children: [
-        {
-          path: '',
-          component: MaintenanceView,
-          name: 'maintenance',
-        },
-      ],
-    },
     // Catch-all route to home
     {
       path: '/:pathMatch(.*)*',
@@ -77,14 +64,6 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
-  const settingsStore = useSettingsStore();
-
-  const maintenanceMode =
-    settingsStore.activeSettings.maintenanceMode || settingsStore.status.maintenanceMode === undefined;
-  if (maintenanceMode && to.name !== 'maintenance') {
-    next({ name: 'maintenance' });
-    return;
-  }
 
   const hasTOSAccepted = () => {
     return authStore.acceptedToS || authStore.user?.acceptedToS;

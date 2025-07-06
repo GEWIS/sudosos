@@ -210,6 +210,11 @@
       "totalSnacks": "On snacks you spent:",
       "fav": "Lastly your favourites were:",
       "christmas": "Merry christmas and a happy new year from the ABC!"
+    },
+    "maintenanceMode": {
+      "title": "SudoSOS is under maintenance.",
+      "subtitle": "Please try again later...",
+      "footer": "MAINTENANCE ENABLED"
     }
   }
 }

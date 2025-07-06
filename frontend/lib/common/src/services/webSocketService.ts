@@ -1,4 +1,3 @@
-// services/webSocketService.ts
 import { io } from 'socket.io-client';
 import { useWebSocketStore } from '../stores/websocket.store';
 

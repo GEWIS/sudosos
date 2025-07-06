@@ -1,4 +1,9 @@
-import { clearTokenInStorage, populateStoresFromToken, useAuthStore } from '@sudosos/sudosos-frontend-common';
+import {
+  clearTokenInStorage,
+  populateStoresFromToken,
+  setupWebSocket,
+  useAuthStore,
+} from '@sudosos/sudosos-frontend-common';
 import { GrolschGreen, BetaBlue, AthenaPinkBlue, IvvNavy, BoomMango, DefiLilac, GepwnageYellow } from '@sudosos/themes';
 import { computed } from 'vue';
 import { useSettingsStore } from '@/stores/settings.store';
@@ -20,11 +25,9 @@ export default async function beforeLoad() {
   const settingsStore = useSettingsStore();
 
   try {
-    await settingsStore.fetchMaintenanceMode();
+    setupWebSocket();
     await settingsStore.fetchKeys();
   } catch (e) {
-    // Overload status to indicate that backend is not available
-    settingsStore.status.maintenanceMode = undefined;
     console.error(e);
     return;
   }
