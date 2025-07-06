@@ -4,10 +4,20 @@ import { useWebSocketStore } from '../stores/websocket.store';
 export const setupWebSocket = () => {
   const socket = io({
     path: '/ws/socket.io',
-    transports: ['websocket'], // optional: skip polling fallback
+    transports: ['websocket'],
   });
 
   const websocketStore = useWebSocketStore();
+  const addToLogs = (event: string, args: unknown[]) => {
+    const logTime = new Date();
+    const logMsg = `[${event}] ${args.map((a) => JSON.stringify(a)).join(' ')}`;
+    websocketStore.addLog({ time: logTime, message: logMsg });
+  };
+
+  socket.onAny((event, ...args) => {
+    addToLogs(event, args);
+  });
+
   socket.emit('subscribe', 'system');
 
   socket.on('connect', () => {

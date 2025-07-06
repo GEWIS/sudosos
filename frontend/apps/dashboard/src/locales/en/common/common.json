@@ -158,7 +158,8 @@
       "debtors": "Debtors",
       "invoiceAccounts": "Invoice Account Overview",
       "fines": "Fines",
-      "writeOffs": "Write-Offs"
+      "writeOffs": "Write-Offs",
+      "maintainer": "Maintainer"
     },
     "validation": {
       "number": {

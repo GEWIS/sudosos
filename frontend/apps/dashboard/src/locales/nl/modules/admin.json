@@ -67,6 +67,23 @@
           "ofAge": "Gebruiker is meerderjarig",
           "canGoIntoDebt": "Gebruiker kan schulden maken"
         }
+      },
+      "actions": {
+        "title": "Admin acties"
+      },
+      "maintenance": {
+        "maintenanceMode": "Onderhoud modus",
+        "confirm": {
+          "initial": "Onderhoud is {enabled}",
+          "confirm": "Schakel {enabled}?",
+          "on": "aan",
+          "off": "uit",
+          "enabled": "ingeschakeld",
+          "disabled": "uitgeschakeld"
+        }
+      },
+      "websocket": {
+        "title": "Websocket logs"
       }
     }
   }

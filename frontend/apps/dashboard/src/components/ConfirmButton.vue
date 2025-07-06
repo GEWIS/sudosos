@@ -5,13 +5,17 @@
     :label="labelText"
     :severity="severity"
     :type="type"
+    v-bind="attrs"
     @blur="reset"
     @click="handleClick"
   />
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { ref, computed, useAttrs } from 'vue';
+
+defineOptions({ inheritAttrs: false });
+const attrs = useAttrs();
 
 const props = defineProps<{
   disabled?: boolean;

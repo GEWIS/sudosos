@@ -23,6 +23,11 @@ export function useAdminNav() {
           },
         ].filter((item) => item.visible),
       },
+      {
+        label: t('common.navigation.maintainer'),
+        visible: isAllowed('update', ['all'], 'Maintenance', ['*']),
+        route: '/maintainer',
+      },
     ].filter((item) => item.visible),
   );
 }

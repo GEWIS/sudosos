@@ -21,6 +21,7 @@ import {
   DebtorsApi,
   SellerPayoutsApi,
   WriteoffsApi,
+  ServerSettingsApi,
 } from '@sudosos/sudosos-client';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { getTokenFromStorage, updateTokenIfNecessary } from '../helpers/TokenHelper';
@@ -79,6 +80,8 @@ export class ApiService {
 
   private readonly _writeOffsApi: WriteoffsApi;
 
+  private readonly _serverSettingsApi: ServerSettingsApi;
+
   constructor(basePath: string) {
     const withKeyConfiguration = new Configuration({
       accessToken: () => getTokenFromStorage().token,
@@ -106,6 +109,7 @@ export class ApiService {
     this._rbacApi = new RbacApi(withKeyConfiguration, basePath, axiosInstance);
     this._sellerPayoutsApi = new SellerPayoutsApi(withKeyConfiguration, basePath, axiosInstance);
     this._writeOffsApi = new WriteoffsApi(withKeyConfiguration, basePath, axiosInstance);
+    this._serverSettingsApi = new ServerSettingsApi(withKeyConfiguration, basePath, axiosInstance);
   }
 
   get authenticate(): AuthenticateApi {
@@ -194,5 +198,9 @@ export class ApiService {
 
   get writeOffs(): WriteoffsApi {
     return this._writeOffsApi;
+  }
+
+  get serverSettings(): ServerSettingsApi {
+    return this._serverSettingsApi;
   }
 }

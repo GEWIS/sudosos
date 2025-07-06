@@ -157,7 +157,8 @@
       "debtors": "Schuldigen",
       "invoiceAccounts": "Facturen Account Overzicht",
       "fines": "Boetes",
-      "writeOffs": "Afschrijvingen"
+      "writeOffs": "Afschrijvingen",
+      "maintainer": "Maintainer"
     },
     "validation": {
       "number": {

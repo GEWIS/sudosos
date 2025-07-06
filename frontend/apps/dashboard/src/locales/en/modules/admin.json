@@ -67,6 +67,23 @@
           "ofAge": "User is of age",
           "canGoIntoDebt": "User can go into debt"
         }
+      },
+      "actions": {
+        "title": "Admin actions"
+      },
+      "maintenance": {
+        "maintenanceMode": "Maintenance mode",
+        "confirm": {
+          "initial": "Maintenance is {enabled}",
+          "confirm": "Turn {enabled}?",
+          "on": "on",
+          "off": "off",
+          "enabled": "enabled",
+          "disabled": "disabled"
+        }
+      },
+      "websocket": {
+        "title": "Websocket logs"
       }
     }
   }

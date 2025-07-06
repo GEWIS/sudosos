@@ -25,6 +25,11 @@ function parseTime(value: number): string {
   return value.toString().padStart(2, '0');
 }
 
+export function dateToTimeString(date: Date): string {
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
 export function formatPrice(value: Dinero, isNegative?: boolean): string {
   if (isNegative) {
     return ((value.amount / 100) * -1).toLocaleString('nl-NL', { style: 'currency', currency: 'EUR' });
