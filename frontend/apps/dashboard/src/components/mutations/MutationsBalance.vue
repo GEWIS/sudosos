@@ -113,12 +113,12 @@ const props = defineProps<{
   rowsAmount?: number;
   preload?: boolean;
 }>();
-const mutations = ref<FinancialMutation[]>(new Array(10));
+
+const rows: Ref<number> = ref(props.rowsAmount || 10);
+const mutations = ref<FinancialMutation[]>(new Array(rows.value));
 const totalRecords = ref<number>(0);
 const isLoading: Ref<boolean> = ref(true);
 const currentUserId = computed(() => userStore.current.user?.id);
-
-const rows: Ref<number> = ref(props.rowsAmount || 10);
 
 // Expose the refresh method
 async function refresh() {
