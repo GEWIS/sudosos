@@ -1128,6 +1128,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sudosos/point-of-sale@workspace:apps/point-of-sale":
+  version: 0.0.0-use.local
+  resolution: "@sudosos/point-of-sale@workspace:apps/point-of-sale"
+  dependencies:
+    "@sudosos/sudosos-frontend-common": "workspace:^"
+    eslint: "npm:^9.24.0"
+    lint-staged: "npm:^15.2.10"
+    primevue: "npm:^3.53.1"
+  languageName: unknown
+  linkType: soft
+
 "@sudosos/sudosos-client@github:GEWIS/sudosos-client#693f5f138073f342ad01b029452d8db5ebffaf07":
   version: 1.1.2
   resolution: "@sudosos/sudosos-client@https://github.com/GEWIS/sudosos-client.git#commit=693f5f138073f342ad01b029452d8db5ebffaf07"
@@ -6590,17 +6601,6 @@ __metadata:
     vue-tsc: "npm:^2.2.8"
     vue3-pdf-app: "npm:^1.0.3"
     yup: "npm:^1.4.0"
-  languageName: unknown
-  linkType: soft
-
-"sudosos-point-of-sale@workspace:apps/point-of-sale":
-  version: 0.0.0-use.local
-  resolution: "sudosos-point-of-sale@workspace:apps/point-of-sale"
-  dependencies:
-    "@sudosos/sudosos-frontend-common": "workspace:^"
-    eslint: "npm:^9.24.0"
-    lint-staged: "npm:^15.2.10"
-    primevue: "npm:^3.53.1"
   languageName: unknown
   linkType: soft
 
