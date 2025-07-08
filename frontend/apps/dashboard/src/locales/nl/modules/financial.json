@@ -38,6 +38,13 @@
         }
       },
       "invoice": {
+        "vat": {
+          "title": "BTW",
+          "percentage": "BTW %",
+          "baseExclVat": "Grondslag (excl. BTW)",
+          "inclVat": "Incl. BTW",
+          "vat": "BTW-bedrag"
+        },
         "header": "Facturen",
         "invoice": "Factuur",
         "transfer": "Overboeking",

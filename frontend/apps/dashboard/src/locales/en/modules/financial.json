@@ -38,6 +38,13 @@
         }
       },
       "invoice": {
+        "vat": {
+          "title": "VAT",
+          "percentage": "VAT %",
+          "baseExclVat": "Base (Excl. VAT)",
+          "inclVat": "Incl. VAT",
+          "vat": "VAT Amount"
+        },
         "header": "Invoices",
         "invoice": "Invoice",
         "transfer": "Transfer amount",
