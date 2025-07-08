@@ -36,6 +36,7 @@ import { useToast } from 'primevue/usetoast';
 import apiService from '@/services/ApiService';
 import { formatPrice } from '@/utils/formatterUtils';
 import { useSettingsStore } from '@/stores/settings.store';
+import { useDarkMode } from '@/composables/darkMode';
 
 const { t } = useI18n();
 
@@ -66,6 +67,8 @@ onBeforeMount(async () => {
   stripe.value = await loadStripe(`${settingStore.getStripe}`);
 });
 
+const { isDark } = useDarkMode();
+
 const pay = async () => {
   visible.value = true;
   const deposit = {
@@ -74,7 +77,12 @@ const pay = async () => {
     },
   };
   await apiService.stripe.deposit(deposit).then((paymentIntent) => {
-    elements.value = stripe.value.elements({ clientSecret: paymentIntent.data.clientSecret });
+    elements.value = stripe.value.elements({
+      clientSecret: paymentIntent.data.clientSecret,
+      appearance: {
+        theme: isDark.value ? 'night' : 'light',
+      },
+    });
     paymentElement.value = elements.value.create('payment');
     paymentElement.value.mount('#payment-element');
   });
