@@ -5,7 +5,7 @@
         <WriteOffUserOverview />
       </CardComponent>
       <CardComponent class="w-full" :header="t('modules.financial.write-offs.table.header')">
-        <WriteOffTable />
+        <WriteOffTableYear />
       </CardComponent>
     </div>
   </PageContainer>
@@ -13,10 +13,10 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import WriteOffTable from '@/modules/financial/components/write-offs/WriteOffTable.vue';
 import CardComponent from '@/components/CardComponent.vue';
 import WriteOffUserOverview from '@/modules/financial/components/write-offs/WriteOffUserOverview.vue';
 import PageContainer from '@/layout/PageContainer.vue';
+import WriteOffTableYear from '@/modules/financial/components/write-offs/WriteOffTableYear.vue';
 
 const { t } = useI18n();
 </script>

@@ -69,7 +69,8 @@
     "toast": {
       "info": {
         "Info": "Info",
-        "scanStarted": "NFC Scan gestart, houd je NFC kaart tegen je telefoon!"
+        "scanStarted": "NFC Scan gestart, houd je NFC kaart tegen je telefoon!",
+        "notFound": "Niet gevonden"
       },
       "success": {
         "success": "Succes",

@@ -4,24 +4,20 @@
       class="w-full"
       data-key="id"
       lazy
-      :paginator="paginator"
+      :loading="isLoading"
+      :paginator="true"
       :rows="rows"
-      :rows-per-page-options="[5, 10, 25, 50, 100]"
+      :rows-per-page-options="rowsPerPageOptions"
       table-style="min-width: 50rem"
       :total-records="totalRecords"
       :value="writeOffs"
-      @page="onPage($event)"
+      @page="onPage"
     >
       <template #header>
         <div class="flex flex-row align-items-center justify-content-between">
           <IconField icon-position="left">
-            <InputIcon class="pi pi-search"> </InputIcon>
-            <InputText
-              v-model="idQuery"
-              :placeholder="t('common.id')"
-              @focusout="searchId()"
-              @keyup.enter="searchId()"
-            />
+            <InputIcon class="pi pi-search" />
+            <InputText v-model="idQuery" :placeholder="t('common.id')" @focusout="searchId" @keyup.enter="searchId" />
           </IconField>
           <Button class="ml-2" icon="pi pi-plus" :label="t('common.create')" @click="showDialog = true" />
         </div>
@@ -59,7 +55,7 @@
               class="p-button-rounded p-button-text p-button-plain"
               icon="pi pi-times"
               type="button"
-              @click="() => showWarning()"
+              @click="showWarning"
             />
             <Button
               v-tooltip.top="t('common.downloadPdf')"
@@ -73,122 +69,94 @@
         </template>
       </Column>
     </DataTable>
+
+    <Dialog
+      ref="dialog"
+      v-model:visible="showWarningModal"
+      class="w-auto flex"
+      :draggable="false"
+      :header="t('modules.financial.write-offs.delete.delete')"
+      modal
+      @show="addListenerOnDialogueOverlay(dialog)"
+    >
+      {{ t('modules.financial.write-offs.delete.not-possible') }}
+    </Dialog>
+
+    <FormDialog
+      v-model="showDialog"
+      :confirm="true"
+      :form="form"
+      :header="t('modules.financial.write-offs.create')"
+      :is-editable="true"
+    >
+      <template #form="slotProps">
+        <WriteOffCreateForm :form="slotProps.form" @submit:success="showDialog = false" />
+      </template>
+    </FormDialog>
   </div>
-  <Dialog
-    ref="dialog"
-    v-model:visible="showWarningModal"
-    class="w-auto flex"
-    :draggable="false"
-    :header="t('modules.financial.write-offs.delete.delete')"
-    modal
-    @show="addListenerOnDialogueOverlay(dialog)"
-  >
-    {{ t('modules.financial.write-offs.delete.not-possible') }}
-  </Dialog>
-  <FormDialog
-    v-model="showDialog"
-    :confirm="true"
-    :form="form"
-    :header="t('modules.financial.write-offs.create')"
-    :is-editable="true"
-  >
-    <template #form="slotProps">
-      <WriteOffCreateForm :form="slotProps.form" @submit:success="showDialog = false" />
-    </template>
-  </FormDialog>
 </template>
 
 <script setup lang="ts">
-import { onMounted, type Ref, ref, watch } from 'vue';
-import type { PaginatedWriteOffResponse, WriteOffResponse } from '@sudosos/sudosos-client';
-import type { DataTablePageEvent } from 'primevue/datatable';
+import { ref, defineProps, defineEmits } from 'vue';
+import type { WriteOffResponse } from '@sudosos/sudosos-client';
 import Column from 'primevue/column';
-import { useI18n } from 'vue-i18n';
 import Button from 'primevue/button';
-import { useToast } from 'primevue/usetoast';
+import Skeleton from 'primevue/skeleton';
+import Dialog from 'primevue/dialog';
+import { useI18n } from 'vue-i18n';
 import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
-import { formatDateFromString, formatPrice } from '@/utils/formatterUtils';
-import { useWriteOffStore } from '@/stores/writeoff.store';
+import { useToast } from 'primevue/usetoast';
+import type { DataTablePageEvent } from 'primevue/datatable';
 import FormDialog from '@/components/FormDialog.vue';
+import WriteOffCreateForm from '@/modules/financial/components/write-offs/forms/WriteOffCreateForm.vue';
+import { formatDateFromString, formatPrice } from '@/utils/formatterUtils';
 import { schemaToForm } from '@/utils/formUtils';
 import { createWriteOffSchema } from '@/utils/validation-schema';
-import WriteOffCreateForm from '@/modules/financial/components/write-offs/forms/WriteOffCreateForm.vue';
 import { getWriteOffPdfSrc } from '@/utils/urlUtils';
+import { useWriteOffStore } from '@/stores/writeoff.store';
+
+withDefaults(
+  defineProps<{
+    writeOffs: WriteOffResponse[];
+    isLoading: boolean;
+    rows: number;
+    rowsPerPageOptions?: number[];
+    totalRecords: number;
+  }>(),
+  {
+    rowsPerPageOptions: () => [5, 10, 25, 50, 100, 250],
+  },
+);
+
+const emit = defineEmits(['page', 'single']);
 
 const { t } = useI18n();
+const writeOffStore = useWriteOffStore();
 const toast = useToast();
 
-const writeOffStore = useWriteOffStore();
-
-const totalRecords = ref<number>(0);
-const isLoading = ref<boolean>(true);
-
-const rows = ref<number>(5);
-const paginator = ref<boolean>(true);
-const page = ref<number>(0);
-const writeOffs = ref();
-
-const showWarningModal: Ref<boolean> = ref(false);
+const showWarningModal = ref(false);
 const dialog = ref();
 const showWarning = () => {
   showWarningModal.value = true;
 };
 
-const showDialog: Ref<boolean> = ref(false);
+const showDialog = ref(false);
 const form = schemaToForm(createWriteOffSchema);
 
-const idQuery = ref<string>('');
+const idQuery = ref('');
+const downloadingPdf = ref(false);
 
-onMounted(async () => {
-  await loadWriteOffs();
-});
-
-async function loadWriteOffs() {
-  isLoading.value = true;
-  const response: PaginatedWriteOffResponse = await writeOffStore.fetchWriteOffs(rows.value, page.value);
-  if (response) {
-    writeOffs.value = response.records;
-    totalRecords.value = response._pagination.count || 0;
-  }
-  isLoading.value = false;
+function onPage(event: DataTablePageEvent) {
+  emit('page', event);
 }
 
-async function onPage(event: DataTablePageEvent) {
-  rows.value = event.rows;
-  page.value = event.first;
-  await loadWriteOffs();
+function searchId() {
+  emit('single', parseInt(idQuery.value));
 }
-
-watch(
-  () => writeOffStore.getUpdatedAt,
-  () => {
-    void loadWriteOffs().then(() => console.error('loaded', writeOffs.value));
-  },
-);
-
-const searchId = async (): Promise<void> => {
-  const queryNumber = parseInt(idQuery.value);
-  const isNan = isNaN(queryNumber);
-  if (isNan) {
-    await loadWriteOffs();
-    return;
-  }
-
-  writeOffStore
-    .fetchWriteOff(queryNumber)
-    .then((res) => {
-      writeOffs.value = [res];
-    })
-    .catch(() => {
-      writeOffs.value = [];
-    });
-};
 
 const getName = (writeOff: WriteOffResponse) => {
   return writeOff.to.firstName + ' ' + writeOff.to.lastName;
 };
-
-const downloadingPdf = ref<boolean>(false);
 
 const downloadPdf = (id: number) => {
   downloadingPdf.value = true;
@@ -210,5 +178,3 @@ const downloadPdf = (id: number) => {
     });
 };
 </script>
-
-<style scoped lang="scss"></style>

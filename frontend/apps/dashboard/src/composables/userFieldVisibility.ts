@@ -33,7 +33,9 @@ export function useUserFieldVisibility(userType: Ref<USER_TYPES, string>, isCrea
   // Managed user calculation
   const managed = computed(() => {
     if (isCreate.value) return false;
-    return ![USER_TYPES.LOCAL_USER, USER_TYPES.LOCAL_ADMIN].includes(userType.value);
+    return ![USER_TYPES.LOCAL_USER, USER_TYPES.LOCAL_ADMIN, USER_TYPES.INVOICE, USER_TYPES.AUTOMATIC_INVOICE].includes(
+      userType.value,
+    );
   });
 
   return { show, managed };

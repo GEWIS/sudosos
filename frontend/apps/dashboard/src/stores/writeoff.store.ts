@@ -32,8 +32,13 @@ export const useWriteOffStore = defineStore('writeoff', {
     },
   },
   actions: {
-    async fetchWriteOffs(take: number, skip: number): Promise<PaginatedWriteOffResponse> {
-      return apiService.writeOffs.getAllWriteOffs(undefined, undefined, take, skip).then((res) => {
+    async fetchWriteOffs(
+      take: number,
+      skip: number,
+      fromDate: string,
+      tillDate: string,
+    ): Promise<PaginatedWriteOffResponse> {
+      return apiService.writeOffs.getAllWriteOffs(undefined, undefined, take, skip, fromDate, tillDate).then((res) => {
         res.data.records.forEach((writeOff: WriteOffResponse) => {
           this.writeOffs[writeOff.id] = writeOff;
         });
@@ -41,6 +46,7 @@ export const useWriteOffStore = defineStore('writeoff', {
       });
     },
     async fetchWriteOff(id: number): Promise<WriteOffResponse> {
+      if (this.writeOffs[id]) return this.writeOffs[id];
       return apiService.writeOffs.getSingleWriteOff(id).then((res) => {
         this.writeOffs[id] = res.data;
         return res.data;

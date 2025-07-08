@@ -14,10 +14,10 @@
       :value="invoices"
       @page="onPage"
     >
-      <Column field="id" :header="t('common.id')">
+      <Column class="max-w-[2rem]" field="id" :header="t('common.id')">
         <template #body="slotProps">
           <div class="cell-content">
-            <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
+            <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 max-w-[2rem]" />
             <span v-else>
               {{ slotProps.data.id }}
             </span>
@@ -61,7 +61,7 @@
             option-value="value"
             :options="states"
             :placeholder="t('common.placeholders.selectType')"
-            @change="stateFilterChange"
+            @change="(e) => stateFilterChange('state', e)"
           />
         </template>
         <template #body="slotProps">
@@ -74,7 +74,7 @@
         </template>
       </Column>
 
-      <Column field="to.firstName" :header="t('common.for')" style="max-width: 10rem">
+      <Column field="to.firstName" :header="t('common.for')" style="max-width: 15rem">
         <template #body="slotProps">
           <div class="cell-content">
             <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
@@ -85,7 +85,7 @@
         </template>
       </Column>
 
-      <Column field="description" :header="t('common.description')" style="max-width: 15rem">
+      <Column field="description" :header="t('common.description')" style="max-width: 10rem">
         <template #body="slotProps">
           <div class="cell-content">
             <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
@@ -138,6 +138,7 @@ import { type Ref, ref } from 'vue';
 import type { InvoiceResponse } from '@sudosos/sudosos-client';
 import { formatPrice, formatDateFromString } from '@/utils/formatterUtils';
 import router from '@/router';
+import { useFiscalYear } from '@/composables/fiscalYear';
 
 defineProps({
   invoices: {
@@ -166,8 +167,8 @@ function onPage(event: DataTablePageEvent) {
   emit('page', event);
 }
 
-function stateFilterChange(e: SelectChangeEvent) {
-  emit('stateFilterChange', e);
+function stateFilterChange(key: string, e: SelectChangeEvent) {
+  emit('stateFilterChange', key, e.value);
 }
 
 const states: Ref<Array<{ name: string; value: string | null }>> = ref([
@@ -188,18 +189,16 @@ const filters = ref({
 });
 
 // isBackDate should check if the createdAt date is in the same 202Y-07-01 202(Y+1)-07-01 range
+const { getFiscalYear } = useFiscalYear();
+
 function isBackDate(invoice: InvoiceResponse): boolean {
   if (!invoice.createdAt || !invoice.date) return false;
 
-  const fiscalYear = (d: Date) => {
-    const year = d.getFullYear();
-    return d >= new Date(year, 6, 1) ? year : year - 1;
-  };
+  // Use getFiscalYear from your composable
+  const fyCreatedAt = getFiscalYear(invoice.createdAt);
+  const fyDate = getFiscalYear(invoice.date);
 
-  const createdAt = new Date(invoice.createdAt);
-  const date = new Date(invoice.date);
-
-  return fiscalYear(createdAt) !== fiscalYear(date);
+  return fyCreatedAt !== fyDate;
 }
 </script>
 
@@ -209,14 +208,6 @@ function isBackDate(invoice: InvoiceResponse): boolean {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.cell-content {
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  padding: 0 0.5rem;
-  box-sizing: border-box;
 }
 
 .skeleton-fixed {

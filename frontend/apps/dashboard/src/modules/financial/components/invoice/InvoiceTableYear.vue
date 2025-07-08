@@ -1,72 +1,93 @@
 <template>
+  <IconField icon-position="left">
+    <InputIcon class="pi pi-search" />
+    <InputText
+      v-model="searchId"
+      :placeholder="t('common.id')"
+      @focusout="searchById"
+      @keyup.enter="searchById"
+      @submit="searchById"
+    />
+  </IconField>
+  <Tabs v-model:value="year" class="w-full">
+    <TabList>
+      <Tab v-for="y in years" :key="y" :value="y.toString()">{{ y }}</Tab>
+    </TabList>
+  </Tabs>
   <InvoiceTable
-    :invoices="invoices"
+    :invoices="records"
     :is-loading="isLoading"
     :rows="rows"
     :total-records="totalRecords"
     @page="onPage"
-    @state-filter-change="onStateFilterChange"
+    @state-filter-change="setFilter"
   />
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import type { InvoiceResponse } from '@sudosos/sudosos-client';
-import { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client/src/api';
-import type { SelectChangeEvent } from 'primevue/select';
-import type { DataTablePageEvent } from 'primevue/datatable';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useToast } from 'primevue/usetoast';
+import type { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client';
+import { type InvoiceResponseTypes } from '@sudosos/sudosos-client/src/api';
 import InvoiceTable from '@/modules/financial/components/invoice/InvoiceTable.vue';
+import { useFiscalYear } from '@/composables/fiscalYear';
 import { useInvoiceStore } from '@/stores/invoice.store';
+import { useDataTableYear } from '@/composables/dataTableYear';
 
+const { getFiscalYearList, getFiscalYearRange } = useFiscalYear();
+const years = getFiscalYearList();
 const invoiceStore = useInvoiceStore();
+const filterState = ref<InvoiceStatusResponseStateEnum | undefined>(undefined);
+const searchId = ref<string | null>(null);
 
-const totalRecords = ref<number>(0);
-const isLoading = ref<boolean>(true);
-const invoices = ref<InvoiceResponse[]>([]);
-const rows = ref<number>(10);
-const page = ref<number>(0);
-const filterState = ref<InvoiceStatusResponseStateEnum | null>(null);
+const { t } = useI18n();
+const toast = useToast();
 
-const props = defineProps<{
-  state?: InvoiceStatusResponseStateEnum;
+async function fetchInvoices({
+  year,
+  page,
+  rows,
+  filters,
+}: {
   year: number;
-}>();
+  page: number;
+  rows: number;
+  filters: { state?: InvoiceStatusResponseStateEnum };
+}) {
+  const { start, end } = getFiscalYearRange(year);
+  const queryParams = {
+    fromDate: start,
+    tillDate: end,
+    ...(filters?.state ? { state: filters.state } : {}),
+  };
+  return await invoiceStore.fetchInvoices(rows, page, queryParams);
+}
 
-onMounted(async () => {
-  await loadInvoices();
+async function fetchSingleInvoice(id: number) {
+  return await invoiceStore.fetchInvoice(id);
+}
+
+const { year, rows, isLoading, records, totalRecords, onPage, setFilter, onSingle } = useDataTableYear<
+  InvoiceResponseTypes,
+  { state?: InvoiceStatusResponseStateEnum }
+>(fetchInvoices, fetchSingleInvoice, {
+  yearList: years,
+  defaultYear: years[0],
+  initialFilters: { state: filterState.value },
+  defaultRows: 10,
 });
 
-async function loadInvoices() {
-  isLoading.value = true;
-
-  // If a year is provided, compute the date range based on the year.
-  // Example: for year 2025, fromDate = "2024-07-01" and tillDate = "2025-07-01"
-  const queryParams: Record<string, string> = {};
-  if (props.year) {
-    queryParams.fromDate = `${props.year - 1}-07-01T00:00:00.000Z`;
-    queryParams.tillDate = `${props.year}-07-01T00:00:00.000Z`;
-  }
-
-  if (filterState.value) {
-    queryParams.state = filterState.value;
-  }
-
-  const response = await invoiceStore.fetchInvoices(rows.value, page.value, queryParams);
-  if (response) {
-    invoices.value = response.records as InvoiceResponse[];
-    totalRecords.value = response._pagination.count || 0;
-  }
-  isLoading.value = false;
-}
-
-async function onPage(event: DataTablePageEvent) {
-  rows.value = event.rows;
-  page.value = event.first;
-  await loadInvoices();
-}
-
-function onStateFilterChange(e: SelectChangeEvent) {
-  filterState.value = e.value as InvoiceStatusResponseStateEnum;
-  void loadInvoices();
+function searchById() {
+  const id = Number(searchId.value);
+  if (isNaN(id)) return;
+  onSingle(id).catch(() => {
+    toast.add({
+      severity: 'warn',
+      summary: t('common.toast.info.info'),
+      detail: t('common.toast.info.notFound'),
+      life: 3000,
+    });
+  });
 }
 </script>

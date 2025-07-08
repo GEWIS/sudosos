@@ -70,7 +70,8 @@
     "toast": {
       "info": {
         "info": "Info",
-        "scanStarted": "NFC Scan started, please hold your NFC card to your phone!"
+        "scanStarted": "NFC Scan started, please hold your NFC card to your phone!",
+        "notFound": "Not found"
       },
       "success": {
         "success": "Success",
