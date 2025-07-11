@@ -1,7 +1,7 @@
 <template>
   <PageContainer>
     <div class="text-4xl mb-4">
-      {{ t('modules.admin.singleUser.profile', { user: currentUser ? currentUser.firstName : '' }) }}
+      {{ t('modules.admin.singleUser.profile', { user: firstName, gewisId }) }}
     </div>
     <div class="flex flex-col gap-5">
       <div class="flex flex-col gap-8 justify-between md:flex-row">
@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref, watch } from 'vue';
+import { computed, onBeforeMount, ref, watch } from 'vue';
 import type { Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
@@ -52,6 +52,8 @@ const currentUser: Ref<UserResponse> = ref<UserResponse>(null!);
 // TODO: Fix this somehow?
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 const mutations: Ref<InstanceType<typeof MutationsBalance> | null> = ref(null);
+const firstName = computed(() => (currentUser.value ? currentUser.value.firstName : ''));
+const gewisId = computed(() => (currentUser.value ? `(m${currentUser.value?.gewisId})` : ''));
 
 const getUser = async () => {
   await apiService.user

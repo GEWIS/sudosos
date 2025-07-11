@@ -8,7 +8,7 @@
         }
       },
       "singleUser": {
-        "profile": "{user}'s profiel",
+        "profile": "{user}'s profiel {gewisId}",
         "userInfo": {
           "header": "Gebruikersinformatie"
         },
