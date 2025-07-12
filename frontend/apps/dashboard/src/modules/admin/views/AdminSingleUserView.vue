@@ -1,25 +1,31 @@
 <template>
   <PageContainer>
-    <div class="text-4xl mb-4">
-      {{ t('modules.admin.singleUser.profile', { user: firstName, gewisId }) }}
-    </div>
-    <div class="flex flex-col gap-5">
-      <div class="flex flex-col gap-8 justify-between md:flex-row">
-        <div class="flex flex-col gap-8">
-          <AdminUserEditCard :user="currentUser" />
-          <AdminUserInfoCard v-if="currentUser" :user="currentUser" />
-        </div>
-        <AdminUserBalance
-          v-if="currentUser"
-          class="flex-grow flex-grow-1 md:flex-grow-0 md:self-start"
-          :user="currentUser"
-          @update-mutations="() => mutations?.refresh()"
-        />
+    <div v-if="currentUser">
+      <div class="text-4xl mb-4">
+        {{ t('modules.admin.singleUser.profile', { user: firstName, gewisId }) }}
       </div>
+      <div class="flex flex-col gap-5">
+        <div class="flex flex-col gap-8 justify-between md:flex-row">
+          <div class="flex flex-col gap-8">
+            <AdminUserEditCard :user="currentUser" />
+            <AdminUserInfoCard :user="currentUser" />
+          </div>
+          <AdminUserBalance
+            class="flex-grow flex-grow-1 md:flex-grow-0 md:self-start"
+            :user="currentUser"
+            @update-mutations="() => mutations?.refresh()"
+          />
+        </div>
 
-      <CardComponent class="w-full" :header="t('components.mutations.user')">
-        <MutationsBalance ref="mutations" :get-mutations="getUserMutations" modal paginator />
-      </CardComponent>
+        <CardComponent class="w-full" :header="t('components.mutations.user')">
+          <MutationsBalance ref="mutations" :get-mutations="getUserMutations" modal paginator />
+        </CardComponent>
+      </div>
+    </div>
+    <div v-else>
+      <div class="m-auto flex justify-center items-center">
+        <ProgressSpinner />
+      </div>
     </div>
   </PageContainer>
 </template>
@@ -29,7 +35,7 @@ import { computed, onBeforeMount, ref, watch } from 'vue';
 import type { Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
-import type { PaginatedFinancialMutationResponse, UserResponse } from '@sudosos/sudosos-client';
+import type { GewisUserResponse, PaginatedFinancialMutationResponse, UserResponse } from '@sudosos/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import type { AxiosError } from 'axios';
 import { useI18n } from 'vue-i18n';
@@ -42,19 +48,28 @@ import AdminUserInfoCard from '@/modules/admin/components/users/AdminUserInfoCar
 import CardComponent from '@/components/CardComponent.vue';
 import PageContainer from '@/layout/PageContainer.vue';
 import AdminUserEditCard from '@/modules/admin/components/users/AdminUserEditCard.vue';
+import { USER_TYPES } from '@/utils/validation-schema';
 
 const { t } = useI18n();
 
 const route = useRoute();
 const userStore = useUserStore();
 const toast = useToast();
-const currentUser: Ref<UserResponse> = ref<UserResponse>(null!);
+const currentUser: Ref<UserResponse | null> = ref(null);
 // TODO: Fix this somehow?
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 const mutations: Ref<InstanceType<typeof MutationsBalance> | null> = ref(null);
-const firstName = computed(() => (currentUser.value ? currentUser.value.firstName : ''));
-const gewisId = computed(() => (currentUser.value ? `(m${currentUser.value?.gewisId})` : ''));
 
+// Computed properties
+const firstName = computed(() => currentUser.value?.firstName || '');
+
+const isMember = computed(() => !!currentUser.value && currentUser.value.type === String(USER_TYPES.MEMBER));
+
+const memberUser = computed(() => (isMember.value ? (currentUser.value as GewisUserResponse) : null));
+
+const gewisId = computed(() => (memberUser.value?.gewisId ? `(m${memberUser.value.gewisId})` : ''));
+
+// Fetch user
 const getUser = async () => {
   await apiService.user
     .getIndividualUser(Number(route.params.userId))
@@ -68,7 +83,7 @@ const getUser = async () => {
     await router.replace({ path: '/error' });
     return;
   }
-  if (mutations?.value) await mutations.value.refresh();
+  if (mutations.value) await mutations.value.refresh();
 };
 
 watch(
@@ -82,6 +97,7 @@ onBeforeMount(async () => {
   await getUser();
 });
 
+// Get mutations for user
 const getUserMutations = async (
   take: number,
   skip: number,
@@ -92,5 +108,3 @@ const getUserMutations = async (
   return userStore.getCurrentUser.financialMutations;
 };
 </script>
-
-<style scoped lang="scss"></style>
