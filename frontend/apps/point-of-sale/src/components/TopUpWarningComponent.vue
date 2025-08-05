@@ -4,6 +4,7 @@
     :closable="false"
     :content-style="{ width: '35rem' }"
     :dismissable-mask="false"
+    :draggable="false"
     header="Please Top-Up your SudoSOS balance"
     modal
     :pt="{
