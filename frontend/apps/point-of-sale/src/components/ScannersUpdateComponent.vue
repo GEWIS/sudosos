@@ -5,7 +5,7 @@
   <Dialog
     ref="nfcModal"
     v-model:visible="nfcModalVisible"
-    header="Link NFC"
+    header="Manage NFC"
     modal
     :pt="{
       header: () => ({ class: ['dialog-header'] }),
@@ -25,6 +25,9 @@
       />
       <b style="font-weight: bold !important">Scan your NFC card now!</b><br />
       <b>Note: Banking cards, ID cards and phones will not work</b><br />
+      <button class="active rounded-md c-btn font-medium px-2 py-1 mt-1 text-base" @click="deleteNfc">
+        Remove linked NFC
+      </button>
     </div>
   </Dialog>
 </template>
@@ -41,6 +44,10 @@ const nfcModal: Ref<{ mask: HTMLElement; close: () => void } | null> = ref(null)
 const props = defineProps({
   handleNfcUpdate: {
     type: Function as PropType<(nfcCode: string) => Promise<void>>,
+    required: true,
+  },
+  handleNfcDelete: {
+    type: Function as PropType<() => Promise<void>>,
     required: true,
   },
 });
@@ -94,6 +101,31 @@ const onInput = (event: KeyboardEvent): void => {
     captures.push(event);
   }
 };
+
+const deleteNfc = async () => {
+  await props
+    .handleNfcDelete()
+    .then(() => {
+      toast.add({
+        severity: 'success',
+        summary: 'NFC code removed!',
+        detail: 'The linked NFC code has been removed.',
+        life: 5000,
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+      toast.add({
+        severity: 'error',
+        summary: 'API error',
+        detail: err.message,
+        life: 5000,
+      });
+    })
+    .finally(() => {
+      nfcModalVisible.value = false;
+    });
+};
 </script>
 
 <style scoped lang="scss">
@@ -105,6 +137,7 @@ const onInput = (event: KeyboardEvent): void => {
 .dialog-close {
   color: white !important;
 }
+
 .nfc-icon {
   height: 100px;
   position: fixed;

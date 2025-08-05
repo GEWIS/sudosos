@@ -26,7 +26,7 @@
     </div>
   </div>
   <SettingsIconComponent />
-  <ScannersUpdateComponent :handle-nfc-update="nfcUpdate" />
+  <ScannersUpdateComponent :handle-nfc-delete="nfcDelete" :handle-nfc-update="nfcUpdate" />
   <NfcSearchComponent :handle-nfc-search="cartStore.setBuyerFromNfc" />
 </template>
 <script setup lang="ts">
@@ -129,9 +129,22 @@ const nfcUpdate = async (nfcCode: string) => {
     const userId = authStore.user?.id;
     if (!userId) return;
 
-    await apiService.user.updateUserNfc(userId, { nfcCode: nfcCode }).then(async () => {});
+    await apiService.user.updateUserNfc(userId, { nfcCode: nfcCode });
   } catch (error) {
     console.error(error);
+  }
+};
+
+const nfcDelete = async () => {
+  const userId = authStore.user?.id;
+  if (!userId) {
+    throw new Error('No user logged in.');
+  }
+
+  try {
+    await apiService.user.deleteUserNfc(userId);
+  } catch {
+    throw new Error('There is no NFC code linked to your account.');
   }
 };
 </script>
