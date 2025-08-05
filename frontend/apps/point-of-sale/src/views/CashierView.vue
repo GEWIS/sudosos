@@ -46,6 +46,7 @@ import NfcSearchComponent from '@/components/NfcSearchComponent.vue';
 import apiService from '@/services/ApiService';
 import { useCartStore } from '@/stores/cart.store';
 import TopUpWarningComponent from '@/components/TopUpWarningComponent.vue';
+import { useSettingStore } from '@/stores/settings.store';
 
 const authStore = useAuthStore();
 const posNotLoaded = ref(true);
@@ -53,6 +54,7 @@ const currentPos: Ref<PointOfSaleWithContainersResponse | undefined> = ref(undef
 const pointOfSaleStore = usePointOfSaleStore();
 const activityStore = useActivityStore();
 const cartStore = useCartStore();
+const shouldShowTimers = useSettingStore().showTimers;
 
 enum PointOfSaleState {
   SEARCH_USER,
@@ -67,7 +69,7 @@ const hasShownTopUpWarning = ref(false);
 
 const shouldShowTopUpWarning = computed(() => {
   const inDebt = cartStore.checkBuyerInDebt();
-  return inDebt && !hasShownTopUpWarning.value;
+  return inDebt && !hasShownTopUpWarning.value && shouldShowTimers;
 });
 
 const handleTopUpWarningUpdate = (value: boolean) => {
@@ -91,7 +93,10 @@ const fetchPointOfSale = async () => {
         currentPos.value = pointOfSaleStore.pointOfSale;
       }
       posNotLoaded.value = false;
-      activityStore.restartTimer();
+
+      if (shouldShowTimers) {
+        activityStore.restartTimer();
+      }
 
       if (shouldShowTopUpWarning.value) {
         showTopUpWarning.value = true;

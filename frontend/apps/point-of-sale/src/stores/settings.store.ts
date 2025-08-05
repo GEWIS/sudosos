@@ -34,6 +34,9 @@ export const useSettingStore = defineStore('setting', {
         return this.isAlcoholTime ? 'alcoholic' : 'non-alcoholic';
       }
     },
+    showTimers(): boolean {
+      return location.hostname !== 'localhost';
+    },
   },
   actions: {
     /**
