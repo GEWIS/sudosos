@@ -60,7 +60,7 @@ const getFilteredProducts = () => {
         keys: ['product.name'],
         isCaseSensitive: false,
         shouldSort: true,
-        threshold: 0.2,
+        threshold: 0.3,
       })
         .search(searchQuery.value)
         .map((r) => r.item);
