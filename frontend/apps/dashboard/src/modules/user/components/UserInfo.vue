@@ -30,6 +30,6 @@ const props = defineProps({
 
 // Type guard
 function isGewisUser(user: UserResponse | GewisUserResponse): user is GewisUserResponse {
-  return user.gewisId !== null;
+  return 'gewisId' in user && user.gewisId !== undefined;
 }
 </script>
