@@ -231,7 +231,6 @@ export const topupSchema = yup.object({
   amount: yup
     .number()
     .required()
-    .default(0)
     .test('is-min10-or-balance', 'Top up should be more than €10 or settle debt exactly.', function (value) {
       const balance = this.parent.balance;
       return value >= 10 || Math.round(value * -100) === balance;

@@ -6,7 +6,7 @@
         id="amount"
         column
         v-bind="form.model.amount.attr.value"
-        :errors="form.context.errors.value.amount"
+        :errors="(form.context.meta.value.touched && form.context.errors.value.amount) as string"
         :label="t('modules.user.balance.increaseAmount')"
         type="currency"
         :value="form.model.amount.value.value"
