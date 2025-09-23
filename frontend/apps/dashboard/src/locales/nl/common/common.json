@@ -47,6 +47,10 @@
     "selected": "Geselecteerd",
     "users": "Gebruikers",
     "confirm": "Akkoord",
+    "sent": "Verstuurd",
+    "paid": "Betaald",
+    "created": "Gemaakt",
+    "deleted": "Verwijderd",
     "placeholders": {
       "selectType": "Selecteer Type",
       "email": "voorbeeld(at)voorbeeld.com",

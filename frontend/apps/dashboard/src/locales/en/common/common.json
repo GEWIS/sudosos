@@ -48,6 +48,10 @@
     "users": "Users",
     "count": "Count",
     "confirm": "Confirm",
+    "sent": "Sent",
+    "paid": "Paid",
+    "created": "Created",
+    "deleted": "Deleted",
     "placeholders": {
       "selectType": "Select Type",
       "email": "example(at)example.com",

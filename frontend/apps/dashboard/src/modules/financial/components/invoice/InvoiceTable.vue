@@ -67,9 +67,32 @@
         <template #body="slotProps">
           <div class="cell-content">
             <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
-            <span v-else>
-              {{ slotProps.data.currentState.state }}
-            </span>
+            <template v-else>
+              <span
+                v-if="slotProps.data.currentState.state == InvoiceStatusResponseStateEnum.Created"
+                class="font-bold"
+              >
+                {{ t('common.created') }}
+              </span>
+              <span v-else-if="slotProps.data.currentState.state == InvoiceStatusResponseStateEnum.Sent" class="italic">
+                {{ t('common.sent') }}
+              </span>
+              <span
+                v-else-if="slotProps.data.currentState.state == InvoiceStatusResponseStateEnum.Paid"
+                class="text-gray-500"
+              >
+                {{ t('common.paid') }}
+              </span>
+              <span
+                v-else-if="slotProps.data.currentState.state == InvoiceStatusResponseStateEnum.Deleted"
+                class="text-red-500"
+              >
+                {{ t('common.deleted') }}
+              </span>
+              <span v-else>
+                {{ slotProps.data.currentState.state }}
+              </span>
+            </template>
           </div>
         </template>
       </Column>
