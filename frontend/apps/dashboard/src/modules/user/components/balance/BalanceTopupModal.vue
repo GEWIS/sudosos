@@ -14,12 +14,20 @@
     </div>
     <form v-show="!loading" id="payment-form" ref="payment">
       <div id="payment-element">
-        <!--Stripe.js injects the Payment Element-->
+        <!--Stripe.js injects the Payment Element, and replaces the spinner -->
+        <ProgressSpinner />
       </div>
     </form>
 
     <template #footer>
-      <Button class="h-9" :disabled="loading" :label="t('modules.user.balance.pay').toUpperCase()" @click="submitPay" />
+      <Button
+        v-if="!loading"
+        class="h-9"
+        :disabled="loading"
+        :label="t('modules.user.balance.pay').toUpperCase()"
+        @click="submitPay"
+      />
+      <ProgressSpinner v-else />
     </template>
   </Dialog>
 </template>
@@ -40,7 +48,7 @@ import { useDarkMode } from '@/composables/darkMode';
 
 const { t } = useI18n();
 
-const loading = ref(false);
+const loading = ref(true);
 const visible = ref(false);
 const dinero = computed((): Dinero => {
   return {
@@ -85,6 +93,9 @@ const pay = async () => {
     });
     paymentElement.value = elements.value.create('payment');
     paymentElement.value.mount('#payment-element');
+    paymentElement.value.on('ready', () => {
+      loading.value = false;
+    });
   });
 };
 
