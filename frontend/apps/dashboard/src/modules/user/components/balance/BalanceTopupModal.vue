@@ -2,7 +2,7 @@
   <Dialog
     v-model:visible="visible"
     :draggable="false"
-    header="Increase Saldo"
+    :header="t('modules.user.balance.increaseAmount')"
     modal
     position="top"
     :style="{ width: '500px' }"
