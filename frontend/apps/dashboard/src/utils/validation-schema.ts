@@ -226,18 +226,30 @@ export const bannerSchema = yup.object({
   id: yup.number().nullable().optional(),
 });
 
+const parseMoney = (orig: unknown) => {
+  if (orig === '' || orig === null || typeof orig === 'undefined') return undefined;
+  if (typeof orig === 'number') return orig;
+  if (typeof orig !== 'string') return undefined;
+  const n = Number(orig);
+  return Number.isNaN(n) ? undefined : n;
+};
+
 export const topupSchema = yup.object({
-  balance: yup.number().required().default(0),
+  balance: yup.number().required().default(0), // cents
   amount: yup
     .number()
-    .required()
+    .transform((value, originalValue) => parseMoney(originalValue))
+    .typeError('Please enter a valid amount.')
+    .required('Amount is required.')
     .test('is-min10-or-balance', 'Top up should be more than €10 or settle debt exactly.', function (value) {
-      const balance = this.parent.balance;
+      if (value == null) return true;
+      const balance = this.parent.balance as number;
       return value >= 10 || Math.round(value * -100) === balance;
     })
     .test('is-total-less-than-150', 'Your new balance cannot surpass €150.', function (value) {
-      const balance = this.parent.balance;
-      return balance + value * 100 <= 15000;
+      if (value == null) return true;
+      const balance = this.parent.balance as number;
+      return balance + Math.round(value * 100) <= 15000;
     }),
 });
 
