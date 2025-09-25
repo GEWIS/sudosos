@@ -27,6 +27,13 @@ body:
         - Both
     validations:
       required: true
+  - type: checkboxes
+    id: beta
+    attributes:
+      label: Is this the beta version?
+      description: Check if the issue occurs on a beta version.
+      options:
+        - label: Yes, this is on the beta version
   - type: textarea
     id: current-behavior
     attributes:
