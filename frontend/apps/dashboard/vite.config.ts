@@ -3,7 +3,26 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import tailwindcss from '@tailwindcss/vite';
 
-const PROXY_URL = 'https://sudosos.test.gewis.nl';
+// Environment-based proxy URL configuration
+const getProxyUrl = () => {
+  const env = process.env.VITE_ENV || 'test';
+
+  switch (env) {
+    case 'prod':
+      return 'https://sudosos.gewis.nl';
+    case 'test':
+      return 'https://sudosos.test.gewis.nl';
+    case 'local':
+      return 'http://localhost:3000';
+    default:
+      return 'https://sudosos.test.gewis.nl';
+  }
+};
+
+const PROXY_URL = getProxyUrl();
+const isLocal = process.env.VITE_ENV === 'local';
+
+// TODO: Fix nginx dev proxy setup instead of hack
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
@@ -28,7 +47,7 @@ export default defineConfig(() => {
       port: 5173,
       proxy: {
         '/api/v1': {
-          target: PROXY_URL + '/api/v1',
+          target: isLocal ? 'http://localhost:3000/v1' : PROXY_URL + '/api/v1',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api\/v1/, ''),
         },
@@ -38,7 +57,7 @@ export default defineConfig(() => {
           rewrite: (path) => path.replace(/^\/static/, ''),
         },
         '/ws': {
-          target: PROXY_URL + '/ws',
+          target: isLocal ? 'http://localhost:8080' : PROXY_URL + '/ws',
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(/^\/ws/, ''),

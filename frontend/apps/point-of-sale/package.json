@@ -5,7 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:prod": "VITE_ENV=prod vite",
+    "dev:test": "VITE_ENV=test vite",
+    "dev:local": "VITE_ENV=local vite",
     "point-of-sale:dev": "yarn dev",
+    "point-of-sale:dev:prod": "yarn dev:prod",
+    "point-of-sale:dev:test": "yarn dev:test",
+    "point-of-sale:dev:local": "yarn dev:local",
     "dev-host": "vite --host",
     "build": "run-p type-check build-only",
     "preview": "vite preview",

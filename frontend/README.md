@@ -52,6 +52,9 @@ You can quickly start development directly in your browser by using [Codespaces]
 > [!TIP]
 > You can also use the Jetbrains IDE if you prefer that over the default Codespaces IDE. [More information can be found here.](https://docs.github.com/en/codespaces/developing-in-a-codespace/using-github-codespaces-in-your-jetbrains-ide)
 
+> [!TIP]
+> Use `yarn dev-dashboard:local`, `yarn dev-dashboard:test`, or `yarn dev-dashboard:prod` to switch between backends. The test and prod environments correspond to `sudosos.test.gewis.nl` and `sudosos.gewis.nl`, respectively. The local option is for running your own backend.
+
 ### Local set up
 
 #### Step 0: Prerequisites

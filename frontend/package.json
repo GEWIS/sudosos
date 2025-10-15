@@ -10,7 +10,13 @@
   "scripts": {
     "dev-libraries": "concurrently --kill-others \"yarn common:dev\" \"yarn themes:dev\"",
     "dev-dashboard": "concurrently --kill-others \"yarn dashboard:dev\" \"yarn dev-libraries\"",
+    "dev-dashboard:prod": "concurrently --kill-others \"yarn dashboard:dev:prod\" \"yarn dev-libraries\"",
+    "dev-dashboard:test": "concurrently --kill-others \"yarn dashboard:dev:test\" \"yarn dev-libraries\"",
+    "dev-dashboard:local": "concurrently --kill-others \"yarn dashboard:dev:local\" \"yarn dev-libraries\"",
     "dev-pos": "concurrently --kill-others \"yarn point-of-sale:dev\" \"yarn dev-libraries\"",
+    "dev-pos:prod": "concurrently --kill-others \"yarn point-of-sale:dev:prod\" \"yarn dev-libraries\"",
+    "dev-pos:test": "concurrently --kill-others \"yarn point-of-sale:dev:test\" \"yarn dev-libraries\"",
+    "dev-pos:local": "concurrently --kill-others \"yarn point-of-sale:dev:local\" \"yarn dev-libraries\"",
     "build-libraries": "concurrently \"yarn common:build\" \"yarn themes:build\"",
     "build-dashboard": "yarn workspaces foreach -Rpt --from 'sudosos-dashboard' run build",
     "build-pos": "yarn workspaces foreach -Rpt --from '@sudosos/point-of-sale' run build",
