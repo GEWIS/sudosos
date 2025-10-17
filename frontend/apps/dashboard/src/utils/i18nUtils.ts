@@ -20,6 +20,16 @@ import financial_nl from '../locales/nl/modules/financial.json';
 import footer_nl from '../locales/nl/components/footer.json';
 import general_nl from '../locales/nl/components/general.json';
 
+import admin_pl from '../locales/pl/modules/admin.json';
+import common_pl from '../locales/pl/common/common.json';
+import mutations_pl from '../locales/pl/components/mutations.json';
+import auth_pl from '../locales/pl/modules/auth.json';
+import user_pl from '../locales/pl/modules/user.json';
+import seller_pl from '../locales/pl/modules/seller.json';
+import financial_pl from '../locales/pl/modules/financial.json';
+import footer_pl from '../locales/pl/components/footer.json';
+import general_pl from '../locales/pl/components/general.json';
+
 const i18n = createI18n({
   locale: localStorage.getItem('locale') || 'en',
   fallbackLocale: 'en',
@@ -54,6 +64,21 @@ const i18n = createI18n({
         ...seller_nl.modules,
         ...financial_nl.modules,
         ...admin_nl.modules,
+      },
+    },
+    pl: {
+      ...common_pl,
+      components: {
+        ...general_pl.components,
+        ...mutations_pl.components,
+        ...footer_pl.components,
+      },
+      modules: {
+        ...auth_pl.modules,
+        ...user_pl.modules,
+        ...seller_pl.modules,
+        ...financial_pl.modules,
+        ...admin_pl.modules,
       },
     },
   },

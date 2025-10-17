@@ -1,0 +1,40 @@
+{
+  "components": {
+    "mutations": {
+      "balance": "Mutacje salda",
+      "recent": "Ostatnie transakcje",
+      "all": "Wszystkie transakcje",
+      "when": "Kiedy",
+      "created": "Utworzone transakcje",
+      "createdBy": "Utworzone przez",
+      "By": "Przez",
+      "createdFor": "Utworzone dla",
+      "amount": "Kwota",
+      "pos": "Punkt sprzedaży",
+      "you": "Ty",
+      "user": "Transakcje użytkownika",
+      "notYou": "Czy nie dokonałeś tej transakcji?",
+      "modal": {
+        "header": "Szczegóły transakcji (#{id})",
+        "waivedFine": "Umorzona kara",
+        "invoice": "Faktura",
+        "fine": "Kara",
+        "topUp": "Doładowanie",
+        "payment": "Płatność",
+        "payoutRequestDescription": "Zażądałeś wypłaty.",
+        "waivedFineDescription": "Twoje kary zostały umorzone.",
+        "invoiceDescription": "Zapłaciłeś fakturę dla GEWIS",
+        "depositDescription": "Wpłaciłeś pieniądze do GEWIS",
+        "fineDescription": "Zapłaciłeś karę dla GEWIS",
+        "unknown": "Nieznana transakcja"
+      },
+      "userBoughtAt": "Kupiłeś w {pos}",
+      "otherBoughtAt": {
+        "suffix": " kupił w {pos}"
+      },
+      "putInBy": {
+        "prefix": "Transakcję wprowadził "
+      }
+    }
+  }
+}

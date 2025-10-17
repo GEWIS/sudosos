@@ -1,0 +1,134 @@
+{
+  "modules": {
+    "financial": {
+      "debtor": {
+        "title": "Dłużnicy",
+        "debtorUsers": {
+          "header": "Dłużnicy",
+          "currentBalance": "Aktualne saldo",
+          "balanceOn": "Saldo na dzień {date}",
+          "target": "data odniesienia",
+          "control": "kontrola",
+          "explanation": "Poniższa tabela wybiera wszystkich użytkowników, którzy mają co najwyżej -5€ na obie daty. Kary do nałożenia są obliczane na podstawie salda z daty odniesienia.",
+          "apply": "Zastosuj",
+          "notify": "Powiadom",
+          "handout": "Nałóż kary",
+          "toBeFined": "Do ukarania",
+          "wasFined": "Ukarany",
+          "cannotDebt": "Wyłącz możliwość zadłużania się",
+          "ofWhichFine": "Z czego kara",
+          "fineSince": "Kara od",
+          "sumCurrentBalance": "Suma sald",
+          "sumToBeFined": "Suma \"Do ukarania\"",
+          "sumWasFined": "Suma \"Ukarany\"",
+          "confirm": {
+            "handoutMessage": "Czy chcesz nałożyć kary na {count} użytkowników?",
+            "notifyMessage": "Czy chcesz wysłać ostrzeżenie o karze do {count} użytkowników?",
+            "cannotGoInDebt": "Czy chcesz wyłączyć możliwość dalszego zadłużania się dla {count} użytkowników?"
+          }
+        },
+        "handoutEvents": {
+          "title": "Nałożenie kar",
+          "header": "Wydarzenia nałożenia kar",
+          "handoutDate": "Data nałożenia",
+          "referenceDate": "Data odniesienia",
+          "number": "Liczba kar",
+          "total": "Suma kar",
+          "details": "Szczegóły nałożenia kar"
+        }
+      },
+      "invoice": {
+        "vat": {
+          "title": "VAT",
+          "percentage": "VAT %",
+          "baseExclVat": "Podstawa (bez VAT)",
+          "inclVat": "Z VAT",
+          "vat": "Kwota VAT"
+        },
+        "header": "Faktury",
+        "invoice": "Faktura",
+        "transfer": "Kwota przelewu",
+        "credit": "Faktura korygująca",
+        "delete": "Usuń fakturę",
+        "confirmDelete": "Czy na pewno chcesz usunąć tę fakturę?",
+        "creditNoteWarning": "Nie zostanie utworzona nota korygująca.",
+        "unrecoverable": "To usunie fakturę i nie będzie można cofnąć tej operacji.",
+        "table": "Tabela",
+        "recompile": "Przekompiluj",
+        "reload": "Odśwież",
+        "missingPdf": "Brakuje pliku PDF lub jego generowanie nie powiodło się",
+        "deleted": "Faktura została usunięta.",
+        "dirty": "Kwota faktury nie zgadza się z kwotą przelewu.",
+        "total": "Aktualna suma na fakturze to {total}",
+        "for": "Faktura dla",
+        "create": {
+          "create": "Utwórz fakturę",
+          "userBalance": "Saldo wybranych użytkowników",
+          "invocieAmount": "Proponowana kwota faktury",
+          "balanceAfter": "Saldo po wystawieniu faktury",
+          "pos": "Punkty sprzedaży uwzględnione na fakturze:",
+          "warning": "Przed utworzeniem faktury upewnij się, że jest poprawna."
+        },
+        "account": {
+          "lastTransaction": "Ostatnia transakcja",
+          "title": "Konta faktur",
+          "header": "Konta faktur",
+          "balance": "Saldo",
+          "type": "FAKTURA"
+        },
+        "backDate": "Transakcja faktury ({date}) należy do innego roku finansowego."
+      },
+      "payout": {
+        "title": "Wypłaty",
+        "create": "Utwórz wypłatę",
+        "requestedBy": "Zażądane przez",
+        "details": "Szczegóły wypłaty #{payoutId}",
+        "approvedBy": "Zatwierdzone przez {approvedBy}",
+        "approve": "Zatwierdź",
+        "deny": "Odrzuć"
+      },
+      "forms": {
+        "payout": {
+          "for": "Dla",
+          "currentBalance": "Użytkownik ma aktualne saldo {balance}",
+          "bankAccountNumber": "Numer konta bankowego",
+          "bankAccountName": "Nazwa konta bankowego",
+          "amountTooHigh": "Kwota jest wyższa niż saldo użytkownika"
+        },
+        "invoice": {
+          "reference": "Tytuł",
+          "settings": "Ustawienia",
+          "addressing": "Adresowanie",
+          "addressee": "Adresat",
+          "attention": "Uwaga",
+          "street": "Ulica",
+          "postalCode": "Kod pocztowy",
+          "city": "Miasto",
+          "country": "Kraj"
+        },
+        "write-off": {
+          "negative": "Umorzenie można utworzyć tylko wtedy, gdy saldo jest ujemne.",
+          "warning": "Utworzenie umorzenia spowoduje również usunięcie konta użytkownika."
+        }
+      },
+      "write-offs": {
+        "title": "Umorzenia",
+        "fine": "Kara",
+        "table": {
+          "header": "Umorzenia"
+        },
+        "overview": {
+          "header": "Nieaktywni dłużnicy"
+        },
+        "delete": {
+          "delete": "Usuń umorzenie",
+          "not-possible": "Umorzeń nie można usunąć."
+        },
+        "create": "Utwórz umorzenie",
+        "downloadPdf": {
+          "not-possible": "To jeszcze nie jest możliwe."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "modules": {
+    "user": {
+      "landing": {
+        "title": "Podsumowanie",
+        "welcome": "Witaj, ",
+        "motd": "Mamy zgłoszenia, że niektóre doładowania nie są przetwarzane. Zwykle zwrot środków następuje w ciągu 48 godzin. Możesz zapobiec niepotrzebnym karom i pomóc nam, wypełniając {link}. Niestety, nie jesteśmy w stanie wykryć tych problemów, ponieważ występują one między naszym procesorem płatności a iDeal."
+      },
+      "profile": {
+        "title": "Profil",
+        "passwordNew": "Nowe hasło",
+        "passwordConfirm": "Potwierdź hasło",
+        "nfcNew": "Nowy kod NFC",
+        "pinNew": "Nowy PIN",
+        "pinConfirm": "Potwierdź PIN"
+      },
+      "transactions": {
+        "title": "Transakcje"
+      },
+      "settings": {
+        "header": "Ustawienia użytkownika",
+        "changePin": "Zmień PIN",
+        "changePassword": "Zmień hasło",
+        "nfc": "NFC",
+        "changeNFC": "Zmień kod NFC",
+        "deleteNFC": "Usuń kod NFC",
+        "apiKeys": "Klucze API",
+        "changeApiKey": "Zmień klucz API",
+        "deleteApiKey": "Usuń klucz API",
+        "preferences": "Preferencje",
+        "dataAnalysis": "Analiza danych",
+        "enableBeta": "Włącz wersję beta",
+        "confirmChangeNFC": "Czy na pewno chcesz zmienić kod NFC?",
+        "confirmDeleteNFC": "Czy na pewno chcesz usunąć kod NFC?",
+        "confirmChangeApiKey": "Czy na pewno chcesz zmienić klucz API?",
+        "confirmDeleteApiKey": "Czy na pewno chcesz usunąć klucz API?"
+      },
+      "balance": {
+        "balance": "Saldo",
+        "allIsFines": "Całkowita kwota to kary",
+        "someIsFines": "Z czego {fine} to kary",
+        "after": "Saldo po",
+        "increaseAmount": "Zwiększ saldo",
+        "topUp": "Doładuj",
+        "price": "Cena",
+        "pay": "Zapłać"
+      }
+    }
+  }
+}

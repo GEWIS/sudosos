@@ -1,0 +1,227 @@
+{
+  "common": {
+    "sudosos": "SudoSOS",
+    "title": "Tytuł",
+    "total": "Razem",
+    "amount": "Kwota",
+    "actions": "Akcje",
+    "gewisId": "GEWIS ID",
+    "downloadPdf": "Pobierz PDF",
+    "pdf": "PDF",
+    "till": "do",
+    "description": "Opis",
+    "id": "ID",
+    "vat": "VAT",
+    "loading": "Ładowanie",
+    "failed": "Niepowodzenie",
+    "excl": "Bez VAT",
+    "incl": "Z VAT",
+    "firstName": "Imię",
+    "lastName": "Nazwisko",
+    "name": "Nazwa",
+    "for": "Dla",
+    "type": "Typ",
+    "date": "Data",
+    "ofAge": "18+",
+    "info": "Informacja",
+    "price": "Cena",
+    "status": "Status",
+    "active": "Aktywny",
+    "create": "Utwórz",
+    "verify": "Zweryfikuj",
+    "verified": "Zweryfikowano",
+    "edit": "Edytuj",
+    "search": "Szukaj",
+    "save": "Zapisz",
+    "close": "Zamknij",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "remove": "Usuń",
+    "areYouSure": "Jesteś pewien?",
+    "owner": "Właściciel",
+    "back": "Wstecz",
+    "na": "N/D",
+    "signOut": "Wyloguj",
+    "createdAt": "Utworzono",
+    "updatedAt": "Zaktualizowano",
+    "selected": "Wybrano",
+    "users": "Użytkownicy",
+    "count": "Liczba",
+    "confirm": "Potwierdź",
+    "sent": "Wysłano",
+    "paid": "Zapłacono",
+    "created": "Utworzono",
+    "deleted": "Usunięto",
+    "placeholders": {
+      "selectType": "Wybierz typ",
+      "email": "przyklad(at)przyklad.com",
+      "bankAccountNumber": "NL69 ABNA 0012 3456 78",
+      "fullName": "Jan Kowalski",
+      "addressee": "Jan & Spółka",
+      "street": "Rynek Główny 15",
+      "postalCode": "80-800",
+      "city": "Gdańsk",
+      "country": "Polska",
+      "product": "Lody",
+      "pos": "GELIMBO"
+    },
+    "tooltip": {
+      "productOwner": "Uwaga: Właściciel kontenera otrzymuje przychód, a nie właściciel produktu. Właściciela nie można edytować po utworzeniu."
+    },
+    "nickname": "Pseudonim",
+    "email": "Adres e-mail",
+    "usertype": "Typ użytkownika",
+    "toast": {
+      "info": {
+        "info": "Informacja",
+        "scanStarted": "Rozpoczęto skanowanie NFC, przytrzymaj kartę NFC przy telefonie!",
+        "notFound": "Nie znaleziono"
+      },
+      "success": {
+        "success": "Sukces",
+        "userUpdated": "Pomyślnie zaktualizowano użytkownika.",
+        "userCreated": "Pomyślnie utworzono użytkownika.",
+        "userDeleted": "Pomyślnie usunięto użytkownika.",
+        "waiveFinesSuccess": "Pomyślnie umorzono kary.",
+        "resetPasswordSuccess": "Pomyślnie zresetowano hasło.",
+        "dataAnalysis": "Pomyślnie zmieniono preferencje analizy danych.",
+        "apiKeyChanged": "Pomyślnie zmieniono klucz API.",
+        "apiKeyDeleted": "Pomyślnie usunięto klucz API.",
+        "passwordUpdated": "Pomyślnie zaktualizowano hasło.",
+        "nfcCodeUpdated": "Pomyślnie zaktualizowano kod NFC.",
+        "nfcCodeDeleted": "Pomyślnie usunięto kod NFC.",
+        "pinUpdated": "Pomyślnie zaktualizowano PIN.",
+        "finesNotified": "Pomyślnie powiadomiono użytkowników.",
+        "finesHandedOut": "Pomyślnie nałożono kary.",
+        "finesCannotGoIntoDebt": "Pomyślnie wyłączono możliwość zadłużenia.",
+        "payoutCreated": "Pomyślnie utworzono wypłatę.",
+        "invoiceDeleted": "Pomyślnie usunięto fakturę.",
+        "invoiceCreated": "Pomyślnie utworzono fakturę.",
+        "invoiceUpdated": "Pomyślnie zaktualizowano fakturę.",
+        "invoiceAmountUpdated": "Pomyślnie zaktualizowano kwotę faktury.",
+        "pointOfSaleDeleted": "Pomyślnie usunięto punkt sprzedaży.",
+        "pointOfSaleUpdated": "Pomyślnie zaktualizowano punkt sprzedaży.",
+        "pointOfSaleCreated": "Pomyślnie utworzono punkt sprzedaży.",
+        "containerUpdated": "Pomyślnie zaktualizowano kontener.",
+        "containerCreated": "Pomyślnie utworzono kontener.",
+        "containerDeleted": "Pomyślnie usunięto kontener.",
+        "containerRemoved": "Pomyślnie usunięto kontener z punktu sprzedaży.",
+        "fineDeleted": "Pomyślnie usunięto karę.",
+        "transactionDeleted": "Pomyślnie usunięto transakcję.",
+        "productCreated": "Pomyślnie utworzono produkt.",
+        "productUpdated": "Pomyślnie zaktualizowano produkt.",
+        "productContainerDeleted": "Pomyślnie usunięto produkt z kontenera.",
+        "productDeleted": "Pomyślnie usunięto produkt.",
+        "payoutDeleted": "Pomyślnie usunięto wypłatę.",
+        "payoutUpdated": "Pomyślnie zaktualizowano wypłatę.",
+        "payout": {
+          "verify": "Weryfikacja zakończona sukcesem",
+          "details": "Wypłata została zweryfikowana."
+        },
+        "writeOffCreated": "Pomyślnie utworzono umorzenie."
+      },
+      "error": {
+        "error": "Błąd",
+        "scanNotStarted": "Skanowanie NFC nie zostało rozpoczęte, sprawdź uprawnienia dotyczące NFC.",
+        "desktopUnsupported": "Skanowanie NFC można wykonać tylko za pomocą telefonu komórkowego.",
+        "androidUnsupported": "Tylko przeglądarka Chrome obsługuje Web NFC.",
+        "iosUnsupported": "System iOS nie obsługuje Web NFC."
+      },
+      "canceled": "Anulowano",
+      "reject": {
+        "waiveFinesRejected": "Anulowano umarzanie kar."
+      },
+      "failed": {
+        "failed": "Niepowodzenie",
+        "payout": {
+          "verify": "Weryfikacja nie powiodła się",
+          "details": "Kwota wypłaty nie zgadza się z kwotą zakupów. {amount} vs. {totalInclVat}",
+          "unable": "Nie można zweryfikować wypłaty."
+        },
+        "topUp": {
+          "unable": "Nie można ukończyć doładowania. Spróbuj ponownie później."
+        }
+      }
+    },
+    "navigation": {
+      "transactions": "Transakcje",
+      "admin": "Admin",
+      "financial": "Finanse",
+      "seller": "Sprzedawca",
+      "profile": "Profil",
+      "signOut": "Wyloguj",
+      "dutch": "Holenderski",
+      "english": "Angielski",
+      "polish": "Polski",
+      "users": "Użytkownicy",
+      "banners": "Banery",
+      "socialDrinkCards": "Karty napojów społecznościowych",
+      "invoices": "Faktury",
+      "payouts": "Wypłaty",
+      "productsContainers": "Produkty i kontenery",
+      "pos": "Punkty sprzedaży",
+      "flaggedTransactions": "Zaznaczone transakcje",
+      "debtors": "Dłużnicy",
+      "invoiceAccounts": "Przegląd kont faktur",
+      "fines": "Kary",
+      "writeOffs": "Umorzenia",
+      "maintainer": "Utrzymanie"
+    },
+    "validation": {
+      "number": {
+        "min": "To pole musi być większe niż {min}"
+      },
+      "password": {
+        "match": "Hasła muszą być takie same."
+      },
+      "pin": {
+        "match": "Kody PIN muszą być takie same.",
+        "onlyDigits": "Kod PIN może zawierać tylko cyfry."
+      },
+      "required": "To pole jest wymagane",
+      "string": {
+        "exact": "To pole musi mieć dokładnie {len} znaków",
+        "max": "To pole nie może być dłuższe niż {max} znaków",
+        "min": "To pole musi mieć co najmniej {min} znaków"
+      }
+    },
+    "apiError": "Błąd",
+    "errorMessage": "Coś poszło nie tak, otwórz zgłoszenie na {link}, opisując problem.",
+    "permissionMessages": {
+      "transactions": "Nie masz uprawnień do przeglądania tych transakcji."
+    },
+    "time": {
+      "today": "Dziś",
+      "yesterday": "Wczoraj",
+      "yearsAgo": "lat temu",
+      "daysAgo": "dni temu",
+      "hoursAgo": "godzin temu",
+      "minutesAgo": "minut temu",
+      "secondsAgo": "sekund temu",
+      "justNow": "właśnie teraz",
+      "sunday": "Niedziela",
+      "monday": "Poniedziałek",
+      "tuesday": "Wtorek",
+      "wednesday": "Środa",
+      "thursday": "Czwartek",
+      "friday": "Piątek",
+      "saturday": "Sobota"
+    },
+    "wrapped": {
+      "lastYear": "W ciągu ostatniego roku:",
+      "total": "Wydałeś łącznie:",
+      "totalBorrel": "Wydałeś łącznie na imprezach:",
+      "depth": "Ale bardziej szczegółowo:",
+      "totalAlc": "Na alkohol (w tym 0,0%) wydałeś:",
+      "totalSoda": "Na napoje wydałeś:",
+      "totalSnacks": "Na przekąski wydałeś:",
+      "fav": "Na koniec, twoje ulubione były:",
+      "christmas": "Wesołych Świąt i szczęśliwego Nowego Roku od ABC!"
+    },
+    "maintenanceMode": {
+      "title": "SudoSOS jest w trybie konserwacji.",
+      "subtitle": "Spróbuj ponownie później...",
+      "footer": "TRYB KONSERWACJI WŁĄCZONY"
+    }
+  }
+}

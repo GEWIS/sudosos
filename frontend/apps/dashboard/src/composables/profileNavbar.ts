@@ -54,6 +54,14 @@ export function useProfileNav() {
             localStorage.setItem('locale', 'en');
           },
         },
+        {
+          label: t('common.navigation.polish'),
+          disabled: () => locale.value === 'pl',
+          command: () => {
+            locale.value = 'pl';
+            localStorage.setItem('locale', 'pl');
+          },
+        },
       ],
     },
     {

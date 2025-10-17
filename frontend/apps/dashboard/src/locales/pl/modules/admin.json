@@ -1,0 +1,90 @@
+{
+  "modules": {
+    "admin": {
+      "userOverview": {
+        "title": "Użytkownicy",
+        "list": {
+          "header": "Użytkownicy"
+        }
+      },
+      "singleUser": {
+        "profile": "Profil użytkownika {user} {gewisId}",
+        "userInfo": {
+          "header": "Informacje o użytkowniku"
+        },
+        "balance": {
+          "header": "Saldo",
+          "waiveFines": "Umorzenie kar",
+          "allIsFines": "Całkowita kwota to kary",
+          "waiveAllFines": "Umorzenie wszystkich kar",
+          "someIsFines": "Z czego {fine} to kary",
+          "someIsFinesDetailed": "Aktualna kara to {fine}, z czego {waived} zostało umorzone.",
+          "waiveFinesConfirmation": "Czy na pewno chcesz umorzyć kary? Tej operacji nie można cofnąć.",
+          "waiveFinesConfirmationTitle": "Umorzenie kar",
+          "waiveFineTooMuch": "Nie można umorzyć więcej niż wartość kary użytkownika.",
+          "waiveExplanation": "Może istnieć tylko jedno umorzenie na grupę kar. Dodanie umorzenia, gdy istnieje już jedno, zastąpi istniejące umorzenie."
+        }
+      },
+      "banners": {
+        "title": "Banery",
+        "noBannerFound": "Nie znaleziono baneru, proszę wgrać nowy!",
+        "till": "do",
+        "list": {
+          "header": "Banery",
+          "filterActive": "Filtruj aktywne",
+          "filterNotExpired": "Filtruj nieprzeterminowane",
+          "active": "Aktywny",
+          "notActive": "Nieaktywny"
+        },
+        "seconds": "Sekunda | Sekundy"
+      },
+      "forms": {
+        "banner": {
+          "headerCreate": "Utwórz baner",
+          "headerEdit": "Edytuj baner",
+          "duration": "Czas trwania",
+          "timespan": "Okres",
+          "startDate": "Data rozpoczęcia",
+          "endDate": "Data zakończenia",
+          "active": "Aktywny",
+          "toast": {
+            "success": {
+              "success": "Baner został pomyślnie utworzony",
+              "bannerCreated": "Baner utworzony",
+              "bannerUpdated": "Baner zaktualizowany",
+              "bannerDeleted": "Baner usunięty"
+            },
+            "error": {
+              "error": "Błąd podczas tworzenia banera",
+              "bannerCreated": "Błąd podczas tworzenia banera",
+              "bannerUpdated": "Błąd podczas aktualizacji banera",
+              "bannerDeleted": "Błąd podczas usuwania banera"
+            }
+          }
+        },
+        "user": {
+          "header": "Utwórz użytkownika",
+          "ofAge": "Użytkownik jest pełnoletni",
+          "canGoIntoDebt": "Użytkownik może zadłużyć się"
+        }
+      },
+      "actions": {
+        "title": "Akcje administratora"
+      },
+      "maintenance": {
+        "maintenanceMode": "Tryb konserwacji",
+        "confirm": {
+          "initial": "Konserwacja jest {enabled}",
+          "confirm": "Przełączyć na {enabled}?",
+          "on": "włączony",
+          "off": "wyłączony",
+          "enabled": "włączony",
+          "disabled": "wyłączony"
+        }
+      },
+      "websocket": {
+        "title": "Logi WebSocket"
+      }
+    }
+  }
+}
