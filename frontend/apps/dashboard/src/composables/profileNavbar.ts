@@ -3,6 +3,7 @@ import { useUserStore, useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useDarkMode } from '@/composables/darkMode';
+import { useConditionalPreset } from '@/composables/conditionalPreset';
 
 export function useProfileNav() {
   const userStore = useUserStore();
@@ -10,6 +11,7 @@ export function useProfileNav() {
   const router = useRouter();
   const { t, locale } = useI18n();
   const { isDark, toggle } = useDarkMode();
+  const { currentPreset, availablePresets, applyPreset } = useConditionalPreset();
 
   const firstName = computed((): string | undefined => {
     return userStore.getCurrentUser.user?.firstName;
@@ -63,6 +65,18 @@ export function useProfileNav() {
           },
         },
       ],
+    },
+    {
+      label: '',
+      icon: 'pi pi-palette',
+      visible: availablePresets.value.length > 1,
+      items: availablePresets.value.map((entry) => {
+        return {
+          label: entry.label,
+          disabled: currentPreset.value === entry.label,
+          command: () => applyPreset(entry),
+        };
+      }),
     },
     {
       label: '',
