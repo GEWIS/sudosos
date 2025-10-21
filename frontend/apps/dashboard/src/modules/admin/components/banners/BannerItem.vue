@@ -39,7 +39,7 @@
         </div>
         <div class="items-end flex flex-col justify-between">
           <!-- Text will be grey when time is in the past -->
-          <div class="text-right" :class="{ 'text-600 font-italic': isExpired }">
+          <div class="text-right" :class="{ 'text-gray-400 italic': isExpired }">
             <span v-tooltip.top="startDate.toLocaleString()" class="font-semibold">
               {{ formatDateTime(startDate) }}
             </span>
