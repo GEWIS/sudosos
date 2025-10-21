@@ -13,7 +13,6 @@
         "releasedLabels": false
       }
     ],
-    "@mrbernnz/semantic-release-calver",
     [
       "@semantic-release/git",
       {
