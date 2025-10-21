@@ -7,10 +7,11 @@ import {
 
 import { useSettingsStore } from '@/stores/settings.store';
 import apiService from '@/services/ApiService';
-import { useConditionalPreset } from '@/composables/conditionalPreset';
+import { initializeAuthHook } from '@/composables/useAuthHook';
 
 export default async function beforeLoad() {
   const settingsStore = useSettingsStore();
+  initializeAuthHook();
 
   try {
     setupWebSocket();
@@ -25,7 +26,4 @@ export default async function beforeLoad() {
     const authStore = useAuthStore();
     authStore.logout();
   });
-
-  const { applyInitialPreset } = useConditionalPreset();
-  applyInitialPreset();
 }

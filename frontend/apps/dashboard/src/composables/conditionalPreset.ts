@@ -74,7 +74,10 @@ export function useConditionalPreset() {
   const applyPreset = (entry: PresetEntry) => {
     currentPreset.value = entry.label;
     usePreset(entry.preset);
-    localStorage.setItem(CONDITIONAL_PRESET_KEY, entry.label);
+    // When user is not logged in, there is only a single preset available.
+    if (availablePresets.value.length > 1) {
+      localStorage.setItem(CONDITIONAL_PRESET_KEY, entry.label);
+    }
   };
 
   const applyInitialPreset = () => {

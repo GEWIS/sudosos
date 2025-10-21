@@ -1,4 +1,4 @@
-export { useAuthStore } from './stores/auth.store';
+export { useAuthStore, authEventEmitter } from './stores/auth.store';
 export { useUserStore } from './stores/user.store';
 
 export { ApiService } from './services/ApiService';

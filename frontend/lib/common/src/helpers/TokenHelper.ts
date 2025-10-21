@@ -14,7 +14,7 @@ export function updateTokenIfNecessary(response: AxiosResponse) {
 }
 
 export function clearTokenInStorage() {
-  localStorage.clear();
+  localStorage.removeItem('jwt_token');
 }
 
 export function parseToken(rawToken: string): Token {

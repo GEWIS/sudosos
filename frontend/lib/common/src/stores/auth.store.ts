@@ -20,6 +20,30 @@ import { ApiService } from '../services/ApiService';
 import { clearTokenInStorage, getTokenFromStorage, setTokenInStorage } from '../helpers/TokenHelper';
 import { useUserStore } from './user.store';
 
+// Event emitter for authentication events
+class AuthEventEmitter {
+  private listeners: Array<(user: UserResponse) => void> = [];
+
+  onAuthenticated(callback: (user: UserResponse) => void) {
+    this.listeners.push(callback);
+  }
+
+  offAuthenticated(callback: (user: UserResponse) => void) {
+    const index = this.listeners.indexOf(callback);
+    if (index > -1) {
+      this.listeners.splice(index, 1);
+    }
+  }
+
+  emitAuthenticated(user: UserResponse) {
+    this.listeners.forEach((callback) => {
+      callback(user);
+    });
+  }
+}
+
+export const authEventEmitter = new AuthEventEmitter();
+
 interface AuthStoreState {
   user: UserResponse | null;
   organs: UserResponse[];
@@ -61,6 +85,9 @@ export const useAuthStore = defineStore('auth', {
         void userStore.fetchCurrentUserBalance(user.id, service);
         userStore.setCurrentUser(user);
         userStore.setCurrentRolesWithPermissions(rolesWithPermissions);
+
+        // Emit authentication event for dashboard-specific logic
+        authEventEmitter.emitAuthenticated(user);
       }
     },
 
@@ -192,6 +219,7 @@ export const useAuthStore = defineStore('auth', {
       this.token = token.token;
       this.organs = decoded.organs;
       this.acceptedToS = decoded.acceptedToS;
+      if (this.user) authEventEmitter.emitAuthenticated(this.user);
     },
     logout() {
       this.user = null;
