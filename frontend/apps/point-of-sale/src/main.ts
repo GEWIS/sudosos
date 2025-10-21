@@ -4,20 +4,20 @@ import 'primeicons/primeicons.css';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import PrimeVue from 'primevue/config';
-import 'primevue/resources/themes/bootstrap4-light-blue/theme.css';
 import '@gewis/splash';
 
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
 import Panel from 'primevue/panel';
 import Dialog from 'primevue/dialog';
-import OverlayPanel from 'primevue/overlaypanel';
-import Dropdown from 'primevue/dropdown';
+import Select from 'primevue/select';
 import Toast from 'primevue/toast';
+import Card from 'primevue/card';
 
 import Message from 'primevue/message';
 import ToastService from 'primevue/toastservice';
 import { setupWebSocket } from '@sudosos/sudosos-frontend-common';
+import { SudososRed } from '@sudosos/themes';
 import router from '@/router';
 import App from '@/App.vue';
 import { useSettingStore } from '@/stores/settings.store';
@@ -25,7 +25,20 @@ import { useSettingStore } from '@/stores/settings.store';
 const app = createApp(App);
 
 app.use(router);
-app.use(PrimeVue);
+app.use(PrimeVue, {
+  theme: {
+    preset: SudososRed,
+    options: {
+      darkModeSelector: '.dark-mode',
+      cssLayer: {
+        name: 'primevue',
+        // First "basic" tailwind stuff, then overwrite that with primevue, then overwrite that with utility classes
+        // See: https://tailwindcss.com/docs/preflight & https://primevue.org/theming/styled/#csslayer
+        order: 'theme, base, component, primevue, utilities',
+      },
+    },
+  },
+});
 app.use(ToastService);
 
 // eslint-disable-next-line
@@ -35,13 +48,14 @@ app.component('ProgressSpinner', ProgressSpinner);
 app.component('Dialog', Dialog);
 // eslint-disable-next-line
 app.component('Panel', Panel);
-app.component('OverlayPanel', OverlayPanel);
 // eslint-disable-next-line
-app.component('Dropdown', Dropdown);
+app.component('Select', Select);
 // eslint-disable-next-line
 app.component('Message', Message);
 // eslint-disable-next-line
 app.component('Toast', Toast);
+// eslint-disable-next-line
+app.component('Card', Card);
 app.use(createPinia());
 app.mount('#app');
 

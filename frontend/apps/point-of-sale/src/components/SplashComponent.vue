@@ -6,7 +6,7 @@
 
 <style scoped>
 .cls-1 {
-  fill: var(--accent-color, #d40100);
+  fill: var(--p-primary-color);
   stroke-width: 0;
 }
 

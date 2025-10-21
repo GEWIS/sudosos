@@ -1,25 +1,21 @@
 <template>
   <div class="point-of-sale">
     <div class="header">
-      <div class="header-row">
-        <div class="active c-btn icon-large search-close square" @click="cancelSearch()">
+      <div class="flex flex-row">
+        <Button class="icon-large search-close square mr-3" @click="cancelSearch()">
           <i class="pi pi-times" style="font-size: 2rem" />
-        </div>
+        </Button>
         <input
           ref="searchInput"
           v-model="searchValue"
           autocomplete="off"
-          class="flex-sm-grow-1"
+          class="flex-sm-grow-1 rounded mr-3 p-2"
           placeholder="Search user to charge..."
           type="text"
           @input="updateSearchQuery($event as InputEvent)"
         />
-        <div v-if="!settings.isBorrelmode" class="active c-btn rounder text-xl" @click="selectSelf()">
-          Charge yourself
-        </div>
-        <div v-else-if="settings.isBorrelmode" class="active c-btn rounder text-xl" @click="selectNone()">
-          Select no one
-        </div>
+        <Button v-if="!settings.isBorrelmode" class="text-xl" @click="selectSelf()"> Charge yourself </Button>
+        <Button v-else-if="settings.isBorrelmode" class="text-xl" @click="selectNone()"> Select no one </Button>
       </div>
     </div>
     <div>

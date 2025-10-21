@@ -1193,9 +1193,9 @@ __metadata:
   resolution: "@sudosos/point-of-sale@workspace:apps/point-of-sale"
   dependencies:
     "@sudosos/sudosos-frontend-common": "workspace:^"
+    "@sudosos/themes": "workspace:^"
     eslint: "npm:^9.24.0"
     lint-staged: "npm:^15.2.10"
-    primevue: "npm:^3.53.1"
   languageName: unknown
   linkType: soft
 
@@ -5697,15 +5697,6 @@ __metadata:
   version: 6.0.1
   resolution: "primeicons@npm:6.0.1"
   checksum: 10c0/9f59473d9b7f3b5aad1a3c7050fce8c06503f21586a67d3ed1fd362a9fad42a114c89b6e0f8fd7c94d71d090962b53181a086fe07a68a5535fa348fdbf63e641
-  languageName: node
-  linkType: hard
-
-"primevue@npm:^3.53.1":
-  version: 3.53.1
-  resolution: "primevue@npm:3.53.1"
-  peerDependencies:
-    vue: ^3.0.0
-  checksum: 10c0/83b70a6233320c5455b0e01c54908fa71bb07b2c7ce7b1c1b9e4f7097b4639502da0f3b68222b4b7b3e27d551f98b4a0d63b404230e839fe56f70dd641bde564
   languageName: node
   linkType: hard
 

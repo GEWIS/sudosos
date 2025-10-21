@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@sudosos/sudosos-frontend-common": "workspace:^",
-    "primevue": "^3.53.1"
+    "@sudosos/themes": "workspace:^"
   },
   "devDependencies": {
     "eslint": "^9.24.0",

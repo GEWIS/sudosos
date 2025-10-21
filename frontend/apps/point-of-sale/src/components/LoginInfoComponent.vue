@@ -1,7 +1,7 @@
 <template>
   <div
-    class="h-full text-decoration-underline text-right"
-    style="color: #d40000; margin-left: -60px; font-size: 35px; margin-top: 80px; margin-right: 28px"
+    class="h-full text-decoration-underline text-right text-primary"
+    style="margin-left: -60px; font-size: 35px; margin-top: 80px; margin-right: 28px"
     @click="() => (howToModalVisible = true)"
   >
     <i class="pi pi-question-circle" style="font-size: 2rem" />

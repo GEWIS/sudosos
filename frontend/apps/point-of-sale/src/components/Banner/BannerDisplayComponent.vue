@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute banner-content bottom-0 flex flex-row justify-center">
+  <div class="absolute banner-content bottom-30 flex flex-row justify-center">
     <img :alt="banner.name" class="h-full w-full" :src="getBannerImageSrc(banner)" style="object-fit: contain" />
   </div>
 </template>
@@ -20,6 +20,6 @@ defineProps({
   height: 165px;
   background: url('@/assets/poster-background.png');
   margin: 1.5rem;
-  width: calc(100% - 3rem);
+  width: calc(100% - 5rem);
 }
 </style>

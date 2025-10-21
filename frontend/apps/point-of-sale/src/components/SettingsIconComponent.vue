@@ -1,5 +1,5 @@
 <template>
-  <div class="settings-icon" @click="openSettings">
+  <div class="m-5 cursor-pointer" @click="openSettings">
     <div class="pi pi-cog" style="font-size: 3rem" />
   </div>
   <Dialog
@@ -7,17 +7,13 @@
     v-model:visible="visible"
     header="Settings"
     modal
-    :pt="{
-      header: () => ({ class: ['dialog-header'] }),
-      closeButton: () => ({ class: ['dialog-close'] }),
-    }"
     :style="{ width: '50vw' }"
     @show="addListenerOnDialogueOverlay(settings!)"
   >
     <div>
       <div v-if="pointOfSale">
         Switch POS to
-        <Dropdown
+        <Select
           v-model="selectedPos"
           class="md:w-14rem w-full"
           :loading="loadingPos"
@@ -31,11 +27,11 @@
           <template #option="slotProps">
             {{ slotProps.option.name }}
           </template>
-        </Dropdown>
+        </Select>
         <div class="mt-2">
-          <button class="active rounded-md c-btn font-medium p-2 text-base" @click="forceExit">
+          <Button class="active rounded-md font-md p-2 text-base" @click="forceExit">
             Force logout and exit POS
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -47,6 +43,8 @@ import { computed, Ref, ref, watch } from 'vue';
 import { addListenerOnDialogueOverlay, useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { StoreGeneric, storeToRefs } from 'pinia';
 import { PointOfSaleResponse } from '@sudosos/sudosos-client';
+import { SudososRed } from '@sudosos/themes';
+import { usePreset } from '@primeuix/themes';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import { PointOfSaleSwitchService } from '@/services/PointOfSaleSwitchService';
 import { logoutService } from '@/services/logoutService';
@@ -70,6 +68,8 @@ watch(selectedPos, () => {
 });
 
 const forceExit = async () => {
+  // This is pretty dirty, but this will be fixed with POS Authentication (I think/hope)
+  usePreset(SudososRed);
   usePointOfSaleStore().$reset();
   await logoutService();
 };
@@ -86,22 +86,4 @@ const openSettings = async () => {
 };
 </script>
 
-<style lang="scss">
-.dialog-header {
-  background: var(--accent-color) !important;
-  color: white !important;
-}
-
-.dialog-close {
-  color: white !important;
-}
-.settings-icon {
-  height: 100px;
-  position: fixed;
-  left: 60px;
-  font-size: 70px;
-  cursor: pointer;
-  bottom: 0;
-  color: var(--accent-color);
-}
-</style>
+<style lang="scss"></style>

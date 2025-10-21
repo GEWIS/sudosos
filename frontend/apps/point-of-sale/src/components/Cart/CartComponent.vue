@@ -1,19 +1,19 @@
 <template>
   <div class="flex flex-col h-full">
-    <div class="flex-container flex-row flex-wrap justify-between">
-      <p class="text-accent !font-bold font-size-lg mb-0">Current order for</p>
-      <div class="active c-btn px-5 py-2 square rounded-none text-2xl" @click="selectUser">
+    <div class="flex flex-row flex-wrap justify-between items-center">
+      <p class="text-accent font-bold text-lg mb-0">Current order for</p>
+      <Button class="px-5 py-2 square rounded-lg text-2xl" @click="selectUser">
         <i class="pi pi-user pr-2" style="font-size: 1.5rem" />
         {{ displayName() }}
-      </div>
-      <button
+      </Button>
+      <Button
         v-if="showLock()"
-        class="active c-btn lock min-w-70 px-3 py-2 square text-4xl"
+        class="border-0 checkout font-medium rounder text-3xl"
         :class="{ disabled: disabledLock, active: lockedIn }"
         @click="lockUser"
       >
         <i class="text-4xl" :class="lockIcon" />
-      </button>
+      </Button>
     </div>
     <div v-if="!shouldShowTransactions || !showHistory" class="flex-col flex-grow-1 gap-2 mt-4 overflow-y-auto">
       <div v-for="item in cartItems" :key="item.product.id">
@@ -21,10 +21,10 @@
       </div>
     </div>
     <TransactionHistoryComponent v-else-if="shouldShowTransactions" :transactions="transactions" />
-    <div class="content-body font-size-lg mt-3 px-3 py-2 shadow-sm">
+    <div class="bg-white rounded-xl font-size-lg mt-3 px-3 py-2 shadow-sm">
       <div class="flex-between w-full">
-        <div class="!font-semibold">Total</div>
-        <div class="!font-bold font-size-lg">€{{ formatPrice(totalPrice) }}</div>
+        <div class="font-semibold">Total</div>
+        <div class="font-bold font-size-lg">€{{ formatPrice(totalPrice) }}</div>
       </div>
       <div v-if="cartStore.buyerBalance != null" class="items-end flex-container font-size-md justify-between pt-2">
         <span><i class="pi pi-exclamation-triangle" /> Debit after purchase: </span>
@@ -190,11 +190,22 @@ const formattedBalanceAfter = computed(() => {
 </script>
 
 <style scoped lang="scss">
-.lock {
+.checkout {
   &.disabled {
-    background-color: grey;
-    opacity: 0.5;
-    color: white;
+    background-color: #6b7280 !important; /* grey-500 */
+    opacity: 0.6 !important;
+    color: #9ca3af !important; /* grey-400 */
+    cursor: not-allowed !important;
+
+    &:hover {
+      background-color: #6b7280 !important; /* Keep grey on hover */
+      opacity: 0.6 !important;
+    }
+  }
+
+  &.active {
+    background-color: var(--p-primary-color) !important;
+    color: white !important;
   }
 }
 </style>

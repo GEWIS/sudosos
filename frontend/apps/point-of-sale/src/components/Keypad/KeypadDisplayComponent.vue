@@ -1,25 +1,37 @@
 <template>
   <LoginInfoComponent />
-  <div class="accent-text user wrapper" :class="{ inactive: !isActive }">
-    <i class="pi pi-user text-center w-full" style="font-size: 3rem" />
-    <div
-      class="display-value pl-3 shadow-sm"
+  <div class="w-[20rem] mr-12" :class="{ inactive: !isActive }">
+    <i class="pi pi-user text-center w-full mb-4 text-primary" style="font-size: 3rem" />
+    <Card
+      class="h-24 text-5xl font-bold pl-3 text-primary"
       @click="
         () => {
           emits('focus:userid');
         }
       "
     >
-      {{ external ? 'E' : '' }}
-      <span v-for="char in userId" :key="char">
-        {{ char }}
-      </span>
-    </div>
+      <template #content>
+        {{ external ? 'E' : '' }}
+        <span v-for="char in userId" :key="char" class="pl-3">
+          {{ char }}
+        </span>
+      </template>
+    </Card>
   </div>
-  <div class="accent-text pincode wrapper" :class="{ inactive: isActive }">
-    <i class="pi pi-key text-center w-full" style="font-size: 3rem" />
-    <div class="passcode-wrapper" :class="{ wrong: wrongPin }">
-      <div v-if="wrongPin" class="text-5xl">WRONG PIN</div>
+  <div class="w-[20rem]" :class="{ inactive: isActive }">
+    <i class="pi pi-key text-center w-full mb-4 text-primary" style="font-size: 3rem" />
+    <div>
+      <Message
+        v-if="wrongPin"
+        class="h-24 w-full"
+        :pt="{
+          text: {
+            class: 'text-4xl text-center w-full',
+          },
+        }"
+        severity="error"
+        >WRONG PIN</Message
+      >
       <div
         v-else
         class="items-center flex h-full justify-between w-full"
@@ -29,7 +41,9 @@
           }
         "
       >
-        <span v-for="char in displayCode" :key="char" class="passcode-span shadow-sm">{{ char }}</span>
+        <Card v-for="char in displayCode" :key="char" class="h-24 w-16 text-6xl font-bold text-primary pin-card">
+          <template #content>{{ char }}</template>
+        </Card>
       </div>
     </div>
   </div>
@@ -72,74 +86,19 @@ const displayCode = computed<string[]>(() => {
 </script>
 
 <style scoped lang="scss">
-.display-value {
+.pin-card {
   display: flex;
-  background-color: $body-overlay-color;
-  width: calc(3 * var(--key-size) + 2 * var(--key-gap-size));
-
-  border-radius: $border-radius;
-  font-size: $font-size-larger;
-  text-align: left;
-  min-height: $keypad-display-height;
   align-items: center;
-  margin-top: 10px;
-  font-weight: bold;
+  justify-content: center;
 
-  > span {
-    padding: 0 10px;
-    font-weight: bold;
-    background-color: $body-overlay-color;
-  }
-}
-
-.passcode-wrapper {
-  display: flex;
-  width: calc(3 * var(--key-size) + 2 * var(--key-gap-size));
-  margin-top: 10px;
-  font-weight: bold;
-  min-height: $keypad-display-height;
-
-  .passcode-span {
-    font-size: $font-size-larger;
-    font-weight: bold;
-    text-align: center;
-    min-height: $keypad-display-height;
-    background-color: $body-overlay-color;
-    min-width: 65px;
-
-    border-radius: $border-radius;
+  :deep(.p-card-content) {
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 100%;
+    padding: 0;
+    line-height: 1;
+    transform: translateY(-6px);
   }
-}
-
-.wrapper.user {
-  width: calc(3 * var(--key-size) + 2 * var(--key-gap-size));
-  margin: auto 80px 0 auto;
-}
-
-.wrapper {
-  width: calc(3 * var(--key-size) + 2 * var(--key-gap-size));
-}
-
-.wrapper.pincode {
-  background-color: transparent;
-}
-
-.wrong {
-  background-color: #ff6e99;
-  color: $body-overlay-color;
-  text-align: center;
-  border-radius: $border-radius;
-
-  > div {
-    width: 100%;
-    margin: auto;
-  }
-}
-
-.wrapper.inactive {
-  opacity: 0.7;
 }
 </style>

@@ -1,36 +1,41 @@
 <template>
-  <div class="main-content">
-    <div v-if="loggingIn" class="items-center flex h-full justify-center">
-      <div>
-        <ProgressSpinner aria-label="Loading" />
+  <div class="flex flex-col h-screen">
+    <div class="m-5 p-5 bg-[#ffffffEE] shadow-lg rounded-lg flex-grow">
+      <div v-if="loggingIn" class="items-center flex h-full justify-center">
+        <div>
+          <ProgressSpinner aria-label="Loading" />
+        </div>
       </div>
-    </div>
-    <div v-else>
-      <div class="keypad-container m-auto pt-6">
-        <div class="display-container" :class="displayContainerClasses">
-          <KeypadDisplayComponent
-            :external="external"
-            :is-active="enteringUserId"
-            :pin-code="pinCode"
-            :user-id="userId"
-            :wrong-pin="wrongPin"
-            @focus:passcode="focusPasscode"
-            @focus:userid="focusUserId"
+      <div v-else class="flex justify-center mt-8">
+        <div class="flex flex-col items-start w-[20rem]">
+          <div
+            class="flex flex-row space-between transition-all duration-500 ease-in-out mb-5"
+            :class="displayContainerClasses"
+          >
+            <KeypadDisplayComponent
+              :external="external"
+              :is-active="enteringUserId"
+              :pin-code="pinCode"
+              :user-id="userId"
+              :wrong-pin="wrongPin"
+              @focus:passcode="focusPasscode"
+              @focus:userid="focusUserId"
+            />
+          </div>
+          <KeypadComponent
+            @backspace="handleBackspace"
+            @continue="handleContinue"
+            @external="handleExternal"
+            @input="handleInput"
           />
         </div>
-        <KeypadComponent
-          @backspace="handleBackspace"
-          @continue="handleContinue"
-          @external="handleExternal"
-          @input="handleInput"
-        />
+        <BannerComponent v-if="shouldShowBanner" />
       </div>
-      <BannerComponent v-if="shouldShowBanner" />
     </div>
+    <SettingsIconComponent />
+    <GitInfo />
+    <ScannersLoginComponent :handle-ean-login="eanLogin" :handle-nfc-login="nfcLogin" />
   </div>
-  <SettingsIconComponent />
-  <GitInfo />
-  <ScannersLoginComponent :handle-ean-login="eanLogin" :handle-nfc-login="nfcLogin" />
 </template>
 
 <script setup lang="ts">
@@ -112,10 +117,7 @@ const handleExternal = () => {
 };
 
 const displayContainerClasses = computed(() => ({
-  to: enteringUserId.value,
-  from: !enteringUserId.value,
-  animating: animateSwitch.value,
-  switched: !enteringUserId.value && !animateSwitch.value,
+  'ml-[-23rem]': !enteringUserId.value,
 }));
 
 const loginSucces = async () => {
@@ -200,36 +202,4 @@ const shouldShowBanner = computed(() => {
 });
 </script>
 
-<style scoped lang="scss">
-.keypad-container {
-  width: calc(3 * var(--key-size) + 2 * var(--key-gap-size));
-  padding-top: 45px;
-  margin: auto;
-}
-
-.display-container {
-  display: flex;
-  margin-bottom: 40px;
-  justify-content: space-between;
-}
-
-.display-container.from.animating {
-  transform: translateX(-126.5%);
-  transition: transform 0.5s ease;
-}
-
-.display-container.to.animating {
-  transform: translateX(126.5%);
-  justify-content: flex-end;
-  transition: transform 0.5s ease;
-}
-
-.display-container.switched {
-  justify-content: flex-end;
-}
-
-.keypad-container,
-.display-container {
-  align-items: flex-start;
-}
-</style>
+<style scoped></style>

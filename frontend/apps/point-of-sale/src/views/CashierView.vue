@@ -1,33 +1,40 @@
 <template>
-  <div v-if="posNotLoaded" class="items-center flex h-full justify-center">
-    <div>
-      <ProgressSpinner aria-label="Loading" />
-    </div>
-  </div>
-  <div v-else class="main-content">
-    <div class="wrapper">
-      <div class="pos-wrapper">
-        <TopUpWarningComponent
-          v-if="shouldShowTopUpWarning"
-          :show="showTopUpWarning"
-          @update:show="handleTopUpWarningUpdate"
-        />
-        <UserSearchComponent v-if="currentState === PointOfSaleState.SEARCH_USER" @cancel-search="cancelSearch()" />
-        <PointOfSaleDisplayComponent v-if="currentState === PointOfSaleState.DISPLAY_POS" :point-of-sale="currentPos" />
-        <BuyerSelectionComponent
-          v-if="currentState === PointOfSaleState.SELECT_CREATOR"
-          @cancel-select-creator="cancelSelectCreator()"
-        />
-        <ActivityComponent />
-      </div>
-      <div class="cart-wrapper">
-        <CartComponent @select-creator="selectCreator()" @select-user="selectUser()" />
+  <div class="flex flex-col h-screen">
+    <div v-if="posNotLoaded" class="items-center flex flex-col h-screen justify-center">
+      <div>
+        <ProgressSpinner aria-label="Loading" />
       </div>
     </div>
+    <div v-else class="m-5 p-5 bg-[#ffffffEE] shadow-lg flex-grow rounded-lg min-h-0">
+      <div class="wrapper">
+        <div class="pos-wrapper">
+          <TopUpWarningComponent
+            v-if="shouldShowTopUpWarning"
+            :show="showTopUpWarning"
+            @update:show="handleTopUpWarningUpdate"
+          />
+          <UserSearchComponent v-if="currentState === PointOfSaleState.SEARCH_USER" @cancel-search="cancelSearch()" />
+          <PointOfSaleDisplayComponent
+            v-if="currentState === PointOfSaleState.DISPLAY_POS"
+            :point-of-sale="currentPos"
+          />
+          <BuyerSelectionComponent
+            v-if="currentState === PointOfSaleState.SELECT_CREATOR"
+            @cancel-select-creator="cancelSelectCreator()"
+          />
+          <ActivityComponent />
+        </div>
+        <div class="cart-wrapper">
+          <CartComponent @select-creator="selectCreator()" @select-user="selectUser()" />
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-row">
+      <SettingsIconComponent />
+      <ScannersUpdateComponent :handle-nfc-delete="nfcDelete" :handle-nfc-update="nfcUpdate" />
+    </div>
+    <NfcSearchComponent :handle-nfc-search="cartStore.setBuyerFromNfc" />
   </div>
-  <SettingsIconComponent />
-  <ScannersUpdateComponent :handle-nfc-delete="nfcDelete" :handle-nfc-update="nfcUpdate" />
-  <NfcSearchComponent :handle-nfc-search="cartStore.setBuyerFromNfc" />
 </template>
 <script setup lang="ts">
 import { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';

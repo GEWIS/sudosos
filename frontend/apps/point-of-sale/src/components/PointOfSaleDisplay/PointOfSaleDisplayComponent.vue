@@ -1,16 +1,17 @@
 <template>
-  <div class="point-of-sale">
+  <div class="flex flex-col h-full">
     <div class="header">
       <div v-show="isSearchViewVisible">
-        <div class="header-row">
-          <div class="active c-btn icon-large search-close square" @click="closeSearchView">
+        <div class="flex flex-row">
+          <Button class="icon-large search-close square mr-5" @click="closeSearchView">
             <i class="pi pi-times text-4xl" />
-          </div>
+          </Button>
           <input
             id="searchInput"
             ref="searchInput"
             v-model="searchQuery"
             autocomplete="off"
+            class="rounded p-2"
             placeholder="Search..."
             type="text"
           />
@@ -19,23 +20,23 @@
       <div v-show="!isSearchViewVisible">
         <div class="flex justify-between w-full">
           <div class="flex flex-wrap gap-2">
-            <label class="c-btn icon-md search-close" for="searchInput" @click="openSearchView">
+            <Button class="icon-md search-close border-0" for="searchInput" outlined @click="openSearchView">
               <i class="pi pi-search" style="font-size: 2rem" />
-            </label>
-            <div
+            </Button>
+            <Button
               v-for="category in computedCategories"
               :key="category.id"
-              class="c-btn font-size-lg px-5 shadow-sm square"
-              :class="{ active: category.id === selectedCategoryId }"
+              class="text-lg px-5 shadow-sm square"
+              :outlined="category.id !== selectedCategoryId"
               @click="selectCategory(category.id)"
             >
               {{ category.name }}
-            </div>
+            </Button>
           </div>
         </div>
       </div>
     </div>
-    <div class="mr-6">
+    <div class="m-2 mr-6">
       <Message v-if="isCategoryAlcoholic && !useSettingStore().isAlcoholTime" severity="warn">
         Please note that today, alcoholic drinks are only allowed to be served after
         {{

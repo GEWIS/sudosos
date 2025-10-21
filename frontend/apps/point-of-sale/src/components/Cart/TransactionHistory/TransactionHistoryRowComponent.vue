@@ -1,12 +1,12 @@
 <template>
   <div v-if="transaction" class="shadow-sm">
-    <div class="content-body flex-col px-3 py-1" @click="toggleOpen">
-      <div class="flex font-medium font-size-lg justify-between w-full">
+    <div class="bg-white rounded-xl my-2 flex-col px-3 py-1" @click="toggleOpen">
+      <div class="flex font-medium text-lg justify-between w-full">
         <div>{{ formattedDate }}</div>
         <div>{{ formattedTime }}</div>
         <div class="inline-flex justify-between">
           €
-          <div class="min-w-65 text-right">{{ formattedValue }}</div>
+          <div class="min-w-15 text-right">{{ formattedValue }}</div>
         </div>
       </div>
       <div v-if="settings.isBorrelmode">
@@ -123,7 +123,7 @@ const isCreatedByDifferent = props.transaction.createdBy?.id !== props.transacti
 
   > hr {
     margin: 5px 0;
-    border-top: 1px solid $accent-color;
+    //border-top: 1px solid $accent-color;
   }
 
   > .created-by {

@@ -109,7 +109,8 @@ const sortedProducts = computed(() => {
   scrollbar-color: var(--accent-color) rgba(135, 135, 135, 0.3);
 
   > .container {
-    grid-template-columns: repeat(auto-fill, minmax($product-column-width, 1fr));
+    //grid-template-columns: repeat(auto-fill, minmax($product-column-width, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
     display: grid;
   }
 }

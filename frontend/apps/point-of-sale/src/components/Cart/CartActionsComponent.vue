@@ -17,21 +17,21 @@
     </Message>
   </Dialog>
   <div class="flex justify-between w-full">
-    <button
-      class="c-btn checkout font-medium rounder text-3xl"
+    <Button
+      class="border-0 checkout font-medium rounder text-3xl"
       :class="{ countdown: checkingOut, disabled: !enabled, borrelMode }"
       @click="checkout"
     >
       {{ checkoutText }}
-    </button>
+    </Button>
     <div class="flex justify-center items-center">
-      <button
+      <Button
         v-if="!borrelMode"
-        class="rounded-full p-3 text-2xl bg-red-500 text-white flex items-center justify-center w-16 h-16"
+        class="p-3 text-2xl text-white flex items-center justify-center w-16 h-16"
         @click="logout"
       >
         <i class="pi pi-times" style="font-size: 2rem" />
-      </button>
+      </Button>
     </div>
     <audio ref="sound" />
   </div>
@@ -131,8 +131,6 @@ const checkout = () => {
 .clear {
   color: white;
   background-color: red;
-  height: $cart-logout-size;
-  width: $cart-logout-size;
 }
 
 .checkout {

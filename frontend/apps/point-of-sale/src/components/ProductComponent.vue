@@ -1,20 +1,22 @@
 <template>
-  <div class="text-center product-card shadow-lg mb-2 py-2">
-    <div class="image-container">
+  <div class="relative text-center h-40 shadow-lg bg-white p-2 m-2 flex flex-col rounded-lg">
+    <div class="flex-1 min-h-0 flex items-center justify-center">
       <img
         ref="productImage"
         :alt="product.name"
-        class="product-card-image"
+        class="h-full w-auto max-w-full object-contain"
         :class="{ pulsing, featured: product.featured }"
         :src="image"
         @click="addToCart"
       />
-      <div v-if="product.featured" class="promo-tag">PROMO</div>
+      <div v-if="product.featured" class="promo-tag absolute top-2 left-2">PROMO</div>
     </div>
-    <div class="product-name-wrapper">
-      <p class="product-name font-size-md font-bold m-0 px-2">{{ product.name }}</p>
+
+    <!-- TEXT AREA: fixed height including both name + price -->
+    <div class="h-14 flex flex-col justify-center px-2">
+      <p class="text-sm font-bold leading-tight truncate m-0">{{ product.name }}</p>
+      <p class="text-xs m-0">€{{ productPrice }}</p>
     </div>
-    <p class="product-price font-size-sm m-0">€{{ productPrice }}</p>
   </div>
 </template>
 
@@ -75,25 +77,29 @@ const startFlyingAnimation = async () => {
   const rect = productImage.value.getBoundingClientRect();
   flyElement.classList.add('product-image');
 
-  // $product-column-width - $product-card-size
-  const offset = 36;
-
   flyElement.style.position = 'fixed';
   flyElement.style.top = `${rect.top}px`;
-  flyElement.style.left = `${rect.left + offset}px`;
+  flyElement.style.left = `${rect.left}px`;
   flyElement.style.width = `${rect.width}px`;
   flyElement.style.height = `${rect.height}px`;
   flyElement.style.pointerEvents = 'none';
-  flyElement.style.transition = 'all 0.5s ease-in-out';
+  flyElement.style.transition = 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out';
+  flyElement.style.transformOrigin = 'center center';
+  flyElement.style.opacity = '1';
 
   const destinationRect = destinationElement.getBoundingClientRect();
-  const deltaX = destinationRect.left - (rect.left + offset);
-  const deltaY = destinationRect.top - rect.top;
+  // Fine-tune the destination position to account for cart item styling
+  const deltaX = destinationRect.left - rect.left - 20; // Small horizontal adjustment
+  const deltaY = destinationRect.top - rect.top - 20; // Small vertical adjustment
+
+  // Calculate scale factor to shrink to 3rem
+  const targetSize = 48; // 3rem = 48px
+  const scaleX = targetSize / rect.width;
+  const scaleY = targetSize / rect.height;
 
   // Move the flying element to the destination element's position using the delta values
-  flyElement.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-  flyElement.style.width = '52px';
-  flyElement.style.height = '52px';
+  flyElement.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})`;
+  flyElement.style.opacity = '0.3';
 
   // Cleanup the temporary element after the animation is complete
   const removeFlyElement = () => {
@@ -109,25 +115,25 @@ const startFlyingAnimation = async () => {
 
 <style scoped lang="scss">
 .product-card-image {
-  width: $product-card-size;
-  height: $product-card-size;
-  background-color: $gewis-grey-light;
-  border-top-left-radius: $border-radius;
-  border-top-right-radius: $border-radius;
+  //width: $product-card-size;
+  //height: $product-card-size;
+  //background-color: $gewis-grey-light;
+  //border-top-left-radius: $border-radius;
+  //border-top-right-radius: $border-radius;
   object-fit: contain;
   box-sizing: border-box;
 }
 
 .image-container {
   position: relative; /* Establish this div as the positioning context for absolute elements within */
-  width: $product-card-size; /* Adjust to match the image size */
-  height: $product-card-size; /* Adjust to match the image size */
+  //width: $product-card-size; /* Adjust to match the image size */
+  //height: $product-card-size; /* Adjust to match the image size */
   margin: auto; /* Center the container */
 }
 
 .product-card {
   padding: 0 0 8px 0;
-  border-radius: $border-radius;
+  //border-radius: $border-radius;
   width: var(--product-card-width);
 
   &.pulsing {
@@ -148,7 +154,7 @@ const startFlyingAnimation = async () => {
   right: 0;
   color: #fff;
   font-weight: bolder;
-  background-color: $gewis-red-shadow;
+  background-color: var(--p-primary-color);
   text-align: center;
   font-size: 1.2em;
   padding: 5px 0;
@@ -174,7 +180,7 @@ const startFlyingAnimation = async () => {
 }
 
 .product-price {
-  height: $product-price-height;
+  //height: $product-price-height;
 }
 
 @keyframes pulse {
