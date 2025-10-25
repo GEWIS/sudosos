@@ -2,36 +2,39 @@
   <Dialog
     v-model:visible="visible"
     :closable="false"
-    :content-style="{ width: '35rem' }"
     :dismissable-mask="false"
     :draggable="false"
     header="Please Top-Up your SudoSOS balance"
     modal
-    :pt="{
-      header: () => ({ class: ['dialog-header'] }),
-    }"
+    :style="{ width: '35rem' }"
   >
     <Message :closable="false" :icon="undefined" severity="warn">
       Your account balance is currently
-      <span style="color: red; font-weight: bold">€{{ formattedBuyerBalance }}</span
-      ><br />
-      Please first Top-Up your balance before proceeding.<br />
+      <span class="text-red-600 font-bold">€{{ formattedBuyerBalance }}</span>
+      <br />
+      Please first Top-Up your balance before proceeding.
     </Message>
-    <div class="qr-code" style="display: flex; justify-content: center; margin-top: 1rem">
-      <img alt="" src="@/assets/sudosos-qr.png" style="width: 25rem" />
+
+    <div class="flex justify-center mt-4">
+      <img alt="SudoSOS QR Code" class="w-[25rem]" src="@/assets/sudosos-qr.png" />
     </div>
-    <div v-if="topUpProgress > 0" class="spinner-container">
+
+    <div v-if="topUpProgress > 0" class="relative w-[100px] h-[100px] mx-auto my-4">
       <ProgressSpinner animation-duration="5s" stroke-width="6" style="width: 100px; height: 100px" />
-      <div class="spinner-text">{{ topUpProgress }}</div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-bold">
+        {{ topUpProgress }}
+      </div>
     </div>
-    <div v-if="topUpProgress <= 0" class="mt-4 text-center">
-      <button class="c-btn checkout font-medium red-button rounder text-3xl" @click="closeDialog">I Understand</button>
+
+    <div v-if="topUpProgress <= 0" class="flex justify-center items-center mt-4">
+      <Button class="text-xl px-6 py-3 understand-button" @click="closeDialog"> I Understand </Button>
     </div>
   </Dialog>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import Button from 'primevue/button';
 import { useCartStore } from '@/stores/cart.store';
 import { formatPrice } from '@/utils/FormatUtils';
 
@@ -63,11 +66,8 @@ const topUpProgress = ref(5);
 
 let topUpInterval: number | undefined;
 
-const showConfirmButton = ref(false);
-
 const startTopUpCountdown = () => {
   topUpProgress.value = 5;
-  showConfirmButton.value = false;
 
   const tickInterval = 1000;
 
@@ -76,7 +76,6 @@ const startTopUpCountdown = () => {
       topUpProgress.value -= 1;
     } else {
       clearInterval(topUpInterval);
-      showConfirmButton.value = true;
     }
   }, tickInterval);
 };
@@ -93,31 +92,9 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.spinner-container {
-  position: relative;
-  width: 100px;
-  height: 100px;
-  margin: 1rem auto;
-}
-
-.spinner-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.red-button {
+.understand-button {
   background-color: red;
+  border-color: red;
   color: white;
-}
-
-.text-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
 }
 </style>

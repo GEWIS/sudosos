@@ -1,5 +1,5 @@
 <template>
-  <div class="relative text-center h-40 shadow-lg bg-white p-2 m-2 flex flex-col rounded-lg">
+  <div class="relative text-center w-[145px] h-[200px] shadow-lg bg-white p-2 mx-2 my-1 flex flex-col rounded-lg">
     <div class="flex-1 min-h-0 flex items-center justify-center">
       <img
         ref="productImage"
@@ -9,12 +9,12 @@
         :src="image"
         @click="addToCart"
       />
-      <div v-if="product.featured" class="promo-tag absolute top-2 left-2">PROMO</div>
+      <div v-if="product.featured" class="promo-tag absolute top-2 left-2 opacity-70">PROMO</div>
     </div>
 
     <!-- TEXT AREA: fixed height including both name + price -->
     <div class="h-14 flex flex-col justify-center px-2">
-      <p class="text-sm font-bold leading-tight truncate m-0">{{ product.name }}</p>
+      <p class="text-base font-bold leading-tight truncate m-0">{{ product.name }}</p>
       <p class="text-xs m-0">€{{ productPrice }}</p>
     </div>
   </div>
@@ -75,6 +75,7 @@ const startFlyingAnimation = async () => {
   document.body.appendChild(flyElement);
 
   const rect = productImage.value.getBoundingClientRect();
+  flyElement.classList.remove('pulsing');
   flyElement.classList.add('product-image');
 
   flyElement.style.position = 'fixed';
@@ -86,11 +87,12 @@ const startFlyingAnimation = async () => {
   flyElement.style.transition = 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out';
   flyElement.style.transformOrigin = 'center center';
   flyElement.style.opacity = '1';
+  flyElement.style.zIndex = '9999';
 
   const destinationRect = destinationElement.getBoundingClientRect();
   // Fine-tune the destination position to account for cart item styling
-  const deltaX = destinationRect.left - rect.left - 20; // Small horizontal adjustment
-  const deltaY = destinationRect.top - rect.top - 20; // Small vertical adjustment
+  const deltaX = destinationRect.left - rect.left - 40; // Small horizontal adjustment
+  const deltaY = destinationRect.top - rect.top - 40; // Small vertical adjustment
 
   // Calculate scale factor to shrink to 3rem
   const targetSize = 48; // 3rem = 48px
@@ -99,7 +101,7 @@ const startFlyingAnimation = async () => {
 
   // Move the flying element to the destination element's position using the delta values
   flyElement.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})`;
-  flyElement.style.opacity = '0.3';
+  flyElement.style.opacity = '0.5';
 
   // Cleanup the temporary element after the animation is complete
   const removeFlyElement = () => {
@@ -114,37 +116,8 @@ const startFlyingAnimation = async () => {
 </script>
 
 <style scoped lang="scss">
-.product-card-image {
-  //width: $product-card-size;
-  //height: $product-card-size;
-  //background-color: $gewis-grey-light;
-  //border-top-left-radius: $border-radius;
-  //border-top-right-radius: $border-radius;
-  object-fit: contain;
-  box-sizing: border-box;
-}
-
-.image-container {
-  position: relative; /* Establish this div as the positioning context for absolute elements within */
-  //width: $product-card-size; /* Adjust to match the image size */
-  //height: $product-card-size; /* Adjust to match the image size */
-  margin: auto; /* Center the container */
-}
-
-.product-card {
-  padding: 0 0 8px 0;
-  //border-radius: $border-radius;
-  width: var(--product-card-width);
-
-  &.pulsing {
-    animation: pulse 0.5s infinite;
-  }
-}
-
-.product-name,
-.product-price {
-  position: relative; /* Ensure text is positioned relative to its container for proper layering */
-  z-index: 2; /* Higher z-index ensures it's on top if needed */
+.pulsing {
+  animation: pulse 0.5s;
 }
 
 .promo-tag {
@@ -160,38 +133,15 @@ const startFlyingAnimation = async () => {
   padding: 5px 0;
 }
 
-.product-name-wrapper {
-  height: calc(1.2em * 2.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.product-name {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1;
-  padding-bottom: 0.1em;
-}
-
-.product-price {
-  //height: $product-price-height;
-}
-
 @keyframes pulse {
   0% {
-    opacity: 0;
-  }
-  50% {
     opacity: 1;
   }
+  50% {
+    opacity: 0.1;
+  }
   100% {
-    opacity: 0;
+    opacity: 1;
   }
 }
 </style>

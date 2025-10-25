@@ -1,14 +1,14 @@
 <template>
   <div class="mr-3 point-of-sale">
-    <div class="header">
-      <div class="header-row">
-        <div class="active c-btn icon-large search-close square" @click="cancelSelect()">
-          <i class="pi pi-times" style="font-size: 3rem" />
-        </div>
-        <div class="text-2xl text-center w-full">Select member of {{ organName }} to charge as:</div>
+    <div class="header min-h-[4rem] flex items-center">
+      <div class="flex flex-row gap-4 w-full items-center">
+        <Button class="border-none" @click="cancelSelect()">
+          <i class="pi pi-times" style="font-size: 2rem" />
+        </Button>
+        <div class="text-2xl font-semibold text-center flex-1">Select member of {{ organName }} to charge as:</div>
       </div>
     </div>
-    <div class="align-content-center flex-container flex-wrap gap-3 h-full justify-center w-full">
+    <div class="buyer-grid mt-4">
       <BuyerSelectButtonComponent
         v-for="associate in posAssociates"
         :key="associate.id"
@@ -21,6 +21,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
+import Button from 'primevue/button';
 import { PointOfSaleAssociate, usePointOfSaleStore } from '@/stores/pos.store';
 import BuyerSelectButtonComponent from '@/components/BuyerSelect/BuyerSelectButtonComponent.vue';
 
@@ -43,4 +44,18 @@ const cancelSelect = () => {
 onMounted(fetchIfEmpty);
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.header > div {
+  width: 100%;
+}
+
+.buyer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-auto-rows: 5rem;
+  gap: 1rem;
+  align-items: stretch;
+  justify-items: stretch;
+  width: 100%;
+}
+</style>

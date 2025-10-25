@@ -22,13 +22,13 @@
     </div>
     <TransactionHistoryComponent v-else-if="shouldShowTransactions" :transactions="transactions" />
     <div class="bg-white rounded-xl font-size-lg mt-3 px-3 py-2 shadow-sm">
-      <div class="flex-between w-full">
+      <div class="flex justify-between items-center w-full">
         <div class="font-semibold">Total</div>
         <div class="font-bold font-size-lg">€{{ formatPrice(totalPrice) }}</div>
       </div>
-      <div v-if="cartStore.buyerBalance != null" class="items-end flex-container font-size-md justify-between pt-2">
+      <div v-if="cartStore.buyerBalance != null" class="flex justify-between items-center font-size-md pt-2">
         <span><i class="pi pi-exclamation-triangle" /> Debit after purchase: </span>
-        €{{ formattedBalanceAfter }}
+        <span>€{{ formattedBalanceAfter }}</span>
       </div>
     </div>
     <div class="flex-col mt-3">

@@ -1,7 +1,7 @@
 <template>
   <div
-    class="rounded-xl flex items-center font-semibold text-lg my-1 md:my-3 py-3 shadow-sm text-center user-row"
-    :class="[rowBackground, { inactive: !active }]"
+    class="rounded-xl flex items-center font-semibold text-lg my-1 md:my-3 py-3 shadow-sm text-center pl-[75px] mr-[30px] text-white cursor-pointer user-row"
+    :class="{ 'opacity-35 cursor-not-allowed': !active }"
     @click="selectUser"
   >
     {{ displayName() }}
@@ -12,7 +12,6 @@
 <script setup lang="ts">
 import { GewisUserResponse, UserResponse } from '@sudosos/sudosos-client';
 import { useCartStore } from '@/stores/cart.store';
-import { rowBackground } from '@/services/PointOfSaleSwitchService';
 
 const props = defineProps({
   user: {
@@ -57,10 +56,6 @@ const active = canUse;
 
 <style scoped lang="scss">
 .user-row {
-  padding-left: 75px;
-}
-
-.inactive {
-  color: grey;
+  background-color: color-mix(in srgb, var(--p-primary-color) 85%, gray);
 }
 </style>

@@ -12,10 +12,18 @@
         <h4 class="font-bold truncate">{{ product.name }}</h4>
         <p class="text-sm">{{ product.category.name }}</p>
       </div>
-      <div class="flex">
-        <Button class="bg-red w-5 h-6 shadow-sm text-3xl" @click="decreaseQuantity">-</Button>
-        <span class="font-bold w-5 text-center">{{ cartProduct.count }}</span>
-        <Button class="w-5 h-6 shadow-sm text-2xl" @click="increaseQuantity">+</Button>
+      <div class="flex items-center gap-1">
+        <Button
+          class="bg-red w-[34px] h-[34px] shadow-sm text-2xl flex items-center justify-center p-0 leading-none cart-button"
+          @click="decreaseQuantity"
+          >-</Button
+        >
+        <span class="font-bold w-8 text-center">{{ cartProduct.count }}</span>
+        <Button
+          class="w-[34px] h-[34px] shadow-sm text-2xl flex items-center justify-center p-0 leading-none cart-button"
+          @click="increaseQuantity"
+          >+</Button
+        >
       </div>
 
       <p class="font-bold text-right basis-1/5">€{{ totalPrice }}</p>
@@ -54,4 +62,17 @@ const totalPrice = computed(() => {
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.cart-button {
+  line-height: 0.8 !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  font-size: 1.5rem !important;
+  padding-bottom: 4px !important;
+
+  &::before,
+  &::after {
+    content: none !important;
+  }
+}
+</style>

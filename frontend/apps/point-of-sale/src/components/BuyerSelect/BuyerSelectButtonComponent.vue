@@ -1,14 +1,15 @@
 <template>
-  <div
-    class="active flex-grow-1 fs-6 px-4 py-4 select-user square"
-    :class="{ 'c-btn': props.associate.type === 'owner', 'c-btn-outline': props.associate.type !== 'owner' }"
-    @click="select()"
-  >
-    {{ displayName() }}
-  </div>
+  <Button class="text-lg px-4 py-4 select-user" :outlined="props.associate.type !== 'owner'" @click="select()">
+    <span>
+      {{ props.associate.firstName }}
+      <span v-if="props.associate.nickname" class="italic"> "{{ props.associate.nickname }}"</span>
+      {{ props.associate.lastName }}
+    </span>
+  </Button>
 </template>
 
 <script setup lang="ts">
+import Button from 'primevue/button';
 import { useCartStore } from '@/stores/cart.store';
 import { PointOfSaleAssociate } from '@/stores/pos.store';
 
@@ -23,15 +24,6 @@ const props = defineProps({
 
 const emit = defineEmits(['cancelSelectCreator']);
 
-const displayName = () => {
-  let name = props.associate.firstName;
-  if (props.associate) {
-    if (props.associate.nickname) name += ` "${props.associate.nickname}"`;
-  }
-  name += ' ' + props.associate.lastName;
-  return name;
-};
-
 const select = async () => {
   cartStore.setCreatedBy(props.associate);
   await cartStore.checkout();
@@ -41,8 +33,11 @@ const select = async () => {
 
 <style scoped lang="scss">
 .select-user {
-  flex-basis: 30%;
-  flex-shrink: 0;
-  max-width: 33%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 </style>

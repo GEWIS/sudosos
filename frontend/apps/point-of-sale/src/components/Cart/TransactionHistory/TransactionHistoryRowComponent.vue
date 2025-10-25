@@ -18,7 +18,7 @@
       <transition name="expand" @before-enter="beforeEnter" @before-leave="beforeLeave" @enter="enter" @leave="leave">
         <!-- The 'bottom' div will only be rendered when 'products' is truthy and 'open' is true -->
         <div v-if="products && open" ref="bottomDiv" class="bottom">
-          <hr class="border-1 opacity-30" />
+          <hr />
           <div v-for="subTransaction in products.subTransactions" :key="subTransaction.id">
             <div v-for="row in subTransaction.subTransactionRows" :key="row.product.id" class="flex justify-between">
               <div class="flex gap-2">
@@ -123,7 +123,8 @@ const isCreatedByDifferent = props.transaction.createdBy?.id !== props.transacti
 
   > hr {
     margin: 5px 0;
-    //border-top: 1px solid $accent-color;
+    border-top: 1px solid var(--p-primary-color);
+    opacity: 1;
   }
 
   > .created-by {

@@ -5,7 +5,7 @@
         <ProgressSpinner aria-label="Loading" />
       </div>
     </div>
-    <div v-else class="m-5 p-5 bg-[#ffffffEE] shadow-lg flex-grow rounded-lg min-h-0">
+    <div v-else class="mx-8 mt-8 bg-[#ffffffEE] shadow-lg flex-grow rounded-3xl min-h-0">
       <div class="wrapper">
         <div class="pos-wrapper">
           <TopUpWarningComponent
@@ -90,6 +90,29 @@ const fetchPointOfSale = async () => {
   const storedPos = pointOfSaleStore.getPos;
   const target = storedPos ? storedPos.id : 1;
 
+  // If POS is already cached, use it immediately (no loading screen)
+  if (storedPos) {
+    currentPos.value = storedPos;
+    posNotLoaded.value = false;
+
+    if (shouldShowTimers) {
+      activityStore.restartTimer();
+    }
+
+    if (shouldShowTopUpWarning.value) {
+      showTopUpWarning.value = true;
+    }
+
+    // Refresh in background to ensure data is up-to-date
+    void pointOfSaleStore.fetchPointOfSale(target).catch((err) => {
+      // Log the error for debugging purposes while still continuing with cached data
+      console.warn('Background POS refresh failed:', err);
+    });
+
+    return;
+  }
+
+  // No cached POS - fetch with loading screen
   await pointOfSaleStore
     .fetchPointOfSale(target)
     .catch(async () => {

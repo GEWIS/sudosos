@@ -1,15 +1,15 @@
 <template>
   <div class="point-of-sale">
-    <div class="header">
-      <div class="flex flex-row">
-        <Button class="icon-large search-close square mr-3" @click="cancelSearch()">
+    <div class="header min-h-[4rem] flex items-center">
+      <div class="flex flex-row gap-4 w-full">
+        <Button class="border-none" @click="cancelSearch()">
           <i class="pi pi-times" style="font-size: 2rem" />
         </Button>
         <input
           ref="searchInput"
           v-model="searchValue"
           autocomplete="off"
-          class="flex-sm-grow-1 rounded mr-3 p-2"
+          class="flex-sm-grow-1 shadow-md p-2 rounded border-2 border-transparent search-input"
           placeholder="Search user to charge..."
           type="text"
           @input="updateSearchQuery($event as InputEvent)"
@@ -158,17 +158,30 @@ const cancelSearch = () => {
 </script>
 
 <style scoped lang="scss">
+.header > div {
+  width: 100%;
+}
+
+.search-input {
+  &:focus {
+    outline: none;
+    border: 2px solid var(--p-primary-color);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--p-primary-color) 20%, transparent);
+  }
+}
+
 ::v-deep(.p-scrollpanel.custombar .p-scrollpanel-wrapper) {
   border-right: 10px solid var(--surface-ground);
 }
 
 ::v-deep(.p-scrollpanel.custombar .p-scrollpanel-bar) {
-  background-color: var(--primary-300);
+  background-color: var(--p-primary-color);
   opacity: 1;
   transition: background-color 0.3s;
 }
 
 ::v-deep(.p-scrollpanel.custombar .p-scrollpanel-bar:hover) {
-  background-color: var(--primary-400);
+  background-color: var(--p-primary-color);
+  filter: brightness(0.85);
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div ref="wrapper" class="container-grid-wrapper flex-1 h-full mb-2 mr-0 pl-1 pr-6">
+  <div ref="wrapper" class="container-grid-wrapper flex-1 mb-2 mr-0 pl-1 pr-6">
     <div class="container gap-2">
       <ProductComponent
         v-for="product in sortedProducts"
@@ -105,13 +105,10 @@ const sortedProducts = computed(() => {
 
 <style scoped lang="scss">
 .container-grid-wrapper {
-  overflow-y: auto;
-  scrollbar-color: var(--accent-color) rgba(135, 135, 135, 0.3);
-
   > .container {
-    //grid-template-columns: repeat(auto-fill, minmax($product-column-width, 1fr));
-    grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
     display: grid;
+    grid-template-columns: repeat(auto-fill, 145px);
+    justify-content: space-evenly;
   }
 }
 </style>
