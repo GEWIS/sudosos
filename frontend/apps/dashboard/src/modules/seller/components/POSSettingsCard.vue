@@ -2,6 +2,7 @@
   <FormCard
     v-if="pointOfSale"
     :enable-edit="isAllowed('update', ['own', 'organ'], 'PointOfSale', ['any'])"
+    :form="form"
     :header="t('modules.seller.forms.pos.overview')"
     @cancel="updateFieldValues(pointOfSale)"
     @save="formSubmit"
