@@ -11,9 +11,9 @@
     }"
     @click="resetDialog"
   >
-    <Message :closable="false" :icon="undefined" severity="warn">
+    <Message :icon="undefined" severity="warn">
       You cannot checkout as you are a user that cannot go into debt! <br />
-      Please remove items before you can continue.
+      Please remove items or top up before you can continue.
     </Message>
   </Dialog>
   <div class="flex justify-between w-full">
@@ -98,7 +98,11 @@ watch(cartItems, () => {
 });
 
 const finalizeCheckout = async () => {
-  if (unallowedUserInDebt.value) return stopCheckout();
+  if (unallowedUserInDebt.value) {
+    stopCheckout();
+    showDebtWarning.value = true;
+    return;
+  }
 
   stopCheckout();
   if (sound.value) {
@@ -113,7 +117,11 @@ const finalizeCheckout = async () => {
 };
 const checkout = () => {
   if (!enabled.value) return;
-  if (unallowedUserInDebt.value) return stopCheckout();
+  if (unallowedUserInDebt.value) {
+    stopCheckout();
+    showDebtWarning.value = true;
+    return;
+  }
 
   if (borrelMode.value) {
     emit('selectCreator');
