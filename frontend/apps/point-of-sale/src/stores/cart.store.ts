@@ -56,13 +56,18 @@ export const useCartStore = defineStore('cart', {
       this.lockedIn = lockedIn;
     },
     async setBuyer(buyer: UserResponse | null) {
-      this.buyer = buyer;
-      if (buyer) {
-        const response = await apiService.balance.getBalanceId(buyer.id).catch((this.buyerBalance = null));
-        this.buyerBalance = response.data.amount;
-      } else {
+      if (!buyer) {
+        this.buyer = null;
         this.buyerBalance = null;
+        return;
       }
+
+      // Refetch the data to ensure we have the latest data.
+      return apiService.user.getIndividualUser(buyer.id).then(async (res) => {
+        this.buyer = res.data;
+        this.buyerBalance = await apiService.balance.getBalanceId(buyer.id).then((res) => res.data.amount);
+        return this.buyer;
+      });
     },
     setCreatedBy(createdBy: BaseUserResponse) {
       this.createdBy = createdBy;
