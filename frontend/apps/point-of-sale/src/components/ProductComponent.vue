@@ -14,7 +14,9 @@
 
     <!-- TEXT AREA: fixed height including both name + price -->
     <div class="h-14 flex flex-col justify-center px-2">
-      <p class="text-base font-bold leading-tight truncate m-0">{{ product.name }}</p>
+      <div class="product-name-wrapper">
+        <p class="product-name text-base font-bold leading-tight m-0">{{ product.name }}</p>
+      </div>
       <p class="text-xs m-0">€{{ productPrice }}</p>
     </div>
   </div>
@@ -116,6 +118,24 @@ const startFlyingAnimation = async () => {
 </script>
 
 <style scoped lang="scss">
+.product-name-wrapper {
+  height: calc(1.2em * 2.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1;
+  padding-bottom: 0.1em;
+}
+
 .pulsing {
   animation: pulse 0.5s;
 }
