@@ -8,6 +8,7 @@ import InvoiceCreateView from '@/modules/financial/views/invoice/InvoiceCreateVi
 import DebtorView from '@/modules/financial/views/debtor/DebtorView.vue';
 import DebtorHandoutView from '@/modules/financial/views/debtor/DebtorHandoutView.vue';
 import WriteOffsView from '@/modules/financial/views/write-offs/WriteOffsView.vue';
+import TransactionView from '@/modules/financial/views/transaction/TransactionView.vue';
 
 export function financialRoutes(): RouteRecordRaw[] {
   return [
@@ -89,6 +90,15 @@ export function financialRoutes(): RouteRecordRaw[] {
           meta: {
             requiresAuth: true,
             isAllowed: () => isAllowed('get', ['all'], 'WriteOff', ['any']),
+          },
+        },
+        {
+          path: '/financial/transactions',
+          component: TransactionView,
+          name: 'financial-transactions',
+          meta: {
+            requiresAuth: true,
+            isAllowed: () => isAllowed('update', ['all'], 'Transaction', ['any']),
           },
         },
       ],

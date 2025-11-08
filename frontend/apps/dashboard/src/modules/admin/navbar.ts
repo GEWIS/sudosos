@@ -9,7 +9,10 @@ export function useAdminNav() {
     [
       {
         label: t('common.navigation.admin'),
-        visible: isAllowed('update', ['all'], 'User', ['any']) || isAllowed('get', ['all'], 'Banner', ['any']),
+        visible:
+          isAllowed('update', ['all'], 'User', ['any']) ||
+          isAllowed('get', ['all'], 'Banner', ['any']) ||
+          isAllowed('get', ['all'], 'Transaction', ['any']),
         items: [
           {
             label: t('common.navigation.users'),
@@ -20,6 +23,11 @@ export function useAdminNav() {
             label: t('common.navigation.banners'),
             route: '/banner',
             visible: isAllowed('get', ['own'], 'Banner', ['any']),
+          },
+          {
+            label: t('common.navigation.transactions'),
+            route: '/financial/transactions',
+            visible: isAllowed('get', ['all'], 'Transaction', ['any']),
           },
         ].filter((item) => item.visible),
       },

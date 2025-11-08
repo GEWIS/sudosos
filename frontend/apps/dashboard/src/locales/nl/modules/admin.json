@@ -84,6 +84,34 @@
       },
       "websocket": {
         "title": "Websocket logs"
+      },
+      "transactions": {
+        "title": "Transactie zoeken",
+        "search": "Zoek transactie op ID",
+        "notFound": "Transactie niet gevonden",
+        "enterValid": "Voer een geldig transactie-ID in",
+        "editUser": "Gebruiker bewerken",
+        "currentUser": "Huidige gebruiker",
+        "newUser": "Nieuwe gebruiker",
+        "selectUser": "Selecteer een gebruiker",
+        "confirmEdit": "Transactie bewerking bevestigen",
+        "confirmEditMessage": "Weet je zeker dat je de gebruiker voor deze transactie wilt wijzigen?",
+        "userUpdated": "Transactie gebruiker succesvol bijgewerkt",
+        "editAmounts": "Aantallen bewerken",
+        "currentAmounts": "Huidige aantallen",
+        "confirmAmountsEdit": "Aantalwijzigingen bevestigen",
+        "confirmAmountsMessage": "Weet je zeker dat je de aantallen voor deze transactie wilt wijzigen?",
+        "amountChanges": "Aantalwijzigingen",
+        "costChange": "Kostenwijziging",
+        "amountsUpdated": "Transactie aantallen succesvol bijgewerkt",
+        "willBeRemoved": "wordt verwijderd",
+        "missingUserData": "Ontbrekende nieuwe gebruikersgegevens",
+        "missingAmountsData": "Ontbrekende bijgewerkte hoeveelheidsgegevens",
+        "cannotRemoveAllItems": "Kan niet alle items uit een transactie verwijderen. Minimaal één item moet blijven.",
+        "addProduct": "Product toevoegen",
+        "selectProduct": "Selecteer een product om toe te voegen",
+        "newProductsAdded": "Nieuwe producten toegevoegd",
+        "newProduct": "NIEUW"
       }
     }
   }

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { TransactionResponse } from '@sudosos/sudosos-client';
+import type { TransactionResponse, TransactionRequest } from '@sudosos/sudosos-client';
 import type { ApiService } from '@sudosos/sudosos-frontend-common';
 
 interface TransactionModuleState {
@@ -47,6 +47,17 @@ export const useTransactionStore = defineStore('transaction', {
         take,
         skip,
       );
+    },
+    async updateTransaction(
+      id: number,
+      transactionRequest: TransactionRequest,
+      service: ApiService,
+    ): Promise<TransactionResponse> {
+      return await service.transaction.updateTransaction(id, transactionRequest).then((res) => {
+        const transaction: TransactionResponse = res.data;
+        this.transactions[transaction.id] = transaction;
+        return transaction;
+      });
     },
   },
 });

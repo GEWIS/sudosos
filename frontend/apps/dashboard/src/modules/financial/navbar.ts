@@ -56,6 +56,11 @@ export function useFinancialNav() {
             visible: isAllowed('get', ['all'], 'WriteOff', ['any']),
             notifications: inactiveDebtors.value,
           },
+          {
+            label: t('common.navigation.transactions'),
+            route: '/financial/transactions',
+            visible: isAllowed('update', ['all'], 'Transaction', ['any']),
+          },
         ].filter((item) => item.visible),
       },
     ].filter((item) => item.visible),

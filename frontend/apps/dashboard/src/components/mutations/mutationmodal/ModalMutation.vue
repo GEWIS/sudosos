@@ -30,15 +30,20 @@
       <WaivedFineDetailModal v-else-if="isType('waivedFine').value" :waived-fines="transfer" />
     </template>
 
-    <template v-if="canDelete" #footer>
-      <div class="items-end flex flex-col">
-        <ConfirmButton
-          :disabled="false"
-          icon="pi pi-trash"
-          :initial-label="t('common.delete')"
-          type="submit"
-          @confirm="deleteMutation"
-        />
+    <template v-if="canDelete || canEdit" #footer>
+      <div class="items-end flex gap-2">
+        <div v-if="canEdit" class="flex justify-end">
+          <Button icon="pi pi-pencil" :label="t('common.edit')" @click="editTransaction" />
+        </div>
+        <div v-if="canDelete" class="flex justify-end">
+          <ConfirmButton
+            :disabled="false"
+            icon="pi pi-trash"
+            :initial-label="t('common.delete')"
+            type="submit"
+            @confirm="deleteMutation"
+          />
+        </div>
       </div>
     </template>
   </Dialog>
@@ -50,6 +55,7 @@ import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import Skeleton from 'primevue/skeleton';
+import Button from 'primevue/button';
 import apiService from '@/services/ApiService';
 import TransactionDetailModal from '@/components/mutations/mutationmodal/ModalDetailTransaction.vue';
 import PayoutRequestDetailModal from '@/components/mutations/mutationmodal/ModalDetailPayoutRequest.vue';
@@ -58,9 +64,10 @@ import InvoiceDetailModal from '@/components/mutations/mutationmodal/ModalDetail
 import FineDetailModal from '@/components/mutations/mutationmodal/ModalDetailFine.vue';
 import WaivedFineDetailModal from '@/components/mutations/mutationmodal/ModalDetailWaivedFine.vue';
 import router from '@/router';
-import { FinancialMutationType } from '@/utils/mutationUtils';
+import { FinancialMutationType, isTransaction } from '@/utils/mutationUtils';
 import ConfirmButton from '@/components/ConfirmButton.vue';
 import { useMutationDetails } from '@/composables/mutationDetails';
+import { isAllowed } from '@/utils/permissionUtils';
 
 const props = defineProps<{ type: FinancialMutationType; id: number }>();
 
@@ -70,6 +77,9 @@ const { isLoading, transaction, transfer, products, canDelete } = useMutationDet
 );
 
 const { t } = useI18n();
+
+// Check if user can edit transactions
+const canEdit = computed(() => isTransaction(props.type) && isAllowed('update', ['all'], 'Transaction', ['any']));
 
 const visible = ref<boolean>(false);
 const dialog = ref();
@@ -95,6 +105,13 @@ const detailType = computed(() => {
       return null;
   }
 });
+
+const editTransaction = () => {
+  if (transaction.value) {
+    dialog.value.close();
+    void router.push({ name: 'financial-transactions', query: { id: transaction.value.id.toString() } });
+  }
+};
 
 const deleteMutation = async () => {
   // Only allow deleting when permitted

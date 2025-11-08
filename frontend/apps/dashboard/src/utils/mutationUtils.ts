@@ -134,3 +134,7 @@ export function isIncreasingTransfer(mutationType: FinancialMutationType): boole
 export function isFine(mutationType: FinancialMutationType): boolean {
   return mutationType == FinancialMutationType.FINE;
 }
+
+export function isTransaction(mutationType: FinancialMutationType): boolean {
+  return mutationType == FinancialMutationType.TRANSACTION;
+}

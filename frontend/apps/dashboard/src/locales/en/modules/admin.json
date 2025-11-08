@@ -84,6 +84,34 @@
       },
       "websocket": {
         "title": "Websocket logs"
+      },
+      "transactions": {
+        "title": "Transaction Search",
+        "search": "Search Transaction by ID",
+        "notFound": "Transaction not found",
+        "enterValid": "Please enter a valid transaction ID",
+        "editUser": "Edit User",
+        "currentUser": "Current User",
+        "newUser": "New User",
+        "selectUser": "Select a user",
+        "confirmEdit": "Confirm Transaction Edit",
+        "confirmEditMessage": "Are you sure you want to change the user for this transaction?",
+        "userUpdated": "Transaction user updated successfully",
+        "editAmounts": "Edit Amounts",
+        "currentAmounts": "Current Amounts",
+        "confirmAmountsEdit": "Confirm Amount Changes",
+        "confirmAmountsMessage": "Are you sure you want to change the amounts for this transaction?",
+        "amountChanges": "Amount Changes",
+        "costChange": "Cost Change",
+        "amountsUpdated": "Transaction amounts updated successfully",
+        "willBeRemoved": "will be removed",
+        "missingUserData": "Missing new user data",
+        "missingAmountsData": "Missing updated amounts data",
+        "cannotRemoveAllItems": "Cannot remove all items from a transaction. At least one item must remain.",
+        "addProduct": "Add Product",
+        "selectProduct": "Select a product to add",
+        "newProductsAdded": "New Products Added",
+        "newProduct": "NEW"
       }
     }
   }
