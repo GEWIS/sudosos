@@ -30,6 +30,7 @@ export interface FinancialMutation {
   id: number;
   pos?: string;
   createdBy?: BaseUserResponse | undefined;
+  editedAt?: Date | undefined;
 }
 
 export function parseTransaction(transaction: BaseTransactionResponse): FinancialMutation {
@@ -38,10 +39,11 @@ export function parseTransaction(transaction: BaseTransactionResponse): Financia
     to: undefined,
     from: transaction.from,
     type: FinancialMutationType.TRANSACTION,
-    moment: new Date(transaction.updatedAt!),
+    moment: new Date(transaction.createdAt!),
     id: transaction.id,
     pos: transaction.pointOfSale.name,
     createdBy: transaction.createdBy,
+    editedAt: transaction.updatedAt !== transaction.createdAt ? new Date(transaction.updatedAt!) : undefined,
   };
 }
 

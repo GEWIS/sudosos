@@ -13,17 +13,41 @@
         <Skeleton class="h-1rem my-1 surface-300 w-6" />
       </template>
       <template v-else #body="mutation">
-        <span class="hidden sm:block">{{
-          mutation.data.moment.toLocaleDateString(locale, {
-            dateStyle: 'full',
-          })
-        }}</span>
-        <span class="sm:hidden whitespace-nowrap"
-          >{{
-            mutation.data.moment.toLocaleDateString('nl-NL', {
+        <span class="hidden sm:block">
+          {{
+            mutation.data.moment.toLocaleDateString(locale, {
+              dateStyle: 'full',
+            })
+          }}
+          <i
+            v-if="mutation.data.editedAt !== undefined"
+            v-tooltip="
+              t('components.mutations.editedOn', {
+                date: mutation.data.editedAt.toLocaleDateString(locale, {
+                  dateStyle: 'short',
+                }),
+              })
+            "
+            class="pi pi-pencil ml-2"
+          />
+        </span>
+        <span class="sm:hidden whitespace-nowrap">
+          {{
+            mutation.data.moment.toLocaleDateString(locale, {
               dateStyle: 'short',
             })
           }}
+          <i
+            v-if="mutation.data.editedAt !== undefined"
+            v-tooltip="
+              t('components.mutations.editedOn', {
+                date: mutation.data.editedAt.toLocaleDateString(locale, {
+                  dateStyle: 'short',
+                }),
+              })
+            "
+            class="pi pi-pencil ml-2"
+          />
         </span>
       </template>
     </Column>

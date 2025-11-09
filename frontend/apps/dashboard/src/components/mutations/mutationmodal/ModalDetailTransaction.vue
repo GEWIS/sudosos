@@ -7,6 +7,16 @@
           timeStyle: 'short',
         })
       }}
+      <small v-if="transactionInfo.updatedAt !== transactionInfo.createdAt" class="ml-2 text-sm text-gray-500">
+        {{
+          t('components.mutations.editedOn', {
+            date: new Date(transactionInfo.updatedAt!).toLocaleString('nl-NL', {
+              dateStyle: 'short',
+              timeStyle: 'short',
+            }),
+          })
+        }}
+      </small>
     </span>
     <span>
       <UserLink :new-tab="true" :user="transactionInfo.from" />
