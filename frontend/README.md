@@ -85,7 +85,19 @@ This will also be enforced by the CI on GitHub when creating a pull request.
 
 ### Proxying requests to different backends
 
-In the respective `.env` files, you can change which backend the frontend uses in development by changing the proxy target in vite.config.ts. By default, this is set to the test backend (`https://sudosos.test.gewis.nl/api/v1`), but you can also change it to `https://sudosos.gewis.nl/api/v1` for the production backend. Or you can change it to `http://localhost:3000` if you are running the backend locally.
+You can switch between different backends in development using the following yarn commands:
+
+**For Dashboard:**
+
+- `yarn dev-dashboard` or `yarn dev-dashboard:test` - Uses the test backend (`https://sudosos.test.gewis.nl/api/v1`) - **default**
+- `yarn dev-dashboard:prod` - Uses the production backend (`https://sudosos.gewis.nl/api/v1`)
+- `yarn dev-dashboard:local` - Uses a local backend (`http://localhost:3000`)
+
+**For Point of Sale:**
+
+- `yarn dev-pos` or `yarn dev-pos:test` - Uses the test backend (`https://sudosos.test.gewis.nl/api/v1`) - **default**
+- `yarn dev-pos:prod` - Uses the production backend (`https://sudosos.gewis.nl/api/v1`)
+- `yarn dev-pos:local` - Uses a local backend (`http://localhost:3000`)
 
 ## Contributors
 
