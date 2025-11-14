@@ -1,11 +1,11 @@
 <template>
   <div
     class="rounded-xl flex items-center font-semibold text-lg my-1 md:my-3 py-3 shadow-sm text-center pl-[75px] mr-[30px] text-white cursor-pointer user-row"
-    :class="{ 'opacity-35 cursor-not-allowed': !active }"
+    :class="{ 'opacity-35 cursor-not-allowed': !active, 'not-of-age': shouldShowAge() }"
     @click="selectUser"
   >
+    <i v-if="shouldShowAge()" class="pi pi-user-minus pr-2" />
     {{ displayName() }}
-    <i v-if="shouldShowAge()" class="pi pi-user-minus" />
   </div>
 </template>
 
@@ -57,5 +57,9 @@ const active = canUse;
 <style scoped lang="scss">
 .user-row {
   background-color: color-mix(in srgb, var(--p-primary-color) 85%, gray);
+}
+
+.not-of-age {
+  background-color: color-mix(in srgb, var(--p-primary-color) 50%, black);
 }
 </style>

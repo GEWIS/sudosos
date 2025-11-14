@@ -14,6 +14,10 @@
       >
         <i class="text-4xl" :class="lockIcon" />
       </Button>
+      <span v-if="!isOfAge()" class="flex items-center justify-end pt-1">
+        <i class="pi pi-info-circle pr-2" />
+        This user is underage.
+      </span>
     </div>
     <div v-if="!shouldShowTransactions || !showHistory" class="flex-col flex-grow-1 gap-2 mt-4 overflow-y-auto">
       <div v-for="item in cartItems" :key="item.product.id">
@@ -105,6 +109,10 @@ const displayName = () => {
   } else {
     return `${current.value?.firstName} ${current.value?.lastName}`;
   }
+};
+
+const isOfAge = () => {
+  return current.value?.ofAge ?? true;
 };
 
 const lockUser = () => {
