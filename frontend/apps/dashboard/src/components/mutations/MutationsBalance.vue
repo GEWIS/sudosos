@@ -56,10 +56,13 @@
       <template v-if="isLoading" #body>
         <Skeleton class="h-1rem my-1 surface-300 w-6" />
       </template>
+
       <template v-else #body="mutation">
         {{
           mutation.data.createdBy && currentUserId !== mutation.data.createdBy?.id
-            ? `${mutation.data.createdBy.firstName} ${mutation.data.createdBy.lastName}`
+            ? isMd
+              ? `${mutation.data.createdBy.firstName} ${mutation.data.createdBy.lastName}`
+              : mutation.data.createdBy.firstName
             : t('components.mutations.you')
         }}
       </template>
