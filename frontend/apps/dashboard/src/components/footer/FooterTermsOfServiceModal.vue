@@ -9,7 +9,7 @@
       <p>SudoSOS Terms of Service - version 1.0 (14/08/2022)</p>
       <!-- TOS is also english so we can leave this untranslated -->
       <!-- eslint-disable-next-line vue/no-v-html -->
-      <div class="tosText" v-html="tos"></div>
+      <div class="tosText prose" v-html="tos"></div>
     </div>
     <template #footer>
       <Button autofocus label="Ok" @click="visible = false" />
@@ -42,7 +42,19 @@ const visible = ref(false);
   max-width: 75vw;
 }
 
-.tosText * {
-  color: var(--text-color);
+.tosText.prose {
+  color: var(--text-color-contrast) !important;
+}
+
+.tosText.prose :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--text-color-contrast) !important;
+}
+
+.tosText.prose :is(b, strong) {
+  color: var(--text-color-contrast) !important;
+}
+
+.tosText.prose :is(a) {
+  color: var(--p-primary-color) !important;
 }
 </style>
