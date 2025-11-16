@@ -23,7 +23,7 @@
             v-if="mutation.data.editedAt !== undefined"
             v-tooltip="
               t('components.mutations.editedOn', {
-                date: mutation.data.editedAt.toLocaleDateString(locale, {
+                date: mutation.data.editedAt.toLocaleDateString('nl-NL', {
                   dateStyle: 'short',
                 }),
               })
@@ -33,7 +33,7 @@
         </span>
         <span class="sm:hidden whitespace-nowrap">
           {{
-            mutation.data.moment.toLocaleDateString(locale, {
+            mutation.data.moment.toLocaleDateString('nl-NL', {
               dateStyle: 'short',
             })
           }}
@@ -41,7 +41,7 @@
             v-if="mutation.data.editedAt !== undefined"
             v-tooltip="
               t('components.mutations.editedOn', {
-                date: mutation.data.editedAt.toLocaleDateString(locale, {
+                date: mutation.data.editedAt.toLocaleDateString('nl-NL', {
                   dateStyle: 'short',
                 }),
               })
