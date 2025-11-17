@@ -133,6 +133,9 @@
         "title": "Sellers",
         "showAllTooltip": "Showing all sellers (active and inactive). Uncheck to show only active sellers.",
         "showActiveOnlyTooltip": "Showing only active sellers. Check to show all sellers (active and inactive)."
+      },
+      "vat": {
+        "title": "VAT Groups"
       }
     }
   }

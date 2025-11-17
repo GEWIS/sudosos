@@ -10,6 +10,7 @@ import DebtorHandoutView from '@/modules/financial/views/debtor/DebtorHandoutVie
 import WriteOffsView from '@/modules/financial/views/write-offs/WriteOffsView.vue';
 import TransactionView from '@/modules/financial/views/transaction/TransactionView.vue';
 import SellerView from '@/modules/financial/views/seller/SellerView.vue';
+import VatView from '@/modules/financial/views/vat/VatView.vue';
 
 export function financialRoutes(): RouteRecordRaw[] {
   return [
@@ -109,6 +110,15 @@ export function financialRoutes(): RouteRecordRaw[] {
           meta: {
             requiresAuth: true,
             isAllowed: () => isAllowed('get', ['all'], 'User', ['any']),
+          },
+        },
+        {
+          path: '/vat',
+          component: VatView,
+          name: 'vat',
+          meta: {
+            requiresAuth: true,
+            isAllowed: () => isAllowed('get', ['all'], 'VatGroup', ['any']),
           },
         },
       ],

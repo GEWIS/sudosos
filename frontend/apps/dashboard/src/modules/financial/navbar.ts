@@ -66,6 +66,11 @@ export function useFinancialNav() {
             route: '/seller',
             visible: isAllowed('get', ['all'], 'User', ['any']),
           },
+          {
+            label: t('common.navigation.vat'),
+            route: '/vat',
+            visible: isAllowed('get', ['all'], 'VatGroup', ['any']),
+          },
         ].filter((item) => item.visible),
       },
     ].filter((item) => item.visible),
