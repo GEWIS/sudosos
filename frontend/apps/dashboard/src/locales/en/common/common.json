@@ -174,9 +174,6 @@
       "number": {
         "min": "This field must be greater than {min}"
       },
-      "password": {
-        "match": "Passwords must match."
-      },
       "pin": {
         "match": "PINs must match.",
         "onlyDigits": "PIN must be only digits."
@@ -186,6 +183,28 @@
         "exact": "This field must be exactly {len} characters",
         "max": "This field can't be greater than {max} characters",
         "min": "This field must be at least {min} characters"
+      },
+      "date": {
+        "invalidStart": "Start date must be a valid date",
+        "invalidEnd": "End date must be a valid date",
+        "endInPast": "End date cannot be in the past",
+        "endBeforeStart": "End date can't be before start date"
+      },
+      "top-up": {
+        "invalidAmount": "Please enter a valid amount",
+        "required": "Amount is required",
+        "minOrSettle": "Top up should be more than €10 or settle debt exactly",
+        "tooHigh": "Your new balance cannot surpass €150",
+        "greaterThanZero": "Top up amount must be greater than zero"
+      },
+      "password": {
+        "required": "This is a required field",
+        "uppercase": "At least one uppercase letter is required",
+        "lowercase": "At least one lowercase letter is required",
+        "digit": "At least one digit is required",
+        "special": "At least one special character is required",
+        "allowed": "Password must be at least 8 characters long and only contain allowed characters",
+        "match": "Passwords must match"
       }
     },
     "apiError": "Error",

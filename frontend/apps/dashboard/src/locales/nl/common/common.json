@@ -172,9 +172,6 @@
       "number": {
         "min": "Dit veld moet groter zijn dan {min}"
       },
-      "password": {
-        "match": "Wachtwoorden moeten overeenkomen."
-      },
       "pin": {
         "match": "Pincodes moeten overeenkomen.",
         "onlyDigits": "Pincode mag alleen uit cijfers bestaan."
@@ -184,6 +181,28 @@
         "exact": "Dit veld moet exact {len} tekens bevatten",
         "max": "Dit veld mag niet meer dan {max} tekens bevatten",
         "min": "Dit veld moet ten minste {min} tekens bevatten"
+      },
+      "date": {
+        "invalidStart": "Start datum moet een geldige datum zijn",
+        "invalidEnd": "Eind datum moet een geldige datum zijn",
+        "endInPast": "Eind datum kan niet in het verleden liggen",
+        "endBeforeStart": "Eind datum kan niet voor de startdatum liggen"
+      },
+      "top-up": {
+        "invalidAmount": "Vul een geldig bedrag in",
+        "required": "Bedrag is verplicht",
+        "minOrSettle": "Opwaarderen moet meer dan €10 zijn of precies de schuld afbetalen",
+        "tooHigh": "Je nieuwe saldo mag niet hoger worden dan €150",
+        "greaterThanZero": "Het opwaardeerbedrag moet groter zijn dan nul"
+      },
+      "password": {
+        "required": "Dit is een verplicht veld",
+        "uppercase": "Minstens één hoofdletter is vereist",
+        "lowercase": "Minstens één kleine letter is vereist",
+        "digit": "Minstens één cijfer is vereist",
+        "special": "Minstens één speciaal teken is vereist",
+        "allowed": "Wachtwoord moet minstens 8 tekens zijn en alleen toegestane tekens bevatten",
+        "match": "Wachtwoorden moeten overeenkomen"
       }
     },
     "apiError": "Fout",

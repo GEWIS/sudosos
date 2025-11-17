@@ -238,18 +238,18 @@ export const bannerSchema = yup.object({
   startDate: yup
     .string()
     .required()
-    .test('is-valid-date', 'Start date must be a valid date', (value) => !isNaN(Date.parse(value || ''))),
+    .test('is-valid-date', t('common.validation.date.invalidStart'), (value) => !isNaN(Date.parse(value || ''))),
   endDate: yup
     .string()
     .required()
-    .test('is-valid-date', 'End date must be a valid date', (value) => !isNaN(Date.parse(value || '')))
-    .test('not-in-past', 'End date cannot be in the past', (value) => {
+    .test('is-valid-date', t('common.validation.date.invalidEnd'), (value) => !isNaN(Date.parse(value || '')))
+    .test('not-in-past', t('common.validation.date.endInPast'), (value) => {
       if (!value) return true;
       const now = new Date();
       const end = new Date(value);
       return end >= now;
     })
-    .test('is-after-start', "End date can't be before start date", function (value) {
+    .test('is-after-start', t('common.validation.date.endBeforeStart'), function (value) {
       const { startDate } = this.parent;
       if (!value || !startDate) return true;
       return new Date(value) >= new Date(startDate);
@@ -273,19 +273,19 @@ export const topupSchema = yup.object({
   amount: yup
     .number()
     .transform((value, originalValue) => parseMoney(originalValue))
-    .typeError('Please enter a valid amount.')
-    .required('Amount is required.')
-    .test('is-min10-or-balance', 'Top up should be more than €10 or settle debt exactly.', function (value) {
+    .typeError(t('common.validation.top-up.invalidAmount'))
+    .required(t('common.validation.top-up.required'))
+    .test('is-min10-or-balance', t('common.validation.top-up.minOrSettle'), function (value) {
       if (value == null) return true;
       const balance = this.parent.balance as number;
       return value >= 10 || Math.round(value * -100) === balance;
     })
-    .test('is-total-less-than-150', 'Your new balance cannot surpass €150.', function (value) {
+    .test('is-total-less-than-150', t('common.validation.top-up.tooHigh'), function (value) {
       if (value == null) return true;
       const balance = this.parent.balance as number;
       return balance + Math.round(value * 100) <= 15000;
     })
-    .test('is-greater-than-zero', 'Top up amount must be greater than zero.', function (value) {
+    .test('is-greater-than-zero', t('common.validation.top-up.greaterThanZero'), function (value) {
       if (value == null) return true;
       return value > 0;
     }),
@@ -303,16 +303,16 @@ const allowedCharacters = /^[A-Za-z\d@$!%*?& ]{8,}$/;
 export const authResetSchema = yup.object({
   password: yup
     .string()
-    .required('This is a required field')
-    .matches(atLeastOneUppercase, 'At least one uppercase letter is required')
-    .matches(atLeastOneLowercase, 'At least one lowercase letter is required')
-    .matches(atLeastOneDigit, 'At least one digit is required')
-    .matches(atLeastOneSpecialChar, 'At least one special character is required')
-    .matches(allowedCharacters, 'Password must be at least 8 characters long and only contain allowed characters'),
+    .required(t('common.validation.password.required'))
+    .matches(atLeastOneUppercase, t('common.validation.password.uppercase'))
+    .matches(atLeastOneLowercase, t('common.validation.password.lowercase'))
+    .matches(atLeastOneDigit, t('common.validation.password.digit'))
+    .matches(atLeastOneSpecialChar, t('common.validation.password.special'))
+    .matches(allowedCharacters, t('common.validation.password.allowed')),
   passwordConfirm: yup
     .string()
-    .required('This is a required field')
-    .oneOf([yup.ref('password')], 'Passwords do not match'),
+    .required(t('common.validation.password.required'))
+    .oneOf([yup.ref('password')], t('common.validation.password.match')),
   token: yup.string().required(),
   email: yup.string().email().required(),
 });

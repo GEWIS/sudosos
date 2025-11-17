@@ -173,9 +173,6 @@
       "number": {
         "min": "To pole musi być większe niż {min}"
       },
-      "password": {
-        "match": "Hasła muszą być takie same."
-      },
       "pin": {
         "match": "Kody PIN muszą być takie same.",
         "onlyDigits": "Kod PIN może zawierać tylko cyfry."
@@ -185,6 +182,28 @@
         "exact": "To pole musi mieć dokładnie {len} znaków",
         "max": "To pole nie może być dłuższe niż {max} znaków",
         "min": "To pole musi mieć co najmniej {min} znaków"
+      },
+      "date": {
+        "invalidStart": "Data rozpoczęcia musi być poprawną datą",
+        "invalidEnd": "Data zakończenia musi być poprawną datą",
+        "endInPast": "Data zakończenia nie może być w przeszłości",
+        "endBeforeStart": "Data zakończenia nie może być przed datą rozpoczęcia"
+      },
+      "top-up": {
+        "invalidAmount": "Wprowadź poprawną kwotę",
+        "required": "Kwota jest wymagana",
+        "minOrSettle": "Doładowanie powinno wynosić więcej niż 10 € lub dokładnie spłacić dług",
+        "tooHigh": "Nowe saldo nie może przekroczyć €150",
+        "greaterThanZero": "Kwota doładowania musi być większa niż zero"
+      },
+      "password": {
+        "required": "To pole jest wymagane",
+        "uppercase": "Wymagana jest co najmniej jedna wielka litera",
+        "lowercase": "Wymagana jest co najmniej jedna mała litera",
+        "digit": "Wymagana jest co najmniej jedna cyfra",
+        "special": "Wymagany jest co najmniej jeden znak specjalny",
+        "allowed": "Hasło musi mieć co najmniej 8 znaków i zawierać tylko dozwolone znaki",
+        "match": "Hasła muszą być takie same"
       }
     },
     "apiError": "Błąd",
