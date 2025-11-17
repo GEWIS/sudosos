@@ -128,6 +128,11 @@
         "downloadPdf": {
           "not-possible": "To jeszcze nie jest możliwe."
         }
+      },
+      "seller": {
+        "title": "Sprzedawcy",
+        "showAllTooltip": "Wyświetla wszystkich sprzedawców (aktywnych i nieaktywnych). Odznacz, aby pokazać tylko aktywnych sprzedawców.",
+        "showActiveOnlyTooltip": "Wyświetla tylko aktywnych sprzedawców. Zaznacz, aby pokazać wszystkich sprzedawców (aktywnych i nieaktywnych)."
       }
     }
   }

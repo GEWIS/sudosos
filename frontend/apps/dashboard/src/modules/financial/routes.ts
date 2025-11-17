@@ -9,6 +9,7 @@ import DebtorView from '@/modules/financial/views/debtor/DebtorView.vue';
 import DebtorHandoutView from '@/modules/financial/views/debtor/DebtorHandoutView.vue';
 import WriteOffsView from '@/modules/financial/views/write-offs/WriteOffsView.vue';
 import TransactionView from '@/modules/financial/views/transaction/TransactionView.vue';
+import SellerView from '@/modules/financial/views/seller/SellerView.vue';
 
 export function financialRoutes(): RouteRecordRaw[] {
   return [
@@ -99,6 +100,15 @@ export function financialRoutes(): RouteRecordRaw[] {
           meta: {
             requiresAuth: true,
             isAllowed: () => isAllowed('update', ['all'], 'Transaction', ['any']),
+          },
+        },
+        {
+          path: '/seller',
+          component: SellerView,
+          name: 'sellers',
+          meta: {
+            requiresAuth: true,
+            isAllowed: () => isAllowed('get', ['all'], 'User', ['any']),
           },
         },
       ],

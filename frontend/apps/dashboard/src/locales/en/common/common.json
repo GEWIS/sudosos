@@ -27,6 +27,7 @@
     "price": "Price",
     "status": "Status",
     "active": "Active",
+    "inactive": "Inactive",
     "create": "Create",
     "verify": "Verify",
     "verified": "Verified",
@@ -165,7 +166,8 @@
       "invoiceAccounts": "Invoice Account Overview",
       "fines": "Fines",
       "writeOffs": "Write-Offs",
-      "maintainer": "Maintainer"
+      "maintainer": "Maintainer",
+      "sellers": "Sellers"
     },
     "validation": {
       "number": {

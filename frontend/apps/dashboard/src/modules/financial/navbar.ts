@@ -61,6 +61,11 @@ export function useFinancialNav() {
             route: '/financial/transactions',
             visible: isAllowed('update', ['all'], 'Transaction', ['any']),
           },
+          {
+            label: t('common.navigation.sellers'),
+            route: '/seller',
+            visible: isAllowed('get', ['all'], 'User', ['any']),
+          },
         ].filter((item) => item.visible),
       },
     ].filter((item) => item.visible),

@@ -27,6 +27,7 @@
     "price": "Cena",
     "status": "Status",
     "active": "Aktywny",
+    "inactive": "Nieaktywny",
     "create": "Utwórz",
     "verify": "Zweryfikuj",
     "verified": "Zweryfikowano",
@@ -165,7 +166,8 @@
       "invoiceAccounts": "Przegląd kont faktur",
       "fines": "Kary",
       "writeOffs": "Umorzenia",
-      "maintainer": "Utrzymanie"
+      "maintainer": "Utrzymanie",
+      "sellers": "Sprzedawcy"
     },
     "validation": {
       "number": {

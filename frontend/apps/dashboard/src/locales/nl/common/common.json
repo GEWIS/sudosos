@@ -29,6 +29,7 @@
     "price": "Prijs",
     "status": "Status",
     "active": "Actief",
+    "inactive": "Inactief",
     "create": "Aanmaken",
     "edit": "Bewerken",
     "search": "Zoeken",
@@ -164,7 +165,8 @@
       "invoiceAccounts": "Facturen Account Overzicht",
       "fines": "Boetes",
       "writeOffs": "Afschrijvingen",
-      "maintainer": "Maintainer"
+      "maintainer": "Maintainer",
+      "sellers": "Verkopers"
     },
     "validation": {
       "number": {
