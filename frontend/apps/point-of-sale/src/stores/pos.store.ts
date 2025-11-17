@@ -6,11 +6,12 @@ import {
   PointOfSaleResponse,
   PointOfSaleWithContainersResponse,
   ProductResponse,
+  UserWithIndex,
 } from '@sudosos/sudosos-client';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
 import apiService from '@/services/ApiService';
 
-export type PointOfSaleAssociate = BaseUserResponse & { type: 'owner' | 'cashier' };
+export type PointOfSaleAssociate = BaseUserResponse & { type: 'owner' | 'cashier'; index?: number };
 
 export const usePointOfSaleStore = defineStore('pointOfSale', {
   state: () => ({
@@ -37,14 +38,17 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
     getPointOfSaleAssociates(): PointOfSaleAssociate[] | null {
       if (this.pointOfSaleAssociates == null) return null;
 
-      const owners: PointOfSaleAssociate[] = this.pointOfSaleAssociates.ownerMembers.map((u) => ({
-        ...u,
-        type: 'owner',
-      }));
+      const owners: PointOfSaleAssociate[] = this.pointOfSaleAssociates.ownerMembers.map(
+        (u: UserWithIndex): PointOfSaleAssociate =>
+          ({
+            ...u,
+            type: 'owner',
+          }) as PointOfSaleAssociate,
+      );
       const cashiers: PointOfSaleAssociate[] = this.pointOfSaleAssociates.cashiers
         // Owner overrides cashier (so we avoid duplicates)
         .filter((u1) => !owners.some((u2) => u1.id === u2.id))
-        .map((u) => ({ ...u, type: 'cashier' }));
+        .map((u: BaseUserResponse): PointOfSaleAssociate => ({ ...u, type: 'cashier' }));
 
       const associates = owners.concat(cashiers);
       return associates.sort((a, b) => a.id - b.id);

@@ -10,9 +10,10 @@
     </div>
     <div class="buyer-grid mt-4">
       <BuyerSelectButtonComponent
-        v-for="associate in posAssociates"
-        :key="associate.id"
-        :associate="associate"
+        v-for="item in sortedAssociatesWithGaps"
+        :key="item.key"
+        :associate="item.associate"
+        :is-ghost="item.isGhost"
         @cancel-select-creator="cancelSelect()"
       />
     </div>
@@ -31,6 +32,58 @@ const posStore = usePointOfSaleStore();
 const currentPos = posStore.getPos;
 const posAssociates = computed<PointOfSaleAssociate[] | null>(() => posStore.getPointOfSaleAssociates);
 const organName = computed(() => posStore.getPos?.owner?.firstName);
+
+type AssociateWithIndex = PointOfSaleAssociate & { index: number };
+
+interface AssociateItem {
+  key: string;
+  associate: PointOfSaleAssociate | null;
+  isGhost: boolean;
+}
+
+const sortedAssociatesWithGaps = computed<AssociateItem[]>(() => {
+  if (!posAssociates.value) return [];
+
+  const withIndex: AssociateWithIndex[] = [];
+  const withoutIndex: PointOfSaleAssociate[] = [];
+
+  posAssociates.value.forEach((associate) => {
+    const index = (associate as PointOfSaleAssociate & { index?: number }).index;
+    if (typeof index === 'number') {
+      withIndex.push(associate as AssociateWithIndex);
+    } else {
+      withoutIndex.push(associate);
+    }
+  });
+
+  withIndex.sort((a, b) => a.index - b.index);
+
+  const result: AssociateItem[] = [];
+  const indexMap = new Map<number, AssociateWithIndex>();
+  withIndex.forEach((associate) => {
+    indexMap.set(associate.index, associate);
+  });
+
+  if (withIndex.length > 0) {
+    const minIndex = withIndex[0].index;
+    const maxIndex = withIndex[withIndex.length - 1].index;
+
+    for (let i = minIndex; i <= maxIndex; i++) {
+      const associate = indexMap.get(i);
+      if (associate) {
+        result.push({ key: `associate-${associate.id}`, associate, isGhost: false });
+      } else {
+        result.push({ key: `ghost-${i}`, associate: null, isGhost: true });
+      }
+    }
+  }
+
+  withoutIndex.forEach((associate) => {
+    result.push({ key: `associate-${associate.id}`, associate, isGhost: false });
+  });
+
+  return result;
+});
 
 const fetchIfEmpty = () => {
   if (!currentPos || !currentPos.owner) return;
