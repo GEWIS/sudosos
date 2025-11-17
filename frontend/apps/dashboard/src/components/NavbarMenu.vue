@@ -39,7 +39,7 @@
               <div class="flex items-center">
                 <span v-if="item.icon" :class="item.icon + (item.label ? ' ml-2' : '')" />
                 <Badge v-if="item.notifications" class="ml-2" severity="secondary" :value="item.notifications" />
-                <span v-else-if="hasSubmenu" class="ml-2 pi pi-angle-down pi-fw" />
+                <span v-if="hasSubmenu" class="ml-2 pi pi-angle-down pi-fw" />
               </div>
             </template>
           </div>
