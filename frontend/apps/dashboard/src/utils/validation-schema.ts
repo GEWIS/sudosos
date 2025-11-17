@@ -284,6 +284,10 @@ export const topupSchema = yup.object({
       if (value == null) return true;
       const balance = this.parent.balance as number;
       return balance + Math.round(value * 100) <= 15000;
+    })
+    .test('is-greater-than-zero', 'Top up amount must be greater than zero.', function (value) {
+      if (value == null) return true;
+      return value > 0;
     }),
 });
 
