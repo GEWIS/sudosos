@@ -325,7 +325,6 @@ const controlBalanceHeader = computed(() => {
 });
 
 // Fetch new calculated fines based on the dates
-watch([referenceBalanceDate, controlBalanceDate], updateCalculatedFines);
 async function updateCalculatedFines() {
   selectedUsers.value = [];
   await debtorStore.fetchCalculatedFines(
@@ -334,6 +333,10 @@ async function updateCalculatedFines() {
     props.handoutEvent?.fines.map((f) => f.user.id),
   );
 }
+
+const debouncedUpdateCalculatedFines = debounce(updateCalculatedFines, 500);
+
+watch([referenceBalanceDate, controlBalanceDate], debouncedUpdateCalculatedFines);
 
 const fineHeader = computed(() => {
   if (isEditable.value) {
