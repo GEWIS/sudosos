@@ -9,7 +9,7 @@ interface ActivityState {
   isActive: boolean;
 }
 
-let timerId: null | number = null;
+let timerId: ReturnType<typeof setInterval> | null = null;
 const TIME_OUT = 30;
 
 export const useActivityStore = defineStore('activity', {

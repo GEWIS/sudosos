@@ -13,8 +13,8 @@ export function updateTokenIfNecessary(response: AxiosResponse) {
   }
 }
 
-export function clearTokenInStorage() {
-  localStorage.removeItem('jwt_token');
+export function clearTokenInStorage(tokenKey: string = 'jwt_token') {
+  localStorage.removeItem(tokenKey);
 }
 
 export function parseToken(rawToken: string): Token {
@@ -22,12 +22,12 @@ export function parseToken(rawToken: string): Token {
   return { token: rawToken, expires };
 }
 
-export function setTokenInStorage(jwtToken: string) {
-  localStorage.setItem('jwt_token', JSON.stringify(parseToken(jwtToken)));
+export function setTokenInStorage(jwtToken: string, tokenKey: string = 'jwt_token') {
+  localStorage.setItem(tokenKey, JSON.stringify(parseToken(jwtToken)));
 }
 
-export function getTokenFromStorage(): Token {
-  const rawToken = localStorage.getItem('jwt_token') as string;
+export function getTokenFromStorage(tokenKey: string = 'jwt_token'): Token {
+  const rawToken = localStorage.getItem(tokenKey) as string;
   let token = {} as Token;
   if (rawToken !== null) token = JSON.parse(rawToken);
 
@@ -48,8 +48,8 @@ export function isTokenExpired(tokenEpochTimestamp: number): boolean {
 /**
  * Returns True if there is a token in the LocalStorage and if it hasn't expired yet.
  */
-export function isAuthenticated(): boolean {
-  const token = getTokenFromStorage();
+export function isAuthenticated(tokenKey: string = 'jwt_token'): boolean {
+  const token = getTokenFromStorage(tokenKey);
   if (!token.token || !token.expires) return false;
   return !isTokenExpired(Number(token.expires));
 }
@@ -58,11 +58,11 @@ export function isAuthenticated(): boolean {
  * Populates the auth and userStore from the token stored in the localStorage, resolves when the user roles are loaded.
  */
 export async function populateStoresFromToken(apiService: ApiService) {
-  const isAuth = isAuthenticated();
+  const isAuth = isAuthenticated(apiService.tokenKey);
 
   if (isAuth) {
     const authStore = useAuthStore();
-    authStore.extractStateFromToken();
+    authStore.extractStateFromToken(apiService.tokenKey);
     const user = authStore.getUser;
     if (user) {
       const userStore = useUserStore();

@@ -42,89 +42,28 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@sudosos/sudosos-frontend-common';
-import { BaseTransactionResponse } from '@sudosos/sudosos-client';
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { StoreGeneric, storeToRefs } from 'pinia';
 import { useCartStore } from '@/stores/cart.store';
 import CartItemComponent from '@/components/Cart/CartItemComponent.vue';
-import apiService from '@/services/ApiService';
 import { formatPrice } from '@/utils/FormatUtils';
 import TransactionHistoryComponent from '@/components/Cart/TransactionHistory/TransactionHistoryComponent.vue';
-import { useSettingStore } from '@/stores/settings.store';
 import CartActionsComponent from '@/components/Cart/CartActionsComponent.vue';
 import { usePointOfSaleStore } from '@/stores/pos.store';
+import { useCartTransactions } from '@/composables/useCartTransactions';
 
 const cartStore = useCartStore();
-const authStore = useAuthStore();
 const posStore = usePointOfSaleStore();
-const settings = useSettingStore();
 
-const cartItems = cartStore.getProducts;
-const current = computed(() => cartStore.getBuyer);
+const cartItems = computed(() => cartStore.getProducts);
 const totalPrice = computed(() => cartStore.getTotalPrice);
-const shouldShowTransactions = computed(() => cartStore.cartTotalCount === 0);
 const showHistory = ref(true);
 
 const { pointOfSale } = storeToRefs(posStore as StoreGeneric);
 const { lockedIn } = storeToRefs(cartStore as StoreGeneric);
-const transactions = ref<BaseTransactionResponse[]>([]);
 
-const getUserRecentTransactions = async () => {
-  transactions.value = [];
-  if (cartStore.getBuyer && (cartStore.getBuyer.id === authStore.getUser?.id || settings.isBorrelmode)) {
-    // todo clean up
-    const res = await apiService.user.getUsersTransactions(
-      cartStore.getBuyer?.id,
-      cartStore.getBuyer?.id,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      5,
-    );
-
-    transactions.value.push(...res.data.records);
-  }
-};
-
-const getPointOfSaleRecentTransactions = async () => {
-  transactions.value = [];
-  const res = await posStore.fetchRecentPosTransactions();
-
-  if (res) transactions.value.push(...res.records);
-};
-
-const isOwnBuyer = computed(() => {
-  if (!authStore.user) return false;
-  return current.value?.id === authStore.user.id;
-});
-const displayName = () => {
-  if (!current.value) return 'no one';
-
-  if (isOwnBuyer.value && !settings.isBorrelmode) {
-    return current.value?.firstName;
-  } else {
-    return `${current.value?.firstName} ${current.value?.lastName}`;
-  }
-};
-
-const isOfAge = () => {
-  return current.value?.ofAge ?? true;
-};
-
-const lockUser = () => {
-  if (lockedIn.value) {
-    if (current.value?.id === lockedIn.value.id) {
-      cartStore.setLockedIn(null);
-      return;
-    }
-  }
-
-  if (current.value) cartStore.setLockedIn(current.value);
-};
+const { transactions, shouldShowTransactions, loadTransactions, displayName, isOfAge, lockUser, showLock } =
+  useCartTransactions(pointOfSale);
 
 const lockIcon = computed(() => {
   return cartStore.lockedIn ? 'pi pi-lock' : 'pi pi-unlock';
@@ -132,16 +71,12 @@ const lockIcon = computed(() => {
 
 const disabledLock = computed(() => {
   if (!lockedIn) return true;
-  return current.value?.id !== lockedIn.value?.id;
+  return cartStore.getBuyer?.id !== lockedIn.value?.id;
 });
 
-const showLock = () => {
-  if (cartStore.lockedIn) return true;
-  return current.value && settings.isBorrelmode;
-};
-
 onMounted(async () => {
-  if (shouldShowTransactions.value) await getUserRecentTransactions();
+  transactions.value.splice(0);
+  if (shouldShowTransactions.value) await loadTransactions();
 });
 
 watch(cartItems, () => {
@@ -149,41 +84,15 @@ watch(cartItems, () => {
 });
 
 watch(shouldShowTransactions, async () => {
-  if (shouldShowTransactions.value) await getUserRecentTransactions();
+  if (shouldShowTransactions.value) await loadTransactions();
 });
 
 watch(
   () => cartStore.buyer,
   async () => {
-    if (shouldShowTransactions.value) await getUserRecentTransactions();
+    if (shouldShowTransactions.value) await loadTransactions();
   },
 );
-
-let refreshRecentPosTransactions: number | null;
-
-const refreshInterval = 1000 * 60 * 5;
-
-const getRefreshInterval = () => setInterval(getPointOfSaleRecentTransactions, refreshInterval);
-
-const clearIfExists = () => {
-  if (refreshRecentPosTransactions) clearInterval(refreshRecentPosTransactions);
-};
-
-// TODO Use a websocket instead of this 'hacky' refresh.
-watch(pointOfSale, async (target) => {
-  if (!target) return;
-  if (target.useAuthentication) {
-    clearIfExists();
-    await getUserRecentTransactions();
-  } else {
-    await getPointOfSaleRecentTransactions();
-    refreshRecentPosTransactions = getRefreshInterval();
-  }
-});
-
-onUnmounted(() => {
-  clearIfExists();
-});
 
 const emit = defineEmits(['selectUser', 'selectCreator']);
 const selectUser = () => {

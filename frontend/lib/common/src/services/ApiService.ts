@@ -82,9 +82,13 @@ export class ApiService {
 
   private readonly _serverSettingsApi: ServerSettingsApi;
 
-  constructor(basePath: string) {
+  private readonly _tokenKey: string;
+
+  constructor(basePath: string, tokenKey: string = 'jwt_token') {
+    this._tokenKey = tokenKey;
+
     const withKeyConfiguration = new Configuration({
-      accessToken: () => getTokenFromStorage().token,
+      accessToken: () => getTokenFromStorage(this._tokenKey).token,
     });
 
     this._authenticateApi = new AuthenticateApi(withKeyConfiguration, basePath, axiosInstance);
@@ -203,4 +207,21 @@ export class ApiService {
   get serverSettings(): ServerSettingsApi {
     return this._serverSettingsApi;
   }
+
+  get tokenKey(): string {
+    return this._tokenKey;
+  }
 }
+
+// Factory functions for creating ApiService instances with different token types
+export function createApiService(basePath: string, tokenKey: string = 'jwt_token'): ApiService {
+  return new ApiService(basePath, tokenKey);
+}
+
+// Convenience function for creating a POS-specific ApiService
+export function createPosApiService(basePath: string): ApiService {
+  return new ApiService(basePath, 'pos_jwt_token');
+}
+
+// Default export for backward compatibility
+export default ApiService;

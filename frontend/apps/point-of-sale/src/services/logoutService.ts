@@ -2,6 +2,7 @@ import { clearTokenInStorage, useAuthStore, useUserStore } from '@sudosos/sudoso
 import { useCartStore } from '@/stores/cart.store';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import router from '@/router';
+import { usePosToken } from '@/composables/usePosToken';
 
 export async function logoutService(forceClear = false) {
   const cartStore = useCartStore();
@@ -22,4 +23,11 @@ export async function logoutService(forceClear = false) {
   userStore.clearCurrent();
   clearTokenInStorage();
   await router.push({ name: 'login' });
+}
+
+export async function logoutPosService() {
+  const posToken = usePosToken();
+  posToken.clearPosToken();
+  usePointOfSaleStore().$reset();
+  await logoutService();
 }

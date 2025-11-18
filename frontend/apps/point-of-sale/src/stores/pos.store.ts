@@ -9,7 +9,7 @@ import {
   UserWithIndex,
 } from '@sudosos/sudosos-client';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
-import apiService from '@/services/ApiService';
+import { userApiService, posApiService } from '@/services/ApiService';
 
 export type PointOfSaleAssociate = BaseUserResponse & { type: 'owner' | 'cashier'; index?: number };
 
@@ -57,21 +57,25 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
   actions: {
     async fetchRecentPosTransactions(): Promise<PaginatedBaseTransactionResponse | null> {
       if (!this.pointOfSale) return null;
-      const response = await apiService.pos.getTransactions(this.pointOfSale.id);
+      // Use posApiService for POS-specific operations
+      const response = await posApiService.pos.getTransactions(this.pointOfSale.id);
       return response.data;
     },
     async fetchPointOfSale(id: number): Promise<void> {
-      const response = await apiService.pos.getSinglePointOfSale(id);
+      // Use posApiService for POS-specific operations
+      const response = await posApiService.pos.getSinglePointOfSale(id);
       this.pointOfSaleAssociates = null;
       this.pointOfSale = response.data;
     },
     async fetchPointOfSaleAssociates(posId: number): Promise<void> {
-      const response = await apiService.pos.getPointOfSaleAssociates(posId);
+      // Use posApiService for POS-specific operations
+      const response = await posApiService.pos.getPointOfSaleAssociates(posId);
       this.pointOfSaleAssociates = response.data;
     },
     async fetchUserPointOfSale(id: number): Promise<void> {
+      // Use userApiService for user-level operations
       this.usersPointOfSales = await fetchAllPages<PointOfSaleResponse>((take, skip) =>
-        apiService.user.getUsersPointsOfSale(id, take, skip),
+        userApiService.user.getUsersPointsOfSale(id, take, skip),
       );
     },
     getProduct(productId: number, revision: number, containerId: number): ProductResponse | undefined {

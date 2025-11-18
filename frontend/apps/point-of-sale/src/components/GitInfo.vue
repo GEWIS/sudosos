@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute !font-bold opacity-80 tag text-white">
+  <div class="font-bold opacity-80 text-white">
     <b>{{ localBuild ? `Local build` : `${branch}#${commit}` }}</b>
   </div>
 </template>
@@ -15,10 +15,3 @@ const localBuild = computed(() => {
   return typeof commit !== 'string' || commit.length === 0;
 });
 </script>
-
-<style scoped lang="scss">
-.tag {
-  bottom: 10px;
-  right: 10px;
-}
-</style>

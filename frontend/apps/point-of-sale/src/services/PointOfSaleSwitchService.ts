@@ -6,6 +6,7 @@ import { usePreset } from '@primeuix/themes';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import { useCartStore } from '@/stores/cart.store';
 import { useActivityStore } from '@/stores/activity.store';
+import { POS_ID_KEY } from '@/composables/usePosToken';
 
 export const rowBackground = ref('bg-red-100');
 
@@ -15,17 +16,20 @@ export const rowBackground = ref('bg-red-100');
  * Watchers that watch PointOfSaleSore.getPos should predominantly consist
  * of function from this class.
  */
+
 export class PointOfSaleSwitchService {
   public static switchTo(target: PointOfSaleResponse) {
     const posStore = usePointOfSaleStore();
     const activityStore = useActivityStore();
     const currentPos = posStore.getPos;
 
-    // Guard to check if we are actually switching
     if (!currentPos || (currentPos && target.id !== currentPos.id)) {
+      // TODO: Remove this localStorage workaround once backend includes posId in POS JWT token
+      // The POS JWT token's user.id is not the same as the POS ID, so we store it separately
+      localStorage.setItem(POS_ID_KEY, String(target.id));
+
       void posStore.fetchPointOfSale(target.id);
 
-      // Switch buyer back to user if authentication
       const cartStore = useCartStore();
       void cartStore.setBuyer(target.useAuthentication ? useAuthStore().getUser : null).then(() => {});
       cartStore.setLockedIn(null);

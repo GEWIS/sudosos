@@ -33,25 +33,38 @@
         <i class="pi pi-times" style="font-size: 2rem" />
       </Button>
     </div>
-    <audio ref="sound" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed } from 'vue';
 import { logoutService } from '@/services/logoutService';
 import { useCartStore } from '@/stores/cart.store';
 import { useSettingStore } from '@/stores/settings.store';
+import { useCheckoutTimer } from '@/composables/useCheckoutTimer';
 
 const emit = defineEmits(['selectCreator']);
 
 const settings = useSettingStore();
-
 const cartStore = useCartStore();
 const cartItems = cartStore.getProducts;
 const borrelMode = computed(() => settings.isBorrelmode);
-const sound = ref<HTMLAudioElement | null>(null);
 const buyer = computed(() => cartStore.getBuyer);
+
+const playSound = () => {
+  const soundUrl = new URL('/sounds/rct-cash.wav', window.location.origin).href;
+  const audio = new Audio(soundUrl);
+  void audio.play();
+};
+
+const {
+  duration,
+  checkingOut,
+  checkout: checkoutWithTimer,
+  stopCheckout,
+  showDebtWarningDialog,
+  resetDialog,
+} = useCheckoutTimer(playSound);
 
 const checkoutText = computed(() => {
   if (checkingOut.value) return duration.value;
@@ -63,75 +76,15 @@ const checkoutText = computed(() => {
 const enabled = computed(() => {
   return cartItems.length > 0 && buyer.value;
 });
-const unallowedUserInDebt = computed(() => cartStore.checkUnallowedUserInDebt());
-const showDebtWarning = ref(true);
-const showDebtWarningDialog = computed(() => {
-  return unallowedUserInDebt.value && showDebtWarning.value;
-});
-const resetDialog = () => {
-  showDebtWarning.value = false;
-};
 
-const duration = ref(3);
-const checkingOut = ref(false);
-let intervalId: number | undefined;
-const checkoutTimer = () =>
-  setInterval(async () => {
-    duration.value -= 1;
-    if (duration.value <= 0 && checkingOut.value) {
-      await finalizeCheckout();
-    }
-  }, 1000);
-
-const stopCheckout = () => {
-  duration.value = 3;
-  checkingOut.value = false;
-  clearInterval(intervalId);
-};
 const logout = async () => {
-  if (intervalId) stopCheckout();
+  stopCheckout();
   await logoutService();
 };
 
-watch(cartItems, () => {
-  stopCheckout();
-});
-
-const finalizeCheckout = async () => {
-  if (unallowedUserInDebt.value) {
-    stopCheckout();
-    showDebtWarning.value = true;
-    return;
-  }
-
-  stopCheckout();
-  if (sound.value) {
-    sound.value = new Audio('sounds/rct-cash.wav');
-    void sound.value.play();
-  }
-
-  await cartStore.checkout();
-  checkingOut.value = false;
-  duration.value = 3;
-  await logoutService();
-};
 const checkout = () => {
   if (!enabled.value) return;
-  if (unallowedUserInDebt.value) {
-    stopCheckout();
-    showDebtWarning.value = true;
-    return;
-  }
-
-  if (borrelMode.value) {
-    emit('selectCreator');
-    return;
-  }
-
-  if (cartStore.cartTotalCount === 0) return;
-  if (checkingOut.value) return stopCheckout();
-  checkingOut.value = true;
-  intervalId = checkoutTimer();
+  checkoutWithTimer(() => emit('selectCreator'), borrelMode.value);
 };
 </script>
 

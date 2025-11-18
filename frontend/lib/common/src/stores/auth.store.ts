@@ -14,6 +14,7 @@ import {
   AcceptTosRequest,
   AuthenticationNfcRequest,
   AuthenticationLocalRequest,
+  GEWISAuthenticationSecurePinRequest,
 } from '@sudosos/sudosos-client';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { ApiService } from '../services/ApiService';
@@ -77,7 +78,7 @@ export const useAuthStore = defineStore('auth', {
       if (!user || !token || !rolesWithPermissions || !organs || !acceptedToS) return;
       this.user = user;
       this.token = token;
-      setTokenInStorage(this.token);
+      setTokenInStorage(this.token, service.tokenKey);
       this.organs = organs;
       this.acceptedToS = acceptedToS;
       if (this.acceptedToS === 'ACCEPTED') {
@@ -98,6 +99,23 @@ export const useAuthStore = defineStore('auth', {
       };
 
       await service.authenticate.gewisPinAuthentication(userDetails).then((res) => {
+        this.handleResponse(res.data, service);
+      });
+    },
+    async secureGewisPinlogin(
+      userId: string,
+      pinCode: string,
+      posId: number,
+      posService: ApiService,
+      service: ApiService,
+    ) {
+      const req: GEWISAuthenticationSecurePinRequest = {
+        gewisId: parseInt(userId, 10),
+        pin: pinCode,
+        posId,
+      };
+
+      await posService.authenticate.secureGewisPINAuthentication(req).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
@@ -211,8 +229,8 @@ export const useAuthStore = defineStore('auth', {
       await this.refreshToken(service);
       return;
     },
-    extractStateFromToken() {
-      const token = getTokenFromStorage();
+    extractStateFromToken(tokenKey: string = 'jwt_token') {
+      const token = getTokenFromStorage(tokenKey);
       if (!token.token) return;
       const decoded = jwtDecode<JwtPayload>(token.token) as AuthStoreState;
       this.user = decoded.user;
@@ -221,13 +239,13 @@ export const useAuthStore = defineStore('auth', {
       this.acceptedToS = decoded.acceptedToS;
       if (this.user) authEventEmitter.emitAuthenticated(this.user);
     },
-    logout() {
+    logout(tokenKey: string = 'jwt_token') {
       this.user = null;
       this.token = null;
       this.organs = [];
       this.acceptedToS = null;
 
-      clearTokenInStorage();
+      clearTokenInStorage(tokenKey);
     },
   },
 });

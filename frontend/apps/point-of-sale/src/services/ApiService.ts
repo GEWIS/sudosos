@@ -1,4 +1,8 @@
-import { ApiService } from '@sudosos/sudosos-frontend-common';
+import { createApiService, createPosApiService } from '@sudosos/sudosos-frontend-common';
 
-const apiService = new ApiService(window.location.origin + '/api/v1');
-export default apiService;
+const userApiService = createApiService(window.location.origin + '/api/v1');
+
+const posApiService = createPosApiService(window.location.origin + '/api/v1');
+
+export default posApiService;
+export { userApiService, posApiService };

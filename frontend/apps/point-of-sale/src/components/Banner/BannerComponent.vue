@@ -26,7 +26,7 @@ const switchToNextBanner = () => {
   currentBanner.value = activeBanners.value[bannerIndex];
 };
 
-let timeoutId: number;
+let timeoutId: ReturnType<typeof setTimeout>;
 watch(currentBanner, () => {
   if (currentBanner.value) {
     clearTimeout(timeoutId);

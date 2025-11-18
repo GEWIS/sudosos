@@ -8,6 +8,7 @@ export const setupWebSocket = () => {
   });
 
   const websocketStore = useWebSocketStore();
+  websocketStore.setSocket(socket);
   const addToLogs = (event: string, args: unknown[]) => {
     const logTime = new Date();
     const logMsg = `[${event}] ${args.map((a) => JSON.stringify(a)).join(' ')}`;

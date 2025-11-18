@@ -16,15 +16,14 @@ import Card from 'primevue/card';
 
 import Message from 'primevue/message';
 import ToastService from 'primevue/toastservice';
-import { setupWebSocket } from '@sudosos/sudosos-frontend-common';
 import { SudososRed } from '@sudosos/themes';
 import router from '@/router';
 import App from '@/App.vue';
 import { useSettingStore } from '@/stores/settings.store';
+import beforeLoad from '@/utils/beforeLoadUtil';
 
 const app = createApp(App);
 
-app.use(router);
 app.use(PrimeVue, {
   theme: {
     preset: SudososRed,
@@ -57,9 +56,15 @@ app.component('Toast', Toast);
 // eslint-disable-next-line
 app.component('Card', Card);
 app.use(createPinia());
-app.mount('#app');
 
-setupWebSocket();
+void beforeLoad()
+  .then(() => {
+    app.use(router);
+    app.mount('#app');
+  })
+  .catch((err) => {
+    console.error('Failed to initialize application:', err);
+  });
 
 // Refresh alcohol time every hour.
 setInterval(

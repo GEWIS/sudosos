@@ -11,7 +11,7 @@ import { SubTransactionRowRequest } from '@sudosos/sudosos-client/src/api';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { DineroObjectResponse } from '@sudosos/sudosos-client/dist/api';
 import { usePointOfSaleStore } from '@/stores/pos.store';
-import apiService from '@/services/ApiService';
+import apiService, { userApiService } from '@/services/ApiService';
 
 export interface CartProduct {
   container: ContainerResponse;
@@ -194,7 +194,7 @@ export const useCartStore = defineStore('cart', {
         },
       };
 
-      await apiService.transaction.createTransaction(request);
+      await userApiService.transaction.createTransaction(request);
       this.products.length = 0;
       await this.setBuyer(this.lockedIn);
       this.createdBy = null;

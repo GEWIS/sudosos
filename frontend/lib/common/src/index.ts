@@ -1,7 +1,7 @@
 export { useAuthStore, authEventEmitter } from './stores/auth.store';
 export { useUserStore } from './stores/user.store';
 
-export { ApiService } from './services/ApiService';
+export { ApiService, createApiService, createPosApiService } from './services/ApiService';
 export {
   updateTokenIfNecessary,
   clearTokenInStorage,

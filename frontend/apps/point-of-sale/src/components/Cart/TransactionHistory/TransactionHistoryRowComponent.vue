@@ -41,7 +41,7 @@
 import { nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue';
 import { BaseTransactionResponse, TransactionResponse } from '@sudosos/sudosos-client';
 import { formatDateFromString, formatTimeFromString, formatDineroObjectToString } from '@/utils/FormatUtils';
-import apiService from '@/services/ApiService';
+import { userApiService } from '@/services/ApiService';
 import { useSettingStore } from '@/stores/settings.store';
 
 const emit = defineEmits(['update:open']);
@@ -63,7 +63,7 @@ const products = ref<undefined | TransactionResponse>();
 
 onMounted(async () => {
   if (props.open) {
-    const res = await apiService.transaction.getSingleTransaction(props.transaction.id);
+    const res = await userApiService.transaction.getSingleTransaction(props.transaction.id);
     products.value = res.data;
   }
 });
@@ -72,7 +72,7 @@ watch(
   () => props.open,
   async () => {
     if (!products.value) {
-      const res = await apiService.transaction.getSingleTransaction(props.transaction.id);
+      const res = await userApiService.transaction.getSingleTransaction(props.transaction.id);
       products.value = res.data;
     }
   },

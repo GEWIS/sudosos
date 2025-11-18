@@ -5,6 +5,7 @@ import AuthResetView from '@/modules/auth/views/AuthResetView.vue';
 import AuthLayout from '@/modules/auth/layouts/AuthLayout.vue';
 import AuthTermsOfServiceView from '@/modules/auth/views/AuthTermsOfServiceView.vue';
 import PublicLayout from '@/layout/PublicLayout.vue';
+import AuthQrConfirmView from '@/modules/auth/views/AuthQrConfirmView.vue';
 
 export function authRoutes(): RouteRecordRaw[] {
   return [
@@ -46,6 +47,24 @@ export function authRoutes(): RouteRecordRaw[] {
           path: '/',
           component: AuthTermsOfServiceView,
           name: 'tos',
+        },
+      ],
+    },
+    {
+      path: '',
+      component: PublicLayout,
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: '',
+          component: AuthLayout,
+          children: [
+            {
+              path: '/auth/qr/confirm',
+              component: AuthQrConfirmView,
+              name: 'qr-confirm',
+            },
+          ],
         },
       ],
     },

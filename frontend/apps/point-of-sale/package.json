@@ -23,9 +23,11 @@
   },
   "dependencies": {
     "@sudosos/sudosos-frontend-common": "workspace:^",
-    "@sudosos/themes": "workspace:^"
+    "@sudosos/themes": "workspace:^",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
+    "@types/qrcode": "^1",
     "eslint": "^9.24.0",
     "lint-staged": "^15.2.10"
   }
