@@ -6,6 +6,7 @@ import apiService from '@/services/ApiService';
 export const useBannersStore = defineStore('banners', {
   state: () => ({
     banners: {} as Record<number, BannerResponse>,
+    lastUpdated: 0,
   }),
   getters: {
     /**
@@ -31,6 +32,9 @@ export const useBannersStore = defineStore('banners', {
       (id: number): BannerResponse | null => {
         return state.banners[id] ?? null;
       },
+    getLastUpdated(): number {
+      return this.lastUpdated;
+    },
   },
   actions: {
     /**
@@ -53,6 +57,7 @@ export const useBannersStore = defineStore('banners', {
     async updateBanner(bannerId: number, banner: BannerRequest) {
       const updated = await apiService.banner.update(bannerId, banner);
       this.banners[bannerId] = { ...this.banners[bannerId], ...banner };
+      this.lastUpdated = Date.now();
       return updated;
     },
 
@@ -65,6 +70,7 @@ export const useBannersStore = defineStore('banners', {
       banner.image = URL.createObjectURL(image);
       this.banners[banner.id] = { ...banner };
       await apiService.banner.updateImage(bannerId, image);
+      this.lastUpdated = Date.now();
     },
 
     /**
@@ -73,6 +79,7 @@ export const useBannersStore = defineStore('banners', {
     async createBanner(bannerRequest: BannerRequest) {
       const resp = await apiService.banner.create(bannerRequest);
       this.banners[resp.data.id] = resp.data;
+      this.lastUpdated = Date.now();
       return resp;
     },
   },

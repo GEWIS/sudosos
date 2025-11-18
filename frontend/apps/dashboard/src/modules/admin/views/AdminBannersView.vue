@@ -1,21 +1,38 @@
 <template>
   <PageContainer>
-    <BannersList :banners="banners" :skip="0" :take="5" />
+    <BannersList
+      :active-filter="activeFilter"
+      :banners="banners"
+      :expired-filter="expiredFilter"
+      :is-loading="isLoading"
+      :order="order"
+      :rows="rows"
+      :rows-per-page-options="rowsPerPageOptions"
+      :skip="skip"
+      :total-records="totalRecords"
+      @page="onPage"
+      @sort="onSort"
+      @update:active-filter="(v) => (activeFilter = v)"
+      @update:expired-filter="(v) => (expiredFilter = v)"
+    />
   </PageContainer>
 </template>
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
-import { useBannersStore } from '@/stores/banner.store';
 import BannersList from '@/modules/admin/components/banners/BannersList.vue';
 import PageContainer from '@/layout/PageContainer.vue';
+import { usePaginatedBanners } from '@/composables/paginatedBanners';
 
-const bannersStore = useBannersStore();
-
-const banners = computed(() => {
-  return Object.values(bannersStore.banners);
-});
-
-onMounted(() => {
-  void bannersStore.fetchBanners();
-});
+const {
+  activeFilter,
+  expiredFilter,
+  order,
+  isLoading,
+  totalRecords,
+  banners,
+  rows,
+  rowsPerPageOptions,
+  onPage,
+  onSort,
+  skip,
+} = usePaginatedBanners();
 </script>

@@ -40,9 +40,9 @@ import Column from 'primevue/column';
 import Skeleton from 'primevue/skeleton';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
+import { AxiosError } from 'axios';
 import ApiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
-import { AxiosError } from 'axios';
 
 const { t } = useI18n();
 

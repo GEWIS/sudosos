@@ -32,7 +32,7 @@
   "dependencies": {
     "@gewis/splash": "^2.4.0",
     "@primeuix/themes": "^1.1.1",
-    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#70cc66c809767dab6f585b1d4380ba630fbfc363",
+    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#9abf842a82cc117a7ebf2cf6ea248e08becba709",
     "@tailwindcss/vite": "^4.1.3",
     "axios": "^1.7.7",
     "dinero.js": "^1.9.1",
