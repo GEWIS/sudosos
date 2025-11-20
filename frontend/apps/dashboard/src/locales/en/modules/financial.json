@@ -34,7 +34,13 @@
           "referenceDate": "Reference date",
           "number": "Number of fines",
           "total": "Total of fines",
-          "details": "Fine Handout Event Details"
+          "details": "Fine Handout Event Details",
+          "delete": "Delete fine handout event",
+          "deleteSuccess": "Fine handout event successfully deleted.",
+          "confirm": {
+            "deleteMessage": "Are you sure you want to delete this fine handout event? This will also delete all associated fines.",
+            "delete": "Delete"
+          }
         }
       },
       "invoice": {

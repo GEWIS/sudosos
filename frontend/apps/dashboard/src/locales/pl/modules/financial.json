@@ -34,7 +34,13 @@
           "referenceDate": "Data odniesienia",
           "number": "Liczba kar",
           "total": "Suma kar",
-          "details": "Szczegóły nałożenia kar"
+          "details": "Szczegóły nałożenia kar",
+          "delete": "Usuń wydarzenie nałożenia kar",
+          "deleteSuccess": "Wydarzenie nałożenia kar zostało pomyślnie usunięte.",
+          "confirm": {
+            "deleteMessage": "Czy na pewno chcesz usunąć to wydarzenie nałożenia kar? Spowoduje to również usunięcie wszystkich powiązanych kar.",
+            "delete": "Usuń"
+          }
         }
       },
       "invoice": {

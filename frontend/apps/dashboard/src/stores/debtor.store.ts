@@ -52,6 +52,7 @@ interface DebtorState {
   sort: DebtorSort;
   filter: DebtorFilter;
   isFineHandoutEventsLoading: boolean;
+  isDeleteLoading: boolean;
   isNotifyLoading: boolean;
   isHandoutLoading: boolean;
   isLockLoading: boolean;
@@ -73,6 +74,7 @@ export const useDebtorStore = defineStore('debtor', {
       name: '',
     },
     isFineHandoutEventsLoading: true,
+    isDeleteLoading: false,
     isNotifyLoading: false,
     isHandoutLoading: false,
     isLockLoading: false,
@@ -261,6 +263,14 @@ export const useDebtorStore = defineStore('debtor', {
     },
     async fetchSingleHandoutEvent(id: number): Promise<FineHandoutEventResponse | undefined> {
       return (await ApiService.debtor.returnSingleFineHandoutEvent(id)).data;
+    },
+    async deleteFineHandoutEvent(id: number) {
+      this.isDeleteLoading = true;
+      try {
+        await ApiService.debtor.deleteFineHandout(id);
+      } finally {
+        this.isDeleteLoading = false;
+      }
     },
     async notifyFines(userIds: number[], referenceDate: Date) {
       this.isNotifyLoading = true;

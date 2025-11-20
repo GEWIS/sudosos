@@ -34,7 +34,13 @@
           "referenceDate": "Referentiedatum",
           "number": "Aantal boetes",
           "total": "Totaal aan boetes",
-          "details": "Details van het boete uitdeel moment"
+          "details": "Details van het boete uitdeel moment",
+          "delete": "Boete uitdeel moment verwijderen",
+          "deleteSuccess": "Boete uitdeel moment succesvol verwijderd.",
+          "confirm": {
+            "deleteMessage": "Weet u zeker dat u dit boete uitdeel moment wilt verwijderen? Dit zal ook alle bijbehorende boetes verwijderen.",
+            "delete": "Verwijderen"
+          }
         }
       },
       "invoice": {
