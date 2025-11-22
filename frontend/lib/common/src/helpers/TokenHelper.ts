@@ -1,10 +1,14 @@
 import { AxiosHeaders, AxiosResponse } from 'axios';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { jwtVerify, importSPKI } from 'jose';
 import { ApiService } from '../services/ApiService';
 import { useAuthStore } from '../stores/auth.store';
 import { useUserStore } from '../stores/user.store';
 
 type Token = { token: string; expires: string };
+
+// Cache for the public key to avoid repeated API calls
+let cachedPublicKey: CryptoKey | null = null;
 
 export function updateTokenIfNecessary(response: AxiosResponse) {
   if ((response.headers as AxiosHeaders).has('Set-Authorization')) {
@@ -55,20 +59,52 @@ export function isAuthenticated(tokenKey: string = 'jwt_token'): boolean {
 }
 
 /**
+ * Verifies the JWT token signature using the public key from the API.
+ * Returns true if verification succeeds, false otherwise.
+ */
+async function verifyTokenSignature(token: string, apiService: ApiService): Promise<boolean> {
+  try {
+    if (!cachedPublicKey) {
+      const publicKeyResponse = await apiService.authenticate.getJWTPublicKey();
+      const publicKeyPem = publicKeyResponse.data;
+      cachedPublicKey = await importSPKI(publicKeyPem, 'RS256');
+    }
+    await jwtVerify(token, cachedPublicKey);
+    return true;
+  } catch (err) {
+    console.error('Token verification failed:', err);
+    return false;
+  }
+}
+
+/**
  * Populates the auth and userStore from the token stored in the localStorage, resolves when the user roles are loaded.
  */
 export async function populateStoresFromToken(apiService: ApiService) {
-  const isAuth = isAuthenticated(apiService.tokenKey);
+  const token = getTokenFromStorage(apiService.tokenKey);
+  if (!token.token || !token.expires) {
+    return;
+  }
 
-  if (isAuth) {
-    const authStore = useAuthStore();
-    authStore.extractStateFromToken(apiService.tokenKey);
-    const user = authStore.getUser;
-    if (user) {
-      const userStore = useUserStore();
-      userStore.setCurrentUser(user);
-      void userStore.fetchCurrentUserBalance(user.id, apiService);
-      return await userStore.fetchUserRolesWithPermissions(user.id, apiService);
-    }
+  const isAuth = !isTokenExpired(Number(token.expires));
+  if (!isAuth) {
+    return;
+  }
+
+  const isValid = await verifyTokenSignature(token.token, apiService);
+
+  if (!isValid) {
+    clearTokenInStorage(apiService.tokenKey);
+    return;
+  }
+
+  const authStore = useAuthStore();
+  authStore.extractStateFromToken(apiService.tokenKey);
+  const user = authStore.getUser;
+  if (user) {
+    const userStore = useUserStore();
+    userStore.setCurrentUser(user);
+    void userStore.fetchCurrentUserBalance(user.id, apiService);
+    return await userStore.fetchUserRolesWithPermissions(user.id, apiService);
   }
 }
