@@ -43,6 +43,7 @@ import type {
 import Dinero from 'dinero.js';
 import { useI18n } from 'vue-i18n';
 import { type ContainerWithProductsResponse, type ReportResponse } from '@sudosos/sudosos-client/src/api';
+import { getRelation, isAllowed } from '@sudosos/sudosos-frontend-common';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import ContainerCard from '@/components/container/ContainersCard.vue';
 import router from '@/router';
@@ -52,7 +53,6 @@ import MutationPOSCard from '@/components/mutations/MutationsPOS.vue';
 import CardComponent from '@/components/CardComponent.vue';
 import POSSettingsCard from '@/modules/seller/components/POSSettingsCard.vue';
 import { formatPrice } from 'sudosos-dashboard/src/utils/formatterUtils';
-import { getRelation, isAllowed } from '@/utils/permissionUtils';
 import PageContainer from '@/layout/PageContainer.vue';
 
 const route = useRoute();

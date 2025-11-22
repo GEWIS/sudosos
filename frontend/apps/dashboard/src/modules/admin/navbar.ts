@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { isAllowed } from '@/utils/permissionUtils';
+import { isAllowed } from '@sudosos/sudosos-frontend-common';
 
 export function useAdminNav() {
   const { t } = useI18n();

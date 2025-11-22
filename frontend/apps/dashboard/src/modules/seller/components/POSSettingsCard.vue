@@ -31,6 +31,7 @@ import type { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client'
 import { useConfirm } from 'primevue/useconfirm';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
+import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import FormCard from '@/components/FormCard.vue';
 import { updatePointOfSaleObject } from '@/utils/validation-schema';
 import { schemaToForm } from '@/utils/formUtils';
@@ -38,7 +39,6 @@ import { usePointOfSaleStore } from '@/stores/pos.store';
 import POSSettingsForm from '@/modules/seller/components/POSSettingsForm.vue';
 import router from '@/router';
 import { handleError } from '@/utils/errorUtils';
-import { isAllowed } from '@/utils/permissionUtils';
 
 const confirm = useConfirm();
 

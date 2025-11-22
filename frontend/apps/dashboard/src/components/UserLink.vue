@@ -8,10 +8,9 @@
 <script setup lang="ts">
 import type { BaseUserResponse } from '@sudosos/sudosos-client';
 import { computed } from 'vue';
-import { useAuthStore } from '@sudosos/sudosos-frontend-common';
+import { useAuthStore, getRelation, isAllowed } from '@sudosos/sudosos-frontend-common';
 import { useI18n } from 'vue-i18n';
 import router from '@/router';
-import { getRelation, isAllowed } from '@/utils/permissionUtils';
 
 const { t } = useI18n();
 const authStore = useAuthStore();

@@ -68,11 +68,11 @@ import Accordion, { type AccordionTabOpenEvent } from 'primevue/accordion';
 import { computed, type Ref, ref } from 'vue';
 import type { ContainerWithProductsResponse, PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
 import { useI18n } from 'vue-i18n';
+import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import CardComponent from '../CardComponent.vue';
 import POSAddContainerModal from '@/modules/seller/components/POSAddContainerModal.vue';
 import ContainerActionsDialog from '@/components/container/ContainerActionsDialog.vue';
 import { type ContainerInStore, useContainerStore } from '@/stores/container.store';
-import { isAllowed } from '@/utils/permissionUtils';
 import ContainerProductGrid from '@/components/container/ContainerProductGrid.vue';
 import { useDeleteContainerPOS } from '@/composables/deleteContainerPOS';
 

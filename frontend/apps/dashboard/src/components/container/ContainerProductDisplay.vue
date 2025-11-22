@@ -26,9 +26,9 @@
 import type { ContainerWithProductsResponse, ProductResponse } from '@sudosos/sudosos-client';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import { getProductImageSrc } from '@/utils/urlUtils';
 import ProductActionDialog from '@/modules/seller/components/ProductActionDialog.vue';
-import { isAllowed } from '@/utils/permissionUtils';
 
 const visible = ref(false);
 const imageSrc = computed(() => getProductImageSrc(props.product));

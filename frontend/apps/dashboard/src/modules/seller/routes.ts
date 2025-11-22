@@ -1,11 +1,11 @@
 import type { RouteRecordRaw } from 'vue-router';
+import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import DashboardLayout from '@/layout/DashboardLayout.vue';
 import ProductsContainersView from '@/modules/seller/views/ProductsContainersView.vue';
 import { UserRole } from '@/utils/rbacUtils';
 import POSOverviewView from '@/modules/seller/views/POSOverviewView.vue';
 import POSInfoView from '@/modules/seller/views/POSInfoView.vue';
 import SellerPayoutsView from '@/modules/seller/views/SellerPayoutsView.vue';
-import { isAllowed } from '@/utils/permissionUtils';
 
 export function sellerRoutes(): RouteRecordRaw[] {
   return [

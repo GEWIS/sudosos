@@ -53,10 +53,10 @@ import { onMounted, type Ref, ref } from 'vue';
 import type { PaginatedPointOfSaleResponse, PointOfSaleResponse } from '@sudosos/sudosos-client';
 import Skeleton from 'primevue/skeleton';
 import { useI18n } from 'vue-i18n';
+import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import router from '@/router';
 import POSCreateModal from '@/modules/seller/components/POSCreateModal.vue';
 import CardComponent from '@/components/CardComponent.vue';
-import { isAllowed } from '@/utils/permissionUtils';
 
 const { t } = useI18n();
 

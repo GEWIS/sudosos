@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue';
 import type { TransactionResponse } from '@sudosos/sudosos-client';
+import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import { useTransactionStore } from '@/stores/transaction.store';
-import { isAllowed } from '@/utils/permissionUtils';
 
 export function useTransactionCard(transactionId: number) {
   const transactionStore = useTransactionStore();

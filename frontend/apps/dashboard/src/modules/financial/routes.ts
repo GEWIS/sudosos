@@ -1,9 +1,9 @@
 import type { RouteRecordRaw } from 'vue-router';
+import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import DashboardLayout from '@/layout/DashboardLayout.vue';
 import PayoutsView from '@/modules/financial/views/payouts/PayoutsView.vue';
 import InvoiceOverview from '@/modules/financial/views/invoice/InvoiceOverview.vue';
 import InvoiceInfoView from '@/modules/financial/views/invoice/InvoiceInfoView.vue';
-import { isAllowed } from '@/utils/permissionUtils';
 import InvoiceCreateView from '@/modules/financial/views/invoice/InvoiceCreateView.vue';
 import DebtorView from '@/modules/financial/views/debtor/DebtorView.vue';
 import DebtorHandoutView from '@/modules/financial/views/debtor/DebtorHandoutView.vue';

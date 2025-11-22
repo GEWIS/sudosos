@@ -18,6 +18,7 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
     pointOfSale: null as PointOfSaleWithContainersResponse | null,
     pointOfSaleAssociates: null as PointOfSaleAssociateUsersResponse | null,
     usersPointOfSales: null as PointOfSaleResponse[] | null,
+    allPointOfSales: null as PointOfSaleResponse[] | null,
   }),
   getters: {
     allProductCategories() {
@@ -76,6 +77,12 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
       // Use userApiService for user-level operations
       this.usersPointOfSales = await fetchAllPages<PointOfSaleResponse>((take, skip) =>
         userApiService.user.getUsersPointsOfSale(id, take, skip),
+      );
+    },
+    async fetchAllPointOfSales(): Promise<void> {
+      // Use userApiService for user-level operations
+      this.allPointOfSales = await fetchAllPages<PointOfSaleResponse>((take, skip) =>
+        userApiService.pos.getAllPointsOfSale(take, skip),
       );
     },
     getProduct(productId: number, revision: number, containerId: number): ProductResponse | undefined {

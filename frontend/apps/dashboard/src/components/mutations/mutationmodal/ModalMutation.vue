@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import { computed, ref, toRef } from 'vue';
-import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
+import { addListenerOnDialogueOverlay, isAllowed } from '@sudosos/sudosos-frontend-common';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import Skeleton from 'primevue/skeleton';
@@ -67,7 +67,6 @@ import router from '@/router';
 import { FinancialMutationType, isTransaction } from '@/utils/mutationUtils';
 import ConfirmButton from '@/components/ConfirmButton.vue';
 import { useMutationDetails } from '@/composables/mutationDetails';
-import { isAllowed } from '@/utils/permissionUtils';
 
 const props = defineProps<{ type: FinancialMutationType; id: number }>();
 

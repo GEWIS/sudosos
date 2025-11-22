@@ -23,7 +23,7 @@
 import { useI18n } from 'vue-i18n';
 import type { UserResponse } from '@sudosos/sudosos-client';
 import { computed, ref, watch } from 'vue';
-import { useUserStore } from '@sudosos/sudosos-frontend-common';
+import { useUserStore, isAllowed } from '@sudosos/sudosos-frontend-common';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import { schemaToForm } from '@/utils/formUtils';
@@ -33,7 +33,6 @@ import FormCard from '@/components/FormCard.vue';
 import ConfirmButton from '@/components/ConfirmButton.vue';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
-import { isAllowed } from '@/utils/permissionUtils';
 
 const { t } = useI18n();
 const form = schemaToForm(userUpsertSchema);

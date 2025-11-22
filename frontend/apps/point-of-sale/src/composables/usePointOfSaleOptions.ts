@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue';
-import { useAuthStore } from '@sudosos/sudosos-frontend-common';
+import { useAuthStore, isAllowed } from '@sudosos/sudosos-frontend-common';
 import { PointOfSaleResponse } from '@sudosos/sudosos-client';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 
@@ -12,7 +12,13 @@ export function usePointOfSaleOptions() {
   const posStore = usePointOfSaleStore();
   const loadingPos = ref(false);
 
-  const posOptions = computed(() => posStore.usersPointOfSales || []);
+  const posOptions = computed(() => {
+    // Show all POS if the user has permission
+    if (isAllowed('authenticate', 'all', 'User', ['pointOfSale'])) {
+      return posStore.allPointOfSales || [];
+    }
+    return posStore.usersPointOfSales || [];
+  });
 
   const groupedPos = computed(() => {
     if (!posOptions.value.length) return {};
@@ -44,6 +50,10 @@ export function usePointOfSaleOptions() {
     loadingPos.value = true;
     try {
       await posStore.fetchUserPointOfSale(user.id);
+      // Load all POS if the user has permission
+      if (isAllowed('authenticate', 'all', 'User', ['pointOfSale'])) {
+        await posStore.fetchAllPointOfSales();
+      }
     } catch (error) {
       console.error('Error loading POS options:', error);
       throw error;

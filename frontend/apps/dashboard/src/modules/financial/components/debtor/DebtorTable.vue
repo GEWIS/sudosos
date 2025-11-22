@@ -230,7 +230,7 @@ import { debounce } from 'lodash';
 import type { FineHandoutEventResponse } from '@sudosos/sudosos-client';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
-import { isAllowed } from '@/utils/permissionUtils';
+import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import { formatPrice, formatFineTimeSince } from '@/utils/formatterUtils';
 import { useDebtorStore, SortField, type Debtor } from '@/stores/debtor.store';
 import CardComponent from '@/components/CardComponent.vue';

@@ -1,10 +1,10 @@
 import type { RouteRecordRaw } from 'vue-router';
+import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import DashboardLayout from '@/layout/DashboardLayout.vue';
 import AdminUserOverView from '@/modules/admin/views/AdminUserOverView.vue';
 import AdminBannersView from '@/modules/admin/views/AdminBannersView.vue';
 import AdminSingleUserView from '@/modules/admin/views/AdminSingleUserView.vue';
 import AdminMaintainerView from '@/modules/admin/views/AdminMaintainerView.vue';
-import { isAllowed } from '@/utils/permissionUtils';
 
 export function adminRoutes(): RouteRecordRaw[] {
   return [

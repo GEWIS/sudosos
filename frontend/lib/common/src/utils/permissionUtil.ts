@@ -1,4 +1,5 @@
-import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
+import { useAuthStore } from '../stores/auth.store';
+import { useUserStore } from '../stores/user.store';
 
 /**
  * Performs an access check for the given parameters.

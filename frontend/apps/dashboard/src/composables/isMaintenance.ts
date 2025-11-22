@@ -1,6 +1,5 @@
 import { computed } from 'vue';
-import { useWebSocketStore } from '@sudosos/sudosos-frontend-common';
-import { isAllowed } from '@/utils/permissionUtils';
+import { useWebSocketStore, isAllowed } from '@sudosos/sudosos-frontend-common';
 
 export function useIsMaintenance() {
   const webSocketStore = useWebSocketStore();

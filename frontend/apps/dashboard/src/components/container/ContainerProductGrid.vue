@@ -22,9 +22,9 @@
 <script setup lang="ts">
 import type { ContainerWithProductsResponse } from '@sudosos/sudosos-client';
 import { type Ref, ref, type PropType } from 'vue';
+import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import ContainerProductDisplay from '@/components/container/ContainerProductDisplay.vue';
 import ProductActionDialog from '@/modules/seller/components/ProductActionDialog.vue';
-import { isAllowed } from '@/utils/permissionUtils';
 
 const visible: Ref<boolean> = ref(false);
 const props = defineProps({

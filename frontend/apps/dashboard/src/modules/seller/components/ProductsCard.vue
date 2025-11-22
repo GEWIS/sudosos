@@ -116,12 +116,12 @@ import { computed, onBeforeMount, type Ref, ref } from 'vue';
 import type { ProductResponse } from '@sudosos/sudosos-client';
 import { FilterMatchMode } from '@primevue/core/api';
 import { useI18n } from 'vue-i18n';
+import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import { useProductStore } from '@/stores/product.store';
 import ProductActionDialog from '@/modules/seller/components/ProductActionDialog.vue';
 import CardComponent from '@/components/CardComponent.vue';
 import { formatPrice } from '@/utils/formatterUtils';
 import { getProductImageSrc } from '@/utils/urlUtils';
-import { isAllowed } from '@/utils/permissionUtils';
 
 const { t } = useI18n();
 

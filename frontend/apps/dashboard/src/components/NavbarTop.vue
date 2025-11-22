@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { isAllowed } from '@/utils/permissionUtils';
+import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import { useAdminNav } from '@/modules/admin/navbar';
 import { useFinancialNav } from '@/modules/financial/navbar';
 import { useSellerNav } from '@/modules/seller/navbar';

@@ -1,9 +1,9 @@
 import type { RouteRecordRaw } from 'vue-router';
+import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import DashboardLayout from '@/layout/DashboardLayout.vue';
 import UserLandingView from '@/modules/user/views/UserLandingView.vue';
 import UserTransactionsView from '@/modules/user/views/UserTransactionsView.vue';
 import ProfileView from '@/modules/user/views/UserProfileView.vue';
-import { isAllowed } from '@/utils/permissionUtils';
 
 export function userRoutes(): RouteRecordRaw[] {
   return [
