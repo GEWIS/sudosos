@@ -242,7 +242,9 @@
     "maintenanceMode": {
       "title": "SudoSOS jest w trybie konserwacji.",
       "subtitle": "Spróbuj ponownie później...",
-      "footer": "TRYB KONSERWACJI WŁĄCZONY"
+      "footer": "TRYB KONSERWACJI WŁĄCZONY",
+      "adminLogin": "Logowanie administratora",
+      "cancelLogin": "Anuluj logowanie"
     }
   }
 }

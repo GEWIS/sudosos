@@ -243,7 +243,9 @@
     "maintenanceMode": {
       "title": "SudoSOS is under maintenance.",
       "subtitle": "Please try again later...",
-      "footer": "MAINTENANCE ENABLED"
+      "footer": "MAINTENANCE ENABLED",
+      "adminLogin": "Admin login",
+      "cancelLogin": "Cancel login"
     }
   }
 }

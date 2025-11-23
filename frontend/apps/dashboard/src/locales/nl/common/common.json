@@ -241,7 +241,9 @@
     "maintenanceMode": {
       "title": "SudoSOS is onder onderhoud.",
       "subtitle": "Probeer het later nog eens...",
-      "footer": "ONDERHOUD GEACTIVEERD"
+      "footer": "ONDERHOUD GEACTIVEERD",
+      "adminLogin": "Inloggen beheerder",
+      "cancelLogin": "Inloggen annuleren"
     }
   }
 }
