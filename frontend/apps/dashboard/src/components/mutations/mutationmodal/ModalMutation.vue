@@ -1,6 +1,7 @@
 <template>
   <Dialog
     ref="dialog"
+    :draggable="false"
     :header="t('components.mutations.modal.header', { id })"
     modal
     :pt="{

@@ -27,7 +27,6 @@
     <Dialog
       ref="dialog"
       v-model:visible="visible"
-      :close-on-escape="true"
       :draggable="false"
       :header="t('modules.financial.invoice.delete')"
       modal

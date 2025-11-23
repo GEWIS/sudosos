@@ -1,8 +1,8 @@
 <template>
   <Dialog
     v-model:visible="showDebtWarningDialog"
-    :closable="true"
     :content-style="{ width: '35rem' }"
+    :draggable="false"
     header="Warning!"
     modal
     :pt="{

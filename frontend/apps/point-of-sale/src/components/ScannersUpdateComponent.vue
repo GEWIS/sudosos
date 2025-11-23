@@ -5,6 +5,7 @@
   <Dialog
     ref="nfcModal"
     v-model:visible="nfcModalVisible"
+    :draggable="false"
     header="Manage NFC"
     modal
     :pt="{
