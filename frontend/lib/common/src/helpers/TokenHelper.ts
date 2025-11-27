@@ -67,7 +67,7 @@ async function verifyTokenSignature(token: string, apiService: ApiService): Prom
     if (!cachedPublicKey) {
       const publicKeyResponse = await apiService.authenticate.getJWTPublicKey();
       const publicKeyPem = publicKeyResponse.data;
-      cachedPublicKey = await importSPKI(publicKeyPem, 'RS256');
+      cachedPublicKey = await importSPKI(publicKeyPem, 'RS512');
     }
     await jwtVerify(token, cachedPublicKey);
     return true;
