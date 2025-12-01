@@ -26,8 +26,6 @@ export function usePosToken() {
 
   const clearPosToken = () => {
     clearTokenInStorage(POS_TOKEN_KEY);
-    // TODO: Remove this once backend includes posId in POS JWT token
-    localStorage.removeItem(POS_ID_KEY);
     posTokenState.value = false;
   };
 

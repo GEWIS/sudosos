@@ -6,7 +6,6 @@ import { usePreset } from '@primeuix/themes';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import { useCartStore } from '@/stores/cart.store';
 import { useActivityStore } from '@/stores/activity.store';
-import { POS_ID_KEY } from '@/composables/usePosToken';
 
 export const rowBackground = ref('bg-red-100');
 
@@ -24,10 +23,6 @@ export class PointOfSaleSwitchService {
     const currentPos = posStore.getPos;
 
     if (!currentPos || (currentPos && target.id !== currentPos.id)) {
-      // TODO: Remove this localStorage workaround once backend includes posId in POS JWT token
-      // The POS JWT token's user.id is not the same as the POS ID, so we store it separately
-      localStorage.setItem(POS_ID_KEY, String(target.id));
-
       void posStore.fetchPointOfSale(target.id);
 
       const cartStore = useCartStore();
