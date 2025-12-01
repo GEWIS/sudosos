@@ -4,7 +4,7 @@
       <div class="flex flex-row gap-1 justify-between" style="width: 40vw">
         <div>
           <Button
-            icon="pi pi-eye"
+            icon="pi pi-arrow-right-arrow-left"
             :label="showTable ? t('modules.financial.invoice.invoice') : t('modules.financial.invoice.table')"
             severity="primary"
             @click="showTable = !showTable"

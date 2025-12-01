@@ -35,7 +35,7 @@
         </template>
         <template v-else #body="slotProps">
           <Button
-            icon="pi pi-info-circle"
+            icon="pi pi-window-maximize"
             outlined
             type="button"
             @click="router.push({ name: 'pointOfSaleInfo', params: { id: slotProps.data.id } })"

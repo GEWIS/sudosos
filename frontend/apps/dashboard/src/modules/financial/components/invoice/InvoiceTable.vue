@@ -137,7 +137,7 @@
             <span v-else>
               <Button
                 class="p-button-plain p-button-rounded p-button-text"
-                icon="pi pi-eye"
+                icon="pi pi-window-maximize"
                 type="button"
                 @click="() => viewInvoice(slotProps.data.id)"
               />

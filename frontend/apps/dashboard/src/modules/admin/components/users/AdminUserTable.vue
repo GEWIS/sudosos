@@ -96,7 +96,7 @@
         <Skeleton class="h-1rem my-1 surface-300 w-4" />
       </template>
       <template v-else #body="slotProps">
-        <Button icon="pi pi-info-circle" outlined type="button" @click="emit('info', slotProps.data)" />
+        <Button icon="pi pi-window-maximize" outlined type="button" @click="emit('info', slotProps.data)" />
       </template>
     </Column>
   </DataTable>

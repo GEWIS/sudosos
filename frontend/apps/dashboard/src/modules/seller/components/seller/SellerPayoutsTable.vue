@@ -42,7 +42,7 @@
           <span v-else class="items-center flex flex-row">
             <Button
               class="p-button-plain p-button-rounded p-button-text"
-              icon="pi pi-eye"
+              icon="pi pi-info-circle"
               type="button"
               @click="() => viewPayout(slotProps.data.id)"
             />
