@@ -30,6 +30,7 @@ const visible = ref(false);
 </script>
 <style>
 .tosLink {
+  display: inline-block;
   color: var(--p-primary-color);
 }
 

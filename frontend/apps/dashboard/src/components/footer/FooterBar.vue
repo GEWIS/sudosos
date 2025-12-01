@@ -47,7 +47,7 @@ const { isMaintenance, canOverride } = useIsMaintenance();
 footer {
   width: 100%;
   padding: 0 1rem;
-  height: 60px;
+  height: fit-content;
   line-height: 60px;
   background-color: var(--p-content-background);
 }
