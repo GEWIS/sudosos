@@ -13,7 +13,7 @@
   >
     <template #option="slotProps">
       <span :class="{ 'text-gray-500': isNegative(slotProps.option) === true }">
-        {{ slotProps.option.fullName }} {{ slotProps.option.gewisId ? `(${slotProps.option.gewisId})` : '' }}
+        {{ slotProps.option.fullName }} {{ slotProps.option.memberId ? `(${slotProps.option.memberId})` : '' }}
       </span>
     </template>
   </Select>

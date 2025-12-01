@@ -44,7 +44,6 @@ export function useLoginForm() {
     const user = authStore.getUser;
     if (user === null) return;
 
-    if (userStore.getActiveUsers.length === 0) void userStore.fetchUsers(apiService);
     await useCartStore().setBuyer(user);
     void userStore.fetchCurrentUserBalance(user.id, apiService);
 

@@ -3,7 +3,7 @@ import type {
   BalanceResponse,
   BaseFineHandoutEventResponse,
   FineHandoutEventResponse,
-  GewisUserResponse,
+  UserResponse,
   UserToFineResponse,
 } from '@sudosos/sudosos-client';
 // eslint-disable-next-line import/no-named-as-default
@@ -36,7 +36,7 @@ export interface DebtorFilter {
 
 export interface Debtor {
   fine: UserToFineResponse;
-  user: GewisUserResponse;
+  user: UserResponse;
 }
 
 interface FinancialSummary {

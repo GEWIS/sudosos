@@ -95,9 +95,9 @@ const handleAuthenticatePos = async (pos: PointOfSaleResponse) => {
 
 onMounted(async () => {
   await nextTick();
-  if (!userIsAuthenticated.value) {
+  if (!hasPosToken.value) {
     void generateQrCode();
-  } else if (userIsAuthenticated.value && !hasPosToken.value) {
+  } else if (userIsAuthenticated.value) {
     void loadPosOptions();
   }
   if (session.value) {

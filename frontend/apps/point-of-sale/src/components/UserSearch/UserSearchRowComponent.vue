@@ -10,12 +10,12 @@
 </template>
 
 <script setup lang="ts">
-import { GewisUserResponse, UserResponse } from '@sudosos/sudosos-client';
+import { UserResponse } from '@sudosos/sudosos-client';
 import { useCartStore } from '@/stores/cart.store';
 
 const props = defineProps({
   user: {
-    type: Object as () => UserResponse | GewisUserResponse,
+    type: Object as () => UserResponse,
     required: true,
   },
 });
@@ -38,8 +38,8 @@ const displayName = () => {
   }
   name += ' ' + props.user.lastName;
 
-  if ('gewisId' in props.user && props.user.gewisId) {
-    name += ` - ${props.user?.gewisId}`;
+  if (props.user.memberId) {
+    name += ` - ${props.user?.memberId}`;
   } else {
     switch (props.user?.type) {
       case 'LOCAL_USER':

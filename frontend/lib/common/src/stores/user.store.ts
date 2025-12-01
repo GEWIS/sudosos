@@ -5,7 +5,6 @@ import {
   PaginatedFinancialMutationResponse,
   UserResponse,
   RoleWithPermissionsResponse,
-  GewisUserResponse,
   DineroObjectRequest,
   CreateUserRequest,
   UpdateUserRequest,
@@ -137,12 +136,6 @@ export const useUserStore = defineStore('user', {
         skip,
       );
       this.current.createdTransactions = res.data;
-    },
-    async fetchGewisUser(id: number, service: ApiService): Promise<GewisUserResponse> {
-      return service.user.getIndividualUser(id).then((res) => {
-        this.current.user = res.data;
-        return res.data as GewisUserResponse;
-      });
     },
     async fetchUserApi(service: ApiService, id: number) {
       return await service.user.updateUserKey(id);

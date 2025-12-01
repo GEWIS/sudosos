@@ -2,7 +2,7 @@
   <PageContainer>
     <div v-if="currentUser">
       <div class="text-4xl mb-4">
-        {{ t('modules.admin.singleUser.profile', { user: firstName, gewisId }) }}
+        {{ t('modules.admin.singleUser.profile', { user: firstName, memberId }) }}
       </div>
       <div class="flex flex-col gap-5">
         <div class="flex flex-col gap-8 justify-between md:flex-row">
@@ -35,7 +35,7 @@ import { computed, onBeforeMount, ref, watch } from 'vue';
 import type { Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
-import type { GewisUserResponse, PaginatedFinancialMutationResponse, UserResponse } from '@sudosos/sudosos-client';
+import type { PaginatedFinancialMutationResponse, UserResponse } from '@sudosos/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import type { AxiosError } from 'axios';
 import { useI18n } from 'vue-i18n';
@@ -65,9 +65,9 @@ const firstName = computed(() => currentUser.value?.firstName || '');
 
 const isMember = computed(() => !!currentUser.value && currentUser.value.type === String(USER_TYPES.MEMBER));
 
-const memberUser = computed(() => (isMember.value ? (currentUser.value as GewisUserResponse) : null));
+const memberUser = computed(() => (isMember.value ? currentUser.value : null));
 
-const gewisId = computed(() => (memberUser.value?.gewisId ? `(m${memberUser.value.gewisId})` : ''));
+const memberId = computed(() => (memberUser.value?.memberId ? `(m${memberUser.value.memberId})` : ''));
 
 // Fetch user
 const getUser = async () => {

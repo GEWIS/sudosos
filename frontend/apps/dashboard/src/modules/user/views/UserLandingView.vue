@@ -2,7 +2,7 @@
   <PageContainer>
     <div class="text-4xl mb-4">{{ t('modules.user.landing.welcome') + userFirstName }}</div>
     <div class="flex flex-col gap-5">
-      <UserInfo class="md:hidden" :user="gewisUser || (authStore.user as GewisUserResponse)" />
+      <UserInfo class="md:hidden" :user="user" />
       <BalanceWithTopupComponent />
       <CardComponent
         :action="t('components.mutations.all')"
@@ -18,10 +18,11 @@
 
 <script setup lang="ts">
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
-import type { GewisUserResponse, PaginatedFinancialMutationResponse } from '@sudosos/sudosos-client';
+import type { PaginatedFinancialMutationResponse } from '@sudosos/sudosos-client';
 import { useToast } from 'primevue/usetoast';
-import { computed, onMounted, ref, type Ref } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { storeToRefs } from 'pinia';
 import BalanceWithTopupComponent from '@/modules/user/components/balance/BalanceWithTopup.vue';
 import apiService from '@/services/ApiService';
 import router from '@/router';
@@ -37,30 +38,25 @@ const authStore = useAuthStore();
 const userStore = useUserStore();
 const toast = useToast();
 
+const { user } = storeToRefs(authStore);
+
 const userFirstName = computed(() => {
-  return authStore.getUser?.firstName;
+  return user.value?.firstName;
 });
 
 const getUserMutations = async (
   take: number,
   skip: number,
 ): Promise<PaginatedFinancialMutationResponse | undefined> => {
-  if (!authStore.getUser) {
+  if (!user.value) {
     await router.replace({ path: '/error' });
     return;
   }
   await userStore
-    .fetchUsersFinancialMutations(authStore.getUser.id, apiService, take, skip)
+    .fetchUsersFinancialMutations(user.value.id, apiService, take, skip)
     .catch((err) => handleError(err, toast));
   return userStore.getCurrentUser.financialMutations;
 };
-
-const gewisUser: Ref<GewisUserResponse | undefined> = ref(undefined);
-onMounted(async () => {
-  await apiService.user.getIndividualUser(authStore.getUser!.id).then((res) => {
-    gewisUser.value = res.data;
-  });
-});
 </script>
 
 <style scoped lang="scss">
