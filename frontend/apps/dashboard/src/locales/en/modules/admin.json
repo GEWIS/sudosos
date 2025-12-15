@@ -82,6 +82,17 @@
           "disabled": "disabled"
         }
       },
+      "wrapped": {
+        "wrappedMode": "Wrapped available",
+        "confirm": {
+          "initial": "Wrapped is {enabled}",
+          "confirm": "Turn {enabled}?",
+          "on": "on",
+          "off": "off",
+          "enabled": "available",
+          "disabled": "unavailable"
+        }
+      },
       "websocket": {
         "title": "Websocket logs"
       },

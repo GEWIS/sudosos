@@ -82,6 +82,17 @@
           "disabled": "uitgeschakeld"
         }
       },
+      "wrapped": {
+        "wrappedMode": "Wrapped beschikbaar",
+        "confirm": {
+          "initial": "Wrapped is {enabled}",
+          "confirm": "Schakel {enabled}?",
+          "on": "aan",
+          "off": "uit",
+          "enabled": "beschikbaar",
+          "disabled": "niet beschikbaar"
+        }
+      },
       "websocket": {
         "title": "Websocket logs"
       },

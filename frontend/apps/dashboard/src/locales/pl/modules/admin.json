@@ -82,6 +82,17 @@
           "disabled": "wyłączony"
         }
       },
+      "wrapped": {
+        "wrappedMode": "Dostępny wrapped",
+        "confirm": {
+          "initial": "Wrapped jest {enabled}",
+          "confirm": "Przełączyć na {enabled}?",
+          "on": "włączony",
+          "off": "wyłączony",
+          "enabled": "dostępny",
+          "disabled": "niedostępny"
+        }
+      },
       "websocket": {
         "title": "Logi WebSocket"
       },
