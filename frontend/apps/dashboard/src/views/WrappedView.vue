@@ -116,6 +116,12 @@ import OrgansOverviewCard from '@/components/wrapped/9_OrgansOverviewCard.vue';
 import WrappedControls from '@/components/wrapped/Controls/WrappedControls.vue';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
+import posImage from '@/assets/img/wrapped/pos.png';
+import bacImage from '@/assets/img/wrapped/BAC.png';
+import ivvImage from '@/assets/img/wrapped/IVV.png';
+import boomImage from '@/assets/img/wrapped/BOOM.png';
+import athenaImage from '@/assets/img/wrapped/ATHENA.png';
+import defiImage from '@/assets/img/wrapped/DEFI.png';
 
 const authStore = useAuthStore();
 const toast = useToast();
@@ -271,9 +277,33 @@ const cardProps = computed<CardProps[]>(() => {
   ];
 
   if (hasOrgans.value) {
+    const organName = organDetails.value[organs.value[0].organId]?.firstName;
+    let image = posImage;
+    let dark = true;
+    switch (organName) {
+      case 'BAC':
+        image = bacImage;
+        break;
+      case 'I.V.V':
+        image = ivvImage;
+        break;
+      case 'B.O.O.M':
+        image = boomImage;
+        dark = false;
+        break;
+      case 'ATHENA':
+        image = athenaImage;
+        break;
+      case 'Défi':
+        image = defiImage;
+        break;
+    }
+
     props.push({
       organs: organs.value,
       organDetails: organDetails.value,
+      image: image,
+      dark: dark,
     } as CardProps);
   }
 
@@ -319,7 +349,26 @@ const cardBackgrounds = computed(() => {
   base.push('linear-gradient(45deg, #233329 0%, #63d471 100%)', 'linear-gradient(135deg, #ff8800 0%, #ff3300 100%)');
 
   if (hasOrgans.value) {
-    base.push('linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)');
+    const organName = organDetails.value[organs.value[0].organId]?.firstName;
+    switch (organName) {
+      case 'BAC':
+        base.push('#004b31');
+        break;
+      case 'I.V.V':
+        base.push('#14213d');
+        break;
+      case 'B.O.O.M':
+        base.push('#9EFF00');
+        break;
+      case 'ATHENA':
+        base.push('#d53d86');
+        break;
+      case 'Défi':
+        base.push('#9678d3');
+        break;
+      default:
+        base.push('#b40000');
+    }
   }
 
   if (hasMultipleOrgans.value) {

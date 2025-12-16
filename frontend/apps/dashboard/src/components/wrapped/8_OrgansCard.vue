@@ -1,7 +1,7 @@
 <!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
 <template>
-  <div ref="rootRef" class="card-root text-white" :class="{ active }">
-    <div class="bg seller-bg"></div>
+  <div ref="rootRef" class="card-root" :class="{ active, 'text-black': !props.dark, 'text-white': props.dark }">
+    <div class="bg seller-bg" :style="{ '--bg-image': `url('${image}')` }"></div>
     <div class="content">
       <div v-if="bestOrgan" :aria-hidden="!showOrganName" class="fade-slide">
         <h2 class="text-2xl mb-4">
@@ -50,11 +50,14 @@ const props = defineProps<{
     ordinalTurnoverCreated: number;
   }>;
   organDetails: Record<number, UserResponse>;
+  image: string;
+  dark: boolean;
 }>();
 
 const active = toRef(props, 'active');
 const organs = toRef(props, 'organs');
 const organDetails = toRef(props, 'organDetails');
+const image = toRef(props, 'image');
 
 const organsWithInfo = computed<OrganInfo[]>(() => {
   return organs.value.map((organ) => {
@@ -183,9 +186,9 @@ watch(active, (val) => {
 
 <style scoped lang="scss">
 .seller-bg {
-  background-image: url('../../assets/img/wrapped/pos.png');
-  background-size: 50%;
-  opacity: 0.15;
-  transform: translate(10%, -10%) rotate(-8deg);
+  background-image: var(--bg-image);
+  background-size: 90%;
+  opacity: 0.3;
+  transform: rotate(-8deg);
 }
 </style>
