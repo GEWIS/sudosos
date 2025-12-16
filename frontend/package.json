@@ -13,6 +13,7 @@
     "dev-dashboard:prod": "concurrently --kill-others \"yarn dashboard:dev:prod\" \"yarn dev-libraries\"",
     "dev-dashboard:test": "concurrently --kill-others \"yarn dashboard:dev:test\" \"yarn dev-libraries\"",
     "dev-dashboard:local": "concurrently --kill-others \"yarn dashboard:dev:local\" \"yarn dev-libraries\"",
+    "dev-dashboard-host": "concurrently --kill-others \"yarn dashboard:dev --host\" \"yarn dev-libraries\"",
     "dev-pos": "concurrently --kill-others \"yarn point-of-sale:dev\" \"yarn dev-libraries\"",
     "dev-pos:prod": "concurrently --kill-others \"yarn point-of-sale:dev:prod\" \"yarn dev-libraries\"",
     "dev-pos:test": "concurrently --kill-others \"yarn point-of-sale:dev:test\" \"yarn dev-libraries\"",
@@ -32,7 +33,7 @@
   "dependencies": {
     "@gewis/splash": "^2.4.0",
     "@primeuix/themes": "^1.1.1",
-    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#e2113c05200f4f142a28fcab0bba7751e3665ff6",
+    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#7a7ff2d161777d9200b18c8937b4ff6e28c5784f",
     "@tailwindcss/vite": "^4.1.3",
     "axios": "^1.7.7",
     "dinero.js": "^1.9.1",

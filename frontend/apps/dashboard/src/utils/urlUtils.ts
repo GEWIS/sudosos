@@ -17,6 +17,10 @@ export function getProductImageSrc(product: ProductResponse): string {
   return resolveImageUrl(product.image, '/static/products', 'https://imgur.com/CS0aauU.png');
 }
 
+export function getProductImageSrcFromString(image: string): string {
+  return resolveImageUrl(image, '/static/products', 'https://imgur.com/CS0aauU.png');
+}
+
 export function getBannerImageSrc(banner: BannerResponse): string {
   return resolveImageUrl(banner.image, '/static/banners', 'https://imgur.com/CS0aauU.png');
 }

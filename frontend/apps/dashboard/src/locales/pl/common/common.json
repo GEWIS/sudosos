@@ -237,7 +237,11 @@
       "totalSoda": "Na napoje wydałeś:",
       "totalSnacks": "Na przekąski wydałeś:",
       "fav": "Na koniec, twoje ulubione były:",
-      "christmas": "Wesołych Świąt i szczęśliwego Nowego Roku od ABC!"
+      "christmas": "Wesołych Świąt i szczęśliwego Nowego Roku od ABC!",
+      "banner": {
+        "title": "SudoSOS Wrapped jest tutaj!",
+        "open": "Otwórz Wrapped"
+      }
     },
     "maintenanceMode": {
       "title": "SudoSOS jest w trybie konserwacji.",

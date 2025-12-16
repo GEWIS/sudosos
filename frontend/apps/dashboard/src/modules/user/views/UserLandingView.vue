@@ -1,5 +1,6 @@
 <template>
   <PageContainer>
+    <WrappedIsHereBanner v-if="isWrapped" />
     <div class="text-4xl mb-4">{{ t('modules.user.landing.welcome') + userFirstName }}</div>
     <div class="flex flex-col gap-5">
       <UserInfo class="md:hidden" :user="user" />
@@ -31,6 +32,8 @@ import UserInfo from '@/modules/user/components/UserInfo.vue';
 import CardComponent from '@/components/CardComponent.vue';
 import MutationsBalance from '@/components/mutations/MutationsBalance.vue';
 import PageContainer from '@/layout/PageContainer.vue';
+import { useIsWrapped } from '@/composables/isWrapped';
+import WrappedIsHereBanner from '@/components/wrapped/WrappedIsHereBanner.vue';
 
 const { t } = useI18n();
 
@@ -38,6 +41,7 @@ const authStore = useAuthStore();
 const userStore = useUserStore();
 const toast = useToast();
 
+const { isWrapped } = useIsWrapped();
 const { user } = storeToRefs(authStore);
 
 const userFirstName = computed(() => {

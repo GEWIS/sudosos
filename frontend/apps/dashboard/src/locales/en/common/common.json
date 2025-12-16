@@ -238,7 +238,11 @@
       "totalSoda": "On soda you spent:",
       "totalSnacks": "On snacks you spent:",
       "fav": "Lastly your favourites were:",
-      "christmas": "Merry christmas and a happy new year from the ABC!"
+      "christmas": "Merry christmas and a happy new year from the ABC!",
+      "banner": {
+        "title": "SudoSOS Wrapped is here!",
+        "open": "Open Wrapped"
+      }
     },
     "maintenanceMode": {
       "title": "SudoSOS is under maintenance.",

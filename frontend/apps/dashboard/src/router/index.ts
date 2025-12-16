@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { isAuthenticated, useAuthStore } from '@sudosos/sudosos-frontend-common';
+import { isAuthenticated, useAuthStore, isAllowed } from '@sudosos/sudosos-frontend-common';
 import PublicLayout from '@/layout/PublicLayout.vue';
 import DashboardLayout from '@/layout/DashboardLayout.vue';
 import ErrorView from '@/views/ErrorView.vue';
@@ -9,6 +9,7 @@ import { financialRoutes } from '@/modules/financial/routes';
 import { sellerRoutes } from '@/modules/seller/routes';
 import { userRoutes } from '@/modules/user/routes';
 import WrappedView from '@/views/WrappedView.vue';
+import apiService from '@/services/ApiService';
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -17,6 +18,29 @@ declare module 'vue-router' {
     isAllowed?: () => boolean;
   }
 }
+
+const wrappedGuard = async () => {
+  try {
+    const response = await apiService.serverSettings.getWrappedEnabled();
+    const isWrappedEnabled = typeof response.data === 'boolean' ? response.data : response.data.enabled;
+
+    if (isWrappedEnabled) {
+      return true;
+    }
+
+    // If wrapped is disabled, check if user has permission to update ServerSettings
+    const canUpdateWrapped = isAllowed('update', 'all', 'ServerSettings', ['wrappedEnabled']);
+    if (canUpdateWrapped) {
+      return true;
+    }
+
+    // Redirect to home if wrapped is disabled and user doesn't have permission
+    return { name: 'home' };
+  } catch (error) {
+    console.error('Failed to check wrapped state:', error);
+    return { name: 'home' };
+  }
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -51,6 +75,7 @@ const router = createRouter({
           path: 'wrapped',
           component: WrappedView,
           name: 'wrapped',
+          beforeEnter: wrappedGuard,
         },
       ],
     },
