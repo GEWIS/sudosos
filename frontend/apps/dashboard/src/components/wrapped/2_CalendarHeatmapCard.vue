@@ -24,7 +24,7 @@
       </div>
 
       <!-- right: side panel with text -->
-      <div class="heatmap-side ml-5 flex flex-col justify-center" :class="{ visible: showSide }">
+      <div class="heatmap-side pl-5 flex flex-col justify-center" :class="{ visible: showSide }">
         <div :aria-hidden="!showText" class="text fade-slide">
           <div class="flex flex-column items-center">
             <h1 class="text-2xl whitespace-nowrap">
