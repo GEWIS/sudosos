@@ -19,7 +19,6 @@
 
 <script setup lang="ts">
 import { defineProps, toRef, ref, watch, onMounted, type ComputedRef, computed, unref } from 'vue';
-import { formatPrice } from '@sudosos/point-of-sale/src/utils/FormatUtils';
 import type { ReportProductEntryResponse } from '@sudosos/sudosos-client';
 import PosProduct from '@/components/wrapped/Product/PosProduct.vue';
 import { getProductImageSrcFromString } from '@/utils/urlUtils';
@@ -83,6 +82,10 @@ watch(active, (newVal) => {
 onMounted(() => {
   triggerAnimationIfNeeded();
 });
+
+function formatPrice(number: number) {
+  return (number / 100).toFixed(2).replace('.', ',');
+}
 </script>
 <style scoped lang="scss">
 @keyframes slideIn {
