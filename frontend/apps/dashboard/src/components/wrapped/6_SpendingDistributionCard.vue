@@ -178,7 +178,7 @@ function computePercentage(part: number): string {
   const total = totalSpent.value || 0;
   if (total === 0) return '0%';
   const percentage = (part / total) * 100;
-  return percentage.toFixed(2) + '%';
+  return percentage.toFixed(0) + '%';
 }
 </script>
 
