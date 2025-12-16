@@ -2,7 +2,7 @@
 <template>
   <div class="card-root text-white" :class="{ active }">
     <div class="content">
-      <h2 class="text-2xl mb-5">Your <span class="font-bold">organs</span> were:</h2>
+      <h2 class="text-2xl mb-5">Your <span class="font-bold">top organs</span> were:</h2>
       <div class="grid gap-2">
         <div
           v-for="(organInfo, index) in organsWithInfo"
@@ -28,8 +28,8 @@
               </template>
               <template v-else>
                 Number <span class="font-bold">{{ organInfo.ordinalTurnoverCreated + 1 }}</span> seller
-                <span v-if="organInfo.ordinalTransactionCreated >= 0">
-                  , number <span class="font-bold">{{ organInfo.ordinalTransactionCreated + 1 }}</span> in transactions
+                <span v-if="organInfo.ordinalTransactionCreated >= 0"
+                  >& number <span class="font-bold">{{ organInfo.ordinalTransactionCreated + 1 }}</span> in transactions
                 </span>
               </template>
             </h4>
