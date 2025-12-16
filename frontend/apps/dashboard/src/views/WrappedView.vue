@@ -96,7 +96,7 @@ import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import type { ReportResponse } from '@sudosos/sudosos-client/src/api';
 // eslint-disable-next-line import/no-named-as-default
 import Dinero from 'dinero.js';
-import type { WrappedResponse, UserResponse } from '@sudosos/sudosos-client';
+import type { WrappedResponse, UserResponse, ReportProductEntryResponse } from '@sudosos/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
@@ -211,7 +211,23 @@ const favoriteProducts = computed(() => {
     return [];
   }
 
-  return report.value?.data.products!.sort((a, b) => b.count - a.count);
+  const productMap = new Map<number, ReportProductEntryResponse>();
+
+  for (const productEntry of report.value.data.products || []) {
+    const key = productEntry.product?.id;
+    const existing = productMap.get(key);
+
+    if (existing) {
+      existing.count += productEntry.count;
+      existing.product = productEntry.product;
+    } else {
+      productMap.set(key, { ...productEntry });
+    }
+  }
+
+  const aggregated = Array.from(productMap.values());
+
+  return aggregated.sort((a, b) => b.count - a.count).slice(0, 10);
 });
 
 const favoriteProduct = computed(() => {
