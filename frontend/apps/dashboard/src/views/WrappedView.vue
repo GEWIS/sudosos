@@ -50,10 +50,7 @@
         />
       </div>
     </div>
-    <div
-      v-else
-      class="absolute inset-0 z-50 flex items-center justify-center p-4 sm:static sm:inset-auto sm:flex-1 bg-white"
-    >
+    <div v-else class="absolute inset-0 z-50 flex items-center justify-center p-4 sm:static sm:inset-auto sm:flex-1">
       <div class="flex flex-col items-center gap-3 text-center">
         <ProgressSpinner aria-label="Loading wrapped" stroke-width="6" style="width: 64px; height: 64px" />
         <div class="mt-4 text-lg font-medium">
