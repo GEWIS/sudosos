@@ -132,7 +132,6 @@ const showSide = ref(false);
 const showText = ref(false);
 
 let animationToken = 0;
-const REVEAL_INTERVAL = 15; // ms between revealing subsequent days
 
 // only play the reveal animation the first time the card becomes active
 const hasPlayed = ref(false);
@@ -158,11 +157,31 @@ async function runAnimation(token: number) {
   // mark as centered & start revealing
   stage.value = 'revealing';
 
-  // reveal days sequentially (cancellable)
-  for (const d of daysOfYear.value) {
+  // Reveal days using an ease-in-out curve so delays are shorter in the middle.
+  const days = daysOfYear.value;
+  const n = days.length;
+
+  const duration = 3500;
+  const totalDuration = Math.max(1, Math.round(duration ?? 0));
+
+  const alpha = 0.85; // contrast (0 = uniform, closer to 1 = stronger edge emphasis)
+  const weights: number[] = new Array(n);
+  let sumw = 0;
+  for (let i = 0; i < n; i++) {
+    const x = i / (n - 1); // normalized position in [0,1]
+    // cos(2πx) gives 1 at edges (x=0,1) and -1 at center (x=0.5)
+    weights[i] = 1 + alpha * Math.cos(2 * Math.PI * x);
+    sumw += weights[i];
+  }
+
+  for (let i = 0; i < n; i++) {
     if (token !== animationToken) return; // cancelled
-    revealed.value.add(d.index);
-    await new Promise((res) => setTimeout(res, REVEAL_INTERVAL));
+
+    const wait = Math.max(0, Math.round((weights[i] / sumw) * totalDuration));
+    await new Promise((res) => setTimeout(res, wait));
+    if (token !== animationToken) return;
+
+    revealed.value.add(days[i].index);
   }
 
   if (token !== animationToken) return;
