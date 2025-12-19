@@ -21,13 +21,8 @@ export function useAdminNav() {
           },
           {
             label: t('common.navigation.banners'),
-            route: '/banner',
+            route: '/admin/banner',
             visible: isAllowed('get', ['own'], 'Banner', ['any']),
-          },
-          {
-            label: t('common.navigation.transactions'),
-            route: '/financial/transactions',
-            visible: isAllowed('get', ['all'], 'Transaction', ['any']),
           },
         ].filter((item) => item.visible),
       },

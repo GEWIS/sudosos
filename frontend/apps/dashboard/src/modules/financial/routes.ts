@@ -20,7 +20,7 @@ export function financialRoutes(): RouteRecordRaw[] {
       meta: { requiresAuth: true },
       children: [
         {
-          path: '/debtor',
+          path: '/financial/debtor',
           component: DebtorView,
           name: 'Debtors',
           meta: {
@@ -29,7 +29,7 @@ export function financialRoutes(): RouteRecordRaw[] {
           },
         },
         {
-          path: '/debtor/:id',
+          path: '/financial/debtor/:id',
           component: DebtorHandoutView,
           name: 'debtorSingleHandout',
           meta: {
@@ -38,7 +38,7 @@ export function financialRoutes(): RouteRecordRaw[] {
           },
         },
         {
-          path: '/invoice',
+          path: '/financial/invoice',
           component: InvoiceOverview,
           name: 'invoices',
           meta: {
@@ -47,7 +47,7 @@ export function financialRoutes(): RouteRecordRaw[] {
           },
         },
         {
-          path: '/invoice/create',
+          path: '/financial/invoice/create',
           component: InvoiceCreateView,
           name: 'invoiceCreate',
           meta: {
@@ -56,7 +56,7 @@ export function financialRoutes(): RouteRecordRaw[] {
           },
         },
         {
-          path: '/invoice/:id',
+          path: '/financial/invoice/:id',
           redirect: (to) => {
             const { id } = to.params;
             return `/invoice/${id as string}/info`;
@@ -67,7 +67,7 @@ export function financialRoutes(): RouteRecordRaw[] {
           },
         },
         {
-          path: '/invoice/:id/info',
+          path: '/financial/invoice/:id/info',
           name: 'invoiceInfo',
           component: InvoiceInfoView,
           props: true,
@@ -77,7 +77,7 @@ export function financialRoutes(): RouteRecordRaw[] {
           },
         },
         {
-          path: '/payout',
+          path: '/financial/payout',
           component: PayoutsView,
           name: 'payouts',
           meta: {
@@ -86,7 +86,7 @@ export function financialRoutes(): RouteRecordRaw[] {
           },
         },
         {
-          path: '/write-offs',
+          path: '/financial/write-off',
           component: WriteOffsView,
           name: 'writeOffs',
           meta: {
@@ -95,7 +95,7 @@ export function financialRoutes(): RouteRecordRaw[] {
           },
         },
         {
-          path: '/financial/transactions',
+          path: '/financial/transaction',
           component: TransactionView,
           name: 'financial-transactions',
           meta: {
@@ -104,7 +104,7 @@ export function financialRoutes(): RouteRecordRaw[] {
           },
         },
         {
-          path: '/seller',
+          path: '/financial/seller',
           component: SellerView,
           name: 'sellers',
           meta: {
@@ -113,7 +113,7 @@ export function financialRoutes(): RouteRecordRaw[] {
           },
         },
         {
-          path: '/vat',
+          path: '/financial/vat',
           component: VatView,
           name: 'vat',
           meta: {

@@ -24,7 +24,7 @@ export function adminRoutes(): RouteRecordRaw[] {
           },
         },
         {
-          path: '/banner',
+          path: '/admin/banner',
           component: AdminBannersView,
           name: 'banners',
           meta: {
