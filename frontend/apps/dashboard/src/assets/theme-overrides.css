@@ -12,3 +12,7 @@
 .p-tablist-active-bar {
   background-color: var(--p-secondary-color) !important;
 }
+
+:root {
+  --p-transition-duration: 0;
+}
