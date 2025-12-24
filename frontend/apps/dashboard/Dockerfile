@@ -1,5 +1,5 @@
 # Build in a different image to keep the target image clean
-FROM node:20 AS build
+FROM node:24 AS build
 RUN corepack enable && yarn set version berry
 WORKDIR /app
 COPY lib/common/ lib/common/

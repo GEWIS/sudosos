@@ -58,7 +58,7 @@ const imageSource = computed(() => {
 
 const onImgUpload = (e: Event) => {
   const el = e.target as HTMLInputElement;
-  if (!el?.files?.length) return;
+  if (!(el?.files?.length && el.files[0])) return;
   uploadedImage.value = el.files[0];
   props.form.context.setFieldValue('file', uploadedImage.value);
 };

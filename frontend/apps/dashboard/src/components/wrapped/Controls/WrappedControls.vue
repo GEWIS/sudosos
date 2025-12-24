@@ -33,7 +33,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
 import DotPager from '@/components/wrapped/Controls/DotPager.vue';
 
 const props = defineProps({

@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, toRef, ref, watch, computed, type ComputedRef, unref } from 'vue';
+import { toRef, ref, watch, computed, type ComputedRef, unref } from 'vue';
 import type { ReportProductEntryResponse } from '@sudosos/sudosos-client';
 import { getProductImageSrcFromString } from '@/utils/urlUtils';
 

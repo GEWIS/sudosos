@@ -66,7 +66,7 @@ export function useConditionalPreset() {
       }
     }
 
-    return availablePresets.value[availablePresets.value.length - 1];
+    return availablePresets.value[availablePresets.value.length - 1]!;
   };
 
   const currentPreset = ref(getInitialPreset().label);

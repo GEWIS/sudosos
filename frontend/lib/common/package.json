@@ -16,13 +16,11 @@
   "main": "./dist/sudosos-frontend-common.umd.cjs",
   "module": "./dist/sudosos-frontend-common.js",
   "type": "module",
-  "types": "./dist/index.d.ts",
-  "typings": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/src/index.d.ts",
       "import": "./dist/sudosos-frontend-common.js",
-      "require": "./dist/sudosos-frontend-common.umd.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/sudosos-frontend-common.umd.cjs"
     }
   },
   "files": [
@@ -40,6 +38,6 @@
   },
   "homepage": "https://gitlab.com/sudosos/sudosos-frontend-common#readme",
   "devDependencies": {
-    "eslint": "^9.24.0"
+    "eslint": "^9.39.1"
   }
 }

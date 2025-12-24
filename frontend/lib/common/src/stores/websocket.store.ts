@@ -17,7 +17,7 @@ export const useWebSocketStore = defineStore('websocket', {
       if (!this.socket) {
         throw new Error('Socket not found');
       }
-      return this.socket;
+      return this.socket as Socket;
     },
   },
   actions: {

@@ -23,7 +23,7 @@ import {
   WriteoffsApi,
   ServerSettingsApi,
 } from '@sudosos/sudosos-client';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import { getTokenFromStorage, updateTokenIfNecessary } from '../helpers/TokenHelper';
 
 // Create an axios instance

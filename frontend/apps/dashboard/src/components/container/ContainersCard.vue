@@ -95,7 +95,7 @@ const { t } = useI18n();
 const onTabOpen = async (event: AccordionTabOpenEvent) => {
   const index = props.containers.findIndex((c) => c.id === event.index);
   if (index === -1) return;
-  await containerStore.fetchContainer(props.containers[index].id);
+  await containerStore.fetchContainer(props.containers[index]!.id);
 };
 
 const handleEditClick = async (event: Event, id: number) => {
@@ -125,7 +125,7 @@ const handleRemoveClick = (event: Event, id: number) => {
   const index = props.containers.findIndex((c) => c.id === id);
   event.stopPropagation();
   if (!props.associatedPos || index === -1) return;
-  deleteContainerPOS(props.associatedPos, props.containers[index]);
+  deleteContainerPOS(props.associatedPos, props.containers[index]!);
 };
 </script>
 <style scoped lang="scss"></style>

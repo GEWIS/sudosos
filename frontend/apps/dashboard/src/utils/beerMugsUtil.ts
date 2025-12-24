@@ -104,7 +104,7 @@ function moveBeerMugs() {
   if (enableAnimations) {
     for (let i = 0; i < beerMugsUtil.length; i++) {
       const beerMug = beerMugsUtil[i];
-      beerMug.update();
+      beerMug!.update();
     }
   }
 
@@ -116,8 +116,8 @@ function moveBeerMugs() {
     for (let i = 0; i < beerMugsUtil.length; i++) {
       const beerMug = beerMugsUtil[i];
 
-      beerMug.xPos = getPosition(50, browserWidth);
-      beerMug.yPos = getPosition(50, browserHeight);
+      beerMug!.xPos = getPosition(50, browserWidth);
+      beerMug!.yPos = getPosition(50, browserHeight);
     }
 
     resetPosition = false;
@@ -131,7 +131,7 @@ function moveBeerMugs() {
 //
 function generateBeerMugs() {
   // get our beerMug element from the DOM and store it
-  const originalBeerMug = document.getElementsByClassName('beerMug')[0];
+  const originalBeerMug = document.getElementsByClassName('beerMug')[0]!;
 
   // access our beerMug element's parent container
   const beerMugContainer = document.getElementById('beerMugContainer');

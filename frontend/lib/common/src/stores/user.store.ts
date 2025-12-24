@@ -1,5 +1,5 @@
 import { createPinia, defineStore } from 'pinia';
-import {
+import type {
   BalanceResponse,
   PaginatedBaseTransactionResponse,
   PaginatedFinancialMutationResponse,

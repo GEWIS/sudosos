@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, toRef, ref, watch, onMounted, onUnmounted } from 'vue';
+import { toRef, ref, watch, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 const props = defineProps<{ active?: boolean; showArrows?: boolean }>();
 const active = toRef(props, 'active');

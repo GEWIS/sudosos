@@ -293,7 +293,7 @@ const cardProps = computed<CardProps[]>(() => {
   ];
 
   if (hasOrgans.value) {
-    const organName = organDetails.value[organs.value[0].organId]?.firstName;
+    const organName = organDetails.value[organs.value[0]!.organId]?.firstName;
     let image = posImage;
     let dark = true;
     switch (organName) {
@@ -365,7 +365,7 @@ const cardBackgrounds = computed(() => {
   base.push('linear-gradient(45deg, #233329 0%, #63d471 100%)', 'linear-gradient(135deg, #ff8800 0%, #ff3300 100%)');
 
   if (hasOrgans.value) {
-    const organName = organDetails.value[organs.value[0].organId]?.firstName;
+    const organName = organDetails.value[organs.value[0]!.organId]?.firstName;
     switch (organName) {
       case 'BAC':
         base.push('#004b31');
@@ -405,7 +405,7 @@ const bgFadeDuration = 420;
 
 watch(currentIndex, async (newIndex, oldIndex) => {
   if (oldIndex === undefined || oldIndex === newIndex) return;
-  prevBackground.value = cardBackgrounds.value[oldIndex];
+  prevBackground.value = cardBackgrounds.value[oldIndex]!;
   prevFading.value = false;
 
   await nextTick();

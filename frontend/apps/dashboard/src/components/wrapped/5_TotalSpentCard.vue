@@ -22,7 +22,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { defineProps, toRef, ref, onMounted, onUnmounted, watch, type ComputedRef, computed, unref } from 'vue';
+import { toRef, ref, onMounted, onUnmounted, watch, type ComputedRef, computed, unref } from 'vue';
 // eslint-disable-next-line import/no-named-as-default
 import Dinero, { type DineroObject } from 'dinero.js';
 import { formatPrice } from '@/utils/formatterUtils';

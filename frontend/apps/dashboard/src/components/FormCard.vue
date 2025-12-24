@@ -30,7 +30,7 @@
         :result="form.success?.value != null"
         :submitting="form.context.isSubmitting.value"
         type="submit"
-        @click="() => form.submit()"
+        @click="() => form && form.submit()"
       />
       <Button icon="pi pi-times" :label="t('common.cancel')" severity="secondary" type="button" @click="cancel" />
     </div>

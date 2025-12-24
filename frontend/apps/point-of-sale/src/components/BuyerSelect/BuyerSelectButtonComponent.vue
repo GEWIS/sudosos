@@ -15,7 +15,6 @@
 </template>
 
 <script setup lang="ts">
-import { withDefaults } from 'vue';
 import Button from 'primevue/button';
 import { useCartStore } from '@/stores/cart.store';
 import { PointOfSaleAssociate } from '@/stores/pos.store';

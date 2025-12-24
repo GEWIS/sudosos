@@ -45,6 +45,6 @@ const { year, rows, isLoading, records, totalRecords, onPage, onSingle } = useDa
   Record<string, unknown>
 >(fetchWriteOffs, fetchSingleWriteOff, {
   yearList: years,
-  defaultYear: years[0],
+  defaultYear: years[0]!,
 });
 </script>

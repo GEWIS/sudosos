@@ -118,7 +118,7 @@ onMounted(() => {
   let selected = undefined;
   if (props.default) {
     // Quick load the default user
-    selected = transformUsers([props.default])[0];
+    selected = transformUsers([props.default])[0]!;
     users.value = [selected];
     selectedUser.value = selected;
   }

@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, toRef, ref, onMounted, onUnmounted, watch, computed, unref, type ComputedRef } from 'vue';
+import { toRef, ref, onMounted, onUnmounted, watch, computed, unref, type ComputedRef } from 'vue';
 import type { DineroObject } from 'dinero.js';
 
 const props = defineProps<{

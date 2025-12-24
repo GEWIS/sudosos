@@ -56,6 +56,8 @@ export const useBannersStore = defineStore('banners', {
      */
     async updateBanner(bannerId: number, banner: BannerRequest) {
       const updated = await apiService.banner.update(bannerId, banner);
+      if (!this.banners[bannerId]) return updated;
+
       this.banners[bannerId] = { ...this.banners[bannerId], ...banner };
       this.lastUpdated = Date.now();
       return updated;

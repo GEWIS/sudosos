@@ -209,7 +209,7 @@ function updateAmount(subTransactionIndex: number, rowIndex: number, amount: num
   );
 
   if (existingIndex >= 0) {
-    currentAmounts[existingIndex] = { ...currentAmounts[existingIndex], amount };
+    currentAmounts[existingIndex] = { ...currentAmounts[existingIndex]!, amount };
   } else {
     currentAmounts.push({ subTransactionIndex, rowIndex, amount });
   }

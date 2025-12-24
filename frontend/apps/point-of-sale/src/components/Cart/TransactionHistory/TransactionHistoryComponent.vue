@@ -31,7 +31,7 @@ const props = defineProps({
 const openId: Ref<number | undefined | null> = ref(null);
 
 const shouldOpen = (transaction: BaseTransactionResponse) => {
-  return transaction.id === openId.value || (openId.value === null && transaction.id === props.transactions[0].id);
+  return transaction.id === openId.value || (openId.value === null && transaction.id === props.transactions[0]!.id);
 };
 
 // Function to handle onClick of rows. If same row is pressed twice we close it again.

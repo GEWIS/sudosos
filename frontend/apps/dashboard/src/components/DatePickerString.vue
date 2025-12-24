@@ -59,10 +59,11 @@ watch(internalDate, (newDate) => {
 // Function to convert a string date to a Date object
 function stringToDate(dateString: string): Date | null {
   if (!dateString) return null;
+  if (!/^\d{4}-\d{1,2}-\d{1,2}$/.test(dateString)) return null; // Basic validation
   const parts = dateString.split('-');
-  const year = parseInt(parts[0], 10);
-  const month = parseInt(parts[1], 10) - 1; // Months are zero-indexed
-  const day = parseInt(parts[2], 10);
+  const year = parseInt(parts[0]!, 10);
+  const month = parseInt(parts[1]!, 10) - 1; // Months are zero-indexed
+  const day = parseInt(parts[2]!, 10);
   return new Date(year, month, day);
 }
 

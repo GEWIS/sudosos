@@ -48,7 +48,7 @@ const props = defineProps<{
 const { t } = useI18n();
 const userStore = useUserStore();
 
-const userBalance: ComputedRef<BalanceResponse | null> = computed(() => {
+const userBalance: ComputedRef<BalanceResponse | undefined> = computed(() => {
   return userStore.getBalanceById(props.user.id);
 });
 const isOrgan = computed(() => props.user?.type == 'ORGAN');

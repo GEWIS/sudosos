@@ -157,7 +157,7 @@ watch(props.form.model.name.value, () => {
     return;
   }
   if (closest.score && results.length > 0 && closest.score < 0.3) {
-    closeTo.value = results[0].item;
+    closeTo.value = results[0]!.item;
   } else {
     closeTo.value = null;
   }

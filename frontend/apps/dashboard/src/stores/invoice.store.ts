@@ -29,12 +29,13 @@ export const useInvoiceStore = defineStore('invoice', {
     },
   },
   actions: {
-    async updateInvoice(id: number, updateInvoiceRequest: UpdateInvoiceRequest): Promise<InvoiceResponse> {
+    async updateInvoice(id: number, updateInvoiceRequest: UpdateInvoiceRequest): Promise<BaseInvoiceResponse> {
       return await ApiService.invoices.updateInvoice(id, updateInvoiceRequest).then((res) => {
         const invoice: BaseInvoiceResponse = res.data;
+        if (!this.invoices[invoice.id]) return invoice;
         // BaseInvoice does not contain entries, so we merge them
-        this.invoices[invoice.id] = { ...this.invoices[invoice.id], ...invoice };
-        return this.invoices[invoice.id];
+        this.invoices[invoice.id] = { ...this.invoices[invoice.id]!, ...invoice };
+        return this.invoices[invoice.id]!;
       });
     },
     async getOrFetchInvoice(id: number): Promise<InvoiceResponse> {
@@ -46,13 +47,16 @@ export const useInvoiceStore = defineStore('invoice', {
     async deleteInvoice(id: number): Promise<void> {
       await ApiService.invoices.updateInvoice(id, { state: InvoiceStatusResponseStateEnum.Deleted }).then((res) => {
         const invoice: BaseInvoiceResponse = res.data;
-        this.invoices[invoice.id] = { ...this.invoices[invoice.id], ...invoice };
+        if (!this.invoices[invoice.id]) return undefined;
+        this.invoices[invoice.id] = { ...this.invoices[invoice.id]!, ...invoice };
         return this.invoices[invoice.id];
       });
     },
-    async fetchInvoicePdf(id: number): Promise<string> {
+    async fetchInvoicePdf(id: number): Promise<string | undefined> {
       return await ApiService.invoices.getInvoicePdf(id).then((res) => {
         const pdf = (res.data as unknown as { pdf: string }).pdf;
+        if (!this.invoices[id]) return undefined;
+
         this.invoices[id].pdf = pdf;
         return pdf;
       });
@@ -61,7 +65,7 @@ export const useInvoiceStore = defineStore('invoice', {
       return await ApiService.invoices.getSingleInvoice(id).then((res) => {
         const invoice = res.data;
         this.invoices[invoice.id] = invoice;
-        return this.invoices[invoice.id];
+        return this.invoices[invoice.id]!;
       });
     },
     async fetchInvoices(

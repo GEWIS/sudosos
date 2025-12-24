@@ -97,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref } from 'vue';
 import type { WriteOffResponse } from '@sudosos/sudosos-client';
 import Column from 'primevue/column';
 import Button from 'primevue/button';

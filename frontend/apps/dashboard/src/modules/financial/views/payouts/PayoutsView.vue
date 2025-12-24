@@ -11,7 +11,7 @@
             @click="showDialog = true"
           />
         </template>
-        <Tabs class="w-full" :value="states[0]">
+        <Tabs class="w-full" :value="states[0]!">
           <TabList>
             <Tab v-for="state in states" :key="state" :value="state">
               {{ state }}

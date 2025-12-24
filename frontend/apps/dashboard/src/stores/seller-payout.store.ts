@@ -26,7 +26,7 @@ export const useSellerPayoutStore = defineStore('seller-payout', {
       return await ApiService.sellerPayouts.getSingleSellerPayout(id).then((res) => {
         const payout = res.data;
         this.payouts[payout.id] = payout;
-        return this.payouts[payout.id];
+        return this.payouts[payout.id]!;
       });
     },
     async fetchPayouts(take: number, skip: number): Promise<PaginatedSellerPayoutResponse> {

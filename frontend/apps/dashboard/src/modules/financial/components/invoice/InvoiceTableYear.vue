@@ -73,7 +73,7 @@ const { year, rows, isLoading, records, totalRecords, onPage, setFilter, onSingl
   { state?: InvoiceStatusResponseStateEnum }
 >(fetchInvoices, fetchSingleInvoice, {
   yearList: years,
-  defaultYear: years[0],
+  defaultYear: years[0]!,
   initialFilters: { state: filterState.value },
   defaultRows: 10,
 });

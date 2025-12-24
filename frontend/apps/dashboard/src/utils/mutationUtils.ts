@@ -76,7 +76,7 @@ export function isPaginatedBaseTransactionResponse(obj: unknown): obj is Paginat
   return (
     (obj as PaginatedBaseTransactionResponse).records &&
     (obj as PaginatedBaseTransactionResponse).records.length > 0 &&
-    'id' in (obj as PaginatedBaseTransactionResponse).records[0]
+    'id' in (obj as PaginatedBaseTransactionResponse).records[0]!
   );
 }
 

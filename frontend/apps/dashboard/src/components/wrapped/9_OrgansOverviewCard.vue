@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, toRef, ref, watch, computed, type ComputedRef, unref } from 'vue';
+import { toRef, ref, watch, computed, type ComputedRef, unref } from 'vue';
 import type { UserResponse } from '@sudosos/sudosos-client';
 
 interface OrganInfo {

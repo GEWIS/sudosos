@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, toRef, ref, onMounted, onUnmounted, unref, computed } from 'vue';
+import { toRef, ref, onMounted, onUnmounted, unref, computed } from 'vue';
 
 const props = defineProps<{
   active?: boolean;

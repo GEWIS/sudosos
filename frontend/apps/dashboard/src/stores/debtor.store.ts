@@ -89,15 +89,15 @@ export const useDebtorStore = defineStore('debtor', {
   getters: {
     debtors(state) {
       const debtors = state.allDebtors.filter((u) => {
-        return (u.fine.balances[0].firstName + ' ' + u.fine.balances[0].lastName)
+        return (u.fine.balances[0]!.firstName + ' ' + u.fine.balances[0]!.lastName)
           .toLowerCase()
           .includes(state.filter.name.toLowerCase());
       });
       switch (state.sort.field) {
         case SortField.NAME: {
           debtors.sort((a, b) => {
-            const aFullName = (a.fine.balances[0].firstName + ' ' + a.fine.balances[0].lastName).toLowerCase();
-            const bFullName = (b.fine.balances[0].firstName + ' ' + b.fine.balances[0].lastName).toLowerCase();
+            const aFullName = (a.fine.balances[0]!.firstName + ' ' + a.fine.balances[0]!.lastName).toLowerCase();
+            const bFullName = (b.fine.balances[0]!.firstName + ' ' + b.fine.balances[0]!.lastName).toLowerCase();
 
             return (aFullName > bFullName ? 1 : -1) * (state.sort.direction || 1) * -1;
           });
@@ -106,7 +106,7 @@ export const useDebtorStore = defineStore('debtor', {
         case SortField.FINE: {
           debtors.sort((a, b) => {
             return (
-              ((a.fine.balances[0].fine?.amount || 0) - (b.fine.balances[0].fine?.amount || 0)) *
+              ((a.fine.balances[0]!.fine?.amount || 0) - (b.fine.balances[0]!.fine?.amount || 0)) *
               (state.sort.direction || 1)
             );
           });
@@ -114,8 +114,8 @@ export const useDebtorStore = defineStore('debtor', {
         }
         case SortField.FINE_SINCE: {
           debtors.sort((a, b) => {
-            const dateA = a.fine.balances[0].fineSince ? new Date(a.fine.balances[0].fineSince) : new Date();
-            const dateB = b.fine.balances[0].fineSince ? new Date(b.fine.balances[0].fineSince) : new Date();
+            const dateA = a.fine.balances[0]!.fineSince ? new Date(a.fine.balances[0]!.fineSince) : new Date();
+            const dateB = b.fine.balances[0]!.fineSince ? new Date(b.fine.balances[0]!.fineSince) : new Date();
             return (dateA.getTime() - dateB.getTime()) * (state.sort.direction || 1) * -1;
           });
           break;
@@ -123,7 +123,7 @@ export const useDebtorStore = defineStore('debtor', {
         case SortField.REFERENCE_BALANCE: {
           debtors.sort((a, b) => {
             return (
-              (a.fine.balances[0].amount.amount - b.fine.balances[0].amount.amount) * (state.sort.direction || 1) * -1
+              (a.fine.balances[0]!.amount.amount - b.fine.balances[0]!.amount.amount) * (state.sort.direction || 1) * -1
             );
           });
           break;
@@ -131,7 +131,7 @@ export const useDebtorStore = defineStore('debtor', {
         case SortField.CONTROL_BALANCE: {
           debtors.sort((a, b) => {
             return (
-              (a.fine.balances[1].amount.amount - b.fine.balances[1].amount.amount) * (state.sort.direction || 1) * -1
+              (a.fine.balances[1]!.amount.amount - b.fine.balances[1]!.amount.amount) * (state.sort.direction || 1) * -1
             );
           });
           break;
@@ -143,7 +143,7 @@ export const useDebtorStore = defineStore('debtor', {
     totalDebt(state): Dinero.DineroObject {
       return {
         amount: state.allDebtors.reduce((accumulator: number, current: Debtor) => {
-          return accumulator + current.fine.balances[0].amount.amount;
+          return accumulator + current.fine.balances[0]!.amount.amount;
         }, 0),
         currency: 'EUR',
         precision: 2,
@@ -199,7 +199,7 @@ export const useDebtorStore = defineStore('debtor', {
       users.forEach((user, i) => {
         allDebtors.push({
           user: user.data,
-          fine: this.userToFineResponse[i],
+          fine: this.userToFineResponse[i]!,
         });
       });
 

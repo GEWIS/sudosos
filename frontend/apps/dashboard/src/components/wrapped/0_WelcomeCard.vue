@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, toRef, ref, onMounted, onUnmounted, watch } from 'vue';
+import { toRef, ref, onMounted, onUnmounted, watch } from 'vue';
 const props = defineProps<{ active?: boolean; firstName?: string; showArrows?: boolean }>();
 const active = toRef(props, 'active');
 const firstName = toRef(props, 'firstName');

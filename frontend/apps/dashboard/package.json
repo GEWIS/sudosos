@@ -22,21 +22,20 @@
     "format-fix": "prettier --ignore-path .gitignore --write ."
   },
   "dependencies": {
-    "@stripe/stripe-js": "^5.2.0",
+    "@stripe/stripe-js": "^8.5.3",
     "@sudosos/sudosos-frontend-common": "workspace:^",
     "@sudosos/themes": "workspace:^",
-    "@tailwindcss/vite": "^4.1.4",
-    "@vee-validate/rules": "^4.14.1",
-    "@vee-validate/yup": "^4.14.1",
-    "marked": "^15.0.1",
-    "vee-validate": "^4.14.1",
-    "vue-i18n": "^9.14.1",
+    "@tailwindcss/vite": "^4.1.17",
+    "@vee-validate/rules": "^4.15.1",
+    "@vee-validate/yup": "^4.15.1",
+    "marked": "^17.0.1",
+    "vee-validate": "^4.15.1",
+    "vue-i18n": "^11.2.2",
     "vue3-pdf-app": "^1.0.3",
-    "yup": "^1.4.0"
+    "yup": "^1.7.1"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.16",
-    "eslint": "^9.24.0",
-    "vue-tsc": "^2.2.8"
+    "@tailwindcss/typography": "^0.5.19",
+    "eslint": "^9.39.1"
   }
 }

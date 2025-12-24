@@ -1,5 +1,5 @@
-import { AxiosHeaders, AxiosResponse } from 'axios';
-import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { AxiosHeaders, type AxiosResponse } from 'axios';
+import { jwtDecode, type JwtPayload } from 'jwt-decode';
 import { jwtVerify, importSPKI } from 'jose';
 import { ApiService } from '../services/ApiService';
 import { useAuthStore } from '../stores/auth.store';

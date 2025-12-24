@@ -55,6 +55,8 @@ export const useWriteOffStore = defineStore('writeoff', {
     async fetchPdf(id: number): Promise<string | undefined> {
       return apiService.writeOffs.getWriteOffPdf(id).then((res) => {
         const pdf = res.data.pdf;
+        if (!this.writeOffs[id]) return undefined;
+
         this.writeOffs[id].pdf = pdf;
         return pdf;
       });

@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, toRef, computed, ref, watch, unref } from 'vue';
+import { toRef, computed, ref, watch, unref } from 'vue';
 
 const props = defineProps<{
   active?: boolean;
@@ -171,17 +171,17 @@ async function runAnimation(token: number) {
     const x = i / (n - 1); // normalized position in [0,1]
     // cos(2πx) gives 1 at edges (x=0,1) and -1 at center (x=0.5)
     weights[i] = 1 + alpha * Math.cos(2 * Math.PI * x);
-    sumw += weights[i];
+    sumw += weights[i]!;
   }
 
   for (let i = 0; i < n; i++) {
     if (token !== animationToken) return; // cancelled
 
-    const wait = Math.max(0, Math.round((weights[i] / sumw) * totalDuration));
+    const wait = Math.max(0, Math.round((weights[i]! / sumw) * totalDuration));
     await new Promise((res) => setTimeout(res, wait));
     if (token !== animationToken) return;
 
-    revealed.value.add(days[i].index);
+    revealed.value.add(days[i]!.index);
   }
 
   if (token !== animationToken) return;

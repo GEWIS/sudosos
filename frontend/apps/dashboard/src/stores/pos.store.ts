@@ -53,7 +53,7 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
         const pointOfSaleWithContainers: PointOfSaleWithContainersResponse = res.data;
         this.pointsOfSale[pointOfSale.id] = pointOfSale;
         this.pointsOfSaleWithContainers[pointOfSaleWithContainers.id] = pointOfSaleWithContainers;
-        return this.pointsOfSaleWithContainers[pointOfSaleWithContainers.id];
+        return this.pointsOfSaleWithContainers[pointOfSaleWithContainers.id]!;
       });
     },
     async removeContainerFromPos(posId: number, containerId: number) {

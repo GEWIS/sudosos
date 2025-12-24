@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import {
+import type {
   AuthenticationEanRequest,
   AuthenticationKeyRequest,
   AuthenticationLDAPRequest,
@@ -16,7 +16,7 @@ import {
   AuthenticationLocalRequest,
   GEWISAuthenticationSecurePinRequest,
 } from '@sudosos/sudosos-client';
-import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { jwtDecode, type JwtPayload } from 'jwt-decode';
 import { ApiService } from '../services/ApiService';
 import { clearTokenInStorage, getTokenFromStorage, setTokenInStorage } from '../helpers/TokenHelper';
 import { useUserStore } from './user.store';

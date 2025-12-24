@@ -119,8 +119,8 @@ export const useCartStore = defineStore('cart', {
       );
       if (index !== -1) {
         const existingProduct = this.products[index];
-        existingProduct.count -= 1;
-        if (existingProduct.count === 0) {
+        existingProduct!.count -= 1;
+        if (existingProduct!.count === 0) {
           this.products.splice(index, 1);
         }
       }
@@ -154,7 +154,7 @@ export const useCartStore = defineStore('cart', {
             row: [request],
           };
         } else {
-          containerSubTransactionsRows[cartProduct.container.id].row.push(request);
+          containerSubTransactionsRows[cartProduct.container.id]!.row.push(request);
         }
       });
 

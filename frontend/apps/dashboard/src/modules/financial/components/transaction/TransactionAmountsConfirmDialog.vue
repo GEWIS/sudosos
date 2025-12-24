@@ -119,8 +119,8 @@ const amountChanges = computed(() => {
     // Skip new products - they don't have existing rows to compare
     if (isNewProduct) return;
 
-    const subTransaction = props.transaction.subTransactions[subTransactionIndex];
-    const row = subTransaction.subTransactionRows[rowIndex];
+    const subTransaction = props.transaction.subTransactions[subTransactionIndex]!;
+    const row = subTransaction.subTransactionRows[rowIndex]!;
     const oldAmount = row.amount;
 
     if (oldAmount !== amount) {

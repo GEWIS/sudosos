@@ -103,7 +103,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';

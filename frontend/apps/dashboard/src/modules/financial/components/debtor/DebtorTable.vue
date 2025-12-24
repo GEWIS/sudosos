@@ -405,11 +405,11 @@ const debtorRows: ComputedRef<DebtorRow[]> = computed(() => {
       id: debtor.user.id,
       gewisId: debtor.user.gewisId,
       user: debtor.user,
-      referenceBalance: formatPrice(debtor.fine.balances[0].amount),
-      controlBalance: debtor.fine.balances[1] && formatPrice(debtor.fine.balances[1].amount),
-      referenceBalanceFine: debtor.fine.balances[0].fine && formatPrice(debtor.fine.balances[0].fine),
+      referenceBalance: formatPrice(debtor.fine.balances[0]!.amount),
+      controlBalance: debtor.fine.balances[1]! && formatPrice(debtor.fine.balances[1].amount),
+      referenceBalanceFine: debtor.fine.balances[0]!.fine && formatPrice(debtor.fine.balances[0]!.fine),
       fine: fine,
-      fineSince: debtor.fine.balances[0].fineSince,
+      fineSince: debtor.fine.balances[0]!.fineSince,
       canGoInDebt: debtor.user.canGoIntoDebt,
     });
   }
@@ -423,7 +423,7 @@ const selectedTotalDebt = computed(() => {
       selectedUsers.value
         ?.map((r) => debtorStore.allDebtors.find((d) => d.user.id === r.id)!)
         .reduce((accumulator: number, current: Debtor) => {
-          return accumulator + current.fine.balances[0].amount.amount;
+          return accumulator + current.fine.balances[0]!.amount.amount;
         }, 0) || 0,
     currency: 'EUR',
     precision: 2,

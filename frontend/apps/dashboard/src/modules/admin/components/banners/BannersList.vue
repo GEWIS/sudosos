@@ -35,7 +35,7 @@
             v-for="(item, index) in slotProps.items"
             :key="index"
             :banner="item"
-            :index="index"
+            :index="Number(index)"
             @select:banner="selectBanner"
           />
         </div>
@@ -111,10 +111,10 @@ const options = [
 const selectedFilters = computed(() => {
   const filters: FilterOption[] = [];
   if (props.activeFilter === true) {
-    filters.push(options[0]);
+    filters.push(options[0]!);
   }
   if (props.expiredFilter === false) {
-    filters.push(options[1]);
+    filters.push(options[1]!);
   }
   return filters;
 });
