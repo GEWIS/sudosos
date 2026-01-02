@@ -1,9 +1,10 @@
-import { clearTokenInStorage, setupWebSocket } from '@sudosos/sudosos-frontend-common';
+import { clearTokenInStorage, setupWebSocket, useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { jwtDecode } from 'jwt-decode';
 import { BasePointOfSaleInfoResponse } from '@sudosos/sudosos-client';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import { POS_TOKEN_KEY, usePosToken } from '@/composables/usePosToken';
 import posApiService from '@/services/PosApiService';
+import { usePointOfSaleSwitch } from '@/composables/usePointOfSaleSwitch';
 
 /**
  * Refreshes the POS authentication token and populates the POS store from the token.
@@ -36,11 +37,31 @@ export default async function beforeLoad() {
     console.error(e);
     return;
   }
-  await populatePosStoreFromToken()
-    .then((res) => {
-      if (!res) clearTokenInStorage(POS_TOKEN_KEY);
-    })
-    .catch(() => {
-      clearTokenInStorage(POS_TOKEN_KEY);
-    });
+
+  // Load POS via apiKey and userId from URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const apiKey = urlParams.get('apiKey');
+  const userId = urlParams.get('userId');
+  // Authenticate from url if present
+  if (apiKey && userId) {
+    const authStore = useAuthStore();
+    const { switchToPos } = usePointOfSaleSwitch();
+
+    await authStore.apiKeyLogin(apiKey, Number(userId), posApiService);
+
+    const decoded = jwtDecode<{ user: { pointOfSale: BasePointOfSaleInfoResponse } }>(authStore.getToken!);
+    const posId = decoded.user.pointOfSale.id;
+    const pos = await posApiService.pos.getSinglePointOfSale(Number(posId));
+
+    await switchToPos(pos.data);
+  } else {
+    // Otherwise load POS from stored token, or clear invalid token
+    await populatePosStoreFromToken()
+      .then((res) => {
+        if (!res) clearTokenInStorage(POS_TOKEN_KEY);
+      })
+      .catch(() => {
+        clearTokenInStorage(POS_TOKEN_KEY);
+      });
+  }
 }

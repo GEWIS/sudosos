@@ -1,6 +1,5 @@
 import { ref } from 'vue';
 import { PointOfSaleResponse } from '@sudosos/sudosos-client';
-import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { GrolschGreen, SudososRed } from '@sudosos/themes';
 import { usePreset } from '@primeuix/themes';
 import { usePointOfSaleStore } from '@/stores/pos.store';
@@ -26,7 +25,6 @@ export class PointOfSaleSwitchService {
       void posStore.fetchPointOfSale(target.id);
 
       const cartStore = useCartStore();
-      void cartStore.setBuyer(target.useAuthentication ? useAuthStore().getUser : null).then(() => {});
       cartStore.setLockedIn(null);
 
       if (target.useAuthentication) {
