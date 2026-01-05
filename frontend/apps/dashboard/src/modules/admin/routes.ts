@@ -5,6 +5,7 @@ import AdminUserOverView from '@/modules/admin/views/AdminUserOverView.vue';
 import AdminBannersView from '@/modules/admin/views/AdminBannersView.vue';
 import AdminSingleUserView from '@/modules/admin/views/AdminSingleUserView.vue';
 import AdminMaintainerView from '@/modules/admin/views/AdminMaintainerView.vue';
+import AdminRBACView from '@/modules/admin/views/AdminRBACView.vue';
 
 export function adminRoutes(): RouteRecordRaw[] {
   return [
@@ -49,6 +50,15 @@ export function adminRoutes(): RouteRecordRaw[] {
           meta: {
             requiresAuth: true,
             isAllowed: () => isAllowed('update', ['all'], 'Maintenance', ['*']),
+          },
+        },
+        {
+          path: '/rbac',
+          component: AdminRBACView,
+          name: 'rbac',
+          meta: {
+            requiresAuth: true,
+            isAllowed: () => isAllowed('get', ['all'], 'Role', ['*']),
           },
         },
       ],

@@ -96,6 +96,43 @@
       "websocket": {
         "title": "Logi WebSocket"
       },
+      "rbac": {
+        "title": "RBAC Management",
+        "selection": {
+          "title": "Wybierz rolę",
+          "label": ""
+        },
+        "permissions": {
+          "title": "Uprawnienia",
+          "entity": "Entity",
+          "crud": "CRUD",
+          "systemDefault": "Ta rola jest domyślną rolą systemową, nie możesz zobaczyć jej użytkowników!",
+          "action": "Action",
+          "relation": "Relation",
+          "attribute": "Attribute",
+          "addAction": "Dodaj Action",
+          "addPermission": "Dodaj uprawnienie",
+          "deletePermission": "Usuń uprawnienie",
+          "firstName": "Imię",
+          "lastName": "Nazwisko",
+          "id": "ID",
+          "deletePermissionCancellation": "Anuluj",
+          "deletePermissionConfirmation": "Potwierdź",
+          "deleteRow": "Usuń wiersz",
+          "actionSubmission": "Zatwierdź",
+          "deleteAction": "Usuń akcję",
+          "all": "Wszystkie operacje CRUD dozwolone",
+          "partial": "Część operacji CRUD dozwolona",
+          "none": "Brak operacji CRUD dozwolonych",
+          "deletePermissionConfirmationMessage": "Czy na pewno chcesz usunąć {action}, {relation}, {attribute} z {entity}?"
+        },
+        "users": {
+          "addUser": "Dodaj użytkownika",
+          "deleteUser": "Usuń użytkownika",
+          "userTitle": "Użytkownicy",
+          "deleteUserConfirmationMessage": "Czy na pewno chcesz usunąć {firstName} z roli {role}?"
+        }
+      },
       "transactions": {
         "title": "Wyszukiwanie transakcji",
         "search": "Wyszukaj transakcję po ID",

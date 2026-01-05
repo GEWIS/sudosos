@@ -168,7 +168,8 @@
       "writeOffs": "Write-Offs",
       "vat": "VAT",
       "maintainer": "Maintainer",
-      "sellers": "Sellers"
+      "sellers": "Sellers",
+      "rbac": "RBAC"
     },
     "validation": {
       "number": {

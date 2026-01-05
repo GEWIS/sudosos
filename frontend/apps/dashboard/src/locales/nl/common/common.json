@@ -166,7 +166,8 @@
       "fines": "Boetes",
       "writeOffs": "Afschrijvingen",
       "maintainer": "Maintainer",
-      "sellers": "Verkopers"
+      "sellers": "Verkopers",
+      "rbac": "RBAC"
     },
     "validation": {
       "number": {

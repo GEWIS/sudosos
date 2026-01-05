@@ -24,6 +24,11 @@ export function useAdminNav() {
             route: '/admin/banner',
             visible: isAllowed('get', ['own'], 'Banner', ['any']),
           },
+          {
+            label: t('common.navigation.rbac'),
+            route: '/rbac',
+            visible: isAllowed('get', ['all'], 'Role', ['any']),
+          },
         ].filter((item) => item.visible),
       },
       {

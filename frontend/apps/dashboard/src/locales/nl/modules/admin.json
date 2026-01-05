@@ -123,6 +123,43 @@
         "selectProduct": "Selecteer een product om toe te voegen",
         "newProductsAdded": "Nieuwe producten toegevoegd",
         "newProduct": "NIEUW"
+      },
+      "rbac": {
+        "title": "RBAC Beheer",
+        "selection": {
+          "title": "Kies een rol",
+          "label": ""
+        },
+        "permissions": {
+          "title": "Permissies",
+          "entity": "Entity",
+          "crud": "CRUD",
+          "systemDefault": "Deze rol is een systeem standaard, je kan de gebruikers niet zien!",
+          "action": "Action",
+          "relation": "Relation",
+          "attribute": "Attribute",
+          "addAction": "Voeg action toe",
+          "addPermission": "Voeg permissie toe",
+          "deletePermission": "Verwijder Permissie",
+          "firstName": "First Name",
+          "lastName": "Last Name",
+          "id": "ID",
+          "deletePermissionCancellation": "Annuleer",
+          "deletePermissionConfirmation": "Ga door",
+          "deleteRow": "Verwijder rij",
+          "actionSubmission": "Voeg toe",
+          "deleteAction": "Verwijder Actie",
+          "all": "Alle CRUD operaties mogelijk",
+          "partial": "Sommige CRUD operaties mogelijk",
+          "none": "Geen CRUD operaties mogelijk",
+          "deletePermissionConfirmationMessage": "Weet je zeker dat je {action}, {relation}, {attribute} wilt verwijderen van {entity}?"
+        },
+        "users": {
+          "addUser": "Voeg gebruiker toe",
+          "deleteUser": "Verwijder gebruiker",
+          "userTitle": "Gebruikers",
+          "deleteUserConfirmationMessage": "Weet je zeker dat je {firstName} uit rol {role} wilt verwijderen?"
+        }
       }
     }
   }

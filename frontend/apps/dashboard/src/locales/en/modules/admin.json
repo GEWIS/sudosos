@@ -123,6 +123,43 @@
         "selectProduct": "Select a product to add",
         "newProductsAdded": "New Products Added",
         "newProduct": "NEW"
+      },
+      "rbac": {
+        "title": "RBAC Management",
+        "selection": {
+          "title": "Choose a role",
+          "label": ""
+        },
+        "permissions": {
+          "title": "Permissions",
+          "entity": "Entity",
+          "crud": "CRUD",
+          "systemDefault": "This role is a system default, you cannot see its users!",
+          "action": "Action",
+          "relation": "Relation",
+          "attribute": "Attribute",
+          "addAction": "Add Action",
+          "addPermission": "Add Permission",
+          "deletePermission": "Delete Permission",
+          "firstName": "First Name",
+          "lastName": "Last Name",
+          "id": "ID",
+          "deletePermissionCancellation": "Cancel",
+          "deletePermissionConfirmation": "Confirm",
+          "deleteRow": "Delete Row",
+          "actionSubmission": "Submit",
+          "deleteAction": "Delete Action",
+          "all": "All CRUD operations allowed",
+          "partial": "Some CRUD operations allowed",
+          "none": "No CRUD operations allowed",
+          "deletePermissionConfirmationMessage": "Are you sure you want to delete {action}, {relation}, {attribute} from {entity}?"
+        },
+        "users": {
+          "addUser": "Add User",
+          "deleteUser": "Delete User",
+          "userTitle": "Users",
+          "deleteUserConfirmationMessage": "Are you sure you want to remove {firstName} from role {role}?"
+        }
       }
     }
   }
