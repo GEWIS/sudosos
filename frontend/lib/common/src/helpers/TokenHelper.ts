@@ -10,10 +10,10 @@ type Token = { token: string; expires: string };
 // Cache for the public key to avoid repeated API calls
 let cachedPublicKey: CryptoKey | null = null;
 
-export function updateTokenIfNecessary(response: AxiosResponse) {
+export function updateTokenIfNecessary(response: AxiosResponse, tokenKey: string) {
   if ((response.headers as AxiosHeaders).has('Set-Authorization')) {
     const newToken = (response.headers as AxiosHeaders).get('Set-Authorization') as string;
-    if (newToken) setTokenInStorage(newToken);
+    if (newToken) setTokenInStorage(newToken, tokenKey);
   }
 }
 

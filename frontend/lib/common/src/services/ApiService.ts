@@ -26,16 +26,9 @@ import {
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import { getTokenFromStorage, updateTokenIfNecessary } from '../helpers/TokenHelper';
 
-// Create an axios instance
-const axiosInstance: AxiosInstance = axios.create();
-
-// Add a response interceptor to the axios instance
-axiosInstance.interceptors.response.use((response: AxiosResponse) => {
-  updateTokenIfNecessary(response);
-  return response;
-});
-
 export class ApiService {
+  private readonly _axiosInstance: AxiosInstance;
+
   private readonly _authenticateApi: AuthenticateApi;
 
   private readonly _balanceApi: BalanceApi;
@@ -85,35 +78,44 @@ export class ApiService {
   private readonly _tokenKey: string;
 
   constructor(basePath: string, tokenKey: string = 'jwt_token') {
+    // Create an axios instance
+    this._axiosInstance = axios.create();
+
     this._tokenKey = tokenKey;
+
+    // Add a response interceptor to the axios instance
+    this._axiosInstance.interceptors.response.use((response: AxiosResponse) => {
+      updateTokenIfNecessary(response, tokenKey);
+      return response;
+    });
 
     const withKeyConfiguration = new Configuration({
       accessToken: () => getTokenFromStorage(this._tokenKey).token,
     });
 
-    this._authenticateApi = new AuthenticateApi(withKeyConfiguration, basePath, axiosInstance);
-    this._balanceApi = new BalanceApi(withKeyConfiguration, basePath, axiosInstance);
-    this._debtorsApi = new DebtorsApi(withKeyConfiguration, basePath, axiosInstance);
-    this._usersApi = new UsersApi(withKeyConfiguration, basePath, axiosInstance);
-    this._posApi = new PointofsaleApi(withKeyConfiguration, basePath, axiosInstance);
-    this._categoryApi = new ProductCategoriesApi(withKeyConfiguration, basePath, axiosInstance);
-    this._transactionApi = new TransactionsApi(withKeyConfiguration, basePath, axiosInstance);
-    this._bannerApi = new BannersApi(withKeyConfiguration, basePath, axiosInstance);
-    this._openBannerApi = new BannersApi(undefined, basePath, axiosInstance);
-    this._rootApi = new RootApi(undefined, basePath, axiosInstance);
-    this._voucherGroupApi = new VouchergroupsApi(withKeyConfiguration, basePath, axiosInstance);
-    this._containerApi = new ContainersApi(withKeyConfiguration, basePath, axiosInstance);
-    this._filesApi = new FilesApi(withKeyConfiguration, basePath, axiosInstance);
-    this._invoicesApi = new InvoicesApi(withKeyConfiguration, basePath, axiosInstance);
-    this._payoutsApi = new PayoutRequestsApi(withKeyConfiguration, basePath, axiosInstance);
-    this._productsApi = new ProductsApi(withKeyConfiguration, basePath, axiosInstance);
-    this._transfersApi = new TransfersApi(withKeyConfiguration, basePath, axiosInstance);
-    this._vatGroupsApi = new VatGroupsApi(withKeyConfiguration, basePath, axiosInstance);
-    this._stripeApi = new StripeApi(withKeyConfiguration, basePath, axiosInstance);
-    this._rbacApi = new RbacApi(withKeyConfiguration, basePath, axiosInstance);
-    this._sellerPayoutsApi = new SellerPayoutsApi(withKeyConfiguration, basePath, axiosInstance);
-    this._writeOffsApi = new WriteoffsApi(withKeyConfiguration, basePath, axiosInstance);
-    this._serverSettingsApi = new ServerSettingsApi(withKeyConfiguration, basePath, axiosInstance);
+    this._authenticateApi = new AuthenticateApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._balanceApi = new BalanceApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._debtorsApi = new DebtorsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._usersApi = new UsersApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._posApi = new PointofsaleApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._categoryApi = new ProductCategoriesApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._transactionApi = new TransactionsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._bannerApi = new BannersApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._openBannerApi = new BannersApi(undefined, basePath, this._axiosInstance);
+    this._rootApi = new RootApi(undefined, basePath, this._axiosInstance);
+    this._voucherGroupApi = new VouchergroupsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._containerApi = new ContainersApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._filesApi = new FilesApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._invoicesApi = new InvoicesApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._payoutsApi = new PayoutRequestsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._productsApi = new ProductsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._transfersApi = new TransfersApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._vatGroupsApi = new VatGroupsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._stripeApi = new StripeApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._rbacApi = new RbacApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._sellerPayoutsApi = new SellerPayoutsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._writeOffsApi = new WriteoffsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._serverSettingsApi = new ServerSettingsApi(withKeyConfiguration, basePath, this._axiosInstance);
   }
 
   get authenticate(): AuthenticateApi {
