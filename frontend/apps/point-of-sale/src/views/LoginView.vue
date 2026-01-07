@@ -44,14 +44,16 @@
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import KeypadComponent from '@/components/Keypad/KeypadComponent.vue';
 import KeypadDisplayComponent from '@/components/Keypad/KeypadDisplayComponent.vue';
-import apiService from '@/services/ApiService';
+import { posApiService, userApiService } from '@/services/ApiService';
 import BannerComponent from '@/components/Banner/BannerComponent.vue';
 import ScannersLoginComponent from '@/components/ScannersLoginComponent.vue';
 import GitInfo from '@/components/GitInfo.vue';
 import PosInfo from '@/components/PosInfo.vue';
 import { useLoginForm } from '@/composables/useLoginForm';
+import { usePointOfSaleStore } from '@/stores/pos.store';
 
 const authStore = useAuthStore();
+const posStore = usePointOfSaleStore();
 
 const {
   userId,
@@ -105,7 +107,11 @@ const handleBackspace = () => {
 
 const nfcLogin = async (nfcCode: string) => {
   try {
-    await authStore.nfcLogin(nfcCode, apiService).then(async () => {
+    const pos = posStore.getPos;
+    if (!pos) {
+      return;
+    }
+    await authStore.secureNfcLogin(nfcCode, pos.id, posApiService, userApiService).then(async () => {
       await loginSuccess();
     });
   } catch (error) {
@@ -114,8 +120,9 @@ const nfcLogin = async (nfcCode: string) => {
 };
 
 const eanLogin = async (eanCode: string) => {
+  throw new Error('No secure ean login has been implemented yet');
   try {
-    await authStore.eanLogin(eanCode, apiService).then(async () => {
+    await authStore.eanLogin(eanCode, userApiService).then(async () => {
       await loginSuccess();
     });
   } catch (error) {

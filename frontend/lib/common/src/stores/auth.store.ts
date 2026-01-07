@@ -15,6 +15,7 @@ import type {
   AuthenticationNfcRequest,
   AuthenticationLocalRequest,
   GEWISAuthenticationSecurePinRequest,
+  AuthenticationSecureNfcRequest,
 } from '@sudosos/sudosos-client';
 import { jwtDecode, type JwtPayload } from 'jwt-decode';
 import { ApiService } from '../services/ApiService';
@@ -116,6 +117,16 @@ export const useAuthStore = defineStore('auth', {
       };
 
       await posService.authenticate.secureGewisPINAuthentication(req).then((res) => {
+        this.handleResponse(res.data, service);
+      });
+    },
+    async secureNfcLogin(nfcCode: string, posId: number, posService: ApiService, service: ApiService) {
+      const req: AuthenticationSecureNfcRequest = {
+        nfcCode,
+        posId,
+      };
+
+      await posService.authenticate.secureNfcAuthentication(req).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
