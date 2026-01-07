@@ -27,6 +27,14 @@ export function parseToken(rawToken: string): Token {
 }
 
 export function setTokenInStorage(jwtToken: string, tokenKey: string = 'jwt_token') {
+  if (tokenKey === 'pos_jwt_token') {
+    const decoded = jwtDecode<{ user?: { pointOfSale?: unknown } }>(jwtToken);
+    if (!decoded.user?.pointOfSale) {
+      throw new Error(
+        'Attempted to store a non-POS token in pos_jwt_token. Token must have user.pointOfSale property.',
+      );
+    }
+  }
   localStorage.setItem(tokenKey, JSON.stringify(parseToken(jwtToken)));
 }
 
