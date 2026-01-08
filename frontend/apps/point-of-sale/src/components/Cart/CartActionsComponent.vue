@@ -30,7 +30,7 @@
         class="p-3 text-2xl text-white flex items-center justify-center w-16 h-16"
         @click="logout"
       >
-        <i class="pi pi-times" style="font-size: 2rem" />
+        <i class="pi pi-sign-out" style="font-size: 2rem" />
       </Button>
     </div>
   </div>
