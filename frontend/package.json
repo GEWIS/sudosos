@@ -31,6 +31,8 @@
     "postpublish": "pinst --enable"
   },
   "dependencies": {
+    "@commitlint/cli": "^20.3.0",
+    "@commitlint/config-conventional": "^20.3.0",
     "@gewis/splash": "^2.4.0",
     "@primeuix/themes": "^2.0.2",
     "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#7f8b72b0df57642b440e75360e051cb9e12bb703",
