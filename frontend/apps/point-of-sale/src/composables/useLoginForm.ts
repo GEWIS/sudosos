@@ -61,9 +61,15 @@ export function useLoginForm() {
   const login = () => {
     loggingIn.value = true;
 
+    const pos = posStore.getPos;
+    if (!pos) {
+      loggingIn.value = false;
+      return;
+    }
+
     if (external.value) {
       authStore
-        .externalPinLogin(Number(userId.value), pinCode.value, apiService)
+        .secureExternalPinLogin(userId.value, pinCode.value, pos.id, posApiService, userApiService)
         .then(async () => {
           await loginSuccess();
         })
@@ -75,12 +81,6 @@ export function useLoginForm() {
           loggingIn.value = false;
         });
     } else {
-      const pos = posStore.getPos;
-      if (!pos) {
-        loggingIn.value = false;
-        return;
-      }
-
       authStore
         .secureGewisPinlogin(userId.value, pinCode.value, pos.id, posApiService, userApiService)
         .then(async () => {

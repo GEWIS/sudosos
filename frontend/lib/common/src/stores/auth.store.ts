@@ -16,6 +16,7 @@ import type {
   AuthenticationLocalRequest,
   GEWISAuthenticationSecurePinRequest,
   AuthenticationSecureNfcRequest,
+  AuthenticationSecurePinRequest,
 } from '@sudosos/sudosos-client';
 import { jwtDecode, type JwtPayload } from 'jwt-decode';
 import { ApiService } from '../services/ApiService';
@@ -154,6 +155,23 @@ export const useAuthStore = defineStore('auth', {
         userId,
       };
       await service.authenticate.pinAuthentication(req).then((res) => {
+        this.handleResponse(res.data, service);
+      });
+    },
+    async secureExternalPinLogin(
+      userId: string,
+      pinCode: string,
+      posId: number,
+      posService: ApiService,
+      service: ApiService,
+    ) {
+      const req: AuthenticationSecurePinRequest = {
+        userId: parseInt(userId, 10),
+        pin: pinCode,
+        posId,
+      };
+
+      await posService.authenticate.securePINAuthentication(req).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
