@@ -13,7 +13,10 @@
         v-for="item in sortedAssociatesWithGaps"
         :key="item.key"
         :associate="item.associate"
+        :is-disabled="isDisabled"
         :is-ghost="item.isGhost"
+        :is-loading="item.associate ? loadingAssociateId === item.associate.id : false"
+        @button-clicked="handleButtonClick"
         @cancel-select-creator="cancelSelect()"
       />
     </div>
@@ -21,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import Button from 'primevue/button';
 import { PointOfSaleAssociate, usePointOfSaleStore } from '@/stores/pos.store';
 import BuyerSelectButtonComponent from '@/components/BuyerSelect/BuyerSelectButtonComponent.vue';
@@ -29,6 +32,13 @@ import BuyerSelectButtonComponent from '@/components/BuyerSelect/BuyerSelectButt
 const emit = defineEmits(['cancelSelectCreator']);
 
 const posStore = usePointOfSaleStore();
+const isDisabled = ref(false);
+const loadingAssociateId = ref<number | null>(null);
+
+const handleButtonClick = (associateId: number) => {
+  isDisabled.value = true;
+  loadingAssociateId.value = associateId;
+};
 const currentPos = posStore.getPos;
 const posAssociates = computed<PointOfSaleAssociate[] | null>(() => posStore.getPointOfSaleAssociates);
 const organName = computed(() => posStore.getPos?.owner?.firstName);
