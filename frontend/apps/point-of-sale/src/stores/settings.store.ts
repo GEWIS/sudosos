@@ -35,7 +35,7 @@ export const useSettingStore = defineStore('setting', {
       }
     },
     showTimers(): boolean {
-      return location.hostname !== 'localhost';
+      return location.hostname !== 'localhost' && this.isAuthenticatedPos;
     },
   },
   actions: {
