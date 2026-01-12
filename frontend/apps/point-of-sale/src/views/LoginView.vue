@@ -41,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, onUnmounted } from 'vue';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import KeypadComponent from '@/components/Keypad/KeypadComponent.vue';
 import KeypadDisplayComponent from '@/components/Keypad/KeypadDisplayComponent.vue';
@@ -133,6 +134,30 @@ const eanLogin = async (eanCode: string) => {
 const handleContinue = () => {
   switchInput();
 };
+
+const handleKeyboard = (event: KeyboardEvent) => {
+  if (loggingIn.value) return;
+
+  const key = event.key;
+  // Check if the key pressed is a digit (0-9)
+  if (/^\d$/.test(key)) {
+    handleInput(key);
+  } else if (key === 'Backspace') {
+    handleBackspace();
+  } else if (key === 'Enter') {
+    handleContinue();
+  } else if (key.toLowerCase() === 'e') {
+    handleExternal();
+  }
+};
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeyboard);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyboard);
+});
 </script>
 
 <style scoped></style>
