@@ -21,6 +21,8 @@ const addEventListeners = () => {
   window.addEventListener('mousedown', resetTimer);
   window.addEventListener('mousemove', resetTimer);
   window.addEventListener('mouseup', resetTimer);
+  window.addEventListener('keydown', resetTimer);
+  window.addEventListener('input', resetTimer);
 };
 
 const removeEventListeners = () => {
@@ -30,6 +32,8 @@ const removeEventListeners = () => {
   window.removeEventListener('mousedown', resetTimer);
   window.removeEventListener('mousemove', resetTimer);
   window.removeEventListener('mouseup', resetTimer);
+  window.removeEventListener('keydown', resetTimer);
+  window.removeEventListener('input', resetTimer);
 };
 
 onMounted(addEventListeners);
