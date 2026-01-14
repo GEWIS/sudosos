@@ -1,9 +1,7 @@
 <template>
-  <div
-    v-if="!hasPosToken && !userIsAuthenticated"
-    class="absolute top-0 left-0 w-full h-full flex justify-center items-center z-10 auth-screen"
-  >
-    <main>
+  <div class="fixed top-0 left-0 w-full h-full flex justify-center items-center auth-screen">
+    <!-- Auth Screen (Not Authenticated) -->
+    <main v-if="!userIsAuthenticated">
       <div class="block mx-auto mb-5 max-h-[25rem] w-64 h-64 flex items-center justify-center">
         <div v-if="session" class="w-full h-full flex items-center justify-center">
           <a v-if="qrCodeDataUrl" :href="session.qrCodeUrl" rel="noopener noreferrer" target="_blank">
@@ -26,14 +24,9 @@
         </Button>
       </div>
     </main>
-  </div>
 
-  <!-- POS Selection Screen -->
-  <div
-    v-else-if="!hasPosToken"
-    class="absolute top-0 left-0 w-full h-full flex justify-center items-center z-10 pos-selection-screen"
-  >
-    <main>
+    <!-- POS Selection Screen (Authenticated) -->
+    <main v-else>
       <div class="block mx-auto mb-5 max-h-[25rem] w-64 h-64 flex items-center justify-center">
         <img alt="logo" class="w-full h-full object-contain" src="../assets/bier_grayscale.png" />
       </div>
@@ -59,16 +52,17 @@ import { computed, onMounted, nextTick, watch } from 'vue';
 import Button from 'primevue/button';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { PointOfSaleResponse } from '@sudosos/sudosos-client';
-import PosSwitchDisplay from './PosSwitchDisplay.vue';
+import { useRouter } from 'vue-router';
+import PosSwitchDisplay from '@/components/PosSwitchDisplay.vue';
 import { useQrAuth } from '@/composables/useQrAuth';
 import { usePosToken } from '@/composables/usePosToken';
 import { usePointOfSaleSwitch } from '@/composables/usePointOfSaleSwitch';
 import { usePointOfSaleOptions } from '@/composables/usePointOfSaleOptions';
-import { logoutService } from '@/services/logoutService';
 
 const { session, qrCodeDataUrl, generateQrCode, generateQrCodeImage, isExpired } = useQrAuth();
 const { hasPosToken } = usePosToken();
 const authStore = useAuthStore();
+const router = useRouter();
 
 const userIsAuthenticated = computed(() => authStore.getUser !== null);
 
@@ -90,7 +84,8 @@ const handleRefresh = async () => {
 
 const handleAuthenticatePos = async (pos: PointOfSaleResponse) => {
   await switchToPos(pos);
-  await logoutService();
+  // Redirect to cashier after POS is configured
+  // The watcher on hasPosToken will handle navigation automatically
 };
 
 onMounted(async () => {
@@ -127,11 +122,17 @@ watch(
   },
   { immediate: true },
 );
+
+// Watch for POS token changes and redirect to cashier when token is available
+watch(hasPosToken, (hasToken) => {
+  if (hasToken) {
+    void router.push({ name: 'cashier' });
+  }
+});
 </script>
 
 <style scoped lang="scss">
-.auth-screen,
-.pos-selection-screen {
+.auth-screen {
   background-color: var(--p-primary-color);
   color: var(--p-primary-inverse-color);
 }

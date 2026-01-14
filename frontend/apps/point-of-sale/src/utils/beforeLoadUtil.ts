@@ -1,8 +1,8 @@
-import { clearTokenInStorage, setupWebSocket, useAuthStore } from '@sudosos/sudosos-frontend-common';
+import { setupWebSocket, useAuthStore, getTokenFromStorage } from '@sudosos/sudosos-frontend-common';
 import { jwtDecode } from 'jwt-decode';
 import { BasePointOfSaleInfoResponse } from '@sudosos/sudosos-client';
 import { usePointOfSaleStore } from '@/stores/pos.store';
-import { POS_TOKEN_KEY, usePosToken } from '@/composables/usePosToken';
+import { usePosToken, POS_TOKEN_KEY } from '@/composables/usePosToken';
 import posApiService from '@/services/PosApiService';
 import { usePointOfSaleSwitch } from '@/composables/usePointOfSaleSwitch';
 
@@ -11,7 +11,13 @@ import { usePointOfSaleSwitch } from '@/composables/usePointOfSaleSwitch';
  */
 async function populatePosStoreFromToken(): Promise<boolean> {
   const posToken = usePosToken();
-  if (!posToken.hasPosToken.value) return false;
+  // Check if POS token exists in storage
+  const posTokenData = getTokenFromStorage(POS_TOKEN_KEY);
+  const hasPosTokenInStorage = !!posTokenData.token;
+
+  if (!hasPosTokenInStorage) {
+    return false;
+  }
 
   try {
     const res = await posApiService.authenticate.refreshToken();
@@ -56,12 +62,15 @@ export default async function beforeLoad() {
     await switchToPos(pos.data);
   } else {
     // Otherwise load POS from stored token, or clear invalid token
+    const posToken = usePosToken();
+
     await populatePosStoreFromToken()
       .then((res) => {
-        if (!res) clearTokenInStorage(POS_TOKEN_KEY);
+        if (!res) posToken.clearPosToken();
       })
       .catch(() => {
-        clearTokenInStorage(POS_TOKEN_KEY);
+        // Clear token on refresh failure
+        posToken.clearPosToken();
       });
   }
 }
