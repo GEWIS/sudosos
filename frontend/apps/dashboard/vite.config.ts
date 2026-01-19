@@ -1,31 +1,31 @@
 import { fileURLToPath, URL } from 'node:url';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import tailwindcss from '@tailwindcss/vite';
 
-// Environment-based proxy URL configuration
-const getProxyUrl = () => {
-  const env = process.env.VITE_ENV || 'test';
-
-  switch (env) {
-    case 'prod':
-      return 'https://sudosos.gewis.nl';
-    case 'test':
-      return 'https://sudosos.test.gewis.nl';
-    case 'local':
-      return 'http://localhost:3000';
-    default:
-      return 'https://sudosos.test.gewis.nl';
-  }
-};
-
-const PROXY_URL = getProxyUrl();
-const isLocal = process.env.VITE_ENV === 'local';
-
-// TODO: Fix nginx dev proxy setup instead of hack
-
 // https://vitejs.dev/config/
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
+  const env = process.env.VITE_ENV || loadEnv(mode, process.cwd(), '').VITE_ENV || 'test';
+
+  // Environment-based proxy URL configuration
+  const getProxyUrl = () => {
+    switch (env) {
+      case 'prod':
+        return 'https://sudosos.gewis.nl';
+      case 'test':
+        return 'https://sudosos.test.gewis.nl';
+      case 'local':
+        return 'http://localhost:3000';
+      default:
+        return 'https://sudosos.test.gewis.nl';
+    }
+  };
+
+  const PROXY_URL = getProxyUrl();
+  const isLocal = env === 'local';
+
+  // TODO: Fix nginx dev proxy setup instead of hack
+
   return {
     plugins: [vue(), tailwindcss()],
     resolve: {
