@@ -61,7 +61,7 @@ import type { UserResponse } from '@sudosos/sudosos-client';
 import Divider from 'primevue/divider';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
-import { useUserStore } from '@sudosos/sudosos-frontend-common';
+import { useUserStore, useUserSettingsStore } from '@sudosos/sudosos-frontend-common';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as yup from 'yup';
 import CardComponent from '@/components/CardComponent.vue';
@@ -72,6 +72,7 @@ import ChangePasswordForm from '@/modules/user/components/forms/ChangePasswordFo
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
 import { isBetaEnabled } from '@/utils/betaUtil';
+import { AxiosError } from 'axios';
 
 async function startScan() {
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -138,6 +139,7 @@ const toast = useToast();
 const dataAnalysis = ref(props.user.extensiveDataProcessing);
 const betaEnabled = ref(isBetaEnabled());
 const userStore = useUserStore();
+const settingsStore = useUserSettingsStore();
 
 const handleChangeDataAnalysis = (value: boolean) => {
   apiService.user
@@ -156,9 +158,20 @@ const handleChangeDataAnalysis = (value: boolean) => {
     });
 };
 
-const handleChangeEnableBeta = (value: boolean) => {
-  document.cookie = 'X-Beta-Enabled=' + value;
-  location.reload();
+const handleChangeEnableBeta = async (value: boolean) => {
+  try {
+    // Update backend settings
+    await settingsStore.setBetaEnabled(apiService, props.user.id, value);
+    // Update cookie and reload
+    document.cookie = `X-Beta-Enabled=${value}; path=/`;
+    location.reload();
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      handleError(err, toast);
+    } else {
+      console.error(err);
+    }
+  }
 };
 
 const confirmChangeApiKey = () => {

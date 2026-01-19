@@ -22,6 +22,7 @@ import { jwtDecode, type JwtPayload } from 'jwt-decode';
 import { ApiService } from '../services/ApiService';
 import { clearTokenInStorage, getTokenFromStorage, setTokenInStorage } from '../helpers/TokenHelper';
 import { useUserStore } from './user.store';
+import { useUserSettingsStore } from './userSettings.store';
 
 // Event emitter for authentication events
 class AuthEventEmitter {
@@ -275,6 +276,7 @@ export const useAuthStore = defineStore('auth', {
       this.acceptedToS = null;
 
       clearTokenInStorage(tokenKey);
+      useUserSettingsStore().clearSettings();
     },
   },
 });

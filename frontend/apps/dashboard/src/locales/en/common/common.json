@@ -251,6 +251,10 @@
       "footer": "MAINTENANCE ENABLED",
       "adminLogin": "Admin login",
       "cancelLogin": "Cancel login"
+    },
+    "betaSync": {
+      "redirecting": "Redirecting...",
+      "message": "Syncing beta settings. Please wait..."
     }
   }
 }

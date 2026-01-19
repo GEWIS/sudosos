@@ -249,6 +249,10 @@
       "footer": "TRYB KONSERWACJI WŁĄCZONY",
       "adminLogin": "Logowanie administratora",
       "cancelLogin": "Anuluj logowanie"
+    },
+    "betaSync": {
+      "redirecting": "Przekierowywanie...",
+      "message": "Synchronizowanie ustawień beta. Proszę czekać..."
     }
   }
 }

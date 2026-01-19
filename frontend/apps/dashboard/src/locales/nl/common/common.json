@@ -249,6 +249,10 @@
       "footer": "ONDERHOUD GEACTIVEERD",
       "adminLogin": "Inloggen beheerder",
       "cancelLogin": "Inloggen annuleren"
+    },
+    "betaSync": {
+      "redirecting": "Doorverwijzen...",
+      "message": "Beta-instellingen synchroniseren. Even geduld..."
     }
   }
 }

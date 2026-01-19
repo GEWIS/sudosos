@@ -1,5 +1,6 @@
 import { authEventEmitter } from '@sudosos/sudosos-frontend-common';
 import { useConditionalPreset } from '@/composables/conditionalPreset';
+import { useBetaSync } from '@/composables/useBetaSync';
 
 /**
  * Function to initialize authentication hook and trigger dashboard-specific logic
@@ -7,6 +8,7 @@ import { useConditionalPreset } from '@/composables/conditionalPreset';
  */
 export function initializeAuthHook() {
   const { applyInitialPreset } = useConditionalPreset();
+  const { initializeBetaSync } = useBetaSync();
 
   const handleAuthentication = () => {
     // Apply the initial preset after user has logged in
@@ -15,6 +17,9 @@ export function initializeAuthHook() {
 
   // Listen for authentication events
   authEventEmitter.onAuthenticated(handleAuthentication);
+
+  // Initialize beta sync
+  initializeBetaSync();
 
   return {
     handleAuthentication,

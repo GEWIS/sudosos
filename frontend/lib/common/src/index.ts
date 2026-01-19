@@ -1,5 +1,6 @@
 export { useAuthStore, authEventEmitter } from './stores/auth.store';
 export { useUserStore } from './stores/user.store';
+export { useUserSettingsStore } from './stores/userSettings.store';
 
 export { ApiService, createApiService, createPosApiService } from './services/ApiService';
 export {
