@@ -52,7 +52,8 @@ const borrelMode = computed(() => settings.isBorrelmode);
 const buyer = computed(() => cartStore.getBuyer);
 
 const playSound = () => {
-  const soundUrl = new URL('/sounds/rct-cash.wav', window.location.origin).href;
+  const basePath = window.location.pathname.includes('/pos-develop/') ? '/pos-develop/' : '/pos/';
+  const soundUrl = new URL(`${basePath}sounds/rct-cash.wav`, window.location.origin).href;
   const audio = new Audio(soundUrl);
   void audio.play();
 };
