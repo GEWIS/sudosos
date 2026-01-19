@@ -5,6 +5,10 @@ export const setupWebSocket = () => {
   const socket = io({
     path: '/ws/socket.io',
     transports: ['websocket'],
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000,
+    reconnectionAttempts: Infinity,
   });
 
   const websocketStore = useWebSocketStore();
@@ -19,10 +23,10 @@ export const setupWebSocket = () => {
     addToLogs(event, args);
   });
 
-  socket.emit('subscribe', 'system');
-
   socket.on('connect', () => {
     websocketStore.setConnected(true);
+    // Re-subscribe to system channel on every connect/reconnect
+    socket.emit('subscribe', 'system');
   });
 
   socket.on('disconnect', () => {
