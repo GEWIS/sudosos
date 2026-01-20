@@ -44,7 +44,7 @@ export function useLoginForm() {
     const user = authStore.getUser;
     if (user === null) return;
 
-    await useCartStore().setBuyer(user);
+    void useCartStore().setBuyer(user);
     void userStore.fetchCurrentUserBalance(user.id, apiService);
 
     await router.push({ path: '/cashier' });

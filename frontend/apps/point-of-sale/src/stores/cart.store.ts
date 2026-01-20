@@ -55,7 +55,7 @@ export const useCartStore = defineStore('cart', {
     setLockedIn(lockedIn: UserResponse | null) {
       this.lockedIn = lockedIn;
     },
-    async setBuyer(buyer: UserResponse | null) {
+    setBuyer(buyer: UserResponse | null) {
       if (!buyer) {
         this.buyer = null;
         this.buyerBalance = null;
