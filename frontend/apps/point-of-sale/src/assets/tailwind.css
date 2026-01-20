@@ -1,2 +1,3 @@
 @import 'tailwindcss';
 @import 'tailwindcss-primeui';
+@import './theme-overrides.css';
