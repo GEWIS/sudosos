@@ -5,6 +5,8 @@ import {
   clearTokenInStorage,
   isAuthenticated,
 } from '@sudosos/sudosos-frontend-common';
+import { jwtDecode } from 'jwt-decode';
+import { BasePointOfSaleInfoResponse } from '@sudosos/sudosos-client';
 import { posApiService } from '@/services/ApiService';
 
 export const POS_TOKEN_KEY = 'pos_jwt_token';
@@ -40,11 +42,24 @@ export function usePosToken() {
     return tokenData.token;
   };
 
+  const getPosIdFromToken = (): number | null => {
+    const token = getPosToken();
+    if (!token) return null;
+
+    try {
+      const decoded = jwtDecode<{ user: { pointOfSale: BasePointOfSaleInfoResponse } }>(token);
+      return decoded.user.pointOfSale.id || null;
+    } catch {
+      return null;
+    }
+  };
+
   return {
     hasPosToken,
     setPosToken,
     clearPosToken,
     getPosToken,
     refreshPosToken,
+    getPosIdFromToken,
   };
 }

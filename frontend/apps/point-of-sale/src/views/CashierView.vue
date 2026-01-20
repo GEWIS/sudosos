@@ -41,6 +41,7 @@ import { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
 import { computed, onMounted, Ref, ref, watch } from 'vue';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { usePointOfSaleStore } from '@/stores/pos.store';
+import { usePosToken } from '@/composables/usePosToken';
 import PointOfSaleDisplayComponent from '@/components/PointOfSaleDisplay/PointOfSaleDisplayComponent.vue';
 import SettingsIconComponent from '@/components/SettingsIconComponent.vue';
 import CartComponent from '@/components/Cart/CartComponent.vue';
@@ -62,6 +63,7 @@ const pointOfSaleStore = usePointOfSaleStore();
 const activityStore = useActivityStore();
 const cartStore = useCartStore();
 const shouldShowTimers = useSettingStore().showTimers;
+const { getPosIdFromToken } = usePosToken();
 
 enum PointOfSaleState {
   SEARCH_USER,
@@ -88,7 +90,13 @@ const handleTopUpWarningUpdate = (value: boolean) => {
 
 const fetchPointOfSale = async () => {
   const storedPos = pointOfSaleStore.getPos;
-  const target = storedPos ? storedPos.id : 1;
+  const target = storedPos?.id ?? getPosIdFromToken();
+
+  if (!target) {
+    console.error('No POS ID available');
+    posNotLoaded.value = false;
+    return;
+  }
 
   // If POS is already cached, use it immediately (no loading screen)
   if (storedPos) {
@@ -113,25 +121,20 @@ const fetchPointOfSale = async () => {
   }
 
   // No cached POS - fetch with loading screen
-  await pointOfSaleStore
-    .fetchPointOfSale(target)
-    .catch(async () => {
-      await pointOfSaleStore.fetchPointOfSale(1);
-    })
-    .finally(() => {
-      if (pointOfSaleStore.pointOfSale) {
-        currentPos.value = pointOfSaleStore.pointOfSale;
-      }
-      posNotLoaded.value = false;
+  await pointOfSaleStore.fetchPointOfSale(target).finally(() => {
+    if (pointOfSaleStore.pointOfSale) {
+      currentPos.value = pointOfSaleStore.pointOfSale;
+    }
+    posNotLoaded.value = false;
 
-      if (shouldShowTimers) {
-        activityStore.restartTimer();
-      }
+    if (shouldShowTimers) {
+      activityStore.restartTimer();
+    }
 
-      if (shouldShowTopUpWarning.value) {
-        showTopUpWarning.value = true;
-      }
-    });
+    if (shouldShowTopUpWarning.value) {
+      showTopUpWarning.value = true;
+    }
+  });
 };
 
 onMounted(fetchPointOfSale);
