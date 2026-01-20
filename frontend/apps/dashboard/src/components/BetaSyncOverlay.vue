@@ -24,6 +24,6 @@ const { t } = useI18n();
 
 <style scoped lang="scss">
 .bg-red {
-  background: var(--accent-color, #d40100);
+  background: var(--p-primary-color);
 }
 </style>
