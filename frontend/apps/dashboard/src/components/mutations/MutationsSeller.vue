@@ -83,6 +83,7 @@
     :id="openedMutationId"
     v-model:visible="isModalVisible"
     :type="openedMutationType"
+    @deleted="refresh"
   />
 </template>
 <script lang="ts" setup>
@@ -127,6 +128,18 @@ async function onPage(event: DataTablePageEvent) {
   mutations.value = parseFinancialMutations(newTransactions);
 }
 
+async function refresh() {
+  isLoading.value = true;
+  const newTransactions = await props.getMutations(rows.value, 0);
+  if (!newTransactions) {
+    isLoading.value = false;
+    return;
+  }
+  mutations.value = parseFinancialMutations(newTransactions);
+  totalRecords.value = newTransactions._pagination.count || 0;
+  isLoading.value = false;
+}
+
 const openedMutationId = ref<number>();
 const openedMutationType = ref<FinancialMutationType>();
 const isModalVisible = ref<boolean>(false);
@@ -136,5 +149,7 @@ function openModal(id: number, type: FinancialMutationType) {
   openedMutationType.value = type;
   isModalVisible.value = true;
 }
+
+defineExpose({ refresh });
 </script>
 <style lang="scss" scoped></style>

@@ -113,6 +113,7 @@
     :id="openedMutationId"
     v-model:visible="isModalVisible"
     :type="openedMutationType"
+    @deleted="refresh"
   />
 </template>
 <script lang="ts" setup>

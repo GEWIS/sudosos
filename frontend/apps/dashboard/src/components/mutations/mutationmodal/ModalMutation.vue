@@ -71,6 +71,8 @@ import { useMutationDetails } from '@/composables/mutationDetails';
 
 const props = defineProps<{ type: FinancialMutationType; id: number }>();
 
+const emit = defineEmits(['deleted']);
+
 const { isLoading, transaction, transfer, products, canDelete } = useMutationDetails(
   toRef(props, 'type'),
   toRef(props, 'id'),
@@ -127,6 +129,7 @@ const deleteMutation = async () => {
         life: 3000,
       });
       dialog.value.close();
+      emit('deleted');
     } else if (props.type === FinancialMutationType.TRANSACTION && transaction.value) {
       await apiService.transaction.deleteTransaction(transaction.value.id);
       toast.add({
@@ -135,11 +138,12 @@ const deleteMutation = async () => {
         severity: 'success',
         life: 3000,
       });
+      dialog.value.close();
+      emit('deleted');
     } else {
       await router.replace({ path: '/error' });
       return;
     }
-    dialog.value.close();
   } catch (err) {
     console.error(err);
   }
