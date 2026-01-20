@@ -255,6 +255,33 @@
     "betaSync": {
       "redirecting": "Redirecting...",
       "message": "Syncing beta settings. Please wait..."
+    },
+    "titles": {
+      "users": "Users",
+      "banners": "Banners",
+      "maintainer": "Maintainer",
+      "rbac": "RBAC",
+      "login": "Login",
+      "localLogin": "Local Login",
+      "passwordReset": "Password Reset",
+      "qrConfirm": "QR Code Login Confirmation",
+      "debtors": "Debtors",
+      "fineHandout": "Fine Handout",
+      "invoices": "Invoices",
+      "invoice": "Invoice",
+      "createInvoice": "Create Invoice",
+      "payouts": "Payouts",
+      "writeOffs": "Write-Offs",
+      "transactions": "Transactions",
+      "transactionLookup": "Transaction Lookup",
+      "sellers": "Sellers",
+      "vatGroups": "VAT Groups",
+      "posses": "Points of Sale",
+      "pos": "Point of Sale",
+      "productsContainers": "Products & Containers",
+      "profile": "Profile",
+      "error": "Error",
+      "wrapped": "Wrapped"
     }
   }
 }

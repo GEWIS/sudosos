@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeMount, ref, type Ref } from 'vue';
+import { computed, onBeforeMount, ref, watchEffect, type Ref } from 'vue';
 import type { InvoiceResponse } from '@sudosos/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import { useI18n } from 'vue-i18n';
@@ -63,6 +63,12 @@ const invoice: Ref<InvoiceResponse | undefined> = ref(undefined);
 
 // Invoice is considered dirty if entry total does not match transfer total
 const dirty = computed(() => isDirty(invoice.value as InvoiceResponse));
+
+watchEffect(() => {
+  if (invoice.value) {
+    document.title = `${t('common.titles.invoice')} #${invoice.value.id} - ${t('common.titles.invoices')} | ${t('common.sudosos')}`;
+  }
+});
 
 onBeforeMount(async () => {
   const id = Number(route.params.id);

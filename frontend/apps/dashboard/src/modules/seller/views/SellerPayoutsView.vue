@@ -27,7 +27,7 @@
 import type { BalanceResponse, UserResponse } from '@sudosos/sudosos-client';
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { computed, onBeforeMount, ref, type Ref } from 'vue';
+import { computed, onBeforeMount, ref, watchEffect, type Ref } from 'vue';
 import ApiService from '@/services/ApiService';
 import SellerPayoutsTable from '@/modules/seller/components/seller/SellerPayoutsTable.vue';
 import CardComponent from '@/components/CardComponent.vue';
@@ -49,6 +49,13 @@ const zeroBalance = computed(() => {
 const user: Ref<UserResponse | undefined> = ref();
 
 const form = schemaToForm(createSellerPayoutObject);
+
+watchEffect(() => {
+  if (user.value) {
+    const sellerName = `${user.value.firstName} ${user.value.lastName}`;
+    document.title = `${sellerName} - ${t('common.titles.payouts')} | ${t('common.sudosos')}`;
+  }
+});
 
 onBeforeMount(async () => {
   const id = Number(route.params.id);

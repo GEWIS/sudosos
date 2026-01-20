@@ -253,6 +253,33 @@
     "betaSync": {
       "redirecting": "Przekierowywanie...",
       "message": "Synchronizowanie ustawień beta. Proszę czekać..."
+    },
+    "titles": {
+      "users": "Użytkownicy",
+      "banners": "Banery",
+      "maintainer": "Utrzymanie",
+      "rbac": "RBAC",
+      "login": "Logowanie",
+      "localLogin": "Logowanie Lokalne",
+      "passwordReset": "Resetowanie Hasła",
+      "qrConfirm": "Potwierdzenie Logowania QR Code",
+      "debtors": "Dłużnicy",
+      "fineHandout": "Rozdawanie Kar",
+      "invoices": "Faktury",
+      "invoice": "Faktura",
+      "createInvoice": "Utwórz Fakturę",
+      "payouts": "Wypłaty",
+      "writeOffs": "Umorzenia",
+      "transactions": "Transakcje",
+      "transactionLookup": "Wyszukiwanie Transakcji",
+      "sellers": "Sprzedawcy",
+      "vatGroups": "Grupy VAT",
+      "posses": "Punkty Sprzedaży",
+      "pos": "Punkt Sprzedaży",
+      "productsContainers": "Produkty i Kontenery",
+      "profile": "Profil",
+      "error": "Błąd",
+      "wrapped": "Wrapped"
     }
   }
 }

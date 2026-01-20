@@ -253,6 +253,33 @@
     "betaSync": {
       "redirecting": "Doorverwijzen...",
       "message": "Beta-instellingen synchroniseren. Even geduld..."
+    },
+    "titles": {
+      "users": "Gebruikers",
+      "banners": "Banners",
+      "maintainer": "Maintainer",
+      "rbac": "RBAC",
+      "login": "Inloggen",
+      "localLogin": "Lokaal Inloggen",
+      "passwordReset": "Wachtwoord Resetten",
+      "qrConfirm": "QR Code Login Bevestiging",
+      "debtors": "Schuldigen",
+      "fineHandout": "Boetes Uitdelen",
+      "invoices": "Facturen",
+      "invoice": "Factuur",
+      "createInvoice": "Factuur Aanmaken",
+      "payouts": "Uitbetalingen",
+      "writeOffs": "Afschrijvingen",
+      "transactions": "Transacties",
+      "transactionLookup": "Transactie Opzoeken",
+      "sellers": "Verkopers",
+      "vatGroups": "BTW Groepen",
+      "posses": "Verkooppunten",
+      "pos": "Verkooppunt",
+      "productsContainers": "Producten & Containers",
+      "profile": "Profiel",
+      "error": "Fout",
+      "wrapped": "Wrapped"
     }
   }
 }

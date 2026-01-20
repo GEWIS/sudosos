@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeMount, ref, watch } from 'vue';
+import { computed, onBeforeMount, ref, watch, watchEffect } from 'vue';
 import type { Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
@@ -68,6 +68,13 @@ const isMember = computed(() => !!currentUser.value && currentUser.value.type ==
 const memberUser = computed(() => (isMember.value ? currentUser.value : null));
 
 const memberId = computed(() => (memberUser.value?.memberId ? `(m${memberUser.value.memberId})` : ''));
+
+watchEffect(() => {
+  if (currentUser.value) {
+    const userName = `${currentUser.value.firstName} ${currentUser.value.lastName}`;
+    document.title = `${userName} - ${t('common.titles.users')} | ${t('common.sudosos')}`;
+  }
+});
 
 // Fetch user
 const getUser = async () => {

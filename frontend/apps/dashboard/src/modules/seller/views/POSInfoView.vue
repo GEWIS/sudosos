@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeMount, ref, watch } from 'vue';
+import { computed, onBeforeMount, ref, watch, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import type {
   PaginatedBaseTransactionResponse,
@@ -77,6 +77,12 @@ const posName = computed(() => {
 const canLoadTransactions = computed(() => {
   if (p.value == undefined) return false;
   return isAllowed('get', [getRelation(p.value.owner!.id)], 'Transaction', ['any']);
+});
+
+watchEffect(() => {
+  if (p.value) {
+    document.title = `${p.value.name} - ${t('common.titles.pos')} | ${t('common.sudosos')}`;
+  }
 });
 
 // Fetch containers from the container store, then the ContainerCard will be reactive.
