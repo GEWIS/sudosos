@@ -47,6 +47,7 @@
     "updatedAt": "Bijgewerkt op",
     "selected": "Geselecteerd",
     "users": "Gebruikers",
+    "count": "Aantal",
     "confirm": "Akkoord",
     "sent": "Verstuurd",
     "paid": "Betaald",
@@ -73,6 +74,7 @@
     "usertype": "Gebruikerstype",
     "toast": {
       "info": {
+        "info": "Info",
         "Info": "Info",
         "scanStarted": "NFC Scan gestart, houd je NFC kaart tegen je telefoon!",
         "notFound": "Niet gevonden"
@@ -153,18 +155,22 @@
       "dutch": "Nederlands",
       "english": "Engels",
       "polish": "Pools",
+      "users": "Gebruikers",
       "userOverview": "Gebruikersoverzicht",
       "banners": "Banners",
       "socialDrinkCards": "Sociale drinkkaarten",
       "invoices": "Facturen",
       "payouts": "Uitbetalingen",
+      "productsContainers": "Producten & containers",
       "manageProducts": "Producten beheren",
+      "pos": "Verkooppunten",
       "posOverview": "POS overzicht",
       "flaggedTransactions": "Gemarkeerde transacties",
       "debtors": "Schuldigen",
       "invoiceAccounts": "Facturen Account Overzicht",
       "fines": "Boetes",
       "writeOffs": "Afschrijvingen",
+      "vat": "BTW",
       "maintainer": "Maintainer",
       "sellers": "Verkopers",
       "rbac": "RBAC"

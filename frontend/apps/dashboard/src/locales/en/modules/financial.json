@@ -115,6 +115,10 @@
         "write-off": {
           "negative": "Can only create a write-off if the balance is negative.",
           "warning": "Creating a write-off will also delete the user's account."
+        },
+        "write-offs": {
+          "negative": "Can only create a write-off if the balance is negative.",
+          "warning": "Creating a write-off will also delete the user's account."
         }
       },
       "write-offs": {

@@ -130,6 +130,10 @@
           "city": "Stad",
           "country": "Land"
         },
+        "write-off": {
+          "negative": "Kan alleen een negatieve afschrijving maken.",
+          "warning": "Het maken van een afschrijving zal ook de gebruiker verwijderen."
+        },
         "write-offs": {
           "negative": "Kan alleen een negatieve afschrijving maken.",
           "warning": "Het maken van een afschrijving zal ook de gebruiker verwijderen."
@@ -139,6 +143,9 @@
         "title": "Verkopers",
         "showAllTooltip": "Toont alle verkopers (actief en inactief). Vink uit om alleen actieve verkopers te tonen.",
         "showActiveOnlyTooltip": "Toont alleen actieve verkopers. Vink aan om alle verkopers (actief en inactief) te tonen."
+      },
+      "vat": {
+        "title": "BTW Groepen"
       }
     }
   }

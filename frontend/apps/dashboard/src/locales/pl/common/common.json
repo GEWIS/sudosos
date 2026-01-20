@@ -75,6 +75,7 @@
     "toast": {
       "info": {
         "info": "Informacja",
+        "Info": "Informacja",
         "scanStarted": "Rozpoczęto skanowanie NFC, przytrzymaj kartę NFC przy telefonie!",
         "notFound": "Nie znaleziono"
       },
@@ -155,19 +156,24 @@
       "english": "Angielski",
       "polish": "Polski",
       "users": "Użytkownicy",
+      "userOverview": "Przegląd Użytkowników",
       "banners": "Banery",
       "socialDrinkCards": "Karty napojów społecznościowych",
       "invoices": "Faktury",
       "payouts": "Wypłaty",
       "productsContainers": "Produkty i kontenery",
+      "manageProducts": "Zarządzaj Produktami",
       "pos": "Punkty sprzedaży",
+      "posOverview": "Przegląd Punktów Sprzedaży",
       "flaggedTransactions": "Zaznaczone transakcje",
       "debtors": "Dłużnicy",
       "invoiceAccounts": "Przegląd kont faktur",
       "fines": "Kary",
       "writeOffs": "Umorzenia",
+      "vat": "VAT",
       "maintainer": "Utrzymanie",
-      "sellers": "Sprzedawcy"
+      "sellers": "Sprzedawcy",
+      "rbac": "RBAC"
     },
     "validation": {
       "number": {

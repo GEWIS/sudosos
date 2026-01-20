@@ -75,6 +75,7 @@
     "toast": {
       "info": {
         "info": "Info",
+        "Info": "Info",
         "scanStarted": "NFC Scan started, please hold your NFC card to your phone!",
         "notFound": "Not found"
       },
@@ -155,12 +156,15 @@
       "english": "English",
       "polish": "Polish",
       "users": "Users",
+      "userOverview": "User Overview",
       "banners": "Banners",
       "socialDrinkCards": "Social drink cards",
       "invoices": "Invoices",
       "payouts": "Payouts",
       "productsContainers": "Products & containers",
+      "manageProducts": "Manage Products",
       "pos": "Points of sale",
+      "posOverview": "POS Overview",
       "flaggedTransactions": "Flagged transactions",
       "debtors": "Debtors",
       "invoiceAccounts": "Invoice Account Overview",

@@ -22,6 +22,8 @@
         "changePin": "PIN wijzigen",
         "changePassword": "Wachtwoord wijzigen",
         "changeNFC": "NFC code wijzigen",
+        "nfc": "NFC",
+        "deleteNFC": "NFC code verwijderen",
         "apiKeys": "API-sleutels",
         "changeApiKey": "API-sleutel wijzigen",
         "deleteApiKey": "API-sleutel verwijderen",

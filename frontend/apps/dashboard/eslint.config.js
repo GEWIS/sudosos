@@ -18,7 +18,7 @@ export default defineConfig([
     extends: [...vueI18n.configs.recommended],
     rules: {
       '@intlify/vue-i18n/no-missing-keys-in-other-locales': ['error'],
-      '@intlify/vue-i18n/no-unused-keys': ['warn', { enableFix: false, extensions: ['.js', '.vue', '.ts'] }],
+      '@intlify/vue-i18n/no-unused-keys': ['error', { enableFix: false, extensions: ['.js', '.vue', '.ts'] }],
       '@intlify/vue-i18n/no-duplicate-keys-in-locale': 'error',
     },
     ignores: ['/src/components/icons/*.vue'],
@@ -37,9 +37,16 @@ export default defineConfig([
             localePattern: '^.*\\\\(?<locale>en)\\\\.*\\.json$', // Regex to capture 'en' in the path
             localeKey: 'path',
           },
+          // Dutch locale configuration
           {
-            pattern: './src/locales/nl/**/*.json', // Match JSON files in the English 'modules' folder
-            localePattern: '^.*\\\\(?<locale>nl)\\\\.*\\.json$', // Regex to capture 'en' in the path
+            pattern: './src/locales/nl/**/*.json', // Match JSON files in the Dutch 'modules' folder
+            localePattern: '^.*\\\\(?<locale>nl)\\\\.*\\.json$', // Regex to capture 'nl' in the path
+            localeKey: 'path',
+          },
+          // Polish locale configuration
+          {
+            pattern: './src/locales/pl/**/*.json', // Match JSON files in the Polish 'modules' folder
+            localePattern: '^.*\\\\(?<locale>pl)\\\\.*\\.json$', // Regex to capture 'pl' in the path
             localeKey: 'path',
           },
         ],

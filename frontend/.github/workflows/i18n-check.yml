@@ -1,0 +1,41 @@
+name: i18n Translation Check
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches-ignore:
+      - main
+
+jobs:
+  check-translations:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build libraries
+        run: yarn build-libraries
+
+      - name: Run i18n checks on dashboard
+        run: |
+          cd apps/dashboard
+          yarn lint
+        continue-on-error: false
+
+      - name: Check for translation key mismatches
+        run: node scripts/check-translations.js
+        continue-on-error: false

@@ -115,6 +115,10 @@
         "write-off": {
           "negative": "Umorzenie można utworzyć tylko wtedy, gdy saldo jest ujemne.",
           "warning": "Utworzenie umorzenia spowoduje również usunięcie konta użytkownika."
+        },
+        "write-offs": {
+          "negative": "Umorzenie można utworzyć tylko wtedy, gdy saldo jest ujemne.",
+          "warning": "Utworzenie umorzenia spowoduje również usunięcie konta użytkownika."
         }
       },
       "write-offs": {
@@ -139,6 +143,9 @@
         "title": "Sprzedawcy",
         "showAllTooltip": "Wyświetla wszystkich sprzedawców (aktywnych i nieaktywnych). Odznacz, aby pokazać tylko aktywnych sprzedawców.",
         "showActiveOnlyTooltip": "Wyświetla tylko aktywnych sprzedawców. Zaznacz, aby pokazać wszystkich sprzedawców (aktywnych i nieaktywnych)."
+      },
+      "vat": {
+        "title": "Grupy VAT"
       }
     }
   }
