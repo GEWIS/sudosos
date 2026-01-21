@@ -44,6 +44,24 @@
         "topUp": "Opwaarderen",
         "price": "Prijs",
         "pay": "Betalen"
+      },
+      "notifications": {
+        "header": "Notificatievoorkeuren",
+        "transactionNotifications": "Transacties",
+        "transactionNotificationMode": "Notificatiemodus",
+        "transactionsMadeByMyself": "Transacties die ik zelf maak",
+        "transactionsMadeByOthers": "Transacties gemaakt door anderen",
+        "disabled": "Uitgeschakeld",
+        "own": "Alleen eigen transacties",
+        "other": "Alleen andere transacties",
+        "all": "Alle transacties",
+        "preferencesUpdated": "Notificatievoorkeuren bijgewerkt",
+        "tooltip": {
+          "disabled": "Je ontvangt geen e-mailnotificaties voor transacties",
+          "own": "Je ontvangt e-mailnotificaties alleen voor transacties die je zelf maakt",
+          "other": "Je ontvangt e-mailnotificaties alleen voor transacties die door anderen voor jou worden gemaakt",
+          "all": "Je ontvangt e-mailnotificaties voor alle transacties, inclusief die door anderen voor jou worden gemaakt"
+        }
       }
     }
   }

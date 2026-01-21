@@ -44,6 +44,24 @@
         "topUp": "Top up",
         "price": "Price",
         "pay": "Pay"
+      },
+      "notifications": {
+        "header": "Notification preferences",
+        "transactionNotifications": "Transactions",
+        "transactionNotificationMode": "Notification mode",
+        "transactionsMadeByMyself": "Transactions made by myself",
+        "transactionsMadeByOthers": "Transactions made by others",
+        "disabled": "Disabled",
+        "own": "Own transactions only",
+        "other": "Other transactions only",
+        "all": "All transactions",
+        "preferencesUpdated": "Notification preferences updated",
+        "tooltip": {
+          "disabled": "You will not receive email notifications for any transactions",
+          "own": "You will receive email notifications only for transactions you make yourself",
+          "other": "You will receive email notifications only for transactions made by others for you",
+          "all": "You will receive email notifications for all transactions, including those made by others for you"
+        }
       }
     }
   }

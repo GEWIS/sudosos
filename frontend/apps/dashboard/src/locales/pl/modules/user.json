@@ -44,6 +44,24 @@
         "topUp": "Doładuj",
         "price": "Cena",
         "pay": "Zapłać"
+      },
+      "notifications": {
+        "header": "Preferencje powiadomień",
+        "transactionNotifications": "Transakcje",
+        "transactionNotificationMode": "Tryb powiadomień",
+        "transactionsMadeByMyself": "Transakcje wykonane przeze mnie",
+        "transactionsMadeByOthers": "Transakcje wykonane przez innych",
+        "disabled": "Wyłączone",
+        "own": "Tylko własne transakcje",
+        "other": "Tylko inne transakcje",
+        "all": "Wszystkie transakcje",
+        "preferencesUpdated": "Preferencje powiadomień zaktualizowane",
+        "tooltip": {
+          "disabled": "Nie będziesz otrzymywać powiadomień e-mail o żadnych transakcjach",
+          "own": "Będziesz otrzymywać powiadomienia e-mail tylko za transakcje, które sam wykonujesz",
+          "other": "Będziesz otrzymywać powiadomienia e-mail tylko za transakcje wykonane przez innych dla Ciebie",
+          "all": "Będziesz otrzymywać powiadomienia e-mail o wszystkich transakcjach, w tym tych wykonanych przez innych dla Ciebie"
+        }
       }
     }
   }

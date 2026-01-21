@@ -9,8 +9,9 @@
         <UserPinComponent />
         <UserSettingsComponent :user="current.user" />
       </div>
-      <div class="hidden md:flex justify-center md:justify-start items-start flex-1">
-        <UserInfo class="self-start shrink-0" :user="current.user" />
+      <div class="flex flex-col justify-start items-start flex-1 gap-4">
+        <UserInfo class="self-start shrink-0 hidden md:block" :user="current.user" />
+        <UserNotificationPreferencesComponent :user="current.user" />
       </div>
     </div>
   </PageContainer>
@@ -24,6 +25,7 @@ import UserSettingsComponent from '@/modules/user/components/UserSettingsCompone
 import UserInfo from '@/modules/user/components/UserInfo.vue';
 import PageContainer from '@/layout/PageContainer.vue';
 import UserPinComponent from '@/modules/user/components/UserPinComponent.vue';
+import UserNotificationPreferencesComponent from '@/modules/user/components/UserNotificationPreferencesComponent.vue';
 
 const userStore = useUserStore();
 const { t } = useI18n();
