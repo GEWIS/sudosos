@@ -29,10 +29,14 @@ const onInput = (event: KeyboardEvent): void => {
     const checkCode = capturedCode.substring(0, 3);
     switch (checkCode) {
       case 'nfc':
+        event.preventDefault();
+        event.stopImmediatePropagation();
         void props.handleNfcLogin(capturedCode.substring(3));
         break;
       case 'ean':
-        // capturedCode.substring(3)
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        void props.handleEanLogin(capturedCode.substring(3));
         break;
       default:
       //TODO toast error for user
@@ -44,11 +48,11 @@ const onInput = (event: KeyboardEvent): void => {
 };
 
 onMounted(() => {
-  document.addEventListener('keydown', onInput);
+  document.addEventListener('keydown', onInput, true);
 });
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', onInput);
+  document.removeEventListener('keydown', onInput, true);
 });
 </script>
 
