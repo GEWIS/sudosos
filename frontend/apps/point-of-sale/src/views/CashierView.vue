@@ -51,7 +51,7 @@ import UserSearchComponent from '@/components/UserSearch/UserSearchComponent.vue
 import BuyerSelectionComponent from '@/components/BuyerSelect/BuyerSelectionComponent.vue';
 import ScannersUpdateComponent from '@/components/ScannersUpdateComponent.vue';
 import NfcSearchComponent from '@/components/NfcSearchComponent.vue';
-import apiService from '@/services/ApiService';
+import { userApiService } from '@/services/ApiService';
 import { useCartStore } from '@/stores/cart.store';
 import TopUpWarningComponent from '@/components/TopUpWarningComponent.vue';
 import { useSettingStore } from '@/stores/settings.store';
@@ -167,7 +167,7 @@ const nfcUpdate = async (nfcCode: string) => {
     const userId = authStore.user?.id;
     if (!userId) return;
 
-    await apiService.user.updateUserNfc(userId, { nfcCode: nfcCode });
+    await userApiService.user.updateUserNfc(userId, { nfcCode: nfcCode });
   } catch (error) {
     console.error(error);
   }
@@ -180,7 +180,7 @@ const nfcDelete = async () => {
   }
 
   try {
-    await apiService.user.deleteUserNfc(userId);
+    await userApiService.user.deleteUserNfc(userId);
   } catch {
     throw new Error('There is no NFC code linked to your account.');
   }
