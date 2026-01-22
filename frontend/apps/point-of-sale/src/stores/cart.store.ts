@@ -50,6 +50,15 @@ export const useCartStore = defineStore('cart', {
     getBuyer(): UserResponse | null {
       return this.buyer;
     },
+    checkBuyerInDebt(): boolean {
+      const buyer = this.buyer;
+      if (buyer) {
+        if (!this.buyerBalance) return false;
+
+        return this.buyerBalance.amount < 0;
+      }
+      return false;
+    },
   },
   actions: {
     setLockedIn(lockedIn: UserResponse | null) {
@@ -73,8 +82,9 @@ export const useCartStore = defineStore('cart', {
       this.createdBy = createdBy;
     },
     async setBuyerFromNfc(nfc: string) {
-      return apiService.user.findUserNfc(nfc).then((res) => {
+      return apiService.user.findUserNfc(nfc).then(async (res) => {
         this.buyer = res.data;
+        this.buyerBalance = await apiService.balance.getBalanceId(res.data.id).then((res) => res.data.amount);
         return this.buyer;
       });
     },
@@ -90,15 +100,6 @@ export const useCartStore = defineStore('cart', {
       } else {
         this.products.push(cartProduct);
       }
-    },
-    checkBuyerInDebt(): boolean {
-      const buyer = this.buyer;
-      if (buyer) {
-        if (!this.buyerBalance) return false;
-
-        return this.buyerBalance.amount < 0;
-      }
-      return false;
     },
     checkUnallowedUserInDebt(): boolean {
       const buyer = this.buyer;

@@ -43,6 +43,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
+import { useToast } from 'primevue/usetoast';
 import KeypadComponent from '@/components/Keypad/KeypadComponent.vue';
 import KeypadDisplayComponent from '@/components/Keypad/KeypadDisplayComponent.vue';
 import { posApiService, userApiService } from '@/services/ApiService';
@@ -52,7 +53,6 @@ import GitInfo from '@/components/GitInfo.vue';
 import PosInfo from '@/components/PosInfo.vue';
 import { useLoginForm } from '@/composables/useLoginForm';
 import { usePointOfSaleStore } from '@/stores/pos.store';
-import { useToast } from 'primevue/usetoast';
 
 const authStore = useAuthStore();
 const posStore = usePointOfSaleStore();

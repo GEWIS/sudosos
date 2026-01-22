@@ -40,6 +40,7 @@
 import { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
 import { computed, onMounted, Ref, ref, watch } from 'vue';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
+import { storeToRefs } from 'pinia';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import { usePosToken } from '@/composables/usePosToken';
 import PointOfSaleDisplayComponent from '@/components/PointOfSaleDisplay/PointOfSaleDisplayComponent.vue';
@@ -62,6 +63,7 @@ const currentPos: Ref<PointOfSaleWithContainersResponse | undefined> = ref(undef
 const pointOfSaleStore = usePointOfSaleStore();
 const activityStore = useActivityStore();
 const cartStore = useCartStore();
+const { checkBuyerInDebt, buyerBalance } = storeToRefs(cartStore);
 const shouldShowTimers = useSettingStore().showTimers;
 const { getPosIdFromToken } = usePosToken();
 
@@ -74,18 +76,14 @@ enum PointOfSaleState {
 const currentState = ref(PointOfSaleState.DISPLAY_POS);
 
 const showTopUpWarning = ref(false);
-const hasShownTopUpWarning = ref(false);
+const hasCheckedDebtAfterLogin = ref(false);
 
 const shouldShowTopUpWarning = computed(() => {
-  const inDebt = cartStore.checkBuyerInDebt();
-  return inDebt && !hasShownTopUpWarning.value && shouldShowTimers;
+  return checkBuyerInDebt.value && shouldShowTimers;
 });
 
 const handleTopUpWarningUpdate = (value: boolean) => {
   showTopUpWarning.value = value;
-  if (!value) {
-    hasShownTopUpWarning.value = true;
-  }
 };
 
 const fetchPointOfSale = async () => {
@@ -107,10 +105,6 @@ const fetchPointOfSale = async () => {
       activityStore.restartTimer();
     }
 
-    if (shouldShowTopUpWarning.value) {
-      showTopUpWarning.value = true;
-    }
-
     // Refresh in background to ensure data is up-to-date
     void pointOfSaleStore.fetchPointOfSale(target).catch((err) => {
       // Log the error for debugging purposes while still continuing with cached data
@@ -129,10 +123,6 @@ const fetchPointOfSale = async () => {
 
     if (shouldShowTimers) {
       activityStore.restartTimer();
-    }
-
-    if (shouldShowTopUpWarning.value) {
-      showTopUpWarning.value = true;
     }
   });
 };
@@ -160,6 +150,17 @@ watch(
   (newPos) => {
     if (newPos) currentPos.value = newPos;
   },
+);
+
+watch(
+  () => buyerBalance.value,
+  (newBalance) => {
+    if (!hasCheckedDebtAfterLogin.value && newBalance !== null && shouldShowTopUpWarning.value) {
+      showTopUpWarning.value = true;
+      hasCheckedDebtAfterLogin.value = true;
+    }
+  },
+  { immediate: true },
 );
 
 const nfcUpdate = async (nfcCode: string) => {

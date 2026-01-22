@@ -1,16 +1,16 @@
 <template>
   <Dialog
     v-model:visible="visible"
+    class="w-[35rem]"
     :closable="false"
     :dismissable-mask="false"
     :draggable="false"
     header="Please Top-Up your SudoSOS balance"
     modal
-    :style="{ width: '35rem' }"
   >
     <Message :closable="false" :icon="undefined" severity="warn">
       Your account balance is currently
-      <span class="text-red-600 font-bold">€{{ formattedBuyerBalance }}</span>
+      <span class="balance-negative font-bold">€{{ formattedBuyerBalance }}</span>
       <br />
       Please first Top-Up your balance before proceeding.
     </Message>
@@ -20,7 +20,7 @@
     </div>
 
     <div v-if="topUpProgress > 0" class="relative w-[100px] h-[100px] mx-auto my-4">
-      <ProgressSpinner animation-duration="5s" stroke-width="6" style="width: 100px; height: 100px" />
+      <ProgressSpinner animation-duration="5s" class="w-[100px] h-[100px]" stroke-width="6" />
       <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-bold">
         {{ topUpProgress }}
       </div>
@@ -35,6 +35,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import Button from 'primevue/button';
+import { storeToRefs } from 'pinia';
 import { useCartStore } from '@/stores/cart.store';
 import { formatPrice } from '@/utils/FormatUtils';
 
@@ -53,13 +54,11 @@ const visible = computed({
 });
 
 const cartStore = useCartStore();
-
-const checkUserInDebt = computed(() => cartStore.checkBuyerInDebt());
+const { checkBuyerInDebt, buyerBalance } = storeToRefs(cartStore);
 
 const formattedBuyerBalance = computed(() => {
-  if (cartStore.buyerBalance == null) return null;
-  const buyerBalance = cartStore.buyerBalance.amount;
-  return formatPrice(buyerBalance);
+  if (buyerBalance.value == null) return null;
+  return formatPrice(buyerBalance.value.amount);
 });
 
 const topUpProgress = ref(5);
@@ -85,16 +84,29 @@ const closeDialog = () => {
 };
 
 onMounted(() => {
-  if (checkUserInDebt.value) {
+  if (checkBuyerInDebt.value) {
     startTopUpCountdown();
   }
 });
 </script>
 
 <style scoped lang="scss">
+.balance-negative {
+  color: var(--p-primary-color);
+}
+
 .understand-button {
-  background-color: red;
-  border-color: red;
-  color: white;
+  background-color: var(--p-primary-color);
+  border-color: var(--p-primary-color);
+  color: var(--p-primary-inverse-color);
+
+  &:hover:not(:disabled) {
+    background-color: var(--p-primary-hover-color);
+    border-color: var(--p-primary-hover-color);
+  }
+
+  &:focus-visible {
+    outline-color: var(--p-primary-color);
+  }
 }
 </style>

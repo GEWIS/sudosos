@@ -8,8 +8,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { usePointOfSaleStore } from '@/stores/pos.store';
 import PosTokenInfoModal from './PosTokenInfoModal.vue';
+import { usePointOfSaleStore } from '@/stores/pos.store';
 
 const { pointOfSale } = storeToRefs(usePointOfSaleStore());
 const showModal = ref(false);
