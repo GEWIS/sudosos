@@ -264,6 +264,7 @@ export const useAuthStore = defineStore('auth', {
       if (!token.token) return;
       const decoded = jwtDecode<JwtPayload>(token.token) as AuthStoreState;
       this.user = decoded.user;
+      this.user.memberId = decoded.user.memberUser?.memberId;
       this.token = token.token;
       this.organs = decoded.organs;
       this.acceptedToS = decoded.acceptedToS;
