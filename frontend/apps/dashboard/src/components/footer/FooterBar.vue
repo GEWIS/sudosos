@@ -1,11 +1,19 @@
 <template>
-  <footer v-if="isMaintenance && canOverride" class="sticky bottom-0 w-full">
-    <div class="w-full h-full flex justify-center items-center bg-red-700 overflow-hidden relative">
+  <footer v-if="isMaintenance && canOverride" class="sticky bottom-0 w-full maintenance-footer-wrapper">
+    <div class="w-full h-full flex items-center maintenance-footer overflow-hidden relative">
       <div class="maintenance-marquee">
-        <span v-for="n in 10" :key="n" class="font-bold text-3xl text-center text-white mx-8">
-          <i class="pi pi-exclamation-triangle text-3xl" />
-          {{ t('common.maintenanceMode.footer') }}
-        </span>
+        <div class="maintenance-marquee-content">
+          <span v-for="n in 10" :key="`first-${n}`" class="font-bold text-3xl text-center text-white mx-8">
+            <i class="pi pi-exclamation-triangle text-3xl" />
+            {{ t('common.maintenanceMode.footer') }}
+          </span>
+        </div>
+        <div class="maintenance-marquee-content">
+          <span v-for="n in 10" :key="`second-${n}`" class="font-bold text-3xl text-center text-white mx-8">
+            <i class="pi pi-exclamation-triangle text-3xl" />
+            {{ t('common.maintenanceMode.footer') }}
+          </span>
+        </div>
       </div>
     </div>
   </footer>
@@ -62,17 +70,31 @@ b {
   margin: 0 1rem;
 }
 
+.maintenance-footer-wrapper {
+  z-index: 10;
+}
+
+.maintenance-footer {
+  background-color: var(--p-primary-color, #d40100);
+}
+
 .maintenance-marquee {
   display: flex;
   align-items: center;
-  min-width: 200%;
   white-space: nowrap;
-  animation: maintenance-scroll 15s linear infinite;
+  animation: maintenance-scroll 20s linear infinite;
+  will-change: transform;
+}
+
+.maintenance-marquee-content {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 @keyframes maintenance-scroll {
   0% {
-    transform: translateX(0%);
+    transform: translateX(0);
   }
   100% {
     transform: translateX(-50%);
