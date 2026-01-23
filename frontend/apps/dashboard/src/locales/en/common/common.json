@@ -53,6 +53,12 @@
     "paid": "Paid",
     "created": "Created",
     "deleted": "Deleted",
+    "view": "View",
+    "clear": "Clear",
+    "clearSelection": "Clear Selection",
+    "selectAll": "Select All",
+    "refresh": "Refresh",
+    "userId": "User ID",
     "placeholders": {
       "selectType": "Select Type",
       "email": "example(at)example.com",
@@ -64,7 +70,9 @@
       "city": "Zwolle",
       "country": "Netherlands",
       "product": "Ice cream",
-      "pos": "GELIMBO"
+      "pos": "GELIMBO",
+      "selectFromDate": "Select from date",
+      "selectToDate": "Select to date"
     },
     "tooltip": {
       "productOwner": "Note: Container owner gets the revenue, not the product owner. Owner cannot be edited after creation."
@@ -171,6 +179,7 @@
       "fines": "Fines",
       "writeOffs": "Write-Offs",
       "vat": "VAT",
+      "administrativeCosts": "Administrative Costs",
       "maintainer": "Maintainer",
       "sellers": "Sellers",
       "rbac": "RBAC"

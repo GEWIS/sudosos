@@ -53,6 +53,12 @@
     "paid": "Betaald",
     "created": "Gemaakt",
     "deleted": "Verwijderd",
+    "view": "Bekijken",
+    "clear": "Wissen",
+    "clearSelection": "Selectie wissen",
+    "selectAll": "Alles selecteren",
+    "refresh": "Vernieuwen",
+    "userId": "Gebruikers-ID",
     "placeholders": {
       "selectType": "Selecteer Type",
       "email": "voorbeeld(at)voorbeeld.com",
@@ -64,7 +70,9 @@
       "city": "Zwolle",
       "country": "Nederland",
       "product": "IJs",
-      "pos": "GELIMBO"
+      "pos": "GELIMBO",
+      "selectFromDate": "Selecteer startdatum",
+      "selectToDate": "Selecteer einddatum"
     },
     "tooltip": {
       "productOwner": "Opmerking: De eigenaar van de container krijgt de opbrengst, niet de producteigenaar. Eigenaar kan na aanmaak niet meer worden bewerkt."
@@ -171,6 +179,7 @@
       "fines": "Boetes",
       "writeOffs": "Afschrijvingen",
       "vat": "BTW",
+      "administrativeCosts": "Administratiekosten",
       "maintainer": "Maintainer",
       "sellers": "Verkopers",
       "rbac": "RBAC"

@@ -53,6 +53,12 @@
     "paid": "Zapłacono",
     "created": "Utworzono",
     "deleted": "Usunięto",
+    "view": "Zobacz",
+    "clear": "Wyczyść",
+    "clearSelection": "Wyczyść zaznaczenie",
+    "selectAll": "Zaznacz wszystko",
+    "refresh": "Odśwież",
+    "userId": "ID użytkownika",
     "placeholders": {
       "selectType": "Wybierz typ",
       "email": "przyklad(at)przyklad.com",
@@ -64,7 +70,9 @@
       "city": "Gdańsk",
       "country": "Polska",
       "product": "Lody",
-      "pos": "GELIMBO"
+      "pos": "GELIMBO",
+      "selectFromDate": "Wybierz datę początkową",
+      "selectToDate": "Wybierz datę końcową"
     },
     "tooltip": {
       "productOwner": "Uwaga: Właściciel kontenera otrzymuje przychód, a nie właściciel produktu. Właściciela nie można edytować po utworzeniu."
@@ -171,6 +179,7 @@
       "fines": "Kary",
       "writeOffs": "Umorzenia",
       "vat": "VAT",
+      "administrativeCosts": "Koszty administracyjne",
       "maintainer": "Utrzymanie",
       "sellers": "Sprzedawcy",
       "rbac": "RBAC"

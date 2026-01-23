@@ -71,6 +71,11 @@ export function useFinancialNav() {
             route: '/financial/vat',
             visible: isAllowed('get', ['all'], 'VatGroup', ['any']),
           },
+          {
+            label: t('common.navigation.administrativeCosts'),
+            route: '/financial/administrative',
+            visible: isAllowed('get', ['all'], 'InactiveAdministrativeCost', ['any']),
+          },
         ].filter((item) => item.visible),
       },
     ].filter((item) => item.visible),

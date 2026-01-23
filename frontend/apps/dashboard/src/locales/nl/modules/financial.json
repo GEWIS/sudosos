@@ -146,6 +146,75 @@
       },
       "vat": {
         "title": "BTW Groepen"
+      },
+      "administrative": {
+        "title": "Administratiekosten",
+        "costs": "Administratiekosten",
+        "user": "Gebruiker",
+        "filters": {
+          "userId": "Gebruikers-ID",
+          "costId": "Kosten-ID"
+        },
+        "selectedCount": "{count} geselecteerd",
+        "details": {
+          "title": "Administratiekosten Details",
+          "basicInfo": "Basisinformatie",
+          "userInfo": "Gebruikersinformatie",
+          "financialInfo": "Financiële Informatie",
+          "transferInfo": "Overboekingsinformatie",
+          "notFound": "Kosten niet gevonden"
+        },
+        "create": {
+          "title": "Administratiekosten Aanmaken",
+          "userId": "Gebruikers-ID",
+          "userIdRequired": "Gebruikers-ID is verplicht"
+        },
+        "confirm": {
+          "delete": "Weet u zeker dat u deze administratiekosten wilt verwijderen? Dit zal de kosten en de bijbehorende overboeking permanent verwijderen.",
+          "bulkDelete": "Weet u zeker dat u {count} administratiekosten wilt verwijderen? Dit zal elke kosten en de bijbehorende overboeking permanent verwijderen."
+        },
+        "deleteSuccess": "Administratiekosten succesvol verwijderd.",
+        "deleteError": "Kon administratiekosten niet verwijderen. Probeer het opnieuw.",
+        "bulkDeleteSuccess": "Succesvol {count} administratiekosten verwijderd.",
+        "createSuccess": "Administratiekosten succesvol aangemaakt.",
+        "eligibleUsers": {
+          "title": "In aanmerking komende gebruikers",
+          "notificationMode": "Stap 1: Melding",
+          "handoutMode": "Stap 2: Uitdelen",
+          "count": "{count} in aanmerking komende gebruikers",
+          "notify": "Geselecteerde gebruikers melden",
+          "handoutButton": "Uitdelen aan geselecteerde gebruikers",
+          "notifySuccess": "Gebruikers succesvol gemeld.",
+          "handoutSuccess": "Succesvol kosten uitgedeeld aan {count} gebruikers.",
+          "step1": {
+            "title": "Stap 1: Gebruikers melden",
+            "description": "Meld gebruikers die 2+ jaar inactief zullen zijn"
+          },
+          "step2": {
+            "title": "Stap 2: Kosten uitdelen",
+            "description": "Deel kosten uit aan gebruikers die vorig jaar zijn gemeld (3+ jaar inactief)"
+          },
+          "notification": {
+            "infoTitle": "Meldingsfase",
+            "infoMessage": "Deze gebruikers zullen 2+ jaar inactief zijn. Meld hen over aankomende administratiekosten. Alleen gebruikers die een melding ontvangen komen volgend jaar in aanmerking voor uitdeling."
+          },
+          "handout": {
+            "infoTitle": "Uitdeelfase",
+            "infoMessage": "Deze gebruikers zijn vorig jaar gemeld en zijn nu 3+ jaar inactief. U kunt nu administratiekosten aan hen uitdelen. Alleen gebruikers die eerder zijn gemeld worden hier getoond."
+          },
+          "confirm": {
+            "notify": "Wilt u {count} gebruikers melden over aankomende administratiekosten?",
+            "handout": "Wilt u administratiekosten uitdelen aan {count} gebruikers? Dit zal kosten aanmaken voor alle geselecteerde gebruikers."
+          }
+        },
+        "report": {
+          "title": "Administratiekosten Rapport Downloaden",
+          "button": "Rapport",
+          "fromDate": "Vanaf Datum (inclusief)",
+          "toDate": "Tot Datum (exclusief)",
+          "downloadSuccess": "Rapport succesvol gedownload.",
+          "downloadError": "Rapport downloaden mislukt. Probeer het opnieuw."
+        }
       }
     }
   }

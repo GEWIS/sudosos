@@ -146,6 +146,75 @@
       },
       "vat": {
         "title": "VAT Groups"
+      },
+      "administrative": {
+        "title": "Administrative Costs",
+        "costs": "Administrative Costs",
+        "user": "User",
+        "filters": {
+          "userId": "User ID",
+          "costId": "Cost ID"
+        },
+        "selectedCount": "{count} selected",
+        "details": {
+          "title": "Administrative Cost Details",
+          "basicInfo": "Basic Information",
+          "userInfo": "User Information",
+          "financialInfo": "Financial Information",
+          "transferInfo": "Transfer Information",
+          "notFound": "Cost not found"
+        },
+        "create": {
+          "title": "Create Administrative Cost",
+          "userId": "User ID",
+          "userIdRequired": "User ID is required"
+        },
+        "confirm": {
+          "delete": "Are you sure you want to delete this administrative cost? This will permanently delete the cost and its associated transfer.",
+          "bulkDelete": "Are you sure you want to delete {count} administrative costs? This will permanently delete each cost and its associated transfer."
+        },
+        "deleteSuccess": "Administrative cost successfully deleted.",
+        "deleteError": "Failed to delete administrative cost. Please try again.",
+        "bulkDeleteSuccess": "Successfully deleted {count} administrative costs.",
+        "createSuccess": "Administrative cost successfully created.",
+        "eligibleUsers": {
+          "title": "Eligible Users",
+          "notificationMode": "Step 1: Notification",
+          "handoutMode": "Step 2: Handout",
+          "count": "{count} eligible users",
+          "notify": "Notify Selected Users",
+          "handoutButton": "Handout to Selected Users",
+          "notifySuccess": "Users successfully notified.",
+          "handoutSuccess": "Successfully handed out costs to {count} users.",
+          "step1": {
+            "title": "Step 1: Notify Users",
+            "description": "Notify users who will be inactive for 2+ years"
+          },
+          "step2": {
+            "title": "Step 2: Handout Costs",
+            "description": "Handout costs to users notified last year (3+ years inactive)"
+          },
+          "notification": {
+            "infoTitle": "Notification Phase",
+            "infoMessage": "These users will be inactive for 2+ years. Notify them about upcoming administrative costs. Only users who receive a notification will be eligible for handout next year."
+          },
+          "handout": {
+            "infoTitle": "Handout Phase",
+            "infoMessage": "These users were notified last year and are now inactive for 3+ years. You can now handout administrative costs to them. Only users who were previously notified are shown here."
+          },
+          "confirm": {
+            "notify": "Do you want to notify {count} users about upcoming administrative costs?",
+            "handout": "Do you want to handout administrative costs to {count} users? This will create costs for all selected users."
+          }
+        },
+        "report": {
+          "title": "Download Administrative Cost Report",
+          "button": "Report",
+          "fromDate": "From Date (inclusive)",
+          "toDate": "To Date (exclusive)",
+          "downloadSuccess": "Report successfully downloaded.",
+          "downloadError": "Failed to download report. Please try again."
+        }
       }
     }
   }

@@ -146,6 +146,75 @@
       },
       "vat": {
         "title": "Grupy VAT"
+      },
+      "administrative": {
+        "title": "Koszty administracyjne",
+        "costs": "Koszty administracyjne",
+        "user": "Użytkownik",
+        "filters": {
+          "userId": "ID użytkownika",
+          "costId": "ID kosztu"
+        },
+        "selectedCount": "{count} wybranych",
+        "details": {
+          "title": "Szczegóły kosztów administracyjnych",
+          "basicInfo": "Podstawowe informacje",
+          "userInfo": "Informacje o użytkowniku",
+          "financialInfo": "Informacje finansowe",
+          "transferInfo": "Informacje o przelewie",
+          "notFound": "Koszt nie znaleziony"
+        },
+        "create": {
+          "title": "Utwórz koszty administracyjne",
+          "userId": "ID użytkownika",
+          "userIdRequired": "ID użytkownika jest wymagane"
+        },
+        "confirm": {
+          "delete": "Czy na pewno chcesz usunąć te koszty administracyjne? Spowoduje to trwałe usunięcie kosztów i powiązanego przelewu.",
+          "bulkDelete": "Czy na pewno chcesz usunąć {count} kosztów administracyjnych? Spowoduje to trwałe usunięcie każdego kosztu i powiązanego przelewu."
+        },
+        "deleteSuccess": "Koszty administracyjne zostały pomyślnie usunięte.",
+        "deleteError": "Nie udało się usunąć kosztów administracyjnych. Spróbuj ponownie.",
+        "bulkDeleteSuccess": "Pomyślnie usunięto {count} kosztów administracyjnych.",
+        "createSuccess": "Koszty administracyjne zostały pomyślnie utworzone.",
+        "eligibleUsers": {
+          "title": "Użytkownicy uprawnieni",
+          "notificationMode": "Krok 1: Powiadomienie",
+          "handoutMode": "Krok 2: Przydział",
+          "count": "{count} uprawnionych użytkowników",
+          "notify": "Powiadom wybranych użytkowników",
+          "handoutButton": "Przydziel wybranym użytkownikom",
+          "notifySuccess": "Użytkownicy zostali pomyślnie powiadomieni.",
+          "handoutSuccess": "Pomyślnie przydzielono koszty {count} użytkownikom.",
+          "step1": {
+            "title": "Krok 1: Powiadom użytkowników",
+            "description": "Powiadom użytkowników, którzy będą nieaktywni przez 2+ lata"
+          },
+          "step2": {
+            "title": "Krok 2: Przydziel koszty",
+            "description": "Przydziel koszty użytkownikom powiadomionym w zeszłym roku (3+ lata nieaktywni)"
+          },
+          "notification": {
+            "infoTitle": "Faza powiadomienia",
+            "infoMessage": "Ci użytkownicy będą nieaktywni przez 2+ lata. Powiadom ich o nadchodzących kosztach administracyjnych. Tylko użytkownicy, którzy otrzymają powiadomienie, będą uprawnieni do przydziału w przyszłym roku."
+          },
+          "handout": {
+            "infoTitle": "Faza przydziału",
+            "infoMessage": "Ci użytkownicy zostali powiadomieni w zeszłym roku i są teraz nieaktywni przez 3+ lata. Możesz teraz przydzielić im koszty administracyjne. Tylko użytkownicy, którzy wcześniej zostali powiadomieni, są tutaj wyświetlani."
+          },
+          "confirm": {
+            "notify": "Czy chcesz powiadomić {count} użytkowników o nadchodzących kosztach administracyjnych?",
+            "handout": "Czy chcesz przydzielić koszty administracyjne {count} użytkownikom? Spowoduje to utworzenie kosztów dla wszystkich wybranych użytkowników."
+          }
+        },
+        "report": {
+          "title": "Pobierz Raport Kosztów Administracyjnych",
+          "button": "Raport",
+          "fromDate": "Data Od (włącznie)",
+          "toDate": "Data Do (wyłącznie)",
+          "downloadSuccess": "Raport został pomyślnie pobrany.",
+          "downloadError": "Nie udało się pobrać raportu. Spróbuj ponownie."
+        }
       }
     }
   }

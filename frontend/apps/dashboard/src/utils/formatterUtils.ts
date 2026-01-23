@@ -1,4 +1,4 @@
-import type { Dinero, UserResponse } from '@sudosos/sudosos-client';
+import type { Dinero, DineroObjectResponse, UserResponse } from '@sudosos/sudosos-client';
 import i18n from '@/utils/i18nUtils';
 
 const t = i18n.global.t;
@@ -36,6 +36,12 @@ export function formatPrice(value: Dinero, isNegative?: boolean): string {
   } else {
     return (value.amount / 100).toLocaleString('nl-NL', { style: 'currency', currency: 'EUR' });
   }
+}
+
+export function formatDineroObject(dinero: DineroObjectResponse, isNegative?: boolean): string {
+  const amount = dinero.amount / 10 ** dinero.precision;
+  const value = isNegative ? -amount : amount;
+  return value.toLocaleString('nl-NL', { style: 'currency', currency: dinero.currency || 'EUR' });
 }
 
 export function formatDateFromString(date: string | undefined) {
