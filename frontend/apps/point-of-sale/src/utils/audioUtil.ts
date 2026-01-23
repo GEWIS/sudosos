@@ -1,5 +1,5 @@
 function getSoundBasePath(): string {
-  if (import.meta.env.DEV) return '/sounds/';
+  if (location.hostname === 'localhost') return '/sounds/';
   if (window.location.pathname.includes('/pos-develop/')) return '/pos-develop/sounds/';
   return '/pos/sounds/';
 }
