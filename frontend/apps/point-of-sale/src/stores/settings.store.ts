@@ -4,7 +4,8 @@ import { usePointOfSaleStore } from '@/stores/pos.store';
 
 export const useSettingStore = defineStore('setting', {
   state: () => ({
-    alcoholTimeToday: Date.now() + 24 * 60 * 60 * 1000, // Should always be recalculated
+    alcoholTimeToday: Date.now() + 24 * 60 * 60 * 1000,
+    loaded: false,
   }),
   getters: {
     isAuthenticatedPos(): boolean {
@@ -54,6 +55,7 @@ export const useSettingStore = defineStore('setting', {
       let alcTime = '16:30';
 
       if (alcTimeRes.ok) {
+        this.loaded = true;
         const alcTimeResText = await alcTimeRes.text();
 
         // If time matches XX:XX regex

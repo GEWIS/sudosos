@@ -37,10 +37,7 @@
       </div>
     </div>
     <div class="m-2 mr-6">
-      <Message
-        v-if="isCategoryAlcoholic && !useSettingStore().isAlcoholTime && pointOfSale?.useAuthentication"
-        severity="warn"
-      >
+      <Message v-if="shouldShowAlcoholWarning" severity="warn">
         Please note that today, alcoholic drinks are only allowed to be served after
         {{
           new Date(useSettingStore().alcoholTimeToday).toLocaleTimeString('nl-NL', {
@@ -93,6 +90,16 @@ const productCount = computed(() => {
     });
   });
   return ids.size;
+});
+
+const settingStore = useSettingStore();
+const shouldShowAlcoholWarning = computed(() => {
+  return (
+    settingStore.loaded &&
+    isCategoryAlcoholic.value &&
+    !settingStore.isAlcoholTime &&
+    props.pointOfSale?.useAuthentication
+  );
 });
 
 const shouldShowAllCategory = computed(() => {
