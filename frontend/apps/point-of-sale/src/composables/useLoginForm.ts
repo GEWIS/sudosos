@@ -4,6 +4,7 @@ import router from '@/router';
 import { useCartStore } from '@/stores/cart.store';
 import apiService, { posApiService, userApiService } from '@/services/ApiService';
 import { usePointOfSaleStore } from '@/stores/pos.store';
+import { playSound } from '@/utils/audioUtil';
 
 export function useLoginForm() {
   const userStore = useUserStore();
@@ -51,6 +52,7 @@ export function useLoginForm() {
     userId.value = '';
     pinCode.value = '';
     enteringUserId.value = true;
+    playSound('login-success.wav');
   };
 
   const loginFail = () => {

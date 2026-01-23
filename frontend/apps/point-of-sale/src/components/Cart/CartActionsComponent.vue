@@ -42,6 +42,7 @@ import { logoutService } from '@/services/logoutService';
 import { useCartStore } from '@/stores/cart.store';
 import { useSettingStore } from '@/stores/settings.store';
 import { useCheckoutTimer } from '@/composables/useCheckoutTimer';
+import { playSound } from '@/utils/audioUtil';
 
 const emit = defineEmits(['selectCreator']);
 
@@ -51,13 +52,6 @@ const cartItems = cartStore.getProducts;
 const borrelMode = computed(() => settings.isBorrelmode);
 const buyer = computed(() => cartStore.getBuyer);
 
-const playSound = () => {
-  const basePath = window.location.pathname.includes('/pos-develop/') ? '/pos-develop/' : '/pos/';
-  const soundUrl = new URL(`${basePath}sounds/rct-cash.wav`, window.location.origin).href;
-  const audio = new Audio(soundUrl);
-  void audio.play();
-};
-
 const {
   duration,
   checkingOut,
@@ -65,7 +59,7 @@ const {
   stopCheckout,
   showDebtWarningDialog,
   resetDialog,
-} = useCheckoutTimer(playSound);
+} = useCheckoutTimer(() => playSound('rct-cash.wav'));
 
 const checkoutText = computed(() => {
   if (checkingOut.value) return duration.value;

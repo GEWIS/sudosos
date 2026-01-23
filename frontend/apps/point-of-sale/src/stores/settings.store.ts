@@ -35,7 +35,8 @@ export const useSettingStore = defineStore('setting', {
       }
     },
     showTimers(): boolean {
-      return location.hostname !== 'localhost' && this.isAuthenticatedPos;
+      // Only show timers in production mode
+      return import.meta.env.DEV && this.isAuthenticatedPos;
     },
   },
   actions: {
