@@ -3,7 +3,7 @@
     v-if="id"
     ref="dialog"
     :draggable="false"
-    :header="t('components.mutations.modal.header', { id })"
+    :header="t('components.mutations.modal.header', { id: displayId })"
     modal
     :pt="{
       root: { class: 'w-full max-w-[90vw] md:max-w-[33rem]' },
@@ -41,10 +41,14 @@ import { addListenerOnDialogueOverlay, isAllowed } from '@sudosos/sudosos-fronte
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import Skeleton from 'primevue/skeleton';
-import type { BaseInactiveAdministrativeCostResponse } from '@sudosos/sudosos-client';
+import type { BaseInactiveAdministrativeCostResponse, TransferResponse } from '@sudosos/sudosos-client';
 import ConfirmButton from '@/components/ConfirmButton.vue';
 import { useAdministrativeCostsStore } from '@/stores/administrativeCosts.store';
 import InactiveDetailModal from '@/components/mutations/mutationmodal/ModalDetailInactive.vue';
+
+interface InactiveAdministrativeCostWithTransfer extends BaseInactiveAdministrativeCostResponse {
+  transfer?: TransferResponse;
+}
 
 interface Props {
   id?: number;
@@ -64,12 +68,16 @@ const store = useAdministrativeCostsStore();
 const toast = useToast();
 
 const dialog = ref();
-const inactiveInfo = ref<BaseInactiveAdministrativeCostResponse | null>(null);
+const inactiveInfo = ref<InactiveAdministrativeCostWithTransfer | null>(null);
 const isLoading = ref(false);
 const visible = ref(false);
 const isClosing = ref(false);
 
 const canDelete = computed(() => isAllowed('delete', ['all'], 'InactiveAdministrativeCost', ['any']));
+
+const displayId = computed(() => {
+  return inactiveInfo.value?.transfer?.id ?? props.id ?? 0;
+});
 
 async function fetchInactive() {
   if (!props.id) return;
@@ -92,7 +100,7 @@ watch(
       inactiveInfo.value = null;
     }
   },
-  { immediate: false },
+  { immediate: true },
 );
 
 function handleClose() {

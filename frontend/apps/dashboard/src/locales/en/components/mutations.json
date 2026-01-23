@@ -27,6 +27,8 @@
         "invoiceDescription": "You have paid an invoice to GEWIS",
         "depositDescription": "You have deposited money to GEWIS",
         "fineDescription": "You have paid a fine to GEWIS",
+        "inactiveCostDescription": "You have been charged an administrative cost for being inactive via transfer.",
+        "inactiveCostExplanation": "This cost is applied to members who have been inactive for an extended period.",
         "unknown": "Unknown transaction"
       },
       "userBoughtAt": "You bought at {pos}",

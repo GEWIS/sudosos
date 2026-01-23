@@ -87,8 +87,14 @@
           {{ formatPrice((mutation.data as FinancialMutation).amount) }}
         </div>
 
-        <!-- Fines get red -->
-        <div v-else-if="isFine(mutation.data.type)" class="font-bold" style="color: #d40000">
+        <!-- Fines and inactive costs get red -->
+        <div
+          v-else-if="
+            isFine(mutation.data.type) || mutation.data.type === FinancialMutationType.INACTIVE_ADMINISTRATIVE_COST
+          "
+          class="font-bold"
+          style="color: #d40000"
+        >
           {{ formatPrice((mutation.data as FinancialMutation).amount, true) }}
         </div>
 
@@ -104,16 +110,29 @@
         <Skeleton class="h-1rem my-1 surface-300 w-3" />
       </template>
       <template v-else #body="mutation">
-        <i class="cursor-pointer pi pi-info-circle" @click="() => openModal(mutation.data.id, mutation.data.type)" />
+        <i
+          class="cursor-pointer pi pi-info-circle"
+          @click="() => openModal(mutation.data.id, mutation.data.type, mutation.data.inactiveCostId)"
+        />
       </template>
     </Column>
   </DataTable>
   <ModalMutation
-    v-if="openedMutationId && openedMutationType !== undefined"
+    v-if="
+      openedMutationId &&
+      openedMutationType !== undefined &&
+      openedMutationType !== FinancialMutationType.INACTIVE_ADMINISTRATIVE_COST
+    "
     :id="openedMutationId"
     v-model:visible="isModalVisible"
     :type="openedMutationType"
     @deleted="refresh"
+  />
+  <ModalInactive
+    v-if="openedInactiveCostId"
+    :id="openedInactiveCostId"
+    @close="handleInactiveClose"
+    @delete="handleInactiveDelete"
   />
 </template>
 <script lang="ts" setup>
@@ -124,9 +143,15 @@ import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import type { PaginatedFinancialMutationResponse } from '@sudosos/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { formatPrice } from '@/utils/formatterUtils';
-import { type FinancialMutation, FinancialMutationType, parseFinancialMutations } from '@/utils/mutationUtils';
+import {
+  type FinancialMutation,
+  FinancialMutationType,
+  parseFinancialMutations,
+  isIncreasingTransfer,
+  isFine,
+} from '@/utils/mutationUtils';
 import ModalMutation from '@/components/mutations/mutationmodal/ModalMutation.vue';
-import { isIncreasingTransfer, isFine } from '@/utils/mutationUtils';
+import ModalInactive from '@/components/mutations/mutationmodal/ModalInactive.vue';
 import { useSizeBreakpoints } from '@/composables/sizeBreakpoints';
 import { usePrefetchMutationDetails } from '@/composables/preloadMutationDetails';
 
@@ -178,12 +203,28 @@ async function onPage(event: DataTablePageEvent) {
 
 const openedMutationId = ref<number>();
 const openedMutationType = ref<FinancialMutationType>();
+const openedInactiveCostId = ref<number>();
 const isModalVisible = ref<boolean>(false);
 
-function openModal(id: number, type: FinancialMutationType) {
-  openedMutationId.value = id;
-  openedMutationType.value = type;
-  isModalVisible.value = true;
+function openModal(id: number, type: FinancialMutationType, inactiveCostId?: number) {
+  if (type === FinancialMutationType.INACTIVE_ADMINISTRATIVE_COST) {
+    if (inactiveCostId !== undefined && inactiveCostId !== null) {
+      openedInactiveCostId.value = inactiveCostId;
+    }
+  } else {
+    openedMutationId.value = id;
+    openedMutationType.value = type;
+    isModalVisible.value = true;
+  }
+}
+
+function handleInactiveClose() {
+  openedInactiveCostId.value = undefined;
+}
+
+function handleInactiveDelete() {
+  openedInactiveCostId.value = undefined;
+  void refresh();
 }
 
 defineExpose({ refresh });

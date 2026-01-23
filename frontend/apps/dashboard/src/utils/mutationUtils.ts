@@ -19,6 +19,7 @@ export enum FinancialMutationType {
   FINE,
   WAIVED_FINE,
   TRANSACTION,
+  INACTIVE_ADMINISTRATIVE_COST,
 }
 
 export interface FinancialMutation {
@@ -31,6 +32,7 @@ export interface FinancialMutation {
   pos?: string;
   createdBy?: BaseUserResponse | undefined;
   editedAt?: Date | undefined;
+  inactiveCostId?: number;
 }
 
 export function parseTransaction(transaction: BaseTransactionResponse): FinancialMutation {
@@ -49,6 +51,7 @@ export function parseTransaction(transaction: BaseTransactionResponse): Financia
 
 export function parseTransfer(transfer: TransferResponse): FinancialMutation {
   let type = FinancialMutationType.DEPOSIT;
+  let inactiveCostId: number | undefined;
 
   if (transfer.invoice) {
     type = FinancialMutationType.INVOICE;
@@ -60,6 +63,9 @@ export function parseTransfer(transfer: TransferResponse): FinancialMutation {
     type = FinancialMutationType.FINE;
   } else if (transfer.waivedFines) {
     type = FinancialMutationType.WAIVED_FINE;
+  } else if (transfer.inactiveAdministrativeCost) {
+    type = FinancialMutationType.INACTIVE_ADMINISTRATIVE_COST;
+    inactiveCostId = transfer.inactiveAdministrativeCost.id;
   }
 
   return {
@@ -69,6 +75,7 @@ export function parseTransfer(transfer: TransferResponse): FinancialMutation {
     type: type,
     moment: new Date(transfer.updatedAt!),
     id: transfer.id,
+    inactiveCostId,
   };
 }
 
@@ -118,6 +125,9 @@ export function getDescription(mutation: FinancialMutation) {
     }
     case FinancialMutationType.INVOICE: {
       return t('components.mutations.modal.invoice');
+    }
+    case FinancialMutationType.INACTIVE_ADMINISTRATIVE_COST: {
+      return t('modules.financial.administrative.title');
     }
     default: {
       return t('components.mutations.modal.unknown');

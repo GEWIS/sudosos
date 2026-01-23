@@ -64,6 +64,7 @@ import { useToast } from 'primevue/usetoast';
 import { useUserStore, useUserSettingsStore } from '@sudosos/sudosos-frontend-common';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as yup from 'yup';
+import { AxiosError } from 'axios';
 import CardComponent from '@/components/CardComponent.vue';
 import FormDialog from '@/components/FormDialog.vue';
 import { editPasswordSchema } from '@/utils/validation-schema';
@@ -72,7 +73,6 @@ import ChangePasswordForm from '@/modules/user/components/forms/ChangePasswordFo
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
 import { isBetaEnabled } from '@/utils/betaUtil';
-import { AxiosError } from 'axios';
 
 async function startScan() {
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);

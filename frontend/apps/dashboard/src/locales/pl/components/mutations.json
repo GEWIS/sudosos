@@ -27,6 +27,8 @@
         "invoiceDescription": "Zapłaciłeś fakturę dla GEWIS",
         "depositDescription": "Wpłaciłeś pieniądze do GEWIS",
         "fineDescription": "Zapłaciłeś karę dla GEWIS",
+        "inactiveCostDescription": "Zostałeś obciążony kosztami administracyjnymi za nieaktywność poprzez przelew.",
+        "inactiveCostExplanation": "Ten koszt jest stosowany do członków, którzy byli nieaktywni przez dłuższy okres.",
         "unknown": "Nieznana transakcja"
       },
       "userBoughtAt": "Kupiłeś w {pos}",

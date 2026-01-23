@@ -27,6 +27,8 @@
         "invoiceDescription": "Je hebt een factuur betaald aan GEWIS",
         "depositDescription": "Je hebt geld gestort bij GEWIS",
         "fineDescription": "Je hebt een boete betaald aan GEWIS",
+        "inactiveCostDescription": "Je bent een administratiekosten in rekening gebracht voor inactiviteit via overschrijving.",
+        "inactiveCostExplanation": "Deze kosten worden toegepast op leden die gedurende een langere periode inactief zijn geweest.",
         "unknown": "Onbekende transactie"
       },
       "userBoughtAt": "Je hebt gekocht bij {pos}",
