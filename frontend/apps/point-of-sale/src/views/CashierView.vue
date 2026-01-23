@@ -79,7 +79,10 @@ const showTopUpWarning = ref(false);
 const hasCheckedDebtAfterLogin = ref(false);
 
 const shouldShowTopUpWarning = computed(() => {
-  return checkBuyerInDebt.value && shouldShowTimers;
+  const buyer = cartStore.getBuyer;
+  const loggedInUser = authStore.getUser;
+  const isBuyerLoggedInUser = buyer && loggedInUser && buyer.id === loggedInUser.id;
+  return checkBuyerInDebt.value && shouldShowTimers && isBuyerLoggedInUser;
 });
 
 const handleTopUpWarningUpdate = (value: boolean) => {
