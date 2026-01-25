@@ -21,10 +21,6 @@
       />
 
       <div v-if="usersPointOfSales && usersPointOfSales.length > 0" class="flex gap-3 pt-4 justify-end">
-        <Button class="px-3 py-2" outlined @click="visible = false">
-          <i class="pi pi-times mr-2" />
-          Close
-        </Button>
         <Button class="px-3 py-2" @click="forceExit">
           <i class="pi pi-sign-out mr-2" />
           Force logout
