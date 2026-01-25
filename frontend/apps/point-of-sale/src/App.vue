@@ -17,7 +17,7 @@ const handleClick = (event: Event) => {
       element.__vnode?.props?.onClick;
 
     if (hasClickListener) {
-      playSound('button-press.wav');
+      playSound('button-press.wav', 0.6);
       break;
     }
 
