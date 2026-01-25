@@ -49,6 +49,10 @@ onBeforeMount(() => {
     resetForm.context.setFieldValue('email', email);
     passwordResetMode.value = ResetMode.SetNew;
   }
+
+  if (email) {
+    requestForm.context.setFieldValue('email', email);
+  }
 });
 
 const backToLogin = () => {
