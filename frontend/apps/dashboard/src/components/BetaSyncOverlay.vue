@@ -4,7 +4,7 @@
     class="fixed top-0 left-0 w-full h-full flex text-white justify-center items-center z-[9999] bg-red bg-opacity-75"
   >
     <main class="flex flex-col items-center gap-4">
-      <ProgressSpinner />
+      <ProgressSpinner class="white-spinner" />
       <div class="font-bold text-xl text-center">{{ t('common.betaSync.redirecting') }}</div>
       <div class="text-lg text-center">{{ t('common.betaSync.message') }}</div>
     </main>
@@ -25,5 +25,11 @@ const { t } = useI18n();
 <style scoped lang="scss">
 .bg-red {
   background: var(--p-primary-color);
+}
+.white-spinner {
+  --p-progressspinner-color-one: white;
+  --p-progressspinner-color-two: white;
+  --p-progressspinner-color-three: white;
+  --p-progressspinner-color-four: white;
 }
 </style>
