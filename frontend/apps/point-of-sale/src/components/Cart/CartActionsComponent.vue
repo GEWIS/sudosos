@@ -42,7 +42,7 @@ import { logoutService } from '@/services/logoutService';
 import { useCartStore } from '@/stores/cart.store';
 import { useSettingStore } from '@/stores/settings.store';
 import { useCheckoutTimer } from '@/composables/useCheckoutTimer';
-import { playSound } from '@/utils/audioUtil';
+import { playAudio, Sound } from '@/utils/audioUtil';
 
 const emit = defineEmits(['selectCreator']);
 
@@ -59,7 +59,7 @@ const {
   stopCheckout,
   showDebtWarningDialog,
   resetDialog,
-} = useCheckoutTimer(() => playSound('rct-cash.wav'));
+} = useCheckoutTimer(() => playAudio(Sound.CASHOUT));
 
 const checkoutText = computed(() => {
   if (checkingOut.value) return duration.value;

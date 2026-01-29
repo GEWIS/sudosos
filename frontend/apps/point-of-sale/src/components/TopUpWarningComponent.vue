@@ -38,7 +38,7 @@ import Button from 'primevue/button';
 import { storeToRefs } from 'pinia';
 import { useCartStore } from '@/stores/cart.store';
 import { formatPrice } from '@/utils/FormatUtils';
-import { playSound } from '@/utils/audioUtil';
+import { playAudio, Sound } from '@/utils/audioUtil';
 
 const props = defineProps({
   show: {
@@ -87,7 +87,7 @@ const closeDialog = () => {
 onMounted(() => {
   if (checkBuyerInDebt.value) {
     startTopUpCountdown();
-    playSound('sad-trombone.wav');
+    playAudio(Sound.TOP_UP_WARNING);
   }
 });
 </script>
