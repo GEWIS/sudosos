@@ -1,21 +1,30 @@
 import { computed, ref, watch, onUnmounted, type Ref } from 'vue';
+import type { Socket } from 'socket.io-client';
 import { BaseTransactionResponse, PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
-import { useAuthStore } from '@sudosos/sudosos-frontend-common';
+import { useAuthStore, useWebSocketStore } from '@sudosos/sudosos-frontend-common';
 import { useCartStore } from '@/stores/cart.store';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import { useSettingStore } from '@/stores/settings.store';
 import { userApiService } from '@/services/ApiService';
+import { usePosToken } from '@/composables/usePosToken';
+
+const POS_TRANSACTIONS_ROOM_PREFIX = 'pos:';
+const POS_TRANSACTIONS_ROOM_SUFFIX = ':transactions';
+const RECENT_TRANSACTIONS_MAX = 50;
 
 export function useCartTransactions(pointOfSale?: Ref<PointOfSaleWithContainersResponse | null>) {
   const cartStore = useCartStore();
   const authStore = useAuthStore();
   const posStore = usePointOfSaleStore();
   const settings = useSettingStore();
+  const posToken = usePosToken();
 
   const transactions = ref<BaseTransactionResponse[]>([]);
+  const openTransactionId = ref<number | null>(null);
   const isLoadingTransactions = ref(false);
   const loadingBuyerId = ref<number | null>(null);
   const shouldShowTransactions = computed(() => cartStore.cartTotalCount === 0);
+  const hasToken = computed(() => !!authStore.getToken || posToken.hasPosToken.value);
 
   const current = computed(() => cartStore.getBuyer);
   const isOwnBuyer = computed(() => {
@@ -102,19 +111,81 @@ export function useCartTransactions(pointOfSale?: Ref<PointOfSaleWithContainersR
 
   const getRefreshInterval = () => setInterval(() => void getPointOfSaleRecentTransactions(), refreshInterval);
 
-  const clearIfExists = () => {
-    if (refreshRecentPosTransactions) clearInterval(refreshRecentPosTransactions);
+  const clearPollingIfExists = () => {
+    if (refreshRecentPosTransactions) {
+      clearInterval(refreshRecentPosTransactions);
+      refreshRecentPosTransactions = null;
+    }
+  };
+
+  let unsubscribePosTransactions: (() => void) | null = null;
+  let subscribedPosId: number | null = null;
+
+  function subscribeToPosTransactions(posId: number): boolean {
+    if (subscribedPosId === posId) return true;
+    clearPosTransactionsSubscription();
+    subscribedPosId = posId;
+
+    const wsStore = useWebSocketStore();
+    let socket: Socket;
+    try {
+      socket = wsStore.getSocket;
+    } catch {
+      subscribedPosId = null;
+      return false;
+    }
+    const room = `${POS_TRANSACTIONS_ROOM_PREFIX}${posId}${POS_TRANSACTIONS_ROOM_SUFFIX}`;
+
+    const onTransactionCreated = (payload: BaseTransactionResponse) => {
+      const alreadyInList = transactions.value.some((t) => t.id === payload.id);
+      if (!alreadyInList) {
+        transactions.value = [payload, ...transactions.value].slice(0, RECENT_TRANSACTIONS_MAX);
+        openTransactionId.value = payload.id;
+      }
+    };
+    const onConnect = () => {
+      socket.emit('subscribe', room);
+      void getPointOfSaleRecentTransactions();
+    };
+
+    socket.emit('subscribe', room);
+    socket.on('transaction:created', onTransactionCreated);
+    socket.on('connect', onConnect);
+
+    unsubscribePosTransactions = () => {
+      socket.off('transaction:created', onTransactionCreated);
+      socket.off('connect', onConnect);
+      socket.emit('unsubscribe', room);
+      unsubscribePosTransactions = null;
+      subscribedPosId = null;
+    };
+    return true;
+  }
+
+  const clearPosTransactionsSubscription = () => {
+    if (unsubscribePosTransactions) {
+      unsubscribePosTransactions();
+    }
   };
 
   const loadTransactions = async () => {
     if (!pointOfSale?.value) return;
     if (pointOfSale.value.useAuthentication) {
-      clearIfExists();
+      clearPollingIfExists();
+      clearPosTransactionsSubscription();
       await getUserRecentTransactions();
     } else {
-      clearIfExists();
+      clearPollingIfExists();
+      clearPosTransactionsSubscription();
       await getPointOfSaleRecentTransactions();
-      refreshRecentPosTransactions = getRefreshInterval();
+      if (hasToken.value) {
+        const subscribed = subscribeToPosTransactions(pointOfSale.value.id);
+        if (!subscribed) {
+          refreshRecentPosTransactions = getRefreshInterval();
+        }
+      } else {
+        refreshRecentPosTransactions = getRefreshInterval();
+      }
     }
   };
 
@@ -125,11 +196,13 @@ export function useCartTransactions(pointOfSale?: Ref<PointOfSaleWithContainersR
   }
 
   onUnmounted(() => {
-    clearIfExists();
+    clearPollingIfExists();
+    clearPosTransactionsSubscription();
   });
 
   return {
     transactions,
+    openTransactionId,
     isLoadingTransactions,
     shouldShowTransactions,
     getUserRecentTransactions,

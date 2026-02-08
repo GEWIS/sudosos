@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue';
 import { BaseTransactionResponse, TransactionResponse } from '@sudosos/sudosos-client';
 import { formatDateFromString, formatTimeFromString, formatDineroObjectToString } from '@/utils/FormatUtils';
 import { userApiService } from '@/services/ApiService';
@@ -49,7 +49,7 @@ const settings = useSettingStore();
 
 const props = defineProps({
   transaction: {
-    type: Object as () => BaseTransactionResponse,
+    type: Object as () => BaseTransactionResponse | TransactionResponse,
     required: true,
   },
   open: {
@@ -112,7 +112,10 @@ async function leave(el: Element) {
 const toggleOpen = () => emit('update:open', props.transaction.id);
 const formattedDate = formatDateFromString(props.transaction.createdAt);
 const formattedTime = formatTimeFromString(props.transaction.createdAt);
-const formattedValue = formatDineroObjectToString(props.transaction.value, false);
+const transactionValue = computed(() =>
+  'value' in props.transaction ? props.transaction.value : props.transaction.totalPriceInclVat,
+);
+const formattedValue = computed(() => formatDineroObjectToString(transactionValue.value, false));
 const isCreatedByDifferent = props.transaction.createdBy?.id !== props.transaction.from.id || settings.isBorrelmode;
 </script>
 

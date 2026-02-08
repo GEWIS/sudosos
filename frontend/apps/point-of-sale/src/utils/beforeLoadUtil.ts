@@ -37,18 +37,10 @@ async function populatePosStoreFromToken(): Promise<boolean> {
 }
 
 export default async function beforeLoad() {
-  try {
-    setupWebSocket();
-  } catch (e) {
-    console.error(e);
-    return;
-  }
-
-  // Load POS via apiKey and userId from URL parameters
   const urlParams = new URLSearchParams(window.location.search);
   const apiKey = urlParams.get('apiKey');
   const userId = urlParams.get('userId');
-  // Authenticate from url if present
+
   if (apiKey && userId) {
     const authStore = useAuthStore();
     const { switchToPos } = usePointOfSaleSwitch();
@@ -61,7 +53,6 @@ export default async function beforeLoad() {
 
     await switchToPos(pos.data);
   } else {
-    // Otherwise load POS from stored token, or clear invalid token
     const posToken = usePosToken();
 
     await populatePosStoreFromToken()
@@ -69,8 +60,17 @@ export default async function beforeLoad() {
         if (!res) posToken.clearPosToken();
       })
       .catch(() => {
-        // Clear token on refresh failure
         posToken.clearPosToken();
       });
+  }
+
+  const authStore = useAuthStore();
+  const token = getTokenFromStorage(POS_TOKEN_KEY).token ?? authStore.getToken;
+
+  try {
+    setupWebSocket({ token });
+  } catch (e) {
+    console.error(e);
+    return;
   }
 }

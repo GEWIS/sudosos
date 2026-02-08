@@ -24,7 +24,11 @@
         <CartItemComponent :cart-product="item" />
       </div>
     </div>
-    <TransactionHistoryComponent v-else-if="shouldShowTransactions" :transactions="transactions" />
+    <TransactionHistoryComponent
+      v-else-if="shouldShowTransactions"
+      :open-transaction-id="openTransactionId"
+      :transactions="transactions"
+    />
     <div class="bg-white rounded-xl font-size-lg mt-3 px-3 py-2 shadow-sm">
       <div class="flex justify-between items-center w-full">
         <div class="font-semibold">Total</div>
@@ -62,8 +66,16 @@ const showHistory = ref(true);
 const { pointOfSale } = storeToRefs(posStore as StoreGeneric);
 const { lockedIn } = storeToRefs(cartStore as StoreGeneric);
 
-const { transactions, shouldShowTransactions, loadTransactions, displayName, isOfAge, lockUser, showLock } =
-  useCartTransactions(pointOfSale);
+const {
+  transactions,
+  openTransactionId,
+  shouldShowTransactions,
+  loadTransactions,
+  displayName,
+  isOfAge,
+  lockUser,
+  showLock,
+} = useCartTransactions(pointOfSale);
 
 const lockIcon = computed(() => {
   return cartStore.lockedIn ? 'pi pi-lock' : 'pi pi-unlock';

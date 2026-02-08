@@ -1,7 +1,12 @@
 import { io } from 'socket.io-client';
 import { useWebSocketStore } from '../stores/websocket.store';
 
-export const setupWebSocket = () => {
+export interface WebSocketSetupOptions {
+  token?: string | null;
+}
+
+export const setupWebSocket = (options?: WebSocketSetupOptions) => {
+  const token = options?.token;
   const socket = io({
     path: '/ws/socket.io',
     transports: ['websocket'],
@@ -9,6 +14,7 @@ export const setupWebSocket = () => {
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
     reconnectionAttempts: Infinity,
+    ...(token ? { auth: { token } } : {}),
   });
 
   const websocketStore = useWebSocketStore();

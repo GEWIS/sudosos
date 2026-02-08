@@ -17,7 +17,7 @@ more information when clicked. */
 
 <script setup lang="ts">
 import { BaseTransactionResponse } from '@sudosos/sudosos-client';
-import { Ref, ref } from 'vue';
+import { Ref, ref, watch } from 'vue';
 import TransactionHistoryRowComponent from '@/components/Cart/TransactionHistory/TransactionHistoryRowComponent.vue';
 
 const props = defineProps({
@@ -25,10 +25,21 @@ const props = defineProps({
     type: Object as () => BaseTransactionResponse[],
     required: true,
   },
+  openTransactionId: {
+    type: Number as () => number | null,
+    default: null,
+  },
 });
 
 // Which transaction to open. null means that it should open the top transaction.
 const openId: Ref<number | undefined | null> = ref(null);
+
+watch(
+  () => props.openTransactionId,
+  (id) => {
+    if (id != null) openId.value = id;
+  },
+);
 
 const shouldOpen = (transaction: BaseTransactionResponse) => {
   return transaction.id === openId.value || (openId.value === null && transaction.id === props.transactions[0]!.id);
