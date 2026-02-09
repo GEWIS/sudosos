@@ -1,9 +1,6 @@
 <template>
-  <div
-    v-if="disconnected"
-    class="fixed top-0 left-0 w-screen h-screen overlay flex align-items-center justify-content-center z-5"
-  >
-    <div class="flex flex-col align-items-center gap-3 opacity-100">
+  <div v-if="disconnected" class="fixed inset-0 overlay flex justify-center items-center z-5">
+    <div class="flex flex-col items-center gap-3 opacity-100">
       <div class="text-3xl font-bold text-center">Oh no! Lost connection! Please stand by...</div>
       <ProgressSpinner stroke-width="4" style="width: 50px; height: 50px" />
     </div>
