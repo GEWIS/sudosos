@@ -6,7 +6,7 @@
     :outlined="associate.type !== 'owner'"
     @click="select()"
   >
-    <ProgressSpinner v-if="props.isLoading" stroke-width="4" style="width: 30px; height: 30px" />
+    <ProgressSpinner v-if="props.isLoading" class="white-spinner" stroke-width="4" />
     <span v-else>
       {{ associate.firstName }}
       <span v-if="associate.nickname" class="italic"> "{{ associate.nickname }}"</span>
@@ -66,5 +66,14 @@ const select = async () => {
 .ghost-button {
   opacity: 0;
   pointer-events: none;
+}
+
+.white-spinner {
+  width: 30px;
+  height: 30px;
+  --p-progressspinner-color-one: white;
+  --p-progressspinner-color-two: white;
+  --p-progressspinner-color-three: white;
+  --p-progressspinner-color-four: white;
 }
 </style>
