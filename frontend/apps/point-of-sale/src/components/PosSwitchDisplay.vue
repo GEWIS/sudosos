@@ -25,21 +25,27 @@
             :outlined="currentPosId !== pos.id"
             @click="handlePosClick(pos)"
           >
-            <div class="flex flex-col items-start">
-              <span class="font-semibold">{{ pos.name }}</span>
-              <span v-if="currentPosId === pos.id" class="text-sm opacity-75">(Current)</span>
+            <div class="flex items-center justify-between w-full">
+              <div class="flex flex-col items-start">
+                <span class="font-semibold">{{ pos.name }}</span>
+                <span v-if="currentPosId === pos.id" class="text-sm opacity-75">(Current)</span>
+              </div>
+              <i v-if="currentPosId === pos.id" class="pi pi-info-circle text-xl ml-2"></i>
             </div>
           </Button>
         </div>
       </div>
     </div>
   </div>
+  <PosTokenInfoModal v-model="showModal" />
 </template>
 
 <script setup lang="ts">
 import { PointOfSaleResponse } from '@sudosos/sudosos-client';
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
+import { ref } from 'vue';
+import PosTokenInfoModal from '@/components/PosTokenInfoModal.vue';
 
 interface Props {
   groupedPos: Record<string, PointOfSaleResponse[]>;
@@ -66,9 +72,15 @@ const emit = defineEmits<{
 }>();
 
 const handlePosClick = (pos: PointOfSaleResponse) => {
-  if (props.currentPosId === pos.id || props.switching) return;
+  if (props.switching) return;
+  if (props.currentPosId === pos.id) {
+    showModal.value = true;
+    return;
+  }
   emit('select', pos);
 };
+
+const showModal = ref(false);
 </script>
 
 <style scoped lang="scss">
