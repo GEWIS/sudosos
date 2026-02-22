@@ -16,8 +16,8 @@ export function useDataTableYear<T, F extends Record<string, unknown>>(
     defaultRows?: number;
   },
 ) {
-  const yearnumber = options?.defaultYear ?? options?.yearList?.[0];
-  const year = ref(Number(yearnumber));
+  const yearnumber = options?.defaultYear ?? options?.yearList[0];
+  const year = ref(yearnumber?.toString() ?? '');
   const page = ref(0);
   const rows = ref(options?.defaultRows ?? 10);
   const filters = ref({ ...(options?.initialFilters || {}) } as F);
@@ -29,7 +29,7 @@ export function useDataTableYear<T, F extends Record<string, unknown>>(
     isLoading.value = true;
     records.value = new Array(rows.value) as T[];
     const resp = await fetchRecords({
-      year: year.value,
+      year: Number(year.value),
       page: page.value,
       rows: rows.value,
       filters: filters.value,

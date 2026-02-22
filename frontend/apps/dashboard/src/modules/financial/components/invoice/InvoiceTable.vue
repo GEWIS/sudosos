@@ -25,6 +25,17 @@
         </template>
       </Column>
 
+      <Column field="description" :header="t('common.description')" style="max-width: 10rem">
+        <template #body="slotProps">
+          <div class="cell-content">
+            <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
+            <span v-else v-tooltip="slotProps.data.description" class="truncate">
+              {{ slotProps.data.description }}
+            </span>
+          </div>
+        </template>
+      </Column>
+
       <Column field="date" :header="t('common.date')">
         <template #body="{ data }">
           <div class="cell-content">
@@ -103,17 +114,6 @@
             <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
             <span v-else class="truncate">
               {{ slotProps.data.to.firstName }}
-            </span>
-          </div>
-        </template>
-      </Column>
-
-      <Column field="description" :header="t('common.description')" style="max-width: 10rem">
-        <template #body="slotProps">
-          <div class="cell-content">
-            <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
-            <span v-else class="truncate">
-              {{ slotProps.data.description }}
             </span>
           </div>
         </template>
