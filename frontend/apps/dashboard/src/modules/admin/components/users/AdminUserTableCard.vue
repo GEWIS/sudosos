@@ -2,9 +2,7 @@
   <CardComponent class="w-full" :header="t('modules.admin.userOverview.list.header')">
     <AdminUserTable
       :filters="filters"
-      :is-active-filter="isActiveFilter"
       :is-loading="isLoading"
-      :of-age-filter="ofAgeFilter"
       :rows="rows"
       :rows-per-page-options="rowsPerPageOptions"
       :search-query="searchQuery"
@@ -17,8 +15,6 @@
       @show-create="showDialog = true"
       @sort="onSort"
       @update:filters="(v) => (filters = v)"
-      @update:is-active-filter="(v) => (isActiveFilter = v)"
-      @update:of-age-filter="(v) => (ofAgeFilter = v)"
       @update:search-query="(v) => (searchQuery = v)"
     />
 
@@ -48,8 +44,6 @@ const showDialog = ref(false);
 const {
   searchQuery,
   filters,
-  isActiveFilter,
-  ofAgeFilter,
   isLoading,
   totalRecords,
   rows,

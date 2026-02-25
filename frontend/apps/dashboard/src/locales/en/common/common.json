@@ -60,6 +60,7 @@
     "refresh": "Refresh",
     "userId": "User ID",
     "placeholders": {
+      "select": "Select",
       "selectType": "Select Type",
       "email": "example(at)example.com",
       "bankAccountNumber": "NL69 ABNA 0012 3456 78",

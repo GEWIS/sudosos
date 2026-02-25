@@ -70,7 +70,7 @@
         <Column field="user" :header="t('common.name')">
           <template #body="slotProps">
             <Skeleton v-if="isLoading || !slotProps.data" class="w-6 my-1 h-1rem surface-300" />
-            <UserLink v-else new-tab :user="slotProps.data" />
+            <UserLink v-else :user="slotProps.data" />
           </template>
         </Column>
       </DataTable>

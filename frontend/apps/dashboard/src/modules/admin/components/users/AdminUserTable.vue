@@ -2,7 +2,6 @@
   <DataTable
     filter-display="menu"
     :filters="filters"
-    :global-filter-fields="['type', 'firstName', 'lastName', 'fullName']"
     lazy
     :loading="isLoading"
     paginator
@@ -33,26 +32,30 @@
       <template v-if="isLoading" #body>
         <Skeleton class="h-1rem my-1 surface-300 w-6" />
       </template>
+      <template v-else #body="slotProps">
+        <ExternalLink
+          v-if="slotProps.data.gewisId"
+          :text="slotProps.data.gewisId"
+          :url="`https://gewis.nl/member/${slotProps.data.gewisId}`"
+        />
+      </template>
     </Column>
-    <Column field="firstName" :header="t('common.firstName')">
+    <Column field="fullName" :header="t('common.name')">
       <template v-if="isLoading" #body>
         <Skeleton class="h-1rem my-1 surface-300 w-8" />
       </template>
-    </Column>
-    <Column field="lastName" :header="t('common.lastName')">
-      <template v-if="isLoading" #body>
-        <Skeleton class="h-1rem my-1 surface-300 w-8" />
+      <template v-else #body="slotProps">
+        <UserLink :user="slotProps.data" />
       </template>
     </Column>
     <Column field="type" :header="t('common.type')" :show-filter-match-modes="false">
-      <template #filter="{ filterModel, filterCallback }">
+      <template #filter="{ filterModel }">
         <Select
           v-model="filterModel.value"
           option-label="name"
           option-value="name"
           :options="userTypes"
           :placeholder="t('common.placeholders.selectType')"
-          @change="filterCallback()"
         />
       </template>
       <template v-if="isLoading" #body>
@@ -63,40 +66,44 @@
       <template #header>
         <div class="items-center flex flex-row gap-2">
           {{ t('common.active') }}
-          <Checkbox
-            binary
-            :model-value="isActiveFilter"
-            @change="emit('filter')"
-            @update:model-value="(v) => emit('update:isActiveFilter', v)"
-          />
         </div>
       </template>
       <template v-if="isLoading" #body>
         <Skeleton class="h-1rem my-1 surface-300 w-2" />
       </template>
+      <template #filter="{ filterModel }">
+        <Select
+          v-model="filterModel.value"
+          option-label="label"
+          option-value="value"
+          :options="[
+            { label: t('common.active'), value: true },
+            { label: t('common.inactive'), value: false },
+          ]"
+          :placeholder="t('common.placeholders.select')"
+        />
+      </template>
     </Column>
-    <Column field="ofAge">
+    <Column field="ofAge" :show-filter-match-modes="false">
       <template #header>
         <div class="items-center flex flex-row gap-2">
           {{ t('common.ofAge') }}
-          <Checkbox
-            binary
-            :model-value="ofAgeFilter"
-            @change="emit('filter')"
-            @update:model-value="(v) => emit('update:ofAgeFilter', v)"
-          />
         </div>
       </template>
       <template v-if="isLoading" #body>
         <Skeleton class="h-1rem my-1 surface-300 w-3" />
       </template>
-    </Column>
-    <Column body-style="text-align: center; overflow: visible" header-style="width: 3rem; text-align: center">
-      <template v-if="isLoading" #body>
-        <Skeleton class="h-1rem my-1 surface-300 w-4" />
-      </template>
-      <template v-else #body="slotProps">
-        <Button icon="pi pi-window-maximize" outlined type="button" @click="emit('info', slotProps.data)" />
+      <template #filter="{ filterModel }">
+        <Select
+          v-model="filterModel.value"
+          option-label="label"
+          option-value="value"
+          :options="[
+            { label: '18+', value: true },
+            { label: '18-', value: false },
+          ]"
+          :placeholder="t('common.placeholders.select')"
+        />
       </template>
     </Column>
   </DataTable>
@@ -104,41 +111,22 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Checkbox from 'primevue/checkbox';
-import InputText from 'primevue/inputtext';
-import Skeleton from 'primevue/skeleton';
-import IconField from 'primevue/iconfield';
-import InputIcon from 'primevue/inputicon';
-import Button from 'primevue/button';
-import Select from 'primevue/select';
 import type { BaseUserResponse } from '@sudosos/sudosos-client';
+import UserLink from '@/components/UserLink.vue';
+import ExternalLink from '@/components/ExternalLink.vue';
 
 const { t } = useI18n();
 
 defineProps<{
   users: (BaseUserResponse & { fullName: string })[];
   isLoading: boolean;
-  filters: Record<string, { value: string | null; matchMode: string }>;
+  filters: Record<string, { value: string | string[] | boolean | null; matchMode: string }>;
   searchQuery: string;
   userTypes: { name: string; value: string }[];
   totalRecords: number;
   rows?: number;
   rowsPerPageOptions?: number[];
-  isActiveFilter: boolean;
-  ofAgeFilter: boolean;
 }>();
 
-const emit = defineEmits([
-  'filter',
-  'page',
-  'sort',
-  'update:filters',
-  'update:searchQuery',
-  'update:isActiveFilter',
-  'update:ofAgeFilter',
-  'show-create',
-  'info',
-]);
+const emit = defineEmits(['filter', 'page', 'sort', 'update:filters', 'update:searchQuery', 'show-create', 'info']);
 </script>

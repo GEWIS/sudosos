@@ -60,6 +60,7 @@
     "refresh": "Odśwież",
     "userId": "ID użytkownika",
     "placeholders": {
+      "select": "Wybierz",
       "selectType": "Wybierz typ",
       "email": "przyklad(at)przyklad.com",
       "bankAccountNumber": "NL69 ABNA 0012 3456 78",

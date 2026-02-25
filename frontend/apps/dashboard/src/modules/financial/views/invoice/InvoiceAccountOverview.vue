@@ -10,7 +10,7 @@
             <Skeleton class="h-1rem my-1 surface-300 w-8" />
           </template>
           <template v-else #body="{ data }">
-            <UserLink new-tab :user="data" />
+            <UserLink :user="data" />
           </template>
         </Column>
 

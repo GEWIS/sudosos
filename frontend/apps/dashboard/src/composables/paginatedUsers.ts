@@ -11,10 +11,10 @@ export function usePaginatedUsers() {
   const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     type: { value: null, matchMode: FilterMatchMode.EQUALS },
+    ofAge: { value: null, matchMode: FilterMatchMode.EQUALS },
+    active: { value: true, matchMode: FilterMatchMode.EQUALS },
   });
 
-  const isActiveFilter = ref(true);
-  const ofAgeFilter = ref(true);
   const isLoading = ref(true);
   const totalRecords = ref(0);
   const allUsers = ref<UserResponse[]>([]);
@@ -36,8 +36,8 @@ export function usePaginatedUsers() {
         rows.value,
         skip.value,
         searchQuery.value.split(' ')[0] || '',
-        isActiveFilter.value ? isActiveFilter.value : undefined,
-        ofAgeFilter.value,
+        filters.value.active.value === null ? undefined : filters.value.active.value,
+        filters.value.ofAge.value === null ? undefined : filters.value.ofAge.value,
         undefined,
         filters.value.type.value || undefined,
       );
@@ -81,11 +81,14 @@ export function usePaginatedUsers() {
 
   const sortedUsers = computed(() => {
     if (!searchQuery.value.trim()) return allUsersWithFullName.value;
+    // Only use Fuse for sorting, backend will do the strict filter.
+    // This also allows searching for nicknames and emails.
     return new Fuse(allUsersWithFullName.value, {
-      keys: ['fullName'],
+      keys: ['fullName', 'nickName', 'email'],
       isCaseSensitive: false,
       shouldSort: true,
-      threshold: 0.2,
+      ignoreDiacritics: true,
+      threshold: 1.0,
     })
       .search(searchQuery.value)
       .map((r) => r.item);
@@ -94,8 +97,6 @@ export function usePaginatedUsers() {
   return {
     searchQuery,
     filters,
-    isActiveFilter,
-    ofAgeFilter,
     isLoading,
     totalRecords,
     allUsers,

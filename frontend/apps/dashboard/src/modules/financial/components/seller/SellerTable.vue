@@ -21,7 +21,7 @@
       <Column field="name" :header="t('common.name')">
         <template #body="slotProps">
           <Skeleton v-if="isLoading" class="h-1rem my-1 surface-300 w-6" />
-          <UserLink v-else new-tab :user="slotProps.data.user" />
+          <UserLink v-else :user="slotProps.data.user" />
         </template>
       </Column>
       <Column field="active" :show-filter-match-modes="false">

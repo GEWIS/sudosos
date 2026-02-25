@@ -92,13 +92,7 @@
           <Skeleton class="h-2rem my-1 surface-300 w-3" />
         </template>
         <template v-else #body="rowData">
-          <Button
-            icon="pi pi-info-circle"
-            outlined
-            severity="secondary"
-            type="button"
-            @click="openEditModal(rowData.data.id)"
-          />
+          <i class="cursor-pointer pi pi-info-circle" @click="() => openEditModal(rowData.data.id)" />
         </template>
       </Column>
     </DataTable>

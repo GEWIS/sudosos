@@ -23,23 +23,19 @@
         <template v-if="isLoading" #body>
           <Skeleton class="h-2rem mr-8 my-1 surface-300 w-6" />
         </template>
+        <template v-else #body="slotProps">
+          <AppLink
+            :text="slotProps.data.name"
+            :to="{ name: 'pointOfSaleInfo', params: { id: slotProps.data.id } }"
+          ></AppLink>
+        </template>
       </Column>
       <Column field="owner.firstName" :header="t('common.owner')">
         <template v-if="isLoading" #body>
           <Skeleton class="h-2rem my-1 surface-300 w-6" />
         </template>
-      </Column>
-      <Column body-style="text-align: center; overflow: visible" header-style="width: 3rem; text-align: center">
-        <template v-if="isLoading" #body>
-          <Skeleton class="h-2rem my-1 surface-300 w-6" />
-        </template>
         <template v-else #body="slotProps">
-          <Button
-            icon="pi pi-window-maximize"
-            outlined
-            type="button"
-            @click="router.push({ name: 'pointOfSaleInfo', params: { id: slotProps.data.id } })"
-          />
+          <UserLink :user="slotProps.data.owner" />
         </template>
       </Column>
     </DataTable>
@@ -54,7 +50,8 @@ import type { PaginatedPointOfSaleResponse, PointOfSaleResponse } from '@sudosos
 import Skeleton from 'primevue/skeleton';
 import { useI18n } from 'vue-i18n';
 import { isAllowed } from '@sudosos/sudosos-frontend-common';
-import router from '@/router';
+import AppLink from '@/components/AppLink.vue';
+import UserLink from '@/components/UserLink.vue';
 import POSCreateModal from '@/modules/seller/components/POSCreateModal.vue';
 import CardComponent from '@/components/CardComponent.vue';
 

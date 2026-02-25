@@ -29,14 +29,16 @@
         <template #body="slotProps">
           <div class="cell-content">
             <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
-            <span v-else v-tooltip="slotProps.data.description" class="truncate">
-              {{ slotProps.data.description }}
-            </span>
+            <AppLink
+              v-else
+              :text="slotProps.data.description"
+              :to="{ name: 'invoiceInfo', params: { id: slotProps.data.id } }"
+            />
           </div>
         </template>
       </Column>
 
-      <Column field="date" :header="t('common.date')">
+      <Column class="max-w-[4rem]" field="date" :header="t('common.date')">
         <template #body="{ data }">
           <div class="cell-content">
             <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
@@ -57,6 +59,7 @@
       </Column>
 
       <Column
+        class="max-w-[4rem]"
         field="currentState.state"
         filter
         filter-match-mode="equals"
@@ -108,7 +111,7 @@
         </template>
       </Column>
 
-      <Column field="to.firstName" :header="t('common.for')" style="max-width: 15rem">
+      <Column class="max-w-[4rem]" field="to.firstName" :header="t('common.for')">
         <template #body="slotProps">
           <div class="cell-content">
             <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-6" />
@@ -129,22 +132,6 @@
           </div>
         </template>
       </Column>
-
-      <Column :header="t('common.actions')" style="width: 10%">
-        <template #body="slotProps">
-          <div class="cell-content">
-            <Skeleton v-if="isLoading" class="skeleton-fixed surface-300 w-3" />
-            <span v-else>
-              <Button
-                class="p-button-plain p-button-rounded p-button-text"
-                icon="pi pi-window-maximize"
-                type="button"
-                @click="() => viewInvoice(slotProps.data.id)"
-              />
-            </span>
-          </div>
-        </template>
-      </Column>
     </DataTable>
   </div>
 </template>
@@ -153,15 +140,14 @@
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import Skeleton from 'primevue/skeleton';
-import Button from 'primevue/button';
 import { type SelectChangeEvent } from 'primevue/select';
 import { useI18n } from 'vue-i18n';
 import { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client/src/api';
 import { type Ref, ref } from 'vue';
 import type { InvoiceResponse } from '@sudosos/sudosos-client';
 import { formatPrice, formatDateFromString } from '@/utils/formatterUtils';
-import router from '@/router';
 import { useFiscalYear } from '@/composables/fiscalYear';
+import AppLink from '@/components/AppLink.vue';
 
 defineProps({
   invoices: {
@@ -201,11 +187,6 @@ const states: Ref<Array<{ name: string; value: string | null }>> = ref([
   { name: InvoiceStatusResponseStateEnum.Deleted, value: InvoiceStatusResponseStateEnum.Deleted },
   { name: 'ALL', value: null },
 ]);
-
-function viewInvoice(id: number) {
-  const route = router.resolve({ name: 'invoiceInfo', params: { id } });
-  window.open(route.href, '_blank');
-}
 
 const filters = ref({
   'currentState.state': { value: null, matchMode: 'equals' },

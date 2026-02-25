@@ -47,6 +47,7 @@ import StepList from 'primevue/steplist';
 import Card from 'primevue/card';
 import Badge from 'primevue/badge';
 import VirtualScroller from 'primevue/virtualscroller';
+import MultiSelect from 'primevue/multiselect';
 
 import { SudososRed } from '@sudosos/themes';
 
@@ -125,6 +126,7 @@ app.component('Step', Step);
 app.component('Card', Card);
 app.component('Badge', Badge);
 app.component('VirtualScroller', VirtualScroller);
+app.component('MultiSelect', MultiSelect);
 
 void beforeLoad().then(() => {
   app.use(router);

@@ -1,8 +1,5 @@
 <template>
-  <a v-if="allowed" class="cursor-pointer hover:opacity-80 text-primary" @click="goToUser">
-    {{ name }}
-  </a>
-  <span v-else>{{ name }}</span>
+  <AppLink :allowed="allowed" :new-tab="newTab" :text="name" :to="userRoute" />
 </template>
 
 <script setup lang="ts">
@@ -10,7 +7,7 @@ import type { BaseUserResponse } from '@sudosos/sudosos-client';
 import { computed } from 'vue';
 import { useAuthStore, getRelation, isAllowed } from '@sudosos/sudosos-frontend-common';
 import { useI18n } from 'vue-i18n';
-import router from '@/router';
+import AppLink from '@/components/AppLink.vue';
 
 const { t } = useI18n();
 const authStore = useAuthStore();
@@ -40,10 +37,8 @@ const name = computed(() => {
   return `${props.user.firstName} ${props.user.lastName}`.trim();
 });
 
-const goToUser = () => {
-  const routeData = router.resolve({ name: 'user', params: { userId: props.user.id } });
-  window.open(routeData.href, '_blank');
-};
+const userRoute = computed(() => ({ name: 'user', params: { userId: props.user.id } }));
+const newTab = computed(() => props.newTab ?? false);
 </script>
 
 <style scoped lang="scss"></style>

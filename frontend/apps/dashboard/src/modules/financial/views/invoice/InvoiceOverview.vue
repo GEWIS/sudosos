@@ -1,5 +1,5 @@
 <template>
-  <PageContainer>
+  <PageContainer class="max-w-[100rem]">
     <div class="flex flex-col">
       <InvoiceAccountOverview />
       <CardComponent class="w-full" :header="t('modules.financial.invoice.header')">
