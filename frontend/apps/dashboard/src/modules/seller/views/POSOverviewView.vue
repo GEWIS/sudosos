@@ -28,8 +28,7 @@ const getPointsOfSale = async (take: number, skip: number): Promise<PaginatedPoi
   }
   let pointsOfSale;
   // If you can get all point of sales, render them. Otherwise only the user ones.
-  // TODO: Change to `action: get` after https://github.com/GEWIS/sudosos-backend/issues/62 is fully finished
-  if (isAllowed('update', ['all'], 'PointOfSale', ['any'])) {
+  if (isAllowed('get', ['all'], 'PointOfSale', ['any'])) {
     pointsOfSale = await pointOfSaleStore.getPointsOfSale(take, skip).catch((err) => handleError(err, toast));
   } else {
     pointsOfSale = await pointOfSaleStore

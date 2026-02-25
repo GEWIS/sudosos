@@ -23,7 +23,7 @@ export function useFinancialNav() {
         label: t('common.navigation.financial'),
         notifications: notifications.value,
         visible:
-          isAllowed('update', ['all'], 'User', ['any']) ||
+          isAllowed('get', ['all'], 'User', ['any']) ||
           isAllowed('get', ['all'], 'Invoice', ['any']) ||
           isAllowed('get', ['all'], 'Fine', ['any']) ||
           isAllowed('get', ['all'], 'SellerPayout', ['any']),
@@ -31,7 +31,7 @@ export function useFinancialNav() {
           {
             label: t('common.navigation.users'),
             route: '/user',
-            visible: isAllowed('update', ['all'], 'User', ['any']),
+            visible: isAllowed('get', ['all'], 'User', ['any']),
           },
           {
             label: t('common.navigation.invoices'),

@@ -10,14 +10,14 @@ export function useAdminNav() {
       {
         label: t('common.navigation.admin'),
         visible:
-          isAllowed('update', ['all'], 'User', ['any']) ||
+          isAllowed('get', ['all'], 'User', ['any']) ||
           isAllowed('get', ['all'], 'Banner', ['any']) ||
           isAllowed('get', ['all'], 'Transaction', ['any']),
         items: [
           {
             label: t('common.navigation.users'),
             route: '/user',
-            visible: isAllowed('update', ['all'], 'User', ['any']),
+            visible: isAllowed('get', ['all'], 'User', ['any']),
           },
           {
             label: t('common.navigation.banners'),

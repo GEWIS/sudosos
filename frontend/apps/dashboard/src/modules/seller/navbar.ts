@@ -27,25 +27,23 @@ export function useSellerNav() {
   // Start loading in the background after mount
   onMounted(fetchOrgansNotifications);
 
-  const canUpdateProducts = isAllowed('update', ['own', 'organ'], 'Product', ['any']);
-  const canUpdatePointsOfSale = isAllowed('update', ['own', 'organ'], 'PointOfSale', ['any']);
+  const canGetProducts = isAllowed('get', ['own', 'organ'], 'Product', ['any']);
+  const canGetPointsOfSale = isAllowed('get', ['own', 'organ'], 'PointOfSale', ['any']);
 
   return computed(() => [
     {
       label: t('common.navigation.seller'),
-      visible: canUpdateProducts || canUpdatePointsOfSale,
+      visible: canGetProducts || canGetPointsOfSale,
       items: [
         {
           label: t('common.navigation.productsContainers'),
           route: '/product',
-          // TODO: Change to `action: get` after https://github.com/GEWIS/sudosos-backend/issues/62 is fully finished
-          visible: canUpdateProducts,
+          visible: canGetProducts,
         },
         {
           label: t('common.navigation.pos'),
           route: '/point-of-sale',
-          // TODO: Change to `action: get` after https://github.com/GEWIS/sudosos-backend/issues/62 is fully finished
-          visible: canUpdatePointsOfSale,
+          visible: canGetPointsOfSale,
         },
         ...authStore.organs.map((organ) => ({
           label: `${organ.firstName} ${organ.lastName}`,
