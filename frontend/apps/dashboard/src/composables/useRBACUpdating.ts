@@ -93,17 +93,7 @@ export function useRBACUpdating(
     apiService.rbac
       .deletePermission(id, entity, action, relation)
       .then(() => {
-        const allRelations: ActionResponse[] = [];
-        form.context.values.currentPermission.actions.forEach((action) => {
-          action.relations.forEach((relation) => {
-            relation.attributes.forEach((attribute) => {
-              const rel = { relation: relation.relation, attributes: [attribute] };
-              allRelations.push({ action: action.action, relations: [rel] });
-            });
-          });
-        });
-        actionRelations.value = allRelations;
-        permissionVision.value = false;
+        location.reload();
       })
       .catch((error) => {
         handleError(error, toast);
@@ -117,16 +107,14 @@ export function useRBACUpdating(
       relation: relation,
       attributes: [attribute],
     };
-    apiService.rbac.addPermissions(form.context.values.role.id, [addPermissionReq]).catch((error) => {
-      handleError(error, toast);
-    });
-    actionVision.value = false;
-    if (actionRelations.value) {
-      const allRelations = actionRelations.value;
-      const rel = { relation: relation, attributes: [attribute] };
-      allRelations.push({ action: action, relations: [rel] });
-      actionRelations.value = allRelations;
-    }
+    apiService.rbac
+      .addPermissions(form.context.values.role.id, [addPermissionReq])
+      .then(() => {
+        location.reload();
+      })
+      .catch((error) => {
+        handleError(error, toast);
+      });
   };
 
   const handleDeleteUserPush = (user: UserResponse) => {
