@@ -1,11 +1,30 @@
 <template>
   <CardComponent class="p-0" :header="t('modules.seller.productContainers.containers.header')">
     <template #topAction>
-      <div v-if="showCreate || associatedPos" class="flex gap-2 justify-end">
-        <Button v-if="posEditAllowed && associatedPos" outlined @click="openContainerAdd()"
-          >{{ t('modules.seller.productContainers.containers.addExisting') }}
+      <div class="flex gap-2 items-center justify-end">
+        <div class="flex border border-surface rounded overflow-hidden">
+          <Button
+            :class="viewMode !== 'grid' ? 'opacity-40' : ''"
+            icon="pi pi-th-large"
+            size="small"
+            :text="true"
+            @click="viewMode = 'grid'"
+          />
+          <Button
+            :class="viewMode !== 'table' ? 'opacity-40' : ''"
+            icon="pi pi-list"
+            size="small"
+            :text="true"
+            @click="viewMode = 'table'"
+          />
+        </div>
+        <Button v-if="posEditAllowed && associatedPos" outlined @click="openContainerAdd()">
+          {{ t('modules.seller.productContainers.containers.addExisting') }}
         </Button>
-        <Button v-if="isAllowed('create', ['own', 'organ'], 'Container', ['any'])" @click="openContainerEdit()">
+        <Button
+          v-if="showCreate && isAllowed('create', ['own', 'organ'], 'Container', ['any'])"
+          @click="openContainerEdit()"
+        >
           {{ t('common.create') }}
         </Button>
       </div>
@@ -45,7 +64,7 @@
           </div>
         </AccordionHeader>
         <AccordionContent>
-          <ContainerProductGrid :container="container as ContainerWithProductsResponse" />
+          <ContainerProductGrid :container="container as ContainerWithProductsResponse" :view-mode="viewMode" />
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
@@ -79,6 +98,7 @@ import { useDeleteContainerPOS } from '@/composables/deleteContainerPOS';
 const visible = ref(false);
 const POSAddContainerIsVisible = ref(false);
 const selectedContainer: Ref<ContainerWithProductsResponse | undefined> = ref(undefined);
+const viewMode = ref<'grid' | 'table'>('table');
 
 const props = withDefaults(
   defineProps<{
