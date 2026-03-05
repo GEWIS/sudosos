@@ -69,10 +69,12 @@ export function useCartTransactions(pointOfSale?: Ref<PointOfSaleWithContainersR
   };
 
   const getPointOfSaleRecentTransactions = async () => {
-    transactions.value = [];
     const res = await posStore.fetchRecentPosTransactions();
 
-    if (res) transactions.value.push(...res.records);
+    if (res) {
+      transactions.value = [];
+      transactions.value.push(...res.records);
+    }
   };
 
   const displayName = () => {
@@ -177,7 +179,17 @@ export function useCartTransactions(pointOfSale?: Ref<PointOfSaleWithContainersR
     } else {
       clearPollingIfExists();
       clearPosTransactionsSubscription();
-      await getPointOfSaleRecentTransactions();
+
+      // Fetch recent transactions for initial display. A failure here must not
+      // prevent the WebSocket subscription from being set up - otherwise a
+      // transient API error would silently leave the POS on 5-minute polling
+      // with no live updates until the next page refresh.
+      try {
+        await getPointOfSaleRecentTransactions();
+      } catch (e) {
+        console.error('Failed to fetch recent POS transactions:', e);
+      }
+
       if (hasToken.value) {
         const subscribed = subscribeToPosTransactions(pointOfSale.value.id);
         if (!subscribed) {

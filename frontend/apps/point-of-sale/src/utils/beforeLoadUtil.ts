@@ -65,10 +65,11 @@ export default async function beforeLoad() {
   }
 
   const authStore = useAuthStore();
-  const token = getTokenFromStorage(POS_TOKEN_KEY).token ?? authStore.getToken;
 
   try {
-    setupWebSocket({ token });
+    // Supply a getToken callback so that socket.io fetches the latest credential
+    // on every reconnect attempt instead of reusing a potentially stale token.
+    setupWebSocket({ getToken: () => getTokenFromStorage(POS_TOKEN_KEY).token ?? authStore.getToken });
   } catch (e) {
     console.error(e);
     return;
