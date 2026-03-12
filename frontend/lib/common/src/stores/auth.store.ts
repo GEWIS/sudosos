@@ -5,7 +5,7 @@ import type {
   AuthenticationLDAPRequest,
   AuthenticationPinRequest,
   AuthenticationResponse,
-  GEWISAuthenticationPinRequest,
+  MemberAuthenticationPinRequest,
   GewiswebAuthenticationRequest,
   UpdatePinRequest,
   UpdateLocalRequest,
@@ -14,7 +14,7 @@ import type {
   AcceptTosRequest,
   AuthenticationNfcRequest,
   AuthenticationLocalRequest,
-  GEWISAuthenticationSecurePinRequest,
+  MemberAuthenticationSecurePinRequest,
   AuthenticationSecureNfcRequest,
   AuthenticationSecurePinRequest,
 } from '@sudosos/sudosos-client';
@@ -96,12 +96,12 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async gewisPinlogin(userId: string, pinCode: string, service: ApiService) {
-      const userDetails: GEWISAuthenticationPinRequest = {
-        gewisId: parseInt(userId, 10),
+      const userDetails: MemberAuthenticationPinRequest = {
+        memberId: parseInt(userId, 10),
         pin: pinCode,
       };
 
-      await service.authenticate.gewisPinAuthentication(userDetails).then((res) => {
+      await service.authenticate.memberPinAuthentication(userDetails).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
@@ -112,13 +112,13 @@ export const useAuthStore = defineStore('auth', {
       posService: ApiService,
       service: ApiService,
     ) {
-      const req: GEWISAuthenticationSecurePinRequest = {
-        gewisId: parseInt(userId, 10),
+      const req: MemberAuthenticationSecurePinRequest = {
+        memberId: parseInt(userId, 10),
         pin: pinCode,
         posId,
       };
 
-      await posService.authenticate.secureGewisPINAuthentication(req).then((res) => {
+      await posService.authenticate.secureMemberPINAuthentication(req).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
