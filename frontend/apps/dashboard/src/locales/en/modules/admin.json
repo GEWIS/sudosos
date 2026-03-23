@@ -96,6 +96,36 @@
       "websocket": {
         "title": "Websocket logs"
       },
+      "dashboard": {
+        "title": "Dashboard",
+        "empty": "Nothing to show 🎉",
+        "welcome": "Welcome back, {name}",
+        "viewAll": "View all",
+        "balanceSummary": {
+          "title": "Balance Overview",
+          "tooltip": "Shows combined balances for Members and Local Users only.",
+          "totalPositive": "Total positive balance",
+          "totalNegative": "Total negative balance",
+          "financialOverview": "Financial Overview",
+          "underConstruction": "Under construction",
+          "unavailable": "Balance data unavailable"
+        },
+        "pendingPayouts": {
+          "title": "Pending Payout Requests"
+        },
+        "pendingInvoices": {
+          "title": "Pending Invoices"
+        },
+        "negativeInvoiceAccounts": {
+          "title": "Negative Invoice Accounts"
+        },
+        "debtors": {
+          "title": "Users Eligible for Fines",
+          "totalDebt": "Total negative balance",
+          "totalFine": "Total fine to be issued",
+          "handoutFines": "Hand out fines"
+        }
+      },
       "transactions": {
         "title": "Transaction Search",
         "search": "Search Transaction by ID",

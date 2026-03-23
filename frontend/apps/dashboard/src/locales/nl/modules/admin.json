@@ -96,6 +96,36 @@
       "websocket": {
         "title": "Websocket logs"
       },
+      "dashboard": {
+        "title": "Dashboard",
+        "empty": "Niets te tonen 🎉",
+        "welcome": "Welkom terug, {name}",
+        "viewAll": "Bekijk alles",
+        "balanceSummary": {
+          "title": "Saldo overzicht",
+          "tooltip": "Toont gecombineerde saldo's voor Leden en Lokale Gebruikers.",
+          "totalPositive": "Totaal positief saldo",
+          "totalNegative": "Totaal negatief saldo",
+          "financialOverview": "Financieel overzicht",
+          "underConstruction": "In aanbouw",
+          "unavailable": "Saldobegegevens niet beschikbaar"
+        },
+        "pendingPayouts": {
+          "title": "Openstaande uitbetalingen"
+        },
+        "pendingInvoices": {
+          "title": "Openstaande facturen"
+        },
+        "negativeInvoiceAccounts": {
+          "title": "Factuuraccounts met negatief saldo"
+        },
+        "debtors": {
+          "title": "Gebruikers die in aanmerking komen voor boetes",
+          "totalDebt": "Totaal negatief saldo",
+          "totalFine": "Totale uit te geven boete",
+          "handoutFines": "Boetes uitdelen"
+        }
+      },
       "transactions": {
         "title": "Transactie zoeken",
         "search": "Zoek transactie op ID",

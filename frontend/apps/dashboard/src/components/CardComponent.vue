@@ -1,8 +1,9 @@
 <template>
   <Card
+    class="h-full"
     :pt="{
-      body: center ? 'flex-1' : '',
-      content: center ? 'h-full pb-[2rem]' : '',
+      body: `flex flex-col h-full${center ? ' flex-1' : ''}`,
+      content: `flex-1${center ? ' h-full pb-[2rem]' : ''}`,
     }"
   >
     <template #header>
@@ -14,9 +15,10 @@
     <template #content>
       <slot />
     </template>
-    <template v-if="action" #footer>
-      <Button id="bottom-left-button" class="w-full font-semibold" outlined @click="handleClick">
-        {{ action.toUpperCase() }}
+    <template v-if="action || $slots.footer" #footer>
+      <slot v-if="$slots.footer" name="footer" />
+      <Button v-else id="bottom-left-button" class="w-full font-semibold" outlined @click="handleClick">
+        {{ action?.toUpperCase() }}
       </Button>
     </template>
   </Card>

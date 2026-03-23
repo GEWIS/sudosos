@@ -96,6 +96,36 @@
       "websocket": {
         "title": "Logi WebSocket"
       },
+      "dashboard": {
+        "title": "Panel",
+        "empty": "Brak danych 🎉",
+        "welcome": "Witaj ponownie, {name}",
+        "viewAll": "Pokaż wszystko",
+        "balanceSummary": {
+          "title": "Przegląd salda",
+          "tooltip": "Pokazuje łączne salda tylko dla Członków i Użytkowników Lokalnych.",
+          "totalPositive": "Łączne saldo dodatnie",
+          "totalNegative": "Łączne saldo ujemne",
+          "financialOverview": "Przegląd finansowy",
+          "underConstruction": "W budowie",
+          "unavailable": "Dane salda niedostępne"
+        },
+        "pendingPayouts": {
+          "title": "Oczekujące wypłaty"
+        },
+        "pendingInvoices": {
+          "title": "Oczekujące faktury"
+        },
+        "negativeInvoiceAccounts": {
+          "title": "Konta faktur z ujemnym saldem"
+        },
+        "debtors": {
+          "title": "Użytkownicy kwalifikujący się do kar",
+          "totalDebt": "Łączne saldo ujemne",
+          "totalFine": "Łączna kara do wydania",
+          "handoutFines": "Wydaj kary"
+        }
+      },
       "rbac": {
         "title": "RBAC Management",
         "selection": {

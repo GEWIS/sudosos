@@ -6,6 +6,7 @@ import AdminBannersView from '@/modules/admin/views/AdminBannersView.vue';
 import AdminSingleUserView from '@/modules/admin/views/AdminSingleUserView.vue';
 import AdminMaintainerView from '@/modules/admin/views/AdminMaintainerView.vue';
 import AdminRBACView from '@/modules/admin/views/AdminRBACView.vue';
+import AdminDashboardView from '@/modules/admin/views/AdminDashboardView.vue';
 
 export function adminRoutes(): RouteRecordRaw[] {
   return [
@@ -14,6 +15,16 @@ export function adminRoutes(): RouteRecordRaw[] {
       component: DashboardLayout,
       meta: { requiresAuth: true },
       children: [
+        {
+          path: '/admin',
+          component: AdminDashboardView,
+          name: 'adminDashboard',
+          meta: {
+            requiresAuth: true,
+            isAllowed: () => isAllowed('get', ['all'], 'User', ['any']),
+            title: 'modules.admin.dashboard.title',
+          },
+        },
         {
           path: '/user',
           name: 'users',
