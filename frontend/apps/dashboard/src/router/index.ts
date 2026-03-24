@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { isAuthenticated, useAuthStore, isAllowed } from '@sudosos/sudosos-frontend-common';
+import { isBetaEnabled } from '@/utils/betaUtil';
 import PublicLayout from '@/layout/PublicLayout.vue';
 import DashboardLayout from '@/layout/DashboardLayout.vue';
 import ErrorView from '@/views/ErrorView.vue';
@@ -128,6 +129,14 @@ router.beforeEach((to, from, next) => {
   } else if (!to.meta?.requiresAuth && isAuth && hasTOSAccepted() == 'ACCEPTED') {
     // If the route doesn't require authentication and the user is authenticated, redirect to home
     next({ name: 'home' });
+  } else if (
+    to.name === 'home' &&
+    isBetaEnabled() &&
+    window.innerWidth >= 1024 &&
+    isAllowed('get', ['all'], 'User', ['any'])
+  ) {
+    // Beta admin on desktop: go to admin landing page
+    next({ name: 'adminDashboard' });
   } else if (to.meta?.isAllowed) {
     // Permission guard present, so let's test is
     if (to.meta?.isAllowed()) {

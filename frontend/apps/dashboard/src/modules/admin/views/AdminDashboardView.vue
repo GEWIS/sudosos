@@ -120,10 +120,11 @@
             {{ t('modules.admin.dashboard.empty') }}
           </p>
           <DataTable v-else size="small" :value="pendingInvoices">
-            <Column :header="t('common.description')">
+            <Column :header="t('common.description')" style="max-width: 12rem">
               <template #body="{ data }">
                 <router-link
-                  class="text-primary hover:underline"
+                  v-tooltip.top="data.description"
+                  class="text-primary hover:underline block truncate max-w-[12rem]"
                   :to="{ name: 'invoiceInfo', params: { id: data.id } }"
                   >{{ data.description }}</router-link
                 >
