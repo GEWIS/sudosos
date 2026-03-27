@@ -16,6 +16,18 @@
       Please remove items or top up before you can continue.
     </Message>
   </Dialog>
+  <AprilFoolsComponent
+    :show="showAprilFools"
+    @closed="onAprilFoolsClosed"
+    @logout="logout"
+    @update:show="showAprilFools = $event"
+  />
+  <AgeVerificationComponent
+    :show="showAgeVerification"
+    @confirmed="onAgeVerificationConfirmed"
+    @denied="onAgeVerificationDenied"
+    @update:show="showAgeVerification = $event"
+  />
   <div class="flex justify-between w-full">
     <Button
       class="border-0 checkout font-medium rounder text-3xl"
@@ -37,12 +49,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { logoutService } from '@/services/logoutService';
 import { useCartStore } from '@/stores/cart.store';
 import { useSettingStore } from '@/stores/settings.store';
 import { useCheckoutTimer } from '@/composables/useCheckoutTimer';
 import { playAudio, Sound } from '@/utils/audioUtil';
+import AprilFoolsComponent from '@/components/AprilFoolsComponent.vue';
+import AgeVerificationComponent from '@/components/AgeVerificationComponent.vue';
 
 const emit = defineEmits(['selectCreator']);
 
@@ -77,9 +91,61 @@ const logout = async () => {
   await logoutService();
 };
 
+const STEEKPROEF_CHANCE = 0.45;
+
+const showAprilFools = ref(false);
+let pendingCheckoutArgs: { onSelectCreator: () => void; isBorrelMode: boolean } | null = null;
+
+const showAgeVerification = ref(false);
+let pendingAgeVerificationArgs: { onSelectCreator: () => void; isBorrelMode: boolean } | null = null;
+
+const proceedToCheckoutTimer = (onSelectCreator: () => void, isBorrelMode: boolean) => {
+  if (settings.showAprilFools && Math.random() < STEEKPROEF_CHANCE) {
+    pendingCheckoutArgs = { onSelectCreator, isBorrelMode };
+    showAprilFools.value = true;
+  } else {
+    checkoutWithTimer(onSelectCreator, isBorrelMode);
+  }
+};
+
+const onAprilFoolsClosed = () => {
+  if (pendingCheckoutArgs) {
+    const { onSelectCreator, isBorrelMode } = pendingCheckoutArgs;
+    pendingCheckoutArgs = null;
+    checkoutWithTimer(onSelectCreator, isBorrelMode);
+  }
+};
+
+const onAgeVerificationConfirmed = () => {
+  if (pendingAgeVerificationArgs) {
+    const { onSelectCreator, isBorrelMode } = pendingAgeVerificationArgs;
+    pendingAgeVerificationArgs = null;
+    proceedToCheckoutTimer(onSelectCreator, isBorrelMode);
+  }
+};
+
+const onAgeVerificationDenied = () => {
+  cartStore.removeAlcoholicProducts();
+  pendingAgeVerificationArgs = null;
+};
+
 const checkout = () => {
   if (!enabled.value) return;
-  checkoutWithTimer(() => emit('selectCreator'), borrelMode.value);
+
+  const onSelectCreator = () => emit('selectCreator');
+  const isBorrelMode = borrelMode.value;
+
+  if (checkingOut.value) {
+    checkoutWithTimer(onSelectCreator, isBorrelMode);
+    return;
+  }
+
+  if (settings.showAprilFools && cartStore.hasAlcoholicProducts) {
+    pendingAgeVerificationArgs = { onSelectCreator, isBorrelMode };
+    showAgeVerification.value = true;
+  } else {
+    proceedToCheckoutTimer(onSelectCreator, isBorrelMode);
+  }
 };
 </script>
 

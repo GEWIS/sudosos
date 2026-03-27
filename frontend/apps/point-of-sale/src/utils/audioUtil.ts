@@ -8,6 +8,7 @@ export enum Sound {
   PRESS = 'button-press.wav',
   TOP_UP_WARNING = 'sad-trombone.wav',
   CASHOUT = 'rct-cash.wav',
+  POPUP = 'popup.wav',
 }
 
 const audioCache: Map<Sound, HTMLAudioElement> = new Map();

@@ -6,7 +6,7 @@ import ConnectionLostOverlay from '@/components/ConnectionLostOverlay.vue';
 import MaintenanceModeOverlay from '@/components/MaintenanceModeOverlay.vue';
 import { playAudio, preloadAudios, Sound } from '@/utils/audioUtil';
 
-preloadAudios([Sound.PRESS, Sound.TOP_UP_WARNING, Sound.CASHOUT]);
+preloadAudios([Sound.PRESS, Sound.TOP_UP_WARNING, Sound.CASHOUT, Sound.POPUP]);
 
 // Plays a sound effect when buttons or clickable elements are pressed
 const handleClick = (event: Event) => {

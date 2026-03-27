@@ -38,6 +38,10 @@ export const useSettingStore = defineStore('setting', {
     showTimers(): boolean {
       return location.hostname !== 'localhost' && this.isAuthenticatedPos;
     },
+    showAprilFools(): boolean {
+      const today = new Date();
+      return today.getMonth() === 3 && today.getDate() === 1;
+    },
   },
   actions: {
     /**

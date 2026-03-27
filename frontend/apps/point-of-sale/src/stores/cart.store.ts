@@ -59,6 +59,9 @@ export const useCartStore = defineStore('cart', {
       }
       return false;
     },
+    hasAlcoholicProducts(): boolean {
+      return this.products.some((p) => p.product.alcoholPercentage > 0);
+    },
   },
   actions: {
     setLockedIn(lockedIn: UserResponse | null) {
@@ -128,6 +131,10 @@ export const useCartStore = defineStore('cart', {
     },
     clearCart(): void {
       this.products.splice(0, this.products.length);
+    },
+    removeAlcoholicProducts(): void {
+      const nonAlcoholic = this.products.filter((p) => p.product.alcoholPercentage === 0);
+      this.products.splice(0, this.products.length, ...nonAlcoholic);
     },
     async checkout(): Promise<void> {
       const pos = usePointOfSaleStore().getPos;
