@@ -38,5 +38,6 @@ bin
 *.sw?
 
 .env
+*.tsbuildinfo
 
 _

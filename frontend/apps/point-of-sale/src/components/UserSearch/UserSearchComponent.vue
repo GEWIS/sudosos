@@ -20,12 +20,25 @@
     </div>
     <div>
       <ScrollPanel class="custombar" style="width: 100%; height: 25rem">
-        <UserSearchRowComponent
-          v-for="user in getUsers"
-          :key="user.id"
-          :user="user as UserResponse"
-          @click="selectUser(user as UserResponse)"
-        />
+        <template v-if="!searchValue && !settings.isBorrelmode && getUsers.length">
+          <div class="px-3 pt-2 pb-1 text-xs font-semibold uppercase tracking-widest opacity-50">Quick suggestions</div>
+          <div class="grid grid-cols-2 gap-x-2 suggestions-grid">
+            <UserSearchRowComponent
+              v-for="user in getUsers"
+              :key="user.id"
+              :user="user as UserResponse"
+              @click="selectUser(user as UserResponse)"
+            />
+          </div>
+        </template>
+        <template v-else>
+          <UserSearchRowComponent
+            v-for="user in getUsers"
+            :key="user.id"
+            :user="user as UserResponse"
+            @click="selectUser(user as UserResponse)"
+          />
+        </template>
       </ScrollPanel>
     </div>
   </div>
@@ -55,20 +68,28 @@ const settings = useSettingStore();
 const posStore = usePointOfSaleStore();
 
 const getRecentUsers = async () => {
-  if (!posStore.getPos?.id) return;
-  const recentUsers: BaseUserResponse[] = [];
-  await apiService.pos.getTransactions(posStore.getPos?.id, 100).then((res) => {
-    const data = res.data;
-    const ids = new Set<number>([]);
-    data.records.map((u) => {
-      if (!ids.has(u.from.id)) {
-        recentUsers.push(u.from);
-        ids.add(u.from.id);
-      }
+  if (settings.isBorrelmode) {
+    // Borrelmode: derive recent users from POS transactions (existing behavior)
+    if (!posStore.getPos?.id) return;
+    const recentUsers: BaseUserResponse[] = [];
+    await apiService.pos.getTransactions(posStore.getPos?.id, 100).then((res) => {
+      const data = res.data;
+      const ids = new Set<number>([]);
+      data.records.map((u) => {
+        if (!ids.has(u.from.id)) {
+          recentUsers.push(u.from);
+          ids.add(u.from.id);
+        }
+      });
     });
-    return ids;
-  });
-  return recentUsers;
+    return recentUsers;
+  } else {
+    // Authenticated POS: use pre-fetched store value (populated at login), or fall back to fetching now
+    if (posStore.recentUsers === null) {
+      await posStore.fetchRecentUsers();
+    }
+    return posStore.recentUsers ?? [];
+  }
 };
 
 const updateSearchQuery = (event: InputEvent) => {
@@ -183,5 +204,15 @@ const cancelSearch = () => {
 ::v-deep(.p-scrollpanel.custombar .p-scrollpanel-bar:hover) {
   background-color: var(--p-primary-color);
   filter: brightness(0.85);
+}
+
+.suggestions-grid {
+  padding-right: 30px;
+}
+
+.suggestions-grid :deep(.user-row) {
+  margin-right: 0;
+  padding-left: 0;
+  justify-content: center;
 }
 </style>

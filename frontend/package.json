@@ -35,7 +35,7 @@
     "@commitlint/config-conventional": "^20.3.0",
     "@gewis/splash": "^2.4.0",
     "@primeuix/themes": "^2.0.2",
-    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#f7d27403ac5a1f7d1f47b46cf1818055f9a3c333",
+    "@sudosos/sudosos-client": "github:GEWIS/sudosos-client#7aeeb030f8f1896fe2bdf21089ce4e649e55d6df",
     "@tailwindcss/vite": "^4.1.17",
     "axios": "^1.13.2",
     "dinero.js": "^1.9.1",

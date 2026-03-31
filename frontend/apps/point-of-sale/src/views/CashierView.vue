@@ -64,7 +64,8 @@ const pointOfSaleStore = usePointOfSaleStore();
 const activityStore = useActivityStore();
 const cartStore = useCartStore();
 const { checkBuyerInDebt, buyerBalance } = storeToRefs(cartStore);
-const shouldShowTimers = useSettingStore().showTimers;
+const settingStore = useSettingStore();
+const shouldShowTimers = computed(() => settingStore.showTimers);
 const { getPosIdFromToken } = usePosToken();
 
 enum PointOfSaleState {
@@ -82,7 +83,7 @@ const shouldShowTopUpWarning = computed(() => {
   const buyer = cartStore.getBuyer;
   const loggedInUser = authStore.getUser;
   const isBuyerLoggedInUser = buyer && loggedInUser && buyer.id === loggedInUser.id;
-  return checkBuyerInDebt.value && shouldShowTimers && isBuyerLoggedInUser;
+  return checkBuyerInDebt.value && shouldShowTimers.value && isBuyerLoggedInUser;
 });
 
 const handleTopUpWarningUpdate = (value: boolean) => {
@@ -104,7 +105,7 @@ const fetchPointOfSale = async () => {
     currentPos.value = storedPos;
     posNotLoaded.value = false;
 
-    if (shouldShowTimers) {
+    if (shouldShowTimers.value) {
       activityStore.restartTimer();
     }
 
@@ -124,13 +125,27 @@ const fetchPointOfSale = async () => {
     }
     posNotLoaded.value = false;
 
-    if (shouldShowTimers) {
+    if (shouldShowTimers.value) {
       activityStore.restartTimer();
     }
   });
 };
 
-onMounted(fetchPointOfSale);
+onMounted(() => {
+  void fetchPointOfSale();
+});
+
+const hasFetchedRecentUsers = ref(false);
+
+watch(
+  () => [pointOfSaleStore.pointOfSale, settingStore.isBorrelmode] as const,
+  ([newPos, isBorrelmode]) => {
+    if (!hasFetchedRecentUsers.value && newPos && !isBorrelmode) {
+      hasFetchedRecentUsers.value = true;
+      void pointOfSaleStore.fetchRecentUsers();
+    }
+  },
+);
 
 const selectUser = () => {
   currentState.value = PointOfSaleState.SEARCH_USER;

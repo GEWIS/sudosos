@@ -6,6 +6,7 @@ import {
   PointOfSaleResponse,
   PointOfSaleWithContainersResponse,
   ProductResponse,
+  UserResponse,
   UserWithIndex,
 } from '@sudosos/sudosos-client';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
@@ -19,6 +20,7 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
     pointOfSaleAssociates: null as PointOfSaleAssociateUsersResponse | null,
     usersPointOfSales: null as PointOfSaleResponse[] | null,
     allPointOfSales: null as PointOfSaleResponse[] | null,
+    recentUsers: null as UserResponse[] | null,
   }),
   getters: {
     allProductCategories() {
@@ -56,6 +58,17 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
     },
   },
   actions: {
+    async fetchRecentUsers(): Promise<void> {
+      try {
+        const response = await userApiService.user.getRecentlyChargedUsers(10);
+        this.recentUsers = response.data;
+      } catch (error) {
+        console.error('Failed to fetch recent users', error);
+        if (this.recentUsers === null) {
+          this.recentUsers = [];
+        }
+      }
+    },
     async fetchRecentPosTransactions(): Promise<PaginatedBaseTransactionResponse | null> {
       if (!this.pointOfSale) return null;
       // Use posApiService for POS-specific operations
