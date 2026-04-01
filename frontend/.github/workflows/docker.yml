@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker
 
 on:
   workflow_dispatch:
@@ -77,18 +77,17 @@ jobs:
           username: ${{ secrets.SVC_GH_SUDOSOS_USERNAME }}
           password: ${{ secrets.SVC_GH_SUDOSOS_PWD }}
 
-      # Build and push Docker image with Buildx
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64 #SudoSOS does not run on linux/arm64
+          platforms: linux/amd64
           push: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            GIT_COMMIT_BRANCH=${{ github.head_ref || github.ref_name }} 
+            GIT_COMMIT_BRANCH=${{ github.head_ref || github.ref_name }}
             GIT_COMMIT_SHA=${{ env.GIT_COMMIT_SHA }}
           file: ${{ matrix.dockerfile_path }}

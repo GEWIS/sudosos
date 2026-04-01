@@ -1,4 +1,4 @@
-name: fast-forward
+name: Policy - Fast Forward
 on:
   issue_comment:
     types: [created, edited]

@@ -1,4 +1,4 @@
-name: Semantic Release
+name: Release
 
 on:
   workflow_dispatch:
@@ -6,36 +6,27 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   versioning:
-    runs-on: ubuntu-latest
-
     permissions:
       contents: write
       pull-requests: write
       issues: write
-
-    outputs:
-      next_version: ${{ steps.semantic.outputs.new_release_version }}
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          path: .
-
-      - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v4
-        id: semantic
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    uses: GEWIS/actions/.github/workflows/versioning.yml@v1
+    with:
+      node-version: '22.x'
 
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     needs: versioning
-    if: ${{ needs.versioning.outputs.next_version != '' }}
-    container:
-      image: docker:dind
+    if: ${{ needs.versioning.outputs['next-version'] != '' }}
     strategy:
       matrix:
         app: [dashboard, point-of-sale]
@@ -74,7 +65,7 @@ jobs:
           images: |
             ${{ vars.DOCKER_REGISTRY }}/${{ matrix.docker_tag }}
           tags: |
-            ${{ needs.versioning.outputs.next_version }}
+            ${{ needs.versioning.outputs['next-version'] }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -89,7 +80,6 @@ jobs:
           username: ${{ secrets.SVC_GH_SUDOSOS_USERNAME }}
           password: ${{ secrets.SVC_GH_SUDOSOS_PWD }}
 
-      # Build and push Docker image with Buildx
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
@@ -101,6 +91,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            GIT_COMMIT_BRANCH=${{ github.head_ref || github.ref_name }} 
+            GIT_COMMIT_BRANCH=${{ github.head_ref || github.ref_name }}
             GIT_COMMIT_SHA=${{ env.GIT_COMMIT_SHA }}
           file: ${{ matrix.dockerfile_path }}
