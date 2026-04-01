@@ -19,7 +19,7 @@
     </div>
 
     <TransactionDetailModal
-      v-else-if="transaction && products"
+      v-else-if="detailType === 'transaction' && transaction && products"
       :products-info="products"
       :transaction-info="transaction"
     />
@@ -29,6 +29,7 @@
       <FineDetailModal v-else-if="isType('fine').value" :fine="transfer" />
       <PayoutRequestDetailModal v-else-if="isType('payoutRequest').value" :payout-request="transfer" />
       <WaivedFineDetailModal v-else-if="isType('waivedFine').value" :waived-fines="transfer" />
+      <SellerPayoutDetailModal v-else-if="isType('sellerPayout').value" :seller-payout="transfer" />
     </template>
 
     <template v-if="canDelete || canEdit" #footer>
@@ -64,6 +65,7 @@ import DepositDetailModal from '@/components/mutations/mutationmodal/ModalDetail
 import InvoiceDetailModal from '@/components/mutations/mutationmodal/ModalDetailInvoice.vue';
 import FineDetailModal from '@/components/mutations/mutationmodal/ModalDetailFine.vue';
 import WaivedFineDetailModal from '@/components/mutations/mutationmodal/ModalDetailWaivedFine.vue';
+import SellerPayoutDetailModal from '@/components/mutations/mutationmodal/ModalDetailSellerPayout.vue';
 import router from '@/router';
 import { FinancialMutationType, isTransaction } from '@/utils/mutationUtils';
 import ConfirmButton from '@/components/ConfirmButton.vue';
@@ -101,6 +103,8 @@ const detailType = computed(() => {
       return 'fine';
     case FinancialMutationType.WAIVED_FINE:
       return 'waivedFine';
+    case FinancialMutationType.SELLER_PAYOUT:
+      return 'sellerPayout';
     case FinancialMutationType.TRANSACTION:
       return transaction.value ? 'transaction' : null;
     default:

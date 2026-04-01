@@ -16,6 +16,7 @@ export enum FinancialMutationType {
   INVOICE,
   DEPOSIT,
   PAYOUT_REQUEST,
+  SELLER_PAYOUT,
   FINE,
   WAIVED_FINE,
   TRANSACTION,
@@ -66,6 +67,8 @@ export function parseTransfer(transfer: TransferResponse): FinancialMutation {
   } else if (transfer.inactiveAdministrativeCost) {
     type = FinancialMutationType.INACTIVE_ADMINISTRATIVE_COST;
     inactiveCostId = transfer.inactiveAdministrativeCost.id;
+  } else if ((transfer as TransferResponse & { sellerPayout?: unknown }).sellerPayout) {
+    type = FinancialMutationType.SELLER_PAYOUT;
   }
 
   return {
@@ -125,6 +128,12 @@ export function getDescription(mutation: FinancialMutation) {
     }
     case FinancialMutationType.INVOICE: {
       return t('components.mutations.modal.invoice');
+    }
+    case FinancialMutationType.PAYOUT_REQUEST: {
+      return t('components.mutations.modal.payoutRequest');
+    }
+    case FinancialMutationType.SELLER_PAYOUT: {
+      return t('components.mutations.modal.sellerPayout');
     }
     case FinancialMutationType.INACTIVE_ADMINISTRATIVE_COST: {
       return t('modules.financial.administrative.title');
