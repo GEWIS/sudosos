@@ -1,7 +1,7 @@
 // bannerStore.ts
 
 import { defineStore } from 'pinia';
-import { BannerResponse } from '@sudosos/sudosos-client';
+import { BannerResponse } from '@gewis/sudosos-client';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
 import apiService from '@/services/ApiService';
 

@@ -47,7 +47,7 @@ setSubmit(
   props.form,
   props.form.context.handleSubmit((values) => {
     apiService.authenticate
-      .resetLocal({ accountMail: values.email })
+      .resetLocal({ resetLocalRequest: { accountMail: values.email } })
       .then(() => {
         emit('success');
       })

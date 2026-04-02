@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import type { RoleResponse } from '@sudosos/sudosos-client';
+import type { RoleResponse } from '@gewis/sudosos-client';
 import { ref, type PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import * as yup from 'yup';

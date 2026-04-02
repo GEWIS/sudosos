@@ -1,7 +1,7 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import Fuse from 'fuse.js';
 import { FilterMatchMode } from '@primevue/core/api';
-import type { UserResponse } from '@sudosos/sudosos-client';
+import type { UserResponse } from '@gewis/sudosos-client';
 import type { DataTablePageEvent } from 'primevue/datatable';
 import apiService from '@/services/ApiService';
 import { debounce } from '@/utils/debounceUtil';
@@ -32,15 +32,14 @@ export function usePaginatedUsers() {
   async function apiCall(): Promise<void> {
     isLoading.value = true;
     try {
-      const response = await apiService.user.getAllUsers(
-        rows.value,
-        skip.value,
-        searchQuery.value.split(' ')[0] || '',
-        filters.value.active.value === null ? undefined : filters.value.active.value,
-        filters.value.ofAge.value === null ? undefined : filters.value.ofAge.value,
-        undefined,
-        filters.value.type.value || undefined,
-      );
+      const response = await apiService.user.getAllUsers({
+        take: rows.value,
+        skip: skip.value,
+        search: searchQuery.value.split(' ')[0] || '',
+        active: filters.value.active.value === null ? undefined : filters.value.active.value,
+        ofAge: filters.value.ofAge.value === null ? undefined : filters.value.ofAge.value,
+        type: filters.value.type.value || undefined,
+      });
       totalRecords.value = response.data._pagination.count || 0;
       allUsers.value = response.data.records;
     } finally {

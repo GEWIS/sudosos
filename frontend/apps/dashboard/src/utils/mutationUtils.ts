@@ -6,7 +6,7 @@ import type {
   TransferResponse,
   Dinero,
   PaginatedBaseTransactionResponse,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 
 import i18n from '@/utils/i18nUtils';
 

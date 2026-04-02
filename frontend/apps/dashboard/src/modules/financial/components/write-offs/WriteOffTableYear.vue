@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import type { WriteOffResponse } from '@sudosos/sudosos-client';
+import type { WriteOffResponse } from '@gewis/sudosos-client';
 import { useFiscalYear } from '@/composables/fiscalYear';
 import { useWriteOffStore } from '@/stores/writeoff.store';
 import { useDataTableYear } from '@/composables/dataTableYear';

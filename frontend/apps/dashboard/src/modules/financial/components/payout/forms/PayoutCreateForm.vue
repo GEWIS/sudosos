@@ -65,7 +65,7 @@
 import { type PropType, watch } from 'vue';
 import * as yup from 'yup';
 import { useI18n } from 'vue-i18n';
-import type { PayoutRequestRequest } from '@sudosos/sudosos-client';
+import type { PayoutRequestRequest } from '@gewis/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import { usePayoutStore } from '@/stores/payout.store';
 import apiService from '@/services/ApiService';
@@ -95,7 +95,7 @@ watch(
   () => {
     if (props.form.model.user.value.value.id) {
       apiService.balance
-        .getBalanceId(props.form.model.user.value.value.id)
+        .getBalanceId({ id: props.form.model.user.value.value.id })
         .then((res) => {
           const numericBalance = res.data.amount.amount / 100;
           props.form.context.setFieldValue('balance', numericBalance);

@@ -37,7 +37,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
+import { PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
 import { computed, onMounted, Ref, ref, watch } from 'vue';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { storeToRefs } from 'pinia';
@@ -186,7 +186,7 @@ const nfcUpdate = async (nfcCode: string) => {
     const userId = authStore.user?.id;
     if (!userId) return;
 
-    await userApiService.user.updateUserNfc(userId, { nfcCode: nfcCode });
+    await userApiService.user.updateUserNfc({ id: userId, updateNfcRequest: { nfcCode: nfcCode } });
   } catch (error) {
     console.error(error);
   }
@@ -199,7 +199,7 @@ const nfcDelete = async () => {
   }
 
   try {
-    await userApiService.user.deleteUserNfc(userId);
+    await userApiService.user.deleteUserNfc({ id: userId });
   } catch {
     throw new Error('There is no NFC code linked to your account.');
   }

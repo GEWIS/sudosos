@@ -70,8 +70,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { SubTransactionRowResponse } from '@sudosos/sudosos-client/src/api';
-import type { TransactionResponse } from '@sudosos/sudosos-client';
+import type { SubTransactionRowResponse } from '@gewis/sudosos-client';
+import type { TransactionResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';

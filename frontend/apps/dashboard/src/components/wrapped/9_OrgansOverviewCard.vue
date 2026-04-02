@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
 import { toRef, ref, watch, computed, type ComputedRef, unref } from 'vue';
-import type { UserResponse } from '@sudosos/sudosos-client';
+import type { UserResponse } from '@gewis/sudosos-client';
 
 interface OrganInfo {
   organId: number;

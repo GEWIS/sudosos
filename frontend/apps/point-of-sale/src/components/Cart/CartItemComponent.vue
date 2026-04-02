@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { ProductResponse } from '@sudosos/sudosos-client';
+import { ProductResponse } from '@gewis/sudosos-client';
 import { CartProduct, useCartStore } from '@/stores/cart.store';
 import { getProductImageSrc } from '@/utils/imageUtils';
 import { formatPrice } from '@/utils/FormatUtils';

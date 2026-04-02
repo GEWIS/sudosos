@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { ContainerWithProductsResponse, ProductResponse } from '@sudosos/sudosos-client';
+import { ContainerWithProductsResponse, ProductResponse } from '@gewis/sudosos-client';
 import { nextTick, ref } from 'vue';
 import { useCartStore } from '@/stores/cart.store';
 import { getProductImageSrc } from '@/utils/imageUtils';

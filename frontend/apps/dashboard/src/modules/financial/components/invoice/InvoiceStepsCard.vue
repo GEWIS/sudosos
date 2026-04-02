@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client';
+import { InvoiceStatusResponseStateEnum } from '@gewis/sudosos-client';
 import CardComponent from '@/components/CardComponent.vue';
 import { useInvoiceCard } from '@/composables/invoiceCard';
 import { useInvoiceStore } from '@/stores/invoice.store';

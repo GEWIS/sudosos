@@ -36,7 +36,7 @@
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { computed } from 'vue';
-import type { BaseInactiveAdministrativeCostResponse, TransferResponse } from '@sudosos/sudosos-client';
+import type { BaseInactiveAdministrativeCostResponse, TransferResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { formatPrice } from '@/utils/formatterUtils';
 

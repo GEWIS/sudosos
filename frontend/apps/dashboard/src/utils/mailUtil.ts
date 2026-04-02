@@ -1,5 +1,5 @@
-import type { TransactionResponse } from '@sudosos/sudosos-client';
-import type { SubTransactionRowResponse } from '@sudosos/sudosos-client/src/api';
+import type { TransactionResponse } from '@gewis/sudosos-client';
+import type { SubTransactionRowResponse } from '@gewis/sudosos-client';
 import { formatPrice } from '@/utils/formatterUtils';
 
 export function sendEmail(transactionInfo: TransactionResponse, productsInfo: Array<SubTransactionRowResponse>) {

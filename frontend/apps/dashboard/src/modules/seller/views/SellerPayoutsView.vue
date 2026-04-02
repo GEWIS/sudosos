@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import type { BalanceResponse, UserResponse } from '@sudosos/sudosos-client';
+import type { BalanceResponse, UserResponse } from '@gewis/sudosos-client';
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { computed, onBeforeMount, ref, watchEffect, type Ref } from 'vue';
@@ -60,7 +60,7 @@ watchEffect(() => {
 onBeforeMount(async () => {
   const id = Number(route.params.id);
   await ApiService.user
-    .getIndividualUser(id)
+    .getIndividualUser({ id })
     .then((res) => {
       user.value = res.data;
       form.context.resetForm({ values: { user: res.data } });

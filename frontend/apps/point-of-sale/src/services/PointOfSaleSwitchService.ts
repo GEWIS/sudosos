@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { PointOfSaleResponse } from '@sudosos/sudosos-client';
+import { PointOfSaleResponse } from '@gewis/sudosos-client';
 import { GrolschGreen, SudososRed } from '@sudosos/themes';
 import { usePreset } from '@primeuix/themes';
 import { usePointOfSaleStore } from '@/stores/pos.store';

@@ -85,7 +85,7 @@
 <script setup lang="ts">
 import Accordion, { type AccordionTabOpenEvent } from 'primevue/accordion';
 import { computed, type Ref, ref } from 'vue';
-import type { ContainerWithProductsResponse, PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
+import type { ContainerWithProductsResponse, PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import CardComponent from '../CardComponent.vue';

@@ -77,7 +77,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, type Ref } from 'vue';
-import type { BalanceResponse } from '@sudosos/sudosos-client';
+import type { BalanceResponse } from '@gewis/sudosos-client';
 import DataTable, { type DataTablePageEvent, type DataTableSortEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import Skeleton from 'primevue/skeleton';

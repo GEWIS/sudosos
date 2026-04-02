@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { type BannerRequest, type BannerResponse } from '@sudosos/sudosos-client';
+import { type BannerRequest, type BannerResponse } from '@gewis/sudosos-client';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
 import apiService from '@/services/ApiService';
 
@@ -55,7 +55,7 @@ export const useBannersStore = defineStore('banners', {
      * Updates a banner by ID (excluding image).
      */
     async updateBanner(bannerId: number, banner: BannerRequest) {
-      const updated = await apiService.banner.update(bannerId, banner);
+      const updated = await apiService.banner.update({ id: bannerId, bannerRequest: banner });
       if (!this.banners[bannerId]) return updated;
 
       this.banners[bannerId] = { ...this.banners[bannerId], ...banner };
@@ -71,7 +71,7 @@ export const useBannersStore = defineStore('banners', {
       if (!banner) return;
       banner.image = URL.createObjectURL(image);
       this.banners[banner.id] = { ...banner };
-      await apiService.banner.updateImage(bannerId, image);
+      await apiService.banner.updateImage({ id: bannerId, file: image });
       this.lastUpdated = Date.now();
     },
 
@@ -79,7 +79,7 @@ export const useBannersStore = defineStore('banners', {
      * Creates a new banner and adds it to the store.
      */
     async createBanner(bannerRequest: BannerRequest) {
-      const resp = await apiService.banner.create(bannerRequest);
+      const resp = await apiService.banner.create({ bannerRequest });
       this.banners[resp.data.id] = resp.data;
       this.lastUpdated = Date.now();
       return resp;

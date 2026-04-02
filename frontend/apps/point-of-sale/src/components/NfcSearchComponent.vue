@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, PropType } from 'vue';
-import { UserResponse } from '@sudosos/sudosos-client';
+import { UserResponse } from '@gewis/sudosos-client';
 
 const props = defineProps({
   handleNfcSearch: {

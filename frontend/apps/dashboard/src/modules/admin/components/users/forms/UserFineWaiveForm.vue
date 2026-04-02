@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
-import type { BalanceResponse, UserResponse } from '@sudosos/sudosos-client';
+import type { BalanceResponse, UserResponse } from '@gewis/sudosos-client';
 import { type PropType } from 'vue';
 import * as yup from 'yup';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';

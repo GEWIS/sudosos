@@ -1,4 +1,4 @@
-import type { Dinero, DineroObjectResponse, UserResponse } from '@sudosos/sudosos-client';
+import type { Dinero, DineroObjectResponse, UserResponse } from '@gewis/sudosos-client';
 import i18n from '@/utils/i18nUtils';
 
 const t = i18n.global.t;

@@ -46,7 +46,7 @@
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import { onMounted, type Ref, ref } from 'vue';
-import type { PaginatedPointOfSaleResponse, PointOfSaleResponse } from '@sudosos/sudosos-client';
+import type { PaginatedPointOfSaleResponse, PointOfSaleResponse } from '@gewis/sudosos-client';
 import Skeleton from 'primevue/skeleton';
 import { useI18n } from 'vue-i18n';
 import { isAllowed } from '@sudosos/sudosos-frontend-common';

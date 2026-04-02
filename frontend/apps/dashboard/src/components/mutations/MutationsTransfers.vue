@@ -95,7 +95,7 @@
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import { onMounted, type Ref, ref } from 'vue';
-import type { PaginatedTransferResponse, TransferResponse } from '@sudosos/sudosos-client';
+import type { PaginatedTransferResponse, TransferResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { formatPrice } from '@/utils/formatterUtils';
 import {

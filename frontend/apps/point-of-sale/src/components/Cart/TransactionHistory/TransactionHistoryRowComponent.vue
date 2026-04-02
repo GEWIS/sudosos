@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue';
-import { BaseTransactionResponse, TransactionResponse } from '@sudosos/sudosos-client';
+import { BaseTransactionResponse, TransactionResponse } from '@gewis/sudosos-client';
 import { formatDateFromString, formatTimeFromString, formatDineroObjectToString } from '@/utils/FormatUtils';
 import { userApiService } from '@/services/ApiService';
 import { useSettingStore } from '@/stores/settings.store';
@@ -63,7 +63,7 @@ const products = ref<undefined | TransactionResponse>();
 
 onMounted(async () => {
   if (props.open) {
-    const res = await userApiService.transaction.getSingleTransaction(props.transaction.id);
+    const res = await userApiService.transaction.getSingleTransaction({ id: props.transaction.id });
     products.value = res.data;
   }
 });
@@ -72,7 +72,7 @@ watch(
   () => props.open,
   async () => {
     if (!products.value) {
-      const res = await userApiService.transaction.getSingleTransaction(props.transaction.id);
+      const res = await userApiService.transaction.getSingleTransaction({ id: props.transaction.id });
       products.value = res.data;
     }
   },

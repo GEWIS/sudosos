@@ -1,6 +1,6 @@
 import { computed, ref, watch, onUnmounted, type Ref } from 'vue';
 import type { Socket } from 'socket.io-client';
-import { BaseTransactionResponse, PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
+import { BaseTransactionResponse, PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
 import { useAuthStore, useWebSocketStore } from '@sudosos/sudosos-frontend-common';
 import { useCartStore } from '@/stores/cart.store';
 import { usePointOfSaleStore } from '@/stores/pos.store';
@@ -44,17 +44,11 @@ export function useCartTransactions(pointOfSale?: Ref<PointOfSaleWithContainersR
 
     try {
       if (cartStore.getBuyer && (cartStore.getBuyer.id === authStore.getUser?.id || settings.isBorrelmode)) {
-        const res = await userApiService.user.getUsersTransactions(
-          cartStore.getBuyer?.id,
-          cartStore.getBuyer?.id,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          5,
-        );
+        const res = await userApiService.user.getUsersTransactions({
+          id: cartStore.getBuyer?.id,
+          fromId: cartStore.getBuyer?.id,
+          take: 5,
+        });
 
         if (loadingBuyerId.value === buyerIdForThisCall && cartStore.getBuyer?.id === buyerIdForThisCall) {
           transactions.value.push(...res.data.records);

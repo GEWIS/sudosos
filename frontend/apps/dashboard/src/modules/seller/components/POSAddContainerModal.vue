@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
+import type { PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { addContainerObject } from '@/utils/validation-schema';
 import FormDialog from '@/components/FormDialog.vue';

@@ -35,7 +35,7 @@ const { t } = useI18n();
 
 const toggleMaintenance = async () => {
   await apiService.serverSettings.setMaintenanceMode({
-    enabled: !isMaintenance.value,
+    updateMaintenanceModeRequest: { enabled: !isMaintenance.value },
   });
 };
 </script>

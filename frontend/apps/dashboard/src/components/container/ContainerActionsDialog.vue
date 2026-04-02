@@ -28,7 +28,7 @@ import type {
   CreateContainerRequest,
   PointOfSaleWithContainersResponse,
   UpdateContainerRequest,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import { useI18n } from 'vue-i18n';
 import { useConfirm } from 'primevue/useconfirm';

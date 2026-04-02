@@ -5,9 +5,9 @@ import type {
   InvoiceResponse,
   PaginatedInvoiceResponse,
   UpdateInvoiceRequest,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
-import { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client/src/api';
+import { InvoiceStatusResponseStateEnum } from '@gewis/sudosos-client';
 import ApiService from '@/services/ApiService';
 
 export const useInvoiceStore = defineStore('invoice', {
@@ -30,7 +30,7 @@ export const useInvoiceStore = defineStore('invoice', {
   },
   actions: {
     async updateInvoice(id: number, updateInvoiceRequest: UpdateInvoiceRequest): Promise<BaseInvoiceResponse> {
-      return await ApiService.invoices.updateInvoice(id, updateInvoiceRequest).then((res) => {
+      return await ApiService.invoices.updateInvoice({ id, updateInvoiceRequest }).then((res) => {
         const invoice: BaseInvoiceResponse = res.data;
         if (!this.invoices[invoice.id]) return invoice;
         // BaseInvoice does not contain entries, so we merge them
@@ -45,15 +45,17 @@ export const useInvoiceStore = defineStore('invoice', {
       return this.fetchInvoice(id);
     },
     async deleteInvoice(id: number): Promise<void> {
-      await ApiService.invoices.updateInvoice(id, { state: InvoiceStatusResponseStateEnum.Deleted }).then((res) => {
-        const invoice: BaseInvoiceResponse = res.data;
-        if (!this.invoices[invoice.id]) return undefined;
-        this.invoices[invoice.id] = { ...this.invoices[invoice.id]!, ...invoice };
-        return this.invoices[invoice.id];
-      });
+      await ApiService.invoices
+        .updateInvoice({ id, updateInvoiceRequest: { state: InvoiceStatusResponseStateEnum.Deleted } })
+        .then((res) => {
+          const invoice: BaseInvoiceResponse = res.data;
+          if (!this.invoices[invoice.id]) return undefined;
+          this.invoices[invoice.id] = { ...this.invoices[invoice.id]!, ...invoice };
+          return this.invoices[invoice.id];
+        });
     },
     async fetchInvoicePdf(id: number): Promise<string | undefined> {
-      return await ApiService.invoices.getInvoicePdf(id).then((res) => {
+      return await ApiService.invoices.getInvoicePdf({ id }).then((res) => {
         const pdf = (res.data as unknown as { pdf: string }).pdf;
         if (!this.invoices[id]) return undefined;
 
@@ -62,7 +64,7 @@ export const useInvoiceStore = defineStore('invoice', {
       });
     },
     async fetchInvoice(id: number): Promise<InvoiceResponse> {
-      return await ApiService.invoices.getSingleInvoice(id).then((res) => {
+      return await ApiService.invoices.getSingleInvoice({ id }).then((res) => {
         const invoice = res.data;
         this.invoices[invoice.id] = invoice;
         return this.invoices[invoice.id]!;
@@ -109,22 +111,14 @@ export const useInvoiceStore = defineStore('invoice', {
     async fetchAllNegativeInvoiceUsers(): Promise<Record<number, BalanceResponse>> {
       return fetchAllPages<BalanceResponse>((take, skip) =>
         // @ts-expect-error PaginatedBalanceResponse is the same as PaginatedResult<BalanceResponse>
-        ApiService.balance.getAllBalance(
-          undefined,
-          undefined,
-          -1,
-          undefined,
-          undefined,
-          undefined,
+        ApiService.balance.getAllBalance({
+          maxBalance: -1,
           // @ts-expect-error not sure why typescript thinks this is wrong
-          'INVOICE',
-          undefined,
-          undefined,
-          false,
-          undefined,
+          userTypes: 'INVOICE',
+          allowDeleted: false,
           take,
           skip,
-        ),
+        }),
       ).then((users) => {
         users.forEach((user: BalanceResponse) => {
           this.negativeInvoiceUsers[user.id] = user;

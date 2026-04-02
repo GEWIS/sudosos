@@ -1,6 +1,6 @@
 import { computed, ref, onMounted, type Ref, watch } from 'vue';
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
-import type { BalanceResponse } from '@sudosos/sudosos-client';
+import type { BalanceResponse } from '@gewis/sudosos-client';
 import { useRouter } from 'vue-router';
 import { formatPrice } from '@/utils/formatterUtils';
 import apiService from '@/services/ApiService';

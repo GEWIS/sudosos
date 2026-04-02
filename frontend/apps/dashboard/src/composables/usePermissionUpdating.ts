@@ -1,5 +1,5 @@
 import { computed, type Ref } from 'vue';
-import type { ActionResponse, CreatePermissionParams, PermissionResponse } from '@sudosos/sudosos-client';
+import type { ActionResponse, CreatePermissionParams, PermissionResponse } from '@gewis/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import * as yup from 'yup';
 import type { DataTableRowClickEvent } from 'primevue/datatable';
@@ -69,7 +69,7 @@ export function usePermissionsUpdating(
       attributes: [attributeToAdd.value],
     };
     apiService.rbac
-      .addPermissions(form.context.values.role.id, [newPermission])
+      .addPermissions({ id: form.context.values.role.id, createPermissionParams: [newPermission] })
       .then(() => {
         addPermissionVision.value = false;
         location.reload();

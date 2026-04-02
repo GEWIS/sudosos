@@ -93,10 +93,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick, onBeforeMount } from 'vue';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
-import type { ReportResponse } from '@sudosos/sudosos-client/src/api';
+import type { ReportResponse } from '@gewis/sudosos-client';
 // eslint-disable-next-line import/no-named-as-default
 import Dinero from 'dinero.js';
-import type { WrappedResponse, UserResponse, ReportProductEntryResponse } from '@sudosos/sudosos-client';
+import type { WrappedResponse, UserResponse, ReportProductEntryResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
@@ -506,11 +506,15 @@ function onPointerUp(e: PointerEvent) {
 async function loadWrappedData() {
   const userId = authStore.getUser!.id;
 
-  report.value = (await apiService.user.getUsersPurchasesReport(userId, '2025-01-01', '2025-12-31')).data;
+  report.value = (
+    await apiService.user.getUsersPurchasesReport({ id: userId, fromDate: '2025-01-01', tillDate: '2025-12-31' })
+  ).data;
 
-  report2024.value = (await apiService.user.getUsersPurchasesReport(userId, '2024-01-01', '2024-12-31')).data;
+  report2024.value = (
+    await apiService.user.getUsersPurchasesReport({ id: userId, fromDate: '2024-01-01', tillDate: '2024-12-31' })
+  ).data;
 
-  wrapped.value = (await apiService.user.getWrapped(userId)).data;
+  wrapped.value = (await apiService.user.getWrapped({ id: userId })).data;
 
   // Fetch organ details
   if (wrapped.value?.organs && wrapped.value.organs.length > 0) {
@@ -518,7 +522,7 @@ async function loadWrappedData() {
     await Promise.all(
       wrapped.value.organs.map(async (organ) => {
         try {
-          const response = await apiService.user.getIndividualUser(organ.organId);
+          const response = await apiService.user.getIndividualUser({ id: organ.organId });
           organDetailsMap[organ.organId] = response.data;
         } catch (e) {
           console.error(`Failed to fetch organ ${organ.organId}`, e);
@@ -558,11 +562,11 @@ async function handleEnableDataAnalysis() {
     const userId = authStore.getUser!.id;
 
     // Update user preference
-    await apiService.user.updateUser(userId, { extensiveDataProcessing: true });
+    await apiService.user.updateUser({ id: userId, updateUserRequest: { extensiveDataProcessing: true } });
 
     isLoading.value = true;
     showDataAnalysisDialog.value = false;
-    await apiService.user.updateWrapped(userId);
+    await apiService.user.updateWrapped({ id: userId });
     await loadWrappedData();
 
     toast.add({

@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { type PropType, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { UserResponse, BaseUserResponse } from '@sudosos/sudosos-client';
+import type { UserResponse, BaseUserResponse } from '@gewis/sudosos-client';
 import * as yup from 'yup';
 import FindUser from '@/components/FindUser.vue';
 import UserLink from '@/components/UserLink.vue';

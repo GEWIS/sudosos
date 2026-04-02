@@ -111,7 +111,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import type { BaseUserResponse } from '@sudosos/sudosos-client';
+import type { BaseUserResponse } from '@gewis/sudosos-client';
 import UserLink from '@/components/UserLink.vue';
 import ExternalLink from '@/components/ExternalLink.vue';
 

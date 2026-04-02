@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { BannerResponse } from '@sudosos/sudosos-client';
+import { BannerResponse } from '@gewis/sudosos-client';
 import { getBannerImageSrc } from '@/utils/imageUtils';
 defineProps({
   banner: {

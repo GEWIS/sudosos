@@ -58,7 +58,7 @@
 import Image from 'primevue/image';
 import Tag from 'primevue/tag';
 
-import type { BannerResponse } from '@sudosos/sudosos-client';
+import type { BannerResponse } from '@gewis/sudosos-client';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 

@@ -19,7 +19,7 @@
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import { computed, type PropType } from 'vue';
-import type { InvoiceResponse } from '@sudosos/sudosos-client';
+import type { InvoiceResponse } from '@gewis/sudosos-client';
 import * as yup from 'yup';
 import type { DineroObject } from 'dinero.js';
 import InputSpan from '@/components/InputSpan.vue';

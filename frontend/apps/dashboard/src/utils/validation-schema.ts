@@ -9,7 +9,7 @@ import type {
   UserResponse,
   ActionResponse,
   RoleResponse,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import type { DineroObject } from 'dinero.js';
 import i18n from './i18nUtils';
 import type { ContainerInStore } from '@/stores/container.store';

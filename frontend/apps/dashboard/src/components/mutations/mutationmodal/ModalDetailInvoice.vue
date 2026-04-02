@@ -28,7 +28,7 @@
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { computed } from 'vue';
-import type { TransferResponse } from '@sudosos/sudosos-client';
+import type { TransferResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { formatPrice } from '@/utils/formatterUtils';
 

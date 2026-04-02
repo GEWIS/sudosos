@@ -46,7 +46,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, Ref, ref, watch } from 'vue';
-import { BaseUserResponse, PaginatedUserResponse, UserResponse } from '@sudosos/sudosos-client';
+import { BaseUserResponse, PaginatedUserResponse, UserResponse } from '@gewis/sudosos-client';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { debounce } from 'lodash';
 import type { AxiosResponse } from 'axios';
@@ -72,7 +72,7 @@ const getRecentUsers = async () => {
     // Borrelmode: derive recent users from POS transactions (existing behavior)
     if (!posStore.getPos?.id) return;
     const recentUsers: BaseUserResponse[] = [];
-    await apiService.pos.getTransactions(posStore.getPos?.id, 100).then((res) => {
+    await apiService.pos.getTransactions({ id: posStore.getPos?.id, take: 100 }).then((res) => {
       const data = res.data;
       const ids = new Set<number>([]);
       data.records.map((u) => {
@@ -100,7 +100,7 @@ const updateSearchQuery = (event: InputEvent) => {
 
 const delayedAPICall = debounce(() => {
   void apiService.user
-    .getAllUsers(200, 0, searchQuery.value, true)
+    .getAllUsers({ take: 200, skip: 0, search: searchQuery.value, active: true })
     .then((res: AxiosResponse<PaginatedUserResponse>) => {
       users.value = res.data.records;
     });

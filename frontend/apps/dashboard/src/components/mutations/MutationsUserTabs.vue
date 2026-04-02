@@ -15,7 +15,7 @@
   </Tabs>
 </template>
 <script lang="ts" setup>
-import type { PaginatedBaseTransactionResponse, PaginatedFinancialMutationResponse } from '@sudosos/sudosos-client';
+import type { PaginatedBaseTransactionResponse, PaginatedFinancialMutationResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import MutationsBalance from '@/components/mutations/MutationsBalance.vue';
 import MutationsSeller from '@/components/mutations/MutationsSeller.vue';

@@ -88,7 +88,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { BaseInactiveAdministrativeCostResponse } from '@sudosos/sudosos-client';
+import type { BaseInactiveAdministrativeCostResponse } from '@gewis/sudosos-client';
 import type { DataTablePageEvent } from 'primevue/datatable';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';

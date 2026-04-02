@@ -25,7 +25,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { TransferResponse } from '@sudosos/sudosos-client';
+import type { TransferResponse } from '@gewis/sudosos-client';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { computed } from 'vue';

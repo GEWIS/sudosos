@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import { type PropType } from 'vue';
-import type { UserResponse } from '@sudosos/sudosos-client';
+import type { UserResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { useConfirm } from 'primevue/useconfirm';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
@@ -80,7 +80,7 @@ async function startScan() {
     const nfcCode = event.serialNumber.toLowerCase().replace(/[^a-z0-9]/g, '');
 
     await apiService.user
-      .updateUserNfc(props.user.id, { nfcCode })
+      .updateUserNfc({ id: props.user.id, updateNfcRequest: { nfcCode } })
       .then(() => {
         toast.add({
           severity: 'success',
@@ -132,7 +132,7 @@ const confirmDeleteApiKey = () => {
     icon: 'pi pi-exclamation-triangle',
     accept: () => {
       apiService.user
-        .deleteUserKey(props.user.id)
+        .deleteUserKey({ id: props.user.id })
         .then(() => {
           toast.add({
             severity: 'success',
@@ -155,7 +155,7 @@ const confirmDeleteNFC = () => {
     icon: 'pi pi-exclamation-triangle',
     accept: () => {
       apiService.user
-        .deleteUserNfc(props.user.id)
+        .deleteUserNfc({ id: props.user.id })
         .then(() => {
           toast.add({
             severity: 'success',

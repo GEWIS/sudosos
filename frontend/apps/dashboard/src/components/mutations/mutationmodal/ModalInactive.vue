@@ -41,7 +41,7 @@ import { addListenerOnDialogueOverlay, isAllowed } from '@sudosos/sudosos-fronte
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import Skeleton from 'primevue/skeleton';
-import type { BaseInactiveAdministrativeCostResponse, TransferResponse } from '@sudosos/sudosos-client';
+import type { BaseInactiveAdministrativeCostResponse, TransferResponse } from '@gewis/sudosos-client';
 import ConfirmButton from '@/components/ConfirmButton.vue';
 import { useAdministrativeCostsStore } from '@/stores/administrativeCosts.store';
 import InactiveDetailModal from '@/components/mutations/mutationmodal/ModalDetailInactive.vue';

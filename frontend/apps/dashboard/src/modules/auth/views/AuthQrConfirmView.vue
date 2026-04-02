@@ -54,7 +54,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { QRStatusResponseStatusEnum } from '@sudosos/sudosos-client';
+import { QRStatusResponseStatusEnum } from '@gewis/sudosos-client';
 import apiService from '@/services/ApiService';
 import AuthLocalCard from '@/modules/auth/components/AuthLocalCard.vue';
 
@@ -79,7 +79,7 @@ const checkQrStatus = async () => {
     isCheckingStatus.value = true;
     error.value = null;
 
-    const response = await apiService.authenticate.getQRStatus(sessionId.value);
+    const response = await apiService.authenticate.getQRStatus({ sessionId: sessionId.value });
 
     if (response.data.status === QRStatusResponseStatusEnum.Pending) {
       isQrValid.value = true;
@@ -103,7 +103,7 @@ const confirmLogin = async () => {
     isLoading.value = true;
     error.value = null;
 
-    await apiService.authenticate.confirmQRCode(sessionId.value);
+    await apiService.authenticate.confirmQRCode({ sessionId: sessionId.value });
     success.value = true;
 
     // Redirect to dashboard after a short delay

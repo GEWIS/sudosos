@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
-import type { PaginatedBaseTransactionResponse, PaginatedFinancialMutationResponse } from '@sudosos/sudosos-client';
+import type { PaginatedBaseTransactionResponse, PaginatedFinancialMutationResponse } from '@gewis/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import { useI18n } from 'vue-i18n';
 import MutationsUserTabs from '@/components/mutations/MutationsUserTabs.vue';

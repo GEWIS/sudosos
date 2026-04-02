@@ -1,4 +1,4 @@
-import type { BannerResponse, ProductResponse } from '@sudosos/sudosos-client';
+import type { BannerResponse, ProductResponse } from '@gewis/sudosos-client';
 
 export function resolveImageUrl(
   image: string | null | undefined,

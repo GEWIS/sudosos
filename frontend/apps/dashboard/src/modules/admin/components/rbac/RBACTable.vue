@@ -244,7 +244,7 @@ import * as yup from 'yup';
 import { useI18n } from 'vue-i18n';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import type { ActionResponse, UserResponse } from '@sudosos/sudosos-client';
+import type { ActionResponse, UserResponse } from '@gewis/sudosos-client';
 import { rbacSchema } from '@/utils/validation-schema';
 import { type Form } from '@/utils/formUtils';
 import InputUserSpan from '@/components/InputUserSpan.vue';

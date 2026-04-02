@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import { toRef, ref, watch, computed, type ComputedRef, unref } from 'vue';
-import type { ReportProductEntryResponse } from '@sudosos/sudosos-client';
+import type { ReportProductEntryResponse } from '@gewis/sudosos-client';
 import { getProductImageSrcFromString } from '@/utils/urlUtils';
 
 const props = defineProps<{

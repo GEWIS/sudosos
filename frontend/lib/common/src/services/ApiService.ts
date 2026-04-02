@@ -24,7 +24,7 @@ import {
   WriteoffsApi,
   ServerSettingsApi,
   UserNotificationPreferencesApi,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import { getTokenFromStorage, updateTokenIfNecessary } from '../helpers/TokenHelper';
 

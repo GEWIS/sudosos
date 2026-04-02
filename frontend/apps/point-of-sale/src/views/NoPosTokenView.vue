@@ -51,7 +51,7 @@
 import { computed, onMounted, nextTick, watch } from 'vue';
 import Button from 'primevue/button';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
-import { PointOfSaleResponse } from '@sudosos/sudosos-client';
+import { PointOfSaleResponse } from '@gewis/sudosos-client';
 import { useRouter } from 'vue-router';
 import PosSwitchDisplay from '@/components/PosSwitchDisplay.vue';
 import { useQrAuth } from '@/composables/useQrAuth';

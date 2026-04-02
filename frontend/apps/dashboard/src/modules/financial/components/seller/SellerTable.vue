@@ -43,7 +43,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { UserResponse } from '@sudosos/sudosos-client';
+import type { UserResponse } from '@gewis/sudosos-client';
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import Checkbox from 'primevue/checkbox';
@@ -80,15 +80,13 @@ const rowValues = computed(() => {
 async function loadSellers(): Promise<void> {
   isLoading.value = true;
   try {
-    const response = await apiService.user.getAllUsers(
-      rows.value,
-      skip.value,
-      '',
-      showAllActiveSellers.value ? undefined : true,
-      undefined,
-      undefined,
-      USER_TYPES.ORGAN,
-    );
+    const response = await apiService.user.getAllUsers({
+      take: rows.value,
+      skip: skip.value,
+      search: '',
+      active: showAllActiveSellers.value ? undefined : true,
+      type: USER_TYPES.ORGAN,
+    });
     if (response.data) {
       sellers.value = response.data.records;
       totalRecords.value = response.data._pagination.count || 0;

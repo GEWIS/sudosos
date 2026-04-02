@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import type { BaseProductResponse } from '@sudosos/sudosos-client';
+import type { BaseProductResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();

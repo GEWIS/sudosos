@@ -234,7 +234,7 @@ import { useI18n } from 'vue-i18n';
 import { computed, type ComputedRef, onMounted, ref, watch } from 'vue';
 import { type DataTableSortEvent } from 'primevue/datatable';
 import { debounce } from 'lodash';
-import type { FineHandoutEventResponse } from '@sudosos/sudosos-client';
+import type { FineHandoutEventResponse } from '@gewis/sudosos-client';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 import { isAllowed } from '@sudosos/sudosos-frontend-common';

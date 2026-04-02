@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
-import type { BaseUserResponse } from '@sudosos/sudosos-client';
+import type { BaseUserResponse } from '@gewis/sudosos-client';
 import InputSelectSpan from '@/components/InputSelectSpan.vue';
 
 const authStore = useAuthStore();

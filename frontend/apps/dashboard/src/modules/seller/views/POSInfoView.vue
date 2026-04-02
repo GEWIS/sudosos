@@ -38,11 +38,11 @@ import type {
   PaginatedBaseTransactionResponse,
   Dinero as SudoSOSDinero,
   PointOfSaleWithContainersResponse,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 // eslint-disable-next-line import/no-named-as-default
 import Dinero from 'dinero.js';
 import { useI18n } from 'vue-i18n';
-import { type ContainerWithProductsResponse, type ReportResponse } from '@sudosos/sudosos-client/src/api';
+import { type ContainerWithProductsResponse, type ReportResponse } from '@gewis/sudosos-client';
 import { getRelation, isAllowed } from '@sudosos/sudosos-frontend-common';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import ContainerCard from '@/components/container/ContainersCard.vue';
@@ -114,11 +114,11 @@ watch(
   async (canLoad) => {
     if (!canLoad || !p.value?.owner) return;
     await apiService.user
-      .getUsersSalesReport(
-        p.value.owner.id,
-        new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-        new Date().toISOString(),
-      )
+      .getUsersSalesReport({
+        id: p.value.owner.id,
+        fromDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        tillDate: new Date().toISOString(),
+      })
       .then((res) => {
         const data: ReportResponse = res.data;
         if (!data.data.pos) return;
@@ -133,7 +133,7 @@ const getPOSTransactions = async (
   take: number,
   skip: number,
 ): Promise<PaginatedBaseTransactionResponse | undefined> => {
-  return await apiService.pos.getTransactions(id.value!, take, skip).then((res) => res.data);
+  return await apiService.pos.getTransactions({ id: id.value!, take, skip }).then((res) => res.data);
 };
 </script>
 

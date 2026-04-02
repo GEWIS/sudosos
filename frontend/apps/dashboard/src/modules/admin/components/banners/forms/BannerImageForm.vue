@@ -28,7 +28,7 @@
 <script setup lang="ts">
 import { computed, type PropType, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { BannerResponse } from '@sudosos/sudosos-client';
+import type { BannerResponse } from '@gewis/sudosos-client';
 import * as yup from 'yup';
 import type { bannerSchema } from '@/utils/validation-schema';
 import { type Form, getProperty } from '@/utils/formUtils';

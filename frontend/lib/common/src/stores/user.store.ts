@@ -8,7 +8,7 @@ import type {
   DineroObjectRequest,
   CreateUserRequest,
   UpdateUserRequest,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import { ApiService } from '../services/ApiService';
 import { fetchAllPages } from '../helpers/PaginationHelper';
 
@@ -79,13 +79,13 @@ export const useUserStore = defineStore('user', {
     async fetchUsers(service: ApiService) {
       // Fetches all users if the store is empty
       if (Object.values(this.users).length == 0) {
-        this.users = await fetchAllPages<UserResponse>((take, skip) => service.user.getAllUsers(take, skip));
+        this.users = await fetchAllPages<UserResponse>((take, skip) => service.user.getAllUsers({ take, skip }));
       }
     },
     async fetchAllOrgans(apiService: ApiService) {
       if (this.organs.length != 0) return this.organs;
       return fetchAllPages<UserResponse>((take, skip) =>
-        apiService.user.getAllUsersOfUserType('ORGAN', take, skip),
+        apiService.user.getAllUsersOfUserType({ userType: 'ORGAN', take, skip }),
       ).then((organs) => {
         this.organs = organs;
         return this.organs;
@@ -93,14 +93,14 @@ export const useUserStore = defineStore('user', {
     },
     async fetchInvoiceAccountsWithBalance(service: ApiService) {
       await fetchAllPages<UserResponse>((take, skip) =>
-        service.user.getAllUsers(take, skip, undefined, true, true, undefined, 'INVOICE'),
+        service.user.getAllUsers({ take, skip, active: true, ofAge: true, type: 'INVOICE' }),
       ).then((users) => {
         this.addUsers(users);
         void this.fetchUserBalances(users, service);
       });
     },
     async fetchCurrentUserBalance(id: number, service: ApiService): Promise<BalanceResponse> {
-      const res = await service.balance.getBalanceId(id);
+      const res = await service.balance.getBalanceId({ id });
       this.current.balance = res.data;
       return res.data;
     },
@@ -110,40 +110,28 @@ export const useUserStore = defineStore('user', {
       }
     },
     async fetchUserBalance(id: number, service: ApiService) {
-      this.balances[id] = (await service.balance.getBalanceId(id)).data;
+      this.balances[id] = (await service.balance.getBalanceId({ id })).data;
     },
     async fetchUserRolesWithPermissions(id: number, service: ApiService) {
-      this.current.rolesWithPermissions = (await service.user.getUserRoles(id)).data;
+      this.current.rolesWithPermissions = (await service.user.getUserRoles({ id })).data;
     },
     async fetchUsersFinancialMutations(id: number, service: ApiService, take?: number, skip?: number) {
-      this.current.financialMutations = (
-        await service.user.getUsersFinancialMutations(id, undefined, undefined, take, skip)
-      ).data;
+      this.current.financialMutations = (await service.user.getUsersFinancialMutations({ id, take, skip })).data;
     },
     async fetchUserCreatedTransactions(id: number, service: ApiService, take?: number, skip?: number) {
-      const res = await service.transaction.getAllTransactions(
-        undefined,
-        id,
-        undefined,
-        undefined,
-        id,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
+      const res = await service.transaction.getAllTransactions({
+        createdById: id,
+        excludeFromId: id,
         take,
         skip,
-      );
+      });
       this.current.createdTransactions = res.data;
     },
     async fetchUserApi(service: ApiService, id: number) {
-      return await service.user.updateUserKey(id);
+      return await service.user.updateUserKey({ id });
     },
     async waiveUserFine(id: number, amount: DineroObjectRequest, service: ApiService) {
-      return service.user.waiveUserFines(id, {
-        amount,
-      });
+      return service.user.waiveUserFines({ id, waiveFinesRequest: { amount } });
     },
     setCurrentUser(user: UserResponse) {
       this.current.user = user;
@@ -167,16 +155,16 @@ export const useUserStore = defineStore('user', {
       delete this.users[id];
     },
     async removeUser(id: number, service: ApiService) {
-      await service.user.deleteUser(id);
+      await service.user.deleteUser({ id });
       this.deleteUser(id);
     },
     async createUser(user: CreateUserRequest, service: ApiService): Promise<UserResponse> {
-      const createdUser: UserResponse = (await service.user.createUser(user)).data;
+      const createdUser: UserResponse = (await service.user.createUser({ createUserRequest: user })).data;
       this.addUser(createdUser);
       return createdUser;
     },
     async updateUser(id: number, u: UpdateUserRequest, service: ApiService): Promise<UserResponse> {
-      const updatedUser: UserResponse = (await service.user.updateUser(id, u)).data;
+      const updatedUser: UserResponse = (await service.user.updateUser({ id, updateUserRequest: u })).data;
       this.addUser(updatedUser);
       return updatedUser;
     },

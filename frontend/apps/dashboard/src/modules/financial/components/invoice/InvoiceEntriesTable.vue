@@ -49,7 +49,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { InvoiceResponse } from '@sudosos/sudosos-client';
+import type { InvoiceResponse } from '@gewis/sudosos-client';
 import { useInvoiceEntries } from '@/modules/financial/composables/useInvoiceEntries';
 import { formatPrice } from 'sudosos-dashboard/src/utils/formatterUtils';
 

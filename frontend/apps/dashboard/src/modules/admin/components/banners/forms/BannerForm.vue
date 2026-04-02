@@ -61,7 +61,7 @@
 <script setup lang="ts">
 import { type PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { BannerRequest } from '@sudosos/sudosos-client';
+import type { BannerRequest } from '@gewis/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import * as yup from 'yup';
 import type { bannerSchema } from '@/utils/validation-schema';

@@ -97,7 +97,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
-import type { UserToInactiveAdministrativeCostResponse } from '@sudosos/sudosos-client';
+import type { UserToInactiveAdministrativeCostResponse } from '@gewis/sudosos-client';
 import type { DataTablePageEvent } from 'primevue/datatable';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';

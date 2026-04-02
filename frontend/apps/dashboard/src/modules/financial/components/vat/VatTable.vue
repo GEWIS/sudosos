@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import type { VatGroupResponse } from '@sudosos/sudosos-client';
+import type { VatGroupResponse } from '@gewis/sudosos-client';
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import Skeleton from 'primevue/skeleton';
@@ -69,14 +69,7 @@ onMounted(async () => {
 async function loadVatGroups(skip = 0) {
   isLoading.value = true;
   try {
-    const response = await ApiService.vatGroups.getAllVatGroups(
-      undefined,
-      undefined,
-      undefined,
-      false,
-      rows.value,
-      skip,
-    );
+    const response = await ApiService.vatGroups.getAllVatGroups({ deleted: false, take: rows.value, skip });
     if (response.data) {
       vatGroups.value = response.data.records;
       totalRecords.value = response.data._pagination?.count || 0;

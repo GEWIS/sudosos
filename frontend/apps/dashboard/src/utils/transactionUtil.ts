@@ -3,8 +3,8 @@ import type {
   TransactionRequest,
   SubTransactionRequest,
   SubTransactionRowRequest,
-} from '@sudosos/sudosos-client';
-import type { SubTransactionResponse, SubTransactionRowResponse } from '@sudosos/sudosos-client/src/api';
+} from '@gewis/sudosos-client';
+import type { SubTransactionResponse, SubTransactionRowResponse } from '@gewis/sudosos-client';
 
 export function getProductsOfTransaction(transactionResponse: TransactionResponse): SubTransactionRowResponse[] {
   return transactionResponse.subTransactions.flatMap(

@@ -83,7 +83,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, type PropType, type Ref, computed } from 'vue';
-import { type UserResponse } from '@sudosos/sudosos-client';
+import { type UserResponse } from '@gewis/sudosos-client';
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
@@ -135,7 +135,7 @@ const viewPayout = (id: number) => {
 const downloadPdf = async (id: number) => {
   downloadingPdf.value = true;
   await ApiService.sellerPayouts
-    .getSellerPayoutReportPdf(id)
+    .getSellerPayoutReportPdf({ id })
     .then((res) => {
       if (res.data.pdf) window.location.href = getSellerPayoutPdfSrc(res.data.pdf);
     })

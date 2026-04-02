@@ -55,7 +55,10 @@ setSubmit(
   props.form.context.handleSubmit((values) => {
     if (userStore.getCurrentUser.user) {
       apiService.user
-        .updateUserLocalPassword(userStore.getCurrentUser.user.id, { password: values.passwordConfirm })
+        .updateUserLocalPassword({
+          id: userStore.getCurrentUser.user.id,
+          updateLocalRequest: { password: values.passwordConfirm },
+        })
         .then(() => {
           emit('submit:success', values);
           toast.add({

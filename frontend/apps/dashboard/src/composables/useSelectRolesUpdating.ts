@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import { ref } from 'vue';
-import type { PermissionResponse, RoleResponse, UserResponse } from '@sudosos/sudosos-client';
+import type { PermissionResponse, RoleResponse, UserResponse } from '@gewis/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import type { Form } from '@/utils/formUtils';
 import { rbacSchema } from '@/utils/validation-schema';
@@ -19,7 +19,7 @@ export function useSelectRolesUpdating(form: Form<yup.InferType<typeof rbacSchem
 
   function fetchPermissions(id: number) {
     apiService.rbac
-      .getSingleRole(id)
+      .getSingleRole({ id })
       .then((response) => {
         if (response.data.permissions[0]) {
           currentPermissions.value = response.data.permissions;
@@ -35,7 +35,7 @@ export function useSelectRolesUpdating(form: Form<yup.InferType<typeof rbacSchem
   function updateUsers(id: number) {
     let systemDefault = false;
     apiService.rbac
-      .getSingleRole(id)
+      .getSingleRole({ id })
       .then((res) => {
         systemDefault = res.data.systemDefault;
       })
@@ -44,7 +44,7 @@ export function useSelectRolesUpdating(form: Form<yup.InferType<typeof rbacSchem
       });
     if (!systemDefault) {
       apiService.rbac
-        .getRoleUsers(id)
+        .getRoleUsers({ id })
         .then((res) => {
           currentUsers.value = res.data.records;
           form.context.setFieldValue('users', currentUsers.value);

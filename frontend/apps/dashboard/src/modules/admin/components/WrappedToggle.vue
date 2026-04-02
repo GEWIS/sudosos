@@ -33,7 +33,7 @@ const toggleWrapped = async () => {
   const newValue = !isWrapped.value;
   isWrapped.value = newValue;
   try {
-    await apiService.serverSettings.setWrappedEnabled({ enabled: newValue });
+    await apiService.serverSettings.setWrappedEnabled({ updateWrappedEnabledRequest: { enabled: newValue } });
   } catch (error) {
     await fetchWrappedState();
     throw error;

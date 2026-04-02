@@ -75,7 +75,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, type PropType, type Ref, computed, watch } from 'vue';
-import { type PaginatedBasePayoutRequestResponse, PayoutRequestStatusRequestStateEnum } from '@sudosos/sudosos-client';
+import { type PaginatedBasePayoutRequestResponse, PayoutRequestStatusRequestStateEnum } from '@gewis/sudosos-client';
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';

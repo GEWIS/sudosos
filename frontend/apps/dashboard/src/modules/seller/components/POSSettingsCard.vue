@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import { onBeforeMount, ref, watch } from 'vue';
-import type { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
+import type { PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
 import { useConfirm } from 'primevue/useconfirm';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';

@@ -125,7 +125,7 @@ const deleteMutation = async () => {
 
   try {
     if (props.type === FinancialMutationType.FINE && transfer.value?.fine) {
-      await apiService.debtor.deleteFine(transfer.value.fine.id);
+      await apiService.debtor.deleteFine({ id: transfer.value.fine.id });
       toast.add({
         summary: t('common.toast.success.success'),
         detail: t('common.toast.success.fineDeleted'),
@@ -135,7 +135,7 @@ const deleteMutation = async () => {
       dialog.value.close();
       emit('deleted');
     } else if (props.type === FinancialMutationType.TRANSACTION && transaction.value) {
-      await apiService.transaction.deleteTransaction(transaction.value.id);
+      await apiService.transaction.deleteTransaction({ id: transaction.value.id });
       toast.add({
         summary: t('common.toast.success.success'),
         detail: t('common.toast.success.transactionDeleted'),

@@ -5,7 +5,7 @@ import type {
   ProductResponse,
   UpdateProductRequest,
   VatGroupResponse,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
 import ApiService from '@/services/ApiService';
 import { useContainerStore } from '@/stores/container.store';
@@ -66,7 +66,7 @@ export const useProductStore = defineStore('products', {
      * Note, this function will overwrite any existing products in the store.
      */
     async fetchAllProducts() {
-      return fetchAllPages<ProductResponse>((take, skip) => ApiService.products.getAllProducts(take, skip)).then(
+      return fetchAllPages<ProductResponse>((take, skip) => ApiService.products.getAllProducts({ take, skip })).then(
         (productsArray) => {
           this.products = {};
           productsArray.forEach((product) => {
@@ -79,9 +79,8 @@ export const useProductStore = defineStore('products', {
      * Fetch all product categories and store them in the store.
      */
     async fetchAllCategories() {
-      return fetchAllPages<ProductCategoryResponse>(
-        // @ts-expect-error PaginatedProductCategoryResponse is the same as PaginatedResult<ProductCategoryResponse>
-        (take, skip) => ApiService.category.getAllProductCategories(take, skip),
+      return fetchAllPages<ProductCategoryResponse>((take, skip) =>
+        ApiService.category.getAllProductCategories({ take, skip }),
       ).then((categories) => {
         this.categories = categories;
         return categories;
@@ -92,7 +91,7 @@ export const useProductStore = defineStore('products', {
      */
     async fetchAllVatGroups() {
       return fetchAllPages<VatGroupResponse>((take, skip) =>
-        ApiService.vatGroups.getAllVatGroups(undefined, undefined, undefined, false, take, skip),
+        ApiService.vatGroups.getAllVatGroups({ deleted: false, take, skip }),
       ).then((vatGroups) => {
         this.vatGroups = vatGroups;
         return this.vatGroups;
@@ -109,7 +108,7 @@ export const useProductStore = defineStore('products', {
       product.image = URL.createObjectURL(productImage);
       this.products[product.id] = product;
 
-      return ApiService.products.updateProductImage(id, productImage).then(() => {
+      return ApiService.products.updateProductImage({ id, file: productImage }).then(() => {
         useContainerStore().handleProductUpdate(product);
         return product;
       });
@@ -120,7 +119,7 @@ export const useProductStore = defineStore('products', {
      * @param productImage
      */
     async createProduct(createProductRequest: CreateProductRequest, productImage: File | undefined) {
-      const product = await ApiService.products.createProduct(createProductRequest).then((resp) => resp.data);
+      const product = await ApiService.products.createProduct({ createProductRequest }).then((resp) => resp.data);
       this.products[product.id] = product;
       if (productImage) {
         await this.updateProductImage(product.id, productImage);
@@ -128,7 +127,7 @@ export const useProductStore = defineStore('products', {
       return product;
     },
     async updateProduct(productId: number, updateProductRequest: UpdateProductRequest): Promise<ProductResponse> {
-      return ApiService.products.updateProduct(productId, updateProductRequest).then((resp) => {
+      return ApiService.products.updateProduct({ id: productId, updateProductRequest }).then((resp) => {
         const product = resp.data;
         this.products[product.id] = product;
         useContainerStore().handleProductUpdate(product);
@@ -136,11 +135,11 @@ export const useProductStore = defineStore('products', {
       });
     },
     async fetchProduct(id: number) {
-      const product = await ApiService.products.getSingleProduct(id).then((resp) => resp.data);
+      const product = await ApiService.products.getSingleProduct({ id }).then((resp) => resp.data);
       this.products[product.id] = product;
     },
     async deleteProduct(id: number) {
-      await ApiService.products.deleteProduct(id);
+      await ApiService.products.deleteProduct({ id });
       delete this.products[id];
       useContainerStore().handleProductDelete(id);
     },

@@ -1,4 +1,4 @@
-import { AuthenticationResponse, QRCodeResponse } from '@sudosos/sudosos-client';
+import { AuthenticationResponse, QRCodeResponse } from '@gewis/sudosos-client';
 import { useWebSocketStore, useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { toDataURL } from 'qrcode';

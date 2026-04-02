@@ -60,9 +60,11 @@ setSubmit(
   props.form.context.handleSubmit((values) => {
     apiService.authenticate
       .resetLocalWithToken({
-        accountMail: values.email,
-        token: values.token,
-        password: values.password,
+        authenticationResetTokenRequest: {
+          accountMail: values.email,
+          token: values.token,
+          password: values.password,
+        },
       })
       .then(() => {
         toast.add({

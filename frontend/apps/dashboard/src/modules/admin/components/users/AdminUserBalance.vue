@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, watch, type ComputedRef } from 'vue';
-import type { BalanceResponse, UserResponse } from '@sudosos/sudosos-client';
+import type { BalanceResponse, UserResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
 // eslint-disable-next-line import/no-named-as-default

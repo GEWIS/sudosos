@@ -93,7 +93,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { TransactionResponse } from '@sudosos/sudosos-client';
+import type { TransactionResponse } from '@gewis/sudosos-client';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import TransactionEditCard from './TransactionEditCard.vue';

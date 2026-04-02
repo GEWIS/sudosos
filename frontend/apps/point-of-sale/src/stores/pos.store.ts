@@ -8,7 +8,7 @@ import {
   ProductResponse,
   UserResponse,
   UserWithIndex,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
 import { userApiService, posApiService } from '@/services/ApiService';
 
@@ -60,7 +60,7 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
   actions: {
     async fetchRecentUsers(): Promise<void> {
       try {
-        const response = await userApiService.user.getRecentlyChargedUsers(10);
+        const response = await userApiService.user.getRecentlyChargedUsers({ take: 10 });
         this.recentUsers = response.data;
       } catch (error) {
         console.error('Failed to fetch recent users', error);
@@ -72,30 +72,30 @@ export const usePointOfSaleStore = defineStore('pointOfSale', {
     async fetchRecentPosTransactions(): Promise<PaginatedBaseTransactionResponse | null> {
       if (!this.pointOfSale) return null;
       // Use posApiService for POS-specific operations
-      const response = await posApiService.pos.getTransactions(this.pointOfSale.id);
+      const response = await posApiService.pos.getTransactions({ id: this.pointOfSale.id });
       return response.data;
     },
     async fetchPointOfSale(id: number): Promise<void> {
       // Use posApiService for POS-specific operations
-      const response = await posApiService.pos.getSinglePointOfSale(id);
+      const response = await posApiService.pos.getSinglePointOfSale({ id });
       this.pointOfSaleAssociates = null;
       this.pointOfSale = response.data;
     },
     async fetchPointOfSaleAssociates(posId: number): Promise<void> {
       // Use posApiService for POS-specific operations
-      const response = await posApiService.pos.getPointOfSaleAssociates(posId);
+      const response = await posApiService.pos.getPointOfSaleAssociates({ id: posId });
       this.pointOfSaleAssociates = response.data;
     },
     async fetchUserPointOfSale(id: number): Promise<void> {
       // Use userApiService for user-level operations
       this.usersPointOfSales = await fetchAllPages<PointOfSaleResponse>((take, skip) =>
-        userApiService.user.getUsersPointsOfSale(id, take, skip),
+        userApiService.user.getUsersPointsOfSale({ id, take, skip }),
       );
     },
     async fetchAllPointOfSales(): Promise<void> {
       // Use userApiService for user-level operations
       this.allPointOfSales = await fetchAllPages<PointOfSaleResponse>((take, skip) =>
-        userApiService.pos.getAllPointsOfSale(take, skip),
+        userApiService.pos.getAllPointsOfSale({ take, skip }),
       );
     },
     getProduct(productId: number, revision: number, containerId: number): ProductResponse | undefined {

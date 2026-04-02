@@ -5,7 +5,7 @@ import type {
   CreateContainerRequest,
   ProductResponse,
   UpdateContainerRequest,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
 import ApiService from '@/services/ApiService';
 
@@ -83,7 +83,7 @@ export const useContainerStore = defineStore('container', {
      * @param id - The ID of the container to fetch.
      */
     async fetchContainer(id: number): Promise<ContainerWithProductsResponse> {
-      return ApiService.container.getSingleContainer(id).then((resp) => {
+      return ApiService.container.getSingleContainer({ id }).then((resp) => {
         this.containers[id] = resp.data;
         return this.containers[id] as ContainerWithProductsResponse;
       });
@@ -92,21 +92,21 @@ export const useContainerStore = defineStore('container', {
      * Fetches all containers and stores them in the store.
      */
     async fetchAllContainers() {
-      return fetchAllPages<ContainerResponse>((take, skip) => ApiService.container.getAllContainers(take, skip)).then(
-        (containersArray) => {
-          containersArray.forEach((container: ContainerResponse) => {
-            this.containers[container.id] = container;
-          });
-          return this.containers;
-        },
-      );
+      return fetchAllPages<ContainerResponse>((take, skip) =>
+        ApiService.container.getAllContainers({ take, skip }),
+      ).then((containersArray) => {
+        containersArray.forEach((container: ContainerResponse) => {
+          this.containers[container.id] = container;
+        });
+        return this.containers;
+      });
     },
     /**
      * Creates a container and stores it in the store.
      * @param c - The container to create.
      */
     async createContainer(c: CreateContainerRequest) {
-      return await ApiService.container.createContainer(c).then((resp) => {
+      return await ApiService.container.createContainer({ createContainerRequest: c }).then((resp) => {
         this.containers[resp.data.id] = resp.data;
         return this.containers[resp.data.id];
       });
@@ -133,10 +133,12 @@ export const useContainerStore = defineStore('container', {
       };
 
       container.products.push(product);
-      return ApiService.container.updateContainer(container.id, updateContainerReq).then((resp) => {
-        this.containers[container.id] = resp.data;
-        return resp.data;
-      });
+      return ApiService.container
+        .updateContainer({ id: container.id, updateContainerRequest: updateContainerReq })
+        .then((resp) => {
+          this.containers[container.id] = resp.data;
+          return resp.data;
+        });
     },
     /**
      * Deletes a product from a container and updates the store.
@@ -160,10 +162,12 @@ export const useContainerStore = defineStore('container', {
       };
 
       container.products = container.products.filter((e) => e.id !== product.id);
-      return ApiService.container.updateContainer(container.id, updateContainerReq).then((resp) => {
-        this.containers[container.id] = resp.data;
-        return resp.data;
-      });
+      return ApiService.container
+        .updateContainer({ id: container.id, updateContainerRequest: updateContainerReq })
+        .then((resp) => {
+          this.containers[container.id] = resp.data;
+          return resp.data;
+        });
     },
     /**
      * Used for receiving and handling product updates from product store.
@@ -194,7 +198,7 @@ export const useContainerStore = defineStore('container', {
      * @param c
      */
     async updateContainer(cId: number, c: UpdateContainerRequest) {
-      const response = await ApiService.container.updateContainer(cId, c);
+      const response = await ApiService.container.updateContainer({ id: cId, updateContainerRequest: c });
       const container = response.data;
 
       this.containers[container.id] = container;
@@ -208,10 +212,12 @@ export const useContainerStore = defineStore('container', {
      */
     async createEmptyContainer(name: string, isPublic: boolean, ownerId: number) {
       const response = await ApiService.container.createContainer({
-        name: name,
-        products: [],
-        public: isPublic,
-        ownerId: ownerId,
+        createContainerRequest: {
+          name: name,
+          products: [],
+          public: isPublic,
+          ownerId: ownerId,
+        },
       });
       const container = response.data;
 
@@ -224,7 +230,7 @@ export const useContainerStore = defineStore('container', {
      * @param id
      */
     async deleteContainer(id: number) {
-      await ApiService.container.deleteContainer(id);
+      await ApiService.container.deleteContainer({ id });
       delete this.containers[id];
     },
   },

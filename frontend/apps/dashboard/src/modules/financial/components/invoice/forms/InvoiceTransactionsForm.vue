@@ -40,7 +40,7 @@ import {
   type BasePointOfSaleResponse,
   type BaseTransactionResponse,
   type TransactionResponse,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import { type Form, getProperty } from '@/utils/formUtils';
 import type { createInvoiceObject } from '@/utils/validation-schema';
@@ -83,7 +83,11 @@ const getTransactions = () => {
 
   props.form.context.resetField('transactionTotal');
   apiService.invoices
-    .getEligibleTransactions(selectedUser.value, fromDate.toISOString(), toDate.toISOString())
+    .getEligibleTransactions({
+      forId: selectedUser.value,
+      fromDate: fromDate.toISOString(),
+      tillDate: toDate.toISOString(),
+    })
     .then((res) => {
       const t = res.data as unknown as TransactionResponse[];
 
@@ -161,7 +165,11 @@ const getTransactionsHeatMap = (event: { month: number; year: number }) => {
   toDate.setHours(0, 0, 0, 0);
 
   apiService.invoices
-    .getEligibleTransactions(selectedUser.value, fromDate.toISOString(), toDate.toISOString())
+    .getEligibleTransactions({
+      forId: selectedUser.value,
+      fromDate: fromDate.toISOString(),
+      tillDate: toDate.toISOString(),
+    })
     .then((res) => {
       const t = res.data as unknown as BaseTransactionResponse[];
       t.forEach((transaction: BaseTransactionResponse) => {

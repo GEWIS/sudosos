@@ -35,7 +35,7 @@
 import { type PropType, ref, type Ref, watch } from 'vue';
 import * as yup from 'yup';
 import { useI18n } from 'vue-i18n';
-import type { BalanceResponse } from '@sudosos/sudosos-client';
+import type { BalanceResponse } from '@gewis/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import { type createWriteOffSchema } from '@/utils/validation-schema';
 import type { Form } from '@/utils/formUtils';
@@ -73,7 +73,7 @@ watch(
     console.info('updated:', props.form.model.user.value.value);
     if (props.form.model.user.value.value.id) {
       apiService.balance
-        .getBalanceId(props.form.model.user.value.value.id)
+        .getBalanceId({ id: props.form.model.user.value.value.id })
         .then((res) => {
           userBalance.value = res.data;
           props.form.context.setFieldValue('balance', userBalance.value.amount.amount);

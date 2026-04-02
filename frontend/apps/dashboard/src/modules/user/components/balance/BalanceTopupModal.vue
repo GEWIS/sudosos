@@ -38,7 +38,7 @@
 import { computed, onBeforeMount, ref } from 'vue';
 import { loadStripe } from '@stripe/stripe-js/pure';
 import type { PaymentIntentResult } from '@stripe/stripe-js';
-import type { Dinero } from '@sudosos/sudosos-client';
+import type { Dinero } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import apiService from '@/services/ApiService';
@@ -84,7 +84,7 @@ const pay = async () => {
       ...dinero.value,
     },
   };
-  await apiService.stripe.deposit(deposit).then((paymentIntent) => {
+  await apiService.stripe.deposit({ stripeRequest: deposit }).then((paymentIntent) => {
     elements.value = stripe.value.elements({
       clientSecret: paymentIntent.data.clientSecret,
       appearance: {

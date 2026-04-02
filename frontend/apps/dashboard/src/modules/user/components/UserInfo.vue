@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import type { UserResponse } from '@sudosos/sudosos-client';
+import type { UserResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import CardComponent from '@/components/CardComponent.vue';
 

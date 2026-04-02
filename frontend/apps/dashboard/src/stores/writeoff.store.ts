@@ -1,9 +1,10 @@
-import type {
-  PaginatedWriteOffResponse,
-  WriteOffResponse,
-  WriteOffRequest,
-  BalanceResponse,
-} from '@sudosos/sudosos-client';
+import {
+  type PaginatedWriteOffResponse,
+  type WriteOffResponse,
+  type WriteOffRequest,
+  type BalanceResponse,
+  GetAllBalanceOrderDirectionEnum,
+} from '@gewis/sudosos-client';
 import { defineStore } from 'pinia';
 import apiService from '@/services/ApiService';
 
@@ -38,7 +39,7 @@ export const useWriteOffStore = defineStore('writeoff', {
       fromDate: string,
       tillDate: string,
     ): Promise<PaginatedWriteOffResponse> {
-      return apiService.writeOffs.getAllWriteOffs(undefined, undefined, take, skip, fromDate, tillDate).then((res) => {
+      return apiService.writeOffs.getAllWriteOffs({ take, skip, fromDate, tillDate }).then((res) => {
         res.data.records.forEach((writeOff: WriteOffResponse) => {
           this.writeOffs[writeOff.id] = writeOff;
         });
@@ -47,13 +48,13 @@ export const useWriteOffStore = defineStore('writeoff', {
     },
     async fetchWriteOff(id: number): Promise<WriteOffResponse> {
       if (this.writeOffs[id]) return this.writeOffs[id];
-      return apiService.writeOffs.getSingleWriteOff(id).then((res) => {
+      return apiService.writeOffs.getSingleWriteOff({ id }).then((res) => {
         this.writeOffs[id] = res.data;
         return res.data;
       });
     },
     async fetchPdf(id: number): Promise<string | undefined> {
-      return apiService.writeOffs.getWriteOffPdf(id).then((res) => {
+      return apiService.writeOffs.getWriteOffPdf({ id }).then((res) => {
         const pdf = res.data.pdf;
         if (!this.writeOffs[id]) return undefined;
 
@@ -62,29 +63,24 @@ export const useWriteOffStore = defineStore('writeoff', {
       });
     },
     async createWriteOff(values: WriteOffRequest): Promise<WriteOffResponse> {
-      return apiService.writeOffs.createWriteOff(values).then((res) => {
+      return apiService.writeOffs.createWriteOff({ writeOffRequest: values }).then((res) => {
         this.writeOffs[res.data.id] = res.data;
         this.updatedAt = Date.now();
         return res.data;
       });
     },
     async fetchInactiveUsers(take: number, skip: number, orderBy = 'amount', orderDirection = 'ASC') {
-      const users = await apiService.balance.getAllBalance(
-        undefined,
-        undefined,
-        -1,
-        undefined,
-        undefined,
-        undefined,
-        // @ts-expect-error not sure why typescript thinks this is wrong
-        ['MEMBER', 'LOCAL_USER'],
+      const users = await apiService.balance.getAllBalance({
+        maxBalance: -1,
+        userTypes: ['MEMBER', 'LOCAL_USER'],
         orderBy,
-        orderDirection,
-        true,
-        true,
+        orderDirection:
+          orderDirection === 'ASC' ? GetAllBalanceOrderDirectionEnum.Asc : GetAllBalanceOrderDirectionEnum.Desc,
+        allowDeleted: true,
+        inactive: true,
         take,
         skip,
-      );
+      });
       this.usersFetchedAt = Date.now();
       this.inactiveUsers = users.data.records as BalanceResponse[];
       this.count = users.data._pagination?.count || 0;

@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import type { BalanceResponse, UserResponse } from '@sudosos/sudosos-client';
+import type { BalanceResponse, UserResponse } from '@gewis/sudosos-client';
 import { computed, onMounted } from 'vue';
 import { waiveUserFineSchema } from '@/utils/validation-schema';
 import FormDialog from '@/components/FormDialog.vue';

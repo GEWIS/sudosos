@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { TransactionResponse, TransactionRequest } from '@sudosos/sudosos-client';
+import type { TransactionResponse, TransactionRequest } from '@gewis/sudosos-client';
 import type { ApiService } from '@sudosos/sudosos-frontend-common';
 
 interface TransactionModuleState {
@@ -20,7 +20,7 @@ export const useTransactionStore = defineStore('transaction', {
   actions: {
     async fetchIndividualTransaction(id: number, service: ApiService): Promise<TransactionResponse> {
       if (this.transactions[id]) return this.transactions[id];
-      return service.transaction.getSingleTransaction(id).then((res) => {
+      return service.transaction.getSingleTransaction({ id }).then((res) => {
         this.transactions[id] = res.data;
         return res.data;
       });
@@ -33,27 +33,14 @@ export const useTransactionStore = defineStore('transaction', {
       take?: number,
       skip?: number,
     ) {
-      return await service.transaction.getAllTransactions(
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        pointOfSaleId,
-        undefined,
-        undefined,
-        fromDate,
-        tillDate,
-        take,
-        skip,
-      );
+      return await service.transaction.getAllTransactions({ pointOfSaleId, fromDate, tillDate, take, skip });
     },
     async updateTransaction(
       id: number,
       transactionRequest: TransactionRequest,
       service: ApiService,
     ): Promise<TransactionResponse> {
-      return await service.transaction.updateTransaction(id, transactionRequest).then((res) => {
+      return await service.transaction.updateTransaction({ id, transactionRequest }).then((res) => {
         const transaction: TransactionResponse = res.data;
         this.transactions[transaction.id] = transaction;
         return transaction;

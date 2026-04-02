@@ -32,7 +32,7 @@
 import { onMounted, type Ref, ref, computed } from 'vue';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
-import type { DineroObjectResponse, TransferResponse } from '@sudosos/sudosos-client';
+import type { DineroObjectResponse, TransferResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import router from '@/router';
 import { formatPrice } from '@/utils/formatterUtils';

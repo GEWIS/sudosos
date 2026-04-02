@@ -103,8 +103,7 @@ async function downloadReport() {
     const toDateStr = formatDateToYYYYMMDD(toDate.value);
 
     const report = await apiService.inactiveAdministrativeCosts.getInactiveAdministrativeCostReportPdf(
-      fromDateStr,
-      toDateStr,
+      { fromDate: fromDateStr, toDate: toDateStr },
       { responseType: 'arraybuffer' },
     );
 

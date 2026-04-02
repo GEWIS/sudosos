@@ -6,10 +6,10 @@ import {
   SubTransactionRequest,
   TransactionRequest,
   UserResponse,
-} from '@sudosos/sudosos-client';
-import { SubTransactionRowRequest } from '@sudosos/sudosos-client/src/api';
+  SubTransactionRowRequest,
+  DineroObjectResponse,
+} from '@gewis/sudosos-client';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
-import { DineroObjectResponse } from '@sudosos/sudosos-client/dist/api';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import apiService, { userApiService } from '@/services/ApiService';
 
@@ -75,9 +75,9 @@ export const useCartStore = defineStore('cart', {
       }
 
       // Refetch the data to ensure we have the latest data.
-      return apiService.user.getIndividualUser(buyer.id).then(async (res) => {
+      return apiService.user.getIndividualUser({ id: buyer.id }).then(async (res) => {
         this.buyer = res.data;
-        this.buyerBalance = await apiService.balance.getBalanceId(buyer.id).then((res) => res.data.amount);
+        this.buyerBalance = await apiService.balance.getBalanceId({ id: buyer.id }).then((res) => res.data.amount);
         return this.buyer;
       });
     },
@@ -85,9 +85,9 @@ export const useCartStore = defineStore('cart', {
       this.createdBy = createdBy;
     },
     async setBuyerFromNfc(nfc: string) {
-      return apiService.user.findUserNfc(nfc).then(async (res) => {
+      return apiService.user.findUserNfc({ nfcCode: nfc }).then(async (res) => {
         this.buyer = res.data;
-        this.buyerBalance = await apiService.balance.getBalanceId(res.data.id).then((res) => res.data.amount);
+        this.buyerBalance = await apiService.balance.getBalanceId({ id: res.data.id }).then((res) => res.data.amount);
         return this.buyer;
       });
     },
@@ -202,7 +202,7 @@ export const useCartStore = defineStore('cart', {
         },
       };
 
-      await userApiService.transaction.createTransaction(request);
+      await userApiService.transaction.createTransaction({ transactionRequest: request });
       this.products.length = 0;
       await this.setBuyer(this.lockedIn);
       this.createdBy = null;

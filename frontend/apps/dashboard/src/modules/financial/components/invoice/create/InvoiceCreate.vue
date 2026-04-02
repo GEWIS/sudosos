@@ -22,11 +22,11 @@
 import { computed, type PropType } from 'vue';
 import * as yup from 'yup';
 import { useI18n } from 'vue-i18n';
-import type { CreateInvoiceRequest } from '@sudosos/sudosos-client';
+import type { CreateInvoiceRequest } from '@gewis/sudosos-client';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { useToast } from 'primevue/usetoast';
 import type { AxiosResponse } from 'axios';
-import type { InvoiceResponse } from '@sudosos/sudosos-client/src/api';
+import type { InvoiceResponse } from '@gewis/sudosos-client';
 import { useRouter } from 'vue-router';
 import { useInvoiceStore } from '@/stores/invoice.store';
 import { handleError } from '@/utils/errorUtils';
@@ -79,7 +79,7 @@ setSubmit(
     };
 
     apiService.invoices
-      .createInvoice(request)
+      .createInvoice({ createInvoiceRequest: request })
       .then(async (invoiceResult: AxiosResponse<InvoiceResponse>) => {
         toast.add({
           severity: 'success',

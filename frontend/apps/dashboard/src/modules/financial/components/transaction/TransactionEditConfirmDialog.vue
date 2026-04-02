@@ -38,7 +38,7 @@
 import { useI18n } from 'vue-i18n';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
-import type { UserResponse } from '@sudosos/sudosos-client';
+import type { UserResponse } from '@gewis/sudosos-client';
 import UserLink from '@/components/UserLink.vue';
 
 const { t } = useI18n();

@@ -76,9 +76,9 @@ import type {
   ProductResponse,
   TransactionResponse,
   ContainerResponse,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import * as yup from 'yup';
-import type { DineroObjectResponse } from '@sudosos/sudosos-client/src/api';
+import type { DineroObjectResponse } from '@gewis/sudosos-client';
 import type { Form } from '@/utils/formUtils';
 import { formatPrice } from '@/utils/formatterUtils';
 import { type UpdateAmountItem, updateTransactionAmountsObject } from '@/utils/validation-schema';

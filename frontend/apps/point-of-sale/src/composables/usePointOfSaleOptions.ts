@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue';
 import { useAuthStore, isAllowed } from '@sudosos/sudosos-frontend-common';
-import { PointOfSaleResponse } from '@sudosos/sudosos-client';
+import { PointOfSaleResponse } from '@gewis/sudosos-client';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 
 /**

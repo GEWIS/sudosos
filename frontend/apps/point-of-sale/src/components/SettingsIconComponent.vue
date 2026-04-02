@@ -34,7 +34,7 @@
 import { Ref, ref } from 'vue';
 import { addListenerOnDialogueOverlay, useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { storeToRefs } from 'pinia';
-import { PointOfSaleResponse } from '@sudosos/sudosos-client';
+import { PointOfSaleResponse } from '@gewis/sudosos-client';
 import PosSwitchDisplay from './PosSwitchDisplay.vue';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import { logoutPosService, logoutService } from '@/services/logoutService';

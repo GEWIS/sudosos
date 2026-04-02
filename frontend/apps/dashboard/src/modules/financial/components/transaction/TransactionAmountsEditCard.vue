@@ -35,7 +35,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { ProductResponse, ContainerResponse } from '@sudosos/sudosos-client';
+import type { ProductResponse, ContainerResponse } from '@gewis/sudosos-client';
 import { useTransactionCard } from '../../composables/useTransactionCard';
 import { useTransactionForm } from '../../composables/useTransactionForm';
 import TransactionAmountsUpdateForm from './forms/TransactionAmountsUpdateForm.vue';
@@ -65,7 +65,7 @@ watch(
   async (newTransaction) => {
     if (newTransaction) {
       try {
-        const posResponse = await apiService.pos.getSinglePointOfSale(newTransaction.pointOfSale.id);
+        const posResponse = await apiService.pos.getSinglePointOfSale({ id: newTransaction.pointOfSale.id });
         const posWithContainers = posResponse.data;
 
         productOptions.value = posWithContainers.containers.flatMap((container) => container.products);

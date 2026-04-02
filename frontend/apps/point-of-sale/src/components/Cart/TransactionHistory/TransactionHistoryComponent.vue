@@ -16,7 +16,7 @@ more information when clicked. */
 </template>
 
 <script setup lang="ts">
-import { BaseTransactionResponse } from '@sudosos/sudosos-client';
+import { BaseTransactionResponse } from '@gewis/sudosos-client';
 import { Ref, ref, watch } from 'vue';
 import TransactionHistoryRowComponent from '@/components/Cart/TransactionHistory/TransactionHistoryRowComponent.vue';
 

@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue';
-import type { TransactionResponse } from '@sudosos/sudosos-client';
+import type { TransactionResponse } from '@gewis/sudosos-client';
 import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import { useTransactionStore } from '@/stores/transaction.store';
 

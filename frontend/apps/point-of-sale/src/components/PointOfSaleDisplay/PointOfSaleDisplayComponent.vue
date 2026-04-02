@@ -62,7 +62,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
-import { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
+import { PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
 import ScrollPanel from 'primevue/scrollpanel';
 import { useCartStore } from '@/stores/cart.store';
 import PointOfSaleProductsComponent from '@/components/PointOfSaleDisplay/PointOfSaleProductsComponent.vue';

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { UserSettingsResponse, PatchUserSettingsRequest } from '@sudosos/sudosos-client';
+import type { UserSettingsResponse, PatchUserSettingsRequest } from '@gewis/sudosos-client';
 import { ApiService } from '../services/ApiService';
 
 interface UserSettingsStoreState {
@@ -64,7 +64,7 @@ export const useUserSettingsStore = defineStore('userSettings', {
 
       this.isLoading = true;
       try {
-        const response = await service.user.getUserSettings(userId);
+        const response = await service.user.getUserSettings({ id: userId });
         this.settings = response.data;
         return response.data;
       } finally {
@@ -87,7 +87,7 @@ export const useUserSettingsStore = defineStore('userSettings', {
           [key]: value,
         } as PatchUserSettingsRequest;
 
-        const response = await service.user.patchUserSettings(userId, patchRequest);
+        const response = await service.user.patchUserSettings({ id: userId, patchUserSettingsRequest: patchRequest });
         this.settings = response.data;
         return response.data;
       } finally {
@@ -105,7 +105,7 @@ export const useUserSettingsStore = defineStore('userSettings', {
     ): Promise<UserSettingsResponse> {
       this.isUpdating = true;
       try {
-        const response = await service.user.patchUserSettings(userId, updates);
+        const response = await service.user.patchUserSettings({ id: userId, patchUserSettingsRequest: updates });
         this.settings = response.data;
         return response.data;
       } finally {

@@ -17,7 +17,7 @@ import type {
   MemberAuthenticationSecurePinRequest,
   AuthenticationSecureNfcRequest,
   AuthenticationSecurePinRequest,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import { jwtDecode, type JwtPayload } from 'jwt-decode';
 import { ApiService } from '../services/ApiService';
 import { clearTokenInStorage, getTokenFromStorage, setTokenInStorage } from '../helpers/TokenHelper';
@@ -101,9 +101,11 @@ export const useAuthStore = defineStore('auth', {
         pin: pinCode,
       };
 
-      await service.authenticate.memberPinAuthentication(userDetails).then((res) => {
-        this.handleResponse(res.data, service);
-      });
+      await service.authenticate
+        .memberPinAuthentication({ memberAuthenticationPinRequest: userDetails })
+        .then((res) => {
+          this.handleResponse(res.data, service);
+        });
     },
     async secureGewisPinlogin(
       userId: string,
@@ -118,9 +120,11 @@ export const useAuthStore = defineStore('auth', {
         posId,
       };
 
-      await posService.authenticate.secureMemberPINAuthentication(req).then((res) => {
-        this.handleResponse(res.data, service);
-      });
+      await posService.authenticate
+        .secureMemberPINAuthentication({ memberAuthenticationSecurePinRequest: req })
+        .then((res) => {
+          this.handleResponse(res.data, service);
+        });
     },
     async secureNfcLogin(nfcCode: string, posId: number, posService: ApiService, service: ApiService) {
       const req: AuthenticationSecureNfcRequest = {
@@ -128,7 +132,7 @@ export const useAuthStore = defineStore('auth', {
         posId,
       };
 
-      await posService.authenticate.secureNfcAuthentication(req).then((res) => {
+      await posService.authenticate.secureNfcAuthentication({ authenticationSecureNfcRequest: req }).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
@@ -137,7 +141,7 @@ export const useAuthStore = defineStore('auth', {
         accountName,
         password,
       };
-      await service.authenticate.ldapAuthentication(req).then((res) => {
+      await service.authenticate.ldapAuthentication({ authenticationLDAPRequest: req }).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
@@ -146,7 +150,7 @@ export const useAuthStore = defineStore('auth', {
         nonce,
         token,
       };
-      await service.authenticate.gewisWebAuthentication(req).then((res) => {
+      await service.authenticate.gewisWebAuthentication({ gewiswebAuthenticationRequest: req }).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
@@ -155,7 +159,7 @@ export const useAuthStore = defineStore('auth', {
         pin,
         userId,
       };
-      await service.authenticate.pinAuthentication(req).then((res) => {
+      await service.authenticate.pinAuthentication({ authenticationPinRequest: req }).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
@@ -172,7 +176,7 @@ export const useAuthStore = defineStore('auth', {
         posId,
       };
 
-      await posService.authenticate.securePINAuthentication(req).then((res) => {
+      await posService.authenticate.securePINAuthentication({ authenticationSecurePinRequest: req }).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
@@ -180,7 +184,7 @@ export const useAuthStore = defineStore('auth', {
       const req: AuthenticationNfcRequest = {
         nfcCode,
       };
-      await service.authenticate.nfcAuthentication(req).then((res) => {
+      await service.authenticate.nfcAuthentication({ authenticationNfcRequest: req }).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
@@ -188,7 +192,7 @@ export const useAuthStore = defineStore('auth', {
       const req: AuthenticationEanRequest = {
         eanCode,
       };
-      await service.authenticate.eanAuthentication(req).then((res) => {
+      await service.authenticate.eanAuthentication({ authenticationEanRequest: req }).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
@@ -198,7 +202,7 @@ export const useAuthStore = defineStore('auth', {
         userId,
       };
 
-      await service.authenticate.keyAuthentication(req).then((res) => {
+      await service.authenticate.keyAuthentication({ authenticationKeyRequest: req }).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
@@ -207,7 +211,7 @@ export const useAuthStore = defineStore('auth', {
         accountName,
         password,
       };
-      await service.authenticate.gewisLDAPAuthentication(req).then((res) => {
+      await service.authenticate.gewisLDAPAuthentication({ authenticationLDAPRequest: req }).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
@@ -216,7 +220,7 @@ export const useAuthStore = defineStore('auth', {
         accountMail,
         password,
       };
-      await service.authenticate.localAuthentication(req).then((res) => {
+      await service.authenticate.localAuthentication({ authenticationLocalRequest: req }).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
@@ -225,25 +229,25 @@ export const useAuthStore = defineStore('auth', {
       const req: UpdatePinRequest = {
         pin,
       };
-      await service.user.updateUserPin(this.user.id, req);
+      await service.user.updateUserPin({ id: this.user.id, updatePinRequest: req });
     },
     async updateUserLocalPassword(password: string, service: ApiService) {
       if (!this.user) return;
       const req: UpdateLocalRequest = {
         password,
       };
-      await service.user.updateUserLocalPassword(this.user.id, req);
+      await service.user.updateUserLocalPassword({ id: this.user.id, updateLocalRequest: req });
     },
     async updateUserNfc(nfcCode: string, service: ApiService) {
       if (!this.user) return;
       const req: UpdateNfcRequest = {
         nfcCode,
       };
-      await service.user.updateUserNfc(this.user.id, req);
+      await service.user.updateUserNfc({ id: this.user.id, updateNfcRequest: req });
     },
     async updateUserKey(service: ApiService) {
       if (!this.user) return;
-      return (await service.user.updateUserKey(this.user.id)).data;
+      return (await service.user.updateUserKey({ id: this.user.id })).data;
     },
     async refreshToken(service: ApiService) {
       return service.authenticate.refreshToken().then((res) => {
@@ -255,7 +259,7 @@ export const useAuthStore = defineStore('auth', {
       const req: AcceptTosRequest = {
         extensiveDataProcessing: extensiveDataProcessing,
       };
-      await service.user.acceptTos(req);
+      await service.user.acceptTos({ acceptTosRequest: req });
       await this.refreshToken(service);
       return;
     },
@@ -264,7 +268,6 @@ export const useAuthStore = defineStore('auth', {
       if (!token.token) return;
       const decoded = jwtDecode<JwtPayload>(token.token) as AuthStoreState;
       this.user = decoded.user;
-      this.user.memberId = decoded.user.memberUser?.memberId;
       this.token = token.token;
       this.organs = decoded.organs;
       this.acceptedToS = decoded.acceptedToS;

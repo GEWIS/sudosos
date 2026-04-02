@@ -8,7 +8,7 @@ interval is cleaned up when * the component is unmounted. */
 <script setup lang="ts">
 import { StoreGeneric, storeToRefs } from 'pinia';
 import { onBeforeMount, onUnmounted, Ref, ref, watch } from 'vue';
-import { BannerResponse } from '@sudosos/sudosos-client';
+import { BannerResponse } from '@gewis/sudosos-client';
 import { useBannerStore } from '@/stores/banner.store';
 import BannerDisplayComponent from '@/components/Banner/BannerDisplayComponent.vue';
 

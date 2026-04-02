@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { ref } from 'vue';
-import type { UserResponse } from '@sudosos/sudosos-client';
+import type { UserResponse } from '@gewis/sudosos-client';
 import FormDialog from '@/components/FormDialog.vue';
 import { schemaToForm } from '@/utils/formUtils';
 import { userUpsertSchema } from '@/utils/validation-schema';

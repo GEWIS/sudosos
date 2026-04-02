@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
+import { PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
 import Fuse from 'fuse.js';
 import ProductComponent from '@/components/ProductComponent.vue';
 

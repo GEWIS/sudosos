@@ -6,7 +6,7 @@ import {
   isAuthenticated,
 } from '@sudosos/sudosos-frontend-common';
 import { jwtDecode } from 'jwt-decode';
-import { BasePointOfSaleInfoResponse } from '@sudosos/sudosos-client';
+import { BasePointOfSaleInfoResponse } from '@gewis/sudosos-client';
 import { posApiService } from '@/services/ApiService';
 
 export const POS_TOKEN_KEY = 'pos_jwt_token';

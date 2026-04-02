@@ -140,7 +140,7 @@ import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import { computed, onMounted, type Ref, ref } from 'vue';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
-import type { PaginatedFinancialMutationResponse } from '@sudosos/sudosos-client';
+import type { PaginatedFinancialMutationResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { formatPrice } from '@/utils/formatterUtils';
 import {

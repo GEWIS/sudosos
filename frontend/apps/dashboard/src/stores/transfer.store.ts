@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { TransferResponse } from '@sudosos/sudosos-client';
+import type { TransferResponse } from '@gewis/sudosos-client';
 import type { ApiService } from '@sudosos/sudosos-frontend-common';
 
 interface TransferStoreModuleState {
@@ -20,7 +20,7 @@ export const useTransferStore = defineStore('transfer', {
   actions: {
     async fetchIndividualTransfer(id: number, service: ApiService): Promise<TransferResponse> {
       if (this.transfers[id]) return this.transfers[id];
-      return service.transfers.getSingleTransfer(id).then((res) => {
+      return service.transfers.getSingleTransfer({ id }).then((res) => {
         this.transfers[id] = res.data;
         return res.data;
       });

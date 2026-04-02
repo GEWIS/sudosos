@@ -51,7 +51,7 @@ const acceptTermsOfService = async () => {
 
   if (authStore.getUser) {
     apiService.user
-      .getIndividualUser(authStore.getUser.id)
+      .getIndividualUser({ id: authStore.getUser.id })
       .then((res) => {
         const userStore = useUserStore();
         userStore.setCurrentUser(res.data);

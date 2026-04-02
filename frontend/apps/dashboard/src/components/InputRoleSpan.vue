@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { onMounted, type PropType, ref, watch } from 'vue';
-import { type RoleResponse } from '@sudosos/sudosos-client';
+import { type RoleResponse } from '@gewis/sudosos-client';
 import ErrorSpan from '@/components/ErrorSpan.vue';
 import FindRole from '@/components/FindRole.vue';
 

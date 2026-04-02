@@ -1,4 +1,4 @@
-import type { DineroObjectResponse } from '@sudosos/sudosos-client/dist/api';
+import type { DineroObjectResponse } from '@gewis/sudosos-client';
 
 const locale: Intl.LocalesArgument = Intl.DateTimeFormat().resolvedOptions().locale;
 const timeFormatOptions: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hour12: false };

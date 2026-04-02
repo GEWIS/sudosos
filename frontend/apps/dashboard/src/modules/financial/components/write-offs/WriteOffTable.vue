@@ -98,7 +98,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { WriteOffResponse } from '@sudosos/sudosos-client';
+import type { WriteOffResponse } from '@gewis/sudosos-client';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import Skeleton from 'primevue/skeleton';

@@ -17,7 +17,7 @@ export function useSellerNav() {
     const notifications: OrganNotificationMap = {};
     await Promise.all(
       authStore.organs.map(async (organ) => {
-        const res = await apiService.balance.getBalanceId(organ.id);
+        const res = await apiService.balance.getBalanceId({ id: organ.id });
         notifications[organ.id] = res.data.amount.amount > 0 ? ' ' : '';
       }),
     );

@@ -235,7 +235,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client';
+import { InvoiceStatusResponseStateEnum } from '@gewis/sudosos-client';
 import type {
   BasePayoutRequestResponse,
   BalanceResponse,
@@ -243,7 +243,7 @@ import type {
   InvoiceResponse,
   TotalBalanceResponse,
   UserTypeTotalBalanceResponse,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Skeleton from 'primevue/skeleton';
@@ -322,7 +322,7 @@ onMounted(async () => {
   const now = new Date();
   await Promise.allSettled([
     apiService.balance
-      .calculateTotalBalances(now.toISOString().split('T')[0] ?? '')
+      .calculateTotalBalances({ date: now.toISOString().split('T')[0] ?? '' })
       .then((res) => {
         totalBalanceData.value = res.data;
       })

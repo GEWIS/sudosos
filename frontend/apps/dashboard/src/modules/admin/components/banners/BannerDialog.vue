@@ -14,7 +14,7 @@
   </FormDialog>
 </template>
 <script setup lang="ts">
-import type { BannerResponse } from '@sudosos/sudosos-client';
+import type { BannerResponse } from '@gewis/sudosos-client';
 
 import { type Ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';

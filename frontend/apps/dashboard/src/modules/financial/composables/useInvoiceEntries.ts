@@ -1,5 +1,5 @@
 import { computed, type Ref } from 'vue';
-import type { DineroObjectResponse, InvoiceEntryResponse, InvoiceResponse } from '@sudosos/sudosos-client';
+import type { DineroObjectResponse, InvoiceEntryResponse, InvoiceResponse } from '@gewis/sudosos-client';
 import { isDirty } from '@/utils/invoiceUtil';
 import i18n from '@/utils/i18nUtils';
 

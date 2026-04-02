@@ -73,7 +73,7 @@ import type {
   ProductResponse,
   UpdateProductRequest,
   VatGroupResponse,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';

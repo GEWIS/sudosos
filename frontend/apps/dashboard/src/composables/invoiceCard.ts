@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue';
-import type { InvoiceResponse } from '@sudosos/sudosos-client';
-import { InvoiceStatusResponseStateEnum } from '@sudosos/sudosos-client/src/api';
+import type { InvoiceResponse } from '@gewis/sudosos-client';
+import { InvoiceStatusResponseStateEnum } from '@gewis/sudosos-client';
 import { useInvoiceStore } from '@/stores/invoice.store';
 
 export function useInvoiceCard(invoiceId: number) {

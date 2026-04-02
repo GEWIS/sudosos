@@ -1,5 +1,5 @@
 import { useConfirm } from 'primevue/useconfirm';
-import type { PointOfSaleWithContainersResponse } from '@sudosos/sudosos-client';
+import type { PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import { handleError } from '@/utils/errorUtils';

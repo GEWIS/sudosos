@@ -33,7 +33,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { UserResponse } from '@sudosos/sudosos-client';
+import type { UserResponse } from '@gewis/sudosos-client';
 import { useTransactionCard } from '../../composables/useTransactionCard';
 import { useTransactionForm } from '../../composables/useTransactionForm';
 import TransactionUserUpdateForm from './forms/TransactionUserUpdateForm.vue';

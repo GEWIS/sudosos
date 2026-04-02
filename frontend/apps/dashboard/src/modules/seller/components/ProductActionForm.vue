@@ -111,7 +111,7 @@
 </template>
 <script setup lang="ts">
 import * as yup from 'yup';
-import type { BaseVatGroupResponse, ProductCategoryResponse, ProductResponse } from '@sudosos/sudosos-client';
+import type { BaseVatGroupResponse, ProductCategoryResponse, ProductResponse } from '@gewis/sudosos-client';
 import { ref, watch } from 'vue';
 import Fuse from 'fuse.js';
 import { useI18n } from 'vue-i18n';

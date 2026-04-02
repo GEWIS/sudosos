@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { PayoutRequestStatusRequestStateEnum } from '@sudosos/sudosos-client';
+import { PayoutRequestStatusRequestStateEnum } from '@gewis/sudosos-client';
 import { type Ref, ref } from 'vue';
 import Button from 'primevue/button';
 import { useI18n } from 'vue-i18n';

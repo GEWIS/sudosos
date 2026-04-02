@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch, type Ref } from 'vue';
 import { debounce } from 'lodash';
-import { type BaseUserResponse, GetAllUsersTypeEnum, type UserResponse } from '@sudosos/sudosos-client';
+import { type BaseUserResponse, GetAllUsersTypeEnum, type UserResponse } from '@gewis/sudosos-client';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import { useToast } from 'primevue/usetoast';
 import type { SelectFilterEvent } from 'primevue/select';
@@ -88,7 +88,7 @@ const transformUsers = (userData: BaseUserResponse[]) => {
 const debouncedSearch = debounce((e: SelectFilterEvent) => {
   loading.value = true;
   apiService.user
-    .getAllUsers(props.take, 0, e.value, undefined, undefined, undefined, props.type)
+    .getAllUsers({ take: props.take, skip: 0, search: e.value, type: props.type })
     .then((res) => {
       users.value = transformUsers(res.data.records);
     })
@@ -124,7 +124,7 @@ onMounted(() => {
   }
 
   apiService.user
-    .getAllUsers(props.take, 0, undefined, undefined, undefined, undefined, props.type)
+    .getAllUsers({ take: props.take, skip: 0, type: props.type })
     .then((res) => {
       userStore.addUsers(res.data.records);
       void userStore.fetchUserBalances(res.data.records, apiService).then(() => {

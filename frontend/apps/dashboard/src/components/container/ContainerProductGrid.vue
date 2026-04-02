@@ -85,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ContainerWithProductsResponse, ProductResponse } from '@sudosos/sudosos-client';
+import type { ContainerWithProductsResponse, ProductResponse } from '@gewis/sudosos-client';
 import { type Ref, ref, type PropType, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useConfirm } from 'primevue/useconfirm';

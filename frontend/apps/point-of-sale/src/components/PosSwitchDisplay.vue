@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { PointOfSaleResponse } from '@sudosos/sudosos-client';
+import { PointOfSaleResponse } from '@gewis/sudosos-client';
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
 import { ref } from 'vue';

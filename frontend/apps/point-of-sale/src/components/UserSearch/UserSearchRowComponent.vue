@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { UserResponse } from '@sudosos/sudosos-client';
+import { UserResponse } from '@gewis/sudosos-client';
 import { useCartStore } from '@/stores/cart.store';
 
 const props = defineProps({

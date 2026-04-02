@@ -60,8 +60,8 @@ import type {
   PaginatedFinancialMutationResponse,
   PaginatedTransferResponse,
   UserResponse,
-} from '@sudosos/sudosos-client';
-import { FinancialMutationResponseTypeEnum } from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
+import { FinancialMutationResponseTypeEnum } from '@gewis/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import type { AxiosError } from 'axios';
 import { useI18n } from 'vue-i18n';
@@ -109,7 +109,7 @@ watchEffect(() => {
 // Fetch user
 const getUser = async () => {
   await apiService.user
-    .getIndividualUser(Number(route.params.userId))
+    .getIndividualUser({ id: Number(route.params.userId) })
     .then((res) => {
       currentUser.value = res.data;
     })
@@ -138,7 +138,7 @@ onBeforeMount(async () => {
 // Get transfers for user
 const getUserTransfers = async (take: number, skip: number): Promise<PaginatedTransferResponse | undefined> => {
   const response = await apiService.user
-    .getUsersTransfers(Number(route.params.userId), take, skip)
+    .getUsersTransfers({ id: Number(route.params.userId), take, skip })
     .catch((err: AxiosError) => handleError(err, toast));
   return response?.data;
 };
@@ -160,18 +160,7 @@ const getUserTransactionsOnly = async (
   skip: number,
 ): Promise<PaginatedFinancialMutationResponse | undefined> => {
   const response = await apiService.user
-    .getUsersTransactions(
-      Number(route.params.userId),
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      take,
-      skip,
-    )
+    .getUsersTransactions({ id: Number(route.params.userId), take, skip })
     .catch((err: AxiosError) => handleError(err, toast));
   if (!response) return undefined;
   return {

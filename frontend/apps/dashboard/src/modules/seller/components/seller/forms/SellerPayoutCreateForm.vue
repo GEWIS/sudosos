@@ -78,7 +78,7 @@
 <script setup lang="ts">
 import InputNumber from 'primevue/inputnumber';
 import { computed, type PropType, type Ref, ref, watch } from 'vue';
-import type { CreateSellerPayoutRequest, UserResponse } from '@sudosos/sudosos-client';
+import type { CreateSellerPayoutRequest, UserResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import * as yup from 'yup';
@@ -139,11 +139,11 @@ const updateDate = (field: 'toDate' | 'fromDate', value: string) => {
 
 const calculatePayoutAmount = async () => {
   if (!props.seller.id) return;
-  const amount = await ApiService.user.getUsersSalesReport(
-    props.seller.id,
-    props.form.model.fromDate.value.value,
-    props.form.model.toDate.value.value,
-  );
+  const amount = await ApiService.user.getUsersSalesReport({
+    id: props.seller.id,
+    fromDate: props.form.model.fromDate.value.value,
+    tillDate: props.form.model.toDate.value.value,
+  });
   if (amount.data.totalInclVat.amount) {
     payoutAmount.value = amount.data.totalInclVat.amount / 100;
   }
@@ -154,11 +154,13 @@ const getReportPdf = async () => {
   pdfLoading.value = true;
   try {
     const report = await ApiService.user.getUsersSalesReportPdf(
-      props.seller.id,
-      props.form.model.fromDate.value.value,
-      props.form.model.toDate.value.value,
-      props.form.model.reference.value.value,
-      'PDF',
+      {
+        id: props.seller.id,
+        fromDate: props.form.model.fromDate.value.value,
+        tillDate: props.form.model.toDate.value.value,
+        description: props.form.model.reference.value.value,
+        fileType: 'PDF',
+      },
       { responseType: 'arraybuffer' },
     );
     pdfLoading.value = false;

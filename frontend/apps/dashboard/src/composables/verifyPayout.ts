@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useI18n } from 'vue-i18n';
-import type { SellerPayoutResponse } from '@sudosos/sudosos-client';
+import type { SellerPayoutResponse } from '@gewis/sudosos-client';
 import { formatPrice } from '@/utils/formatterUtils';
 import ApiService from '@/services/ApiService';
 
@@ -23,11 +23,11 @@ export const useVerifyPayout = {
         const startDate = new Date(payout.startDate);
         const endDate = new Date(payout.endDate);
 
-        const result = await ApiService.user.getUsersSalesReport(
-          payout.requestedBy.id,
-          startDate.toISOString(),
-          endDate.toISOString(),
-        );
+        const result = await ApiService.user.getUsersSalesReport({
+          id: payout.requestedBy.id,
+          fromDate: startDate.toISOString(),
+          tillDate: endDate.toISOString(),
+        });
 
         verifyAmount.value = result.data.totalInclVat.amount;
         if (result.data.totalInclVat.amount === payout.amount.amount) {

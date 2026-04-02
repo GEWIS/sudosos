@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ContainerWithProductsResponse, ProductResponse } from '@sudosos/sudosos-client';
+import type { ContainerWithProductsResponse, ProductResponse } from '@gewis/sudosos-client';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { isAllowed } from '@sudosos/sudosos-frontend-common';

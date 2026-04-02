@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { toRef, ref, watch, onMounted, type ComputedRef, computed, unref } from 'vue';
-import type { ReportProductEntryResponse } from '@sudosos/sudosos-client';
+import type { ReportProductEntryResponse } from '@gewis/sudosos-client';
 import PosProduct from '@/components/wrapped/Product/PosProduct.vue';
 import { getProductImageSrcFromString } from '@/utils/urlUtils';
 

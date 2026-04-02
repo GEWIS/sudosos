@@ -63,7 +63,7 @@ setSubmit<yup.InferType<typeof editPinSchema>>(
   props.form.context.handleSubmit((values) => {
     if (userStore.getCurrentUser.user) {
       apiService.user
-        .updateUserPin(userStore.getCurrentUser.user.id, { pin: values.pinConfirm })
+        .updateUserPin({ id: userStore.getCurrentUser.user.id, updatePinRequest: { pin: values.pinConfirm } })
         .then(() => {
           emit('submit:success', values);
           toast.add({

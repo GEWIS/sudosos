@@ -43,7 +43,7 @@ import {
   type DineroObjectResponse,
   GetAllUsersTypeEnum,
   type UserResponse,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
@@ -125,7 +125,7 @@ const updateUserBalance = () => {
   const forId = getProperty(props.form, 'forId');
   if (forId) {
     apiService.balance
-      .getBalanceId(forId)
+      .getBalanceId({ id: forId })
       .then((res) => {
         userBalance.value = res.data.amount;
       })
@@ -141,7 +141,7 @@ const updateUserBalance = () => {
  */
 const updateDefaultUser = (forId: number) => {
   apiService.invoices
-    .getSingleInvoiceUser(forId)
+    .getSingleInvoiceUser({ id: forId })
     .then((res) => {
       const user = res.data;
       props.form.context.setFieldValue('addressee', user.user.firstName);

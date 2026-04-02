@@ -80,8 +80,8 @@
 
 <script setup lang="ts">
 import { computed, type ComputedRef, onMounted, type Ref, ref } from 'vue';
-import type { BalanceResponse, PayoutRequestResponse } from '@sudosos/sudosos-client';
-import { PayoutRequestStatusRequestStateEnum } from '@sudosos/sudosos-client';
+import type { BalanceResponse, PayoutRequestResponse } from '@gewis/sudosos-client';
+import { PayoutRequestStatusRequestStateEnum } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import Skeleton from 'primevue/skeleton';
@@ -144,7 +144,7 @@ onMounted(() => {
     });
   if (!payout.value) return;
   apiService.balance
-    .getBalanceId(payout.value.requestedBy.id)
+    .getBalanceId({ id: payout.value.requestedBy.id })
     .then((res) => {
       userBalance.value = res.data;
     })

@@ -46,7 +46,7 @@ import { computed, ref } from 'vue';
 import { jwtDecode } from 'jwt-decode';
 import Dialog from 'primevue/dialog';
 import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
-import { BasePointOfSaleInfoResponse } from '@sudosos/sudosos-client';
+import { BasePointOfSaleInfoResponse } from '@gewis/sudosos-client';
 import { usePosToken } from '@/composables/usePosToken';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 

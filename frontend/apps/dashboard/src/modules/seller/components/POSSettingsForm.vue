@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import { type PropType } from 'vue';
-import type { PointOfSaleResponse } from '@sudosos/sudosos-client';
+import type { PointOfSaleResponse } from '@gewis/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import { useI18n } from 'vue-i18n';
 import * as yup from 'yup';

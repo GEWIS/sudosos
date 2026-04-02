@@ -5,7 +5,7 @@ import type {
   FineHandoutEventResponse,
   UserResponse,
   UserToFineResponse,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 // eslint-disable-next-line import/no-named-as-default
 import Dinero from 'dinero.js';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
@@ -175,7 +175,9 @@ export const useDebtorStore = defineStore('debtor', {
       }
 
       // Don't calculate fines for ORGAN, VOUCHER, LOCAL_ADMIN, INVOICE, AUTOMATIC_INVOICE
-      this.userToFineResponse = (await ApiService.debtor.calculateFines(dates, ['MEMBER', 'LOCAL_USER'])).data;
+      this.userToFineResponse = (
+        await ApiService.debtor.calculateFines({ referenceDates: dates, userTypes: ['MEMBER', 'LOCAL_USER'] })
+      ).data;
 
       await this.fetchDebtors(userIds);
       this.isDebtorsLoading = false;
@@ -190,7 +192,7 @@ export const useDebtorStore = defineStore('debtor', {
         this.userToFineResponse
           .filter((user) => (userIds ? userIds.includes(user.id) : true))
           .map((user) => {
-            return ApiService.user.getIndividualUser(user.id);
+            return ApiService.user.getIndividualUser({ id: user.id });
           }),
       );
 
@@ -213,22 +215,11 @@ export const useDebtorStore = defineStore('debtor', {
 
       // @ts-expect-error PaginatedBalanceResponse is the same as PaginatedResult<BalanceResponse>
       const allBalances = await fetchAllPages<BalanceResponse>(async (take, skip) => {
-        return ApiService.balance.getAllBalance(
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          // @ts-expect-error not sure why typescript thinks this is wrong
-          ['MEMBER', 'LOCAL_USER'],
-          undefined,
-          undefined,
-          undefined,
-          undefined,
+        return ApiService.balance.getAllBalance({
+          userTypes: ['MEMBER', 'LOCAL_USER'],
           take,
           skip,
-        );
+        });
       });
 
       let totalNegative = Dinero({
@@ -255,19 +246,19 @@ export const useDebtorStore = defineStore('debtor', {
     },
     async fetchFineHandoutEvents(take: number, skip: number) {
       this.isFineHandoutEventsLoading = true;
-      const handoutEvents = await ApiService.debtor.returnAllFineHandoutEvents(take, skip);
+      const handoutEvents = await ApiService.debtor.returnAllFineHandoutEvents({ take, skip });
 
       this.fineHandoutEvents = handoutEvents.data.records;
       this.totalFineHandoutEvents = handoutEvents.data._pagination.count;
       this.isFineHandoutEventsLoading = false;
     },
     async fetchSingleHandoutEvent(id: number): Promise<FineHandoutEventResponse | undefined> {
-      return (await ApiService.debtor.returnSingleFineHandoutEvent(id)).data;
+      return (await ApiService.debtor.returnSingleFineHandoutEvent({ id })).data;
     },
     async deleteFineHandoutEvent(id: number) {
       this.isDeleteLoading = true;
       try {
-        await ApiService.debtor.deleteFineHandout(id);
+        await ApiService.debtor.deleteFineHandout({ id });
       } finally {
         this.isDeleteLoading = false;
       }
@@ -275,16 +266,20 @@ export const useDebtorStore = defineStore('debtor', {
     async notifyFines(userIds: number[], referenceDate: Date) {
       this.isNotifyLoading = true;
       await ApiService.debtor.notifyAboutFutureFines({
-        userIds: userIds,
-        referenceDate: referenceDate.toISOString(),
+        handoutFinesRequest: {
+          userIds: userIds,
+          referenceDate: referenceDate.toISOString(),
+        },
       });
       this.isNotifyLoading = false;
     },
     async handoutFines(userIds: number[], referenceDate: Date) {
       this.isHandoutLoading = true;
       await ApiService.debtor.handoutFines({
-        userIds: userIds,
-        referenceDate: referenceDate.toISOString(),
+        handoutFinesRequest: {
+          userIds: userIds,
+          referenceDate: referenceDate.toISOString(),
+        },
       });
       this.isHandoutLoading = false;
     },
@@ -292,8 +287,11 @@ export const useDebtorStore = defineStore('debtor', {
       this.isLockLoading = true;
 
       const requests = userIds.map((id) => {
-        return ApiService.user.updateUser(id, {
-          canGoIntoDebt: false,
+        return ApiService.user.updateUser({
+          id,
+          updateUserRequest: {
+            canGoIntoDebt: false,
+          },
         });
       });
 

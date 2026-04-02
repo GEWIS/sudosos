@@ -1,6 +1,6 @@
 import { setupWebSocket, useAuthStore, getTokenFromStorage } from '@sudosos/sudosos-frontend-common';
 import { jwtDecode } from 'jwt-decode';
-import { BasePointOfSaleInfoResponse } from '@sudosos/sudosos-client';
+import { BasePointOfSaleInfoResponse } from '@gewis/sudosos-client';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import { usePosToken, POS_TOKEN_KEY } from '@/composables/usePosToken';
 import posApiService from '@/services/PosApiService';
@@ -49,7 +49,7 @@ export default async function beforeLoad() {
 
     const decoded = jwtDecode<{ user: { pointOfSale: BasePointOfSaleInfoResponse } }>(authStore.getToken!);
     const posId = decoded.user.pointOfSale.id;
-    const pos = await posApiService.pos.getSinglePointOfSale(Number(posId));
+    const pos = await posApiService.pos.getSinglePointOfSale({ id: Number(posId) });
 
     await switchToPos(pos.data);
   } else {

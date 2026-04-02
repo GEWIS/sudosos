@@ -57,7 +57,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { UserResponse } from '@sudosos/sudosos-client';
+import type { UserResponse } from '@gewis/sudosos-client';
 import Divider from 'primevue/divider';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
@@ -112,7 +112,7 @@ async function startScan() {
     const nfcCode = event.serialNumber.toLowerCase().replace(/[^a-z0-9]/g, '');
 
     await apiService.user
-      .updateUserNfc(props.user.id, { nfcCode })
+      .updateUserNfc({ id: props.user.id, updateNfcRequest: { nfcCode } })
       .then(() => {
         toast.add({
           severity: 'success',
@@ -143,7 +143,7 @@ const settingsStore = useUserSettingsStore();
 
 const handleChangeDataAnalysis = (value: boolean) => {
   apiService.user
-    .updateUser(props.user.id, { extensiveDataProcessing: value })
+    .updateUser({ id: props.user.id, updateUserRequest: { extensiveDataProcessing: value } })
     .then(() => {
       dataAnalysis.value = value;
       toast.add({
@@ -204,7 +204,7 @@ const confirmDeleteApiKey = () => {
     icon: 'pi pi-exclamation-triangle',
     accept: () => {
       apiService.user
-        .deleteUserKey(props.user.id)
+        .deleteUserKey({ id: props.user.id })
         .then(() => {
           toast.add({
             severity: 'success',
@@ -227,7 +227,7 @@ const confirmDeleteNFC = () => {
     icon: 'pi pi-exclamation-triangle',
     accept: () => {
       apiService.user
-        .deleteUserNfc(props.user.id)
+        .deleteUserNfc({ id: props.user.id })
         .then(() => {
           toast.add({
             severity: 'success',

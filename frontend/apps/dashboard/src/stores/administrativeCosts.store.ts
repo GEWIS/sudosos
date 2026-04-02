@@ -4,7 +4,7 @@ import type {
   CreateInactiveAdministrativeCostRequest,
   HandoutInactiveAdministrativeCostsRequest,
   UserToInactiveAdministrativeCostResponse,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import ApiService from '@/services/ApiService';
 
 interface AdministrativeCostsState {
@@ -49,10 +49,10 @@ export const useAdministrativeCostsStore = defineStore('administrativeCosts', {
     }) {
       this.isLoading = true;
       try {
-        const response = await ApiService.inactiveAdministrativeCosts.getAllInactiveAdministrativeCosts(
-          filters?.fromId,
-          filters?.inactiveAdministrativeCostId,
-        );
+        const response = await ApiService.inactiveAdministrativeCosts.getAllInactiveAdministrativeCosts({
+          fromId: filters?.fromId,
+          inactiveAdministrativeCostId: filters?.inactiveAdministrativeCostId,
+        });
         const data = response.data;
         this.costs = data.records || [];
         this.pagination = {
@@ -66,7 +66,7 @@ export const useAdministrativeCostsStore = defineStore('administrativeCosts', {
     },
 
     async fetchCost(id: number): Promise<BaseInactiveAdministrativeCostResponse> {
-      const response = await ApiService.inactiveAdministrativeCosts.getInactiveAdministrativeCosts(id);
+      const response = await ApiService.inactiveAdministrativeCosts.getInactiveAdministrativeCosts({ id });
       return response.data;
     },
 
@@ -75,7 +75,9 @@ export const useAdministrativeCostsStore = defineStore('administrativeCosts', {
     ): Promise<BaseInactiveAdministrativeCostResponse> {
       this.isCreateLoading = true;
       try {
-        const response = await ApiService.inactiveAdministrativeCosts.createInactiveAdministrativeCosts(request);
+        const response = await ApiService.inactiveAdministrativeCosts.createInactiveAdministrativeCosts({
+          createInactiveAdministrativeCostRequest: request,
+        });
         return response.data;
       } finally {
         this.isCreateLoading = false;
@@ -85,7 +87,7 @@ export const useAdministrativeCostsStore = defineStore('administrativeCosts', {
     async deleteCost(id: number): Promise<void> {
       this.isDeleteLoading = true;
       try {
-        await ApiService.inactiveAdministrativeCosts.deleteInactiveAdministrativeCost(id);
+        await ApiService.inactiveAdministrativeCosts.deleteInactiveAdministrativeCost({ id });
       } finally {
         this.isDeleteLoading = false;
       }
@@ -94,8 +96,9 @@ export const useAdministrativeCostsStore = defineStore('administrativeCosts', {
     async fetchEligibleUsers(notification: boolean): Promise<UserToInactiveAdministrativeCostResponse[]> {
       this.isEligibleUsersLoading = true;
       try {
-        const response =
-          await ApiService.inactiveAdministrativeCosts.getInactiveAdministrativeCostsEligibleUsers(notification);
+        const response = await ApiService.inactiveAdministrativeCosts.getInactiveAdministrativeCostsEligibleUsers({
+          notification,
+        });
         this.eligibleUsers = response.data || [];
         return this.eligibleUsers;
       } finally {
@@ -106,7 +109,9 @@ export const useAdministrativeCostsStore = defineStore('administrativeCosts', {
     async notifyUsers(request: HandoutInactiveAdministrativeCostsRequest): Promise<void> {
       this.isNotifyLoading = true;
       try {
-        await ApiService.inactiveAdministrativeCosts.notifyInactiveAdministrativeCostsUsers(request);
+        await ApiService.inactiveAdministrativeCosts.notifyInactiveAdministrativeCostsUsers({
+          handoutInactiveAdministrativeCostsRequest: request,
+        });
       } finally {
         this.isNotifyLoading = false;
       }
@@ -115,7 +120,9 @@ export const useAdministrativeCostsStore = defineStore('administrativeCosts', {
     async handoutCosts(request: HandoutInactiveAdministrativeCostsRequest): Promise<void> {
       this.isHandoutLoading = true;
       try {
-        await ApiService.inactiveAdministrativeCosts.handoutInactiveAdministrativeCostsUsers(request);
+        await ApiService.inactiveAdministrativeCosts.handoutInactiveAdministrativeCostsUsers({
+          handoutInactiveAdministrativeCostsRequest: request,
+        });
       } finally {
         this.isHandoutLoading = false;
       }

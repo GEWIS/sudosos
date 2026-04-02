@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, useAttrs, watch } from 'vue';
-import { type BaseUserResponse, GetAllUsersTypeEnum } from '@sudosos/sudosos-client';
+import { type BaseUserResponse, GetAllUsersTypeEnum } from '@gewis/sudosos-client';
 import ErrorSpan from '@/components/ErrorSpan.vue';
 import FindUser from '@/components/FindUser.vue';
 

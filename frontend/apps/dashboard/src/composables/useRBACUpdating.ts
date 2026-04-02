@@ -6,7 +6,7 @@ import type {
   CreatePermissionParams,
   RelationResponse,
   UserResponse,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import * as yup from 'yup';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
@@ -91,7 +91,7 @@ export function useRBACUpdating(
 
   const handleDeletePermissionConfirmation = (entity: string, id: number, action: string, relation: string) => {
     apiService.rbac
-      .deletePermission(id, entity, action, relation)
+      .deletePermission({ id, entity, action, relation })
       .then(() => {
         location.reload();
       })
@@ -108,7 +108,7 @@ export function useRBACUpdating(
       attributes: [attribute],
     };
     apiService.rbac
-      .addPermissions(form.context.values.role.id, [addPermissionReq])
+      .addPermissions({ id: form.context.values.role.id, createPermissionParams: [addPermissionReq] })
       .then(() => {
         location.reload();
       })
@@ -124,11 +124,11 @@ export function useRBACUpdating(
 
   const handleDeleteUserConfirmation = (userId: number, roleId: number) => {
     apiService.user
-      .deleteUserRole(userId, roleId)
+      .deleteUserRole({ id: userId, roleId })
       .then(() => {
         deleteUserVision.value = false;
         apiService.rbac
-          .getRoleUsers(form.context.values.role.id)
+          .getRoleUsers({ id: form.context.values.role.id })
           .then((res) => {
             users.value = res.data.records;
             form.context.setFieldValue('users', users.value);
@@ -143,11 +143,11 @@ export function useRBACUpdating(
   const handleAddUserPush = (id: number) => {
     const roleRequest: AddRoleRequest = { roleId: form.context.values.role.id };
     apiService.user
-      .addUserRole(id, roleRequest)
+      .addUserRole({ id, addRoleRequest: roleRequest })
       .then(() => {
         addUserVision.value = false;
         apiService.rbac
-          .getRoleUsers(form.context.values.role.id)
+          .getRoleUsers({ id: form.context.values.role.id })
           .then((res) => {
             users.value = res.data.records;
             form.context.setFieldValue('users', users.value);

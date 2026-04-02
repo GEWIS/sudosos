@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { PointOfSaleResponse } from '@sudosos/sudosos-client';
+import { PointOfSaleResponse } from '@gewis/sudosos-client';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { usePosToken } from './usePosToken';
 import { PointOfSaleSwitchService } from '@/services/PointOfSaleSwitchService';
@@ -29,7 +29,7 @@ export function usePointOfSaleSwitch() {
       // Ideally this checks if POS_JWT_TOKEN exists AND is for the right POS or not, but that
       // state is not directly accessible here.
       if (authStore.user?.type !== 'POINT_OF_SALE') {
-        const response = await userApiService.authenticate.authenticatePointOfSale(pos.id);
+        const response = await userApiService.authenticate.authenticatePointOfSale({ id: pos.id });
         setPosToken(response.data.token);
       }
 

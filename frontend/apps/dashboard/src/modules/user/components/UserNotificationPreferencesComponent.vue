@@ -28,7 +28,7 @@ import type {
   UserResponse,
   BaseUserNotificationPreferenceResponse,
   UserNotificationPreferenceUpdateRequest,
-} from '@sudosos/sudosos-client';
+} from '@gewis/sudosos-client';
 import type { AxiosError } from 'axios';
 import CardComponent from '@/components/CardComponent.vue';
 import InputSpan from '@/components/InputSpan.vue';
@@ -63,7 +63,7 @@ const otherEnabled = ref(false);
 const fetchPreferences = async () => {
   loading.value = true;
   try {
-    const res = await apiService.userNotifications.getAllUserNotificationPreferences(undefined, props.user.id);
+    const res = await apiService.userNotifications.getAllUserNotificationPreferences({ userId: props.user.id });
     allPreferences.value = res.data.records || [];
 
     const selfPreference = findPreference(NOTIFICATION_TYPE_SELF);
@@ -85,7 +85,10 @@ const fetchPreferences = async () => {
 
 const updatePreference = async (id: number, enabled: boolean) => {
   const updateRequest = { enabled } as UserNotificationPreferenceUpdateRequest;
-  await apiService.userNotifications.updateUserNotificationPreference(id, updateRequest);
+  await apiService.userNotifications.updateUserNotificationPreference({
+    id,
+    userNotificationPreferenceUpdateRequest: updateRequest,
+  });
 };
 
 const handleSelfChange = async (enabled: boolean) => {

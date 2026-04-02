@@ -1,5 +1,5 @@
 import { ref, watch, onMounted } from 'vue';
-import type { BannerResponse } from '@sudosos/sudosos-client';
+import type { BannerResponse } from '@gewis/sudosos-client';
 import apiService from '@/services/ApiService';
 import { debounce } from '@/utils/debounceUtil';
 import { useBannersStore } from '@/stores/banner.store';
@@ -19,13 +19,13 @@ export function usePaginatedBanners() {
   async function apiCall(): Promise<void> {
     isLoading.value = true;
     try {
-      const response = await apiService.banner.getAllBanners(
-        rows.value,
-        skip.value,
-        activeFilter.value,
-        expiredFilter.value,
-        order.value,
-      );
+      const response = await apiService.banner.getAllBanners({
+        take: rows.value,
+        skip: skip.value,
+        active: activeFilter.value,
+        expired: expiredFilter.value,
+        order: order.value,
+      });
       totalRecords.value = response.data._pagination?.count || 0;
       banners.value = response.data.records || [];
     } finally {
