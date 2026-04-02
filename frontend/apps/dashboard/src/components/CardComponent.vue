@@ -1,6 +1,5 @@
 <template>
   <Card
-    class="h-full"
     :pt="{
       body: `flex flex-col h-full${center ? ' flex-1' : ''}`,
       content: `flex-1${center ? ' h-full pb-[2rem]' : ''}`,
