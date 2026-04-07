@@ -9,8 +9,8 @@
         <UserPinComponent />
         <UserSettingsComponent :user="current.user" />
       </div>
-      <div class="flex flex-col justify-start items-start flex-1 gap-4">
-        <UserInfo class="self-start shrink-0 hidden md:block" :user="current.user" />
+      <div class="hidden md:flex flex-col gap-4 flex-1">
+        <UserInfo :user="current.user" />
         <UserNotificationPreferencesComponent :user="current.user" />
       </div>
     </div>
