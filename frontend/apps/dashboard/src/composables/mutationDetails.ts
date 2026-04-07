@@ -1,6 +1,7 @@
 import { ref, computed, watch, type Ref } from 'vue';
-import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import { storeToRefs } from 'pinia';
+import { useUserStore } from '@sudosos/sudosos-frontend-common';
+import type { RoleWithPermissionsResponse } from '@gewis/sudosos-client';
 import { useTransactionStore } from '@/stores/transaction.store';
 import { useTransferStore } from '@/stores/transfer.store';
 import apiService from '@/services/ApiService';
@@ -46,8 +47,8 @@ export function useMutationDetails(type: Ref<FinancialMutationType>, id: Ref<num
       (type.value !== FinancialMutationType.TRANSACTION && transfer.value);
 
     const hasPermission = current.value.rolesWithPermissions.some(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-      (r) => r.name === UserRole.BAC_PM || r.name === UserRole.BOARD,
+      (r: RoleWithPermissionsResponse) =>
+        (r.name as UserRole) === UserRole.BAC_PM || (r.name as UserRole) === UserRole.BOARD,
     );
 
     const isDeletable = deletable.includes(type.value);

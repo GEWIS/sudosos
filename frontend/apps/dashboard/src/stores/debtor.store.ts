@@ -213,7 +213,6 @@ export const useDebtorStore = defineStore('debtor', {
     async fetchFinancialSummary() {
       if (this.summary.totalPositive.amount != 0) return;
 
-      // @ts-expect-error PaginatedBalanceResponse is the same as PaginatedResult<BalanceResponse>
       const allBalances = await fetchAllPages<BalanceResponse>(async (take, skip) => {
         return ApiService.balance.getAllBalance({
           userTypes: ['MEMBER', 'LOCAL_USER'],

@@ -34,7 +34,7 @@
     "@commitlint/cli": "^20.3.0",
     "@commitlint/config-conventional": "^20.3.0",
     "@gewis/splash": "^2.4.0",
-    "@gewis/sudosos-client": "0.0.0-develop.884f35f",
+    "@gewis/sudosos-client": "0.0.0-develop.580cc09",
     "@primeuix/themes": "^2.0.2",
     "@tailwindcss/vite": "^4.1.17",
     "axios": "^1.13.2",

@@ -8,6 +8,7 @@ import type {
   DineroObjectRequest,
   CreateUserRequest,
   UpdateUserRequest,
+  UpdateKeyResponse,
 } from '@gewis/sudosos-client';
 import { ApiService } from '../services/ApiService';
 import { fetchAllPages } from '../helpers/PaginationHelper';
@@ -127,11 +128,11 @@ export const useUserStore = defineStore('user', {
       });
       this.current.createdTransactions = res.data;
     },
-    async fetchUserApi(service: ApiService, id: number) {
-      return await service.user.updateUserKey({ id });
+    async fetchUserApi(service: ApiService, id: number): Promise<UpdateKeyResponse> {
+      return (await service.user.updateUserKey({ id })).data;
     },
-    async waiveUserFine(id: number, amount: DineroObjectRequest, service: ApiService) {
-      return service.user.waiveUserFines({ id, waiveFinesRequest: { amount } });
+    async waiveUserFine(id: number, amount: DineroObjectRequest, service: ApiService): Promise<void> {
+      await service.user.waiveUserFines({ id, waiveFinesRequest: { amount } });
     },
     setCurrentUser(user: UserResponse) {
       this.current.user = user;

@@ -186,7 +186,7 @@ const confirmChangeApiKey = () => {
           toast.add({
             severity: 'success',
             summary: t('common.toast.success.success'),
-            detail: `${t('common.toast.success.apiKeyChanged')} \n ${res.data.key}`,
+            detail: `${t('common.toast.success.apiKeyChanged')} \n ${res.key}`,
             life: 5000,
           });
         })

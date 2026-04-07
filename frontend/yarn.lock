@@ -617,12 +617,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gewis/sudosos-client@npm:0.0.0-develop.884f35f":
-  version: 0.0.0-develop.884f35f
-  resolution: "@gewis/sudosos-client@npm:0.0.0-develop.884f35f"
+"@gewis/sudosos-client@npm:0.0.0-develop.580cc09":
+  version: 0.0.0-develop.580cc09
+  resolution: "@gewis/sudosos-client@npm:0.0.0-develop.580cc09"
   dependencies:
-    axios: "npm:^1.6.3"
-  checksum: 10c0/d1b7f1fe26a49805e29a2a7a4934cccd591047decbd41f6ceb09a6d24aacd875a1a0324e0930fce9a72306aecb190731b6af9ab8f31337ce6ffd86c8b5ed69c4
+    axios: "npm:1.14.0"
+  checksum: 10c0/63956d48ac1086f41f8f9297104598eeb181775f2046a0f6eb9414c05511800eb16aea1727ea18f0b98e7b83a86c1ce9a788807184abb50e9f721655bc610261
   languageName: node
   linkType: hard
 
@@ -2592,7 +2592,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.13.2, axios@npm:^1.6.3":
+"axios@npm:1.14.0":
+  version: 1.14.0
+  resolution: "axios@npm:1.14.0"
+  dependencies:
+    follow-redirects: "npm:^1.15.11"
+    form-data: "npm:^4.0.5"
+    proxy-from-env: "npm:^2.1.0"
+  checksum: 10c0/2541f4aa215a7d1842429dad006fc682d82bc0e74bd14500823f7d8cce3bbae0e0a8c328c8538946718f366ab8ce5a4c12e9ad40e5a0f3482ff8bff0cd115d45
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.13.2":
   version: 1.13.2
   resolution: "axios@npm:1.13.2"
   dependencies:
@@ -3974,7 +3985,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.15.6":
+"follow-redirects@npm:^1.15.11, follow-redirects@npm:^1.15.6":
   version: 1.15.11
   resolution: "follow-redirects@npm:1.15.11"
   peerDependenciesMeta:
@@ -4003,7 +4014,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.4":
+"form-data@npm:^4.0.4, form-data@npm:^4.0.5":
   version: 4.0.5
   resolution: "form-data@npm:4.0.5"
   dependencies:
@@ -6177,6 +6188,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"proxy-from-env@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "proxy-from-env@npm:2.1.0"
+  checksum: 10c0/ed01729fd4d094eab619cd7e17ce3698b3413b31eb102c4904f9875e677cd207392795d5b4adee9cec359dfd31c44d5ad7595a3a3ad51c40250e141512281c58
+  languageName: node
+  linkType: hard
+
 "punycode@npm:^2.1.0":
   version: 2.3.1
   resolution: "punycode@npm:2.3.1"
@@ -6988,7 +7006,7 @@ __metadata:
     "@gewis/eslint-config-vue": "npm:^2.4.0"
     "@gewis/prettier-config": "npm:^2.2.2"
     "@gewis/splash": "npm:^2.4.0"
-    "@gewis/sudosos-client": "npm:0.0.0-develop.884f35f"
+    "@gewis/sudosos-client": "npm:0.0.0-develop.580cc09"
     "@intlify/eslint-plugin-vue-i18n": "npm:^4.1.0"
     "@primeuix/themes": "npm:^2.0.2"
     "@rushstack/eslint-patch": "npm:^1.15.0"

@@ -3,11 +3,12 @@ import type {
   BalanceResponse,
   BaseInvoiceResponse,
   InvoiceResponse,
+  InvoiceResponseTypes,
   PaginatedInvoiceResponse,
   UpdateInvoiceRequest,
 } from '@gewis/sudosos-client';
+import { InvoiceStatusResponseStateEnum, UserType } from '@gewis/sudosos-client';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
-import { InvoiceStatusResponseStateEnum } from '@gewis/sudosos-client';
 import ApiService from '@/services/ApiService';
 
 export const useInvoiceStore = defineStore('invoice', {
@@ -30,13 +31,15 @@ export const useInvoiceStore = defineStore('invoice', {
   },
   actions: {
     async updateInvoice(id: number, updateInvoiceRequest: UpdateInvoiceRequest): Promise<BaseInvoiceResponse> {
-      return await ApiService.invoices.updateInvoice({ id, updateInvoiceRequest }).then((res) => {
-        const invoice: BaseInvoiceResponse = res.data;
-        if (!this.invoices[invoice.id]) return invoice;
-        // BaseInvoice does not contain entries, so we merge them
-        this.invoices[invoice.id] = { ...this.invoices[invoice.id]!, ...invoice };
-        return this.invoices[invoice.id]!;
-      });
+      return await ApiService.invoices
+        .updateInvoice({ id, updateInvoiceRequest })
+        .then((res: { data: BaseInvoiceResponse }) => {
+          const invoice: BaseInvoiceResponse = res.data;
+          if (!this.invoices[invoice.id]) return invoice;
+          // BaseInvoice does not contain entries, so we merge them
+          this.invoices[invoice.id] = { ...this.invoices[invoice.id]!, ...invoice };
+          return this.invoices[invoice.id]!;
+        });
     },
     async getOrFetchInvoice(id: number): Promise<InvoiceResponse> {
       if (this.invoices[id]) {
@@ -47,7 +50,7 @@ export const useInvoiceStore = defineStore('invoice', {
     async deleteInvoice(id: number): Promise<void> {
       await ApiService.invoices
         .updateInvoice({ id, updateInvoiceRequest: { state: InvoiceStatusResponseStateEnum.Deleted } })
-        .then((res) => {
+        .then((res: { data: BaseInvoiceResponse }) => {
           const invoice: BaseInvoiceResponse = res.data;
           if (!this.invoices[invoice.id]) return undefined;
           this.invoices[invoice.id] = { ...this.invoices[invoice.id]!, ...invoice };
@@ -56,7 +59,7 @@ export const useInvoiceStore = defineStore('invoice', {
     },
     async fetchInvoicePdf(id: number): Promise<string | undefined> {
       return await ApiService.invoices.getInvoicePdf({ id }).then((res) => {
-        const pdf = (res.data as unknown as { pdf: string }).pdf;
+        const pdf = res.data.pdf;
         if (!this.invoices[id]) return undefined;
 
         this.invoices[id].pdf = pdf;
@@ -64,7 +67,7 @@ export const useInvoiceStore = defineStore('invoice', {
       });
     },
     async fetchInvoice(id: number): Promise<InvoiceResponse> {
-      return await ApiService.invoices.getSingleInvoice({ id }).then((res) => {
+      return await ApiService.invoices.getSingleInvoice({ id }).then((res: { data: InvoiceResponse }) => {
         const invoice = res.data;
         this.invoices[invoice.id] = invoice;
         return this.invoices[invoice.id]!;
@@ -77,12 +80,14 @@ export const useInvoiceStore = defineStore('invoice', {
     ): Promise<PaginatedInvoiceResponse> {
       const { state, fromDate, tillDate } = q;
       return await ApiService.invoices
-        // @ts-expect-error Following line has a bug in the swagger generator
-        .getAllInvoices(undefined, undefined, state ? state : undefined, undefined, fromDate, tillDate, take, skip)
+        .getAllInvoices({ currentState: state ? [state] : undefined, fromDate, tillDate, take, skip })
         .then((res) => {
-          const invoices = res.data.records as InvoiceResponse[];
-          invoices.forEach((invoice) => {
-            this.invoices[invoice.id] = invoice;
+          const invoices = res.data.records;
+          invoices.forEach((invoice: InvoiceResponseTypes) => {
+            this.invoices[invoice.id] = {
+              ...invoice,
+              invoiceEntries: invoice.invoiceEntries ?? [],
+            };
           });
           return res.data;
         });
@@ -93,12 +98,11 @@ export const useInvoiceStore = defineStore('invoice', {
       }
     },
     async fetchAll(): Promise<Record<number, InvoiceResponse>> {
-      return fetchAllPages<InvoiceResponse>(
-        // @ts-expect-error PaginatedInvoiceResponse is the same as PaginatedResult<InvoiceResponse>
-        (take, skip) => ApiService.invoices.getAllInvoices(null, null, null, null, null, null, take, skip),
-      ).then((invoices) => {
-        invoices.forEach((invoice: InvoiceResponse) => {
-          this.invoices[invoice.id] = invoice;
+      return fetchAllPages<InvoiceResponseTypes>((take: number, skip: number) =>
+        ApiService.invoices.getAllInvoices({ take, skip }),
+      ).then((invoices: Array<InvoiceResponseTypes>) => {
+        invoices.forEach((invoice) => {
+          this.invoices[invoice.id] = invoice as unknown as InvoiceResponse;
         });
         return this.invoices;
       });
@@ -109,17 +113,15 @@ export const useInvoiceStore = defineStore('invoice', {
       }
     },
     async fetchAllNegativeInvoiceUsers(): Promise<Record<number, BalanceResponse>> {
-      return fetchAllPages<BalanceResponse>((take, skip) =>
-        // @ts-expect-error PaginatedBalanceResponse is the same as PaginatedResult<BalanceResponse>
+      return fetchAllPages<BalanceResponse>((take: number, skip: number) =>
         ApiService.balance.getAllBalance({
           maxBalance: -1,
-          // @ts-expect-error not sure why typescript thinks this is wrong
-          userTypes: 'INVOICE',
+          userTypes: [UserType.Invoice],
           allowDeleted: false,
           take,
           skip,
         }),
-      ).then((users) => {
+      ).then((users: Array<BalanceResponse>) => {
         users.forEach((user: BalanceResponse) => {
           this.negativeInvoiceUsers[user.id] = user;
         });

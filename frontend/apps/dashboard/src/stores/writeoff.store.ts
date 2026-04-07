@@ -82,7 +82,7 @@ export const useWriteOffStore = defineStore('writeoff', {
         skip,
       });
       this.usersFetchedAt = Date.now();
-      this.inactiveUsers = users.data.records as BalanceResponse[];
+      this.inactiveUsers = users.data.records;
       this.count = users.data._pagination?.count || 0;
       return this.inactiveUsers;
     },
