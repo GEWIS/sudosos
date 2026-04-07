@@ -50,9 +50,9 @@
               icon-pos="right"
               :label="t('modules.admin.dashboard.balanceSummary.financialOverview')"
             />
-            <span class="text-sm text-muted-color"
-              >🚧 {{ t('modules.admin.dashboard.balanceSummary.underConstruction') }} 🚧</span
-            >
+            <span class="text-sm text-muted-color">{{
+              '🚧 ' + t('modules.admin.dashboard.balanceSummary.underConstruction') + ' 🚧'
+            }}</span>
           </div>
         </div>
       </CardComponent>

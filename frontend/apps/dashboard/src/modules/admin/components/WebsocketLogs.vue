@@ -11,8 +11,7 @@
         class="log-line whitespace-pre-wrap px-2 py-1 transition-colors"
         style="border-color: var(--p-primary-inverse-color)"
       >
-        <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
-        [{{ dateToTimeString(item.time) }}] {{ item.message }}
+        {{ `[${dateToTimeString(item.time)}] ${item.message}` }}
       </div>
     </template>
   </VirtualScroller>

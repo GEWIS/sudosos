@@ -1,21 +1,21 @@
 <template>
   <div class="flex flex-col gap-4">
     <div v-if="!edit" class="flex flex-col gap-2">
-      <span class="font-semibold">{{ t('modules.admin.transactions.currentAmounts') }}:</span>
+      <span class="font-semibold">{{ t('modules.admin.transactions.currentAmounts') + ':' }}</span>
       <div class="flex flex-col gap-2">
         <div
           v-for="product in products"
           :key="`${product.subTransactionIndex}-${product.rowIndex}`"
           class="flex flex-row gap-2 items-center"
         >
-          <span class="w-8 text-right">{{ product.amount }}x</span>
+          <span class="w-8 text-right">{{ product.amount + 'x' }}</span>
           <span class="flex-1">{{ product.product.name }}</span>
           <span class="font-semibold">{{ formatPrice(product.totalPriceInclVat) }}</span>
         </div>
       </div>
     </div>
     <div v-else class="flex flex-col gap-2">
-      <span class="font-semibold">{{ t('modules.admin.transactions.editAmounts') }}:</span>
+      <span class="font-semibold">{{ t('modules.admin.transactions.editAmounts') + ':' }}</span>
       <div class="flex flex-col gap-2">
         <div
           v-for="product in products"
@@ -34,12 +34,12 @@
           />
           <div class="flex-1">
             {{ product.product.name }}
-            <span v-if="product.isNewProduct" class="text-blue-500 text-sm ml-2 font-semibold"
-              >({{ t('modules.admin.transactions.newProduct') }})</span
-            >
-            <span v-if="product.amount === 0" class="text-red-500 text-sm ml-2"
-              >({{ t('modules.admin.transactions.willBeRemoved') }})</span
-            >
+            <span v-if="product.isNewProduct" class="text-blue-500 text-sm ml-2 font-semibold">{{
+              '(' + t('modules.admin.transactions.newProduct') + ')'
+            }}</span>
+            <span v-if="product.amount === 0" class="text-red-500 text-sm ml-2">{{
+              '(' + t('modules.admin.transactions.willBeRemoved') + ')'
+            }}</span>
           </div>
           <span class="font-semibold">{{ formatPrice(product.totalPriceInclVat) }}</span>
         </div>
@@ -76,9 +76,9 @@ import type {
   ProductResponse,
   TransactionResponse,
   ContainerResponse,
+  DineroObjectResponse,
 } from '@gewis/sudosos-client';
 import * as yup from 'yup';
-import type { DineroObjectResponse } from '@gewis/sudosos-client';
 import type { Form } from '@/utils/formUtils';
 import { formatPrice } from '@/utils/formatterUtils';
 import { type UpdateAmountItem, updateTransactionAmountsObject } from '@/utils/validation-schema';

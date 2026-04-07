@@ -255,6 +255,7 @@ const { t } = useI18n();
 const props = defineProps({
   state: {
     type: Object as PropType<string>,
+    default: undefined,
   },
   form: {
     type: Object as PropType<Form<yup.InferType<typeof rbacSchema>>>,

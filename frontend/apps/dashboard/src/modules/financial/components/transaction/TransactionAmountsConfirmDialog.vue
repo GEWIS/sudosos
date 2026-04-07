@@ -12,13 +12,13 @@
 
         <div class="flex flex-col gap-2">
           <div class="flex flex-row gap-2">
-            <span class="font-semibold">{{ t('common.id') }}:</span>
+            <span class="font-semibold">{{ t('common.id') + ':' }}</span>
             <span>{{ transaction.id }}</span>
           </div>
 
           <!-- Amount Changes -->
           <div class="flex flex-col gap-2 mt-3">
-            <span class="font-semibold">{{ t('modules.admin.transactions.amountChanges') }}:</span>
+            <span class="font-semibold">{{ t('modules.admin.transactions.amountChanges') + ':' }}</span>
             <div class="flex flex-col gap-1">
               <div
                 v-for="change in amountChanges"
@@ -26,16 +26,16 @@
                 class="flex flex-row gap-2 items-center p-2"
               >
                 <span class="flex-1">{{ change.productName }}</span>
-                <span>{{ change.oldAmount }}x</span>
+                <span>{{ change.oldAmount + 'x' }}</span>
                 <i class="pi pi-arrow-right"></i>
-                <span class="font-semibold">{{ change.newAmount }}x</span>
+                <span class="font-semibold">{{ change.newAmount + 'x' }}</span>
               </div>
             </div>
           </div>
 
           <!-- New Products Added -->
           <div v-if="newProductsAdded.length > 0" class="flex flex-col gap-2 mt-3">
-            <span class="font-semibold">{{ t('modules.admin.transactions.newProductsAdded') }}:</span>
+            <span class="font-semibold">{{ t('modules.admin.transactions.newProductsAdded') + ':' }}</span>
             <div class="flex flex-col gap-1">
               <div
                 v-for="newProduct in newProductsAdded"
@@ -43,22 +43,21 @@
                 class="flex flex-row gap-2 items-center p-2"
               >
                 <span class="flex-1">{{ newProduct.productName }}</span>
-                <span class="font-semibold">{{ newProduct.amount }}x</span>
-                <span class="text-sm font-semibold">({{ t('modules.admin.transactions.newProduct') }})</span>
+                <span class="font-semibold">{{ newProduct.amount + 'x' }}</span>
+                <span class="text-sm font-semibold">{{ '(' + t('modules.admin.transactions.newProduct') + ')' }}</span>
               </div>
             </div>
           </div>
 
           <!-- Cost Change Highlight -->
           <div class="flex flex-col gap-2 mt-3 p-3">
-            <span class="font-semibold">{{ t('modules.admin.transactions.costChange') }}:</span>
+            <span class="font-semibold">{{ t('modules.admin.transactions.costChange') + ':' }}</span>
             <div class="flex flex-row gap-2 items-center">
               <span>{{ formatPrice({ amount: oldTotalCost, currency: 'EUR', precision: 2 }) }}</span>
               <i class="pi pi-arrow-right"></i>
               <span class="font-bold">{{ formatPrice({ amount: newTotalCost, currency: 'EUR', precision: 2 }) }}</span>
               <span class="font-semibold px-2 py-1 rounded text-sm">
-                {{ costDifference >= 0 ? '+' : ''
-                }}{{ formatPrice({ amount: costDifference, currency: 'EUR', precision: 2 }) }}
+                {{ costDifferenceSign + formatPrice({ amount: costDifference, currency: 'EUR', precision: 2 }) }}
               </span>
             </div>
           </div>
@@ -204,6 +203,8 @@ const costDifference = computed(() => {
   const difference = newTotalCost.value - oldTotalCost.value;
   return isNaN(difference) ? 0 : difference;
 });
+
+const costDifferenceSign = computed(() => (costDifference.value >= 0 ? '+' : ''));
 
 function handleConfirm() {
   emit('confirm');

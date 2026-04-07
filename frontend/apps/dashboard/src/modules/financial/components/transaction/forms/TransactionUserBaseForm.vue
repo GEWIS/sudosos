@@ -1,11 +1,11 @@
 <template>
   <div class="flex flex-col gap-2">
     <div v-if="!edit" class="flex flex-row gap-2">
-      <span class="font-semibold">{{ t('common.for') }}:</span>
+      <span class="font-semibold">{{ t('common.for') + ':' }}</span>
       <UserLink :new-tab="true" :user="currentUser" />
     </div>
     <div v-else class="flex flex-col gap-2">
-      <label class="font-semibold">{{ t('modules.admin.transactions.newUser') }}:</label>
+      <label class="font-semibold">{{ t('modules.admin.transactions.newUser') + ':' }}</label>
       <FindUser
         v-model:user="selectedUser as UserResponse"
         :placeholder="t('modules.admin.transactions.selectUser')"

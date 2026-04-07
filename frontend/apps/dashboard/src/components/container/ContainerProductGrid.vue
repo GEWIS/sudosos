@@ -43,7 +43,7 @@
         </template>
       </Column>
       <Column field="vat" :header="t('modules.seller.productContainers.products.vat')" style="width: 5rem">
-        <template #body="{ data }"> {{ data.vat?.percentage }}% </template>
+        <template #body="{ data }"> {{ data.vat != null ? data.vat.percentage + '%' : '' }} </template>
       </Column>
       <Column body-style="text-align: center" field="featured" style="width: 6rem">
         <template #header>

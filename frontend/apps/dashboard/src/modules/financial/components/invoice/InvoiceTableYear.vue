@@ -28,8 +28,7 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
-import type { InvoiceStatusResponseStateEnum } from '@gewis/sudosos-client';
-import { type InvoiceResponseTypes } from '@gewis/sudosos-client';
+import { type InvoiceResponseTypes, type InvoiceStatusResponseStateEnum } from '@gewis/sudosos-client';
 import InvoiceTable from '@/modules/financial/components/invoice/InvoiceTable.vue';
 import { useFiscalYear } from '@/composables/fiscalYear';
 import { useInvoiceStore } from '@/stores/invoice.store';

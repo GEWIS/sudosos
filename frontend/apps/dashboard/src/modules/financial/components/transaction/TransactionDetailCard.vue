@@ -12,11 +12,11 @@
         <!-- Transaction metadata -->
         <div class="flex flex-col gap-2">
           <div class="flex flex-row gap-2">
-            <span class="font-semibold">{{ t('common.id') }}:</span>
+            <span class="font-semibold">{{ t('common.id') + ':' }}</span>
             <span>{{ transaction.id }}</span>
           </div>
           <div class="flex flex-row gap-2">
-            <span class="font-semibold">{{ t('common.date') }}:</span>
+            <span class="font-semibold">{{ t('common.date') + ':' }}</span>
             <span>
               {{
                 new Date(transaction.createdAt || '').toLocaleString('nl-NL', {
@@ -27,18 +27,18 @@
             </span>
           </div>
           <div class="flex flex-row gap-2">
-            <span class="font-semibold">{{ t('common.for') }}:</span>
+            <span class="font-semibold">{{ t('common.for') + ':' }}</span>
             <UserLink :new-tab="true" :user="transaction.from" />
           </div>
           <div
             v-if="transaction.createdBy && transaction.createdBy.id !== transaction.from.id"
             class="flex flex-row gap-2"
           >
-            <span class="font-semibold">{{ t('components.mutations.putInBy.prefix') }}:</span>
+            <span class="font-semibold">{{ t('components.mutations.putInBy.prefix') + ':' }}</span>
             <UserLink :new-tab="true" :user="transaction.createdBy" />
           </div>
           <div class="flex flex-row gap-2">
-            <span class="font-semibold">{{ t('components.mutations.pos') }}:</span>
+            <span class="font-semibold">{{ t('components.mutations.pos') + ':' }}</span>
             <span>{{ transaction.pointOfSale.name }}</span>
           </div>
         </div>

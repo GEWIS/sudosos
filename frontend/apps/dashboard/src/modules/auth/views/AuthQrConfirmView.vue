@@ -19,7 +19,7 @@
 
     <div v-else-if="success" class="flex flex-col items-center gap-4">
       <div class="text-green-600 text-center">
-        <div class="text-4xl mb-2">✓</div>
+        <div class="text-4xl mb-2">{{ checkmark }}</div>
         <p class="font-semibold">{{ t('modules.auth.qr.confirmSuccess') }}</p>
         <p class="text-sm">{{ t('modules.auth.qr.redirecting') }}</p>
       </div>
@@ -59,6 +59,7 @@ import apiService from '@/services/ApiService';
 import AuthLocalCard from '@/modules/auth/components/AuthLocalCard.vue';
 
 const { t } = useI18n();
+const checkmark = '✓';
 const route = useRoute();
 const router = useRouter();
 

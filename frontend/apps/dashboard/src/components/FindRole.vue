@@ -27,10 +27,11 @@ const emits = defineEmits(['update:role']);
 const props = defineProps({
   role: {
     type: Object as PropType<RoleResponse>,
+    default: undefined,
   },
   default: {
     type: Object as PropType<RoleResponse>,
-    required: false,
+    default: undefined,
   },
   placeholder: {
     type: String,

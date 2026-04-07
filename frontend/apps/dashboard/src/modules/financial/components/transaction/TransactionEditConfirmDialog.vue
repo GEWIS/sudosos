@@ -12,15 +12,15 @@
 
         <div class="flex flex-col gap-2">
           <div class="flex flex-row gap-2">
-            <span class="font-semibold">{{ t('modules.admin.transactions.currentUser') }}:</span>
+            <span class="font-semibold">{{ t('modules.admin.transactions.currentUser') + ':' }}</span>
             <UserLink :new-tab="true" :user="oldUser" />
           </div>
           <div class="flex flex-row gap-2">
-            <span class="font-semibold">{{ t('modules.admin.transactions.newUser') }}:</span>
+            <span class="font-semibold">{{ t('modules.admin.transactions.newUser') + ':' }}</span>
             <UserLink :new-tab="true" :user="newUser" />
           </div>
           <div class="flex flex-row gap-2">
-            <span class="font-semibold">{{ t('common.id') }}:</span>
+            <span class="font-semibold">{{ t('common.id') + ':' }}</span>
             <span>{{ transactionId }}</span>
           </div>
         </div>

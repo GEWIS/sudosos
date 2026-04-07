@@ -40,4 +40,6 @@ bin
 .env
 *.tsbuildinfo
 
+CLAUDE.md
 _
+

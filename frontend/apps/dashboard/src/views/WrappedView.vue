@@ -93,10 +93,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick, onBeforeMount } from 'vue';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
-import type { ReportResponse } from '@gewis/sudosos-client';
+import type { ReportResponse, WrappedResponse, UserResponse, ReportProductEntryResponse } from '@gewis/sudosos-client';
 // eslint-disable-next-line import/no-named-as-default
 import Dinero from 'dinero.js';
-import type { WrappedResponse, UserResponse, ReportProductEntryResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';

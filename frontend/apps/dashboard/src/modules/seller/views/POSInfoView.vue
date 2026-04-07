@@ -38,11 +38,12 @@ import type {
   PaginatedBaseTransactionResponse,
   Dinero as SudoSOSDinero,
   PointOfSaleWithContainersResponse,
+  ContainerWithProductsResponse,
+  ReportResponse,
 } from '@gewis/sudosos-client';
 // eslint-disable-next-line import/no-named-as-default
 import Dinero from 'dinero.js';
 import { useI18n } from 'vue-i18n';
-import { type ContainerWithProductsResponse, type ReportResponse } from '@gewis/sudosos-client';
 import { getRelation, isAllowed } from '@sudosos/sudosos-frontend-common';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import ContainerCard from '@/components/container/ContainersCard.vue';
