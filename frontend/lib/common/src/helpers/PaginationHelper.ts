@@ -45,3 +45,21 @@ export async function fetchAllPages<T>(
 
   return allData;
 }
+
+export async function fetchAllPagesParallel<T>(
+  fetchPage: (take: number, skip: number) => Promise<AxiosResponse<PaginationResult<T>>>,
+  pageSize = 500,
+): Promise<T[]> {
+  const first = await fetchPage(pageSize, 0);
+  const { records, _pagination } = first.data;
+  const { count } = _pagination;
+
+  if (count <= pageSize) return records;
+
+  const pageCount = Math.ceil(count / pageSize);
+  const remaining = await Promise.all(
+    Array.from({ length: pageCount - 1 }, (_, i) => fetchPage(pageSize, (i + 1) * pageSize)),
+  );
+
+  return records.concat(...remaining.map((r) => r.data.records));
+}

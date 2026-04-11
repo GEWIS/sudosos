@@ -13,7 +13,7 @@ export {
   isAuthenticated,
   populateStoresFromToken,
 } from './helpers/TokenHelper';
-export { fetchAllPages } from './helpers/PaginationHelper';
+export { fetchAllPages, fetchAllPagesParallel } from './helpers/PaginationHelper';
 export { addListenerOnDialogueOverlay } from './utils/dialogUtil';
 export { getRelation, isAllowed } from './utils/permissionUtil';
 export { setupWebSocket, type WebSocketSetupOptions } from './services/webSocketService';
