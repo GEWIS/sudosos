@@ -147,6 +147,33 @@
       "vat": {
         "title": "Grupy VAT"
       },
+      "financialOverview": {
+        "title": "Przegląd Finansowy",
+        "subtitle": "Przegląd wszystkich transakcji w roku obrachunkowym. Może być użyty do weryfikacji księgowości BAC z saldem SudoSOS.",
+        "table": {
+          "type": "Typ",
+          "credit": "Uznanie (€)",
+          "debit": "Obciążenie (€)",
+          "balance": "Saldo (€)",
+          "totalMutations": "Łączne mutacje (Δ) (€)",
+          "balanceAt": "Saldo na dzień {date} (€)",
+          "expectedEndBalance": "Oczekiwane saldo końcowe (początek + Δ) (€)",
+          "actualBalance": "Rzeczywiste saldo na dzień {date} (€)"
+        },
+        "transferTypes": {
+          "deposits": "Depozyty",
+          "invoices": "Faktury",
+          "creditInvoices": "Faktury korygujące",
+          "waivedFines": "Umorzone kary",
+          "manualCreations": "Ręczne tworzenia",
+          "fines": "Kary",
+          "writeOffs": "Umorzenia",
+          "adminCosts": "Koszty administracyjne",
+          "payoutRequests": "Wnioski o wypłatę",
+          "manualDeletions": "Ręczne usunięcia",
+          "sellerPayouts": "Wypłaty dla sprzedawców"
+        }
+      },
       "administrative": {
         "title": "Koszty administracyjne",
         "costs": "Koszty administracyjne",

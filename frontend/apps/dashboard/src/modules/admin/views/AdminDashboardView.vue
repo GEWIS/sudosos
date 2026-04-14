@@ -45,14 +45,11 @@
           <!-- Financial overview CTA -->
           <div class="flex w-1/2 flex-col items-center justify-center gap-2 px-6">
             <Button
-              disabled
               icon="pi pi-chart-bar"
               icon-pos="right"
               :label="t('modules.admin.dashboard.balanceSummary.financialOverview')"
+              @click="() => router.push({ name: 'financialOverview' })"
             />
-            <span class="text-sm text-muted-color">{{
-              '🚧 ' + t('modules.admin.dashboard.balanceSummary.underConstruction') + ' 🚧'
-            }}</span>
           </div>
         </div>
       </CardComponent>

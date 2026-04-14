@@ -181,6 +181,7 @@
       "writeOffs": "Umorzenia",
       "vat": "VAT",
       "administrativeCosts": "Koszty administracyjne",
+      "financialOverview": "Przegląd finansowy",
       "maintainer": "Utrzymanie",
       "sellers": "Sprzedawcy",
       "rbac": "RBAC"
@@ -295,7 +296,8 @@
       "productsContainers": "Produkty i Kontenery",
       "profile": "Profil",
       "error": "Błąd",
-      "wrapped": "Wrapped"
+      "wrapped": "Wrapped",
+      "financialOverview": "Przegląd finansowy"
     }
   }
 }

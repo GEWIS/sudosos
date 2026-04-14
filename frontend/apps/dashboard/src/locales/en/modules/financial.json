@@ -147,6 +147,33 @@
       "vat": {
         "title": "VAT Groups"
       },
+      "financialOverview": {
+        "title": "Financial Overview",
+        "subtitle": "Overview of all transfers during a fiscal year. This can be used to verify the BAC bookkeeping with the SudoSOS balance.",
+        "table": {
+          "type": "Type",
+          "credit": "Credit (€)",
+          "debit": "Debit (€)",
+          "balance": "Balance (€)",
+          "totalMutations": "Total mutations (Δ) (€)",
+          "balanceAt": "Balance at {date} (€)",
+          "expectedEndBalance": "Expected end balance (start + Δ) (€)",
+          "actualBalance": "Actual balance at {date} (€)"
+        },
+        "transferTypes": {
+          "deposits": "Deposits",
+          "invoices": "Invoices",
+          "creditInvoices": "Credit Invoices",
+          "waivedFines": "Waived Fines",
+          "manualCreations": "Manual Creations",
+          "fines": "Fines",
+          "writeOffs": "Write-offs",
+          "adminCosts": "Admin Costs",
+          "payoutRequests": "Payout Requests",
+          "manualDeletions": "Manual Deletions",
+          "sellerPayouts": "Seller Payouts"
+        }
+      },
       "administrative": {
         "title": "Administrative Costs",
         "costs": "Administrative Costs",

@@ -12,6 +12,7 @@ import TransactionView from '@/modules/financial/views/transaction/TransactionVi
 import SellerView from '@/modules/financial/views/seller/SellerView.vue';
 import VatView from '@/modules/financial/views/vat/VatView.vue';
 import AdministrativeView from '@/modules/financial/views/administrative/AdministrativeView.vue';
+import FinancialOverviewView from '@/modules/financial/views/overview/FinancialOverviewView.vue';
 
 export function financialRoutes(): RouteRecordRaw[] {
   return [
@@ -138,6 +139,16 @@ export function financialRoutes(): RouteRecordRaw[] {
           meta: {
             requiresAuth: true,
             isAllowed: () => isAllowed('get', ['all'], 'InactiveAdministrativeCost', ['any']),
+          },
+        },
+        {
+          path: '/financial/overview',
+          component: FinancialOverviewView,
+          name: 'financialOverview',
+          meta: {
+            requiresAuth: true,
+            isAllowed: () => isAllowed('get', ['all'], 'FinancialOverview', ['any']),
+            title: 'common.titles.financialOverview',
           },
         },
       ],

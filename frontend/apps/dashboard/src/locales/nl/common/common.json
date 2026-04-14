@@ -181,6 +181,7 @@
       "writeOffs": "Afschrijvingen",
       "vat": "BTW",
       "administrativeCosts": "Administratiekosten",
+      "financialOverview": "Overzicht",
       "maintainer": "Maintainer",
       "sellers": "Verkopers",
       "rbac": "RBAC"
@@ -295,7 +296,8 @@
       "productsContainers": "Producten & Containers",
       "profile": "Profiel",
       "error": "Fout",
-      "wrapped": "Wrapped"
+      "wrapped": "Wrapped",
+      "financialOverview": "Financieel Overzicht"
     }
   }
 }

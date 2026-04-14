@@ -26,8 +26,14 @@ export function useFinancialNav() {
           isAllowed('get', ['all'], 'User', ['any']) ||
           isAllowed('get', ['all'], 'Invoice', ['any']) ||
           isAllowed('get', ['all'], 'Fine', ['any']) ||
-          isAllowed('get', ['all'], 'SellerPayout', ['any']),
+          isAllowed('get', ['all'], 'SellerPayout', ['any']) ||
+          isAllowed('get', ['all'], 'FinancialOverview', ['any']),
         items: [
+          {
+            label: t('common.navigation.financialOverview'),
+            route: '/financial/overview',
+            visible: isAllowed('get', ['all'], 'FinancialOverview', ['any']),
+          },
           {
             label: t('common.navigation.users'),
             route: '/user',

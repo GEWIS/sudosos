@@ -147,6 +147,33 @@
       "vat": {
         "title": "BTW Groepen"
       },
+      "financialOverview": {
+        "title": "Financieel Overzicht",
+        "subtitle": "Overzicht van alle transacties tijdens een boekjaar. Dit kan worden gebruikt om de BAC-boekhouding te verifiëren met het SudoSOS-saldo.",
+        "table": {
+          "type": "Type",
+          "credit": "Credit (€)",
+          "debit": "Debet (€)",
+          "balance": "Saldo (€)",
+          "totalMutations": "Totale mutaties (Δ) (€)",
+          "balanceAt": "Saldo op {date} (€)",
+          "expectedEndBalance": "Verwacht eindsaldo (begin + Δ) (€)",
+          "actualBalance": "Werkelijk saldo op {date} (€)"
+        },
+        "transferTypes": {
+          "deposits": "Stortingen",
+          "invoices": "Facturen",
+          "creditInvoices": "Creditfacturen",
+          "waivedFines": "Kwijtgescholden boetes",
+          "manualCreations": "Handmatige aanmaak",
+          "fines": "Boetes",
+          "writeOffs": "Afschrijvingen",
+          "adminCosts": "Administratiekosten",
+          "payoutRequests": "Uitbetalingsverzoeken",
+          "manualDeletions": "Handmatige verwijderingen",
+          "sellerPayouts": "Verkopersuitbetalingen"
+        }
+      },
       "administrative": {
         "title": "Administratiekosten",
         "costs": "Administratiekosten",
