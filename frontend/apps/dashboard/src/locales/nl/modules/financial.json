@@ -157,8 +157,7 @@
           "balance": "Saldo (€)",
           "totalMutations": "Totale mutaties (Δ) (€)",
           "balanceAt": "Saldo op {date} (€)",
-          "expectedEndBalance": "Verwacht eindsaldo (begin + Δ) (€)",
-          "actualBalance": "Werkelijk saldo op {date} (€)"
+          "expectedEndBalance": "Verwacht eindsaldo (begin + Δ) (€)"
         },
         "transferTypes": {
           "deposits": "Stortingen",
@@ -171,7 +170,8 @@
           "adminCosts": "Administratiekosten",
           "payoutRequests": "Uitbetalingsverzoeken",
           "manualDeletions": "Handmatige verwijderingen",
-          "sellerPayouts": "Verkopersuitbetalingen"
+          "sellerPayouts": "Verkopersuitbetalingen",
+          "manual": "Handmatige mutaties"
         }
       },
       "administrative": {

@@ -14,9 +14,11 @@
 
     <Column class="text-left" :header="t('modules.financial.financialOverview.table.type')" header-class="font-sans">
       <template #body="{ data }">
-        <Skeleton v-if="loadingState" height="1rem" />
-        <span v-else-if="data.isChild" class="pl-6 text-color-secondary">{{ data.name }}</span>
-        <span v-else>{{ data.transferType }}</span>
+        <template v-if="!data.isSeparator">
+          <Skeleton v-if="loadingState" height="1rem" />
+          <span v-else-if="data.isChild" class="pl-6 text-color-secondary">{{ data.name }}</span>
+          <span v-else>{{ data.transferType }}</span>
+        </template>
       </template>
     </Column>
 
@@ -26,8 +28,10 @@
       header-class="font-sans text-right"
     >
       <template #body="{ data }">
-        <Skeleton v-if="loadingState" height="1rem" />
-        <span v-else>{{ formatCurrency(data.credit || 0) }}</span>
+        <template v-if="!data.isSeparator">
+          <Skeleton v-if="loadingState" height="1rem" />
+          <span v-else>{{ formatCurrency(data.credit || 0) }}</span>
+        </template>
       </template>
     </Column>
 
@@ -37,8 +41,10 @@
       header-class="font-sans text-right"
     >
       <template #body="{ data }">
-        <Skeleton v-if="loadingState" height="1rem" />
-        <span v-else>{{ formatCurrency(data.debit || 0) }}</span>
+        <template v-if="!data.isSeparator">
+          <Skeleton v-if="loadingState" height="1rem" />
+          <span v-else>{{ formatCurrency(data.debit || 0) }}</span>
+        </template>
       </template>
     </Column>
 
@@ -48,8 +54,10 @@
       header-class="font-sans text-right"
     >
       <template #body="{ data }">
-        <Skeleton v-if="loadingState" height="1rem" />
-        <span v-else>{{ formatCurrency((data.credit || 0) - (data.debit || 0)) }}</span>
+        <template v-if="!data.isSeparator">
+          <Skeleton v-if="loadingState" height="1rem" />
+          <span v-else>{{ formatCurrency((data.credit || 0) - (data.debit || 0)) }}</span>
+        </template>
       </template>
     </Column>
 
@@ -73,19 +81,9 @@
       </Row>
 
       <Row>
-        <Column :colspan="4" :footer="t('modules.financial.financialOverview.table.expectedEndBalance')" />
-        <Column class="font-mono text-right">
-          <template #footer>
-            <Skeleton v-if="loadingBalances" height="1rem" />
-            <span v-else>{{ formatCurrency(startBalance + totalMutationSaldo) }}</span>
-          </template>
-        </Column>
-      </Row>
-
-      <Row>
         <Column
           :colspan="4"
-          :footer="t('modules.financial.financialOverview.table.actualBalance', { date: formatDateFromString(end) })"
+          :footer="t('modules.financial.financialOverview.table.balanceAt', { date: formatDateFromString(end) })"
         />
         <Column
           class="font-mono text-right"
@@ -125,7 +123,7 @@ interface ChildRow {
   name: string;
   credit: number;
   debit: number;
-  id: number;
+  id: number | string;
 }
 
 interface FinancialOverviewTableRow {
@@ -135,6 +133,7 @@ interface FinancialOverviewTableRow {
   children?: ChildRow[];
   isChild?: boolean;
   collapsing?: boolean;
+  isSeparator?: boolean;
   name?: string;
 }
 
@@ -194,6 +193,7 @@ const validationMatch = computed(() => {
 
 const onRowClass = (data: FinancialOverviewTableRow) => {
   if (loadingState.value) return 'skeleton-row';
+  if (data.isSeparator) return 'separator-row';
   if (data.isChild) return data.collapsing ? 'child-row child-row-out' : 'child-row';
   if (!data.children || data.children.length === 0) return 'no-expander-row';
   return '';
@@ -249,7 +249,10 @@ const fetchData = async () => {
   );
 
   const mainDataFetch = Promise.all([
-    ApiService.transfers.getTransferSummary({ fromDate: start.value, tillDate: end.value }),
+    ApiService.transfers.getTransferSummary({
+      fromDate: start.value,
+      tillDate: end.value,
+    }),
     Promise.all(sellerPayoutPromises),
   ])
     .then(([summaryRes, payoutRes]) => {
@@ -257,23 +260,6 @@ const fetchData = async () => {
       const amt = (field: { total?: { amount?: number } } | undefined) => (field?.total?.amount || 0) / 100;
 
       const tt = (key: string) => t(`modules.financial.financialOverview.transferTypes.${key}`);
-      const categoryRows: FinancialOverviewTableRow[] = [
-        { transferType: tt('deposits'), credit: amt(s.deposits), debit: 0, children: [] },
-        { transferType: tt('invoices'), credit: amt(s.invoices), debit: 0, children: [] },
-        { transferType: tt('creditInvoices'), credit: 0, debit: amt(s.creditInvoices), children: [] },
-        { transferType: tt('waivedFines'), credit: amt(s.waivedFines), debit: 0, children: [] },
-        { transferType: tt('manualCreations'), credit: amt(s.manualCreations), debit: 0, children: [] },
-        { transferType: tt('fines'), credit: 0, debit: amt(s.fines), children: [] },
-        { transferType: tt('writeOffs'), credit: amt(s.writeOffs), debit: 0, children: [] },
-        { transferType: tt('adminCosts'), credit: 0, debit: amt(s.inactiveAdministrativeCosts), children: [] },
-        { transferType: tt('payoutRequests'), credit: 0, debit: amt(s.payoutRequests), children: [] },
-        {
-          transferType: tt('manualDeletions'),
-          credit: 0,
-          debit: amt(s.manualDeletions) - amt(s.creditInvoices),
-          children: [],
-        },
-      ];
 
       const payoutChildren = props.sellers
         .map((seller, i) => ({
@@ -284,6 +270,10 @@ const fetchData = async () => {
         }))
         .filter((c) => c.debit !== 0);
 
+      const categoryRows: FinancialOverviewTableRow[] = [
+        { transferType: tt('deposits'), credit: amt(s.deposits), debit: 0, children: [] },
+      ];
+
       if (payoutChildren.length > 0) {
         categoryRows.push({
           transferType: tt('sellerPayouts'),
@@ -292,6 +282,49 @@ const fetchData = async () => {
           children: payoutChildren,
         });
       }
+
+      categoryRows.push({ transferType: 'separator-1', credit: 0, debit: 0, isSeparator: true });
+
+      categoryRows.push({
+        transferType: tt('invoices'),
+        credit: amt(s.invoices),
+        debit: amt(s.creditInvoices),
+        children: [
+          { name: tt('invoices'), credit: amt(s.invoices), debit: 0, id: 'invoices' },
+          { name: tt('creditInvoices'), credit: 0, debit: amt(s.creditInvoices), id: 'creditInvoices' },
+        ],
+      });
+
+      categoryRows.push({
+        transferType: tt('fines'),
+        credit: amt(s.waivedFines),
+        debit: amt(s.fines),
+        children: [
+          { name: tt('fines'), credit: 0, debit: amt(s.fines), id: 'fines' },
+          { name: tt('waivedFines'), credit: amt(s.waivedFines), debit: 0, id: 'waivedFines' },
+        ],
+      });
+
+      categoryRows.push({
+        transferType: tt('adminCosts'),
+        credit: 0,
+        debit: amt(s.inactiveAdministrativeCosts),
+        children: [],
+      });
+      categoryRows.push({ transferType: tt('writeOffs'), credit: amt(s.writeOffs), debit: 0, children: [] });
+      categoryRows.push({ transferType: tt('payoutRequests'), credit: 0, debit: amt(s.payoutRequests), children: [] });
+
+      categoryRows.push({ transferType: 'separator-2', credit: 0, debit: 0, isSeparator: true });
+
+      categoryRows.push({
+        transferType: tt('manual'),
+        credit: amt(s.manualCreations),
+        debit: amt(s.manualDeletions),
+        children: [
+          { name: tt('manualCreations'), credit: amt(s.manualCreations), debit: 0, id: 'manualCreations' },
+          { name: tt('manualDeletions'), credit: 0, debit: amt(s.manualDeletions), id: 'manualDeletions' },
+        ],
+      });
 
       financialMutations.value = categoryRows;
     })
@@ -307,7 +340,10 @@ const fetchData = async () => {
       date: new Date(new Date(start.value).getTime() - 1).toISOString(),
       allowDeleted: true,
     }),
-    ApiService.balance.calculateTotalBalances({ date: end.value, allowDeleted: true }),
+    ApiService.balance.calculateTotalBalances({
+      date: new Date(new Date(end.value).getTime() - 1).toISOString(),
+      allowDeleted: true,
+    }),
   ])
     .then(([startBalRes, endBalRes]) => {
       const startData = startBalRes.data;
@@ -363,6 +399,18 @@ watch(() => [props.year, props.sellers], fetchData, { immediate: true });
 :deep(.no-expander-row) {
   td:first-child {
     padding-left: calc(0.75rem + 1.75rem);
+  }
+}
+
+:deep(.separator-row) {
+  background: transparent !important;
+
+  td {
+    background: transparent !important;
+  }
+
+  &:hover td {
+    background: transparent !important;
   }
 }
 

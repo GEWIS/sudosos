@@ -157,8 +157,7 @@
           "balance": "Saldo (€)",
           "totalMutations": "Łączne mutacje (Δ) (€)",
           "balanceAt": "Saldo na dzień {date} (€)",
-          "expectedEndBalance": "Oczekiwane saldo końcowe (początek + Δ) (€)",
-          "actualBalance": "Rzeczywiste saldo na dzień {date} (€)"
+          "expectedEndBalance": "Oczekiwane saldo końcowe (początek + Δ) (€)"
         },
         "transferTypes": {
           "deposits": "Depozyty",
@@ -171,7 +170,8 @@
           "adminCosts": "Koszty administracyjne",
           "payoutRequests": "Wnioski o wypłatę",
           "manualDeletions": "Ręczne usunięcia",
-          "sellerPayouts": "Wypłaty dla sprzedawców"
+          "sellerPayouts": "Wypłaty dla sprzedawców",
+          "manual": "Ręczne mutacje"
         }
       },
       "administrative": {

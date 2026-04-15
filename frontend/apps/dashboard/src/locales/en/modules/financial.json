@@ -156,9 +156,8 @@
           "debit": "Debit (€)",
           "balance": "Balance (€)",
           "totalMutations": "Total mutations (Δ) (€)",
-          "balanceAt": "Balance at {date} (€)",
-          "expectedEndBalance": "Expected end balance (start + Δ) (€)",
-          "actualBalance": "Actual balance at {date} (€)"
+          "balanceAt": "Balance on {date} (€)",
+          "expectedEndBalance": "Expected end balance (start + Δ) (€)"
         },
         "transferTypes": {
           "deposits": "Deposits",
@@ -171,7 +170,8 @@
           "adminCosts": "Admin Costs",
           "payoutRequests": "Payout Requests",
           "manualDeletions": "Manual Deletions",
-          "sellerPayouts": "Seller Payouts"
+          "sellerPayouts": "Seller Payouts",
+          "manual": "Manual Mutations"
         }
       },
       "administrative": {
