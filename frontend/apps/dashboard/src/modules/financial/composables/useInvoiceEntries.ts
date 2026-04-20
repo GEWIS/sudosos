@@ -35,7 +35,7 @@ export function useInvoiceEntries(invoice: Ref<InvoiceResponse>) {
     const map = new Map<number, VatEntry>();
     invoice.value.invoiceEntries.forEach((entry) => {
       const totalInclVat = entry.priceInclVat.amount * entry.amount;
-      const base = Math.round(totalInclVat / (1 + entry.vatPercentage / 100));
+      const base = Math.round(entry.priceInclVat.amount / (1 + entry.vatPercentage / 100)) * entry.amount;
       const vatAmt = totalInclVat - base;
       if (!map.has(entry.vatPercentage)) {
         map.set(entry.vatPercentage, {
