@@ -3,31 +3,63 @@
     <DataTable
       class="w-full"
       data-key="id"
+      filter-display="menu"
+      :filters="filters"
       lazy
-      :paginator="paginator"
+      :paginator="true"
       :rows="rows"
       :rows-per-page-options="[5, 10, 25, 50, 100]"
       table-style="min-width: 50rem"
       :total-records="totalRecords"
-      :value="rowValues"
-      @page="onPage($event)"
+      :value="payouts"
+      @page="onPage"
     >
-      <Column field="date" :header="t('common.date')">
+      <Column field="id" :header="t('common.id')">
+        <template #body="slotProps">
+          <Skeleton v-if="isLoading" class="h-1rem my-1 surface-300 w-6" />
+          <span v-else>{{ slotProps.data.id }}</span>
+        </template>
+      </Column>
+      <Column field="createdAt" :header="t('common.date')">
         <template #body="slotProps">
           <Skeleton v-if="isLoading" class="h-1rem my-1 surface-300 w-6" />
           <span v-else>{{ formatDateFromString(slotProps.data.createdAt) }}</span>
         </template>
       </Column>
-      <Column field="status" :header="t('common.status')">
-        <template #body>
+      <Column
+        field="status"
+        filter
+        filter-match-mode="equals"
+        :header="t('common.status')"
+        :show-apply-button="false"
+        :show-clear-button="false"
+        :show-filter-match-modes="false"
+      >
+        <template #filter="{ filterModel }">
+          <Select
+            v-model="filterModel.value"
+            option-label="name"
+            option-value="value"
+            :options="states"
+            :placeholder="t('common.placeholders.selectType')"
+            @change="(e) => stateFilterChange('state', e)"
+          />
+        </template>
+        <template #body="slotProps">
           <Skeleton v-if="isLoading" class="h-1rem my-1 surface-300 w-6" />
-          <span v-else>{{ state }}</span>
+          <span v-else>{{ slotProps.data.status }}</span>
         </template>
       </Column>
       <Column field="requestedBy.firstName" :header="t('modules.financial.payout.requestedBy')">
         <template #body="slotProps">
           <Skeleton v-if="isLoading" class="h-1rem my-1 surface-300 w-6" />
           <span v-else>{{ slotProps.data.requestedBy.firstName }}</span>
+        </template>
+      </Column>
+      <Column field="approvedBy.firstName" :header="t('modules.financial.payout.approvedBy')">
+        <template #body="slotProps">
+          <Skeleton v-if="isLoading" class="h-1rem my-1 surface-300 w-6" />
+          <span v-else>{{ slotProps.data.approvedBy ? slotProps.data.approvedBy.firstName : t('common.na') }}</span>
         </template>
       </Column>
       <Column field="amount" :header="t('common.amount')">
@@ -74,11 +106,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, type PropType, type Ref, computed, watch } from 'vue';
-import { type PaginatedBasePayoutRequestResponse, PayoutRequestStatusRequestStateEnum } from '@gewis/sudosos-client';
+import { ref, type Ref } from 'vue';
+import { type BasePayoutRequestResponse, PayoutRequestStatusRequestStateEnum } from '@gewis/sudosos-client';
 import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
+import { type SelectChangeEvent } from 'primevue/select';
 import { useI18n } from 'vue-i18n';
 import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
 import { formatPrice, formatDateFromString } from '@/utils/formatterUtils';
@@ -86,32 +119,42 @@ import { usePayoutStore } from '@/stores/payout.store';
 import { getPayoutPdfSrc } from '@/utils/urlUtils';
 import PayoutInfo from '@/modules/financial/components/payout/PayoutInfo.vue';
 
+defineProps<{
+  payouts: BasePayoutRequestResponse[];
+  isLoading: boolean;
+  rows: number;
+  totalRecords: number;
+}>();
+
+const emit = defineEmits(['page', 'stateFilterChange']);
+
 const { t } = useI18n();
-
-const props = defineProps({
-  state: {
-    type: String as PropType<PayoutRequestStatusRequestStateEnum>,
-    required: true,
-  },
-});
-
 const payoutStore = usePayoutStore();
-const totalRecords = ref<number>(0);
-const isLoading = ref<boolean>(true);
 
-const rows = ref<number>(5);
-const paginator = ref<boolean>(true);
+const states: Ref<Array<{ name: string; value: string | null }>> = ref([
+  { name: PayoutRequestStatusRequestStateEnum.Created, value: PayoutRequestStatusRequestStateEnum.Created },
+  { name: PayoutRequestStatusRequestStateEnum.Approved, value: PayoutRequestStatusRequestStateEnum.Approved },
+  { name: PayoutRequestStatusRequestStateEnum.Denied, value: PayoutRequestStatusRequestStateEnum.Denied },
+  { name: PayoutRequestStatusRequestStateEnum.Cancelled, value: PayoutRequestStatusRequestStateEnum.Cancelled },
+  { name: 'ALL', value: null },
+]);
 
-const payoutRequests = ref();
-const rowValues = computed(() => {
-  if (isLoading.value) return Array(rows.value).fill(null);
-  return payoutRequests.value;
+const filters = ref({
+  status: { value: null, matchMode: 'equals' },
 });
+
+function onPage(event: DataTablePageEvent) {
+  emit('page', event);
+}
+
+function stateFilterChange(key: string, e: SelectChangeEvent) {
+  emit('stateFilterChange', key, e.value);
+}
 
 const showModal: Ref<boolean> = ref(false);
 const dialog = ref();
 const payoutId: Ref<number> = ref(0);
-const downloadingPdf = ref<boolean>(false);
+const downloadingPdf = ref(false);
 
 const viewPayoutRequest = (id: number) => {
   showModal.value = true;
@@ -124,31 +167,4 @@ const downloadPdf = async (id: number) => {
   window.location.href = getPayoutPdfSrc(result);
   downloadingPdf.value = false;
 };
-
-onMounted(async () => {
-  await loadPayoutRequests();
-});
-
-async function loadPayoutRequests(skip = 0) {
-  isLoading.value = true;
-  const response: PaginatedBasePayoutRequestResponse = await payoutStore.fetchPayouts(rows.value, skip, props.state);
-  if (response) {
-    payoutRequests.value = response.records;
-    totalRecords.value = response._pagination.count || 0;
-  }
-  isLoading.value = false;
-}
-
-async function onPage(event: DataTablePageEvent) {
-  await loadPayoutRequests(event.first);
-}
-
-watch(
-  () => payoutStore.getUpdatedAt,
-  () => {
-    void loadPayoutRequests();
-  },
-);
 </script>
-
-<style scoped lang="scss"></style>

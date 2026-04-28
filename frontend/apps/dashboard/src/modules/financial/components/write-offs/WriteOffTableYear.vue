@@ -1,4 +1,14 @@
 <template>
+  <IconField icon-position="left">
+    <InputIcon class="pi pi-search" />
+    <InputText
+      v-model="search"
+      :placeholder="t('common.id')"
+      @focusout="searchById"
+      @keyup.enter="searchById"
+      @submit="searchById"
+    />
+  </IconField>
   <Tabs v-model:value="year" class="w-full">
     <TabList>
       <Tab v-for="y in years" :key="y" :value="y.toString()">{{ y }}</Tab>
@@ -10,41 +20,42 @@
     :total-records="totalRecords"
     :write-offs="records"
     @page="onPage"
-    @single="onSingle"
   />
 </template>
 
 <script setup lang="ts">
 import type { WriteOffResponse } from '@gewis/sudosos-client';
-import { useFiscalYear } from '@/composables/fiscalYear';
+import { useI18n } from 'vue-i18n';
 import { useWriteOffStore } from '@/stores/writeoff.store';
-import { useDataTableYear } from '@/composables/dataTableYear';
-import type { DataTableFetchParams, DataTableFetchResult } from '@/utils/pagination';
 import WriteOffTable from '@/modules/financial/components/write-offs/WriteOffTable.vue';
-const { getFiscalYearList, getFiscalYearRange } = useFiscalYear();
-const years = getFiscalYearList();
+import { useTransferTableYear } from '@/composables/transferTableYear';
 const writeOffStore = useWriteOffStore();
+const { t } = useI18n();
+const { year, years, search, rows, isLoading, records, totalRecords, onPage, searchById } = useTransferTableYear<
+  WriteOffResponse,
+  Record<string, unknown>
+>(fetchWriteOffs, fetchSingleWriteOff, {
+  defaultRows: 10,
+  syncQueryParams: true,
+});
 
 async function fetchWriteOffs({
-  year,
   page,
   rows,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- rquired for type inference
-  filters,
-}: DataTableFetchParams<Record<string, unknown>>): Promise<DataTableFetchResult<WriteOffResponse>> {
-  const { start, end } = getFiscalYearRange(year);
-  return await writeOffStore.fetchWriteOffs(rows, page, start, end);
+  fiscalStart,
+  fiscalEnd,
+}: {
+  year: number;
+  page: number;
+  rows: number;
+  filters: Record<string, unknown>;
+  fiscalStart: string;
+  fiscalEnd: string;
+}) {
+  return await writeOffStore.fetchWriteOffs(rows, page, fiscalStart, fiscalEnd);
 }
 
 function fetchSingleWriteOff(id: number) {
   return writeOffStore.fetchWriteOff(id);
 }
-
-const { year, rows, isLoading, records, totalRecords, onPage, onSingle } = useDataTableYear<
-  WriteOffResponse,
-  Record<string, unknown>
->(fetchWriteOffs, fetchSingleWriteOff, {
-  yearList: years,
-  defaultYear: years[0]!,
-});
 </script>

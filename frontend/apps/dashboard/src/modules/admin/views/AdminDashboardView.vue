@@ -331,7 +331,7 @@ onMounted(async () => {
       }),
 
     payoutStore
-      .fetchPayouts(5, 0, 'CREATED')
+      .fetchPayouts(5, 0, { status: 'CREATED' })
       .then((res) => {
         pendingPayouts.value = res.records;
         pendingPayoutsTotal.value = res._pagination.count ?? 0;

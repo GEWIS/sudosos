@@ -1,8 +1,8 @@
-import type {
-  BasePayoutRequestResponse,
-  PaginatedBasePayoutRequestResponse,
-  PayoutRequestRequest,
-  PayoutRequestResponse,
+import {
+  type BasePayoutRequestResponse,
+  type PaginatedBasePayoutRequestResponse,
+  type PayoutRequestRequest,
+  type PayoutRequestResponse,
 } from '@gewis/sudosos-client';
 import { defineStore } from 'pinia';
 import { PayoutRequestStatusRequestStateEnum } from '@gewis/sudosos-client';
@@ -36,8 +36,13 @@ export const usePayoutStore = defineStore('payout', {
     },
   },
   actions: {
-    async fetchPayouts(take: number, skip: number, state?: string): Promise<PaginatedBasePayoutRequestResponse> {
-      return apiService.payouts.getAllPayoutRequests({ status: state, take, skip }).then((res) => {
+    async fetchPayouts(
+      take: number,
+      skip: number,
+      q: { status?: string; fromDate?: string; tillDate?: string },
+    ): Promise<PaginatedBasePayoutRequestResponse> {
+      const { status, fromDate, tillDate } = q;
+      return apiService.payouts.getAllPayoutRequests({ status, fromDate, tillDate, take, skip }).then((res) => {
         res.data.records.forEach((payout: BasePayoutRequestResponse) => {
           this.payouts[payout.id] = payout;
         });

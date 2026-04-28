@@ -14,9 +14,9 @@
       <Tab v-for="y in years" :key="y" :value="y.toString()">{{ y }}</Tab>
     </TabList>
   </Tabs>
-  <InvoiceTable
-    :invoices="records"
+  <PayoutTable
     :is-loading="isLoading"
+    :payouts="records"
     :rows="rows"
     :total-records="totalRecords"
     @page="onPage"
@@ -26,15 +26,16 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { type InvoiceResponseTypes, InvoiceStatusResponseStateEnum } from '@gewis/sudosos-client';
-import InvoiceTable from '@/modules/financial/components/invoice/InvoiceTable.vue';
-import { useInvoiceStore } from '@/stores/invoice.store';
+import { type BasePayoutRequestResponse, PayoutRequestStatusRequestStateEnum } from '@gewis/sudosos-client';
+import { watch } from 'vue';
+import { usePayoutStore } from '@/stores/payout.store';
 import { useTransferTableYear } from '@/composables/transferTableYear';
+import PayoutTable from '@/modules/financial/components/payout/PayoutTable.vue';
 
-const invoiceStore = useInvoiceStore();
 const { t } = useI18n();
+const payoutStore = usePayoutStore();
 
-async function fetchInvoices({
+async function fetchPayouts({
   page,
   rows,
   filters,
@@ -44,34 +45,39 @@ async function fetchInvoices({
   year: number;
   page: number;
   rows: number;
-  filters: { state?: InvoiceStatusResponseStateEnum };
+  filters: { state?: PayoutRequestStatusRequestStateEnum };
   fiscalStart: string;
   fiscalEnd: string;
 }) {
-  return await invoiceStore.fetchInvoices(rows, page, {
+  return payoutStore.fetchPayouts(rows, page, {
+    status: filters.state,
     fromDate: fiscalStart,
     tillDate: fiscalEnd,
-    state: filters.state,
   });
 }
 
-async function fetchSingleInvoice(id: number) {
-  return await invoiceStore.fetchInvoice(id);
+async function fetchSinglePayout(id: number) {
+  return payoutStore.fetchPayout(id);
 }
 
-const { year, years, search, rows, isLoading, records, totalRecords, onPage, setFilter, searchById } =
-  useTransferTableYear<InvoiceResponseTypes, { state?: InvoiceStatusResponseStateEnum }>(
-    fetchInvoices,
-    fetchSingleInvoice,
+const { year, years, search, rows, isLoading, records, totalRecords, onPage, setFilter, reload, searchById } =
+  useTransferTableYear<BasePayoutRequestResponse, { state?: PayoutRequestStatusRequestStateEnum }>(
+    fetchPayouts,
+    fetchSinglePayout,
     {
       initialFilters: { state: undefined },
       defaultRows: 10,
       syncQueryParams: {
         serializeFilters: (f) => ({ state: f.state }),
         deserializeFilters: (q) => ({
-          state: typeof q.state === 'string' ? (q.state as InvoiceStatusResponseStateEnum) : undefined,
+          state: typeof q.state === 'string' ? (q.state as PayoutRequestStatusRequestStateEnum) : undefined,
         }),
       },
     },
   );
+
+watch(
+  () => payoutStore.getUpdatedAt,
+  () => void reload(),
+);
 </script>
