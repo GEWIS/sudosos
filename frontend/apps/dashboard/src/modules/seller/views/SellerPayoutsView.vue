@@ -15,9 +15,7 @@
         </FormCard>
         <AdminUserBalance v-if="user" :user="user" @update:value="balance = $event" />
       </div>
-      <CardComponent v-if="user" :header="t('modules.seller.payouts.title')">
-        <SellerPayoutsTable :seller="user" />
-      </CardComponent>
+      <SellerPayoutsTable v-if="user" :seller="user" />
       <Skeleton v-else class="h-20rem w-full" />
     </div>
   </PageContainer>
@@ -30,7 +28,6 @@ import { useI18n } from 'vue-i18n';
 import { computed, onBeforeMount, ref, watchEffect, type Ref } from 'vue';
 import ApiService from '@/services/ApiService';
 import SellerPayoutsTable from '@/modules/seller/components/seller/SellerPayoutsTable.vue';
-import CardComponent from '@/components/CardComponent.vue';
 import AdminUserBalance from '@/modules/admin/components/users/AdminUserBalance.vue';
 import { schemaToForm } from '@/utils/formUtils';
 import { createSellerPayoutObject } from '@/utils/validation-schema';

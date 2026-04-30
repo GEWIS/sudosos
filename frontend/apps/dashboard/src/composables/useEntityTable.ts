@@ -1,8 +1,10 @@
+import { watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import type { LocationQuery } from 'vue-router';
 import { useFiscalYear } from '@/composables/fiscalYear';
 import { useDataTableYear } from '@/composables/dataTableYear';
+import { debounce } from '@/utils/debounceUtil';
 
 /**
  * Composable for transfer-type DataTables with fiscal year tabs, ID search, and optional URL query-param sync.
@@ -34,7 +36,7 @@ export interface TransferFilterSync<F> {
   deserializeFilters?: (query: LocationQuery) => Partial<F>;
 }
 
-export function useTransferTableYear<T, F extends Record<string, unknown>>(
+export function useEntityTable<T, F extends Record<string, unknown>>(
   fetchRecords: (params: {
     year: number;
     page: number;
@@ -48,16 +50,22 @@ export function useTransferTableYear<T, F extends Record<string, unknown>>(
     initialFilters?: F;
     defaultRows?: number;
     syncQueryParams?: boolean | TransferFilterSync<F>;
+    useYears?: boolean;
+    searchKey?: keyof F;
   },
 ) {
   const { getFiscalYearList, getFiscalYearRange } = useFiscalYear();
-  const years = getFiscalYearList();
+  const useYears = options?.useYears ?? true;
+  const years = useYears ? getFiscalYearList() : [];
   const { t } = useI18n();
   const toast = useToast();
 
   async function wrappedFetch(params: { year: number; page: number; rows: number; filters: F }) {
-    const { start, end } = getFiscalYearRange(params.year);
-    return fetchRecords({ ...params, fiscalStart: start, fiscalEnd: end });
+    if (useYears) {
+      const { start, end } = getFiscalYearRange(params.year);
+      return fetchRecords({ ...params, fiscalStart: start, fiscalEnd: end });
+    }
+    return fetchRecords({ ...params, fiscalStart: '', fiscalEnd: '' });
   }
 
   const syncOpts = options?.syncQueryParams;
@@ -65,7 +73,7 @@ export function useTransferTableYear<T, F extends Record<string, unknown>>(
 
   const table = useDataTableYear<T, F>(wrappedFetch, fetchSingleRecord, {
     yearList: years,
-    defaultYear: years[0]!,
+    defaultYear: years[0] ?? 0,
     initialFilters: options?.initialFilters,
     defaultRows: options?.defaultRows,
     queryParamSync: syncOpts
@@ -78,7 +86,19 @@ export function useTransferTableYear<T, F extends Record<string, unknown>>(
       : undefined,
   });
 
+  const searchKey = options?.searchKey;
+
+  // Filter-based search: debounced, triggers on every keystroke
+  if (searchKey) {
+    const debouncedSearch = debounce(() => {
+      return Promise.resolve(table.setFilter(searchKey, table.search.value as F[typeof searchKey]));
+    }, 250);
+    watch(table.search, () => debouncedSearch());
+  }
+
+  // ID-based search: triggered manually (enter / focusout), calls fetchSingleRecord
   function searchById() {
+    if (searchKey) return; // live filter mode — manual trigger not needed
     const id = Number(table.search.value);
     if (isNaN(id)) return;
     table.onSingle(id).catch(() => {
