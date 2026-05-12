@@ -3,16 +3,16 @@
     <div class="flex flex-col gap-5 lg:flex-row">
       <EntityTable
         v-model:search="search"
-        v-model:year="year"
         v-model:selection="selectedRows"
+        v-model:year="year"
+        :data-table-props="{ selectionMode: 'multiple' }"
         :is-loading="isLoading"
         :records="records"
         :rows="rows"
+        :search-placeholder="t('common.id')"
+        :title="t('modules.financial.transfer.title')"
         :total-records="totalRecords"
         :years="years"
-        :title="t('modules.financial.transfer.title')"
-        :search-placeholder="t('common.id')"
-        :data-table-props="{ selectionMode: 'multiple' }"
         @page="onPage"
         @search="searchById"
       >
@@ -65,8 +65,8 @@
           </Column>
           <Column
             class="font-mono text-right"
-            header-class="text-right"
             :header="t('modules.financial.financialOverview.table.credit')"
+            header-class="text-right"
           >
             <template #body="{ data }">
               <Skeleton v-if="loading" height="1rem" />
@@ -78,8 +78,8 @@
 
           <Column
             class="font-mono text-right"
-            header-class="text-right"
             :header="t('modules.financial.financialOverview.table.debit')"
+            header-class="text-right"
           >
             <template #body="{ data }">
               <Skeleton v-if="loading" height="1rem" />
@@ -91,8 +91,8 @@
 
           <Column
             class="font-mono text-right"
-            header-class="text-right"
             :header="t('modules.financial.transfer.saldo')"
+            header-class="text-right"
           >
             <template #body="{ data }">
               <Skeleton v-if="loading" height="1rem" />
@@ -106,10 +106,10 @@
 
       <TransferAggregateWidget
         :category="category"
-        :from-date="fromDate"
-        :till-date="tillDate"
-        :selected-rows="selectedRows"
         class="shrink-0 self-start lg:w-72"
+        :from-date="fromDate"
+        :selected-rows="selectedRows"
+        :till-date="tillDate"
       />
     </div>
   </PageContainer>
@@ -124,7 +124,6 @@ import ApiService from '@/services/ApiService';
 import { useEntityTable } from '@/composables/useEntityTable';
 import { useFiscalYear } from '@/composables/fiscalYear';
 import { formatDateFromString, formatDineroObject } from '@/utils/formatterUtils';
-import { getDescription, parseTransfer } from '@/utils/mutationUtils';
 import EntityTable from '@/components/EntityTable.vue';
 import PageContainer from '@/layout/PageContainer.vue';
 import TransferAggregateWidget from '@/modules/financial/components/transfer/TransferAggregateWidget.vue';
@@ -136,20 +135,6 @@ const { getFiscalYearRange } = useFiscalYear();
 
 const selectedRows = ref<TransferResponse[]>([]);
 const selectedCategory = ref<string | undefined>(undefined);
-
-const categoryOptions = [
-  { value: 'deposit', label: t('modules.financial.financialOverview.transferTypes.deposits') },
-  { value: 'payoutRequest', label: t('modules.financial.financialOverview.transferTypes.payoutRequests') },
-  { value: 'sellerPayout', label: t('modules.financial.financialOverview.transferTypes.sellerPayouts') },
-  { value: 'invoice', label: t('modules.financial.financialOverview.transferTypes.invoices') },
-  { value: 'creditInvoice', label: t('modules.financial.financialOverview.transferTypes.creditInvoices') },
-  { value: 'fine', label: t('modules.financial.financialOverview.transferTypes.fines') },
-  { value: 'waivedFines', label: t('modules.financial.financialOverview.transferTypes.waivedFines') },
-  { value: 'writeOff', label: t('modules.financial.financialOverview.transferTypes.writeOffs') },
-  { value: 'inactiveAdministrativeCost', label: t('modules.financial.financialOverview.transferTypes.adminCosts') },
-  { value: 'manualCreation', label: t('modules.financial.financialOverview.transferTypes.manualCreations') },
-  { value: 'manualDeletion', label: t('modules.financial.financialOverview.transferTypes.manualDeletions') },
-];
 
 async function fetchRecords({
   page,
@@ -174,7 +159,7 @@ async function fetchRecords({
   return { records: res.data.records, _pagination: res.data._pagination };
 }
 
-const { year, years, search, rows, isLoading, records, totalRecords, onPage, searchById, reload } = useEntityTable(
+const { year, years, search, rows, isLoading, records, totalRecords, onPage, searchById } = useEntityTable(
   fetchRecords,
   undefined,
   { defaultRows: 25, syncQueryParams: true },
@@ -182,11 +167,6 @@ const { year, years, search, rows, isLoading, records, totalRecords, onPage, sea
 
 const fromDate = computed(() => getFiscalYearRange(Number(year.value)).start);
 const tillDate = computed(() => getFiscalYearRange(Number(year.value)).end);
-
-function onCategoryChange() {
-  selectedRows.value = [];
-  void reload();
-}
 
 function credit(data: TransferResponse): number {
   return data.from == null ? data.amount.amount : 0;

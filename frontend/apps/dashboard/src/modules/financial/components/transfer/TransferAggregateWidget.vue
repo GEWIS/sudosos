@@ -3,25 +3,25 @@
     <div class="flex flex-col gap-1 text-sm">
       <div class="flex justify-between">
         <span class="text-color-secondary">{{ t('modules.financial.transfer.widget.count') }}</span>
-        <Skeleton v-if="loading" width="4rem" height="1rem" />
+        <Skeleton v-if="loading" height="1rem" width="4rem" />
         <span v-else class="font-mono">{{ aggregateCount }}</span>
       </div>
 
       <div class="flex justify-between">
         <span class="text-color-secondary">{{ t('modules.financial.transfer.widget.credit') }}</span>
-        <Skeleton v-if="loading" width="5rem" height="1rem" />
+        <Skeleton v-if="loading" height="1rem" width="5rem" />
         <span v-else class="font-mono">{{ isCredit ? formatDineroObject(aggregateTotal) : '—' }}</span>
       </div>
 
       <div class="flex justify-between">
         <span class="text-color-secondary">{{ t('modules.financial.transfer.widget.debit') }}</span>
-        <Skeleton v-if="loading" width="5rem" height="1rem" />
+        <Skeleton v-if="loading" height="1rem" width="5rem" />
         <span v-else class="font-mono">{{ !isCredit ? formatDineroObject(aggregateTotal) : '—' }}</span>
       </div>
 
       <div class="flex justify-between font-semibold">
         <span class="text-color-secondary">{{ t('modules.financial.transfer.widget.balance') }}</span>
-        <Skeleton v-if="loading" width="5rem" height="1rem" />
+        <Skeleton v-if="loading" height="1rem" width="5rem" />
         <span v-else class="font-mono">{{ formatDineroObject(aggregateTotal, !isCredit) }}</span>
       </div>
 
