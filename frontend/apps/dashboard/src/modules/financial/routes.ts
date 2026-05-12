@@ -13,6 +13,8 @@ import SellerView from '@/modules/financial/views/seller/SellerView.vue';
 import VatView from '@/modules/financial/views/vat/VatView.vue';
 import AdministrativeView from '@/modules/financial/views/administrative/AdministrativeView.vue';
 import FinancialOverviewView from '@/modules/financial/views/overview/FinancialOverviewView.vue';
+import TransferView from '@/modules/financial/views/transfer/TransferView.vue';
+import { isTransferCategory } from '@/modules/financial/utils/transferCategories';
 
 export function financialRoutes(): RouteRecordRaw[] {
   return [
@@ -149,6 +151,20 @@ export function financialRoutes(): RouteRecordRaw[] {
             requiresAuth: true,
             isAllowed: () => isAllowed('get', ['all'], 'FinancialOverview', ['any']),
             title: 'common.titles.financialOverview',
+          },
+        },
+        {
+          path: '/financial/transfer/:category',
+          component: TransferView,
+          name: 'transferView',
+          props: true,
+          // An unknown category would render an empty table: the list request fails with a
+          // 400 and nothing tells the user why. Send them to the error page instead.
+          beforeEnter: (to) => (isTransferCategory(String(to.params.category)) ? true : { name: 'error' }),
+          meta: {
+            requiresAuth: true,
+            isAllowed: () => isAllowed('get', ['all'], 'Transfer', ['any']),
+            title: 'common.titles.transferView',
           },
         },
       ],
