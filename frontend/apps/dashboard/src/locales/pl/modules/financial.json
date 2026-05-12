@@ -242,6 +242,22 @@
           "downloadSuccess": "Raport został pomyślnie pobrany.",
           "downloadError": "Nie udało się pobrać raportu. Spróbuj ponownie."
         }
+      },
+      "transfer": {
+        "title": "Przegląd Transferów",
+        "search": "Szukaj po opisie…",
+        "saldo": "Saldo (€)",
+        "totalSelected": "Razem ({count} zaznaczonych)",
+        "widget": {
+          "title": "Podsumowanie",
+          "count": "Transfery",
+          "credit": "Uznanie (€)",
+          "debit": "Obciążenie (€)",
+          "balance": "Saldo (€)",
+          "selected": "Zaznaczone ({count})",
+          "selectedAmount": "Kwota (€)",
+          "remaining": "Pozostało (€)"
+        }
       }
     }
   }
