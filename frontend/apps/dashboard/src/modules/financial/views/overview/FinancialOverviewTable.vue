@@ -18,12 +18,12 @@
           <Skeleton v-if="loadingState" height="1rem" />
           <template v-else-if="data.transferCategory">
             <RouterLink
+              class="hover:underline"
               :to="{
                 name: 'transferView',
                 params: { category: data.transferCategory },
                 query: { year: props.year.toString() },
               }"
-              class="hover:underline"
             >
               <span v-if="data.isChild" class="pl-6 text-color-secondary">{{ data.name }}</span>
               <span v-else>{{ data.transferType }}</span>

@@ -1,27 +1,27 @@
 <template>
-  <CardComponent :header="t('modules.financial.transfer.widget.title')">
+  <CardComponent :header="header">
     <div class="flex flex-col gap-1 text-sm">
       <div class="flex justify-between">
         <span class="text-muted-color">{{ t('modules.financial.transfer.widget.count') }}</span>
-        <Skeleton v-if="loading" width="4rem" height="1rem" />
+        <Skeleton v-if="loading" height="1rem" width="4rem" />
         <span v-else class="font-mono">{{ aggregateCount }}</span>
       </div>
 
       <div class="flex justify-between">
         <span class="text-muted-color">{{ t('modules.financial.transfer.widget.credit') }}</span>
-        <Skeleton v-if="loading" width="5rem" height="1rem" />
+        <Skeleton v-if="loading" height="1rem" width="5rem" />
         <span v-else class="font-mono">{{ isCredit ? formatDineroObject(aggregateTotal) : '—' }}</span>
       </div>
 
       <div class="flex justify-between">
         <span class="text-muted-color">{{ t('modules.financial.transfer.widget.debit') }}</span>
-        <Skeleton v-if="loading" width="5rem" height="1rem" />
+        <Skeleton v-if="loading" height="1rem" width="5rem" />
         <span v-else class="font-mono">{{ !isCredit ? formatDineroObject(aggregateTotal) : '—' }}</span>
       </div>
 
       <div class="flex justify-between font-semibold">
         <span class="text-muted-color">{{ t('modules.financial.transfer.widget.balance') }}</span>
-        <Skeleton v-if="loading" width="5rem" height="1rem" />
+        <Skeleton v-if="loading" height="1rem" width="5rem" />
         <span v-else class="font-mono">{{ formatDineroObject(aggregateTotal, !isCredit) }}</span>
       </div>
 
@@ -54,7 +54,7 @@ import type { DineroObjectResponse, TransferResponse } from '@gewis/sudosos-clie
 import ApiService from '@/services/ApiService';
 import CardComponent from '@/components/CardComponent.vue';
 import { formatDineroObject } from '@/utils/formatterUtils';
-import { isCreditCategory } from '@/modules/financial/utils/transferCategories';
+import { isCreditCategory, transferCategoryPluralLabelKey } from '@/modules/financial/utils/transferCategories';
 
 const props = defineProps<{
   category: string;
@@ -71,6 +71,13 @@ const aggregateCount = ref(0);
 const aggregateTotal = ref<DineroObjectResponse>({ amount: 0, currency: 'EUR', precision: 2 });
 
 const isCredit = computed(() => isCreditCategory(props.category));
+
+const header = computed(() => {
+  // The route guard the transfer view sits behind only ever lets a valid category through,
+  // so labelKey is always defined here.
+  const labelKey = transferCategoryPluralLabelKey(props.category)!;
+  return t(labelKey);
+});
 
 const selectedTotal = computed(() => props.selectedRows.reduce((sum, r) => sum + r.amount.amount, 0));
 

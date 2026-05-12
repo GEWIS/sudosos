@@ -3,17 +3,16 @@
     <div class="flex flex-col gap-5 lg:flex-row">
       <EntityTable
         v-model:search="search"
-        v-model:year="year"
         v-model:selection="selectedRows"
+        v-model:year="year"
+        :data-table-props="{ selectionMode: 'multiple' }"
         :is-loading="isLoading"
         :records="records"
         :rows="rows"
+        :title="title"
         :total-records="totalRecords"
         :years="years"
-        :title="t('modules.financial.transfer.title')"
-        :data-table-props="{ selectionMode: 'multiple' }"
         @page="onPage"
-        @search="searchById"
       >
         <template #columns="{ isLoading: loading }">
           <Column selection-mode="multiple" style="width: 3rem" />
@@ -64,8 +63,8 @@
           </Column>
           <Column
             class="font-mono text-right"
-            header-class="text-right"
             :header="t('modules.financial.financialOverview.table.credit')"
+            header-class="text-right"
           >
             <template #body="{ data }">
               <Skeleton v-if="loading" height="1rem" />
@@ -77,8 +76,8 @@
 
           <Column
             class="font-mono text-right"
-            header-class="text-right"
             :header="t('modules.financial.financialOverview.table.debit')"
+            header-class="text-right"
           >
             <template #body="{ data }">
               <Skeleton v-if="loading" height="1rem" />
@@ -90,8 +89,8 @@
 
           <Column
             class="font-mono text-right"
-            header-class="text-right"
             :header="t('modules.financial.transfer.saldo')"
+            header-class="text-right"
           >
             <template #body="{ data }">
               <Skeleton v-if="loading" height="1rem" />
@@ -105,17 +104,17 @@
 
       <TransferAggregateWidget
         :category="category"
-        :from-date="fromDate"
-        :till-date="tillDate"
-        :selected-rows="selectedRows"
         class="shrink-0 self-start lg:w-72"
+        :from-date="fromDate"
+        :selected-rows="selectedRows"
+        :till-date="tillDate"
       />
     </div>
   </PageContainer>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { AxiosResponse } from 'axios';
 import type { TransferResponse } from '@gewis/sudosos-client';
@@ -123,10 +122,10 @@ import ApiService from '@/services/ApiService';
 import { useEntityTable } from '@/composables/useEntityTable';
 import { useFiscalYear } from '@/composables/fiscalYear';
 import { formatDateFromString, formatDineroObject } from '@/utils/formatterUtils';
-import { getDescription, parseTransfer } from '@/utils/mutationUtils';
 import EntityTable from '@/components/EntityTable.vue';
 import PageContainer from '@/layout/PageContainer.vue';
 import TransferAggregateWidget from '@/modules/financial/components/transfer/TransferAggregateWidget.vue';
+import { transferCategoryLabelKey } from '@/modules/financial/utils/transferCategories';
 
 const props = defineProps<{ category: string }>();
 
@@ -134,21 +133,6 @@ const { t } = useI18n();
 const { getFiscalYearRange } = useFiscalYear();
 
 const selectedRows = ref<TransferResponse[]>([]);
-const selectedCategory = ref<string | undefined>(undefined);
-
-const categoryOptions = [
-  { value: 'deposit', label: t('modules.financial.financialOverview.transferTypes.deposits') },
-  { value: 'payoutRequest', label: t('modules.financial.financialOverview.transferTypes.payoutRequests') },
-  { value: 'sellerPayout', label: t('modules.financial.financialOverview.transferTypes.sellerPayouts') },
-  { value: 'invoice', label: t('modules.financial.financialOverview.transferTypes.invoices') },
-  { value: 'creditInvoice', label: t('modules.financial.financialOverview.transferTypes.creditInvoices') },
-  { value: 'fine', label: t('modules.financial.financialOverview.transferTypes.fines') },
-  { value: 'waivedFines', label: t('modules.financial.financialOverview.transferTypes.waivedFines') },
-  { value: 'writeOff', label: t('modules.financial.financialOverview.transferTypes.writeOffs') },
-  { value: 'inactiveAdministrativeCost', label: t('modules.financial.financialOverview.transferTypes.adminCosts') },
-  { value: 'manualCreation', label: t('modules.financial.financialOverview.transferTypes.manualCreations') },
-  { value: 'manualDeletion', label: t('modules.financial.financialOverview.transferTypes.manualDeletions') },
-];
 
 async function fetchRecords({
   page,
@@ -166,14 +150,14 @@ async function fetchRecords({
   const res = (await ApiService.transfers.getAllTransfers({
     fromDate: fiscalStart,
     tillDate: fiscalEnd,
-    category: selectedCategory.value ?? props.category,
+    category: props.category,
     take: rows,
     skip: page,
   })) as unknown as AxiosResponse<{ _pagination: { count: number }; records: TransferResponse[] }>;
   return { records: res.data.records, _pagination: res.data._pagination };
 }
 
-const { year, years, search, rows, isLoading, records, totalRecords, onPage, searchById, reload } = useEntityTable(
+const { year, years, search, rows, isLoading, records, totalRecords, onPage, reload } = useEntityTable(
   fetchRecords,
   undefined,
   { defaultRows: 25, syncQueryParams: true },
@@ -182,10 +166,19 @@ const { year, years, search, rows, isLoading, records, totalRecords, onPage, sea
 const fromDate = computed(() => getFiscalYearRange(Number(year.value)).start);
 const tillDate = computed(() => getFiscalYearRange(Number(year.value)).end);
 
-function onCategoryChange() {
+// A category or year switch leaves stale rows selected against a range or category that no
+// longer matches what the table (and the aggregate widget it feeds) shows.
+watch([() => props.category, year], () => {
   selectedRows.value = [];
   void reload();
-}
+});
+
+const title = computed(() => {
+  // The route guard in routes.ts only ever lets a valid category through, so labelKey is
+  // always defined here.
+  const labelKey = transferCategoryLabelKey(props.category)!;
+  return t('modules.financial.transfer.titleForType', { transferType: t(labelKey) });
+});
 
 function credit(data: TransferResponse): number {
   return data.from == null ? data.amount.amount : 0;
