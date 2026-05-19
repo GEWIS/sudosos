@@ -24,6 +24,7 @@ import {
   SellerPayoutsApi,
   WriteoffsApi,
   ServerSettingsApi,
+  TasksApi,
   UserNotificationPreferencesApi,
   TermsOfServiceApi,
 } from '@gewis/sudosos-client';
@@ -81,6 +82,8 @@ export class ApiService {
 
   private readonly _serverSettingsApi: ServerSettingsApi;
 
+  private readonly _tasksApi: TasksApi;
+
   private readonly _userNotificationsApi: UserNotificationPreferencesApi;
 
   private readonly _inactiveAdministrativeCostsApi: InactiveAdministrativeCostsApi;
@@ -129,6 +132,7 @@ export class ApiService {
     this._sellerPayoutsApi = new SellerPayoutsApi(withKeyConfiguration, basePath, this._axiosInstance);
     this._writeOffsApi = new WriteoffsApi(withKeyConfiguration, basePath, this._axiosInstance);
     this._serverSettingsApi = new ServerSettingsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._tasksApi = new TasksApi(withKeyConfiguration, basePath, this._axiosInstance);
     this._userNotificationsApi = new UserNotificationPreferencesApi(
       withKeyConfiguration,
       basePath,
@@ -236,6 +240,10 @@ export class ApiService {
 
   get serverSettings(): ServerSettingsApi {
     return this._serverSettingsApi;
+  }
+
+  get tasks(): TasksApi {
+    return this._tasksApi;
   }
 
   get userNotifications(): UserNotificationPreferencesApi {
