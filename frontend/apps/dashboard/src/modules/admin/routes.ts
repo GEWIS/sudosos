@@ -7,6 +7,7 @@ import AdminSingleUserView from '@/modules/admin/views/AdminSingleUserView.vue';
 import AdminMaintainerView from '@/modules/admin/views/AdminMaintainerView.vue';
 import AdminRBACView from '@/modules/admin/views/AdminRBACView.vue';
 import AdminDashboardView from '@/modules/admin/views/AdminDashboardView.vue';
+import MaintainerTasksView from '@/modules/admin/views/MaintainerTasksView.vue';
 
 export function canViewAdminDashboard(): boolean {
   return (
@@ -83,6 +84,16 @@ export function adminRoutes(): RouteRecordRaw[] {
             requiresAuth: true,
             isAllowed: () => isAllowed('get', ['all'], 'Role', ['*']),
             title: 'common.titles.rbac',
+          },
+        },
+        {
+          path: '/maintainer/tasks',
+          component: MaintainerTasksView,
+          name: 'tasks',
+          meta: {
+            requiresAuth: true,
+            isAllowed: () => isAllowed('get', ['all'], 'Task', ['*']),
+            title: 'common.titles.tasks',
           },
         },
       ],

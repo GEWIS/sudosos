@@ -5,8 +5,21 @@ import { isAllowed } from '@sudosos/sudosos-frontend-common';
 export function useAdminNav() {
   const { t } = useI18n();
 
-  return computed(() =>
-    [
+  return computed(() => {
+    const maintenanceItem = {
+      label: t('common.navigation.maintainerSettings'),
+      route: '/maintainer',
+      visible: isAllowed('update', ['all'], 'Maintenance', ['*']),
+    };
+    const tasksItem = {
+      label: t('common.navigation.tasks'),
+      route: '/maintainer/tasks',
+      visible: isAllowed('get', ['all'], 'Task', ['*']),
+    };
+    const maintainerItems = [maintenanceItem, tasksItem].filter((item) => item.visible);
+    const onlyMaintainerItem = maintainerItems.length === 1 ? maintainerItems[0] : undefined;
+
+    return [
       {
         label: t('common.navigation.admin'),
         visible:
@@ -33,9 +46,11 @@ export function useAdminNav() {
       },
       {
         label: t('common.navigation.maintainer'),
-        visible: isAllowed('update', ['all'], 'Maintenance', ['*']),
-        route: '/maintainer',
+        visible: maintainerItems.length > 0,
+        // When only one sub-item is visible, collapse the dropdown into a direct
+        // route so the navbar stays compact for admins without Task perms.
+        ...(onlyMaintainerItem ? { route: onlyMaintainerItem.route } : { items: maintainerItems }),
       },
-    ].filter((item) => item.visible),
-  );
+    ].filter((item) => item.visible);
+  });
 }

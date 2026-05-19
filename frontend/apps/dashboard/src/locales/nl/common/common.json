@@ -167,6 +167,8 @@
       "users": "Gebruikers",
       "userOverview": "Gebruikersoverzicht",
       "banners": "Banners",
+      "tasks": "Achtergrondtaken",
+      "maintainerSettings": "Onderhoud",
       "socialDrinkCards": "Sociale drinkkaarten",
       "invoices": "Facturen",
       "payouts": "Uitbetalingen",
@@ -274,6 +276,7 @@
     "titles": {
       "users": "Gebruikers",
       "banners": "Banners",
+      "tasks": "Achtergrondtaken",
       "maintainer": "Maintainer",
       "rbac": "RBAC",
       "login": "Inloggen",

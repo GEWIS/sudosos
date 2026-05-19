@@ -167,6 +167,8 @@
       "users": "Użytkownicy",
       "userOverview": "Przegląd Użytkowników",
       "banners": "Banery",
+      "tasks": "Zadania w tle",
+      "maintainerSettings": "Utrzymanie",
       "socialDrinkCards": "Karty napojów społecznościowych",
       "invoices": "Faktury",
       "payouts": "Wypłaty",
@@ -274,6 +276,7 @@
     "titles": {
       "users": "Użytkownicy",
       "banners": "Banery",
+      "tasks": "Zadania w tle",
       "maintainer": "Utrzymanie",
       "rbac": "RBAC",
       "login": "Logowanie",
