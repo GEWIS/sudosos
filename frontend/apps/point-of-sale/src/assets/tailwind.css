@@ -1,3 +1,5 @@
+@layer properties, theme, base, components, primevue, utilities;
+
 @import 'tailwindcss';
 @import 'tailwindcss-primeui';
 @import './theme-overrides.css';
