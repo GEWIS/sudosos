@@ -8,6 +8,16 @@ import AdminMaintainerView from '@/modules/admin/views/AdminMaintainerView.vue';
 import AdminRBACView from '@/modules/admin/views/AdminRBACView.vue';
 import AdminDashboardView from '@/modules/admin/views/AdminDashboardView.vue';
 
+export function canViewAdminDashboard(): boolean {
+  return (
+    isAllowed('get', ['all'], 'User', ['any']) &&
+    isAllowed('get', ['all'], 'Balance', ['any']) &&
+    isAllowed('get', ['all'], 'PayoutRequest', ['any']) &&
+    isAllowed('get', ['all'], 'Invoice', ['any']) &&
+    isAllowed('get', ['all'], 'Fine', ['any'])
+  );
+}
+
 export function adminRoutes(): RouteRecordRaw[] {
   return [
     {
@@ -21,7 +31,7 @@ export function adminRoutes(): RouteRecordRaw[] {
           name: 'adminDashboard',
           meta: {
             requiresAuth: true,
-            isAllowed: () => isAllowed('get', ['all'], 'User', ['any']),
+            isAllowed: () => canViewAdminDashboard(),
             title: 'modules.admin.dashboard.title',
           },
         },

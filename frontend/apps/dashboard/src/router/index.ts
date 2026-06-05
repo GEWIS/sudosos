@@ -5,7 +5,7 @@ import PublicLayout from '@/layout/PublicLayout.vue';
 import DashboardLayout from '@/layout/DashboardLayout.vue';
 import ErrorView from '@/views/ErrorView.vue';
 import { authRoutes } from '@/modules/auth/routes';
-import { adminRoutes } from '@/modules/admin/routes';
+import { adminRoutes, canViewAdminDashboard } from '@/modules/admin/routes';
 import { financialRoutes } from '@/modules/financial/routes';
 import { sellerRoutes } from '@/modules/seller/routes';
 import { userRoutes } from '@/modules/user/routes';
@@ -129,12 +129,7 @@ router.beforeEach((to, from, next) => {
   } else if (!to.meta?.requiresAuth && isAuth && hasTOSAccepted() == 'ACCEPTED') {
     // If the route doesn't require authentication and the user is authenticated, redirect to home
     next({ name: 'home' });
-  } else if (
-    to.name === 'home' &&
-    isBetaEnabled() &&
-    window.innerWidth >= 1024 &&
-    isAllowed('get', ['all'], 'User', ['any'])
-  ) {
+  } else if (to.name === 'home' && isBetaEnabled() && window.innerWidth >= 1024 && canViewAdminDashboard()) {
     // Beta admin on desktop: go to admin landing page
     next({ name: 'adminDashboard' });
   } else if (to.meta?.isAllowed) {
