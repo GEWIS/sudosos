@@ -117,7 +117,7 @@ const nfcLogin = async (nfcCode: string) => {
     if (!pos) {
       return;
     }
-    await authStore.secureNfcLogin(nfcCode, pos.id, posApiService, userApiService).then(async () => {
+    await authStore.nfcLogin(nfcCode, pos.id, posApiService, userApiService).then(async () => {
       await loginSuccess();
     });
   } catch (error) {
@@ -126,9 +126,12 @@ const nfcLogin = async (nfcCode: string) => {
 };
 
 const eanLogin = async (eanCode: string) => {
-  throw new Error('No secure ean login has been implemented yet');
   try {
-    await authStore.eanLogin(eanCode, userApiService).then(async () => {
+    const pos = posStore.getPos;
+    if (!pos) {
+      return;
+    }
+    await authStore.eanLogin(eanCode, pos.id, posApiService, userApiService).then(async () => {
       await loginSuccess();
     });
   } catch (error) {

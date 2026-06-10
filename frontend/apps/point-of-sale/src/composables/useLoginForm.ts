@@ -69,7 +69,7 @@ export function useLoginForm() {
 
     if (external.value) {
       authStore
-        .secureExternalPinLogin(userId.value, pinCode.value, pos.id, posApiService, userApiService)
+        .externalPinLogin(userId.value, pinCode.value, pos.id, posApiService, userApiService)
         .then(async () => {
           await loginSuccess();
         })
@@ -82,7 +82,7 @@ export function useLoginForm() {
         });
     } else {
       authStore
-        .secureGewisPinlogin(userId.value, pinCode.value, pos.id, posApiService, userApiService)
+        .gewisPinlogin(userId.value, pinCode.value, pos.id, posApiService, userApiService)
         .then(async () => {
           await loginSuccess();
         })

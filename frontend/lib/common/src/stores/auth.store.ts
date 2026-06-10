@@ -14,9 +14,6 @@ import type {
   AcceptTosRequest,
   AuthenticationNfcRequest,
   AuthenticationLocalRequest,
-  MemberAuthenticationSecurePinRequest,
-  AuthenticationSecureNfcRequest,
-  AuthenticationSecurePinRequest,
 } from '@gewis/sudosos-client';
 import { jwtDecode, type JwtPayload } from 'jwt-decode';
 import { ApiService } from '../services/ApiService';
@@ -95,44 +92,24 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async gewisPinlogin(userId: string, pinCode: string, service: ApiService) {
-      const userDetails: MemberAuthenticationPinRequest = {
-        memberId: parseInt(userId, 10),
-        pin: pinCode,
-      };
-
-      await service.authenticate
-        .memberPinAuthentication({ memberAuthenticationPinRequest: userDetails })
-        .then((res) => {
-          this.handleResponse(res.data, service);
-        });
-    },
-    async secureGewisPinlogin(
-      userId: string,
-      pinCode: string,
-      posId: number,
-      posService: ApiService,
-      service: ApiService,
-    ) {
-      const req: MemberAuthenticationSecurePinRequest = {
+    async gewisPinlogin(userId: string, pinCode: string, posId: number, posService: ApiService, service: ApiService) {
+      const req: MemberAuthenticationPinRequest = {
         memberId: parseInt(userId, 10),
         pin: pinCode,
         posId,
       };
 
-      await posService.authenticate
-        .secureMemberPINAuthentication({ memberAuthenticationSecurePinRequest: req })
-        .then((res) => {
-          this.handleResponse(res.data, service);
-        });
+      await posService.authenticate.memberPINAuthentication({ memberAuthenticationPinRequest: req }).then((res) => {
+        this.handleResponse(res.data, service);
+      });
     },
-    async secureNfcLogin(nfcCode: string, posId: number, posService: ApiService, service: ApiService) {
-      const req: AuthenticationSecureNfcRequest = {
+    async nfcLogin(nfcCode: string, posId: number, posService: ApiService, service: ApiService) {
+      const req: AuthenticationNfcRequest = {
         nfcCode,
         posId,
       };
 
-      await posService.authenticate.secureNfcAuthentication({ authenticationSecureNfcRequest: req }).then((res) => {
+      await posService.authenticate.nfcAuthentication({ authenticationNfcRequest: req }).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
@@ -154,45 +131,29 @@ export const useAuthStore = defineStore('auth', {
         this.handleResponse(res.data, service);
       });
     },
-    async externalPinLogin(userId: number, pin: string, service: ApiService) {
-      const req: AuthenticationPinRequest = {
-        pin,
-        userId,
-      };
-      await service.authenticate.pinAuthentication({ authenticationPinRequest: req }).then((res) => {
-        this.handleResponse(res.data, service);
-      });
-    },
-    async secureExternalPinLogin(
+    async externalPinLogin(
       userId: string,
       pinCode: string,
       posId: number,
       posService: ApiService,
       service: ApiService,
     ) {
-      const req: AuthenticationSecurePinRequest = {
+      const req: AuthenticationPinRequest = {
         userId: parseInt(userId, 10),
         pin: pinCode,
         posId,
       };
 
-      await posService.authenticate.securePINAuthentication({ authenticationSecurePinRequest: req }).then((res) => {
+      await posService.authenticate.pinAuthentication({ authenticationPinRequest: req }).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
-    async nfcLogin(nfcCode: string, service: ApiService) {
-      const req: AuthenticationNfcRequest = {
-        nfcCode,
-      };
-      await service.authenticate.nfcAuthentication({ authenticationNfcRequest: req }).then((res) => {
-        this.handleResponse(res.data, service);
-      });
-    },
-    async eanLogin(eanCode: string, service: ApiService) {
+    async eanLogin(eanCode: string, posId: number, posService: ApiService, service: ApiService) {
       const req: AuthenticationEanRequest = {
         eanCode,
+        posId,
       };
-      await service.authenticate.eanAuthentication({ authenticationEanRequest: req }).then((res) => {
+      await posService.authenticate.eanAuthentication({ authenticationEanRequest: req }).then((res) => {
         this.handleResponse(res.data, service);
       });
     },
