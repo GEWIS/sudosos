@@ -8,7 +8,8 @@
       "incorrectTransactions": "Onjuiste transacties",
       "security": "Beveiliging",
       "featureRequests": "Functieverzoeken",
-      "termsOfService": "Gebruiksvoorwaarden"
+      "termsOfService": "Gebruiksvoorwaarden",
+      "version": "Versie"
     }
   }
 }

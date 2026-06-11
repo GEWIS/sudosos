@@ -5,6 +5,9 @@
         "header": "Quick overview",
         "message": "Quick overview of your account",
         "underAge": "User is underage!"
+      },
+      "termsOfService": {
+        "header": "SudoSOS Terms of service - Version {version} ({date})"
       }
     }
   }

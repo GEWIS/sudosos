@@ -8,7 +8,8 @@
       "incorrectTransactions": "Incorrect transactions",
       "security": "Security",
       "featureRequests": "Feature requests",
-      "termsOfService": "Terms of service"
+      "termsOfService": "Terms of service",
+      "version": "Version"
     }
   }
 }

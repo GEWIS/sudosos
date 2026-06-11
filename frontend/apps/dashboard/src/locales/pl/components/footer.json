@@ -8,7 +8,8 @@
       "incorrectTransactions": "Niepoprawne transakcje",
       "security": "Bezpieczeństwo",
       "featureRequests": "Propozycje funkcji",
-      "termsOfService": "Regulamin"
+      "termsOfService": "Regulamin",
+      "version": "Wersja"
     }
   }
 }

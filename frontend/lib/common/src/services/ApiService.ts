@@ -24,6 +24,7 @@ import {
   WriteoffsApi,
   ServerSettingsApi,
   UserNotificationPreferencesApi,
+  TermsOfServiceApi,
 } from '@gewis/sudosos-client';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import { getTokenFromStorage, updateTokenIfNecessary } from '../helpers/TokenHelper';
@@ -81,6 +82,8 @@ export class ApiService {
 
   private readonly _inactiveAdministrativeCostsApi: InactiveAdministrativeCostsApi;
 
+  private readonly _termsOfServiceApi: TermsOfServiceApi;
+
   private readonly _tokenKey: string;
 
   constructor(basePath: string, tokenKey: string = 'jwt_token') {
@@ -132,6 +135,7 @@ export class ApiService {
       basePath,
       this._axiosInstance,
     );
+    this._termsOfServiceApi = new TermsOfServiceApi(withKeyConfiguration, basePath, this._axiosInstance);
   }
 
   get authenticate(): AuthenticateApi {
@@ -236,6 +240,10 @@ export class ApiService {
 
   get tokenKey(): string {
     return this._tokenKey;
+  }
+
+  get termsOfService(): TermsOfServiceApi {
+    return this._termsOfServiceApi;
   }
 }
 

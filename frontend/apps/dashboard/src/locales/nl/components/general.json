@@ -5,6 +5,9 @@
         "header": "Snel overzicht",
         "message": "Snel overzicht van je account",
         "underAge": "Gebruiker is minderjarig!"
+      },
+      "termsOfService": {
+        "header": "SudoSOS Gebruiksvoorwaarden - Versie {version} ({date})"
       }
     }
   }

@@ -8,9 +8,11 @@ import {
 import { useSettingsStore } from '@/stores/settings.store';
 import apiService from '@/services/ApiService';
 import { initializeAuthHook } from '@/composables/useAuthHook';
+import { useTermsOfServiceStore } from '@/stores/termsOfService.store';
 
 export default async function beforeLoad() {
   const settingsStore = useSettingsStore();
+  const termsOfServiceStore = useTermsOfServiceStore();
   initializeAuthHook();
 
   try {
@@ -25,5 +27,9 @@ export default async function beforeLoad() {
     clearTokenInStorage();
     const authStore = useAuthStore();
     authStore.logout();
+  });
+
+  await termsOfServiceStore.fetchTermsOfService().catch((e) => {
+    console.error(e);
   });
 }
