@@ -15,6 +15,7 @@ export function useLoginForm() {
   const enteringUserId = ref(true);
   const loggingIn = ref(false);
   const wrongPin = ref(false);
+  const showDeactivatedModal = ref(false);
   const maxUserIdLength = 5;
   const maxPasscodeLength = 4;
   const maxUserId = 40000;
@@ -44,10 +45,23 @@ export function useLoginForm() {
     const user = authStore.getUser;
     if (user === null) return;
 
+    if (!user.active) {
+      showDeactivatedModal.value = true;
+      return;
+    }
+
     void useCartStore().setBuyer(user);
     void userStore.fetchCurrentUserBalance(user.id, apiService);
 
     await router.push({ path: '/cashier' });
+    userId.value = '';
+    pinCode.value = '';
+    enteringUserId.value = true;
+  };
+
+  const dismissDeactivatedModal = () => {
+    authStore.logout();
+    showDeactivatedModal.value = false;
     userId.value = '';
     pinCode.value = '';
     enteringUserId.value = true;
@@ -112,6 +126,7 @@ export function useLoginForm() {
     enteringUserId,
     loggingIn,
     wrongPin,
+    showDeactivatedModal,
     maxUserIdLength,
     maxPasscodeLength,
     maxUserId,
@@ -124,6 +139,7 @@ export function useLoginForm() {
     loginSuccess,
     loginFail,
     login,
+    dismissDeactivatedModal,
     shouldShowBanner,
   };
 }

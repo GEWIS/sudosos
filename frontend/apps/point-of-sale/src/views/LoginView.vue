@@ -37,6 +37,7 @@
       <GitInfo />
     </div>
     <ScannersLoginComponent :handle-ean-login="eanLogin" :handle-nfc-login="nfcLogin" />
+    <DeactivatedAccountModalComponent :show="showDeactivatedModal" @dismiss="dismissDeactivatedModal" />
   </div>
 </template>
 
@@ -49,6 +50,7 @@ import KeypadDisplayComponent from '@/components/Keypad/KeypadDisplayComponent.v
 import { posApiService, userApiService } from '@/services/ApiService';
 import BannerComponent from '@/components/Banner/BannerComponent.vue';
 import ScannersLoginComponent from '@/components/ScannersLoginComponent.vue';
+import DeactivatedAccountModalComponent from '@/components/DeactivatedAccountModalComponent.vue';
 import GitInfo from '@/components/GitInfo.vue';
 import PosInfo from '@/components/PosInfo.vue';
 import { useLoginForm } from '@/composables/useLoginForm';
@@ -65,6 +67,7 @@ const {
   enteringUserId,
   loggingIn,
   wrongPin,
+  showDeactivatedModal,
   maxUserIdLength,
   maxPasscodeLength,
   maxUserId,
@@ -76,6 +79,7 @@ const {
   displayContainerClasses,
   loginSuccess,
   login,
+  dismissDeactivatedModal,
   shouldShowBanner,
 } = useLoginForm();
 
