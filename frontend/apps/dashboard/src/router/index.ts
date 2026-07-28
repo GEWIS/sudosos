@@ -105,9 +105,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
 
-  const hasTOSAccepted = () => {
-    return authStore.acceptedToS || authStore.user?.acceptedToS;
-  };
+  const hasTOSAccepted = () => authStore.acceptedToS;
 
   const isAuth = isAuthenticated();
 
