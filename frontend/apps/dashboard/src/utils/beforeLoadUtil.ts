@@ -17,11 +17,13 @@ export default async function beforeLoad() {
 
   try {
     setupWebSocket();
-    await settingsStore.fetchKeys();
   } catch (e) {
     console.error(e);
-    return;
   }
+
+  await settingsStore.fetchKeys().catch((e) => {
+    console.error(e);
+  });
 
   await populateStoresFromToken(apiService).catch(() => {
     clearTokenInStorage();
