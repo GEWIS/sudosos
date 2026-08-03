@@ -60,7 +60,7 @@ const tos = computed(() => marked(tosStore.getTermsOfService));
 const acceptsExtensiveDataProcessing = ref(false);
 
 const acceptTermsOfService = async () => {
-  await authStore.updateUserToSAccepted(acceptsExtensiveDataProcessing.value, apiService);
+  await authStore.updateUserToSAccepted(acceptsExtensiveDataProcessing.value, tosStore.version, apiService);
 
   if (authStore.getUser) {
     apiService.user
