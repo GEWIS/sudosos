@@ -136,9 +136,17 @@ export const useCartStore = defineStore('cart', {
       const nonAlcoholic = this.products.filter((p) => p.product.alcoholPercentage === 0);
       this.products.splice(0, this.products.length, ...nonAlcoholic);
     },
-    async checkout(): Promise<void> {
+    /**
+     * Assemble the current cart into a TransactionRequest. Shared by the
+     * balance-debit checkout (`from` is the selected buyer) and by anonymous
+     * terminal payments (`from` is the POS's own user).
+     *
+     * Returns null when there is no POS loaded, since the request cannot be
+     * built without a point of sale revision.
+     */
+    buildTransactionRequest(fromUserId: number, createdById: number): TransactionRequest | null {
       const pos = usePointOfSaleStore().getPos;
-      if (!this.buyer || !pos) return;
+      if (!pos) return null;
 
       const containerSubTransactionsRows: {
         [key: string]: { container: ContainerResponse; row: SubTransactionRowRequest[] };
@@ -185,11 +193,9 @@ export const useCartStore = defineStore('cart', {
         },
       );
 
-      const authStore = useAuthStore();
-
-      const request: TransactionRequest = {
-        createdBy: this.createdBy ? this.createdBy.id : authStore.getUser?.id,
-        from: this.buyer.id,
+      return {
+        createdBy: createdById,
+        from: fromUserId,
         pointOfSale: {
           id: pos.id,
           revision: pos.revision,
@@ -201,8 +207,22 @@ export const useCartStore = defineStore('cart', {
           amount: this.getTotalPrice,
         },
       };
+    },
+    async checkout(): Promise<void> {
+      const authStore = useAuthStore();
+      const createdById = this.createdBy ? this.createdBy.id : authStore.getUser?.id;
+      if (!this.buyer || createdById === undefined) return;
+
+      const request = this.buildTransactionRequest(this.buyer.id, createdById);
+      if (!request) return;
 
       await userApiService.transaction.createTransaction({ transactionRequest: request });
+      await this.clearAfterCheckout();
+    },
+    /**
+     * Reset cart state after a completed sale, regardless of how it was paid.
+     */
+    async clearAfterCheckout(): Promise<void> {
       this.products.length = 0;
       await this.setBuyer(this.lockedIn);
       this.createdBy = null;

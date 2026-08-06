@@ -11,7 +11,10 @@
       </div>
       <div v-if="settings.isBorrelmode">
         <div class="fs-6 mt-1">
-          Transaction for {{ transaction.from.firstName }} by {{ transaction.createdBy?.firstName }}
+          <template v-if="isTerminalPayment">Transaction paid with Terminal</template>
+          <template v-else>
+            Transaction for {{ transaction.from.firstName }} by {{ transaction.createdBy?.firstName }}
+          </template>
         </div>
       </div>
       <!-- Here, we attach animation related functions to the corresponding Vue transition hooks-->
@@ -43,9 +46,11 @@ import { BaseTransactionResponse, TransactionResponse } from '@gewis/sudosos-cli
 import { formatDateFromString, formatTimeFromString, formatDineroObjectToString } from '@/utils/FormatUtils';
 import { userApiService } from '@/services/ApiService';
 import { useSettingStore } from '@/stores/settings.store';
+import { usePosToken } from '@/composables/usePosToken';
 
 const emit = defineEmits(['update:open']);
 const settings = useSettingStore();
+const { getPosUserIdFromToken } = usePosToken();
 
 const props = defineProps({
   transaction: {
@@ -56,6 +61,17 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+});
+
+/**
+ * A transaction booked in the name of the POS itself is an anonymous terminal
+ * payment, so naming a buyer and a creator is meaningless -- both are the POS.
+ * BaseUserResponse carries no user type, so the POS's own user id is what we
+ * have to compare against.
+ */
+const isTerminalPayment = computed(() => {
+  const posUserId = getPosUserIdFromToken();
+  return posUserId !== null && props.transaction.from.id === posUserId;
 });
 
 // To store the extra infromation in

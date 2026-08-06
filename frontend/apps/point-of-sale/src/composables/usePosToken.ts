@@ -54,6 +54,23 @@ export function usePosToken() {
     }
   };
 
+  /**
+   * The id of the POINT_OF_SALE-type user this token was minted for. Anonymous
+   * terminal payments are booked in the name of that user, so this is the
+   * `from` of such a transaction.
+   */
+  const getPosUserIdFromToken = (): number | null => {
+    const token = getPosToken();
+    if (!token) return null;
+
+    try {
+      const decoded = jwtDecode<{ user: { id: number } }>(token);
+      return decoded.user.id || null;
+    } catch {
+      return null;
+    }
+  };
+
   return {
     hasPosToken,
     setPosToken,
@@ -61,5 +78,6 @@ export function usePosToken() {
     getPosToken,
     refreshPosToken,
     getPosIdFromToken,
+    getPosUserIdFromToken,
   };
 }

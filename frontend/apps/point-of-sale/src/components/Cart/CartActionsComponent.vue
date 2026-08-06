@@ -28,7 +28,11 @@
     @denied="onAgeVerificationDenied"
     @update:show="showAgeVerification = $event"
   />
-  <div class="flex justify-between w-full">
+  <TerminalPaymentModal :show="showTerminalPayment" @update:show="showTerminalPayment = $event" />
+  <!-- gap-6 matches the spacing justify-between happens to leave between the
+       fixed-width Checkout button and the logout icon on an authenticated POS,
+       so borrel mode (where Checkout is full width) looks identical. -->
+  <div class="flex justify-between gap-6 w-full">
     <Button
       class="border-0 checkout font-medium rounder text-3xl"
       :class="{ countdown: checkingOut, disabled: !enabled, borrelMode }"
@@ -37,6 +41,15 @@
       {{ checkoutText }}
     </Button>
     <div class="flex justify-center items-center">
+      <Button
+        v-if="borrelMode"
+        aria-label="Pay with card terminal"
+        class="terminal p-3 text-2xl text-white flex items-center justify-center w-16 h-16"
+        :disabled="!terminalEnabled"
+        @click="payWithTerminal"
+      >
+        <i class="pi pi-credit-card" style="font-size: 2rem" />
+      </Button>
       <Button
         v-if="!borrelMode"
         class="p-3 text-2xl text-white flex items-center justify-center w-16 h-16"
@@ -57,6 +70,7 @@ import { useCheckoutTimer } from '@/composables/useCheckoutTimer';
 import { playAudio, Sound } from '@/utils/audioUtil';
 import AprilFoolsComponent from '@/components/AprilFoolsComponent.vue';
 import AgeVerificationComponent from '@/components/AgeVerificationComponent.vue';
+import TerminalPaymentModal from '@/components/Cart/TerminalPaymentModal.vue';
 
 const emit = defineEmits(['selectCreator']);
 
@@ -85,6 +99,21 @@ const checkoutText = computed(() => {
 const enabled = computed(() => {
   return cartItems.length > 0 && buyer.value;
 });
+
+const showTerminalPayment = ref(false);
+
+// Terminal payments are anonymous for now: the sale is booked in the name of
+// the POS itself. That only makes sense in borrel mode, where "select no one"
+// exists -- an authenticated POS always has someone to charge, so the button
+// is not rendered there at all (see the v-if in the template).
+const terminalEnabled = computed(() => cartItems.length > 0 && !buyer.value);
+
+const payWithTerminal = () => {
+  if (!terminalEnabled.value) return;
+
+  stopCheckout();
+  showTerminalPayment.value = true;
+};
 
 const logout = async () => {
   stopCheckout();
@@ -153,6 +182,13 @@ const checkout = () => {
 .clear {
   color: white;
   background-color: red;
+}
+
+.terminal:disabled {
+  background-color: grey;
+  border-color: grey;
+  opacity: 1;
+  cursor: not-allowed;
 }
 
 .checkout {
