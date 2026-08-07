@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 import type { StripePaymentTerminalResponse, TerminalPaymentResponse, TransactionRequest } from '@gewis/sudosos-client';
+import { useWebSocketStore } from '@sudosos/sudosos-frontend-common';
+import type { Socket } from 'socket.io-client';
 import { posApiService } from '@/services/ApiService';
 
 /**
@@ -30,13 +32,15 @@ export class TerminalUnavailableError extends Error {
   }
 }
 
-const POLL_INTERVAL_MS = 2000;
+/** Socket.IO event the backend emits whenever a terminal payment changes state. */
+const TERMINAL_PAYMENT_EVENT = 'terminal_payment:updated';
 
 /**
- * How many consecutive polling errors we tolerate before giving up. Polling
- * rides on the network, so a single blip should not kill an in-flight payment.
+ * Room carrying updates for one payment. Underscores are load-bearing: the
+ * backend parses room names as `[a-z_]+:{id}:[a-z_]+`, so a hyphenated variant
+ * silently fails to parse and nothing is ever delivered.
  */
-const MAX_POLL_FAILURES = 3;
+const roomFor = (id: number): string => `terminal_payment:${id}:updates`;
 
 const isSettled = (state: string): boolean => state === 'paid' || state === 'cancelled';
 
@@ -71,11 +75,11 @@ interface TerminalPaymentState_ {
 }
 
 /**
- * Timer handle for the polling loop. Deliberately module-level rather than
- * store state: it is not data, and keeping it out of the store stops Pinia
- * devtools from trying to serialise a timer.
+ * The active subscription's teardown. Deliberately module-level rather than
+ * store state: it is not data, and keeping listeners out of the store stops
+ * Pinia devtools from trying to serialise them.
  */
-let pollTimer: ReturnType<typeof setTimeout> | undefined;
+let unsubscribe: (() => void) | null = null;
 
 export const useTerminalPaymentStore = defineStore('terminalPayment', {
   state: (): TerminalPaymentState_ => ({
@@ -122,7 +126,7 @@ export const useTerminalPaymentStore = defineStore('terminalPayment', {
      * so it does not linger in `created` forever.
      */
     async startPayment(request: TransactionRequest): Promise<void> {
-      this.stopPolling();
+      this.stopListening();
       this.payment = null;
       this.errorMessage = null;
       this.phase = 'preparing';
@@ -141,6 +145,17 @@ export const useTerminalPaymentStore = defineStore('terminalPayment', {
         .then((res) => res.data);
       this.payment = payment;
 
+      // Subscribe before the reader is engaged. The backend emits `processing`
+      // from the same request that starts the payment, and a contactless tap can
+      // settle it within a second, so listening afterwards can miss both.
+      this.phase = 'waiting';
+      if (!this.listenFor(payment.id)) {
+        await this.cancelPayment().catch(() => undefined);
+        this.phase = 'error';
+        this.errorMessage = 'No connection to SudoSOS, so the payment cannot be followed. Check the network.';
+        throw new Error('Cannot follow a terminal payment without a websocket connection');
+      }
+
       try {
         await posApiService.terminalPayments.startTerminalPayment({
           id: payment.id,
@@ -155,65 +170,101 @@ export const useTerminalPaymentStore = defineStore('terminalPayment', {
         throw error;
       }
 
-      this.phase = 'waiting';
-      this.scheduleNextPoll();
+      // Covers the window between subscribing and the room join completing.
+      await this.reconcile();
     },
 
     /**
-     * Poll the payment until it is paid or cancelled. Scheduled with setTimeout
-     * rather than setInterval so a slow response cannot overlap requests.
+     * Apply a state the backend reported for the active payment.
+     *
+     * Ignores updates for any other payment, and anything arriving once we have
+     * stopped waiting, so a late push cannot resurrect a closed dialog.
      */
-    scheduleNextPoll(failures = 0): void {
-      pollTimer = setTimeout(() => {
-        void this.pollOnce(failures);
-      }, POLL_INTERVAL_MS);
+    applyUpdate(payment: TerminalPaymentResponse): void {
+      if (this.phase !== 'waiting' || payment.id !== this.payment?.id) return;
+
+      this.payment = payment;
+      if (isSettled(payment.state)) {
+        this.phase = payment.state === 'paid' ? 'paid' : 'cancelled';
+        this.stopListening();
+      }
     },
 
-    async pollOnce(failures: number): Promise<void> {
-      // A cancel or unmount may have landed while the timer was pending.
+    /**
+     * Subscribe to this payment's room and apply pushed state changes.
+     *
+     * Two fetches remain, both one-shot rather than a loop:
+     *  - immediately after subscribing, because joining a room is asynchronous
+     *    server-side and a fast reader could settle the payment before the join
+     *    completes
+     *  - after a reconnect, since anything emitted while the socket was down is
+     *    gone for good
+     * @param id ID of the payment to follow.
+     * @returns False when there is no socket to listen on. Reporting that is
+     * left to the caller, which has to undo the payment first -- cancelling
+     * moves the phase to `cancelled` and would overwrite an error set here.
+     */
+    listenFor(id: number): boolean {
+      this.stopListening();
+
+      let socket: Socket;
+      try {
+        socket = useWebSocketStore().getSocket;
+      } catch {
+        return false;
+      }
+
+      const room = roomFor(id);
+      const onUpdate = (payment: TerminalPaymentResponse) => this.applyUpdate(payment);
+      const onConnect = () => {
+        socket.emit('subscribe', room);
+        void this.reconcile();
+      };
+
+      socket.emit('subscribe', room);
+      socket.on(TERMINAL_PAYMENT_EVENT, onUpdate);
+      socket.on('connect', onConnect);
+
+      unsubscribe = () => {
+        socket.off(TERMINAL_PAYMENT_EVENT, onUpdate);
+        socket.off('connect', onConnect);
+        socket.emit('unsubscribe', room);
+        unsubscribe = null;
+      };
+      return true;
+    },
+
+    stopListening(): void {
+      unsubscribe?.();
+    },
+
+    /**
+     * Read the payment's committed state once, to close the gap around
+     * subscribing and reconnecting.
+     */
+    async reconcile(): Promise<void> {
       if (this.phase !== 'waiting' || !this.payment) return;
 
       try {
         const payment = await posApiService.terminalPayments
           .getSingleTerminalPayment({ id: this.payment.id })
           .then((res) => res.data);
-
-        if (this.phase !== 'waiting') return;
-        this.payment = payment;
-
-        if (isSettled(payment.state)) {
-          this.phase = payment.state === 'paid' ? 'paid' : 'cancelled';
-          return;
-        }
-
-        this.scheduleNextPoll();
+        this.applyUpdate(payment);
       } catch (error) {
         if (this.phase !== 'waiting') return;
 
         // Once Stripe cancels a payment the backend detaches its temporary
         // transaction, which can drop our POS token out of the `own` relation
         // and make this endpoint 403. Treat losing access, or the payment
-        // disappearing, as a cancellation rather than retrying forever.
+        // disappearing, as a cancellation.
         const status = statusOf(error);
         if (status === 403 || status === 404) {
           this.phase = 'cancelled';
-          return;
+          this.stopListening();
         }
-
-        if (failures + 1 >= MAX_POLL_FAILURES) {
-          this.phase = 'error';
-          this.errorMessage =
-            'Lost contact with SudoSOS while waiting for the payment. Check the terminal before retrying.';
-          return;
-        }
-
-        this.scheduleNextPoll(failures + 1);
+        // Anything else is left alone: the subscription is the primary channel
+        // and a failed reconcile does not mean the payment is lost.
       }
-    },
-
-    stopPolling(): void {
-      clearTimeout(pollTimer);
-      pollTimer = undefined;
     },
 
     /**
@@ -221,7 +272,7 @@ export const useTerminalPaymentStore = defineStore('terminalPayment', {
      * call when there is nothing to cancel.
      */
     async cancelPayment(): Promise<void> {
-      this.stopPolling();
+      this.stopListening();
       const payment = this.payment;
       if (!payment) return;
 
@@ -231,7 +282,7 @@ export const useTerminalPaymentStore = defineStore('terminalPayment', {
     },
 
     reset(): void {
-      this.stopPolling();
+      this.stopListening();
       this.payment = null;
       this.phase = 'idle';
       this.errorMessage = null;

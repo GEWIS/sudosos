@@ -171,7 +171,7 @@ const onCancel = async () => {
 };
 
 onUnmounted(() => {
-  terminalPaymentStore.stopPolling();
+  terminalPaymentStore.stopListening();
 });
 </script>
 
