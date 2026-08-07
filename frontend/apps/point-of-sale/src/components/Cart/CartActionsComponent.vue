@@ -45,10 +45,11 @@
         v-if="borrelMode"
         aria-label="Pay with card terminal"
         class="terminal p-3 text-2xl text-white flex items-center justify-center w-16 h-16"
-        :disabled="!terminalEnabled"
+        :disabled="!terminalEnabled || showTerminalPayment"
         @click="payWithTerminal"
       >
-        <i class="pi pi-credit-card" style="font-size: 2rem" />
+        <ProgressSpinner v-if="showTerminalPayment" class="button-spinner" stroke-width="4" />
+        <i v-else class="pi pi-credit-card" style="font-size: 2rem" />
       </Button>
       <Button
         v-if="!borrelMode"
@@ -109,7 +110,7 @@ const showTerminalPayment = ref(false);
 const terminalEnabled = computed(() => cartItems.length > 0 && !buyer.value);
 
 const payWithTerminal = () => {
-  if (!terminalEnabled.value) return;
+  if (!terminalEnabled.value || showTerminalPayment.value) return;
 
   stopCheckout();
   showTerminalPayment.value = true;
@@ -189,6 +190,15 @@ const checkout = () => {
   border-color: grey;
   opacity: 1;
   cursor: not-allowed;
+}
+
+.button-spinner {
+  width: 30px;
+  height: 30px;
+  --p-progressspinner-color-one: white;
+  --p-progressspinner-color-two: white;
+  --p-progressspinner-color-three: white;
+  --p-progressspinner-color-four: white;
 }
 
 .checkout {

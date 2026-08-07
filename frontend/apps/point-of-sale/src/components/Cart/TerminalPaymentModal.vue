@@ -40,13 +40,23 @@
 
     <template #footer>
       <div class="flex justify-center w-full">
-        <Button v-if="phase === 'waiting'" class="terminal-cancel text-xl px-6 py-3" @click="onCancel"> Cancel </Button>
+        <Button
+          v-if="phase === 'waiting'"
+          class="terminal-cancel text-xl px-6 py-3"
+          :disabled="cancelling"
+          @click="onCancel"
+        >
+          <ProgressSpinner v-if="cancelling" class="button-spinner" stroke-width="4" />
+          <span v-else>Cancel</span>
+        </Button>
         <Button
           v-else-if="phase === 'cancelled' || phase === 'error'"
           class="terminal-close text-xl px-6 py-3"
+          :disabled="closing"
           @click="close"
         >
-          Close
+          <ProgressSpinner v-if="closing" class="button-spinner" stroke-width="4" />
+          <span v-else>Close</span>
         </Button>
       </div>
     </template>
@@ -96,7 +106,13 @@ const formattedAmount = computed(() => {
 /** Guards against the watcher firing twice for one opening. */
 const starting = ref(false);
 
+const cancelling = ref(false);
+const closing = ref(false);
+
 const close = () => {
+  if (closing.value) return;
+
+  closing.value = true;
   terminalPaymentStore.reset();
   visible.value = false;
 };
@@ -136,6 +152,11 @@ watch(
   async (isVisible) => {
     if (!isVisible || starting.value) return;
 
+    // The component is never unmounted between payments, so clear the guards
+    // from the previous one before the footer is shown again.
+    cancelling.value = false;
+    closing.value = false;
+
     starting.value = true;
     try {
       await start();
@@ -160,6 +181,9 @@ watch(
 );
 
 const onCancel = async () => {
+  if (cancelling.value) return;
+
+  cancelling.value = true;
   try {
     await terminalPaymentStore.cancelPayment();
   } catch {
@@ -168,6 +192,8 @@ const onCancel = async () => {
       summary: 'Could not cancel the payment. Check the terminal before trying again.',
       life: 5000,
     });
+  } finally {
+    cancelling.value = false;
   }
 };
 
@@ -190,5 +216,14 @@ onUnmounted(() => {
 
 .terminal-close {
   border: none;
+}
+
+.button-spinner {
+  width: 30px;
+  height: 30px;
+  --p-progressspinner-color-one: white;
+  --p-progressspinner-color-two: white;
+  --p-progressspinner-color-three: white;
+  --p-progressspinner-color-four: white;
 }
 </style>
