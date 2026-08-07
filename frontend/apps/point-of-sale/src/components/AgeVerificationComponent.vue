@@ -1,5 +1,13 @@
 <template>
-  <Dialog v-model:visible="visible" class="w-120" :closable="false" :dismissable-mask="false" :draggable="false" modal>
+  <Dialog
+    v-model:visible="visible"
+    class="w-120"
+    :closable="false"
+    :close-on-escape="false"
+    :dismissable-mask="false"
+    :draggable="false"
+    modal
+  >
     <div class="flex flex-col items-center gap-6 py-4">
       <p class="text-xl font-semibold text-center">Your cart contains alcoholic products.</p>
       <p class="text-center text-lg">Are you 18 years of age or older?</p>

@@ -3,6 +3,7 @@
     v-model:visible="visible"
     class="w-120"
     :closable="false"
+    :close-on-escape="false"
     :dismissable-mask="false"
     :draggable="false"
     header="Card payment"

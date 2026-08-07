@@ -1,5 +1,13 @@
 <template>
-  <Dialog v-model:visible="visible" class="w-100" :closable="false" :dismissable-mask="false" :draggable="false" modal>
+  <Dialog
+    v-model:visible="visible"
+    class="w-100"
+    :closable="false"
+    :close-on-escape="false"
+    :dismissable-mask="false"
+    :draggable="false"
+    modal
+  >
     <div class="flex flex-col justify-center items-center mt-4 gap-4">
       <img alt="SudoSOS QR Code" class="h-72" src="@/assets/aprilfools.png" />
 

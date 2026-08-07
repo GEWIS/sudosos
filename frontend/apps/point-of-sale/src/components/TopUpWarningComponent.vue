@@ -3,6 +3,7 @@
     v-model:visible="visible"
     class="w-[35rem]"
     :closable="false"
+    :close-on-escape="false"
     :dismissable-mask="false"
     :draggable="false"
     header="Please Top-Up your SudoSOS balance"
