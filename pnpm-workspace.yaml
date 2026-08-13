@@ -1,0 +1,31 @@
+packages:
+  - backend
+  - packages/sudosos-client
+  - frontend/apps/dashboard
+  - frontend/apps/point-of-sale
+  - frontend/lib/common
+  - frontend/lib/themes
+
+catalog:
+  axios: 1.17.0
+  vue: ^3.5.25
+  pinia: ^3.0.4
+  typescript: ~5.9.3
+  vite: ^7.2.7
+  vue-tsc: ^3.1.7
+  eslint: ^9.39.1
+  '@vitejs/plugin-vue': ^6.0.2
+  vite-plugin-dts: ^4.5.4
+  '@vue/tsconfig': ^0.8.1
+  '@typescript-eslint/parser': ^8.49.0
+  vue-eslint-parser: ^10.2.0
+  sass: ^1.95.0
+  tailwindcss: ^4.1.17
+  '@tailwindcss/vite': ^4.1.17
+  tailwindcss-primeui: ^0.6.1
+  primevue: ^4.5.2
+  primeicons: ^7.0.0
+  '@primeuix/themes': ^2.0.2
+  '@gewis/eslint-config-typescript': ^2.4.0
+  '@gewis/eslint-config-vue': ^2.4.0
+  '@gewis/prettier-config': ^2.2.2

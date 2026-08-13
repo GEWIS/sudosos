@@ -1,0 +1,43 @@
+{
+  "name": "sudosos",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "prepare": "husky || true",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm --filter sudosos-backend test",
+    "format": "prettier --check frontend",
+    "format:fix": "prettier --write frontend",
+    "generate:client": "pnpm --filter sudosos-backend swagger && pnpm --filter @gewis/sudosos-client gen",
+    "backend:lint": "pnpm --filter sudosos-backend lint",
+    "backend:build": "pnpm --filter sudosos-backend build",
+    "backend:swagger": "pnpm --filter sudosos-backend swagger",
+    "backend:test": "pnpm --filter sudosos-backend test",
+    "backend:watch": "pnpm --filter sudosos-backend watch",
+    "frontend:lint": "pnpm --filter './frontend/**' lint",
+    "frontend:build": "pnpm --filter @gewis/sudosos-client build && pnpm --filter './frontend/**' build",
+    "dev:libraries": "concurrently --kill-others \"pnpm --filter @sudosos/sudosos-frontend-common dev\" \"pnpm --filter @sudosos/themes dev\"",
+    "dev:dashboard": "concurrently --kill-others \"pnpm --filter sudosos-dashboard dev:local\" \"pnpm run dev:libraries\"",
+    "dev:pos": "concurrently --kill-others \"pnpm --filter @sudosos/point-of-sale dev:local\" \"pnpm run dev:libraries\"",
+    "dev": "concurrently --kill-others -n backend,frontend \"pnpm run backend:watch\" \"pnpm run dev:dashboard\"",
+    "bootstrap": "bash scripts/setup-dev.sh"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.3.0",
+    "@commitlint/config-conventional": "^20.3.0",
+    "concurrently": "^9.2.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
+    "@gewis/prettier-config": "catalog:"
+  },
+  "lint-staged": {
+    "frontend/**/*": "prettier --write --ignore-unknown"
+  },
+  "pnpm": {
+    "overrides": { "ioredis": "5.10.1" },
+    "onlyBuiltDependencies": ["@swc/core", "bcrypt", "better-sqlite3", "esbuild", "msgpackr-extract", "vue-demi"]
+  }
+}
