@@ -1,0 +1,185 @@
+name: Backend CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'backend/**'
+      - 'packages/sudosos-client/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.github/workflows/backend-ci.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: write
+  statuses: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.33.0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - name: No stray lockfiles
+        run: '! (find . -name yarn.lock -o -name package-lock.json | grep -v node_modules | grep .)'
+      - run: pnpm run backend:lint
+
+  build:
+    needs: [lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.33.0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run backend:build
+      - run: pnpm run backend:swagger
+      - name: Copy static assets into out/
+        run: mkdir -p backend/out/static && cp -r backend/static/. backend/out/static/
+      - name: Compress out folder
+        run: tar -zcvf out.tar.gz -C backend out/
+      - uses: actions/upload-artifact@v4
+        with: { name: build, path: out.tar.gz, retention-days: 1 }
+
+  client-freshness:
+    needs: [lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.33.0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: pnpm }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '11' }
+      - run: pnpm install --frozen-lockfile
+      - name: Regenerate client from current backend API
+        run: pnpm run generate:client
+      - name: Committed client sources must match the API
+        run: git diff --exit-code packages/sudosos-client/src || (echo "::error::packages/sudosos-client/src is stale -- run 'pnpm generate:client' and commit" && exit 1)
+      - run: pnpm --filter @gewis/sudosos-client build
+
+  coverage:
+    name: "${{ matrix.job-name }}"
+    needs: [build]
+    runs-on: ubuntu-latest
+    container:
+      image: node:22
+    services:
+      mariadb:
+        image: mariadb:lts
+        env:
+          MARIADB_RANDOM_ROOT_PASSWORD: true
+          MARIADB_DATABASE: sudosos-ci
+          MARIADB_USER: sudosos-ci
+          MARIADB_PASSWORD: sudosos-ci
+    strategy:
+      matrix:
+        include:
+          - job-name: coverage-mariadb
+            typeorm-connection: mariadb
+            typeorm-host: mariadb
+            typeorm-port: 3306
+            typeorm-username: sudosos-ci
+            typeorm-password: sudosos-ci
+            typeorm-database: sudosos-ci
+            typeorm-synchronize: "false"
+          - job-name: test-better-sqlite3
+            typeorm-connection: better-sqlite3
+            typeorm-host: ""
+            typeorm-port: ""
+            typeorm-username: ""
+            typeorm-password: ""
+            typeorm-database: local.sqlite
+            typeorm-synchronize: "true"
+    env:
+      NAME: sudosos-test
+      NODE_ENV: development
+      API_BASEPATH: /v1
+      GEWISWEB_JWT_SECRET: ChangeMe
+      TYPEORM_CONNECTION: ${{ matrix.typeorm-connection }}
+      TYPEORM_HOST: ${{ matrix.typeorm-host }}
+      TYPEORM_PORT: ${{ matrix.typeorm-port }}
+      TYPEORM_USERNAME: ${{ matrix.typeorm-username }}
+      TYPEORM_PASSWORD: ${{ matrix.typeorm-password }}
+      TYPEORM_DATABASE: ${{ matrix.typeorm-database }}
+      TYPEORM_SYNCHRONIZE: ${{ matrix.typeorm-synchronize }}
+      TYPEORM_LOGGING: false
+      ENABLE_LDAP: true
+      STRIPE_PUBLIC_KEY: ${{ secrets.STRIPE_SUDOSOS_TEST_KEY }}
+      STRIPE_PRIVATE_KEY: ${{ secrets.STRIPE_SUDOSOS_TEST_KEY }}
+      STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_TEST_SECRET }}
+      SKIP_SQLITE_DEFAULTS: true
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - run: npm install -g pnpm@10.33.0
+      - run: pnpm install --frozen-lockfile
+      - run: mkdir -p backend/config && openssl genrsa -out backend/config/jwt.key 2048 && chmod 0777 backend/config/jwt.key
+      - name: Download build artifact
+        if: matrix.typeorm-connection == 'better-sqlite3'
+        uses: actions/download-artifact@v4
+        with: { name: build }
+      - name: Extract build artifact
+        if: matrix.typeorm-connection == 'better-sqlite3'
+        run: tar -xzf out.tar.gz -C backend
+      - run: pnpm --filter sudosos-backend run swagger:validate
+        if: matrix.typeorm-connection == 'mariadb'
+      - run: pnpm --filter sudosos-backend run test-js-ci
+        if: matrix.typeorm-connection == 'better-sqlite3'
+      - run: pnpm --filter sudosos-backend run coverage-ci-migrate
+        if: matrix.typeorm-connection == 'mariadb'
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        if: ${{ matrix.typeorm-connection == 'mariadb' }}
+      - name: Fetch target branch coverage from artifacts
+        id: fetch-coverage-base
+        if: github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork && matrix.typeorm-connection == 'mariadb'
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: backend-coverage-baseline.yml
+          workflow_conclusion: success
+          name: coverage
+          if_no_artifact_found: warn
+          branch: ${{ github.base_ref }}
+          path: backend/reports/coverage-base
+      - name: Check for base coverage artifact
+        id: base-coverage
+        if: github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork && matrix.typeorm-connection == 'mariadb'
+        run: |
+          if [ -f backend/reports/coverage-base/coverage-summary.json ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Comment code coverage on PR
+        if: github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork && matrix.typeorm-connection == 'mariadb' && steps.base-coverage.outputs.exists == 'true'
+        uses: sidx1024/report-nyc-coverage-github-action@v1.2.7
+        with:
+          comment_template_file: .github/coverage-template.md
+          coverage_file: backend/reports/coverage/coverage-summary.json
+          base_coverage_file: backend/reports/coverage-base/coverage-summary.json
+          sources_base_path: "/__w/sudosos/sudosos/backend/"
+      - name: Upload code coverage report
+        if: ${{ matrix.typeorm-connection == 'mariadb' }}
+        uses: actions/upload-artifact@v4
+        with: { name: coverage, path: backend/reports/coverage/, retention-days: 7 }
+      - name: Upload coverage to Coveralls
+        if: matrix.typeorm-connection == 'mariadb'
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./backend/reports/coverage/lcov.info
+          base-path: backend

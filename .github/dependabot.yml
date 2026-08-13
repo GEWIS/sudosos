@@ -1,0 +1,27 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directories:
+      - "/"
+      - "/backend"
+      - "/packages/sudosos-client"
+      - "/frontend/apps/dashboard"
+      - "/frontend/apps/point-of-sale"
+      - "/frontend/lib/common"
+      - "/frontend/lib/themes"
+    schedule:
+      interval: weekly
+    target-branch: develop
+    open-pull-requests-limit: 15
+    commit-message:
+      prefix: "chore(deps)"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      development_minors_and_patches:
+        dependency-type: development
+        update-types: [minor, patch]
+      production_patches:
+        dependency-type: production
+        update-types: [patch]
