@@ -22,13 +22,42 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@gewis/splash": "^2.4.0",
+    "@gewis/sudosos-client": "workspace:*",
+    "@primeuix/themes": "catalog:",
     "@sudosos/sudosos-frontend-common": "workspace:^",
     "@sudosos/themes": "workspace:^",
-    "qrcode": "^1.5.4"
+    "@tailwindcss/vite": "catalog:",
+    "axios": "catalog:",
+    "fuse.js": "^7.1.0",
+    "jwt-decode": "^4.0.0",
+    "lodash": "^4.17.21",
+    "pinia": "catalog:",
+    "primeicons": "catalog:",
+    "primevue": "catalog:",
+    "qrcode": "^1.5.4",
+    "sass": "catalog:",
+    "socket.io-client": "^4.8.1",
+    "tailwindcss": "catalog:",
+    "tailwindcss-primeui": "catalog:",
+    "vue": "catalog:",
+    "vue-router": "^4.6.3"
   },
   "devDependencies": {
+    "@gewis/eslint-config-typescript": "catalog:",
+    "@gewis/eslint-config-vue": "catalog:",
+    "@gewis/prettier-config": "catalog:",
+    "@types/lodash": "^4.17.21",
     "@types/qrcode": "^1.5.6",
-    "eslint": "^9.39.1",
-    "lint-staged": "^16.2.7"
+    "@typescript-eslint/parser": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/tsconfig": "catalog:",
+    "eslint": "catalog:",
+    "lint-staged": "^16.2.7",
+    "npm-run-all": "^4.1.5",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vue-eslint-parser": "catalog:",
+    "vue-tsc": "catalog:"
   }
 }

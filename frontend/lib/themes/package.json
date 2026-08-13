@@ -26,7 +26,23 @@
     "type": "git",
     "url": "https://github.com/GEWIS/sudosos-frontend.git"
   },
+  "dependencies": {
+    "@primeuix/themes": "catalog:",
+    "primevue": "catalog:",
+    "sass": "catalog:",
+    "tailwindcss": "catalog:"
+  },
   "devDependencies": {
-    "eslint": "^9.39.1"
+    "@gewis/eslint-config-typescript": "catalog:",
+    "@gewis/eslint-config-vue": "catalog:",
+    "@gewis/prettier-config": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/tsconfig": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-dts": "catalog:",
+    "vue-tsc": "catalog:"
   }
 }
