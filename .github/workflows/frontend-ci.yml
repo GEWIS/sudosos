@@ -1,0 +1,50 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - 'frontend/**'
+      - 'packages/sudosos-client/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.github/workflows/frontend-ci.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'frontend/**'
+      - 'packages/sudosos-client/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.github/workflows/frontend-ci.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.33.0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - name: Prettier check
+        run: pnpm run format
+      - name: Build client + libraries (lint configs need built dist)
+        run: |
+          pnpm --filter @gewis/sudosos-client build
+          pnpm --filter @sudosos/themes build
+          pnpm --filter @sudosos/sudosos-frontend-common build
+      - name: Lint all frontend workspaces
+        run: pnpm run frontend:lint
+      - name: Build apps
+        run: pnpm run frontend:build
+      - name: i18n translation consistency
+        working-directory: frontend
+        run: node scripts/check-translations.js
