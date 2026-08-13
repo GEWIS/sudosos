@@ -31,6 +31,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
+        'sudosos-dashboard': fileURLToPath(new URL('.', import.meta.url)),
       },
     },
     optimizeDeps: {

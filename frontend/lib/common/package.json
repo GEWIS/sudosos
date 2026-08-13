@@ -37,7 +37,28 @@
     "url": "https://gitlab.com/sudosos/sudosos-frontend-common/issues"
   },
   "homepage": "https://gitlab.com/sudosos/sudosos-frontend-common#readme",
+  "dependencies": {
+    "@gewis/sudosos-client": "workspace:*",
+    "axios": "catalog:",
+    "jose": "^6.1.3",
+    "jwt-decode": "^4.0.0",
+    "lodash": "^4.17.21",
+    "pinia": "catalog:",
+    "socket.io-client": "^4.8.1",
+    "vue": "catalog:"
+  },
   "devDependencies": {
-    "eslint": "^9.39.1"
+    "@gewis/eslint-config-typescript": "catalog:",
+    "@gewis/eslint-config-vue": "catalog:",
+    "@gewis/prettier-config": "catalog:",
+    "@types/lodash": "^4.17.21",
+    "@typescript-eslint/parser": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/tsconfig": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-dts": "catalog:",
+    "vue-tsc": "catalog:"
   }
 }

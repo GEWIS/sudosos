@@ -1,0 +1,34 @@
+{
+  "name": "@gewis/sudosos-client",
+  "version": "0.0.0-development",
+  "description": "Auto-generated TypeScript-Axios client for the SudoSOS API",
+  "license": "AGPL-3.0-or-later",
+  "main": "dist/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "LICENSE"
+  ],
+  "scripts": {
+    "gen": "openapi-generator-cli generate -i ../../backend/out/swagger.json -g typescript-axios -o ./src --openapi-normalizer REFACTOR_ALLOF_WITH_PROPERTIES_ONLY=true --additional-properties=useSingleRequestParameter=true",
+    "build": "tsc && tsc -p tsconfig.esm.json && echo '{\"type\":\"module\"}' > dist/esm/package.json",
+    "genbuild": "pnpm run gen && pnpm run build",
+    "clean": "rm -rf src dist"
+  },
+  "dependencies": {
+    "axios": "catalog:"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "2.40.1",
+    "typescript": "catalog:"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GEWIS/sudosos.git",
+    "directory": "packages/sudosos-client"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
