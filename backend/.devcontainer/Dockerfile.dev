@@ -13,23 +13,26 @@ RUN apk add --no-cache \
     g++ \
     libc-dev
 
-# Set working directory
+RUN npm install -g pnpm@10.33.0
+
+# Set working directory (repo root -- this is a pnpm workspace, not a standalone package)
 WORKDIR /workspace
 
-# Copy package files
-COPY package*.json ./
+# Copy workspace + backend package manifests
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY backend/package.json backend/
 
 # Install dependencies
-RUN npm install
+RUN HUSKY=0 pnpm install --frozen-lockfile --filter sudosos-backend
 
 # Copy source code
 COPY . .
 
 # Create necessary directories
-RUN mkdir -p data/products data/banners data/invoices data/payout_requests data/seller_payouts data/write_offs config
+RUN mkdir -p backend/data/products backend/data/banners backend/data/invoices backend/data/payout_requests backend/data/seller_payouts backend/data/write_offs backend/config
 
 # Expose ports
 EXPOSE 3000 8080
 
 # Default command (will be overridden by docker-compose)
-CMD ["npm", "run", "watch"]
+CMD ["pnpm", "run", "watch"]

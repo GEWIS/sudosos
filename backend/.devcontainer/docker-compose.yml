@@ -1,15 +1,14 @@
-version: '3.8'
-
 services:
   backend:
     build:
-      context: ..
-      dockerfile: .devcontainer/Dockerfile.dev
+      context: ../..
+      dockerfile: backend/.devcontainer/Dockerfile.dev
     volumes:
-      - ..:/workspace:cached
+      - ../..:/workspace:cached
       - /workspace/node_modules
-    working_dir: /workspace
-    command: npm run watch
+      - /workspace/backend/node_modules
+    working_dir: /workspace/backend
+    command: pnpm run watch
     environment:
       - NODE_ENV=development
       - TYPEORM_CONNECTION=mariadb

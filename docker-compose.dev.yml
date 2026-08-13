@@ -1,0 +1,38 @@
+services:
+  mariadb:
+    image: mariadb:lts
+    environment:
+      MARIADB_ROOT_PASSWORD: rootpassword
+      MARIADB_DATABASE: sudosos_dev
+      MARIADB_USER: sudosos
+      MARIADB_PASSWORD: sudosos
+    ports: ["3306:3306"]
+    volumes: [mariadb_data:/var/lib/mysql]
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      timeout: 5s
+      retries: 3
+      interval: 5s
+      start_period: 10s
+
+  redis:
+    image: redis:7.2-alpine
+    ports: ["6379:6379"]
+
+  mailpit:
+    image: axllent/mailpit
+    ports: ["8025:8025", "1025:1025"]
+    environment:
+      - MP_SMTP_AUTH_ACCEPT_ANY=true
+      - MP_SMTP_AUTH_ALLOW_INSECURE=true
+
+  pdf-compiler:
+    image: abc.docker-registry.gewis.nl/eou/pdf-compiler:latest
+    platform: linux/amd64
+    ports: ["3001:80"]
+
+volumes:
+  mariadb_data:
