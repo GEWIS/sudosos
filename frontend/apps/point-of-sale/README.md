@@ -4,7 +4,8 @@ Frontend application for the SudoSOS point of sale (POS) system.
 
 ## Description
 
-This is the frontend for the SudoSOS POS system, built with Vue 3 and TypeScript. It now lives inside the [`sudosos-frontend`](https://github.com/GEWIS/sudosos-frontend) monorepo at `./apps/point-of-sale`.
+This is the frontend for the SudoSOS POS system, built with Vue 3 and TypeScript. It lives inside the
+[GEWIS/sudosos](https://github.com/GEWIS/sudosos) monorepo at `frontend/apps/point-of-sale`.
 
 ## Target Devices & Screen Sizes
 
@@ -18,62 +19,45 @@ Make sure to check your layouts at these sizes for best results.
 ## Prerequisites
 
 - **Node.js 22+** ([Download](https://nodejs.org/))
-- **Yarn** (with corepack enabled) ([Download](https://yarnpkg.com/getting-started/install))
+- **pnpm** (with corepack enabled) — installs happen at the monorepo root, not in this directory.
 
 ## Getting Started
 
 From the root of the monorepo:
 
 ```bash
-git clone https://github.com/GEWIS/sudosos-frontend.git
-yarn install
-yarn dev-pos
+git clone git@github.com:GEWIS/sudosos.git && cd sudosos
+pnpm bootstrap
+pnpm dev:pos
 ```
 
-This will start the POS app along with its dependencies (common libraries) in development mode.
+This starts the POS app along with its dependencies (the shared libraries) in development mode.
 
 ## Building
 
-To create a production build:
+To create a production build, from the repo root:
 
 ```bash
-yarn build-pos
+pnpm --filter @gewis/sudosos-client build && pnpm --filter @sudosos/themes build && pnpm --filter @sudosos/sudosos-frontend-common build
+pnpm --filter @sudosos/point-of-sale build
 ```
 
-The built files will be output to `apps/point-of-sale/dist/`.
+The built files will be output to `frontend/apps/point-of-sale/dist/`.
 
-### Advanced/Direct usage (not recommended):
+### Advanced/Direct usage (not recommended)
 
-If you want to run only the POS app (for example, if you know your libraries are already built and up-to-date):
-
-```bash
-cd apps/point-of-sale
-yarn dev
-```
-
-**Production build:**
+If you want to run only the POS app (for example, if you know the shared libraries are already built
+and up-to-date), you can run its own scripts directly from this directory once the workspace is
+installed:
 
 ```bash
-cd sudosos-frontend
-yarn build-pos
-```
-
-Or, from the app directory:
-
-```bash
-cd apps/point-of-sale
-yarn build
-```
-
-Built files will be in `dist/`.
-
-**Preview production build:**
-
-```bash
-cd apps/point-of-sale
-yarn preview
+cd frontend/apps/point-of-sale
+pnpm dev:local     # dev server against a local backend
+pnpm build          # production build -> dist/
+pnpm preview        # preview the production build
 ```
 
 ## Contributing
 
-Issues and pull requests are welcome! Use the [main repo issue tracker](https://github.com/GEWIS/sudosos-frontend/issues) for feedback or suggestions.
+Issues and pull requests are welcome! Use the
+[monorepo issue tracker](https://github.com/GEWIS/sudosos/issues) for feedback or suggestions.

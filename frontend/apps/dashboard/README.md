@@ -1,41 +1,31 @@
 # sudosos-dashboard
 
-This is the repository for the all-new sudosos-frontend, rewritten in Vue3. It is the website that you see when you go to sudosos.gewis.nl.
+This is the admin/seller dashboard, rewritten in Vue 3. It's the website you see when you go to
+sudosos.gewis.nl. It lives at `frontend/apps/dashboard/` inside the
+[GEWIS/sudosos](https://github.com/GEWIS/sudosos) monorepo — see the [root README](../../../README.md)
+for the one-command setup (`pnpm bootstrap && pnpm dev`).
 
 ## Recommended IDE Setup
 
-We recommend using [Jetbrains Webstorm](https://www.jetbrains.com/webstorm/) for this project.
-
-## Alternative 1: VSCode
-
-You can use [VS Code]() for this project using the official Vue extension.
-
-## Alternative 2: GitHub codespaces (in your browser)
-
-Go to "Code" and then "Codespaces" and click on "Create codespaces on develop"
+We recommend using [Jetbrains Webstorm](https://www.jetbrains.com/webstorm/) for this project, or
+VS Code with the official [Vue extension](https://marketplace.visualstudio.com/items?itemName=Vue.volar).
 
 ## Project Setup
 
-To start working on this project, clone the project using Webstorm in your favorite directory. Then set up and use the project with the following commands. Make sure to copy the contents of .env-example to a new file in the root directory .env
+This package manager is **pnpm**, not npm or yarn, and installs happen at the repo root (one workspace,
+one lockfile) — see the [root README](../../../README.md#quickstart) rather than running `npm install`
+here directly. Copy `.env.example` to `.env` in this directory before starting the dev server.
+
+From the repo root:
 
 ```sh
-npm install
+pnpm dev:dashboard   # or `pnpm dev` for backend + dashboard together
 ```
 
-### Compile and Hot-Reload for Development
+From this directory, once the workspace is installed:
 
 ```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
+pnpm dev:local      # hot-reload dev server against a local backend
+pnpm build           # type-check + build for production
+pnpm lint            # ESLint
 ```
