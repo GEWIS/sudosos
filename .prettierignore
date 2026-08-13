@@ -1,0 +1,4 @@
+backend/
+packages/
+pnpm-lock.yaml
+frontend/**/dist/

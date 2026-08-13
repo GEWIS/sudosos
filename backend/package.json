@@ -1,9 +1,8 @@
 {
-  "name": "sudosos-back-end",
+  "name": "sudosos-backend",
   "version": "0.1.0",
   "description": "Back-end API and database management for SudoSOS.",
   "main": "out/index.js",
-  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=20"
   },
@@ -32,7 +31,7 @@
     "test-js-ci": "pnpm run schema-js && cp -r test/static out/test/static && pnpm run test-js",
     "lint": "eslint package.json src test --ext .js --ext .ts",
     "lint-fix": "pnpm run lint --fix",
-    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
+    "typeorm": "pnpm exec typeorm-ts-node-commonjs",
     "predocs:dev": "typedoc",
     "typedoc": "typedoc",
     "docs:dev": "vitepress dev docs",
@@ -41,9 +40,7 @@
     "maintenance": "ts-node src/maintenance.ts",
     "init:migrate": "pnpm run migrate && pnpm run seed && pnpm run maintenance",
     "init:dev": "pnpm run migrate && pnpm run seed:dev",
-    "client:gen": "pnpm run swagger && cd client && npm install && npm run genbuild",
-    "init:schema": "pnpm run schema && pnpm run seed && pnpm run maintenance",
-    "prepare": "husky || true"
+    "init:schema": "pnpm run schema && pnpm run seed && pnpm run maintenance"
   },
   "author": "",
   "license": "AGPL-3.0-or-later",
@@ -148,18 +145,5 @@
     "vitepress": "1.6.4",
     "vitepress-plugin-mermaid": "2.0.17",
     "vitest": "2.1.9"
-  },
-  "pnpm": {
-    "overrides": {
-      "ioredis": "$ioredis"
-    },
-    "onlyBuiltDependencies": [
-      "@swc/core",
-      "bcrypt",
-      "better-sqlite3",
-      "esbuild",
-      "msgpackr-extract",
-      "vue-demi"
-    ]
   }
 }
