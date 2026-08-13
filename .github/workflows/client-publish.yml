@@ -3,6 +3,10 @@ name: Publish Client Snapshot
 on:
   push:
     branches: [develop]
+    paths:
+      - 'backend/src/**'
+      - 'backend/package.json'
+      - 'packages/sudosos-client/**'
 
 concurrency:
   group: publish-client-${{ github.ref }}
@@ -15,39 +19,23 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.33.0 }
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '22'
           registry-url: 'https://registry.npmjs.org'
-
+          cache: pnpm
       - uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '11'
-
-      # Generate swagger spec from backend
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10.33.0
+        with: { distribution: temurin, java-version: '11' }
       - run: pnpm install --frozen-lockfile
-      - run: pnpm swagger
-
-      # Generate and build client
-      - name: Install client dependencies
-        working-directory: client
-        run: npm install
-
-      - name: Generate and build client
-        working-directory: client
-        run: npm run genbuild
-
-      - name: Set package version
-        working-directory: client
+      - run: pnpm run generate:client
+      - run: pnpm --filter @gewis/sudosos-client build
+      - name: Set snapshot version
+        working-directory: packages/sudosos-client
         run: npm version "0.0.0-develop.$(git rev-parse --short HEAD)" --no-git-tag-version
-
       - name: Publish to npm
-        working-directory: client
+        working-directory: packages/sudosos-client
         run: npm publish --tag develop
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
