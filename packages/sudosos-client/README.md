@@ -2,7 +2,9 @@
 
 Auto-generated TypeScript-Axios client for the SudoSOS API. Published on npm as [`@gewis/sudosos-client`](https://www.npmjs.com/package/@gewis/sudosos-client).
 
-This package lives inside the [SudoSOS Backend](https://github.com/GEWIS/sudosos-backend/tree/develop/client) monorepo (`client/`) and is generated from the backend's Swagger/OpenAPI spec.
+This package lives at `packages/sudosos-client/` in the [GEWIS/sudosos](https://github.com/GEWIS/sudosos)
+monorepo and is generated from the backend's Swagger/OpenAPI spec. The frontend apps in this same repo
+consume it directly as a `workspace:*` dependency, not via the npm-published version.
 
 ---
 
@@ -61,7 +63,7 @@ balanceApi.getBalances().then((res) => {
 });
 ```
 
-For a more complete integration example, see [sudosos-frontend-common](https://github.com/GEWIS/sudosos-frontend-common).
+For a more complete integration example, see [`frontend/lib/common`](../../frontend/lib/common) in this repo.
 
 ---
 
@@ -72,39 +74,43 @@ The client is generated from the OpenAPI spec that the backend emits at build ti
 ### Prerequisites
 
 - Node.js 22+
-- Java runtime (required by `openapi-generator-cli`)
-- The backend's Swagger output must exist at `../out/swagger.json` — run `npm run swagger` from the backend root first
+- Java 11+ runtime (required by `openapi-generator-cli`) — only needed to *regenerate* the client;
+  the generated `src/` is committed, so day-to-day frontend work never needs Java.
+- The backend's Swagger output must exist at `../../backend/out/swagger.json` — run `pnpm backend:swagger`
+  from the repo root first (or `pnpm swagger` from `backend/`).
 
 ### Common commands
 
+Run from this directory (`packages/sudosos-client/`) once the monorepo workspace is installed, or via
+`pnpm --filter @gewis/sudosos-client <script>` from anywhere in the repo:
+
 | Command | Description |
 |---|---|
-| `npm run gen` | Generate TypeScript source from `../out/swagger.json` into `src/` |
-| `npm run build` | Compile `src/` to `dist/` |
-| `npm run genbuild` | Run `gen` then `build` (full regeneration) |
-| `npm run clean` | Remove `src/` and `dist/` |
+| `pnpm gen` | Generate TypeScript source from `../../backend/out/swagger.json` into `src/` |
+| `pnpm build` | Compile `src/` to `dist/` (CJS) and `dist/esm/` (ESM, for bundler consumers) |
+| `pnpm genbuild` | Run `gen` then `build` (full regeneration) |
+| `pnpm clean` | Remove `src/` and `dist/` |
 
 ### Regenerating after a backend change
 
-```bash
-# From the backend root — generate the OpenAPI spec first
-npm run swagger      # produces out/swagger.json
+One-shot, from the repo root:
 
-# Then regenerate the client
-cd client
-npm run genbuild
+```bash
+pnpm generate:client   # runs backend swagger, then this package's genbuild
 ```
 
-Or use the one-shot helper from the backend root:
+Or step by step:
 
 ```bash
-npm run client:gen   # runs npm run swagger, then cd client && npm install && npm run genbuild
+pnpm backend:swagger                              # produces backend/out/swagger.json
+pnpm --filter @gewis/sudosos-client run genbuild   # regenerate + rebuild the client
 ```
 
 ---
 
 ## Contributing
 
-This package is generated — do not edit files under `src/` by hand; they will be overwritten on the next `npm run gen`. To change the client's output, update the backend API and regenerate.
+This package is generated — do not edit files under `src/` by hand; they will be overwritten on the next
+`pnpm gen`. To change the client's output, update the backend API and regenerate.
 
-Issues and contributions go through the [SudoSOS Backend issue tracker](https://github.com/GEWIS/sudosos-backend/issues).
+Issues and contributions go through the [GEWIS/sudosos issue tracker](https://github.com/GEWIS/sudosos/issues).

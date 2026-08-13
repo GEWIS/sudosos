@@ -11,14 +11,16 @@
   <strong>A comprehensive Point of Sale and Financial Management System for Study Association GEWIS</strong>
 </p>
 
-[![Coverage Status](https://coveralls.io/repos/github/GEWIS/sudosos-backend/badge.svg?branch=develop)](https://coveralls.io/github/GEWIS/sudosos-backend?branch=develop)
 [![Uptime](https://uptime.gewis.nl/api/badge/2/uptime)](https://sudosos.gewis.nl/api/v1/ping)
-[![Build](https://img.shields.io/github/actions/workflow/status/GEWIS/sudosos-backend/release.yml?branch=main&label=Build)](https://github.com/GEWIS/sudosos-backend/actions/workflows/release.yml)
-[![Latest Release](https://img.shields.io/github/v/tag/GEWIS/sudosos-backend?label=Latest)](https://github.com/GEWIS/sudosos-backend/releases)
-[![Issues](https://img.shields.io/github/issues/GEWIS/sudosos-backend)](https://github.com/GEWIS/sudosos-backend/issues)
-[![Commit Activity](https://img.shields.io/github/commit-activity/m/GEWIS/sudosos-backend)](https://github.com/GEWIS/sudosos-backend/commits/develop)
-[![Code Size](https://img.shields.io/github/languages/code-size/GEWIS/sudosos-backend)](https://github.com/GEWIS/sudosos-backend)
-[![License](https://img.shields.io/github/license/GEWIS/sudosos-backend.svg)](./LICENSE)
+[![Issues](https://img.shields.io/github/issues/GEWIS/sudosos)](https://github.com/GEWIS/sudosos/issues)
+[![Commit Activity](https://img.shields.io/github/commit-activity/m/GEWIS/sudosos)](https://github.com/GEWIS/sudosos/commits/develop)
+[![License](https://img.shields.io/github/license/GEWIS/sudosos.svg)](../LICENSE)
+
+This is the `backend/` half of the [GEWIS/sudosos](https://github.com/GEWIS/sudosos) monorepo — see the
+[root README](../README.md) for the one-command monorepo quickstart (`pnpm bootstrap && pnpm dev`) and
+[../CLAUDE.md](../CLAUDE.md) for cross-cutting conventions. Coverage/build/release badges and the CI
+workflow links below are pending the monorepo's own CI (not set up yet); everything else on this page
+still applies as-is once you're inside a bootstrapped checkout.
 
 </div>
 
@@ -41,25 +43,29 @@ Before you begin, ensure you have the following installed:
 
 ## 🚀 Quick Start
 
-### 1. Clone and Setup
+`pnpm bootstrap` from the repo root does everything in this section for you (clone, install, `.env`,
+JWT key, schema, dev seed) — this section is the manual, backend-only equivalent, useful when you only
+care about the API.
+
+### 1. Setup
 
 ```bash
-# Clone the repository
-git clone https://github.com/GEWIS/sudosos-backend.git
-cd sudosos-backend
+# From a clone of the monorepo root (git clone git@github.com:GEWIS/sudosos.git)
+cd sudosos
 
-# Install dependencies
+# Install dependencies (always from the repo root — one pnpm workspace, one lockfile)
 pnpm install
 
 # Copy environment configuration
-cp .env.example .env
+cp backend/.env.example backend/.env
 ```
 
 ### 2. Generate JWT Key
 
 ```bash
 # Generate RSA private key for JWT authentication
-openssl genrsa -out config/jwt.key 2048
+mkdir -p backend/config
+openssl genrsa -out backend/config/jwt.key 2048
 ```
 
 Verify the key was created correctly:
@@ -70,6 +76,10 @@ head -1 config/jwt.key
 ```
 
 ### 3. Build and Test
+
+The rest of this guide runs commands from inside `backend/` (`cd backend`); each has a `pnpm --filter
+sudosos-backend <script>` / `pnpm backend:<script>` equivalent from the repo root — see the root
+[README](../README.md#command-reference).
 
 ```bash
 # Generate swagger specification
@@ -217,7 +227,7 @@ This project is licensed under the GNU Affero General Public License v3.0 or lat
 
 This project exists thanks to all the people who contribute code.
 
-<a href="https://github.com/GEWIS/sudosos-backend/graphs/contributors"><img src="https://contributors.aika.dev/GEWIS/sudosos-backend/contributors.svg?max=44" alt="Code contributors" /></a>
+<a href="https://github.com/GEWIS/sudosos/graphs/contributors"><img src="https://contributors.aika.dev/GEWIS/sudosos/contributors.svg?max=44" alt="Code contributors" /></a>
 
 ---
 
