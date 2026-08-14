@@ -314,6 +314,7 @@ const cardProps = computed<CardProps[]>(() => {
         break;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this
     props.push({
       organs: organs.value,
       organDetails: organDetails.value,
@@ -323,6 +324,7 @@ const cardProps = computed<CardProps[]>(() => {
   }
 
   if (hasMultipleOrgans.value) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this
     props.push({
       organs: organs.value,
       organDetails: organDetails.value,
@@ -443,6 +445,7 @@ const trackStyle = computed(() => {
   const baseTranslate = -currentIndex.value * 100;
   if (dragging && deltaX !== 0) {
     // while dragging, don't animate so movement follows pointer
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this
     return {
       transform: `translateX(calc(${baseTranslate}% + ${deltaX}px))`,
       transition: 'none',
@@ -450,6 +453,7 @@ const trackStyle = computed(() => {
   }
 
   // smooth transition when snapping to wrapped
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this
   return {
     transform: `translateX(${baseTranslate}%)`,
     transition: 'transform 400ms cubic-bezier(.2,.8,.2,1)',

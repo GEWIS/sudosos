@@ -13,6 +13,7 @@ import { useContainerStore } from '@/stores/container.store';
 export const useProductStore = defineStore('products', {
   state: () => ({
     // Products is a mapping between product IDs and product objects.
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this without a state return-type annotation
     products: {} as Record<number, ProductResponse>,
     categories: [] as ProductCategoryResponse[],
     vatGroups: [] as VatGroupResponse[],

@@ -9,7 +9,9 @@ import ApiService from '@/services/ApiService';
 
 export const usePointOfSaleStore = defineStore('pointOfSale', {
   state: () => ({
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this without a state return-type annotation
     pointsOfSale: {} as Record<number, PointOfSaleResponse>,
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this without a state return-type annotation
     pointsOfSaleWithContainers: {} as Record<number, PointOfSaleWithContainersResponse>,
   }),
   getters: {},

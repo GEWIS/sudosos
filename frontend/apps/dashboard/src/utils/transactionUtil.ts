@@ -25,16 +25,14 @@ export function transactionResponseToRequest(transaction: TransactionResponse): 
       // The -1 will always fail, but this "hack" is needed since the typing of revision here is not correct.
       revision: subTransaction.container.revision || -1,
     },
-    subTransactionRows: subTransaction.subTransactionRows.map(
-      (row): SubTransactionRowRequest => ({
-        amount: row.amount,
-        product: {
-          id: row.product.id,
-          revision: row.product.revision,
-        },
-        totalPriceInclVat: row.totalPriceInclVat,
-      }),
-    ),
+    subTransactionRows: subTransaction.subTransactionRows.map((row): SubTransactionRowRequest => ({
+      amount: row.amount,
+      product: {
+        id: row.product.id,
+        revision: row.product.revision,
+      },
+      totalPriceInclVat: row.totalPriceInclVat,
+    })),
     totalPriceInclVat: subTransaction.totalPriceInclVat,
   }));
 

@@ -22,6 +22,7 @@ export function isContainerWithProductsResponse(
 export const useContainerStore = defineStore('container', {
   // The state is a mapping between IDs and containers which allow for quick lookups.
   state: () => ({
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this without a state return-type annotation
     containers: {} as Record<number, ContainerInStore>,
   }),
   getters: {

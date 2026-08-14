@@ -9,6 +9,7 @@ import ApiService from '@/services/ApiService';
 
 export const useSellerPayoutStore = defineStore('seller-payout', {
   state: () => ({
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this without a state return-type annotation
     payouts: {} as Record<number, SellerPayoutResponse>,
   }),
   getters: {

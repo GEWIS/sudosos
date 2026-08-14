@@ -10,6 +10,7 @@ import apiService from '@/services/ApiService';
 
 export const useWriteOffStore = defineStore('writeoff', {
   state: () => ({
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this without a state return-type annotation
     writeOffs: {} as Record<number, WriteOffResponse & { pdf?: string }>,
     updatedAt: 0,
     inactiveUsers: [] as BalanceResponse[],

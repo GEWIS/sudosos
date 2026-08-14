@@ -31,8 +31,8 @@ interface UserModuleState {
 
 export const useUserStore = defineStore('user', {
   state: (): UserModuleState => ({
-    users: {} as Record<number, UserResponse>,
-    balances: {} as Record<number, BalanceResponse>,
+    users: {},
+    balances: {},
     organs: [],
     current: {
       balance: null,

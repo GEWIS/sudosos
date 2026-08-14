@@ -8,6 +8,7 @@ interface TransferStoreModuleState {
 
 export const useTransferStore = defineStore('transfer', {
   state: (): TransferStoreModuleState => ({
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this without a state return-type annotation
     transfers: {} as Record<number, TransferResponse>,
   }),
   getters: {
