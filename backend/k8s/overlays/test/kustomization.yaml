@@ -4,11 +4,11 @@ kind: Kustomization
 resources:
   - ../../base
   - sealed-backend-env.yaml
+  - sealed-backend-jwt.yaml
   - traefik/ingressroute.yaml
 
 patches:
   - path: patches/backend-config.yaml
-  - path: patches/backend-command.yaml
 
 # Test uses develop tags for everything
 images:
