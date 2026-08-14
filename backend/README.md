@@ -1,237 +1,103 @@
-<!-- markdownlint-disable-file MD041 MD033 -->
-<div align="center">
+# SudoSOS Backend
 
-<img src="https://github.com/GEWIS/sudosos-backend/blob/develop/backend_logo.png?raw=true"
-  alt="SudoSOS Backend Logo" style="width:200px;height:auto;">
+This is the `backend/` half of the [GEWIS/sudosos](https://github.com/GEWIS/sudosos) monorepo -- the
+Express API, TypeORM entities, and RBAC layer behind SudoSOS. It assumes you already have a bootstrapped
+monorepo checkout; see the [root README](../README.md) if you don't (`pnpm bootstrap && pnpm dev` is the
+one-command version of everything below). For architecture, domain model, and agent-facing conventions,
+see [../CLAUDE.md](../CLAUDE.md) and [./CLAUDE.md](./CLAUDE.md).
 
-<h1>SudoSOS Backend</h1>
+## Overview
 
-<p align="center">
-  <!-- markdownlint-disable-next-line MD013 -->
-  <strong>A comprehensive Point of Sale and Financial Management System for Study Association GEWIS</strong>
-</p>
+The backend is a REST API for managing transactions, user accounts, products, payments, and the rest of
+SudoSOS's financial operations. It's the single source of truth the dashboard and point-of-sale apps both
+talk to.
 
-[![Uptime](https://uptime.gewis.nl/api/badge/2/uptime)](https://sudosos.gewis.nl/api/v1/ping)
-[![Issues](https://img.shields.io/github/issues/GEWIS/sudosos)](https://github.com/GEWIS/sudosos/issues)
-[![Commit Activity](https://img.shields.io/github/commit-activity/m/GEWIS/sudosos)](https://github.com/GEWIS/sudosos/commits/develop)
-[![License](https://img.shields.io/github/license/GEWIS/sudosos.svg)](../LICENSE)
+## Local setup, beyond `pnpm bootstrap`
 
-This is the `backend/` half of the [GEWIS/sudosos](https://github.com/GEWIS/sudosos) monorepo — see the
-[root README](../README.md) for the one-command monorepo quickstart (`pnpm bootstrap && pnpm dev`) and
-[../CLAUDE.md](../CLAUDE.md) for cross-cutting conventions. Coverage/build/release badges and the CI
-workflow links below are pending the monorepo's own CI (not set up yet); everything else on this page
-still applies as-is once you're inside a bootstrapped checkout.
+`pnpm bootstrap` (from the repo root) generates a JWT key, initializes the database schema, and seeds dev
+data for you. The notes below explain what it's actually doing, for when you need to customize any of it.
 
-</div>
-
-## 🎯 Overview
-
-SudoSOS Backend is a comprehensive Point of Sale (POS) and financial management system designed specifically for Study Association GEWIS. It provides a robust API for managing transactions, user accounts, products, payments, and financial operations within the association.
-
-## 🔧 Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- **Node.js 22+** - [Download here](https://nodejs.org/)
-- **pnpm** - [Installation guide](https://pnpm.io/installation) (enabled via `corepack enable` on Node.js 16.13+)
-- **Git** - [Download here](https://git-scm.com/)
-- **OpenSSL** - Usually pre-installed on most systems
-- **Database** (choose one):
-  - **SQLite** (default for development) - No additional setup required
-  - **MariaDB/MySQL** - For production environments
-- **SQLite Viewer** (optional) - [DB Browser for SQLite](https://sqlitebrowser.org/) or [DataGrip](https://www.jetbrains.com/datagrip/)
-
-## 🚀 Quick Start
-
-`pnpm bootstrap` from the repo root does everything in this section for you (clone, install, `.env`,
-JWT key, schema, dev seed) — this section is the manual, backend-only equivalent, useful when you only
-care about the API.
-
-### 1. Setup
+**JWT key.** Authentication is RSA-signed JWTs; the private key lives at `backend/config/jwt.key` and
+isn't committed. Regenerate or replace it with:
 
 ```bash
-# From a clone of the monorepo root (git clone git@github.com:GEWIS/sudosos.git)
-cd sudosos
-
-# Install dependencies (always from the repo root — one pnpm workspace, one lockfile)
-pnpm install
-
-# Copy environment configuration
-cp backend/.env.example backend/.env
-```
-
-### 2. Generate JWT Key
-
-```bash
-# Generate RSA private key for JWT authentication
 mkdir -p backend/config
 openssl genrsa -out backend/config/jwt.key 2048
 ```
 
-Verify the key was created correctly:
+Point at a different path with the `JWT_KEY_PATH` env var (defaults to `config/jwt.key`, relative to
+`backend/`).
 
-```bash
-# Should start with -----BEGIN RSA PRIVATE KEY-----
-head -1 config/jwt.key
-```
+**Database schema vs. migrations.** Two ways to get a schema, and `pnpm bootstrap` picks the first for
+you:
 
-### 3. Build and Test
+- `pnpm schema` -- drops and recreates tables directly from the current TypeORM entities. Fast, no
+  history, fine for SQLite dev. **Clear your local database first** (delete `local.sqlite`, or drop all
+  tables on MariaDB) -- it doesn't migrate existing data.
+- `pnpm migrate` -- runs the versioned migrations under `src/database/migration/`. This is what
+  production and CI use, and what you want against MariaDB if you care about migration correctness rather
+  than just a working schema.
 
-The rest of this guide runs commands from inside `backend/` (`cd backend`); each has a `pnpm --filter
-sudosos-backend <script>` / `pnpm backend:<script>` equivalent from the repo root — see the root
-[README](../README.md#command-reference).
+Either way, follow up with `pnpm seed` (or `pnpm seed:dev` for richer fixture data) and `pnpm maintenance`
+to set up default roles and permissions -- or just run one of the combined scripts below.
 
-```bash
-# Generate swagger specification
-pnpm swagger
+**Getting a token for manual API testing.** Hit `/authentication/mock` with a valid user ID to get back a
+JWT, then paste it into Swagger UI's "Authorize" dialog (see [API documentation](#api-documentation)
+below) to authenticate further requests.
 
-# Build the project
-pnpm build
+## Stripe configuration (optional)
 
-# Run tests to verify everything works
-pnpm test
-```
+Only needed for deposit functionality. Configure with **restricted keys only**:
 
-### 4. Initialize Database
+| Env var                 | Purpose                                           |
+| ----------------------- | ------------------------------------------------- |
+| `STRIPE_PUBLIC_KEY`     | Publishable key (safe for frontend)               |
+| `STRIPE_PRIVATE_KEY`    | Restricted secret key -- see permissions below    |
+| `STRIPE_WEBHOOK_SECRET` | Webhook endpoint secret, for validating callbacks |
+| `STRIPE_RETURN_URL`     | Where Stripe redirects users after payment        |
 
-> [!WARNING] > **IMPORTANT: Clear your database before initializing!**
->
-> - For SQLite: Delete the `local.sqlite` file if it exists
-> - For MariaDB: Drop all tables in your database
+When creating the restricted API key, grant only:
 
-**Quick Start for Development:**
+- Write access on all webhooks
+- Write access on payment intents
 
-```bash
-# For SQLite (recommended for development)
-pnpm init:schema
-```
+## Available scripts
 
-```bash
-# OR for MariaDB/MySQL
-pnpm init:migrate
-```
+Run these from `backend/`, or via `pnpm --filter sudosos-backend <script>` / `pnpm backend:<script>` from
+the repo root (see the root [command reference](../README.md#command-reference)).
 
-This command will:
+| Script                   | Description                                       |
+| ------------------------ | ------------------------------------------------- |
+| `pnpm watch`             | Dev server with hot reload                        |
+| `pnpm build`             | Compile TypeScript to `out/`                      |
+| `pnpm serve`             | Run the compiled production server                |
+| `pnpm schema`            | Create/reset the database schema from entities    |
+| `pnpm migrate`           | Run database migrations                           |
+| `pnpm seed` / `seed:dev` | Seed initial data / richer dev fixture data       |
+| `pnpm maintenance`       | Set up default roles and permissions              |
+| `pnpm init:schema`       | `schema` + `seed` + `maintenance` in one go       |
+| `pnpm init:migrate`      | `migrate` + `seed` + `maintenance` in one go      |
+| `pnpm test`              | Run all tests (Vitest)                            |
+| `pnpm test-file <path>`  | Run a single test file                            |
+| `pnpm coverage`          | Run tests with a coverage report                  |
+| `pnpm lint` / `lint-fix` | ESLint, check or autofix                          |
+| `pnpm swagger`           | Regenerate `out/swagger.json` from JSDoc comments |
+| `pnpm cron`              | Start the cron job scheduler                      |
 
-- Create the database schema
-- Seed it with initial data
-- Run maintenance tasks
-- Set up default roles and permissions
+## API documentation
 
-### 5. Start Development Server
+- **Swagger UI (dev):** `http://localhost:3000/api-docs`
+- **Swagger UI (production):** `https://sudosos.gewis.nl/api/api-docs/`
+- **Full docs site** (architecture, domain model, generated TypeDoc): `https://sudosos.gewis.nl/docs/`,
+  built from `backend/docs/` by [`docs.yml`](../.github/workflows/docs.yml). Run it locally with
+  `pnpm docs:dev`.
 
-```bash
-# Start the development server with hot reload
-pnpm watch
-```
+## IDE setup (IntelliJ/WebStorm)
 
-The server will be available at `http://localhost:3000`
-
-### 6. Access API Documentation
-
-Visit `http://localhost:3000/api-docs` to access the Swagger UI for API documentation.
-
-### 7. Get Authentication Token
-
-1. Use the `/authentication/mock` endpoint with a valid userId to get a JWT token
-2. In Swagger UI, simply enter the JWT token returned by the `/authentication/mock` endpoint
-3. Use this token to authenticate API requests
-
-### 8. Stripe Configuration (Optional)
-
-For deposit functionality, configure Stripe with **restricted keys only**:
-
-**Required Environment Variables:**
-
-- `STRIPE_PUBLIC_KEY` - Your Stripe publishable key (safe for frontend)
-- `STRIPE_PRIVATE_KEY` - Your Stripe restricted secret key (see permissions below)
-- `STRIPE_WEBHOOK_SECRET` - Webhook endpoint secret for validation
-- `STRIPE_RETURN_URL` - URL to redirect users after payment
-
-**Required Stripe Permissions:**
-When creating your restricted API key, grant only these permissions:
-
-- ✅ "Write access on all webhooks"
-- ✅ "Write access on payment intents"
-
-```bash
-# Add these to your .env file
-STRIPE_PUBLIC_KEY=pk_test_your_publishable_key_here
-STRIPE_PRIVATE_KEY=sk_test_your_restricted_secret_key_here
-STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
-STRIPE_RETURN_URL=https://your-domain.com/return
-```
-
-## 🛠️ Development Setup
-
-### Available Scripts
-
-| Script                    | Description                                  |
-| ------------------------- | -------------------------------------------- |
-| `pnpm build`           | Compile TypeScript to JavaScript             |
-| `pnpm watch`           | Start development server with hot reload     |
-| `pnpm test`            | Run all tests                                |
-| `pnpm test-ci`         | Run tests with schema setup                  |
-| `pnpm test-ci-migrate` | Run tests with migration setup               |
-| `pnpm coverage`        | Generate test coverage report                |
-| `pnpm lint`            | Run ESLint                                   |
-| `pnpm lint-fix`        | Fix ESLint issues automatically              |
-| `pnpm schema`          | Create/update database schema (SQLite)       |
-| `pnpm migrate`         | Run database migrations (MariaDB/MySQL)      |
-| `pnpm seed`            | Seed database with initial data              |
-| `pnpm init:schema`     | Complete setup for SQLite development        |
-| `pnpm init:migrate`    | Complete setup for MariaDB/MySQL development |
-| `pnpm maintenance`     | Run maintenance tasks                        |
-| `pnpm cron`            | Start cron job scheduler                     |
-| `pnpm serve`           | Start production server                      |
-
-## 📚 API Documentation
-
-### Swagger UI
-
-- **Development**: `http://localhost:3000/api-docs`
-- **Production**: `https://sudosos.gewis.nl/api/api-docs/`
-
-### Comprehensive Documentation
-
-For detailed documentation, API references, and examples, visit the SudoSOS documentation site [here](http://sudosos.gewis.nl/docs):
-
-## 🤝 Contributing
-
-We welcome contributions! Please follow these guidelines:
-
-### Development Workflow
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature-name`
-3. Make your changes
-4. Run tests: `pnpm test`, or `pnpm test-file <path-to-test-file>` to run a single test file
-5. Run linting: `pnpm lint-fix`
-6. Commit your changes: `git commit -m "feat: add your feature"` ([follow the conventional commits format](https://www.conventionalcommits.org/en/v1.0.0/))
-7. Push to your branch: `git push origin feature/your-feature-name`
-8. Create a Pull Request
-
-### IDE Setup (IntelliJ/WebStorm)
-
-For easy ESLint integration:
-
-1. Go to Preferences → Languages & Frameworks → JavaScript → Code Quality Tools → ESLint
-2. Check "Run ESLint --fix on save"
-3. Apply changes
-
-## 📄 License
-
-This project is licensed under the GNU Affero General Public License v3.0 or later. See the [LICENSE](./LICENSE) file for details.
-
-## 👥 Contributors
-
-This project exists thanks to all the people who contribute code.
-
-<a href="https://github.com/GEWIS/sudosos/graphs/contributors"><img src="https://contributors.aika.dev/GEWIS/sudosos/contributors.svg?max=44" alt="Code contributors" /></a>
+For ESLint to fix issues automatically on save: Preferences -> Languages & Frameworks -> JavaScript ->
+Code Quality Tools -> ESLint -> check "Run eslint --fix on save".
 
 ---
 
-<div align="center">
-  <p>Made with ❤️ by <a href="https://gewis.nl">Study Association GEWIS</a></p>
-</div>
-
+Contributing conventions, commit style, and the license are the same for the whole monorepo -- see the
+[root README](../README.md#contributing).
