@@ -29,12 +29,17 @@ import path from 'path';
 import * as locations from './storage/locations';
 
 /**
- * Create all folders necessary to store files locally on disk
+ * Create all folders necessary to store files locally on disk.
+ *
+ * Resolves each location the same way `DiskStorage` does when it reads or
+ * writes a file: relative to `process.cwd()`, not to this module's
+ * `__dirname`.
  */
 export default function initializeDiskStorage() {
   Object.values(locations).forEach((location) => {
-    if (!fs.existsSync(path.join(__dirname, '/../..', location))) {
-      fs.mkdirSync(path.join(__dirname, '/../..', location));
+    const resolved = path.resolve(location);
+    if (!fs.existsSync(resolved)) {
+      fs.mkdirSync(resolved, { recursive: true });
     }
   });
 }
