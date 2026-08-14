@@ -138,7 +138,15 @@ describe('TerminalPaymentService', () => {
   });
 
   afterAll(async () => {
-    process.env.STRIPE_PRIVATE_KEY = originalStripeKey;
+    // Node.js stringifies `process.env.X = undefined` as the truthy string
+    // "undefined" instead of unsetting it, which then defeats the
+    // `|| 'sk_test_dummy'` fallback the next suite that reads this key relies
+    // on. Delete the key when it was originally unset instead.
+    if (originalStripeKey === undefined) {
+      delete process.env.STRIPE_PRIVATE_KEY;
+    } else {
+      process.env.STRIPE_PRIVATE_KEY = originalStripeKey;
+    }
     Config.reset();
     await finishTestDB(ctx.connection);
   });
