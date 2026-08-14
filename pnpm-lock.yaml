@@ -391,8 +391,8 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
       unplugin-swc:
-        specifier: 1.5.9
-        version: 1.5.9(@swc/core@1.15.47(@swc/helpers@0.5.23))(rollup@4.62.4)
+        specifier: 1.5.10
+        version: 1.5.10(@swc/core@1.15.47(@swc/helpers@0.5.23))(rollup@4.62.4)
       vitepress:
         specifier: 1.6.4
         version: 1.6.4(@algolia/client-search@5.56.0)(@types/node@20.19.43)(axios@1.19.0(debug@4.4.3))(fuse.js@7.5.0)(jwt-decode@4.0.0)(lightningcss@1.32.0)(postcss@8.5.26)(qrcode@1.5.4)(sass@1.102.0)(search-insights@2.17.3)(typescript@5.9.3)
@@ -3743,6 +3743,7 @@ packages:
   cron-parser@4.9.0:
     resolution: {integrity: sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q==}
     engines: {node: '>=12.0.0'}
+    deprecated: v4 is no longer maintained, upgrade to v5
 
   croner@4.1.97:
     resolution: {integrity: sha512-/f6gpQuxDaqXu+1kwQYSckUglPaOrHdbIlBAu0YuW8/Cdb45XwXYNUBXg3r/9Mo6n540Kn/smKcZWko5x99KrQ==}
@@ -7363,8 +7364,8 @@ packages:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==}
     engines: {node: '>= 0.8'}
 
-  unplugin-swc@1.5.9:
-    resolution: {integrity: sha512-RKwK3yf0M+MN17xZfF14bdKqfx0zMXYdtOdxLiE6jHAoidupKq3jGdJYANyIM1X/VmABhh1WpdO+/f4+Ol89+g==}
+  unplugin-swc@1.5.10:
+    resolution: {integrity: sha512-aNvKH601KYzc/fXyDQJPAk8obNPzA4GdGqx+qSjQoyweMLDMLs5VRbunjL4skIv/hyyAnSgrbxMwXHdRTzhmew==}
     peerDependencies:
       '@swc/core': ^1.2.108
 
@@ -15082,7 +15083,7 @@ snapshots:
 
   unpipe@1.0.0: {}
 
-  unplugin-swc@1.5.9(@swc/core@1.15.47(@swc/helpers@0.5.23))(rollup@4.62.4):
+  unplugin-swc@1.5.10(@swc/core@1.15.47(@swc/helpers@0.5.23))(rollup@4.62.4):
     dependencies:
       '@rollup/pluginutils': 5.4.0(rollup@4.62.4)
       '@swc/core': 1.15.47(@swc/helpers@0.5.23)
