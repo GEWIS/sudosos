@@ -116,7 +116,7 @@
     "chai-http": "4.4.0",
     "chai-sorted": "0.2.0",
     "chai-swag": "0.1.9",
-    "cytoscape": "3.34.0",
+    "cytoscape": "3.34.1",
     "cytoscape-cose-bilkent": "4.1.0",
     "dayjs": "1.11.21",
     "debug": "4.4.3",
