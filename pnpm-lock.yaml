@@ -89,6 +89,9 @@ importers:
       '@gewis/prettier-config':
         specifier: 'catalog:'
         version: 2.2.2(eslint@9.39.5(jiti@2.7.0))(prettier@3.9.6)
+      '@gewis/release-config':
+        specifier: ^2.4.0
+        version: 2.4.0
       concurrently:
         specifier: ^9.2.1
         version: 9.2.4
@@ -1440,6 +1443,9 @@ packages:
     peerDependencies:
       eslint: '*'
       prettier: '*'
+
+  '@gewis/release-config@2.4.0':
+    resolution: {integrity: sha512-Dh61QyBiDeTbdDcUszNroLKcz9SUC5/cR9ERk/PWB8gSKwmUs40l72DM94xFT/ileBRs81FXuiYOF5kmn6kFPA==}
 
   '@gewis/splash@2.4.0':
     resolution: {integrity: sha512-MdxN/hF2nZSf7OMY3fUAYArMjz+3tav9FNQ7ukEFmJZyDu/eMs/h6n6D3MYCND5yG9WmYJ6DYJq8VU0AWAV1/Q==}
@@ -8451,6 +8457,8 @@ snapshots:
       prettier: 3.9.6
     transitivePeerDependencies:
       - '@types/eslint'
+
+  '@gewis/release-config@2.4.0': {}
 
   '@gewis/splash@2.4.0': {}
 
