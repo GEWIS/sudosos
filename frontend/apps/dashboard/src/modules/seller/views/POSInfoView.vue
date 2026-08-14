@@ -36,7 +36,6 @@ import { computed, onBeforeMount, ref, watch, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import type {
   PaginatedBaseTransactionResponse,
-  Dinero as SudoSOSDinero,
   PointOfSaleWithContainersResponse,
   ContainerWithProductsResponse,
   ReportResponse,
@@ -107,7 +106,7 @@ onBeforeMount(async () => {
 const totalSales = ref(Dinero({ amount: 0, currency: 'EUR' }));
 
 const formattedTotalSales = computed(() => {
-  return formatPrice(totalSales.value.toObject() as SudoSOSDinero);
+  return formatPrice(totalSales.value.toObject());
 });
 
 watch(

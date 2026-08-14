@@ -192,9 +192,7 @@ watch(active, (val) => {
 
 function computeComparison() {
   // compute difference in cents between previous and current
-  const diffObj = Dinero(totalSpentValue.value as Dinero.Options)
-    .subtract(Dinero(previousTotalSpentValue.value as Dinero.Options))
-    .toObject();
+  const diffObj = Dinero(totalSpentValue.value).subtract(Dinero(previousTotalSpentValue.value)).toObject();
 
   const diff = Number(diffObj.amount ?? 0);
   // reset percentile value

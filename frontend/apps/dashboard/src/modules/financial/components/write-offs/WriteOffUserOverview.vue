@@ -161,7 +161,7 @@ const showDialog: Ref<boolean> = ref(false);
 const form = schemaToForm(createWriteOffSchema);
 type WithFullName = BalanceResponse & { fullName?: string };
 const openDialog = (user: BalanceResponse) => {
-  const u: WithFullName = { ...user } as WithFullName;
+  const u: WithFullName = { ...user };
   u.fullName = `${user.firstName} ${user.lastName}`;
   form.context.setFieldValue('user', u);
   form.context.setFieldValue('balance', u.amount.amount);

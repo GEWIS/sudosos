@@ -54,7 +54,7 @@ export function useDataTableYear<T, F extends Record<string, unknown>>(
     const fromQuery = qps.deserializeFilters(route.query);
     // Only apply defined values so URL absence does not override initialFilters
     const defined = Object.fromEntries(Object.entries(fromQuery).filter(([, v]) => v !== undefined)) as Partial<F>;
-    filtersInit = { ...filtersInit, ...defined } as F;
+    filtersInit = { ...filtersInit, ...defined };
   }
   const filters = ref(filtersInit);
 

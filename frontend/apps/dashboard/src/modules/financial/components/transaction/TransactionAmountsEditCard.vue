@@ -110,19 +110,7 @@ function handleSave() {
   }
 
   // Get the updated amounts from the form
-  const updatedAmounts = getProperty(form, 'updatedAmounts') as
-    | Array<{
-        subTransactionIndex: number;
-        rowIndex: number;
-        amount: number;
-        isNewProduct?: boolean;
-        productId?: number;
-        productRevision?: number;
-        containerId?: number;
-        containerRevision?: number;
-        toUserId?: number;
-      }>
-    | undefined;
+  const updatedAmounts = getProperty(form, 'updatedAmounts');
 
   if (!updatedAmounts || updatedAmounts.length === 0 || !transaction.value) return;
 
