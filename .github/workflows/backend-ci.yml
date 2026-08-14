@@ -178,10 +178,3 @@ jobs:
         if: ${{ matrix.typeorm-connection == 'mariadb' }}
         uses: actions/upload-artifact@v4
         with: { name: coverage, path: backend/reports/coverage/, retention-days: 7 }
-      - name: Upload coverage to Coveralls
-        if: matrix.typeorm-connection == 'mariadb'
-        uses: coverallsapp/github-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: ./backend/reports/coverage/lcov.info
-          base-path: backend
