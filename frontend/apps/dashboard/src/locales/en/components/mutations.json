@@ -1,0 +1,49 @@
+{
+  "components": {
+    "mutations": {
+      "balance": "Balance mutations",
+      "recent": "Recent transactions",
+      "all": "All transactions",
+      "when": "When",
+      "created": "Created transactions",
+      "createdBy": "Created by",
+      "By": "By",
+      "createdFor": "Created for",
+      "editedOn": "Edited on {date}",
+      "amount": "Amount",
+      "pos": "Point of sale",
+      "type": "Type",
+      "transfers": "Transfers",
+      "transactions": "Transactions",
+      "you": "You",
+      "user": "User transactions",
+      "notYou": "Did you not make this transaction?",
+      "modal": {
+        "header": "Transaction details (#{id})",
+        "waivedFine": "Waived fine",
+        "invoice": "Invoice",
+        "fine": "Fine",
+        "topUp": "Top up",
+        "payment": "Payment",
+        "payoutRequestDescription": "You have requested a payout.",
+        "waivedFineDescription": "Your fines were waived.",
+        "invoiceDescription": "You have paid an invoice to GEWIS",
+        "depositDescription": "You have deposited money to GEWIS",
+        "fineDescription": "You have paid a fine to GEWIS",
+        "inactiveCostDescription": "You have been charged an administrative cost for being inactive via transfer.",
+        "inactiveCostExplanation": "This cost is applied to members who have been inactive for an extended period.",
+        "payoutRequest": "Payout request",
+        "sellerPayout": "Seller payout",
+        "sellerPayoutDescription": "A seller payout was processed.",
+        "unknown": "Unknown transaction"
+      },
+      "userBoughtAt": "You bought at {pos}",
+      "otherBoughtAt": {
+        "suffix": " bought at {pos}"
+      },
+      "putInBy": {
+        "prefix": "Transaction put in by "
+      }
+    }
+  }
+}

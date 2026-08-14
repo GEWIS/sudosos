@@ -1,0 +1,99 @@
+{
+  "modules": {
+    "seller": {
+      "posOverview": {
+        "title": "Przegląd punktów sprzedaży",
+        "list": {
+          "header": "Punkty sprzedaży",
+          "posName": "Nazwa punktu sprzedaży"
+        }
+      },
+      "singlePos": {
+        "sales": "Sprzedaż w ciągu ostatniego tygodnia",
+        "confirmDelete": "Czy na pewno chcesz usunąć ten punkt sprzedaży?",
+        "confirmRemoveContainer": "Czy na pewno chcesz usunąć ten kontener z tego punktu sprzedaży?"
+      },
+      "productContainers": {
+        "containers": {
+          "header": "Kontenery",
+          "addExisting": "Dodaj istniejący kontener",
+          "public": "Publiczny",
+          "private": "Prywatny",
+          "container": "Kontener",
+          "create": "Utwórz kontener",
+          "edit": "Edytuj kontener",
+          "view": "Podgląd kontenera",
+          "confirmDelete": "Czy na pewno chcesz usunąć ten kontener?"
+        },
+        "products": {
+          "header": "Produkty",
+          "promo": "Promocja",
+          "addExisting": "Dodaj istniejący produkt",
+          "category": "Kategoria",
+          "vat": "VAT",
+          "alcoholPercentage": "Procent alkoholu",
+          "owner": "Właściciel",
+          "preferred": "Preferowany",
+          "featured": "Polecany",
+          "priceList": "Cennik",
+          "image": "Obrazek",
+          "addToContainer": "Dodaj produkt do kontenera",
+          "createProduct": "Utwórz produkt",
+          "productDetails": "Szczegóły produktu",
+          "productContainerDelete": "Usuń produkt z kontenera",
+          "confirmProductContainerDelete": "Czy na pewno chcesz usunąć ten produkt z tego kontenera?",
+          "confirmDelete": "Czy na pewno chcesz usunąć ten produkt?"
+        }
+      },
+      "forms": {
+        "common": {
+          "selectOwner": "Wybierz właściciela"
+        },
+        "pos": {
+          "overview": "Przegląd",
+          "useAuthentication": "Użyj autoryzacji PIN",
+          "create": "Utwórz punkt sprzedaży"
+        },
+        "product": {
+          "select": "Wybierz produkt",
+          "closeTo": "Nazwa jest podobna do: {name} (kliknij, aby wybrać)",
+          "selectCategory": "Wybierz kategorię",
+          "selectVat": "Wybierz stawkę VAT"
+        }
+      },
+      "payouts": {
+        "title": "Wypłaty",
+        "payout": {
+          "check": "Przed utworzeniem wypłaty upewnij się, że raport jest poprawny!",
+          "verify": "Zweryfikuj",
+          "Download PDF": "Pobierz PDF",
+          "payoutDetails": "Szczegóły wypłaty",
+          "verifySuccess": "Wypłata jest zweryfikowana",
+          "verifyFailed": "Kwota wypłaty nie zgadza się z kwotą zakupów",
+          "verifyFailedTitle": "Weryfikacja nie powiodła się",
+          "verifyFailedDescription": "Kwota wypłaty nie zgadza się z kwotą zakupów. {amount} vs. {totalInclVat}",
+          "verifySuccessTitle": "Weryfikacja zakończona sukcesem",
+          "verifySuccessDescription": "Wypłata jest zweryfikowana.",
+          "downloadPdf": "Pobierz PDF",
+          "close": "Zamknij",
+          "startDate": "Data rozpoczęcia",
+          "endDate": "Data zakończenia",
+          "description": "Opis",
+          "amount": "Kwota",
+          "calculateAmount": "Oblicz kwotę",
+          "reference": "Tytuł",
+          "pdf": "PDF",
+          "id": "ID wypłaty",
+          "dates": "Daty",
+          "details": "Szczegóły",
+          "deleted": "Wypłata usunięta",
+          "deleteError": "Błąd podczas usuwania wypłaty",
+          "CreatePayout": "Utwórz wypłatę",
+          "actions": "Akcje",
+          "report": "Zgłoszona kwota to",
+          "update": "Aktualizuj wypłatę"
+        }
+      }
+    }
+  }
+}

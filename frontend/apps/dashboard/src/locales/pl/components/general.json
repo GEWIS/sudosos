@@ -1,0 +1,14 @@
+{
+  "components": {
+    "general": {
+      "quickOverview": {
+        "header": "Szybki przegląd",
+        "message": "Szybki przegląd twojego konta",
+        "underAge": "Użytkownik jest niepełnoletni!"
+      },
+      "termsOfService": {
+        "header": "SudoSOS Regulamin - Wersja {version} ({date})"
+      }
+    }
+  }
+}

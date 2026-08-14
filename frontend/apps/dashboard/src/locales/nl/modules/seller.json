@@ -1,0 +1,99 @@
+{
+  "modules": {
+    "seller": {
+      "posOverview": {
+        "title": "Overzicht verkooppunten",
+        "list": {
+          "header": "Verkooppunten",
+          "posName": "Naam verkooppunt"
+        }
+      },
+      "singlePos": {
+        "sales": "Verkopen in de afgelopen week",
+        "confirmDelete": "Weet je zeker dat je dit verkooppunt wilt verwijderen?",
+        "confirmRemoveContainer": "Weet je zeker dat je deze container uit dit verkooppunt wilt verwijderen?"
+      },
+      "productContainers": {
+        "containers": {
+          "header": "Containers",
+          "addExisting": "Bestaande container toevoegen",
+          "public": "Openbaar",
+          "private": "Privé",
+          "container": "Container",
+          "create": "Container aanmaken",
+          "edit": "Container bewerken",
+          "view": "Container bekijken",
+          "confirmDelete": "Weet je zeker dat je deze container wilt verwijderen?"
+        },
+        "products": {
+          "header": "Producten",
+          "promo": "Promotie",
+          "addExisting": "Bestaand product toevoegen",
+          "category": "Categorie",
+          "vat": "BTW",
+          "alcoholPercentage": "Alcoholpercentage",
+          "owner": "Eigenaar",
+          "preferred": "Voorkeur",
+          "featured": "Uitgelicht",
+          "priceList": "Prijslijst",
+          "image": "Afbeelding",
+          "addToContainer": "Product toevoegen aan container",
+          "createProduct": "Product aanmaken",
+          "productDetails": "Productdetails",
+          "productContainerDelete": "Product uit container verwijderen",
+          "confirmDelete": "Weet je zeker dat je dit product wilt verwijderen?",
+          "confirmProductContainerDelete": "Weet je zeker dat je dit product uit deze container wilt verwijderen?"
+        }
+      },
+      "forms": {
+        "common": {
+          "selectOwner": "Selecteer eigenaar"
+        },
+        "pos": {
+          "overview": "Overzicht",
+          "useAuthentication": "Gebruik PIN-authenticatie",
+          "create": "Verkooppunt aanmaken"
+        },
+        "product": {
+          "select": "Selecteer product",
+          "closeTo": "Naam komt overeen met: {name} (klik om te kiezen)",
+          "selectCategory": "Selecteer categorie",
+          "selectVat": "Selecteer BTW"
+        }
+      },
+      "payouts": {
+        "title": "Uitbetalingen",
+        "payout": {
+          "check": "Zorg ervoor dat je het rapport controleert voordat je een uitbetaling aanmaakt!",
+          "verify": "Verifiëren",
+          "Download PDF": "Download PDF",
+          "payoutDetails": "Uitbetalingsdetails",
+          "verifySuccess": "Uitbetaling geverifieerd",
+          "verifyFailed": "Uitbetalingsbedrag komt niet overeen met de hoeveelheid aankopen",
+          "verifyFailedTitle": "Verificatie mislukt",
+          "verifyFailedDescription": "Uitbetalingsbedrag komt niet overeen met de hoeveelheid aankopen. {amount} vs. {totalInclVat}",
+          "verifySuccessTitle": "Verificatie geslaagd",
+          "verifySuccessDescription": "Uitbetaling is geverifieerd.",
+          "downloadPdf": "Download PDF",
+          "close": "Sluiten",
+          "startDate": "Startdatum",
+          "endDate": "Einddatum",
+          "description": "Beschrijving",
+          "amount": "Bedrag",
+          "calculateAmount": "Bereken bedrag",
+          "reference": "Referentie",
+          "pdf": "PDF",
+          "id": "Uitbetalings-ID",
+          "dates": "Datums",
+          "details": "Details",
+          "deleted": "Uitbetaling verwijderd",
+          "deleteError": "Fout bij het verwijderen van uitbetaling",
+          "CreatePayout": "Uitbetaling aanmaken",
+          "actions": "Acties",
+          "report": "Verslag bedrag is",
+          "update": "Uitbetaling bijwerken"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,248 @@
+{
+  "modules": {
+    "financial": {
+      "debtor": {
+        "title": "Debiteuren",
+        "debtorUsers": {
+          "header": "Debiteuren",
+          "currentBalance": "Huidig saldo",
+          "balanceOn": "Saldo op {date}",
+          "target": "doel",
+          "control": "controle",
+          "explanation": "De tabel hieronder selecteert alle gebruikers waarbij de gebruiker op beide data maximaal -€5 heeft. Boetes die uitgedeeld moeten worden, worden berekend op het saldo van de doeldatum.",
+          "apply": "Toepassen",
+          "notify": "Waarschuwen",
+          "handout": "Uitdelen",
+          "toBeFined": "Te beboeten",
+          "wasFined": "Is beboet",
+          "cannotDebt": "Schakel schuld mogelijkheid uit",
+          "ofWhichFine": "Waarvan boete",
+          "fineSince": "Boete sinds",
+          "sumCurrentBalance": "Totaal van saldi",
+          "sumToBeFined": "Totaal van \"Te beboeten\"",
+          "sumWasFined": "Totaal van \"Is beboet\"",
+          "confirm": {
+            "handoutMessage": "Wilt u boetes uitdelen aan {count} gebruikers?",
+            "notifyMessage": "Wilt u een boetewaarschuwing sturen naar {count} gebruikers?",
+            "cannotGoInDebt": "Wilt u het niet meer mogelijk maken voor {count} gebruikers om verder de schulden in te gaan?"
+          }
+        },
+        "handoutEvents": {
+          "title": "Boete uitdeel moment",
+          "header": "Boete uitdeel momenten",
+          "handoutDate": "Uitdeel datum",
+          "referenceDate": "Referentiedatum",
+          "number": "Aantal boetes",
+          "total": "Totaal aan boetes",
+          "details": "Details van het boete uitdeel moment",
+          "delete": "Boete uitdeel moment verwijderen",
+          "deleteSuccess": "Boete uitdeel moment succesvol verwijderd.",
+          "confirm": {
+            "deleteMessage": "Weet u zeker dat u dit boete uitdeel moment wilt verwijderen? Dit zal ook alle bijbehorende boetes verwijderen.",
+            "delete": "Verwijderen"
+          }
+        }
+      },
+      "invoice": {
+        "vat": {
+          "title": "BTW",
+          "percentage": "BTW %",
+          "baseExclVat": "Grondslag (excl. BTW)",
+          "inclVat": "Incl. BTW",
+          "vat": "BTW-bedrag"
+        },
+        "header": "Facturen",
+        "invoice": "Factuur",
+        "transfer": "Overboeking",
+        "credit": "Creditfactuur",
+        "delete": "Factuur verwijderen",
+        "confirmDelete": "Weet je zeker dat je deze factuur wilt verwijderen?",
+        "creditNoteWarning": "Dit zal geen creditnota aanmaken.",
+        "unrecoverable": "Dit verwijdert de factuur en kan niet ongedaan worden gemaakt.",
+        "table": "Tabel",
+        "recompile": "Opnieuw samenstellen",
+        "reload": "Opnieuw laden",
+        "missingPdf": "PDF ontbreekt of genereren is mislukt",
+        "deleted": "Factuur is verwijderd.",
+        "dirty": "De factuurbedrag komt niet overeen met de overboeking.",
+        "total": "Het huidige totaal op de factuur is {total}",
+        "for": "Invoice for",
+        "create": {
+          "create": "Factuur aanmaken",
+          "userBalance": "Geselecteerde gebruikers saldo",
+          "invocieAmount": "Voorgestelde factuurbedrag",
+          "balanceAfter": "Saldo na factuur",
+          "pos": "POS's die in de factuur zijn opgenomen:",
+          "warning": "Controleer de factuur voordat je deze aanmaakt."
+        },
+        "account": {
+          "lastTransaction": "Laatste transactie",
+          "title": "Factuur accounts",
+          "header": "Factuur accounts",
+          "balance": "Saldo",
+          "type": "INVOICE"
+        },
+        "backDate": "Factuur transactie ({date}) is in andere financiële jaar."
+      },
+      "payout": {
+        "title": "Uitbetalingen",
+        "create": "Uitbetaling aanmaken",
+        "requestedBy": "Aangevraagd door",
+        "details": "Uitbetalingsdetails #{payoutId}",
+        "approvedBy": "Goedgekeurd door {approvedBy}",
+        "approve": "Goedkeuren",
+        "deny": "Afwijzen"
+      },
+      "write-offs": {
+        "title": "Afschrijvingen",
+        "fine": "Boeten",
+        "table": {
+          "header": "Afschrijvingen"
+        },
+        "overview": {
+          "header": "Inactieve debiteuren"
+        },
+        "delete": {
+          "delete": "Afschrijving verwijderen",
+          "not-possible": "Afschrijvingen kunnen niet worden verwijderd."
+        },
+        "create": "Afschrijving aanmaken",
+        "downloadPdf": {
+          "not-possible": "Dit is nog niet mogelijk."
+        }
+      },
+      "forms": {
+        "payout": {
+          "for": "Voor",
+          "currentBalance": "Gebruiker heeft een huidig saldo van {balance}",
+          "bankAccountNumber": "Bankrekeningnummer",
+          "bankAccountName": "Naam bankrekening",
+          "amountTooHigh": "Het bedrag is hoger dan het saldo van de gebruiker"
+        },
+        "invoice": {
+          "reference": "Referentie",
+          "settings": "Instellingen",
+          "addressing": "Adressering",
+          "addressee": "Geadresseerde",
+          "attention": "Ter attentie van",
+          "street": "Straat",
+          "postalCode": "Postcode",
+          "city": "Stad",
+          "country": "Land"
+        },
+        "write-off": {
+          "negative": "Kan alleen een negatieve afschrijving maken.",
+          "warning": "Het maken van een afschrijving zal ook de gebruiker verwijderen."
+        },
+        "write-offs": {
+          "negative": "Kan alleen een negatieve afschrijving maken.",
+          "warning": "Het maken van een afschrijving zal ook de gebruiker verwijderen."
+        }
+      },
+      "seller": {
+        "title": "Verkopers",
+        "showAllTooltip": "Toont alle verkopers (actief en inactief). Vink uit om alleen actieve verkopers te tonen.",
+        "showActiveOnlyTooltip": "Toont alleen actieve verkopers. Vink aan om alle verkopers (actief en inactief) te tonen."
+      },
+      "vat": {
+        "title": "BTW Groepen"
+      },
+      "financialOverview": {
+        "title": "Financieel Overzicht",
+        "subtitle": "Overzicht van alle transacties tijdens een boekjaar. Dit kan worden gebruikt om de BAC-boekhouding te verifiëren met het SudoSOS-saldo.",
+        "table": {
+          "type": "Type",
+          "credit": "Credit (€)",
+          "debit": "Debet (€)",
+          "balance": "Saldo (€)",
+          "totalMutations": "Totale mutaties (Δ) (€)",
+          "balanceAt": "Saldo op {date} (€)",
+          "expectedEndBalance": "Verwacht eindsaldo (begin + Δ) (€)"
+        },
+        "transferTypes": {
+          "deposits": "Stortingen",
+          "invoices": "Facturen",
+          "creditInvoices": "Creditfacturen",
+          "waivedFines": "Kwijtgescholden boetes",
+          "manualCreations": "Handmatige aanmaak",
+          "fines": "Boetes",
+          "writeOffs": "Afschrijvingen",
+          "adminCosts": "Administratiekosten",
+          "payoutRequests": "Uitbetalingsverzoeken",
+          "manualDeletions": "Handmatige verwijderingen",
+          "sellerPayouts": "Verkopersuitbetalingen",
+          "manual": "Handmatige mutaties"
+        }
+      },
+      "administrative": {
+        "title": "Administratiekosten",
+        "costs": "Administratiekosten",
+        "user": "Gebruiker",
+        "filters": {
+          "userId": "Gebruikers-ID",
+          "costId": "Kosten-ID"
+        },
+        "selectedCount": "{count} geselecteerd",
+        "details": {
+          "title": "Administratiekosten Details",
+          "basicInfo": "Basisinformatie",
+          "userInfo": "Gebruikersinformatie",
+          "financialInfo": "Financiële Informatie",
+          "transferInfo": "Overboekingsinformatie",
+          "notFound": "Kosten niet gevonden"
+        },
+        "create": {
+          "title": "Administratiekosten Aanmaken",
+          "userId": "Gebruikers-ID",
+          "userIdRequired": "Gebruikers-ID is verplicht"
+        },
+        "confirm": {
+          "delete": "Weet u zeker dat u deze administratiekosten wilt verwijderen? Dit zal de kosten en de bijbehorende overboeking permanent verwijderen.",
+          "bulkDelete": "Weet u zeker dat u {count} administratiekosten wilt verwijderen? Dit zal elke kosten en de bijbehorende overboeking permanent verwijderen."
+        },
+        "deleteSuccess": "Administratiekosten succesvol verwijderd.",
+        "deleteError": "Kon administratiekosten niet verwijderen. Probeer het opnieuw.",
+        "bulkDeleteSuccess": "Succesvol {count} administratiekosten verwijderd.",
+        "createSuccess": "Administratiekosten succesvol aangemaakt.",
+        "eligibleUsers": {
+          "title": "In aanmerking komende gebruikers",
+          "notificationMode": "Stap 1: Melding",
+          "handoutMode": "Stap 2: Uitdelen",
+          "count": "{count} in aanmerking komende gebruikers",
+          "notify": "Geselecteerde gebruikers melden",
+          "handoutButton": "Uitdelen aan geselecteerde gebruikers",
+          "notifySuccess": "Gebruikers succesvol gemeld.",
+          "handoutSuccess": "Succesvol kosten uitgedeeld aan {count} gebruikers.",
+          "step1": {
+            "title": "Stap 1: Gebruikers melden",
+            "description": "Meld gebruikers die 2+ jaar inactief zullen zijn"
+          },
+          "step2": {
+            "title": "Stap 2: Kosten uitdelen",
+            "description": "Deel kosten uit aan gebruikers die vorig jaar zijn gemeld (3+ jaar inactief)"
+          },
+          "notification": {
+            "infoTitle": "Meldingsfase",
+            "infoMessage": "Deze gebruikers zullen 2+ jaar inactief zijn. Meld hen over aankomende administratiekosten. Alleen gebruikers die een melding ontvangen komen volgend jaar in aanmerking voor uitdeling."
+          },
+          "handout": {
+            "infoTitle": "Uitdeelfase",
+            "infoMessage": "Deze gebruikers zijn vorig jaar gemeld en zijn nu 3+ jaar inactief. U kunt nu administratiekosten aan hen uitdelen. Alleen gebruikers die eerder zijn gemeld worden hier getoond."
+          },
+          "confirm": {
+            "notify": "Wilt u {count} gebruikers melden over aankomende administratiekosten?",
+            "handout": "Wilt u administratiekosten uitdelen aan {count} gebruikers? Dit zal kosten aanmaken voor alle geselecteerde gebruikers."
+          }
+        },
+        "report": {
+          "title": "Administratiekosten Rapport Downloaden",
+          "button": "Rapport",
+          "fromDate": "Vanaf Datum (inclusief)",
+          "toDate": "Tot Datum (exclusief)",
+          "downloadSuccess": "Rapport succesvol gedownload.",
+          "downloadError": "Rapport downloaden mislukt. Probeer het opnieuw."
+        }
+      }
+    }
+  }
+}

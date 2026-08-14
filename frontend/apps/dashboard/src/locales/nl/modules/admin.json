@@ -1,0 +1,196 @@
+{
+  "modules": {
+    "admin": {
+      "userOverview": {
+        "title": "Gebruikers",
+        "list": {
+          "header": "Gebruikers"
+        }
+      },
+      "singleUser": {
+        "profile": "{user}'s profiel {gewisId}",
+        "userInfo": {
+          "header": "Gebruikersinformatie"
+        },
+        "balance": {
+          "header": "Saldo",
+          "waiveFines": "Boetes kwijtschelden",
+          "allIsFines": "Alles hiervan is een boete",
+          "waiveAllFines": "Scheld alle boetes kwijt",
+          "someIsFines": "Waarvan {fine} boetes zijn",
+          "someIsFinesDetailed": "Huidige boete is {fine} waarvan {waived} kwijt gescholden ",
+          "waiveFinesConfirmation": "Weet je zeker dat je de boetes wilt kwijtschelden? Dit kan niet ongedaan worden gemaakt.",
+          "waiveFinesConfirmationTitle": "Boetes kwijtschelden",
+          "waiveFineTooMuch": "Je kan niet meer kwijt schelden dan de huidige boete.",
+          "waiveExplanation": "Je kan slechts 1 keer boetes kwijt schelden per boete groep, als je opnieuw kwijt scheld dan vervang je de huidige kwijtschelding."
+        }
+      },
+      "banners": {
+        "title": "Banners",
+        "noBannerFound": "Geen banner gevonden, upload er een!",
+        "till": "totdat",
+        "list": {
+          "header": "Banners",
+          "filterActive": "Filter actief",
+          "filterNotExpired": "Filter niet verlopen",
+          "active": "Actief",
+          "notActive": "Niet actief"
+        },
+        "seconds": "Seconde | Seconden"
+      },
+      "forms": {
+        "banner": {
+          "headerCreate": "Banner aanmaken",
+          "headerEdit": "Banner bewerken",
+          "duration": "Duur",
+          "timespan": "Tijdsbestek",
+          "startDate": "Startdatum",
+          "endDate": "Einddatum",
+          "active": "Actief",
+          "toast": {
+            "success": {
+              "success": "Banner aangemaakt",
+              "bannerCreated": "Banner aangemaakt",
+              "bannerUpdated": "Banner bijgewerkt",
+              "bannerDeleted": "Banner verwijderd"
+            },
+            "error": {
+              "error": "Fout bij aanmaken banner",
+              "bannerCreated": "Fout bij aanmaken banner",
+              "bannerUpdated": "Fout bij bijwerken banner",
+              "bannerDeleted": "Fout bij verwijderen banner"
+            }
+          }
+        },
+        "user": {
+          "header": "Gebruiker aanmaken",
+          "ofAge": "Gebruiker is meerderjarig",
+          "canGoIntoDebt": "Gebruiker kan schulden maken"
+        }
+      },
+      "actions": {
+        "title": "Admin acties"
+      },
+      "maintenance": {
+        "maintenanceMode": "Onderhoud modus",
+        "confirm": {
+          "initial": "Onderhoud is {enabled}",
+          "confirm": "Schakel {enabled}?",
+          "on": "aan",
+          "off": "uit",
+          "enabled": "ingeschakeld",
+          "disabled": "uitgeschakeld"
+        }
+      },
+      "wrapped": {
+        "wrappedMode": "Wrapped beschikbaar",
+        "confirm": {
+          "initial": "Wrapped is {enabled}",
+          "confirm": "Schakel {enabled}?",
+          "on": "aan",
+          "off": "uit",
+          "enabled": "beschikbaar",
+          "disabled": "niet beschikbaar"
+        }
+      },
+      "websocket": {
+        "title": "Websocket logs"
+      },
+      "dashboard": {
+        "title": "Dashboard",
+        "empty": "Niets te tonen 🎉",
+        "welcome": "Welkom terug, {name}",
+        "viewAll": "Bekijk alles",
+        "balanceSummary": {
+          "title": "Saldo overzicht",
+          "tooltip": "Toont gecombineerde saldo's voor Leden en Lokale Gebruikers.",
+          "totalPositive": "Totaal positief saldo",
+          "totalNegative": "Totaal negatief saldo",
+          "financialOverview": "Financieel overzicht",
+          "underConstruction": "In aanbouw",
+          "unavailable": "Saldobegegevens niet beschikbaar"
+        },
+        "pendingPayouts": {
+          "title": "Openstaande uitbetalingen"
+        },
+        "pendingInvoices": {
+          "title": "Openstaande facturen"
+        },
+        "negativeInvoiceAccounts": {
+          "title": "Factuuraccounts met negatief saldo"
+        },
+        "debtors": {
+          "title": "Gebruikers die in aanmerking komen voor boetes",
+          "totalDebt": "Totaal negatief saldo",
+          "totalFine": "Totale uit te geven boete",
+          "handoutFines": "Boetes uitdelen"
+        }
+      },
+      "transactions": {
+        "title": "Transactie zoeken",
+        "search": "Zoek transactie op ID",
+        "notFound": "Transactie niet gevonden",
+        "enterValid": "Voer een geldig transactie-ID in",
+        "editUser": "Gebruiker bewerken",
+        "currentUser": "Huidige gebruiker",
+        "newUser": "Nieuwe gebruiker",
+        "selectUser": "Selecteer een gebruiker",
+        "confirmEdit": "Transactie bewerking bevestigen",
+        "confirmEditMessage": "Weet je zeker dat je de gebruiker voor deze transactie wilt wijzigen?",
+        "userUpdated": "Transactie gebruiker succesvol bijgewerkt",
+        "editAmounts": "Aantallen bewerken",
+        "currentAmounts": "Huidige aantallen",
+        "confirmAmountsEdit": "Aantalwijzigingen bevestigen",
+        "confirmAmountsMessage": "Weet je zeker dat je de aantallen voor deze transactie wilt wijzigen?",
+        "amountChanges": "Aantalwijzigingen",
+        "costChange": "Kostenwijziging",
+        "amountsUpdated": "Transactie aantallen succesvol bijgewerkt",
+        "willBeRemoved": "wordt verwijderd",
+        "missingUserData": "Ontbrekende nieuwe gebruikersgegevens",
+        "missingAmountsData": "Ontbrekende bijgewerkte hoeveelheidsgegevens",
+        "cannotRemoveAllItems": "Kan niet alle items uit een transactie verwijderen. Minimaal één item moet blijven.",
+        "addProduct": "Product toevoegen",
+        "selectProduct": "Selecteer een product om toe te voegen",
+        "newProductsAdded": "Nieuwe producten toegevoegd",
+        "newProduct": "NIEUW"
+      },
+      "rbac": {
+        "title": "RBAC Beheer",
+        "selection": {
+          "title": "Kies een rol",
+          "label": ""
+        },
+        "permissions": {
+          "title": "Permissies",
+          "entity": "Entity",
+          "crud": "CRUD",
+          "systemDefault": "Deze rol is een systeem standaard, je kan de gebruikers niet zien!",
+          "action": "Action",
+          "relation": "Relation",
+          "attribute": "Attribute",
+          "addAction": "Voeg action toe",
+          "addPermission": "Voeg permissie toe",
+          "deletePermission": "Verwijder Permissie",
+          "firstName": "First Name",
+          "lastName": "Last Name",
+          "id": "ID",
+          "deletePermissionCancellation": "Annuleer",
+          "deletePermissionConfirmation": "Ga door",
+          "deleteRow": "Verwijder rij",
+          "actionSubmission": "Voeg toe",
+          "deleteAction": "Verwijder Actie",
+          "all": "Alle CRUD operaties mogelijk",
+          "partial": "Sommige CRUD operaties mogelijk",
+          "none": "Geen CRUD operaties mogelijk",
+          "deletePermissionConfirmationMessage": "Weet je zeker dat je {action}, {relation}, {attribute} wilt verwijderen van {entity}?"
+        },
+        "users": {
+          "addUser": "Voeg gebruiker toe",
+          "deleteUser": "Verwijder gebruiker",
+          "userTitle": "Gebruikers",
+          "deleteUserConfirmationMessage": "Weet je zeker dat je {firstName} uit rol {role} wilt verwijderen?"
+        }
+      }
+    }
+  }
+}

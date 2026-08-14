@@ -1,0 +1,41 @@
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { isAllowed } from '@sudosos/sudosos-frontend-common';
+
+export function useAdminNav() {
+  const { t } = useI18n();
+
+  return computed(() =>
+    [
+      {
+        label: t('common.navigation.admin'),
+        visible:
+          isAllowed('get', ['all'], 'User', ['any']) ||
+          isAllowed('get', ['all'], 'Banner', ['any']) ||
+          isAllowed('get', ['all'], 'Transaction', ['any']),
+        items: [
+          {
+            label: t('common.navigation.users'),
+            route: '/user',
+            visible: isAllowed('get', ['all'], 'User', ['any']),
+          },
+          {
+            label: t('common.navigation.banners'),
+            route: '/admin/banner',
+            visible: isAllowed('get', ['own'], 'Banner', ['any']),
+          },
+          {
+            label: t('common.navigation.rbac'),
+            route: '/rbac',
+            visible: isAllowed('get', ['all'], 'Role', ['any']),
+          },
+        ].filter((item) => item.visible),
+      },
+      {
+        label: t('common.navigation.maintainer'),
+        visible: isAllowed('update', ['all'], 'Maintenance', ['*']),
+        route: '/maintainer',
+      },
+    ].filter((item) => item.visible),
+  );
+}

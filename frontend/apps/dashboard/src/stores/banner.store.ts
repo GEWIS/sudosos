@@ -1,0 +1,88 @@
+import { defineStore } from 'pinia';
+import { type BannerRequest, type BannerResponse } from '@gewis/sudosos-client';
+import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
+import apiService from '@/services/ApiService';
+
+export const useBannersStore = defineStore('banners', {
+  state: () => ({
+    banners: {} as Record<number, BannerResponse>,
+    lastUpdated: 0,
+  }),
+  getters: {
+    /**
+     * All banners as a list.
+     */
+    allBanners(state): BannerResponse[] {
+      return Object.values(state.banners);
+    },
+    /**
+     * Only active or currently valid banners.
+     */
+    activeBanners(state): BannerResponse[] {
+      const now = new Date().toISOString();
+      return Object.values(state.banners).filter(
+        (banner) => banner.active || (banner.startDate <= now && banner.endDate >= now),
+      );
+    },
+    /**
+     * Get a banner by ID.
+     */
+    getBanner:
+      (state) =>
+      (id: number): BannerResponse | null => {
+        return state.banners[id] ?? null;
+      },
+    getLastUpdated(): number {
+      return this.lastUpdated;
+    },
+  },
+  actions: {
+    /**
+     * Fetches all banners and stores them by ID.
+     */
+    async fetchBanners() {
+      const all = await fetchAllPages<BannerResponse>((take, skip) =>
+        // @ts-expect-error: PaginatedBannerResponse is the same as PaginatedResult<BannerResponse>
+        apiService.openBanner.getAllOpenBanners(take, skip),
+      );
+
+      for (const banner of all) {
+        this.banners[banner.id] = banner;
+      }
+    },
+
+    /**
+     * Updates a banner by ID (excluding image).
+     */
+    async updateBanner(bannerId: number, banner: BannerRequest) {
+      const updated = await apiService.banner.update({ id: bannerId, bannerRequest: banner });
+      if (!this.banners[bannerId]) return updated;
+
+      this.banners[bannerId] = { ...this.banners[bannerId], ...banner };
+      this.lastUpdated = Date.now();
+      return updated;
+    },
+
+    /**
+     * Updates only the image of a banner.
+     */
+    async updateBannerImage(bannerId: number, image: File) {
+      const banner = this.banners[bannerId];
+      if (!banner) return;
+      banner.image = URL.createObjectURL(image);
+      this.banners[banner.id] = { ...banner };
+      await apiService.banner.updateImage({ id: bannerId, file: image });
+      this.lastUpdated = Date.now();
+    },
+
+    /**
+     * Creates a new banner and adds it to the store.
+     */
+    async createBanner(bannerRequest: BannerRequest) {
+      const resp = await apiService.banner.create({ bannerRequest });
+      this.banners[resp.data.id] = resp.data;
+      this.lastUpdated = Date.now();
+      return resp;
+    },
+  },
+});

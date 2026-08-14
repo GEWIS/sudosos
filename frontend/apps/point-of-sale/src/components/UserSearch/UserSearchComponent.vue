@@ -1,0 +1,218 @@
+<template>
+  <div class="point-of-sale">
+    <div class="header min-h-[4rem] flex items-center">
+      <div class="flex flex-row gap-4 w-full">
+        <Button class="border-none" @click="cancelSearch()">
+          <i class="pi pi-times" style="font-size: 2rem" />
+        </Button>
+        <input
+          ref="searchInput"
+          v-model="searchValue"
+          autocomplete="off"
+          class="flex-sm-grow-1 shadow-md p-2 rounded border-2 border-transparent search-input"
+          placeholder="Search user to charge..."
+          type="text"
+          @input="updateSearchQuery($event as InputEvent)"
+        />
+        <Button v-if="!settings.isBorrelmode" class="text-xl" @click="selectSelf()"> Charge yourself </Button>
+        <Button v-else-if="settings.isBorrelmode" class="text-xl" @click="selectNone()"> Select no one </Button>
+      </div>
+    </div>
+    <div>
+      <ScrollPanel class="custombar" style="width: 100%; height: 25rem">
+        <template v-if="!searchValue && !settings.isBorrelmode && getUsers.length">
+          <div class="px-3 pt-2 pb-1 text-xs font-semibold uppercase tracking-widest opacity-50">Quick suggestions</div>
+          <div class="grid grid-cols-2 gap-x-2 suggestions-grid">
+            <UserSearchRowComponent
+              v-for="user in getUsers"
+              :key="user.id"
+              :user="user as UserResponse"
+              @click="selectUser(user as UserResponse)"
+            />
+          </div>
+        </template>
+        <template v-else>
+          <UserSearchRowComponent
+            v-for="user in getUsers"
+            :key="user.id"
+            :user="user as UserResponse"
+            @click="selectUser(user as UserResponse)"
+          />
+        </template>
+      </ScrollPanel>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed, onMounted, Ref, ref, watch } from 'vue';
+import { BaseUserResponse, PaginatedUserResponse, UserResponse } from '@gewis/sudosos-client';
+import { useAuthStore } from '@sudosos/sudosos-frontend-common';
+import { debounce } from 'lodash';
+import type { AxiosResponse } from 'axios';
+import ScrollPanel from 'primevue/scrollpanel';
+import Fuse from 'fuse.js';
+import { useSettingStore } from '@/stores/settings.store';
+import { useCartStore } from '@/stores/cart.store';
+import UserSearchRowComponent from '@/components/UserSearch/UserSearchRowComponent.vue';
+import apiService from '@/services/ApiService';
+import { usePointOfSaleStore } from '@/stores/pos.store';
+
+const searchValue = ref<string>('');
+const searchQuery = computed(() => searchValue.value.split(' ')[0]);
+
+const users = ref<UserResponse[]>([]);
+const cartStore = useCartStore();
+const authStore = useAuthStore();
+const settings = useSettingStore();
+const posStore = usePointOfSaleStore();
+
+const getRecentUsers = async () => {
+  if (settings.isBorrelmode) {
+    // Borrelmode: derive recent users from POS transactions (existing behavior)
+    if (!posStore.getPos?.id) return;
+    const recentUsers: BaseUserResponse[] = [];
+    await apiService.pos.getTransactions({ id: posStore.getPos?.id, take: 100 }).then((res) => {
+      const data = res.data;
+      const ids = new Set<number>([]);
+      data.records.map((u) => {
+        if (!ids.has(u.from.id)) {
+          recentUsers.push(u.from);
+          ids.add(u.from.id);
+        }
+      });
+    });
+    return recentUsers;
+  } else {
+    // Authenticated POS: use pre-fetched store value (populated at login), or fall back to fetching now
+    if (posStore.recentUsers === null) {
+      await posStore.fetchRecentUsers();
+    }
+    return posStore.recentUsers ?? [];
+  }
+};
+
+const updateSearchQuery = (event: InputEvent) => {
+  if (event.target) {
+    searchValue.value = (event.target as HTMLInputElement).value;
+  }
+};
+
+const delayedAPICall = debounce(() => {
+  void apiService.user
+    .getAllUsers({ take: 200, skip: 0, search: searchQuery.value, active: true })
+    .then((res: AxiosResponse<PaginatedUserResponse>) => {
+      users.value = res.data.records;
+    });
+}, 50);
+
+watch(searchQuery, () => {
+  delayedAPICall();
+});
+
+const recent: Ref<BaseUserResponse[]> = ref([]);
+
+const getUsers = computed(() => {
+  if (searchValue.value) return sortedUsers.value;
+  return recent.value;
+});
+
+const sortedUsers = computed(() => {
+  // This fuzzy search allows us to effectively search in the front-end, but this should be done in the backend.
+  const full = [...users.value].map((u: UserResponse) => {
+    return {
+      ...u,
+      fullName: `${u.firstName
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')} ${u.lastName.normalize('NFD').replace(/[\u0300-\u036f]/g, '')}`,
+    };
+  });
+  const fuzzed: UserResponse[] = new Fuse(full, {
+    keys: [
+      { name: 'fullName', weight: 0.3 },
+      { name: 'nickname', weight: 0.7 },
+    ],
+    isCaseSensitive: false,
+    shouldSort: true,
+    threshold: 0.2,
+  })
+    .search(searchValue.value)
+    .map((r) => r.item);
+
+  const filteredUsers = [...fuzzed].filter((user) =>
+    ['MEMBER', 'LOCAL_USER', 'LOCAL_ADMIN', 'INVOICE', 'AUTOMATIC_INVOICE'].includes(user.type),
+  );
+  const validUsers = filteredUsers.filter((user) => user.active && user.acceptedToS !== 'NOT_ACCEPTED');
+  const invalidUsers = filteredUsers.filter((user) => !user.active || user.acceptedToS === 'NOT_ACCEPTED');
+  return [...validUsers, ...invalidUsers];
+});
+
+const searchInput = ref<null | HTMLInputElement>(null);
+
+onMounted(async () => {
+  if (searchInput.value) searchInput.value.focus();
+  const rec = await getRecentUsers();
+
+  if (rec) recent.value = rec;
+});
+
+const emit = defineEmits(['cancelSearch']);
+const selectSelf = () => {
+  if (authStore.user) {
+    selectUser(authStore.user);
+    return;
+  }
+};
+
+const selectNone = () => {
+  selectUser(null);
+};
+
+const selectUser = (user: UserResponse | null) => {
+  void cartStore.setBuyer(user);
+  cancelSearch();
+};
+
+const cancelSearch = () => {
+  emit('cancelSearch');
+};
+</script>
+
+<style scoped lang="scss">
+.header > div {
+  width: 100%;
+}
+
+.search-input {
+  &:focus {
+    outline: none;
+    border: 2px solid var(--p-primary-color);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--p-primary-color) 20%, transparent);
+  }
+}
+
+::v-deep(.p-scrollpanel.custombar .p-scrollpanel-wrapper) {
+  border-right: 10px solid var(--surface-ground);
+}
+
+::v-deep(.p-scrollpanel.custombar .p-scrollpanel-bar) {
+  background-color: var(--p-primary-color);
+  opacity: 1;
+  transition: background-color 0.3s;
+}
+
+::v-deep(.p-scrollpanel.custombar .p-scrollpanel-bar:hover) {
+  background-color: var(--p-primary-color);
+  filter: brightness(0.85);
+}
+
+.suggestions-grid {
+  padding-right: 30px;
+}
+
+.suggestions-grid :deep(.user-row) {
+  margin-right: 0;
+  padding-left: 0;
+  justify-content: center;
+}
+</style>

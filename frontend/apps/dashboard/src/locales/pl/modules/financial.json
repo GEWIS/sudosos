@@ -1,0 +1,248 @@
+{
+  "modules": {
+    "financial": {
+      "debtor": {
+        "title": "Dłużnicy",
+        "debtorUsers": {
+          "header": "Dłużnicy",
+          "currentBalance": "Aktualne saldo",
+          "balanceOn": "Saldo na dzień {date}",
+          "target": "data odniesienia",
+          "control": "kontrola",
+          "explanation": "Poniższa tabela wybiera wszystkich użytkowników, którzy mają co najwyżej -5€ na obie daty. Kary do nałożenia są obliczane na podstawie salda z daty odniesienia.",
+          "apply": "Zastosuj",
+          "notify": "Powiadom",
+          "handout": "Nałóż kary",
+          "toBeFined": "Do ukarania",
+          "wasFined": "Ukarany",
+          "cannotDebt": "Wyłącz możliwość zadłużania się",
+          "ofWhichFine": "Z czego kara",
+          "fineSince": "Kara od",
+          "sumCurrentBalance": "Suma sald",
+          "sumToBeFined": "Suma \"Do ukarania\"",
+          "sumWasFined": "Suma \"Ukarany\"",
+          "confirm": {
+            "handoutMessage": "Czy chcesz nałożyć kary na {count} użytkowników?",
+            "notifyMessage": "Czy chcesz wysłać ostrzeżenie o karze do {count} użytkowników?",
+            "cannotGoInDebt": "Czy chcesz wyłączyć możliwość dalszego zadłużania się dla {count} użytkowników?"
+          }
+        },
+        "handoutEvents": {
+          "title": "Nałożenie kar",
+          "header": "Wydarzenia nałożenia kar",
+          "handoutDate": "Data nałożenia",
+          "referenceDate": "Data odniesienia",
+          "number": "Liczba kar",
+          "total": "Suma kar",
+          "details": "Szczegóły nałożenia kar",
+          "delete": "Usuń wydarzenie nałożenia kar",
+          "deleteSuccess": "Wydarzenie nałożenia kar zostało pomyślnie usunięte.",
+          "confirm": {
+            "deleteMessage": "Czy na pewno chcesz usunąć to wydarzenie nałożenia kar? Spowoduje to również usunięcie wszystkich powiązanych kar.",
+            "delete": "Usuń"
+          }
+        }
+      },
+      "invoice": {
+        "vat": {
+          "title": "VAT",
+          "percentage": "VAT %",
+          "baseExclVat": "Podstawa (bez VAT)",
+          "inclVat": "Z VAT",
+          "vat": "Kwota VAT"
+        },
+        "header": "Faktury",
+        "invoice": "Faktura",
+        "transfer": "Kwota przelewu",
+        "credit": "Faktura korygująca",
+        "delete": "Usuń fakturę",
+        "confirmDelete": "Czy na pewno chcesz usunąć tę fakturę?",
+        "creditNoteWarning": "Nie zostanie utworzona nota korygująca.",
+        "unrecoverable": "To usunie fakturę i nie będzie można cofnąć tej operacji.",
+        "table": "Tabela",
+        "recompile": "Przekompiluj",
+        "reload": "Odśwież",
+        "missingPdf": "Brakuje pliku PDF lub jego generowanie nie powiodło się",
+        "deleted": "Faktura została usunięta.",
+        "dirty": "Kwota faktury nie zgadza się z kwotą przelewu.",
+        "total": "Aktualna suma na fakturze to {total}",
+        "for": "Faktura dla",
+        "create": {
+          "create": "Utwórz fakturę",
+          "userBalance": "Saldo wybranych użytkowników",
+          "invocieAmount": "Proponowana kwota faktury",
+          "balanceAfter": "Saldo po wystawieniu faktury",
+          "pos": "Punkty sprzedaży uwzględnione na fakturze:",
+          "warning": "Przed utworzeniem faktury upewnij się, że jest poprawna."
+        },
+        "account": {
+          "lastTransaction": "Ostatnia transakcja",
+          "title": "Konta faktur",
+          "header": "Konta faktur",
+          "balance": "Saldo",
+          "type": "FAKTURA"
+        },
+        "backDate": "Transakcja faktury ({date}) należy do innego roku finansowego."
+      },
+      "payout": {
+        "title": "Wypłaty",
+        "create": "Utwórz wypłatę",
+        "requestedBy": "Zażądane przez",
+        "details": "Szczegóły wypłaty #{payoutId}",
+        "approvedBy": "Zatwierdzone przez {approvedBy}",
+        "approve": "Zatwierdź",
+        "deny": "Odrzuć"
+      },
+      "forms": {
+        "payout": {
+          "for": "Dla",
+          "currentBalance": "Użytkownik ma aktualne saldo {balance}",
+          "bankAccountNumber": "Numer konta bankowego",
+          "bankAccountName": "Nazwa konta bankowego",
+          "amountTooHigh": "Kwota jest wyższa niż saldo użytkownika"
+        },
+        "invoice": {
+          "reference": "Tytuł",
+          "settings": "Ustawienia",
+          "addressing": "Adresowanie",
+          "addressee": "Adresat",
+          "attention": "Uwaga",
+          "street": "Ulica",
+          "postalCode": "Kod pocztowy",
+          "city": "Miasto",
+          "country": "Kraj"
+        },
+        "write-off": {
+          "negative": "Umorzenie można utworzyć tylko wtedy, gdy saldo jest ujemne.",
+          "warning": "Utworzenie umorzenia spowoduje również usunięcie konta użytkownika."
+        },
+        "write-offs": {
+          "negative": "Umorzenie można utworzyć tylko wtedy, gdy saldo jest ujemne.",
+          "warning": "Utworzenie umorzenia spowoduje również usunięcie konta użytkownika."
+        }
+      },
+      "write-offs": {
+        "title": "Umorzenia",
+        "fine": "Kara",
+        "table": {
+          "header": "Umorzenia"
+        },
+        "overview": {
+          "header": "Nieaktywni dłużnicy"
+        },
+        "delete": {
+          "delete": "Usuń umorzenie",
+          "not-possible": "Umorzeń nie można usunąć."
+        },
+        "create": "Utwórz umorzenie",
+        "downloadPdf": {
+          "not-possible": "To jeszcze nie jest możliwe."
+        }
+      },
+      "seller": {
+        "title": "Sprzedawcy",
+        "showAllTooltip": "Wyświetla wszystkich sprzedawców (aktywnych i nieaktywnych). Odznacz, aby pokazać tylko aktywnych sprzedawców.",
+        "showActiveOnlyTooltip": "Wyświetla tylko aktywnych sprzedawców. Zaznacz, aby pokazać wszystkich sprzedawców (aktywnych i nieaktywnych)."
+      },
+      "vat": {
+        "title": "Grupy VAT"
+      },
+      "financialOverview": {
+        "title": "Przegląd Finansowy",
+        "subtitle": "Przegląd wszystkich transakcji w roku obrachunkowym. Może być użyty do weryfikacji księgowości BAC z saldem SudoSOS.",
+        "table": {
+          "type": "Typ",
+          "credit": "Uznanie (€)",
+          "debit": "Obciążenie (€)",
+          "balance": "Saldo (€)",
+          "totalMutations": "Łączne mutacje (Δ) (€)",
+          "balanceAt": "Saldo na dzień {date} (€)",
+          "expectedEndBalance": "Oczekiwane saldo końcowe (początek + Δ) (€)"
+        },
+        "transferTypes": {
+          "deposits": "Depozyty",
+          "invoices": "Faktury",
+          "creditInvoices": "Faktury korygujące",
+          "waivedFines": "Umorzone kary",
+          "manualCreations": "Ręczne tworzenia",
+          "fines": "Kary",
+          "writeOffs": "Umorzenia",
+          "adminCosts": "Koszty administracyjne",
+          "payoutRequests": "Wnioski o wypłatę",
+          "manualDeletions": "Ręczne usunięcia",
+          "sellerPayouts": "Wypłaty dla sprzedawców",
+          "manual": "Ręczne mutacje"
+        }
+      },
+      "administrative": {
+        "title": "Koszty administracyjne",
+        "costs": "Koszty administracyjne",
+        "user": "Użytkownik",
+        "filters": {
+          "userId": "ID użytkownika",
+          "costId": "ID kosztu"
+        },
+        "selectedCount": "{count} wybranych",
+        "details": {
+          "title": "Szczegóły kosztów administracyjnych",
+          "basicInfo": "Podstawowe informacje",
+          "userInfo": "Informacje o użytkowniku",
+          "financialInfo": "Informacje finansowe",
+          "transferInfo": "Informacje o przelewie",
+          "notFound": "Koszt nie znaleziony"
+        },
+        "create": {
+          "title": "Utwórz koszty administracyjne",
+          "userId": "ID użytkownika",
+          "userIdRequired": "ID użytkownika jest wymagane"
+        },
+        "confirm": {
+          "delete": "Czy na pewno chcesz usunąć te koszty administracyjne? Spowoduje to trwałe usunięcie kosztów i powiązanego przelewu.",
+          "bulkDelete": "Czy na pewno chcesz usunąć {count} kosztów administracyjnych? Spowoduje to trwałe usunięcie każdego kosztu i powiązanego przelewu."
+        },
+        "deleteSuccess": "Koszty administracyjne zostały pomyślnie usunięte.",
+        "deleteError": "Nie udało się usunąć kosztów administracyjnych. Spróbuj ponownie.",
+        "bulkDeleteSuccess": "Pomyślnie usunięto {count} kosztów administracyjnych.",
+        "createSuccess": "Koszty administracyjne zostały pomyślnie utworzone.",
+        "eligibleUsers": {
+          "title": "Użytkownicy uprawnieni",
+          "notificationMode": "Krok 1: Powiadomienie",
+          "handoutMode": "Krok 2: Przydział",
+          "count": "{count} uprawnionych użytkowników",
+          "notify": "Powiadom wybranych użytkowników",
+          "handoutButton": "Przydziel wybranym użytkownikom",
+          "notifySuccess": "Użytkownicy zostali pomyślnie powiadomieni.",
+          "handoutSuccess": "Pomyślnie przydzielono koszty {count} użytkownikom.",
+          "step1": {
+            "title": "Krok 1: Powiadom użytkowników",
+            "description": "Powiadom użytkowników, którzy będą nieaktywni przez 2+ lata"
+          },
+          "step2": {
+            "title": "Krok 2: Przydziel koszty",
+            "description": "Przydziel koszty użytkownikom powiadomionym w zeszłym roku (3+ lata nieaktywni)"
+          },
+          "notification": {
+            "infoTitle": "Faza powiadomienia",
+            "infoMessage": "Ci użytkownicy będą nieaktywni przez 2+ lata. Powiadom ich o nadchodzących kosztach administracyjnych. Tylko użytkownicy, którzy otrzymają powiadomienie, będą uprawnieni do przydziału w przyszłym roku."
+          },
+          "handout": {
+            "infoTitle": "Faza przydziału",
+            "infoMessage": "Ci użytkownicy zostali powiadomieni w zeszłym roku i są teraz nieaktywni przez 3+ lata. Możesz teraz przydzielić im koszty administracyjne. Tylko użytkownicy, którzy wcześniej zostali powiadomieni, są tutaj wyświetlani."
+          },
+          "confirm": {
+            "notify": "Czy chcesz powiadomić {count} użytkowników o nadchodzących kosztach administracyjnych?",
+            "handout": "Czy chcesz przydzielić koszty administracyjne {count} użytkownikom? Spowoduje to utworzenie kosztów dla wszystkich wybranych użytkowników."
+          }
+        },
+        "report": {
+          "title": "Pobierz Raport Kosztów Administracyjnych",
+          "button": "Raport",
+          "fromDate": "Data Od (włącznie)",
+          "toDate": "Data Do (wyłącznie)",
+          "downloadSuccess": "Raport został pomyślnie pobrany.",
+          "downloadError": "Nie udało się pobrać raportu. Spróbuj ponownie."
+        }
+      }
+    }
+  }
+}

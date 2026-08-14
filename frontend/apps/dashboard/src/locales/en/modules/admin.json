@@ -1,0 +1,196 @@
+{
+  "modules": {
+    "admin": {
+      "userOverview": {
+        "title": "Users",
+        "list": {
+          "header": "Users"
+        }
+      },
+      "singleUser": {
+        "profile": "{user}'s profile {gewisId}",
+        "userInfo": {
+          "header": "User information"
+        },
+        "balance": {
+          "header": "Balance",
+          "waiveFines": "Waive fines",
+          "allIsFines": "All of which is a fine",
+          "waiveAllFines": "Waive all fines",
+          "someIsFines": "Of which {fine} is fines",
+          "someIsFinesDetailed": "Current fine is {fine} of which {waived} is waived.",
+          "waiveFinesConfirmation": "Are you sure you want to waive the fines? This cannot be undone.",
+          "waiveFinesConfirmationTitle": "Waive fines",
+          "waiveFineTooMuch": "You cannot waive more than the fine of the user.",
+          "waiveExplanation": "There can only be one waive per fine group, adding a fine when there is already one, will replace the existing waive."
+        }
+      },
+      "banners": {
+        "title": "Banners",
+        "noBannerFound": "No banner found, please upload one!",
+        "till": "till",
+        "list": {
+          "header": "Banners",
+          "filterActive": "Filter active",
+          "filterNotExpired": "Filter not expired",
+          "active": "Active",
+          "notActive": "Not active"
+        },
+        "seconds": "Second | Seconds"
+      },
+      "forms": {
+        "banner": {
+          "headerCreate": "Create banner",
+          "headerEdit": "Edit banner",
+          "duration": "Duration",
+          "timespan": "Timespan",
+          "startDate": "Start date",
+          "endDate": "End date",
+          "active": "Active",
+          "toast": {
+            "success": {
+              "success": "Banner created successfully",
+              "bannerCreated": "Banner created",
+              "bannerUpdated": "Banner updated",
+              "bannerDeleted": "Banner deleted"
+            },
+            "error": {
+              "error": "Error creating banner",
+              "bannerCreated": "Error creating banner",
+              "bannerUpdated": "Error updating banner",
+              "bannerDeleted": "Error deleting banner"
+            }
+          }
+        },
+        "user": {
+          "header": "Create user",
+          "ofAge": "User is of age",
+          "canGoIntoDebt": "User can go into debt"
+        }
+      },
+      "actions": {
+        "title": "Admin actions"
+      },
+      "maintenance": {
+        "maintenanceMode": "Maintenance mode",
+        "confirm": {
+          "initial": "Maintenance is {enabled}",
+          "confirm": "Turn {enabled}?",
+          "on": "on",
+          "off": "off",
+          "enabled": "enabled",
+          "disabled": "disabled"
+        }
+      },
+      "wrapped": {
+        "wrappedMode": "Wrapped available",
+        "confirm": {
+          "initial": "Wrapped is {enabled}",
+          "confirm": "Turn {enabled}?",
+          "on": "on",
+          "off": "off",
+          "enabled": "available",
+          "disabled": "unavailable"
+        }
+      },
+      "websocket": {
+        "title": "Websocket logs"
+      },
+      "dashboard": {
+        "title": "Dashboard",
+        "empty": "Nothing to show 🎉",
+        "welcome": "Welcome back, {name}",
+        "viewAll": "View all",
+        "balanceSummary": {
+          "title": "Balance Overview",
+          "tooltip": "Shows combined balances for Members and Local Users only.",
+          "totalPositive": "Total positive balance",
+          "totalNegative": "Total negative balance",
+          "financialOverview": "Financial Overview",
+          "underConstruction": "Under construction",
+          "unavailable": "Balance data unavailable"
+        },
+        "pendingPayouts": {
+          "title": "Pending Payout Requests"
+        },
+        "pendingInvoices": {
+          "title": "Pending Invoices"
+        },
+        "negativeInvoiceAccounts": {
+          "title": "Negative Invoice Accounts"
+        },
+        "debtors": {
+          "title": "Users Eligible for Fines",
+          "totalDebt": "Total negative balance",
+          "totalFine": "Total fine to be issued",
+          "handoutFines": "Hand out fines"
+        }
+      },
+      "transactions": {
+        "title": "Transaction Search",
+        "search": "Search Transaction by ID",
+        "notFound": "Transaction not found",
+        "enterValid": "Please enter a valid transaction ID",
+        "editUser": "Edit User",
+        "currentUser": "Current User",
+        "newUser": "New User",
+        "selectUser": "Select a user",
+        "confirmEdit": "Confirm Transaction Edit",
+        "confirmEditMessage": "Are you sure you want to change the user for this transaction?",
+        "userUpdated": "Transaction user updated successfully",
+        "editAmounts": "Edit Amounts",
+        "currentAmounts": "Current Amounts",
+        "confirmAmountsEdit": "Confirm Amount Changes",
+        "confirmAmountsMessage": "Are you sure you want to change the amounts for this transaction?",
+        "amountChanges": "Amount Changes",
+        "costChange": "Cost Change",
+        "amountsUpdated": "Transaction amounts updated successfully",
+        "willBeRemoved": "will be removed",
+        "missingUserData": "Missing new user data",
+        "missingAmountsData": "Missing updated amounts data",
+        "cannotRemoveAllItems": "Cannot remove all items from a transaction. At least one item must remain.",
+        "addProduct": "Add Product",
+        "selectProduct": "Select a product to add",
+        "newProductsAdded": "New Products Added",
+        "newProduct": "NEW"
+      },
+      "rbac": {
+        "title": "RBAC Management",
+        "selection": {
+          "title": "Choose a role",
+          "label": ""
+        },
+        "permissions": {
+          "title": "Permissions",
+          "entity": "Entity",
+          "crud": "CRUD",
+          "systemDefault": "This role is a system default, you cannot see its users!",
+          "action": "Action",
+          "relation": "Relation",
+          "attribute": "Attribute",
+          "addAction": "Add Action",
+          "addPermission": "Add Permission",
+          "deletePermission": "Delete Permission",
+          "firstName": "First Name",
+          "lastName": "Last Name",
+          "id": "ID",
+          "deletePermissionCancellation": "Cancel",
+          "deletePermissionConfirmation": "Confirm",
+          "deleteRow": "Delete Row",
+          "actionSubmission": "Submit",
+          "deleteAction": "Delete Action",
+          "all": "All CRUD operations allowed",
+          "partial": "Some CRUD operations allowed",
+          "none": "No CRUD operations allowed",
+          "deletePermissionConfirmationMessage": "Are you sure you want to delete {action}, {relation}, {attribute} from {entity}?"
+        },
+        "users": {
+          "addUser": "Add User",
+          "deleteUser": "Delete User",
+          "userTitle": "Users",
+          "deleteUserConfirmationMessage": "Are you sure you want to remove {firstName} from role {role}?"
+        }
+      }
+    }
+  }
+}

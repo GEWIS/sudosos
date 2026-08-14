@@ -1,0 +1,196 @@
+{
+  "modules": {
+    "admin": {
+      "userOverview": {
+        "title": "Użytkownicy",
+        "list": {
+          "header": "Użytkownicy"
+        }
+      },
+      "singleUser": {
+        "profile": "Profil użytkownika {user} {gewisId}",
+        "userInfo": {
+          "header": "Informacje o użytkowniku"
+        },
+        "balance": {
+          "header": "Saldo",
+          "waiveFines": "Umorzenie kar",
+          "allIsFines": "Całkowita kwota to kary",
+          "waiveAllFines": "Umorzenie wszystkich kar",
+          "someIsFines": "Z czego {fine} to kary",
+          "someIsFinesDetailed": "Aktualna kara to {fine}, z czego {waived} zostało umorzone.",
+          "waiveFinesConfirmation": "Czy na pewno chcesz umorzyć kary? Tej operacji nie można cofnąć.",
+          "waiveFinesConfirmationTitle": "Umorzenie kar",
+          "waiveFineTooMuch": "Nie można umorzyć więcej niż wartość kary użytkownika.",
+          "waiveExplanation": "Może istnieć tylko jedno umorzenie na grupę kar. Dodanie umorzenia, gdy istnieje już jedno, zastąpi istniejące umorzenie."
+        }
+      },
+      "banners": {
+        "title": "Banery",
+        "noBannerFound": "Nie znaleziono baneru, proszę wgrać nowy!",
+        "till": "do",
+        "list": {
+          "header": "Banery",
+          "filterActive": "Filtruj aktywne",
+          "filterNotExpired": "Filtruj nieprzeterminowane",
+          "active": "Aktywny",
+          "notActive": "Nieaktywny"
+        },
+        "seconds": "Sekunda | Sekundy"
+      },
+      "forms": {
+        "banner": {
+          "headerCreate": "Utwórz baner",
+          "headerEdit": "Edytuj baner",
+          "duration": "Czas trwania",
+          "timespan": "Okres",
+          "startDate": "Data rozpoczęcia",
+          "endDate": "Data zakończenia",
+          "active": "Aktywny",
+          "toast": {
+            "success": {
+              "success": "Baner został pomyślnie utworzony",
+              "bannerCreated": "Baner utworzony",
+              "bannerUpdated": "Baner zaktualizowany",
+              "bannerDeleted": "Baner usunięty"
+            },
+            "error": {
+              "error": "Błąd podczas tworzenia banera",
+              "bannerCreated": "Błąd podczas tworzenia banera",
+              "bannerUpdated": "Błąd podczas aktualizacji banera",
+              "bannerDeleted": "Błąd podczas usuwania banera"
+            }
+          }
+        },
+        "user": {
+          "header": "Utwórz użytkownika",
+          "ofAge": "Użytkownik jest pełnoletni",
+          "canGoIntoDebt": "Użytkownik może zadłużyć się"
+        }
+      },
+      "actions": {
+        "title": "Akcje administratora"
+      },
+      "maintenance": {
+        "maintenanceMode": "Tryb konserwacji",
+        "confirm": {
+          "initial": "Konserwacja jest {enabled}",
+          "confirm": "Przełączyć na {enabled}?",
+          "on": "włączony",
+          "off": "wyłączony",
+          "enabled": "włączony",
+          "disabled": "wyłączony"
+        }
+      },
+      "wrapped": {
+        "wrappedMode": "Dostępny wrapped",
+        "confirm": {
+          "initial": "Wrapped jest {enabled}",
+          "confirm": "Przełączyć na {enabled}?",
+          "on": "włączony",
+          "off": "wyłączony",
+          "enabled": "dostępny",
+          "disabled": "niedostępny"
+        }
+      },
+      "websocket": {
+        "title": "Logi WebSocket"
+      },
+      "dashboard": {
+        "title": "Panel",
+        "empty": "Brak danych 🎉",
+        "welcome": "Witaj ponownie, {name}",
+        "viewAll": "Pokaż wszystko",
+        "balanceSummary": {
+          "title": "Przegląd salda",
+          "tooltip": "Pokazuje łączne salda tylko dla Członków i Użytkowników Lokalnych.",
+          "totalPositive": "Łączne saldo dodatnie",
+          "totalNegative": "Łączne saldo ujemne",
+          "financialOverview": "Przegląd finansowy",
+          "underConstruction": "W budowie",
+          "unavailable": "Dane salda niedostępne"
+        },
+        "pendingPayouts": {
+          "title": "Oczekujące wypłaty"
+        },
+        "pendingInvoices": {
+          "title": "Oczekujące faktury"
+        },
+        "negativeInvoiceAccounts": {
+          "title": "Konta faktur z ujemnym saldem"
+        },
+        "debtors": {
+          "title": "Użytkownicy kwalifikujący się do kar",
+          "totalDebt": "Łączne saldo ujemne",
+          "totalFine": "Łączna kara do wydania",
+          "handoutFines": "Wydaj kary"
+        }
+      },
+      "rbac": {
+        "title": "RBAC Management",
+        "selection": {
+          "title": "Wybierz rolę",
+          "label": ""
+        },
+        "permissions": {
+          "title": "Uprawnienia",
+          "entity": "Entity",
+          "crud": "CRUD",
+          "systemDefault": "Ta rola jest domyślną rolą systemową, nie możesz zobaczyć jej użytkowników!",
+          "action": "Action",
+          "relation": "Relation",
+          "attribute": "Attribute",
+          "addAction": "Dodaj Action",
+          "addPermission": "Dodaj uprawnienie",
+          "deletePermission": "Usuń uprawnienie",
+          "firstName": "Imię",
+          "lastName": "Nazwisko",
+          "id": "ID",
+          "deletePermissionCancellation": "Anuluj",
+          "deletePermissionConfirmation": "Potwierdź",
+          "deleteRow": "Usuń wiersz",
+          "actionSubmission": "Zatwierdź",
+          "deleteAction": "Usuń akcję",
+          "all": "Wszystkie operacje CRUD dozwolone",
+          "partial": "Część operacji CRUD dozwolona",
+          "none": "Brak operacji CRUD dozwolonych",
+          "deletePermissionConfirmationMessage": "Czy na pewno chcesz usunąć {action}, {relation}, {attribute} z {entity}?"
+        },
+        "users": {
+          "addUser": "Dodaj użytkownika",
+          "deleteUser": "Usuń użytkownika",
+          "userTitle": "Użytkownicy",
+          "deleteUserConfirmationMessage": "Czy na pewno chcesz usunąć {firstName} z roli {role}?"
+        }
+      },
+      "transactions": {
+        "title": "Wyszukiwanie transakcji",
+        "search": "Wyszukaj transakcję po ID",
+        "notFound": "Transakcja nie znaleziona",
+        "enterValid": "Proszę podać prawidłowy ID transakcji",
+        "editUser": "Edytuj użytkownika",
+        "currentUser": "Aktualny użytkownik",
+        "newUser": "Nowy użytkownik",
+        "selectUser": "Wybierz użytkownika",
+        "confirmEdit": "Potwierdź edycję transakcji",
+        "confirmEditMessage": "Czy na pewno chcesz zmienić użytkownika dla tej transakcji?",
+        "userUpdated": "Użytkownik transakcji został pomyślnie zaktualizowany",
+        "editAmounts": "Edytuj ilości",
+        "currentAmounts": "Aktualne ilości",
+        "confirmAmountsEdit": "Potwierdź zmiany ilości",
+        "confirmAmountsMessage": "Czy na pewno chcesz zmienić ilości dla tej transakcji?",
+        "amountChanges": "Zmiany ilości",
+        "costChange": "Zmiana kosztu",
+        "amountsUpdated": "Ilości transakcji zostały pomyślnie zaktualizowane",
+        "willBeRemoved": "zostanie usunięty",
+        "missingUserData": "Brakujące dane nowego użytkownika",
+        "missingAmountsData": "Brakujące zaktualizowane dane ilości",
+        "cannotRemoveAllItems": "Nie można usunąć wszystkich elementów z transakcji. Co najmniej jeden element musi pozostać.",
+        "addProduct": "Dodaj produkt",
+        "selectProduct": "Wybierz produkt do dodania",
+        "newProductsAdded": "Dodano nowe produkty",
+        "newProduct": "NOWY"
+      }
+    }
+  }
+}

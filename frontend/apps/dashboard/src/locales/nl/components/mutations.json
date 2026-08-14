@@ -1,0 +1,49 @@
+{
+  "components": {
+    "mutations": {
+      "balance": "Saldo mutaties",
+      "recent": "Recente transacties",
+      "all": "Alle transacties",
+      "when": "Wanneer",
+      "created": "Aangemaakte transacties",
+      "createdBy": "Aangemaakt door",
+      "By": "Door",
+      "createdFor": "Aangemaakt voor",
+      "editedOn": "Bewerkt op {date}",
+      "amount": "Bedrag",
+      "pos": "Verkooppunt",
+      "type": "Type",
+      "transfers": "Overschrijvingen",
+      "transactions": "Transacties",
+      "you": "Jij",
+      "user": "Gebruikerstransacties",
+      "notYou": "Heb jij deze aankoop niet gedaan?",
+      "modal": {
+        "header": "Transactiedetails (#{id})",
+        "waivedFine": "Kwijtgescholden boete",
+        "invoice": "Factuur",
+        "fine": "Boete",
+        "topUp": "Opwaardering",
+        "payment": "Betaling",
+        "payoutRequestDescription": "Je hebt een uitbetaling aangevraagd.",
+        "waivedFineDescription": "Je boetes zijn kwijtgescholden.",
+        "invoiceDescription": "Je hebt een factuur betaald aan GEWIS",
+        "depositDescription": "Je hebt geld gestort bij GEWIS",
+        "fineDescription": "Je hebt een boete betaald aan GEWIS",
+        "inactiveCostDescription": "Je bent een administratiekosten in rekening gebracht voor inactiviteit via overschrijving.",
+        "inactiveCostExplanation": "Deze kosten worden toegepast op leden die gedurende een langere periode inactief zijn geweest.",
+        "payoutRequest": "Uitbetalingsverzoek",
+        "sellerPayout": "Verkopersuitbetaling",
+        "sellerPayoutDescription": "Een verkopersuitbetaling is verwerkt.",
+        "unknown": "Onbekende transactie"
+      },
+      "userBoughtAt": "Je hebt gekocht bij {pos}",
+      "otherBoughtAt": {
+        "suffix": " heeft gekocht bij {pos}"
+      },
+      "putInBy": {
+        "prefix": "Transactie geplaatst door "
+      }
+    }
+  }
+}

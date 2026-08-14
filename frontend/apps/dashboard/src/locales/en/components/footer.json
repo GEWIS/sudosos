@@ -1,0 +1,15 @@
+{
+  "components": {
+    "footer": {
+      "copyright": "© 2026 GEWIS",
+      "localBuild": "Local build",
+      "contact": "Contact",
+      "mainContact": "Main contact",
+      "incorrectTransactions": "Incorrect transactions",
+      "security": "Security",
+      "featureRequests": "Feature requests",
+      "termsOfService": "Terms of service",
+      "version": "Version"
+    }
+  }
+}

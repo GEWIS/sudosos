@@ -1,0 +1,68 @@
+{
+  "modules": {
+    "user": {
+      "landing": {
+        "title": "Overzicht",
+        "welcome": "Welkom, ",
+        "motd": "We hebben meldingen gekregen van opwaarderingen die niet correct behandeld worden. Meestal wordt dit bedrag teruggestort binnen 48 uur. Je kunt boetes voorkomen en ons heel erg helpen door {link} in te vullen als je dit probleem zelf mee maakt. Helaas krijgen we hier geen meldingen van omdat dit een probleem is tussen onze payment provider en iDeal."
+      },
+      "profile": {
+        "title": "Profiel",
+        "passwordNew": "Nieuw wachtwoord",
+        "passwordConfirm": "Bevestig wachtwoord",
+        "nfcNew": "Nieuwe NFC Code",
+        "pinNew": "Nieuwe PIN",
+        "pinConfirm": "Bevestig PIN"
+      },
+      "transactions": {
+        "title": "Transacties"
+      },
+      "settings": {
+        "header": "Gebruikersinstellingen",
+        "changePin": "PIN wijzigen",
+        "changePassword": "Wachtwoord wijzigen",
+        "changeNFC": "NFC code wijzigen",
+        "nfc": "NFC",
+        "deleteNFC": "NFC code verwijderen",
+        "apiKeys": "API-sleutels",
+        "changeApiKey": "API-sleutel wijzigen",
+        "deleteApiKey": "API-sleutel verwijderen",
+        "preferences": "Voorkeuren",
+        "dataAnalysis": "Data-analyse",
+        "enableBeta": "Beta inschakelen",
+        "confirmChangeNFC": "Are you sure you want to change the NFC code?",
+        "confirmDeleteNFC": "Are you sure you want to delete the NFC code?",
+        "confirmChangeApiKey": "Weet je zeker dat je de API-sleutel wilt wijzigen?",
+        "confirmDeleteApiKey": "Weet je zeker dat je de API-sleutel wilt verwijderen?"
+      },
+      "balance": {
+        "balance": "Saldo",
+        "allIsFines": "Alles is een boete",
+        "someIsFines": "Waarvan {fine} een boete is",
+        "after": "Saldo na",
+        "increaseAmount": "Saldo verhogen",
+        "topUp": "Opwaarderen",
+        "price": "Prijs",
+        "pay": "Betalen"
+      },
+      "notifications": {
+        "header": "Notificatievoorkeuren",
+        "transactionNotifications": "Transacties",
+        "transactionNotificationMode": "Notificatiemodus",
+        "transactionsMadeByMyself": "Transacties die ik zelf maak",
+        "transactionsMadeByOthers": "Transacties gemaakt door anderen",
+        "disabled": "Uitgeschakeld",
+        "own": "Alleen eigen transacties",
+        "other": "Alleen andere transacties",
+        "all": "Alle transacties",
+        "preferencesUpdated": "Notificatievoorkeuren bijgewerkt",
+        "tooltip": {
+          "disabled": "Je ontvangt geen e-mailnotificaties voor transacties",
+          "own": "Je ontvangt e-mailnotificaties alleen voor transacties die je zelf maakt",
+          "other": "Je ontvangt e-mailnotificaties alleen voor transacties die door anderen voor jou worden gemaakt",
+          "all": "Je ontvangt e-mailnotificaties voor alle transacties, inclusief die door anderen voor jou worden gemaakt"
+        }
+      }
+    }
+  }
+}

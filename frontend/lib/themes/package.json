@@ -1,0 +1,32 @@
+{
+  "name": "@sudosos/themes",
+  "version": "1.0.0",
+  "description": "SudoSOS Primevue themes",
+  "scripts": {
+    "dev": "WATCH=true vite build",
+    "themes:dev": "yarn dev",
+    "test": "echo \"No tests specified\" && exit 0",
+    "build": "vite build",
+    "themes:build": "yarn build",
+    "type-check": "vue-tsc --noEmit -p tsconfig.json --composite false",
+    "lint": "eslint src",
+    "lint-fix": "eslint src --fix"
+  },
+  "main": "./dist/sudosos-frontend-themes.umd.cjs",
+  "module": "./dist/sudosos-frontend-themes.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/sudosos-frontend-themes.js",
+      "require": "./dist/sudosos-frontend-themes.umd.cjs"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GEWIS/sudosos-frontend.git"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.1"
+  }
+}

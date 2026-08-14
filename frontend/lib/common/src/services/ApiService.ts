@@ -1,0 +1,269 @@
+import {
+  AuthenticateApi,
+  BalanceApi,
+  BannersApi,
+  VouchergroupsApi,
+  Configuration,
+  ContainersApi,
+  FilesApi,
+  InvoicesApi,
+  InactiveAdministrativeCostsApi,
+  PayoutRequestsApi,
+  PointofsaleApi,
+  ProductCategoriesApi,
+  ProductsApi,
+  RbacApi,
+  RootApi,
+  StripeApi,
+  TerminalPaymentsApi,
+  TransactionsApi,
+  TransfersApi,
+  UsersApi,
+  VatGroupsApi,
+  DebtorsApi,
+  SellerPayoutsApi,
+  WriteoffsApi,
+  ServerSettingsApi,
+  UserNotificationPreferencesApi,
+  TermsOfServiceApi,
+} from '@gewis/sudosos-client';
+import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
+import { getTokenFromStorage, updateTokenIfNecessary } from '../helpers/TokenHelper';
+
+export class ApiService {
+  private readonly _axiosInstance: AxiosInstance;
+
+  private readonly _authenticateApi: AuthenticateApi;
+
+  private readonly _balanceApi: BalanceApi;
+
+  private readonly _debtorsApi: DebtorsApi;
+
+  private readonly _usersApi: UsersApi;
+
+  private readonly _posApi: PointofsaleApi;
+
+  private readonly _categoryApi: ProductCategoriesApi;
+
+  private readonly _transactionApi: TransactionsApi;
+
+  private readonly _bannerApi: BannersApi;
+
+  private readonly _rootApi: RootApi;
+
+  private readonly _voucherGroupApi: VouchergroupsApi;
+
+  private readonly _containerApi: ContainersApi;
+
+  private readonly _filesApi: FilesApi;
+
+  private readonly _invoicesApi: InvoicesApi;
+
+  private readonly _payoutsApi: PayoutRequestsApi;
+
+  private readonly _productsApi: ProductsApi;
+
+  private readonly _transfersApi: TransfersApi;
+
+  private readonly _vatGroupsApi: VatGroupsApi;
+
+  private readonly _stripeApi: StripeApi;
+
+  private readonly _terminalPaymentsApi: TerminalPaymentsApi;
+
+  private readonly _rbacApi: RbacApi;
+
+  private readonly _openBannerApi: BannersApi;
+
+  private readonly _sellerPayoutsApi: SellerPayoutsApi;
+
+  private readonly _writeOffsApi: WriteoffsApi;
+
+  private readonly _serverSettingsApi: ServerSettingsApi;
+
+  private readonly _userNotificationsApi: UserNotificationPreferencesApi;
+
+  private readonly _inactiveAdministrativeCostsApi: InactiveAdministrativeCostsApi;
+
+  private readonly _termsOfServiceApi: TermsOfServiceApi;
+
+  private readonly _tokenKey: string;
+
+  constructor(basePath: string, tokenKey: string = 'jwt_token') {
+    // Create an axios instance
+    this._axiosInstance = axios.create();
+
+    this._tokenKey = tokenKey;
+
+    // Add a response interceptor to the axios instance
+    this._axiosInstance.interceptors.response.use((response: AxiosResponse) => {
+      updateTokenIfNecessary(response, tokenKey);
+      return response;
+    });
+
+    const withKeyConfiguration = new Configuration({
+      accessToken: () => getTokenFromStorage(this._tokenKey).token,
+    });
+
+    this._authenticateApi = new AuthenticateApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._balanceApi = new BalanceApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._debtorsApi = new DebtorsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._usersApi = new UsersApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._posApi = new PointofsaleApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._categoryApi = new ProductCategoriesApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._transactionApi = new TransactionsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._bannerApi = new BannersApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._openBannerApi = new BannersApi(undefined, basePath, this._axiosInstance);
+    this._rootApi = new RootApi(undefined, basePath, this._axiosInstance);
+    this._voucherGroupApi = new VouchergroupsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._containerApi = new ContainersApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._filesApi = new FilesApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._invoicesApi = new InvoicesApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._payoutsApi = new PayoutRequestsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._productsApi = new ProductsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._transfersApi = new TransfersApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._vatGroupsApi = new VatGroupsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._stripeApi = new StripeApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._terminalPaymentsApi = new TerminalPaymentsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._rbacApi = new RbacApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._sellerPayoutsApi = new SellerPayoutsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._writeOffsApi = new WriteoffsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._serverSettingsApi = new ServerSettingsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._userNotificationsApi = new UserNotificationPreferencesApi(
+      withKeyConfiguration,
+      basePath,
+      this._axiosInstance,
+    );
+    this._inactiveAdministrativeCostsApi = new InactiveAdministrativeCostsApi(
+      withKeyConfiguration,
+      basePath,
+      this._axiosInstance,
+    );
+    this._termsOfServiceApi = new TermsOfServiceApi(withKeyConfiguration, basePath, this._axiosInstance);
+  }
+
+  get authenticate(): AuthenticateApi {
+    return this._authenticateApi;
+  }
+
+  get balance(): BalanceApi {
+    return this._balanceApi;
+  }
+
+  get debtor(): DebtorsApi {
+    return this._debtorsApi;
+  }
+
+  get pos(): PointofsaleApi {
+    return this._posApi;
+  }
+
+  get category(): ProductCategoriesApi {
+    return this._categoryApi;
+  }
+
+  get transaction(): TransactionsApi {
+    return this._transactionApi;
+  }
+
+  get banner(): BannersApi {
+    return this._bannerApi;
+  }
+
+  get rootApi(): RootApi {
+    return this._rootApi;
+  }
+
+  get borrelkaart(): VouchergroupsApi {
+    return this._voucherGroupApi;
+  }
+
+  get container(): ContainersApi {
+    return this._containerApi;
+  }
+
+  get files(): FilesApi {
+    return this._filesApi;
+  }
+
+  get invoices(): InvoicesApi {
+    return this._invoicesApi;
+  }
+
+  get payouts(): PayoutRequestsApi {
+    return this._payoutsApi;
+  }
+
+  get products(): ProductsApi {
+    return this._productsApi;
+  }
+
+  get transfers(): TransfersApi {
+    return this._transfersApi;
+  }
+
+  get vatGroups(): VatGroupsApi {
+    return this._vatGroupsApi;
+  }
+
+  get stripe(): StripeApi {
+    return this._stripeApi;
+  }
+
+  get terminalPayments(): TerminalPaymentsApi {
+    return this._terminalPaymentsApi;
+  }
+
+  get rbac(): RbacApi {
+    return this._rbacApi;
+  }
+
+  get user(): UsersApi {
+    return this._usersApi;
+  }
+
+  get openBanner(): BannersApi {
+    return this._openBannerApi;
+  }
+
+  get sellerPayouts(): SellerPayoutsApi {
+    return this._sellerPayoutsApi;
+  }
+
+  get writeOffs(): WriteoffsApi {
+    return this._writeOffsApi;
+  }
+
+  get serverSettings(): ServerSettingsApi {
+    return this._serverSettingsApi;
+  }
+
+  get userNotifications(): UserNotificationPreferencesApi {
+    return this._userNotificationsApi;
+  }
+
+  get inactiveAdministrativeCosts(): InactiveAdministrativeCostsApi {
+    return this._inactiveAdministrativeCostsApi;
+  }
+
+  get tokenKey(): string {
+    return this._tokenKey;
+  }
+
+  get termsOfService(): TermsOfServiceApi {
+    return this._termsOfServiceApi;
+  }
+}
+
+// Factory functions for creating ApiService instances with different token types
+export function createApiService(basePath: string, tokenKey: string = 'jwt_token'): ApiService {
+  return new ApiService(basePath, tokenKey);
+}
+
+// Convenience function for creating a POS-specific ApiService
+export function createPosApiService(basePath: string): ApiService {
+  return new ApiService(basePath, 'pos_jwt_token');
+}
+
+// Default export for backward compatibility
+export default ApiService;

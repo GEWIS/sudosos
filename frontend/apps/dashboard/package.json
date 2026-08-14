@@ -1,0 +1,41 @@
+{
+  "name": "sudosos-dashboard",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:prod": "VITE_ENV=prod vite",
+    "dev:test": "VITE_ENV=test vite",
+    "dev:local": "VITE_ENV=local vite",
+    "dashboard:dev": "yarn dev",
+    "dashboard:dev:prod": "yarn dev:prod",
+    "dashboard:dev:test": "yarn dev:test",
+    "dashboard:dev:local": "yarn dev:local",
+    "build": "run-p type-check build-only",
+    "preview": "vite preview",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
+    "lint": "eslint src",
+    "lint-fix": "eslint src --fix",
+    "format": "prettier --ignore-path .gitignore --check .",
+    "format-fix": "prettier --ignore-path .gitignore --write ."
+  },
+  "dependencies": {
+    "@stripe/stripe-js": "^8.5.3",
+    "@sudosos/sudosos-frontend-common": "workspace:^",
+    "@sudosos/themes": "workspace:^",
+    "@tailwindcss/vite": "^4.1.17",
+    "@vee-validate/rules": "^4.15.1",
+    "@vee-validate/yup": "^4.15.1",
+    "marked": "^17.0.1",
+    "vee-validate": "^4.15.1",
+    "vue-i18n": "^11.2.2",
+    "vue3-pdf-app": "^1.0.3",
+    "yup": "^1.7.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.19",
+    "eslint": "^9.39.1"
+  }
+}
