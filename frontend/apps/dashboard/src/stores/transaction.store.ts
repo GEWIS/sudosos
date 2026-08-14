@@ -8,6 +8,7 @@ interface TransactionModuleState {
 
 export const useTransactionStore = defineStore('transaction', {
   state: (): TransactionModuleState => ({
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this without a state return-type annotation
     transactions: {} as Record<number, TransactionResponse>,
   }),
   getters: {

@@ -11,6 +11,7 @@ import apiService from '@/services/ApiService';
 export type PayoutResponse = PayoutRequestResponse | BasePayoutRequestResponse;
 export const usePayoutStore = defineStore('payout', {
   state: () => ({
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this without a state return-type annotation
     payouts: {} as Record<number, PayoutResponse>,
     updatedAt: 0,
     pending: 0,

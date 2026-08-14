@@ -13,7 +13,9 @@ import ApiService from '@/services/ApiService';
 
 export const useInvoiceStore = defineStore('invoice', {
   state: () => ({
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this without a state return-type annotation
     invoices: {} as Record<number, InvoiceResponse>,
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this without a state return-type annotation
     negativeInvoiceUsers: {} as Record<number, BalanceResponse>,
   }),
   getters: {

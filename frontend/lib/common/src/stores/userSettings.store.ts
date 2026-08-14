@@ -85,7 +85,7 @@ export const useUserSettingsStore = defineStore('userSettings', {
       try {
         const patchRequest: PatchUserSettingsRequest = {
           [key]: value,
-        } as PatchUserSettingsRequest;
+        };
 
         const response = await service.user.patchUserSettings({ id: userId, patchUserSettingsRequest: patchRequest });
         this.settings = response.data;

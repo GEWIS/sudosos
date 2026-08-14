@@ -5,6 +5,7 @@ import apiService from '@/services/ApiService';
 
 export const useBannersStore = defineStore('banners', {
   state: () => ({
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this without a state return-type annotation
     banners: {} as Record<number, BannerResponse>,
     lastUpdated: 0,
   }),
