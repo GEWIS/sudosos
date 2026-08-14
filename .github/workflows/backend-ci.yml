@@ -87,6 +87,7 @@ jobs:
           MARIADB_USER: sudosos-ci
           MARIADB_PASSWORD: sudosos-ci
     strategy:
+      fail-fast: false
       matrix:
         include:
           - job-name: coverage-mariadb
@@ -147,6 +148,7 @@ jobs:
       - name: Fetch target branch coverage from artifacts
         id: fetch-coverage-base
         if: github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork && matrix.typeorm-connection == 'mariadb'
+        continue-on-error: true # best-effort: no baseline exists yet before backend-coverage-baseline.yml has ever run (e.g. this repo's first PR)
         uses: dawidd6/action-download-artifact@v6
         with:
           workflow: backend-coverage-baseline.yml
