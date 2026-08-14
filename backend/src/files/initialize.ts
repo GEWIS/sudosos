@@ -29,12 +29,23 @@ import path from 'path';
 import * as locations from './storage/locations';
 
 /**
- * Create all folders necessary to store files locally on disk
+ * Create all folders necessary to store files locally on disk.
+ *
+ * Resolves each location the same way `DiskStorage` does when it actually
+ * reads/writes a file: relative to `process.cwd()`, not to this module's own
+ * `__dirname`. Those two used to coincide under ts-node (where `__dirname` is
+ * two levels above `src/`, i.e. the backend package root, matching cwd), but
+ * diverge once compiled: `__dirname` for the built `out/src/files/initialize.js`
+ * is two levels above `out/`, i.e. `<app>/out`, one directory short of the
+ * `<app>` cwd the process actually runs with. That mismatch silently created an
+ * unused `out/data/...` directory tree while every real read/write happened
+ * under cwd-relative `data/...` instead.
  */
 export default function initializeDiskStorage() {
   Object.values(locations).forEach((location) => {
-    if (!fs.existsSync(path.join(__dirname, '/../..', location))) {
-      fs.mkdirSync(path.join(__dirname, '/../..', location));
+    const resolved = path.resolve(location);
+    if (!fs.existsSync(resolved)) {
+      fs.mkdirSync(resolved, { recursive: true });
     }
   });
 }
