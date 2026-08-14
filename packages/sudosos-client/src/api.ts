@@ -3682,6 +3682,25 @@ export interface PaginatedSellerPayoutResponse {
     'records': Array<SellerPayoutResponse>;
 }
 /**
+ * Paginated API response for the `task` entity.
+ * @export
+ * @interface PaginatedTaskResponse
+ */
+export interface PaginatedTaskResponse {
+    /**
+     * 
+     * @type {PaginationResult}
+     * @memberof PaginatedTaskResponse
+     */
+    '_pagination': PaginationResult;
+    /**
+     * The page of tasks.
+     * @type {Array<TaskResponse>}
+     * @memberof PaginatedTaskResponse
+     */
+    'records': Array<TaskResponse>;
+}
+/**
  * 
  * @export
  * @interface PaginatedTransferResponse
@@ -4970,6 +4989,12 @@ export interface ServerStatusResponse {
      * @memberof ServerStatusResponse
      */
     'maintenanceMode': boolean;
+    /**
+     * Number of background tasks currently in failed state
+     * @type {number}
+     * @memberof ServerStatusResponse
+     */
+    'failedTaskCount': number;
 }
 /**
  * 
@@ -5390,6 +5415,122 @@ export interface SubTransactionRowResponse {
      * @memberof SubTransactionRowResponse
      */
     'totalPriceInclVat': DineroObjectResponse;
+}
+/**
+ * 
+ * @export
+ * @interface TaskResponse
+ */
+export interface TaskResponse {
+    /**
+     * The unique id of the entity.
+     * @type {number}
+     * @memberof TaskResponse
+     */
+    'id': number;
+    /**
+     * The creation Date of the entity.
+     * @type {string}
+     * @memberof TaskResponse
+     */
+    'createdAt'?: string;
+    /**
+     * The last update Date of the entity.
+     * @type {string}
+     * @memberof TaskResponse
+     */
+    'updatedAt'?: string;
+    /**
+     * The version of the entity.
+     * @type {number}
+     * @memberof TaskResponse
+     */
+    'version'?: number;
+    /**
+     * Handler key, e.g. \'send-notification\'.
+     * @type {string}
+     * @memberof TaskResponse
+     */
+    'type': string;
+    /**
+     * One of pending, processing, completed, failed.
+     * @type {string}
+     * @memberof TaskResponse
+     */
+    'status': string;
+    /**
+     * Attempts so far.
+     * @type {number}
+     * @memberof TaskResponse
+     */
+    'attempts': number;
+    /**
+     * Maximum attempts before status=failed.
+     * @type {number}
+     * @memberof TaskResponse
+     */
+    'maxAttempts': number;
+    /**
+     * Earliest time this task may be picked up.
+     * @type {string}
+     * @memberof TaskResponse
+     */
+    'availableAt'?: string;
+    /**
+     * When the most recent attempt began.
+     * @type {string}
+     * @memberof TaskResponse
+     */
+    'startedAt'?: string;
+    /**
+     * When the current worker lease expires.
+     * @type {string}
+     * @memberof TaskResponse
+     */
+    'lockedUntil'?: string;
+    /**
+     * When the task finished successfully.
+     * @type {string}
+     * @memberof TaskResponse
+     */
+    'completedAt'?: string;
+    /**
+     * Most recent error message.
+     * @type {string}
+     * @memberof TaskResponse
+     */
+    'lastError'?: string;
+}
+/**
+ * Aggregate counts of tasks by status.
+ * @export
+ * @interface TaskStatsResponse
+ */
+export interface TaskStatsResponse {
+    /**
+     * Count of tasks waiting to run.
+     * @type {number}
+     * @memberof TaskStatsResponse
+     */
+    'pending': number;
+    /**
+     * Count of tasks currently in flight.
+     * @type {number}
+     * @memberof TaskStatsResponse
+     */
+    'processing': number;
+    /**
+     * Count of tasks that succeeded.
+     * @type {number}
+     * @memberof TaskStatsResponse
+     */
+    'completed': number;
+    /**
+     * Count of tasks that gave up after retries.
+     * @type {number}
+     * @memberof TaskStatsResponse
+     */
+    'failed': number;
 }
 /**
  * 
@@ -21688,6 +21829,412 @@ export const GetUserSyncResultsServiceEnum = {
     Gewisdb: 'GEWISDB'
 } as const;
 export type GetUserSyncResultsServiceEnum = typeof GetUserSyncResultsServiceEnum[keyof typeof GetUserSyncResultsServiceEnum];
+
+
+/**
+ * TasksApi - axios parameter creator
+ * @export
+ */
+export const TasksApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Get a single task by id.
+         * @param {number} id The id of the task.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTask: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getTask', 'id', id)
+            const localVarPath = `/tasks/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Aggregate counts of tasks by status.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTaskStats: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/tasks/stats`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary List background tasks, most recent first.
+         * @param {number} [take] How many tasks the endpoint should return.
+         * @param {number} [skip] How many tasks should be skipped (pagination).
+         * @param {string} [status] Filter by status (pending, processing, completed, failed). Comma-separated for multiple.
+         * @param {string} [type] Filter by task type.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listTasks: async (take?: number, skip?: number, status?: string, type?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/tasks`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (take !== undefined) {
+                localVarQueryParameter['take'] = take;
+            }
+
+            if (skip !== undefined) {
+                localVarQueryParameter['skip'] = skip;
+            }
+
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
+            if (type !== undefined) {
+                localVarQueryParameter['type'] = type;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Reset a failed task so it gets picked up again.
+         * @param {number} id The id of the task to retry.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retryTask: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('retryTask', 'id', id)
+            const localVarPath = `/tasks/{id}/retry`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * TasksApi - functional programming interface
+ * @export
+ */
+export const TasksApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = TasksApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Get a single task by id.
+         * @param {number} id The id of the task.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTask(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTask(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TasksApi.getTask']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Aggregate counts of tasks by status.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTaskStats(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskStatsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTaskStats(options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TasksApi.getTaskStats']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary List background tasks, most recent first.
+         * @param {number} [take] How many tasks the endpoint should return.
+         * @param {number} [skip] How many tasks should be skipped (pagination).
+         * @param {string} [status] Filter by status (pending, processing, completed, failed). Comma-separated for multiple.
+         * @param {string} [type] Filter by task type.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listTasks(take?: number, skip?: number, status?: string, type?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedTaskResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listTasks(take, skip, status, type, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TasksApi.listTasks']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Reset a failed task so it gets picked up again.
+         * @param {number} id The id of the task to retry.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async retryTask(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.retryTask(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TasksApi.retryTask']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * TasksApi - factory interface
+ * @export
+ */
+export const TasksApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = TasksApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Get a single task by id.
+         * @param {TasksApiGetTaskRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTask(requestParameters: TasksApiGetTaskRequest, options?: RawAxiosRequestConfig): AxiosPromise<TaskResponse> {
+            return localVarFp.getTask(requestParameters.id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Aggregate counts of tasks by status.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTaskStats(options?: RawAxiosRequestConfig): AxiosPromise<TaskStatsResponse> {
+            return localVarFp.getTaskStats(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary List background tasks, most recent first.
+         * @param {TasksApiListTasksRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listTasks(requestParameters: TasksApiListTasksRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedTaskResponse> {
+            return localVarFp.listTasks(requestParameters.take, requestParameters.skip, requestParameters.status, requestParameters.type, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Reset a failed task so it gets picked up again.
+         * @param {TasksApiRetryTaskRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retryTask(requestParameters: TasksApiRetryTaskRequest, options?: RawAxiosRequestConfig): AxiosPromise<TaskResponse> {
+            return localVarFp.retryTask(requestParameters.id, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * Request parameters for getTask operation in TasksApi.
+ * @export
+ * @interface TasksApiGetTaskRequest
+ */
+export interface TasksApiGetTaskRequest {
+    /**
+     * The id of the task.
+     * @type {number}
+     * @memberof TasksApiGetTask
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for listTasks operation in TasksApi.
+ * @export
+ * @interface TasksApiListTasksRequest
+ */
+export interface TasksApiListTasksRequest {
+    /**
+     * How many tasks the endpoint should return.
+     * @type {number}
+     * @memberof TasksApiListTasks
+     */
+    readonly take?: number
+
+    /**
+     * How many tasks should be skipped (pagination).
+     * @type {number}
+     * @memberof TasksApiListTasks
+     */
+    readonly skip?: number
+
+    /**
+     * Filter by status (pending, processing, completed, failed). Comma-separated for multiple.
+     * @type {string}
+     * @memberof TasksApiListTasks
+     */
+    readonly status?: string
+
+    /**
+     * Filter by task type.
+     * @type {string}
+     * @memberof TasksApiListTasks
+     */
+    readonly type?: string
+}
+
+/**
+ * Request parameters for retryTask operation in TasksApi.
+ * @export
+ * @interface TasksApiRetryTaskRequest
+ */
+export interface TasksApiRetryTaskRequest {
+    /**
+     * The id of the task to retry.
+     * @type {number}
+     * @memberof TasksApiRetryTask
+     */
+    readonly id: number
+}
+
+/**
+ * TasksApi - object-oriented interface
+ * @export
+ * @class TasksApi
+ * @extends {BaseAPI}
+ */
+export class TasksApi extends BaseAPI {
+    /**
+     * 
+     * @summary Get a single task by id.
+     * @param {TasksApiGetTaskRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TasksApi
+     */
+    public getTask(requestParameters: TasksApiGetTaskRequest, options?: RawAxiosRequestConfig) {
+        return TasksApiFp(this.configuration).getTask(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Aggregate counts of tasks by status.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TasksApi
+     */
+    public getTaskStats(options?: RawAxiosRequestConfig) {
+        return TasksApiFp(this.configuration).getTaskStats(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary List background tasks, most recent first.
+     * @param {TasksApiListTasksRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TasksApi
+     */
+    public listTasks(requestParameters: TasksApiListTasksRequest = {}, options?: RawAxiosRequestConfig) {
+        return TasksApiFp(this.configuration).listTasks(requestParameters.take, requestParameters.skip, requestParameters.status, requestParameters.type, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Reset a failed task so it gets picked up again.
+     * @param {TasksApiRetryTaskRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TasksApi
+     */
+    public retryTask(requestParameters: TasksApiRetryTaskRequest, options?: RawAxiosRequestConfig) {
+        return TasksApiFp(this.configuration).retryTask(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
 
 
 /**

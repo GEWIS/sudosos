@@ -96,6 +96,68 @@
       "websocket": {
         "title": "Websocket logs"
       },
+      "tasks": {
+        "title": "Background tasks",
+        "list": {
+          "header": "Background tasks",
+          "empty": "No tasks yet."
+        },
+        "stats": {
+          "pending": "Pending",
+          "processing": "Processing",
+          "completed": "Completed",
+          "failed": "Failed",
+          "refresh": "Refresh"
+        },
+        "filters": {
+          "status": "Status",
+          "type": "Type",
+          "typePlaceholder": "All types"
+        },
+        "columns": {
+          "id": "ID",
+          "type": "Type",
+          "status": "Status",
+          "attempts": "Attempts",
+          "createdAt": "Created",
+          "lastError": "Last error",
+          "actions": "Actions"
+        },
+        "status": {
+          "pending": "Pending",
+          "processing": "Processing",
+          "completed": "Completed",
+          "failed": "Failed"
+        },
+        "retry": "Retry",
+        "retryConfirmTitle": "Retry task",
+        "retryConfirmMessage": "Reset task {id} and try again?",
+        "live": {
+          "live": "Live",
+          "offline": "Reconnecting..."
+        },
+        "details": {
+          "title": "Task #{id}",
+          "open": "Details",
+          "general": "General",
+          "id": "ID",
+          "type": "Type",
+          "status": "Status",
+          "attempts": "Attempts",
+          "createdAt": "Created at",
+          "updatedAt": "Updated at",
+          "startedAt": "Started at",
+          "completedAt": "Completed at",
+          "availableAt": "Available at",
+          "lastError": "Last error",
+          "none": "(none)"
+        },
+        "toast": {
+          "retried": "Task queued for retry.",
+          "retryError": "Could not retry task: {error}",
+          "loadError": "Could not load tasks: {error}"
+        }
+      },
       "dashboard": {
         "title": "Dashboard",
         "empty": "Nothing to show 🎉",

@@ -32,6 +32,7 @@ import User from '../entity/user/user';
 import UserService from './user-service';
 import { TransactionResponse } from '../controller/response/transaction-response';
 import { TerminalPaymentResponse } from '../controller/response/terminal-payment-response';
+import { TaskResponse } from '../controller/response/task-response';
 import { parseRoom } from './websocket/room-parser';
 import {
   RoomPolicyRegistry,
@@ -210,6 +211,19 @@ export default class WebSocketService {
       ),
     });
 
+    // Register global background-task room. Same policy as the task list
+    // endpoint: anyone who can `get:all:Task` can watch the queue.
+    this.registerRoom({
+      pattern: 'tasks:all',
+      policy: async (context) => this.roleManager.can(
+        context.token.roles,
+        'get',
+        'all',
+        'Task',
+        ['*'],
+      ),
+    });
+
 
     // Register transaction:created event handler
     this.eventRegistry.register<TransactionResponse>('transaction:created', {
@@ -279,6 +293,14 @@ export default class WebSocketService {
         entityId: terminalPayment.id,
       }],
       guard: async (terminalPayment, roomContext) => ForTerminalPaymentGuard(terminalPayment, roomContext),
+    });
+
+    // Background tasks are emitted to a single global room. There is no
+    // per-task ACL: the room policy already gated subscription on
+    // `get:all:Task`.
+    this.eventRegistry.register<TaskResponse>('task:updated', {
+      resolver: () => [{ roomName: 'tasks:all', entityId: null }],
+      guard: async () => true,
     });
   }
 
@@ -579,6 +601,15 @@ export default class WebSocketService {
    */
   public async emitTerminalPaymentUpdated(terminalPayment: TerminalPaymentResponse): Promise<void> {
     await this.emit('terminal_payment:updated', terminalPayment);
+  }
+
+  /**
+   * Emits a task lifecycle update (status change, retry, completion) to the
+   * `tasks:all` room so subscribed admins refresh without polling.
+   * @param task - The task response to broadcast.
+   */
+  public async emitTaskUpdated(task: TaskResponse): Promise<void> {
+    await this.emit('task:updated', task);
   }
 
   /**

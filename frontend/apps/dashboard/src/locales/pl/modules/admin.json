@@ -96,6 +96,68 @@
       "websocket": {
         "title": "Logi WebSocket"
       },
+      "tasks": {
+        "title": "Zadania w tle",
+        "list": {
+          "header": "Zadania w tle",
+          "empty": "Brak zadan."
+        },
+        "stats": {
+          "pending": "Oczekuje",
+          "processing": "W trakcie",
+          "completed": "Zakonczone",
+          "failed": "Nieudane",
+          "refresh": "Odswiez"
+        },
+        "filters": {
+          "status": "Status",
+          "type": "Typ",
+          "typePlaceholder": "Wszystkie typy"
+        },
+        "columns": {
+          "id": "ID",
+          "type": "Typ",
+          "status": "Status",
+          "attempts": "Proby",
+          "createdAt": "Utworzono",
+          "lastError": "Ostatni blad",
+          "actions": "Akcje"
+        },
+        "status": {
+          "pending": "Oczekuje",
+          "processing": "W trakcie",
+          "completed": "Zakonczone",
+          "failed": "Nieudane"
+        },
+        "retry": "Sprobuj ponownie",
+        "retryConfirmTitle": "Ponow zadanie",
+        "retryConfirmMessage": "Zresetowac zadanie {id} i sprobowac ponownie?",
+        "live": {
+          "live": "Na zywo",
+          "offline": "Laczenie ponowne..."
+        },
+        "details": {
+          "title": "Zadanie #{id}",
+          "open": "Szczegoly",
+          "general": "Ogolne",
+          "id": "ID",
+          "type": "Typ",
+          "status": "Status",
+          "attempts": "Proby",
+          "createdAt": "Utworzono",
+          "updatedAt": "Zaktualizowano",
+          "startedAt": "Rozpoczeto",
+          "completedAt": "Zakonczono",
+          "availableAt": "Dostepne od",
+          "lastError": "Ostatni blad",
+          "none": "(brak)"
+        },
+        "toast": {
+          "retried": "Zadanie ponownie dodano do kolejki.",
+          "retryError": "Nie udalo sie ponowic zadania: {error}",
+          "loadError": "Nie udalo sie zaladowac zadan: {error}"
+        }
+      },
       "dashboard": {
         "title": "Panel",
         "empty": "Brak danych 🎉",

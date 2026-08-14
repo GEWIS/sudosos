@@ -96,6 +96,68 @@
       "websocket": {
         "title": "Websocket logs"
       },
+      "tasks": {
+        "title": "Achtergrondtaken",
+        "list": {
+          "header": "Achtergrondtaken",
+          "empty": "Nog geen taken."
+        },
+        "stats": {
+          "pending": "In wachtrij",
+          "processing": "Bezig",
+          "completed": "Klaar",
+          "failed": "Mislukt",
+          "refresh": "Verversen"
+        },
+        "filters": {
+          "status": "Status",
+          "type": "Type",
+          "typePlaceholder": "Alle types"
+        },
+        "columns": {
+          "id": "ID",
+          "type": "Type",
+          "status": "Status",
+          "attempts": "Pogingen",
+          "createdAt": "Aangemaakt",
+          "lastError": "Laatste fout",
+          "actions": "Acties"
+        },
+        "status": {
+          "pending": "In wachtrij",
+          "processing": "Bezig",
+          "completed": "Klaar",
+          "failed": "Mislukt"
+        },
+        "retry": "Opnieuw proberen",
+        "retryConfirmTitle": "Taak opnieuw proberen",
+        "retryConfirmMessage": "Taak {id} opnieuw in de wachtrij zetten?",
+        "live": {
+          "live": "Live",
+          "offline": "Verbinding herstellen..."
+        },
+        "details": {
+          "title": "Taak #{id}",
+          "open": "Details",
+          "general": "Algemeen",
+          "id": "ID",
+          "type": "Type",
+          "status": "Status",
+          "attempts": "Pogingen",
+          "createdAt": "Aangemaakt op",
+          "updatedAt": "Bijgewerkt op",
+          "startedAt": "Gestart op",
+          "completedAt": "Klaar op",
+          "availableAt": "Beschikbaar op",
+          "lastError": "Laatste fout",
+          "none": "(geen)"
+        },
+        "toast": {
+          "retried": "Taak teruggezet in de wachtrij.",
+          "retryError": "Kon taak niet opnieuw proberen: {error}",
+          "loadError": "Kon taken niet laden: {error}"
+        }
+      },
       "dashboard": {
         "title": "Dashboard",
         "empty": "Niets te tonen 🎉",

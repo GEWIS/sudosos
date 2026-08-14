@@ -1,5 +1,6 @@
 import {
   clearTokenInStorage,
+  getTokenFromStorage,
   populateStoresFromToken,
   setupWebSocket,
   useAuthStore,
@@ -16,7 +17,11 @@ export default async function beforeLoad() {
   initializeAuthHook();
 
   try {
-    setupWebSocket();
+    // Send the latest JWT on every socket (re)connect so the server can
+    // attach the user and authorise room subscriptions (e.g. `tasks:all`).
+    // The getter is invoked per connect attempt, so token refreshes are
+    // picked up automatically.
+    setupWebSocket({ getToken: () => getTokenFromStorage(apiService.tokenKey).token ?? null });
     await settingsStore.fetchKeys();
   } catch (e) {
     console.error(e);
