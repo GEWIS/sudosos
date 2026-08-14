@@ -24,7 +24,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/GEWIS/sudosos-frontend.git"
+    "url": "git+https://github.com/GEWIS/sudosos.git",
+    "directory": "frontend/lib/themes"
   },
   "dependencies": {
     "@primeuix/themes": "catalog:",
