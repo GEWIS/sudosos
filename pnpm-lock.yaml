@@ -87,7 +87,7 @@ importers:
         specifier: ^20.3.0
         version: 20.5.3
       '@gewis/prettier-config':
-        specifier: 'catalog:'
+        specifier: ^2.2.2
         version: 2.2.2(eslint@9.39.5(jiti@2.7.0))(prettier@3.9.6)
       '@gewis/release-config':
         specifier: ^2.4.0

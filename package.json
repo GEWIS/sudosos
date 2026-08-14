@@ -32,7 +32,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
-    "@gewis/prettier-config": "catalog:"
+    "@gewis/prettier-config": "^2.2.2"
   },
   "lint-staged": {
     "frontend/**/*": "prettier --write --ignore-unknown"
