@@ -14,14 +14,14 @@ This file documents frontend-specific patterns. For general project guidelines s
 frontend/
 ├── apps/
 │   ├── dashboard/            # Admin/seller dashboard
-│   │   └── src/{composables, components, stores, pages, locales}
+│   │   └── src/{composables, components, stores, views, locales}
 │   └── point-of-sale/        # POS kiosk app (same structure)
-├── lib/
-│   ├── common/               # Shared utilities, types, Pinia stores, API client
-│   └── themes/               # Shared PrimeVue themes
-├── .editorconfig             # Line endings — must be end_of_line = lf
-└── .prettierrc               # inherited from root .prettierrc.js (@gewis/prettier-config)
+└── lib/
+    ├── common/               # Shared utilities, types, Pinia stores, API client
+    └── themes/               # Shared PrimeVue themes
 ```
+
+No `.editorconfig` or `.prettierrc` under `frontend/`. Prettier config is the root `.prettierrc.js`, which extends `@gewis/prettier-config`. Line endings are enforced through Prettier's own `lf` default, not a `.editorconfig`.
 
 ---
 
@@ -213,4 +213,4 @@ GitHub doesn't expose a public REST API for user-attachments uploads (the `https
 | Run `pnpm format` to verify CI compliance        | Run `pnpm format:fix` to verify (always exits 0)   |
 | Search locale files before adding i18n keys      | Invent new keys without checking existing ones     |
 | Type-check with `vue-tsc -p tsconfig.app.json`   | Run `tsc --noEmit` on the monorepo root            |
-| Use `end_of_line = lf` in `.editorconfig`        | Use `crlf` (breaks CI on Linux)                    |
+| Let Prettier's `lf` default apply                | Save files with `crlf` (breaks CI on Linux)        |

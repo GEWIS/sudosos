@@ -38,14 +38,26 @@ backend/
 │   ├── controller/           # Express routes, RBAC policy, request/response DTOs
 │   ├── service/              # Business logic (returns entities, not responses)
 │   ├── entity/               # TypeORM entities (including revisioned entities)
+│   ├── authentication/       # Login strategies (local, LDAP, PIN, NFC, EAN, QR)
 │   ├── helpers/              # Shared utilities (pagination, validators)
 │   ├── middleware/           # Express middleware (auth/token)
 │   ├── rbac/                 # Roles, permissions, enforcement helpers
 │   ├── mailer/               # Email templates and sending
-│   ├── database/             # DB setup, migrations
+│   ├── notifications/        # Notification dispatch
+│   ├── subscriber/           # TypeORM entity subscribers
+│   ├── workers/              # Background/queue workers
+│   ├── migrations/           # TypeORM migrations
+│   ├── database/             # DB connection setup
+│   ├── server-settings/      # Runtime-configurable server settings
+│   ├── user-settings/        # Per-user settings
+│   ├── files/                # File storage handling
+│   ├── errors/                # Shared error types
+│   ├── start/                 # Swagger/OpenAPI generation entry point
 │   └── gewis/                # GEWIS-specific integration (LDAP, JWTs, MemberUser)
 ├── test/
 │   ├── unit/{controller,service}/
+│   ├── integration/          # End-to-end style tests against a real app instance
+│   ├── helpers/              # Shared test utilities
 │   ├── setup.ts              # Global test setup
 │   └── seed/                 # Test fixtures & seeders (NOT production code)
 ├── cli/                      # CLI entry points (seed, maintenance)
