@@ -31,12 +31,13 @@
   "author": "SudoSOS WG",
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/sudosos/sudosos-frontend-common.git"
+    "url": "git+https://github.com/GEWIS/sudosos.git",
+    "directory": "frontend/lib/common"
   },
   "bugs": {
-    "url": "https://gitlab.com/sudosos/sudosos-frontend-common/issues"
+    "url": "https://github.com/GEWIS/sudosos/issues"
   },
-  "homepage": "https://gitlab.com/sudosos/sudosos-frontend-common#readme",
+  "homepage": "https://github.com/GEWIS/sudosos/tree/develop/frontend/lib/common#readme",
   "dependencies": {
     "@gewis/sudosos-client": "workspace:*",
     "axios": "catalog:",

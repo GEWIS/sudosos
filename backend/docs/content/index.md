@@ -32,11 +32,11 @@ features:
     details: Go to the SudoSOS Dashboard and view it in action.
     link: https://sudosos.gewis.nl/
 
-  - title: Backend GitHub Repository
+  - title: GitHub Repository
     icon: 
       src: github-mark.png
       alt: GitHub
-    details: View the source code, contribute, and explore ongoing development of the SudoSOS Backend on GitHub. Open issues or submit pull requests to collaborate.
-    link: https://github.com/GEWIS/sudosos-backend
+    details: View the source code, contribute, and explore ongoing development of SudoSOS on GitHub. Open issues or submit pull requests to collaborate.
+    link: https://github.com/GEWIS/sudosos
 ---
 

@@ -31,10 +31,10 @@ It integrates with GEWIS organisational data so that members, organs, and roles 
 - **Authorisation**: role-based access control (RBAC).
 - **Integrations**: sync of users/roles, Stripe deposit entry points, and mail notifications.
 
-The backend does **not** provide a user interface. The dashboard and POS UI live in the separate frontend repository.
+The backend does **not** provide a user interface. The dashboard and POS UI live in `frontend/` of this monorepo.
 
 ::: tip Frontend code
-The dashboard and POS UI are in `https://github.com/GEWIS/sudosos-frontend`.
+The dashboard and POS UI are in [`frontend/`](https://github.com/GEWIS/sudosos/tree/develop/frontend).
 :::
 
 ## Terms you will see everywhere
