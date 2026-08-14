@@ -314,21 +314,19 @@ const cardProps = computed<CardProps[]>(() => {
         break;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this
     props.push({
       organs: organs.value,
       organDetails: organDetails.value,
       image: image,
       dark: dark,
-    } as CardProps);
+    });
   }
 
   if (hasMultipleOrgans.value) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this
     props.push({
       organs: organs.value,
       organDetails: organDetails.value,
-    } as CardProps);
+    });
   }
 
   props.push({ showArrows: showArrows.value });
@@ -445,19 +443,17 @@ const trackStyle = computed(() => {
   const baseTranslate = -currentIndex.value * 100;
   if (dragging && deltaX !== 0) {
     // while dragging, don't animate so movement follows pointer
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this
     return {
       transform: `translateX(calc(${baseTranslate}% + ${deltaX}px))`,
       transition: 'none',
-    } as Record<string, string>;
+    };
   }
 
   // smooth transition when snapping to wrapped
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- tsc still needs this
   return {
     transform: `translateX(${baseTranslate}%)`,
     transition: 'transform 400ms cubic-bezier(.2,.8,.2,1)',
-  } as Record<string, string>;
+  };
 });
 
 function onPointerDown(e: PointerEvent) {

@@ -89,7 +89,7 @@ const getTransactions = () => {
       tillDate: toDate.toISOString(),
     })
     .then((res) => {
-      const t = res.data as unknown as TransactionResponse[];
+      const t = res.data;
 
       includedPOS.value = {};
 

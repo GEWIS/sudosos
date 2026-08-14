@@ -95,7 +95,7 @@ const gridStyle = computed(() => {
     width: `${cellSize.value * weekdays.length}px`,
     height: `${cellSize.value * (weeksCount + 1)}px`,
     '--header-height': sizePx,
-  } as Record<string, string>;
+  };
 });
 
 function intensityForValue(v?: number) {

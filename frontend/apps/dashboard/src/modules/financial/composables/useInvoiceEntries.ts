@@ -110,7 +110,7 @@ export function useInvoiceEntries(invoice: Ref<InvoiceResponse>) {
     return {
       ...row.priceInclVat,
       amount: row.amount * row.priceInclVat.amount,
-    } as DineroObjectResponse;
+    };
   }
 
   return {
