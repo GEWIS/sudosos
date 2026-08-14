@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "backend",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "backend:watch"],
+      "port": 3000
+    },
+    {
+      "name": "dashboard",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "dev:dashboard"],
+      "port": 5173
+    },
+    {
+      "name": "pos",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "dev:pos"],
+      "port": 5174
+    }
+  ]
+}
