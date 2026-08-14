@@ -1,14 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: npm
-    directories:
-      - "/"
-      - "/backend"
-      - "/packages/sudosos-client"
-      - "/frontend/apps/dashboard"
-      - "/frontend/apps/point-of-sale"
-      - "/frontend/lib/common"
-      - "/frontend/lib/themes"
+    directory: "/"
     schedule:
       interval: weekly
     target-branch: develop
