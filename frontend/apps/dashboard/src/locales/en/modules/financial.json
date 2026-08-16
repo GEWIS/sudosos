@@ -242,6 +242,22 @@
           "downloadSuccess": "Report successfully downloaded.",
           "downloadError": "Failed to download report. Please try again."
         }
+      },
+      "transfer": {
+        "title": "Transfer Overview",
+        "search": "Search by description…",
+        "saldo": "Saldo (€)",
+        "totalSelected": "Total ({count} selected)",
+        "widget": {
+          "title": "Aggregate",
+          "count": "Transfers",
+          "credit": "Credit (€)",
+          "debit": "Debit (€)",
+          "balance": "Balance (€)",
+          "selected": "Selected ({count})",
+          "selectedAmount": "Amount (€)",
+          "remaining": "Remaining (€)"
+        }
       }
     }
   }

@@ -16,6 +16,19 @@
       <template #body="{ data }">
         <template v-if="!data.isSeparator">
           <Skeleton v-if="loadingState" height="1rem" />
+          <template v-else-if="data.transferCategory">
+            <RouterLink
+              class="hover:underline"
+              :to="{
+                name: 'transferView',
+                params: { category: data.transferCategory },
+                query: { year: props.year.toString() },
+              }"
+            >
+              <span v-if="data.isChild" class="pl-6 text-color-secondary">{{ data.name }}</span>
+              <span v-else>{{ data.transferType }}</span>
+            </RouterLink>
+          </template>
           <span v-else-if="data.isChild" class="pl-6 text-color-secondary">{{ data.name }}</span>
           <span v-else>{{ data.transferType }}</span>
         </template>
@@ -124,6 +137,7 @@ interface ChildRow {
   credit: number;
   debit: number;
   id: number | string;
+  transferCategory?: string;
 }
 
 interface FinancialOverviewTableRow {
@@ -135,6 +149,7 @@ interface FinancialOverviewTableRow {
   collapsing?: boolean;
   isSeparator?: boolean;
   name?: string;
+  transferCategory?: string;
 }
 
 const { t } = useI18n();
@@ -221,6 +236,7 @@ const displayRows = computed<FinancialOverviewTableRow[]>(() => {
             name: child.name,
             credit: child.credit,
             debit: child.debit,
+            transferCategory: child.transferCategory,
           });
         }
       }
@@ -271,7 +287,7 @@ const fetchData = async () => {
         .filter((c) => c.debit !== 0);
 
       const categoryRows: FinancialOverviewTableRow[] = [
-        { transferType: tt('deposits'), credit: amt(s.deposits), debit: 0, children: [] },
+        { transferType: tt('deposits'), credit: amt(s.deposits), debit: 0, children: [], transferCategory: 'deposit' },
       ];
 
       if (payoutChildren.length > 0) {
@@ -280,6 +296,7 @@ const fetchData = async () => {
           credit: 0,
           debit: payoutChildren.reduce((a, b) => a + b.debit, 0),
           children: payoutChildren,
+          transferCategory: 'sellerPayout',
         });
       }
 
@@ -290,8 +307,14 @@ const fetchData = async () => {
         credit: amt(s.invoices),
         debit: amt(s.creditInvoices),
         children: [
-          { name: tt('invoices'), credit: amt(s.invoices), debit: 0, id: 'invoices' },
-          { name: tt('creditInvoices'), credit: 0, debit: amt(s.creditInvoices), id: 'creditInvoices' },
+          { name: tt('invoices'), credit: amt(s.invoices), debit: 0, id: 'invoices', transferCategory: 'invoice' },
+          {
+            name: tt('creditInvoices'),
+            credit: 0,
+            debit: amt(s.creditInvoices),
+            id: 'creditInvoices',
+            transferCategory: 'creditInvoice',
+          },
         ],
       });
 
@@ -300,8 +323,14 @@ const fetchData = async () => {
         credit: amt(s.waivedFines),
         debit: amt(s.fines),
         children: [
-          { name: tt('fines'), credit: 0, debit: amt(s.fines), id: 'fines' },
-          { name: tt('waivedFines'), credit: amt(s.waivedFines), debit: 0, id: 'waivedFines' },
+          { name: tt('fines'), credit: 0, debit: amt(s.fines), id: 'fines', transferCategory: 'fine' },
+          {
+            name: tt('waivedFines'),
+            credit: amt(s.waivedFines),
+            debit: 0,
+            id: 'waivedFines',
+            transferCategory: 'waivedFines',
+          },
         ],
       });
 
@@ -310,9 +339,22 @@ const fetchData = async () => {
         credit: 0,
         debit: amt(s.inactiveAdministrativeCosts),
         children: [],
+        transferCategory: 'inactiveAdministrativeCost',
       });
-      categoryRows.push({ transferType: tt('writeOffs'), credit: amt(s.writeOffs), debit: 0, children: [] });
-      categoryRows.push({ transferType: tt('payoutRequests'), credit: 0, debit: amt(s.payoutRequests), children: [] });
+      categoryRows.push({
+        transferType: tt('writeOffs'),
+        credit: amt(s.writeOffs),
+        debit: 0,
+        children: [],
+        transferCategory: 'writeOff',
+      });
+      categoryRows.push({
+        transferType: tt('payoutRequests'),
+        credit: 0,
+        debit: amt(s.payoutRequests),
+        children: [],
+        transferCategory: 'payoutRequest',
+      });
 
       categoryRows.push({ transferType: 'separator-2', credit: 0, debit: 0, isSeparator: true });
 
@@ -321,8 +363,20 @@ const fetchData = async () => {
         credit: amt(s.manualCreations),
         debit: amt(s.manualDeletions),
         children: [
-          { name: tt('manualCreations'), credit: amt(s.manualCreations), debit: 0, id: 'manualCreations' },
-          { name: tt('manualDeletions'), credit: 0, debit: amt(s.manualDeletions), id: 'manualDeletions' },
+          {
+            name: tt('manualCreations'),
+            credit: amt(s.manualCreations),
+            debit: 0,
+            id: 'manualCreations',
+            transferCategory: 'manualCreation',
+          },
+          {
+            name: tt('manualDeletions'),
+            credit: 0,
+            debit: amt(s.manualDeletions),
+            id: 'manualDeletions',
+            transferCategory: 'manualDeletion',
+          },
         ],
       });
 

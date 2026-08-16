@@ -242,6 +242,22 @@
           "downloadSuccess": "Rapport succesvol gedownload.",
           "downloadError": "Rapport downloaden mislukt. Probeer het opnieuw."
         }
+      },
+      "transfer": {
+        "title": "Transactieoverzicht",
+        "search": "Zoek op omschrijving…",
+        "saldo": "Saldo (€)",
+        "totalSelected": "Totaal ({count} geselecteerd)",
+        "widget": {
+          "title": "Totaal",
+          "count": "Transacties",
+          "credit": "Credit (€)",
+          "debit": "Debet (€)",
+          "balance": "Saldo (€)",
+          "selected": "Geselecteerd ({count})",
+          "selectedAmount": "Bedrag (€)",
+          "remaining": "Resterend (€)"
+        }
       }
     }
   }
