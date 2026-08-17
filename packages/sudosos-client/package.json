@@ -11,7 +11,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "gen": "openapi-generator-cli generate -i ../../backend/out/swagger.json -g typescript-axios -o ./src --openapi-normalizer REFACTOR_ALLOF_WITH_PROPERTIES_ONLY=true --additional-properties=useSingleRequestParameter=true",
+    "gen": "openapi-generator-cli generate -i ../../backend/out/swagger.json -g typescript-axios -o ./src -t ./openapi-templates --openapi-normalizer REFACTOR_ALLOF_WITH_PROPERTIES_ONLY=true --additional-properties=useSingleRequestParameter=true",
     "build": "tsc && tsc -p tsconfig.esm.json && echo '{\"type\":\"module\"}' > dist/esm/package.json",
     "genbuild": "pnpm run gen && pnpm run build",
     "clean": "rm -rf src dist"
