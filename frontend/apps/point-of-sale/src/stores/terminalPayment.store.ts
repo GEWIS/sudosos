@@ -113,7 +113,7 @@ export const useTerminalPaymentStore = defineStore('terminalPayment', {
         throw new TerminalUnavailableError(available.length);
       }
 
-      return available[0]!;
+      return available[0];
     },
 
     /**

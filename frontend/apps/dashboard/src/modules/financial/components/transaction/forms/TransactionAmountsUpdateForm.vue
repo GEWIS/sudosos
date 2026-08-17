@@ -97,7 +97,7 @@ setSubmit(props.form, async () => {
     existingProductUpdates.forEach(({ subTransactionIndex, rowIndex, amount }) => {
       if (fullTransactionRequest.subTransactions[subTransactionIndex]?.subTransactionRows[rowIndex]) {
         const row = fullTransactionRequest.subTransactions[subTransactionIndex].subTransactionRows[rowIndex];
-        const originalRow = props.transaction.subTransactions[subTransactionIndex]!.subTransactionRows[rowIndex]!;
+        const originalRow = props.transaction.subTransactions[subTransactionIndex].subTransactionRows[rowIndex];
 
         // Update amount
         row.amount = amount;
@@ -130,7 +130,7 @@ setSubmit(props.form, async () => {
     Object.values(newProductsByContainer).forEach((containerProducts) => {
       if (containerProducts.length === 0) return;
 
-      const firstProduct = containerProducts[0]!;
+      const firstProduct = containerProducts[0];
       const containerId = firstProduct.containerId!;
       const toUserId = firstProduct.toUserId!;
       const containerRevision = firstProduct.containerRevision!;
