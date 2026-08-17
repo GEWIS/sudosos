@@ -39,8 +39,8 @@ export const useInvoiceStore = defineStore('invoice', {
           const invoice: BaseInvoiceResponse = res.data;
           if (!this.invoices[invoice.id]) return invoice;
           // BaseInvoice does not contain entries, so we merge them
-          this.invoices[invoice.id] = { ...this.invoices[invoice.id]!, ...invoice };
-          return this.invoices[invoice.id]!;
+          this.invoices[invoice.id] = { ...this.invoices[invoice.id], ...invoice };
+          return this.invoices[invoice.id];
         });
     },
     async getOrFetchInvoice(id: number): Promise<InvoiceResponse> {
@@ -55,7 +55,7 @@ export const useInvoiceStore = defineStore('invoice', {
         .then((res: { data: BaseInvoiceResponse }) => {
           const invoice: BaseInvoiceResponse = res.data;
           if (!this.invoices[invoice.id]) return undefined;
-          this.invoices[invoice.id] = { ...this.invoices[invoice.id]!, ...invoice };
+          this.invoices[invoice.id] = { ...this.invoices[invoice.id], ...invoice };
           return this.invoices[invoice.id];
         });
     },
@@ -72,7 +72,7 @@ export const useInvoiceStore = defineStore('invoice', {
       return await ApiService.invoices.getSingleInvoice({ id }).then((res: { data: InvoiceResponse }) => {
         const invoice = res.data;
         this.invoices[invoice.id] = invoice;
-        return this.invoices[invoice.id]!;
+        return this.invoices[invoice.id];
       });
     },
     async fetchInvoices(
