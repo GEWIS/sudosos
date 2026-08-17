@@ -89,7 +89,7 @@ const isLoading = ref(true);
 const records: Ref<BalanceResponse[]> = computed(() => Object.values(invoiceStore.negativeInvoiceUsers));
 
 onBeforeMount(() => {
-  form.context.resetForm({ values: { userType: USER_TYPES.INVOICE } });
+  form.context.resetForm({ values: { userType: USER_TYPES.INVOICE, canGoIntoDebt: true } });
 });
 
 onMounted(() => {
