@@ -38,7 +38,7 @@
     "frontend/**/*": "prettier --write --ignore-unknown"
   },
   "pnpm": {
-    "overrides": { "ioredis": "5.10.1" },
+    "overrides": { "ioredis": "5.11.1" },
     "onlyBuiltDependencies": ["@swc/core", "bcrypt", "better-sqlite3", "esbuild", "msgpackr-extract", "vue-demi"]
   }
 }
