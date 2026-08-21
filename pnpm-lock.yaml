@@ -151,7 +151,7 @@ importers:
         version: 1.8.0
       gewisdb-ts-client:
         specifier: github:GEWIS/gewisdb-ts-client#6190730be45646d58ff5968689ec22b88d2c918c
-        version: https://codeload.github.com/GEWIS/gewisdb-ts-client/tar.gz/6190730be45646d58ff5968689ec22b88d2c918c(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@20.19.43)(debug@4.4.3)
+        version: https://codeload.github.com/GEWIS/gewisdb-ts-client/tar.gz/6190730be45646d58ff5968689ec22b88d2c918c(@swc/core@1.16.0(@swc/helpers@0.5.23))(@types/node@20.19.43)(debug@4.4.3)
       gray-matter:
         specifier: ^4.0.3
         version: 4.0.3
@@ -205,7 +205,7 @@ importers:
         version: 5.0.1(express@4.22.2)
       typeorm:
         specifier: 1.1.0
-        version: 1.1.0(better-sqlite3@12.11.1)(ioredis@5.11.1)(mysql2@3.23.3(@types/node@20.19.43))(ts-node@10.9.2(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3))
+        version: 1.1.0(better-sqlite3@12.11.1)(ioredis@5.11.1)(mysql2@3.23.3(@types/node@20.19.43))(ts-node@10.9.2(@swc/core@1.16.0(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3))
       uuid:
         specifier: 10.0.0
         version: 10.0.0
@@ -229,8 +229,8 @@ importers:
         specifier: 20.5.3
         version: 20.5.3
       '@swc/core':
-        specifier: 1.15.47
-        version: 1.15.47(@swc/helpers@0.5.23)
+        specifier: 1.16.0
+        version: 1.16.0(@swc/helpers@0.5.23)
       '@types/bcrypt':
         specifier: 5.0.2
         version: 5.0.2
@@ -322,8 +322,8 @@ importers:
         specifier: 4.1.0
         version: 4.1.0(cytoscape@3.34.1)
       dayjs:
-        specifier: 1.11.21
-        version: 1.11.21
+        specifier: 1.11.23
+        version: 1.11.23
       debug:
         specifier: 4.4.3
         version: 4.4.3(supports-color@5.5.0)
@@ -374,7 +374,7 @@ importers:
         version: 3.7.0(chai@4.5.0)(sinon@18.0.1)
       ts-node:
         specifier: 10.9.2
-        version: 10.9.2(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3)
+        version: 10.9.2(@swc/core@1.16.0(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3)
       typedoc:
         specifier: 0.28.20
         version: 0.28.20(typescript@5.9.3)
@@ -391,8 +391,8 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
       unplugin-swc:
-        specifier: 1.5.10
-        version: 1.5.10(@swc/core@1.15.47(@swc/helpers@0.5.23))(rollup@4.62.4)
+        specifier: 1.5.11
+        version: 1.5.11(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(rollup@4.62.4)(vite@5.4.21(@types/node@20.19.43)(lightningcss@1.32.0)(sass@1.102.0))
       vitepress:
         specifier: 1.6.4
         version: 1.6.4(@algolia/client-search@5.56.0)(@types/node@20.19.43)(axios@1.19.0(debug@4.4.3))(fuse.js@7.5.0)(jwt-decode@4.0.0)(lightningcss@1.32.0)(postcss@8.5.26)(qrcode@1.5.4)(sass@1.102.0)(search-insights@2.17.3)(typescript@5.9.3)
@@ -503,8 +503,8 @@ importers:
         specifier: ^0.5.19
         version: 0.5.20(tailwindcss@4.3.3)
       '@tsconfig/node-lts':
-        specifier: ^24.0.0
-        version: 24.0.0
+        specifier: ^24.0.1
+        version: 24.0.1
       '@types/dinero.js':
         specifier: ^1.9.4
         version: 1.9.4
@@ -621,8 +621,8 @@ importers:
         specifier: 'catalog:'
         version: 2.2.2(eslint@9.39.5(jiti@2.7.0))(prettier@3.9.6)
       '@tsconfig/node-lts':
-        specifier: ^24.0.0
-        version: 24.0.0
+        specifier: ^24.0.1
+        version: 24.0.1
       '@types/lodash':
         specifier: ^4.17.21
         version: 4.17.25
@@ -697,8 +697,8 @@ importers:
         specifier: 'catalog:'
         version: 2.2.2(eslint@9.39.5(jiti@2.7.0))(prettier@3.9.6)
       '@tsconfig/node-lts':
-        specifier: ^24.0.0
-        version: 24.0.0
+        specifier: ^24.0.1
+        version: 24.0.1
       '@types/lodash':
         specifier: ^4.17.21
         version: 4.17.25
@@ -752,8 +752,8 @@ importers:
         specifier: 'catalog:'
         version: 2.2.2(eslint@9.39.5(jiti@2.7.0))(prettier@3.9.6)
       '@tsconfig/node-lts':
-        specifier: ^24.0.0
-        version: 24.0.0
+        specifier: ^24.0.1
+        version: 24.0.1
       '@typescript-eslint/parser':
         specifier: 'catalog:'
         version: 8.67.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
@@ -2124,86 +2124,86 @@ packages:
     resolution: {integrity: sha512-3fVF4z3efsgwgyj64nFK+6F4/vMw0mUXD2TBbOfftJtKVNx4JNv3CSfe1fY4DCtCk0JFp8/YPNcRkzgV0HJ8cg==}
     engines: {node: '>=12.16'}
 
-  '@swc/core-darwin-arm64@1.15.47':
-    resolution: {integrity: sha512-GsoMtan3ojGGMGFbl31mmRu5ctZ56re8grGE8mO/OHJ8O+JRkzod02fe7X6ZQ8JvamA3imkEkx/h3u+vsOgPgA==}
+  '@swc/core-darwin-arm64@1.16.0':
+    resolution: {integrity: sha512-SJQPl+xG/zB8bNjC/gTg3WOmOvz7EzlQD+VShfCKFYPNr2qvb+vATUY11vYEjnMWCn6wV8H8eAtjQrVflYyX5A==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [darwin]
 
-  '@swc/core-darwin-x64@1.15.47':
-    resolution: {integrity: sha512-leTi7Rx3KF4zcC637iqWgk9SoV8VXAD8ppQYXsep63px5A/UftOcxLN1pmr8Z1si/YvX90ompP/rHgpYkgwXWg==}
+  '@swc/core-darwin-x64@1.16.0':
+    resolution: {integrity: sha512-ql2JVch8V5t1i+HxiiuD4oVDI1dOku4/e3QiCkplONrm3SLitqNAP+nztHN51fSG2IgGuOwpAi3hgA+ukT5yQg==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [darwin]
 
-  '@swc/core-linux-arm-gnueabihf@1.15.47':
-    resolution: {integrity: sha512-hBqHuoWKKIsKmDBn9qVeWqj5GWZhtlcczVaqQmNRXsDfq+voR5CxKRfamA367QjJXtceYuliLFfEL8QsskRM2g==}
+  '@swc/core-linux-arm-gnueabihf@1.16.0':
+    resolution: {integrity: sha512-PcdDBaRbe39y37h1rXVkhNy7mEU7f8b34KD761C68R23EsfMsj5oDPVddRzGdSRAvwwSfH0WSNEHgYmc/AJipg==}
     engines: {node: '>=10'}
     cpu: [arm]
     os: [linux]
 
-  '@swc/core-linux-arm64-gnu@1.15.47':
-    resolution: {integrity: sha512-TBxvRz+B4K205TWHHZxWVxkC2RFNP/Mz3PNcECBos5PsKwxjg3QSJzdoebr0VCf0Bfh8HOPldKxAP/8XkFe9gA==}
+  '@swc/core-linux-arm64-gnu@1.16.0':
+    resolution: {integrity: sha512-t21IUztHQ/COucy7Kk9eIlehmq08H/hYq7aRA6fZox3S5ddi6TxWPK6e5S/+aTCf6+Od9qQ+LIpjHMiTy737vA==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@swc/core-linux-arm64-musl@1.15.47':
-    resolution: {integrity: sha512-3Yu3Uq/VgytqsPjTMbkPU1ExADytbdWbruJYhA584E9jrpE2Ki+R6VVPoZCeAVk1Cb7QxcRTgblw6bSa6a/R+w==}
+  '@swc/core-linux-arm64-musl@1.16.0':
+    resolution: {integrity: sha512-d9+iajbMB87b0umgbP+Gy3yBDSDgty4Q6H5pZ8fgTb/dOoKIwwynP4L4kvWCOFg2i49kxmAAUs1uJZh9s0E+RQ==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@swc/core-linux-ppc64-gnu@1.15.47':
-    resolution: {integrity: sha512-wfdMi5IaOaNtmh2/6geRoxIdNfqylUZFdtzTKS655y1axWfIWyx7As74vv0wVdjeCIZ3WmCI9odDd4rUttXOSQ==}
+  '@swc/core-linux-ppc64-gnu@1.16.0':
+    resolution: {integrity: sha512-QRpeKGOg+B0qmo3BFU+6rL/gpoKYYJ7OFSMf5DNMafohYZ/iq2qvAH9Gcrf8NxROj3iooKOVewJ+YgahH1nSLw==}
     engines: {node: '>=10'}
     cpu: [ppc64]
     os: [linux]
     libc: [glibc]
 
-  '@swc/core-linux-s390x-gnu@1.15.47':
-    resolution: {integrity: sha512-3hHYBY0yx8Ez7GMRrkhXHQzMdR5IZA6Wq5Ee4svlgwvSECLpnAJ9+0AimEGUFDvuLwE7nV/2+PYe8+Nm4rvNcQ==}
+  '@swc/core-linux-s390x-gnu@1.16.0':
+    resolution: {integrity: sha512-q+Vr/hmHCcRXT/WFzOJC+T6GGEEtq2iaTtmyLfxO7yzu4ckgcqSNkg9m181wfNhuMwfNBoBhOfwQCnLsGZ5F4g==}
     engines: {node: '>=10'}
     cpu: [s390x]
     os: [linux]
     libc: [glibc]
 
-  '@swc/core-linux-x64-gnu@1.15.47':
-    resolution: {integrity: sha512-TjfhjgP/jGCfFHYC3JQPhJA1HwErbIJ9JfREDc1KNkvY6P0LodCgKVIlQ5deeTbkG7ih3bF5PHJLuLpaZjdRyQ==}
+  '@swc/core-linux-x64-gnu@1.16.0':
+    resolution: {integrity: sha512-DWVBc3QnpsSgKoq8N4rmZeZa5r/XrHdLkITsExN/tvTdqPtAPDPt+Ysy33OfgBlyN8lNe4xwsXWe6DXlRkJeRQ==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@swc/core-linux-x64-musl@1.15.47':
-    resolution: {integrity: sha512-CQpS8Ge/avfjZd0UEwG/sds83Uu32deQXcV1Jo3jD0mmvQQqtYAjpsDZXugmheeAwmt+YIuoVtVHro8LMYHqsQ==}
+  '@swc/core-linux-x64-musl@1.16.0':
+    resolution: {integrity: sha512-6XCgDSc1HPf/5dpjvABhKHICiBcsuZyW3hQMkn8sxel0TqprkJGp+H4iaBYIUTPixhrBub2hBPtfjcZLE6yL3w==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@swc/core-win32-arm64-msvc@1.15.47':
-    resolution: {integrity: sha512-0W8IKHsUTYiT7G2RqtOoVWk+89yzZikIiDUb/sCK6BmQDBhN91hQSfyUtW12jhEWLzYgcfmisfsZrmZE+84U1A==}
+  '@swc/core-win32-arm64-msvc@1.16.0':
+    resolution: {integrity: sha512-T/+9VVCZJ3AKEth9IP3U9AJ2YscQq+7LUqRTvfR4a2q36+Ri22oOwUizpAKOqQ42vb2Y/kOa4TOcJOfHoDIT/w==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [win32]
 
-  '@swc/core-win32-ia32-msvc@1.15.47':
-    resolution: {integrity: sha512-ZIp49d2Z4/ka2jO9otOg4hDvTdPmp86kVOgS2M5FCPI7eKKZ1W0boxWn+8XeZrfERtFGW0AlMRm4JhlJa7l3NA==}
+  '@swc/core-win32-ia32-msvc@1.16.0':
+    resolution: {integrity: sha512-Pr1lsR/PMs8ndL0UWMrW8nLZ7H7sspIxBRDdjL8f+YJ/FJNASgzfunbVVXAqj0csgIJYHPZy+OW9smjFmk1Rcg==}
     engines: {node: '>=10'}
     cpu: [ia32]
     os: [win32]
 
-  '@swc/core-win32-x64-msvc@1.15.47':
-    resolution: {integrity: sha512-2h8Iek95vnixkBRCo+H8p09+Q5ll2NgSMFrWTy0iKt7+/t+8/T5mBpiT6c0ZxSS7wcWjwZ9sGZkK70tTSYHdDw==}
+  '@swc/core-win32-x64-msvc@1.16.0':
+    resolution: {integrity: sha512-ktdeYLgOQdaonvsj5tJijqgpb0wk7gfF80wCFVA0kucI1hhSUIyfcGbjo5+9sdqv38OhMnTdLoA6xbqgOgPQjw==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [win32]
 
-  '@swc/core@1.15.47':
-    resolution: {integrity: sha512-FbsO5JcfOjfH38W/rohBRBweJeERsAuIP4f377lmkmxTcq9exjtx4SkRuZY5CdfhR2CBVwDIJegBpJDffwNsOg==}
+  '@swc/core@1.16.0':
+    resolution: {integrity: sha512-zSdvEHxBg00WhUNtW/u58hhcdR33gjtMQvOBo8F7POWJDyjRCt/miKfhidT3hCc/118RUwNnlEAmxiihFMbK4Q==}
     engines: {node: '>=10'}
     peerDependencies:
       '@swc/helpers': '>=0.5.17'
@@ -2337,8 +2337,8 @@ packages:
   '@tootallnate/quickjs-emscripten@0.23.0':
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
 
-  '@tsconfig/node-lts@24.0.0':
-    resolution: {integrity: sha512-8mSTqWwCd6aQpvxSrpQlMoA9RiUZSs7bYhL5qsLXIIaN9HQaINeoydrRu/Y7/fws4bvfuyhs0BRnW9/NI8tySg==}
+  '@tsconfig/node-lts@24.0.1':
+    resolution: {integrity: sha512-xo+1KtV5zVb90fyyeglG1n5cqg3cQXLlCkEpLptYlZUNk28xmwhuD5GmxoXwmrVtUTvaMyclun9kAd0TK7H+Pg==}
 
   '@tsconfig/node10@1.0.12':
     resolution: {integrity: sha512-UCYBaeFvM11aU2y3YPZ//O5Rhj+xKyzy7mvcIoAjASbigy8mHMryP5cK7dgjlz2hWxh1g5pLw084E0a/wlUSFQ==}
@@ -3947,8 +3947,8 @@ packages:
     resolution: {integrity: sha512-39BOQLs9ZjKh0/patS9nrT8wc3ioX3/eA/zgbKNopnF2wCqJEoxywwwElATYvRsXdnOxA/OQeQoFZ3rFjVajhg==}
     engines: {node: '>=4.0'}
 
-  dayjs@1.11.21:
-    resolution: {integrity: sha512-98IT+HOahAisibz/yjKbzuOBwYcjJ7BCLPzARyHiyEBmRz4fatF+KPJszEHXsGYjUG234aH/cOjW1wwTbKUZlA==}
+  dayjs@1.11.23:
+    resolution: {integrity: sha512-QDTCU0M0MxR3hQfnlDJfwekQiaanm1ubOD231u73WBckQ/fsamwRLiE2GBz6D3a/xF1NgfiDLJjXBa1hYOYTtQ==}
 
   dayjs@1.8.36:
     resolution: {integrity: sha512-3VmRXEtw7RZKAf+4Tv1Ym9AGeo8r8+CjDi26x+7SYQil1UqtqdaokhzoEJohqlzt0m5kacJSDhJQkG/LWhpRBw==}
@@ -4266,6 +4266,9 @@ packages:
   es-toolkit@1.50.0:
     resolution: {integrity: sha512-OyZKhUVvEep9ITEiwHn8GKnMRQIVqoSIX7WnRbkWgJkllCujilqP2rD0u979tkl8wqyc8ICwlc1UBVv/Sl1G6w==}
 
+  es-toolkit@1.51.0:
+    resolution: {integrity: sha512-zC2lQGkM7QX+Gm6iM3+WIdZJzthsEd14LvRNJneSO2hzyz/zNBENR8+YXWo1cKxgPBtV6ksPYHELbcwBRzmdCw==}
+
   esbuild@0.21.5:
     resolution: {integrity: sha512-mg3OPMV4hXywwpoDxu3Qda5xCKQi+vCTZq8S9J/EpkhB2HzKXq4SNFZE3+NK93JYxc8VMSep+lOUSC/RVKaBqw==}
     engines: {node: '>=12'}
@@ -4444,6 +4447,7 @@ packages:
   eslint@9.39.5:
     resolution: {integrity: sha512-DgZS62aPLXKlnxILS/AYCoRvHaZeXceIzlXPkkGGzJWSow1aEk0lbTlxUSlyjC8jcaKxAdOnTDz+o1JFSBsyjw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -7355,14 +7359,43 @@ packages:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==}
     engines: {node: '>= 0.8'}
 
-  unplugin-swc@1.5.10:
-    resolution: {integrity: sha512-aNvKH601KYzc/fXyDQJPAk8obNPzA4GdGqx+qSjQoyweMLDMLs5VRbunjL4skIv/hyyAnSgrbxMwXHdRTzhmew==}
+  unplugin-swc@1.5.11:
+    resolution: {integrity: sha512-R7U4GbfrESPnYLn3nXREZrwhKQk3BAmTBoKJ5lmo7btTc/yJpNsDzavBWo+XpQTjDSIogiZEAxC5ig/vfMWxWg==}
     peerDependencies:
       '@swc/core': ^1.2.108
 
-  unplugin@2.3.11:
-    resolution: {integrity: sha512-5uKD0nqiYVzlmCRs01Fhs2BdkEgBS3SAVP6ndrBsuK42iC2+JHyxM05Rm9G8+5mkmRtzMZGY8Ct5+mliZxU/Ww==}
-    engines: {node: '>=18.12.0'}
+  unplugin@3.3.0:
+    resolution: {integrity: sha512-qa66K+crbfyE6JK10GjvbJeRrOsuC/JpbnHctfyp/i4oBTxWOzJfRZyDiOk1PtErMFRu8JhsU/wPvOdBNWe5Rg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    peerDependencies:
+      '@farmfe/core': '*'
+      '@rspack/core': '*'
+      bun-types-no-globals: '*'
+      esbuild: '*'
+      rolldown: '*'
+      rollup: '*'
+      unloader: '*'
+      vite: '*'
+      webpack: '*'
+    peerDependenciesMeta:
+      '@farmfe/core':
+        optional: true
+      '@rspack/core':
+        optional: true
+      bun-types-no-globals:
+        optional: true
+      esbuild:
+        optional: true
+      rolldown:
+        optional: true
+      rollup:
+        optional: true
+      unloader:
+        optional: true
+      vite:
+        optional: true
+      webpack:
+        optional: true
 
   unrs-resolver@1.12.2:
     resolution: {integrity: sha512-dmlRxBJJayXjqTwC+JtF1HhJmgf3ftQ3YejFcZrf4+KKtJv0qDsK1pjqaaVjG7wJ5NJ6UVP1OqRMQ71Z4C3rxQ==}
@@ -7389,8 +7422,8 @@ packages:
     resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
     hasBin: true
 
-  uuid@14.0.1:
-    resolution: {integrity: sha512-6ZxzVpzDXDa3bJWaHilVayA+BH/1zmxCJoVgvmqJnid/gPoKHxUrS/aC/T6LGQtNHT+XHG9fXPJB4d+IrU30Ew==}
+  uuid@14.0.2:
+    resolution: {integrity: sha512-xZe/16rV4aa+HGSOCiY2YeLT1OybRLrrkL/Rqaq7p7GMVXjFh+6wN4oMYgjFmnSnhY8t6Xpdl2l9qmnHYuMHwQ==}
     hasBin: true
 
   uuid@3.4.0:
@@ -9209,7 +9242,7 @@ snapshots:
       cli-tableau: 2.0.1
       commander: 2.15.1
       croner: 4.1.97
-      dayjs: 1.11.21
+      dayjs: 1.11.23
       debug: 4.4.3(supports-color@5.5.0)
       enquirer: 2.3.6
       eventemitter2: 5.0.1
@@ -9240,59 +9273,59 @@ snapshots:
 
   '@stripe/stripe-js@8.11.0': {}
 
-  '@swc/core-darwin-arm64@1.15.47':
+  '@swc/core-darwin-arm64@1.16.0':
     optional: true
 
-  '@swc/core-darwin-x64@1.15.47':
+  '@swc/core-darwin-x64@1.16.0':
     optional: true
 
-  '@swc/core-linux-arm-gnueabihf@1.15.47':
+  '@swc/core-linux-arm-gnueabihf@1.16.0':
     optional: true
 
-  '@swc/core-linux-arm64-gnu@1.15.47':
+  '@swc/core-linux-arm64-gnu@1.16.0':
     optional: true
 
-  '@swc/core-linux-arm64-musl@1.15.47':
+  '@swc/core-linux-arm64-musl@1.16.0':
     optional: true
 
-  '@swc/core-linux-ppc64-gnu@1.15.47':
+  '@swc/core-linux-ppc64-gnu@1.16.0':
     optional: true
 
-  '@swc/core-linux-s390x-gnu@1.15.47':
+  '@swc/core-linux-s390x-gnu@1.16.0':
     optional: true
 
-  '@swc/core-linux-x64-gnu@1.15.47':
+  '@swc/core-linux-x64-gnu@1.16.0':
     optional: true
 
-  '@swc/core-linux-x64-musl@1.15.47':
+  '@swc/core-linux-x64-musl@1.16.0':
     optional: true
 
-  '@swc/core-win32-arm64-msvc@1.15.47':
+  '@swc/core-win32-arm64-msvc@1.16.0':
     optional: true
 
-  '@swc/core-win32-ia32-msvc@1.15.47':
+  '@swc/core-win32-ia32-msvc@1.16.0':
     optional: true
 
-  '@swc/core-win32-x64-msvc@1.15.47':
+  '@swc/core-win32-x64-msvc@1.16.0':
     optional: true
 
-  '@swc/core@1.15.47(@swc/helpers@0.5.23)':
+  '@swc/core@1.16.0(@swc/helpers@0.5.23)':
     dependencies:
       '@swc/counter': 0.1.3
       '@swc/types': 0.1.28
     optionalDependencies:
-      '@swc/core-darwin-arm64': 1.15.47
-      '@swc/core-darwin-x64': 1.15.47
-      '@swc/core-linux-arm-gnueabihf': 1.15.47
-      '@swc/core-linux-arm64-gnu': 1.15.47
-      '@swc/core-linux-arm64-musl': 1.15.47
-      '@swc/core-linux-ppc64-gnu': 1.15.47
-      '@swc/core-linux-s390x-gnu': 1.15.47
-      '@swc/core-linux-x64-gnu': 1.15.47
-      '@swc/core-linux-x64-musl': 1.15.47
-      '@swc/core-win32-arm64-msvc': 1.15.47
-      '@swc/core-win32-ia32-msvc': 1.15.47
-      '@swc/core-win32-x64-msvc': 1.15.47
+      '@swc/core-darwin-arm64': 1.16.0
+      '@swc/core-darwin-x64': 1.16.0
+      '@swc/core-linux-arm-gnueabihf': 1.16.0
+      '@swc/core-linux-arm64-gnu': 1.16.0
+      '@swc/core-linux-arm64-musl': 1.16.0
+      '@swc/core-linux-ppc64-gnu': 1.16.0
+      '@swc/core-linux-s390x-gnu': 1.16.0
+      '@swc/core-linux-x64-gnu': 1.16.0
+      '@swc/core-linux-x64-musl': 1.16.0
+      '@swc/core-win32-arm64-msvc': 1.16.0
+      '@swc/core-win32-ia32-msvc': 1.16.0
+      '@swc/core-win32-x64-msvc': 1.16.0
       '@swc/helpers': 0.5.23
 
   '@swc/counter@0.1.3': {}
@@ -9396,7 +9429,7 @@ snapshots:
 
   '@tootallnate/quickjs-emscripten@0.23.0': {}
 
-  '@tsconfig/node-lts@24.0.0': {}
+  '@tsconfig/node-lts@24.0.1': {}
 
   '@tsconfig/node10@1.0.12': {}
 
@@ -11177,7 +11210,7 @@ snapshots:
 
   date-format@4.0.14: {}
 
-  dayjs@1.11.21: {}
+  dayjs@1.11.23: {}
 
   dayjs@1.8.36: {}
 
@@ -11516,6 +11549,8 @@ snapshots:
       is-symbol: 1.1.1
 
   es-toolkit@1.50.0: {}
+
+  es-toolkit@1.51.0: {}
 
   esbuild@0.21.5:
     optionalDependencies:
@@ -12242,11 +12277,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  gewisdb-ts-client@https://codeload.github.com/GEWIS/gewisdb-ts-client/tar.gz/6190730be45646d58ff5968689ec22b88d2c918c(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@20.19.43)(debug@4.4.3):
+  gewisdb-ts-client@https://codeload.github.com/GEWIS/gewisdb-ts-client/tar.gz/6190730be45646d58ff5968689ec22b88d2c918c(@swc/core@1.16.0(@swc/helpers@0.5.23))(@types/node@20.19.43)(debug@4.4.3):
     dependencies:
       axios: 1.19.0(debug@4.4.3)
       swagger-axios-codegen: 0.16.14(debug@4.4.3)
-      ts-node-dev: 2.0.0(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@4.9.5)
+      ts-node-dev: 2.0.0(@swc/core@1.16.0(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@4.9.5)
       typescript: 4.9.5
     transitivePeerDependencies:
       - '@swc/core'
@@ -13124,16 +13159,16 @@ snapshots:
       d3: 7.9.0
       d3-sankey: 0.12.3
       dagre-d3-es: 7.0.14
-      dayjs: 1.11.21
+      dayjs: 1.11.23
       dompurify: 3.4.13
-      es-toolkit: 1.50.0
+      es-toolkit: 1.51.0
       katex: 0.16.47
       khroma: 2.1.0
       marked: 16.4.2
       roughjs: 4.6.6
       stylis: 4.4.0
       ts-dedent: 2.3.0
-      uuid: 14.0.1
+      uuid: 14.0.2
 
   methods@1.1.2: {}
 
@@ -14799,7 +14834,7 @@ snapshots:
 
   ts-dedent@2.3.0: {}
 
-  ts-node-dev@2.0.0(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@4.9.5):
+  ts-node-dev@2.0.0(@swc/core@1.16.0(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@4.9.5):
     dependencies:
       chokidar: 3.6.0
       dynamic-dedupe: 0.3.0
@@ -14809,7 +14844,7 @@ snapshots:
       rimraf: 2.7.1
       source-map-support: 0.5.21
       tree-kill: 1.2.2
-      ts-node: 10.9.2(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@4.9.5)
+      ts-node: 10.9.2(@swc/core@1.16.0(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@4.9.5)
       tsconfig: 7.0.0
       typescript: 4.9.5
     transitivePeerDependencies:
@@ -14817,7 +14852,7 @@ snapshots:
       - '@swc/wasm'
       - '@types/node'
 
-  ts-node@10.9.2(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@4.9.5):
+  ts-node@10.9.2(@swc/core@1.16.0(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@4.9.5):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.12
@@ -14835,9 +14870,9 @@ snapshots:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     optionalDependencies:
-      '@swc/core': 1.15.47(@swc/helpers@0.5.23)
+      '@swc/core': 1.16.0(@swc/helpers@0.5.23)
 
-  ts-node@10.9.2(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3):
+  ts-node@10.9.2(@swc/core@1.16.0(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.12
@@ -14855,7 +14890,7 @@ snapshots:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     optionalDependencies:
-      '@swc/core': 1.15.47(@swc/helpers@0.5.23)
+      '@swc/core': 1.16.0(@swc/helpers@0.5.23)
 
   tsconfig-paths@3.15.0:
     dependencies:
@@ -14961,11 +14996,11 @@ snapshots:
       typescript: 5.9.3
       yaml: 2.9.0
 
-  typeorm@1.1.0(better-sqlite3@12.11.1)(ioredis@5.11.1)(mysql2@3.23.3(@types/node@20.19.43))(ts-node@10.9.2(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3)):
+  typeorm@1.1.0(better-sqlite3@12.11.1)(ioredis@5.11.1)(mysql2@3.23.3(@types/node@20.19.43))(ts-node@10.9.2(@swc/core@1.16.0(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3)):
     dependencies:
       '@sqltools/formatter': 1.2.5
       ansis: 4.3.1
-      dayjs: 1.11.21
+      dayjs: 1.11.23
       debug: 4.4.3(supports-color@5.5.0)
       dedent: 1.7.2
       reflect-metadata: 0.2.2
@@ -14977,7 +15012,7 @@ snapshots:
       better-sqlite3: 12.11.1
       ioredis: 5.11.1
       mysql2: 3.23.3(@types/node@20.19.43)
-      ts-node: 10.9.2(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3)
+      ts-node: 10.9.2(@swc/core@1.16.0(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
@@ -15057,21 +15092,32 @@ snapshots:
 
   unpipe@1.0.0: {}
 
-  unplugin-swc@1.5.10(@swc/core@1.15.47(@swc/helpers@0.5.23))(rollup@4.62.4):
+  unplugin-swc@1.5.11(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(rollup@4.62.4)(vite@5.4.21(@types/node@20.19.43)(lightningcss@1.32.0)(sass@1.102.0)):
     dependencies:
       '@rollup/pluginutils': 5.4.0(rollup@4.62.4)
-      '@swc/core': 1.15.47(@swc/helpers@0.5.23)
+      '@swc/core': 1.16.0(@swc/helpers@0.5.23)
       load-tsconfig: 0.2.5
-      unplugin: 2.3.11
+      unplugin: 3.3.0(esbuild@0.28.2)(rollup@4.62.4)(vite@5.4.21(@types/node@20.19.43)(lightningcss@1.32.0)(sass@1.102.0))
     transitivePeerDependencies:
+      - '@farmfe/core'
+      - '@rspack/core'
+      - bun-types-no-globals
+      - esbuild
+      - rolldown
       - rollup
+      - unloader
+      - vite
+      - webpack
 
-  unplugin@2.3.11:
+  unplugin@3.3.0(esbuild@0.28.2)(rollup@4.62.4)(vite@5.4.21(@types/node@20.19.43)(lightningcss@1.32.0)(sass@1.102.0)):
     dependencies:
       '@jridgewell/remapping': 2.3.5
-      acorn: 8.18.0
       picomatch: 4.0.5
       webpack-virtual-modules: 0.6.2
+    optionalDependencies:
+      esbuild: 0.28.2
+      rollup: 4.62.4
+      vite: 5.4.21(@types/node@20.19.43)(lightningcss@1.32.0)(sass@1.102.0)
 
   unrs-resolver@1.12.2:
     dependencies:
@@ -15117,7 +15163,7 @@ snapshots:
 
   uuid@11.1.0: {}
 
-  uuid@14.0.1: {}
+  uuid@14.0.2: {}
 
   uuid@3.4.0: {}
 
