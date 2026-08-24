@@ -53,7 +53,7 @@ onBeforeMount(() => {
   returning.value = hasToken();
 });
 const loginViaGEWIS = () => {
-  window.location.href = `https://gewis.nl/token/${settingStore.getToken}`;
+  window.location.href = `https://gewis.nl/user/token/${settingStore.getToken}`;
 };
 </script>
 
