@@ -40,3 +40,11 @@ export function getSellerPayoutPdfSrc(pdf: string): string {
 export function getWriteOffPdfSrc(pdf: string): string {
   return `${window.location.origin}/static/writeOffs/${pdf}`;
 }
+
+/**
+ * Link to a member's profile on the GEWIS website.
+ */
+export function getGewisMemberUrl(gewisId: number | string, locale: string): string {
+  const gewisLocale = locale === 'nl' ? 'nl' : 'en';
+  return `https://gewis.nl/${gewisLocale}/members/${gewisId}`;
+}
