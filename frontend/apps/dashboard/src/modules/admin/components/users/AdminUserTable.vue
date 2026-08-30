@@ -36,7 +36,7 @@
         <ExternalLink
           v-if="slotProps.data.gewisId"
           :text="slotProps.data.gewisId"
-          :url="`https://gewis.nl/member/${slotProps.data.gewisId}`"
+          :url="getGewisMemberUrl(slotProps.data.gewisId, locale)"
         />
       </template>
     </Column>
@@ -114,8 +114,9 @@ import { useI18n } from 'vue-i18n';
 import type { BaseUserResponse } from '@gewis/sudosos-client';
 import UserLink from '@/components/UserLink.vue';
 import ExternalLink from '@/components/ExternalLink.vue';
+import { getGewisMemberUrl } from '@/utils/urlUtils';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 defineProps<{
   users: (BaseUserResponse & { fullName: string })[];
