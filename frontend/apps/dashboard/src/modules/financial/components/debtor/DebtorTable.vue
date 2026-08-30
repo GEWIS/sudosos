@@ -26,7 +26,7 @@
           <ExternalLink
             v-if="slotProps.data.gewisId"
             :text="slotProps.data.gewisId"
-            :url="`https://gewis.nl/member/${slotProps.data.gewisId}`"
+            :url="getGewisMemberUrl(slotProps.data.gewisId, locale)"
           />
         </template>
       </Column>
@@ -243,6 +243,7 @@ import { useDebtorStore, SortField, type Debtor } from '@/stores/debtor.store';
 import CardComponent from '@/components/CardComponent.vue';
 import UserLink from '@/components/UserLink.vue';
 import ExternalLink from '@/components/ExternalLink.vue';
+import { getGewisMemberUrl } from '@/utils/urlUtils';
 import { handleError } from '@/utils/errorUtils';
 
 const props = defineProps<{
@@ -253,7 +254,7 @@ const isEditable = computed(() => {
   return props.handoutEvent == undefined;
 });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const debtorStore = useDebtorStore();
 
