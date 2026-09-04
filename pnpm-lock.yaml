@@ -195,8 +195,8 @@ importers:
         specifier: 4.8.3
         version: 4.8.3
       stripe:
-        specifier: 22.5.0
-        version: 22.5.0(@types/node@20.19.43)
+        specifier: 22.6.0
+        version: 22.6.0(@types/node@20.19.43)
       swagger-model-validator:
         specifier: 3.0.21
         version: 3.0.21
@@ -4282,6 +4282,9 @@ packages:
   es-toolkit@1.50.0:
     resolution: {integrity: sha512-OyZKhUVvEep9ITEiwHn8GKnMRQIVqoSIX7WnRbkWgJkllCujilqP2rD0u979tkl8wqyc8ICwlc1UBVv/Sl1G6w==}
 
+  es-toolkit@1.52.0:
+    resolution: {integrity: sha512-XTNEJQh1tY1ZJVcf6ayP/2n4ZPyaHlW2FWs7xvw5ddPuhUVjLD3olQVQS7kf58JbAB48iL0uL/jerTrjtV3lDA==}
+
   esbuild@0.21.5:
     resolution: {integrity: sha512-mg3OPMV4hXywwpoDxu3Qda5xCKQi+vCTZq8S9J/EpkhB2HzKXq4SNFZE3+NK93JYxc8VMSep+lOUSC/RVKaBqw==}
     engines: {node: '>=12'}
@@ -6919,8 +6922,8 @@ packages:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
 
-  stripe@22.5.0:
-    resolution: {integrity: sha512-QVwMwriC0bbySx6R4dpsvJ0W//GojC1kwWVS6rPSoVqDUIZX4Hy3TaUrd2AZeXEAaKbfWIjQjvo3vKAReHZ0vQ==}
+  stripe@22.6.0:
+    resolution: {integrity: sha512-Ezk+WYEEwX2DLxFrKfb6coznlCMZvCaCYMNPXNHFSZkBIEzF5Hgm7RLb38q/0h9Ol5jsUJGJRorvhzAvckgfhw==}
     engines: {node: '>=18'}
     peerDependencies:
       '@types/node': '>=18'
@@ -11552,6 +11555,8 @@ snapshots:
 
   es-toolkit@1.50.0: {}
 
+  es-toolkit@1.52.0: {}
+
   esbuild@0.21.5:
     optionalDependencies:
       '@esbuild/aix-ppc64': 0.21.5
@@ -13161,7 +13166,7 @@ snapshots:
       dagre-d3-es: 7.0.14
       dayjs: 1.11.21
       dompurify: 3.4.14
-      es-toolkit: 1.50.0
+      es-toolkit: 1.52.0
       katex: 0.16.47
       khroma: 2.1.0
       marked: 16.4.2
@@ -14639,7 +14644,7 @@ snapshots:
 
   strip-json-comments@3.1.1: {}
 
-  stripe@22.5.0(@types/node@20.19.43):
+  stripe@22.6.0(@types/node@20.19.43):
     optionalDependencies:
       '@types/node': 20.19.43
 

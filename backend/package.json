@@ -74,7 +74,7 @@
     "reflect-metadata": "0.2.2",
     "socket.io": "4.8.3",
     "socket.io-client": "4.8.3",
-    "stripe": "22.5.0",
+    "stripe": "22.6.0",
     "swagger-model-validator": "3.0.21",
     "swagger-ui-express": "5.0.1",
     "typeorm": "1.1.0",
