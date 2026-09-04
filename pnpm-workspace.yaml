@@ -7,7 +7,7 @@ packages:
   - frontend/lib/themes
 
 catalog:
-  axios: 1.19.0
+  axios: 1.20.0
   vue: ^3.5.25
   pinia: ^3.0.4
   typescript: ~5.9.3
@@ -19,7 +19,7 @@ catalog:
   '@vue/tsconfig': ^0.9.1
   '@typescript-eslint/parser': ^8.49.0
   vue-eslint-parser: ^10.2.0
-  sass: ^1.95.0
+  sass: ^1.103.1
   tailwindcss: ^4.1.17
   '@tailwindcss/vite': ^4.1.17
   tailwindcss-primeui: ^0.6.1
