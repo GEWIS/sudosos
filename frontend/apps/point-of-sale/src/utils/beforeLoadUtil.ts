@@ -5,6 +5,7 @@ import { usePointOfSaleStore } from '@/stores/pos.store';
 import { usePosToken, POS_TOKEN_KEY } from '@/composables/usePosToken';
 import posApiService from '@/services/PosApiService';
 import { usePointOfSaleSwitch } from '@/composables/usePointOfSaleSwitch';
+import { PointOfSaleSwitchService } from '@/services/PointOfSaleSwitchService';
 
 /**
  * Refreshes the POS authentication token and populates the POS store from the token.
@@ -29,6 +30,9 @@ async function populatePosStoreFromToken(): Promise<boolean> {
 
     const posStore = usePointOfSaleStore();
     await posStore.fetchPointOfSale(posId);
+    if (posStore.pointOfSale) {
+      PointOfSaleSwitchService.switchColor(posStore.pointOfSale);
+    }
     return true;
   } catch (err) {
     console.error('Failed to refresh POS token:', err);
