@@ -81,3 +81,5 @@ export const INVALID_ROLE_ID = (id: number) => new ValidationError(`Role with ID
 export const INVALID_CUSTOM_ROLE_ID = (id: number) => new ValidationError(`Role with ID ${id} is a system default role.`);
 
 export const TOS_NOT_ACCEPTED = () => new ValidationError('must have accepted the Terms of Service.');
+
+export const INVALID_IMAGE_FILE = (message: string) => new ValidationError(`Image file is not valid: ${message}`);
