@@ -37,7 +37,7 @@ export class PointOfSaleSwitchService {
     }
   }
 
-  private static switchColor(target: PointOfSaleResponse) {
+  public static switchColor(target: PointOfSaleResponse) {
     // In the future, this should be stored and retrieved from the backend.
     if (target.owner?.id === 18214 && !target.useAuthentication) {
       usePreset(GrolschGreen);
