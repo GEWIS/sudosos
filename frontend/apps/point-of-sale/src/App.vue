@@ -5,6 +5,7 @@ import SplashComponent from '@/components/SplashComponent.vue';
 import ConnectionLostOverlay from '@/components/ConnectionLostOverlay.vue';
 import MaintenanceModeOverlay from '@/components/MaintenanceModeOverlay.vue';
 import { playAudio, preloadAudios, Sound } from '@/utils/audioUtil';
+import { installKeyboardFocusBridge } from '@/utils/touchKeyboardUtil';
 
 preloadAudios([Sound.PRESS, Sound.TOP_UP_WARNING, Sound.CASHOUT, Sound.POPUP]);
 
@@ -27,12 +28,18 @@ const handleClick = (event: Event) => {
   }
 };
 
+// Makes the GNOME on-screen keyboard appear when a tap moves between two inputs.
+let removeKeyboardFocusBridge: (() => void) | null = null;
+
 onMounted(() => {
   document.addEventListener('click', handleClick, true);
+  removeKeyboardFocusBridge = installKeyboardFocusBridge();
 });
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClick, true);
+  removeKeyboardFocusBridge?.();
+  removeKeyboardFocusBridge = null;
 });
 </script>
 

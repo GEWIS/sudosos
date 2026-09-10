@@ -68,6 +68,7 @@ import { useCartStore } from '@/stores/cart.store';
 import PointOfSaleProductsComponent from '@/components/PointOfSaleDisplay/PointOfSaleProductsComponent.vue';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import { useSettingStore } from '@/stores/settings.store';
+import { focusWithKeyboard } from '@/utils/touchKeyboardUtil';
 
 const props = defineProps({
   pointOfSale: {
@@ -140,7 +141,7 @@ const selectCategory = (categoryId: string) => {
 const openSearchView = async () => {
   isSearchViewVisible.value = true;
   await nextTick();
-  searchInput.value?.focus();
+  focusWithKeyboard(searchInput.value);
 };
 
 const closeSearchView = () => {
