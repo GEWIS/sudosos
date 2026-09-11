@@ -57,7 +57,6 @@ import { useCartStore } from '@/stores/cart.store';
 import UserSearchRowComponent from '@/components/UserSearch/UserSearchRowComponent.vue';
 import apiService from '@/services/ApiService';
 import { usePointOfSaleStore } from '@/stores/pos.store';
-import { focusWithKeyboard } from '@/utils/touchKeyboardUtil';
 
 const searchValue = ref<string>('');
 const searchQuery = computed(() => searchValue.value.split(' ')[0]);
@@ -151,7 +150,7 @@ const sortedUsers = computed(() => {
 const searchInput = ref<null | HTMLInputElement>(null);
 
 onMounted(async () => {
-  focusWithKeyboard(searchInput.value);
+  if (searchInput.value) searchInput.value.focus();
   const rec = await getRecentUsers();
 
   if (rec) recent.value = rec;
