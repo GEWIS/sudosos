@@ -96,6 +96,7 @@ import Config from './config';
 import { applyConfiguredLogLevel } from './helpers/logging';
 import { initRedisConnection } from './helpers/redis-connection';
 import TerminalPaymentController from './controller/terminal-payment-controller';
+import AuditController from './controller/audit-controller';
 
 export class Application {
   app: express.Express;
@@ -324,6 +325,7 @@ export default async function createApp(): Promise<Application> {
   application.app.use('/v1/writeoffs', new WriteOffController(options).getRouter());
   application.app.use('/v1/user-notification-preferences', new UserNotificationController(options).getRouter());
   application.app.use('/v1/seller-payouts', new SellerPayoutController(options).getRouter());
+  application.app.use('/v1/audit-logs', new AuditController(options).getRouter());
   application.app.use('/v1/server-settings', new ServerSettingsController(options).getRouter());
   application.app.use('/v1/sync', new SyncController(options).getRouter());
   application.app.use('/v1/terms-of-service', new TermsOfServiceController(options).getRouter());

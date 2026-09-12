@@ -33,6 +33,8 @@ import { CreateSellerPayoutRequest, UpdateSellerPayoutRequest } from './request/
 import User from '../entity/user/user';
 import ReportService, { SalesReportService } from '../service/report-service';
 import { PdfError } from '../errors';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
 import { PdfUrlResponse } from './response/simple-file-response';
 
 /**
@@ -297,6 +299,11 @@ export default class SellerPayoutController extends BaseController {
         endDate,
         reference: body.reference,
       });
+      await new AuditService().log(req.token.user, {
+        action: AuditAction.SELLER_PAYOUT_CREATE,
+        entityType: AuditEntityType.SELLER_PAYOUT,
+        entityId: payout.id,
+      });
 
       res.json(SellerPayoutService.asSellerPayoutResponse(payout));
     } catch (error) {
@@ -333,6 +340,13 @@ export default class SellerPayoutController extends BaseController {
       }
 
       sellerPayout = await service.updateSellerPayout(sellerPayoutId, body);
+      await new AuditService().log(req.token.user, {
+        action: AuditAction.SELLER_PAYOUT_UPDATE,
+        entityType: AuditEntityType.SELLER_PAYOUT,
+        entityId: sellerPayoutId,
+        changes: { amount: body.amount },
+      });
+
       res.json(SellerPayoutService.asSellerPayoutResponse(sellerPayout));
     } catch (error) {
       this.logger.error('Could not update seller payout:', error);
@@ -365,6 +379,13 @@ export default class SellerPayoutController extends BaseController {
       }
 
       await service.deleteSellerPayout(sellerPayoutId);
+      await new AuditService().log(req.token.user, {
+        action: AuditAction.SELLER_PAYOUT_DELETE,
+        entityType: AuditEntityType.SELLER_PAYOUT,
+        entityId: sellerPayoutId,
+        changes: { amount: sellerPayout.amount.toObject(), reference: sellerPayout.reference },
+      });
+
       res.status(204).json(null);
     } catch (error) {
       this.logger.error('Could not delete seller payout:', error);

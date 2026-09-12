@@ -45,6 +45,8 @@ import { createProductRequestSpecFactory, updateProductRequestSpecFactory } from
 import { globalAsyncValidatorRegistry } from '../middleware/async-validator-registry';
 import { asNumber } from '../helpers/validators';
 import userTokenInOrgan from '../helpers/token-helper';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
 
 /**
  * Controller for managing all routes related to the `product` entity.
@@ -184,6 +186,13 @@ export default class ProductController extends BaseController {
         res.status(404).json('Product owner not found.');
         return;
       }
+      await new AuditService().log(req.token.user, {
+        action: AuditAction.PRODUCT_CREATE,
+        entityType: AuditEntityType.PRODUCT,
+        entityId: revision.productId,
+        changes: { name: request.name, priceInclVat: request.priceInclVat, ownerId: request.ownerId },
+      });
+
       res.json(ProductService.revisionToResponse(revision));
     } catch (error) {
       this.logger.error('Could not create product:', error);
@@ -228,6 +237,19 @@ export default class ProductController extends BaseController {
         res.status(500).json('Could not update product.');
         return;
       }
+      await new AuditService().log(req.token.user, {
+        action: AuditAction.PRODUCT_UPDATE,
+        entityType: AuditEntityType.PRODUCT,
+        entityId: productId,
+        changes: {
+          revision: revision.revision,
+          name: body.name,
+          priceInclVat: body.priceInclVat,
+          vat: body.vat,
+          category: body.category,
+        },
+      });
+
       res.json(ProductService.revisionToResponse(revision));
     } catch (error) {
       this.logger.error('Could not update product:', error);
@@ -350,6 +372,12 @@ export default class ProductController extends BaseController {
       }
 
       await ProductService.deleteProduct(productId);
+      await new AuditService().log(req.token.user, {
+        action: AuditAction.PRODUCT_DELETE,
+        entityType: AuditEntityType.PRODUCT,
+        entityId: productId,
+      });
+
       res.status(204).send();
       return;
     } catch (error) {

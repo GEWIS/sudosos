@@ -37,6 +37,8 @@ import Fine from '../entity/fine/fine';
 import { ReturnFileType } from 'pdf-generator-client';
 import { PdfError } from '../errors';
 import FineHandoutEvent from '../entity/fine/fineHandoutEvent';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
 
 /**
  * Controller for the `/fines` endpoints in the {@link debtors | debtors} module. Covers
@@ -194,13 +196,24 @@ export default class DebtorController extends BaseController {
 
     try {
       const parsedId = Number.parseInt(id, 10);
-      const fine = await Fine.findOne({ where: { id: parsedId } });
+      // userFineGroup is loaded so the audit entry can record whose fine this was.
+      const fine = await Fine.findOne({
+        where: { id: parsedId },
+        relations: { userFineGroup: true },
+      });
       if (fine == null) {
         res.status(404).send();
         return;
       }
 
       await new DebtorService().deleteFine(parsedId);
+      await new AuditService().log(req.token.user, {
+        action: AuditAction.FINE_DELETE,
+        entityType: AuditEntityType.FINE,
+        entityId: parsedId,
+        changes: { userId: fine.userFineGroup.userId, amount: fine.amount.toObject() },
+      });
+
       res.status(204).send();
     } catch (error) {
       this.logger.error('Could not return fine handout event:', error);
@@ -280,6 +293,13 @@ export default class DebtorController extends BaseController {
 
     try {
       const event = await new DebtorService().handOutFines({ referenceDate, userIds: body.userIds }, req.token.user);
+      await new AuditService().log(req.token.user, {
+        action: AuditAction.FINE_HANDOUT,
+        entityType: AuditEntityType.FINE_HANDOUT_EVENT,
+        entityId: event.id,
+        changes: { userIds: body.userIds, referenceDate: body.referenceDate },
+      });
+
       res.json(DebtorService.asFineHandoutEventResponse(event));
     } catch (error) {
       this.logger.error('Could not handout fines:', error);
@@ -314,6 +334,13 @@ export default class DebtorController extends BaseController {
       }
 
       await new DebtorService().deleteFineHandout(event);
+      await new AuditService().log(req.token.user, {
+        action: AuditAction.FINE_HANDOUT_DELETE,
+        entityType: AuditEntityType.FINE_HANDOUT_EVENT,
+        entityId: parsedId,
+        changes: { fineCount: event.fines.length },
+      });
+
       res.status(204).send();
     } catch (error) {
       this.logger.error('Could not delete fine handout:', error);
