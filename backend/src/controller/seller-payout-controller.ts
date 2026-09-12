@@ -108,7 +108,7 @@ export default class SellerPayoutController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnAllSellerPayouts(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all seller payouts by', req.token.user);
+    this.logger.trace('seller_payout.list');
 
     let take;
     let skip;
@@ -145,7 +145,7 @@ export default class SellerPayoutController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnSingleSellerPayout(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get single seller payout with ID', req.params.id, 'by user', req.token.user);
+    this.logger.trace('seller_payout.get', { id: req.params.id });
 
     try {
       const id = Number(req.params.id);
@@ -176,7 +176,7 @@ export default class SellerPayoutController extends BaseController {
    */
   public async getSellerPayoutReport(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get sales report for Seller Payout', id, 'by user', req.token.user);
+    this.logger.trace('seller_payout.get_report', { id });
 
     try {
       const sellerPayoutId = Number(req.params.id);
@@ -213,7 +213,7 @@ export default class SellerPayoutController extends BaseController {
    */
   public async getSellerPayoutReportPdf(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get sales report PDF for Seller Payout', id, 'by user', req.token.user);
+    this.logger.trace('seller_payout.get_report_pdf', { id });
 
     try {
       const sellerPayoutId = Number(req.params.id);
@@ -250,7 +250,7 @@ export default class SellerPayoutController extends BaseController {
    */
   public async createSellerPayout(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as CreateSellerPayoutRequest;
-    this.logger.trace('Create new seller payout by', req.token.user);
+    this.logger.trace('seller_payout.create', { request: body });
 
     try {
       const requestedBy = await User.findOne({ where: { id: body.requestedById, deleted: false } });
@@ -321,7 +321,7 @@ export default class SellerPayoutController extends BaseController {
   public async updateSellerPayout(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as UpdateSellerPayoutRequest;
     const { id } = req.params;
-    this.logger.trace('Update seller payout', id, 'by user', req.token.user);
+    this.logger.trace('seller_payout.update', { id, request: body });
 
     try {
       const sellerPayoutId = Number(req.params.id);
@@ -353,7 +353,7 @@ export default class SellerPayoutController extends BaseController {
    */
   public async deleteSellerPayout(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Delete seller payout', id, 'by user', req.token.user);
+    this.logger.trace('seller_payout.delete', { id });
 
     try {
       const sellerPayoutId = Number(req.params.id);
