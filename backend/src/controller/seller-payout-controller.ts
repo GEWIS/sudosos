@@ -33,6 +33,9 @@ import { CreateSellerPayoutRequest, UpdateSellerPayoutRequest } from './request/
 import User from '../entity/user/user';
 import ReportService, { SalesReportService } from '../service/report-service';
 import { PdfError } from '../errors';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
+import { AppDataSource } from '../database/database';
 import { PdfUrlResponse } from './response/simple-file-response';
 import SellerPayoutPdfService from '../service/pdf/seller-payout-pdf-service';
 import { asBoolean } from '../helpers/validators';
@@ -293,11 +296,20 @@ export default class SellerPayoutController extends BaseController {
         return;
       }
 
-      const payout = await service.createSellerPayout({
-        requestedById: requestedBy.id,
-        startDate,
-        endDate,
-        reference: body.reference,
+      const payout = await AppDataSource.manager.transaction(async (manager) => {
+        const created = await new SellerPayoutService(manager).createSellerPayout({
+          requestedById: requestedBy.id,
+          startDate,
+          endDate,
+          reference: body.reference,
+        });
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.SELLER_PAYOUT_CREATE,
+          entityType: AuditEntityType.SELLER_PAYOUT,
+          entityId: created.id,
+          changes: { requestedById: requestedBy.id, amount: created.amount.toObject() },
+        });
+        return created;
       });
 
       res.json(SellerPayoutService.asSellerPayoutResponse(payout));
@@ -334,7 +346,20 @@ export default class SellerPayoutController extends BaseController {
         return;
       }
 
-      sellerPayout = await service.updateSellerPayout(sellerPayoutId, body);
+      sellerPayout = await AppDataSource.manager.transaction(async (manager) => {
+        const updated = await new SellerPayoutService(manager).updateSellerPayout(sellerPayoutId, body);
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.SELLER_PAYOUT_UPDATE,
+          entityType: AuditEntityType.SELLER_PAYOUT,
+          entityId: sellerPayoutId,
+          changes: AuditService.diff(
+            { amount: sellerPayout.amount.toObject() },
+            { amount: updated.amount.toObject() },
+          ),
+        });
+        return updated;
+      });
+
       res.json(SellerPayoutService.asSellerPayoutResponse(sellerPayout));
     } catch (error) {
       this.logger.error('Could not update seller payout:', error);
@@ -366,7 +391,16 @@ export default class SellerPayoutController extends BaseController {
         return;
       }
 
-      await service.deleteSellerPayout(sellerPayoutId);
+      await AppDataSource.manager.transaction(async (manager) => {
+        await new SellerPayoutService(manager).deleteSellerPayout(sellerPayoutId);
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.SELLER_PAYOUT_DELETE,
+          entityType: AuditEntityType.SELLER_PAYOUT,
+          entityId: sellerPayoutId,
+          changes: { amount: sellerPayout.amount.toObject(), reference: sellerPayout.reference },
+        });
+      });
+
       res.status(204).json(null);
     } catch (error) {
       this.logger.error('Could not delete seller payout:', error);

@@ -106,7 +106,7 @@ export default class SellerPayoutService extends WithManager {
    * @param params
    */
   public async createSellerPayout(params: CreateSellerPayoutParams): Promise<SellerPayout> {
-    const report = await new SalesReportService().getReport({
+    const report = await new SalesReportService(this.manager).getReport({
       forId: params.requestedById,
       fromDate: params.startDate,
       tillDate:params.endDate,
@@ -119,7 +119,7 @@ export default class SellerPayoutService extends WithManager {
       throw new Error(`User with ID "${params.requestedById}" not found.`);
     }
 
-    const transfer = await new TransferService().createTransfer({
+    const transfer = await new TransferService(this.manager).createTransfer({
       createdAt: params.endDate.toISOString(),
       amount: amount.toObject(),
       description: `Seller payout: ${params.reference}`,

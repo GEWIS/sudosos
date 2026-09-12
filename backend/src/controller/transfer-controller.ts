@@ -36,6 +36,9 @@ import { parseRequestPagination, toResponse } from '../helpers/pagination';
 import userTokenInOrgan from '../helpers/token-helper';
 import { PdfError } from '../errors';
 import TransferPdfService from '../service/pdf/transfer-pdf-service';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
+import { AppDataSource } from '../database/database';
 
 /**
  * Controller for the `transfers` module. Exposes CRUD over transfers, aggregate and per-category
@@ -295,15 +298,25 @@ export default class TransferController extends BaseController {
     const request = req.body as TransferRequest;
     this.logger.trace('transfer.create', { request });
 
-    const transferService = new TransferService();
-
     try {
-      if (!(await transferService.verifyTransferRequest(request))) {
+      if (!(await new TransferService().verifyTransferRequest(request))) {
         res.status(400).json('Invalid transfer.');
         return;
       }
 
-      const transfer = await transferService.postTransfer(request);
+      // Mutation and audit entry commit together: a failed audit write rolls back the
+      // transfer instead of leaving a committed transfer with no matching row.
+      const transfer = await AppDataSource.manager.transaction(async (manager) => {
+        const created = await new TransferService(manager).postTransfer(request);
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.TRANSFER_CREATE,
+          entityType: AuditEntityType.TRANSFER,
+          entityId: created.id,
+          changes: { fromId: request.fromId, toId: request.toId, amount: request.amount },
+        });
+        return created;
+      });
+
       res.json(TransferService.asTransferResponse(transfer));
     } catch (error) {
       this.logger.error('Could not create transfer:', error);
@@ -327,7 +340,23 @@ export default class TransferController extends BaseController {
     this.logger.trace('transfer.delete', { id });
 
     try {
-      await new TransferService().deleteTransfer(parseInt(id));
+      const transferId = parseInt(id);
+      await AppDataSource.manager.transaction(async (manager) => {
+        const deleted = await new TransferService(manager).deleteTransfer(transferId);
+        // The transfer row is gone after this, so keep what it was on the entry.
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.TRANSFER_DELETE,
+          entityType: AuditEntityType.TRANSFER,
+          entityId: transferId,
+          changes: {
+            fromId: deleted.from?.id,
+            toId: deleted.to?.id,
+            amount: deleted.amountInclVat.toObject(),
+            description: deleted.description,
+          },
+        });
+      });
+
       res.status(204).send();
     } catch (error) {
       if (error.message === 'Transfer not found') {

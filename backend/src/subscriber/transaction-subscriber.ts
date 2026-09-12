@@ -71,7 +71,7 @@ export default class TransactionSubscriber implements EntitySubscriberInterface 
       return;
     }
 
-    const balance = await new BalanceService().getBalance(user.id);
+    const balance = await new BalanceService(event.manager).getBalance(user.id);
     // POINT_OF_SALE users are excluded from balance reporting, so anonymous
     // terminal payments have no balance here. Nothing to notify about.
     if (!balance?.amount) return;
@@ -100,7 +100,7 @@ export default class TransactionSubscriber implements EntitySubscriberInterface 
     }
 
     // A terminal payment links its final transaction only after insert, so it cannot be paid by terminal yet.
-    const transaction = await new TransactionService().asTransactionResponse(entity, undefined, undefined, false);
+    const transaction = await new TransactionService(event.manager).asTransactionResponse(entity, undefined, undefined, false);
     if (transaction) {
       await this.sendReceipt(user, transaction, currentBalance);
     }
@@ -108,7 +108,7 @@ export default class TransactionSubscriber implements EntitySubscriberInterface 
     if (currentBalance >= 0) return;
     // User is now in debt
 
-    const balanceBefore = await new BalanceService().getBalance(
+    const balanceBefore = await new BalanceService(event.manager).getBalance(
       user.id,
       new Date(entity.createdAt.getTime() - 1),
     );

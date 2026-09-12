@@ -54,6 +54,7 @@ import { FineSeeder, TransactionSeeder, TransferSeeder, UserSeeder } from '../..
 import { ensureProductionRoles, signTokenFor } from '../../helpers/user-factory';
 import { rootStubs } from '../../root-hooks';
 import Notifier from '../../../src/notifications';
+import AuditLogEntry, { AuditAction, AuditEntityType } from '../../../src/entity/audit/audit-log-entry';
 
 const { expect, request } = chai;
 
@@ -373,6 +374,35 @@ describe('DebtorController', () => {
       expect(res.status).to.equal(204);
       expect(res.body).to.be.empty;
     });
+    it('should record the deleted fine in the audit log', async () => {
+      // Take a fine from the handout event that DELETE /fines/handout/{id} removes anyway.
+      const fine = await Fine.findOne({
+        where: { fineHandoutEvent: { id: ctx.fineHandoutEvents[1].id } },
+        relations: { userFineGroup: true },
+      });
+      expect(fine).to.not.be.null;
+
+      const res = await request(ctx.app)
+        .delete(`/fines/single/${fine.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(204);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.FINE_DELETE, entityId: String(fine.id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.FINE);
+      expect(entry.actor.id).to.equal(ctx.adminUser.id);
+      expect(entry.changes).to.deep.equal({ userId: fine.userFineGroup.userId, amount: fine.amount.toObject() });
+
+      const count = await AuditLogEntry.count({ where: { action: AuditAction.FINE_DELETE } });
+      const res2 = await request(ctx.app)
+        .delete(`/fines/single/${fine.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res2.status).to.equal(404);
+      expect(await AuditLogEntry.count({ where: { action: AuditAction.FINE_DELETE } })).to.equal(count);
+    });
     it('should return 404 if fine does not exist', async () => {
       const id = 9999999;
       const fine = await Fine.findOne({ where: { id } });
@@ -402,6 +432,36 @@ describe('DebtorController', () => {
         .set('Authorization', `Bearer ${ctx.adminToken}`);
       expect(res.status).to.equal(204);
       expect(res.body).to.be.empty;
+    });
+
+    it('should record the deleted handout and its fines in the audit log', async () => {
+      // Hand out fines of our own, so deleting them leaves the seeded state as it was.
+      const referenceDate = new Date('2021-02-12');
+      const created = await request(ctx.app)
+        .post('/fines/handout')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ userIds: ctx.users.map((u) => u.id), referenceDate });
+      expect(created.status).to.equal(200);
+      const event = created.body as FineHandoutEventResponse;
+      expect(event.fines.length).to.be.greaterThan(0);
+
+      const res = await request(ctx.app)
+        .delete(`/fines/handout/${event.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(204);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.FINE_HANDOUT_DELETE, entityId: String(event.id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.FINE_HANDOUT_EVENT);
+      expect(entry.actor.id).to.equal(ctx.adminUser.id);
+      expect(entry.changes.referenceDate).to.equal(referenceDate.toISOString());
+      const expectedFines = event.fines.map((f) => ({ fineId: f.id, userId: f.user.id, amount: f.amount }));
+      const sortById = (a: { fineId: number }, b: { fineId: number }) => a.fineId - b.fineId;
+      expect((entry.changes.fines as { fineId: number }[]).slice().sort(sortById))
+        .to.deep.equal(expectedFines.sort(sortById));
     });
 
     it('should return 404 if fine handout event does not exist', async () => {
@@ -439,6 +499,24 @@ describe('DebtorController', () => {
       const validation = ctx.specification.validateModel('FineHandoutResponse', fineHandoutEventResponse, false, true);
       expect(validation.valid).to.be.true;
       expect(fineHandoutEventResponse.createdBy.id).to.equal(ctx.adminUser.id);
+    });
+    it('should record the handout in the audit log', async () => {
+      const userIds = ctx.users.map((u) => u.id);
+      const referenceDate = new Date();
+      const res = await request(ctx.app)
+        .post('/fines/handout')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ userIds, referenceDate });
+      expect(res.status).to.equal(200);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.FINE_HANDOUT, entityId: String(res.body.id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.FINE_HANDOUT_EVENT);
+      expect(entry.actor.id).to.equal(ctx.adminUser.id);
+      expect(entry.changes).to.deep.equal({ userIds, referenceDate: referenceDate.toISOString() });
     });
     it('should return 403 if user is not admin', async () => {
       const res = await request(ctx.app)

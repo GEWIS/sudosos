@@ -55,6 +55,7 @@ import VatGroup from '../../../src/entity/vat-group';
 import { PdfError } from '../../../src/errors';
 import Redis from 'ioredis';
 import InactiveAdministrativeCostReportPdfService from '../../../src/service/pdf/inactive-administrative-cost-report-pdf-service';
+import AuditLogEntry, { AuditAction, AuditEntityType } from '../../../src/entity/audit/audit-log-entry';
 
 const { expect, request } = chai;
 
@@ -294,6 +295,26 @@ describe('InactiveAdministrativeCostController', async () => {
       expect(await InactiveAdministrativeCost.count()).to.equal(count + 1);
       expect(res.status).to.equal(200);
     });
+    it('should record the created cost in the audit log', async () => {
+      const res = await request(ctx.app)
+        .post('/inactive-administrative-costs')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send(ctx.validInactiveAdministrativeCostRequest);
+      expect(res.status).to.equal(200);
+
+      const cost = await InactiveAdministrativeCost.findOne({ where: { id: res.body.id } });
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.INACTIVE_ADMINISTRATIVE_COST_CREATE, entityId: String(cost.id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.INACTIVE_ADMINISTRATIVE_COST);
+      expect(entry.actor.id).to.equal(ctx.adminUser.id);
+      expect(entry.changes).to.deep.equal({
+        forId: ctx.validInactiveAdministrativeCostRequest.forId,
+        amount: cost.amount.toObject(),
+      });
+    });
     it('should verify that forId is a valid user', async () => {
       const req: CreateInactiveAdministrativeCostRequest = { forId: -1 };
 
@@ -373,6 +394,29 @@ describe('InactiveAdministrativeCostController', async () => {
 
       expect(res.status).to.equal(204);
       expect(res.body).to.be.empty;
+    });
+    it('should record the deleted cost in the audit log', async () => {
+      // Create a cost of our own, so the seeded costs stay as the other tests expect.
+      const created = await request(ctx.app)
+        .post('/inactive-administrative-costs')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send(ctx.validInactiveAdministrativeCostRequest);
+      expect(created.status).to.equal(200);
+      const cost = await InactiveAdministrativeCost.findOne({ where: { id: created.body.id } });
+
+      const res = await request(ctx.app)
+        .delete(`/inactive-administrative-costs/${cost.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(204);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.INACTIVE_ADMINISTRATIVE_COST_DELETE, entityId: String(cost.id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.INACTIVE_ADMINISTRATIVE_COST);
+      expect(entry.actor.id).to.equal(ctx.adminUser.id);
+      expect(entry.changes).to.deep.equal({ forId: cost.fromId, amount: cost.amount.toObject() });
     });
     it('should return an HTTP 403 if not admin', async () => {
       const inactiveAdministrativeCost = (await InactiveAdministrativeCost.find())[0];

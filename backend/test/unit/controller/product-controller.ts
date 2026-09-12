@@ -52,6 +52,7 @@ import { finishTestDB } from '../../helpers/test-helpers';
 import ProductRevision from '../../../src/entity/product/product-revision';
 import { ProductSeeder, VatGroupSeeder } from '../../seed';
 import { ensureProductionRoles, signTokenFor } from '../../helpers/user-factory';
+import AuditLogEntry, { AuditAction, AuditEntityType } from '../../../src/entity/audit/audit-log-entry';
 
 const { expect, request } = chai;
 
@@ -381,6 +382,31 @@ describe('ProductController', async (): Promise<void> => {
       await ProductRevision.delete({ productId: product.id, revision: product.revision });
       await Product.delete({ id: product.id });
     });
+    it('should record the creation in the audit log', async () => {
+      const res = await request(ctx.app)
+        .post('/products')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send(ctx.validCreateProductReq);
+      expect(res.status).to.equal(200);
+      const product = res.body as ProductResponse;
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.PRODUCT_CREATE, entityId: String(product.id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.PRODUCT);
+      expect(entry.actor.id).to.equal(ctx.adminUser.id);
+      expect(entry.changes).to.deep.equal({
+        name: ctx.validCreateProductReq.name,
+        priceInclVat: ctx.validCreateProductReq.priceInclVat,
+        ownerId: ctx.validCreateProductReq.ownerId,
+      });
+
+      // Cleanup
+      await ProductRevision.delete({ productId: product.id, revision: product.revision });
+      await Product.delete({ id: product.id });
+    });
     it('should return an HTTP 403 if organ member and the organ does not have productSelfService enabled', async () => {
       const productCount = await Product.count();
       const res = await request(ctx.app)
@@ -525,6 +551,41 @@ describe('ProductController', async (): Promise<void> => {
         false,
         true,
       ).valid).to.be.true;
+    });
+    it('should record only the changed fields in the audit log', async () => {
+      const product = ctx.products[1];
+      const current = await ProductRevision.findOne({
+        where: { productId: product.id, revision: (await Product.findOne({ where: { id: product.id } })).currentRevision },
+        relations: { vat: true, category: true },
+      });
+      const updateReq: UpdateProductRequest = {
+        name: `${current.name} renamed`,
+        priceInclVat: current.priceInclVat.toObject(),
+        alcoholPercentage: Number(current.alcoholPercentage),
+        category: current.category.id,
+        vat: current.vat.id,
+        featured: current.featured,
+        preferred: current.preferred,
+        priceList: current.priceList,
+      };
+
+      const res = await request(ctx.app)
+        .patch(`/products/${product.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send(updateReq);
+      expect(res.status).to.equal(200);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.PRODUCT_UPDATE, entityId: String(product.id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.PRODUCT);
+      expect(entry.actor.id).to.equal(ctx.adminUser.id);
+      expect(entry.changes).to.deep.equal({
+        revision: { before: current.revision, after: current.revision + 1 },
+        name: { before: current.name, after: updateReq.name },
+      });
     });
     it('should return an HTTP 404 if the product is soft deleted', async () => {
       const id = ctx.deletedProducts[0].id;
@@ -707,6 +768,28 @@ describe('ProductController', async (): Promise<void> => {
       expect(dbProduct.deletedAt).to.not.be.null;
 
       // Cleanup
+      await dbProduct.recover();
+    });
+    it('should record the deletion in the audit log', async () => {
+      const product = ctx.products.find((p) => p.owner.id !== ctx.adminUser.id && p.deletedAt == null);
+      const { currentRevision } = await Product.findOne({ where: { id: product.id } });
+      const res = await request(ctx.app)
+        .delete(`/products/${product.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send();
+      expect(res.status).to.equal(204);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.PRODUCT_DELETE, entityId: String(product.id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.PRODUCT);
+      expect(entry.actor.id).to.equal(ctx.adminUser.id);
+      expect(entry.changes).to.deep.equal({ revision: currentRevision });
+
+      // Cleanup
+      const dbProduct = await Product.findOne({ where: { id: product.id }, withDeleted: true });
       await dbProduct.recover();
     });
     it('should return 403 if not owner', async () => {

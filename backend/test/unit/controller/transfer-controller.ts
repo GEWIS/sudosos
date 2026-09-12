@@ -50,6 +50,8 @@ import FineHandoutEvent from '../../../src/entity/fine/fineHandoutEvent';
 import UserFineGroup from '../../../src/entity/fine/userFineGroup';
 import { PdfCompiler } from '../../../src/service/pdf/pdf-service';
 import TransferPdfService from '../../../src/service/pdf/transfer-pdf-service';
+import AuditService from '../../../src/service/audit-service';
+import AuditLogEntry, { AuditAction, AuditEntityType } from '../../../src/entity/audit/audit-log-entry';
 
 const { expect, request } = chai;
 
@@ -475,6 +477,54 @@ describe('TransferController', async (): Promise<void> => {
       });
       expect(databaseEntry).to.exist;
     });
+    it('should clear the inactive notification flag of the sender', async () => {
+      await User.update(validRequest.fromId, { inactiveNotificationSend: true });
+
+      const res = await request(app)
+        .post('/transfers')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send(validRequest);
+
+      expect(res.status).to.equal(200);
+      const sender = await User.findOne({ where: { id: validRequest.fromId } });
+      expect(sender.inactiveNotificationSend).to.be.false;
+    });
+    it('should record the creation in the audit log', async () => {
+      const res = await request(app)
+        .post('/transfers')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send(validRequest);
+      expect(res.status).to.equal(200);
+      const { id } = res.body as TransferResponse;
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.TRANSFER_CREATE, entityId: String(id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.TRANSFER);
+      expect(entry.actor.id).to.equal(1);
+      expect(entry.changes).to.deep.equal({
+        fromId: validRequest.fromId,
+        toId: validRequest.toId,
+        amount: validRequest.amount,
+      });
+    });
+    it('should roll back the transfer when its audit entry fails to record', async () => {
+      const transferCount = await Transfer.count();
+      const stub = sinon.stub(AuditService.prototype, 'log').rejects(new Error('audit insert failed'));
+      try {
+        const res = await request(app)
+          .post('/transfers')
+          .set('Authorization', `Bearer ${adminToken}`)
+          .send(validRequest);
+        expect(res.status).to.equal(500);
+      } finally {
+        stub.restore();
+      }
+
+      expect(await Transfer.count()).to.equal(transferCount);
+    });
     it('should return an HTTP 400 if the given transfer is invalid', async () => {
       const transferCount = await Transfer.count();
       const res = await request(app)
@@ -515,6 +565,35 @@ describe('TransferController', async (): Promise<void> => {
       expect(res.status).to.equal(204);
       expect(await Transfer.count()).to.equal(transferCount - 1);
       expect(await Transfer.findOne({ where: { id: transfer.id } })).to.be.null;
+    });
+
+    it('should record the deletion in the audit log', async () => {
+      const transfer = await Transfer.save({
+        fromId: ctx.users[0].id,
+        toId: ctx.users[1].id,
+        amountInclVat: DineroTransformer.Instance.from(100),
+        description: 'Test transfer for audited deletion',
+        version: 1,
+      });
+
+      const res = await request(app)
+        .delete(`/transfers/${transfer.id}`)
+        .set('Authorization', `Bearer ${adminToken}`);
+      expect(res.status).to.equal(204);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.TRANSFER_DELETE, entityId: String(transfer.id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.TRANSFER);
+      expect(entry.actor.id).to.equal(1);
+      expect(entry.changes).to.deep.equal({
+        fromId: ctx.users[0].id,
+        toId: ctx.users[1].id,
+        amount: DineroTransformer.Instance.from(100).toObject(),
+        description: 'Test transfer for audited deletion',
+      });
     });
 
     it('should return HTTP 400 when trying to delete a transfer with relations', async () => {

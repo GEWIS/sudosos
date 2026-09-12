@@ -289,8 +289,9 @@ describe('DebtorService', (): void => {
 
     /**
      * Covers the use case explained at https://github.com/GEWIS/sudosos-backend/pull/188
+     * @param deleteFine - deletes the fine with the given id.
      */
-    it('should correctly delete currentFines reference when user tops up after being fined the second time', async () => {
+    async function expectCurrentFinesClearedAfterTopUp(deleteFine: (id: number) => Promise<unknown>) {
       const userFineGroupIndex = ctx.userFineGroups.findIndex((g) => g.fines.length > 1 && calculateBalance(g.user, ctx.transactions, ctx.subTransactions, ctx.transfersInclFines).amount.getAmount() < 0);
       const userFineGroup = ctx.userFineGroups[userFineGroupIndex];
       let dbUserFineGroup = await UserFineGroup.findOne({ where: { id: userFineGroup.id }, relations: {
@@ -324,7 +325,7 @@ describe('DebtorService', (): void => {
       expect(dbBalance.fine).to.not.be.undefined;
       expect(dbBalance.fineSince).to.not.be.undefined;
 
-      expect(await new DebtorService().deleteFine(fine.id)).to.not.throw;
+      await deleteFine(fine.id);
 
       const dbFine = await Fine.findOne({ where: { id: fine.id } });
       expect(dbFine).to.be.null;
@@ -344,6 +345,16 @@ describe('DebtorService', (): void => {
       ctx.userFineGroups[userFineGroupIndex].fines.splice(0, 1);
       ctx.fines.filter((f) => f.id !== fine.id);
       ctx.transfers.filter((t) => !t.fine || t.fine.id !== fine.id);
+    }
+
+    it('should correctly delete currentFines reference when user tops up after being fined the second time', async () => {
+      await expectCurrentFinesClearedAfterTopUp((id) => new DebtorService().deleteFine(id));
+    });
+    it('should read the balance inside the caller\'s transaction when clearing currentFines', async () => {
+      // On MariaDB a balance read on another connection would still see the deleted fine.
+      await expectCurrentFinesClearedAfterTopUp((id) => ctx.connection.transaction(
+        async (manager) => new DebtorService(manager).deleteFine(id),
+      ));
     });
     it('should not do anything when fine does not exist', async () => {
       const id = 9999999;
