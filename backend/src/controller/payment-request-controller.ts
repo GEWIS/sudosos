@@ -48,6 +48,9 @@ import {
   CreatePaymentRequestRequest,
   MarkFulfilledExternallyRequest,
 } from './request/payment-request-request';
+import { AppDataSource } from '../database/database';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
 
 export default class PaymentRequestController extends BaseController {
   private logger: Logger = log4js.getLogger('PaymentRequestController');
@@ -266,13 +269,20 @@ export default class PaymentRequestController extends BaseController {
     }
 
     try {
-      const service = new PaymentRequestService();
-      const request = await service.createPaymentRequest({
-        for: forUser,
-        createdBy: req.token.user,
-        amount: Dinero(body.amount),
-        expiresAt,
-        description: body.description ?? null,
+      const request = await AppDataSource.manager.transaction(async (manager) => {
+        const created = await new PaymentRequestService(manager).createPaymentRequest({
+          for: forUser,
+          createdBy: req.token.user,
+          amount: Dinero(body.amount),
+          expiresAt,
+          description: body.description ?? null,
+        });
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.PAYMENT_REQUEST_CREATE,
+          entityType: AuditEntityType.PAYMENT_REQUEST,
+          changes: { paymentRequestId: created.id, forId: body.forId, amount: body.amount },
+        });
+        return created;
       });
       res.status(200).json(PaymentRequestService.asBasePaymentRequestResponse(request));
     } catch (e) {
@@ -308,8 +318,15 @@ export default class PaymentRequestController extends BaseController {
         res.status(404).send();
         return;
       }
-      const service = new PaymentRequestService();
-      const cancelled = await service.cancelPaymentRequest(request, req.token.user);
+      const cancelled = await AppDataSource.manager.transaction(async (manager) => {
+        const result = await new PaymentRequestService(manager).cancelPaymentRequest(request, req.token.user);
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.PAYMENT_REQUEST_CANCEL,
+          entityType: AuditEntityType.PAYMENT_REQUEST,
+          changes: { paymentRequestId: result.id },
+        });
+        return result;
+      });
       res.status(200).json(PaymentRequestService.asBasePaymentRequestResponse(cancelled));
     } catch (e) {
       if (e instanceof IllegalPaymentRequestTransitionError) {
@@ -399,8 +416,15 @@ export default class PaymentRequestController extends BaseController {
         res.status(404).send();
         return;
       }
-      const service = new PaymentRequestService();
-      const updated = await service.markFulfilledExternally(request, body.reason, req.token.user);
+      const updated = await AppDataSource.manager.transaction(async (manager) => {
+        const result = await new PaymentRequestService(manager).markFulfilledExternally(request, body.reason, req.token.user);
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.PAYMENT_REQUEST_MARK_FULFILLED,
+          entityType: AuditEntityType.PAYMENT_REQUEST,
+          changes: { paymentRequestId: result.id, reason: body.reason },
+        });
+        return result;
+      });
       res.status(200).json(PaymentRequestService.asBasePaymentRequestResponse(updated));
     } catch (e) {
       if (e instanceof IllegalPaymentRequestTransitionError) {

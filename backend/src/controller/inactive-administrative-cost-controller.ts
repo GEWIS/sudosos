@@ -44,6 +44,9 @@ import InactiveAdministrativeCost from '../entity/transactions/inactive-administ
 import { asBoolean, asFromAndTillDate } from '../helpers/validators';
 import { PdfError } from '../errors';
 import { formatTitleDate } from '../helpers/pdf';
+import { AppDataSource } from '../database/database';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
 
 
 export default class InactiveAdministrativeCostController extends BaseController {
@@ -220,7 +223,16 @@ export default class InactiveAdministrativeCostController extends BaseController
 
     // handle request
     try {
-      const inactiveAdministrativeCost = await new InactiveAdministrativeCostService().createInactiveAdministrativeCost(body);
+      const inactiveAdministrativeCost = await AppDataSource.manager.transaction(async (manager) => {
+        const created = await new InactiveAdministrativeCostService(manager).createInactiveAdministrativeCost(body);
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.INACTIVE_ADMINISTRATIVE_COST_CREATE,
+          entityType: AuditEntityType.INACTIVE_ADMINISTRATIVE_COST,
+          entityId: created.id,
+          changes: { forId: body.forId },
+        });
+        return created;
+      });
       res.json(inactiveAdministrativeCost.toResponse());
     } catch (error) {
       if (error instanceof NotImplementedError) {
@@ -256,7 +268,14 @@ export default class InactiveAdministrativeCostController extends BaseController
         return;
       }
 
-      await new InactiveAdministrativeCostService().deleteInactiveAdministrativeCost(inactiveAdministrativeCostId);
+      await AppDataSource.manager.transaction(async (manager) => {
+        await new InactiveAdministrativeCostService(manager).deleteInactiveAdministrativeCost(inactiveAdministrativeCostId);
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.INACTIVE_ADMINISTRATIVE_COST_DELETE,
+          entityType: AuditEntityType.INACTIVE_ADMINISTRATIVE_COST,
+          entityId: inactiveAdministrativeCostId,
+        });
+      });
       res.status(204).send();
     } catch (error) {
       this.logger.error('Could not delete InactiveAdministrativeCost:', error);

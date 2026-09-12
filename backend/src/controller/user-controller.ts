@@ -74,6 +74,9 @@ import KeyAuthenticator from '../entity/authenticator/key-authenticator';
 import UpdateKeyResponse from './response/update-key-response';
 import { randomBytes } from 'crypto';
 import DebtorService, { WaiveFinesParams } from '../service/debtor-service';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
+import { AppDataSource } from '../database/database';
 import ReportService, { BuyerReportService, SalesReportService } from '../service/report-service';
 import { ReturnFileType, UserReportParametersType } from 'pdf-generator-client';
 import { reportPDFhelper } from '../helpers/express-pdf';
@@ -1808,7 +1811,15 @@ export default class UserController extends BaseController {
         return;
       }
 
-      await new DebtorService().waiveFines(id, { amount: amountToWaive } as WaiveFinesParams);
+      await AppDataSource.manager.transaction(async (manager) => {
+        await new DebtorService(manager).waiveFines(id, { amount: amountToWaive } as WaiveFinesParams);
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.FINE_WAIVE,
+          entityType: AuditEntityType.FINE,
+          entityId: id,
+          changes: { amount: amountToWaive },
+        });
+      });
       res.status(204).send();
     } catch (e) {
       res.status(500).send();

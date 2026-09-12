@@ -33,6 +33,8 @@ import { RequestWithToken } from '../middleware/token-middleware';
 import VoucherGroup from '../entity/user/voucher-group';
 import VoucherGroupService from '../service/voucher-group-service';
 import { parseRequestPagination, toResponse } from '../helpers/pagination';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
 
 export default class VoucherGroupController extends BaseController {
   private logger: Logger = log4js.getLogger('VoucherGroupController');
@@ -135,6 +137,14 @@ export default class VoucherGroupController extends BaseController {
         return;
       }
       const { voucherGroup, users } = await VoucherGroupService.createVoucherGroup(voucherGroupParams);
+      // VoucherGroupService is not manager-aware (static Active-Record calls), so this
+      // cannot join the mutation's transaction the way the other audited endpoints do.
+      await new AuditService().log(req.token.user, {
+        action: AuditAction.VOUCHER_GROUP_CREATE,
+        entityType: AuditEntityType.VOUCHER_GROUP,
+        entityId: voucherGroup.id,
+        changes: { name: voucherGroup.name, amount: voucherGroup.amount },
+      });
       res.json(VoucherGroupService.asVoucherGroupResponse(voucherGroup, users));
     } catch (error) {
       this.logger.error('Could not create voucher group:', error);
@@ -215,6 +225,13 @@ export default class VoucherGroupController extends BaseController {
         return;
       }
       const result = await VoucherGroupService.updateVoucherGroup(bkgId, voucherGroupParams);
+      // See createVoucherGroup: VoucherGroupService cannot join a transaction here either.
+      await new AuditService().log(req.token.user, {
+        action: AuditAction.VOUCHER_GROUP_UPDATE,
+        entityType: AuditEntityType.VOUCHER_GROUP,
+        entityId: bkgId,
+        changes: { name: result.voucherGroup.name, amount: result.voucherGroup.amount },
+      });
       res.status(200).json(
         VoucherGroupService.asVoucherGroupResponse(result.voucherGroup, result.users),
       );
