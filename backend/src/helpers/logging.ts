@@ -28,6 +28,25 @@ import log4js, { LoggingEvent } from 'log4js';
 import Config from '../config';
 import { getRequestContext } from './request-context';
 
+declare module 'log4js' {
+  interface Logger {
+    /**
+     * Log a recorded financial mutation. See the audit module.
+     */
+    audit(message: any, ...args: any[]): void;
+  }
+}
+
+/**
+ * Sits between INFO (20000) and WARN (30000), so that audit lines survive the
+ * log level that production runs at without being mistaken for a problem.
+ */
+export const AUDIT_LEVEL_VALUE = 25000;
+
+// Registered on import rather than as part of the appender configuration, so that
+// logger.audit exists even in processes that never call getAppLogger.
+log4js.levels.addLevels({ AUDIT: { value: AUDIT_LEVEL_VALUE, colour: 'yellow' } });
+
 /**
  * The shape of a single line of JSON log output.
  *

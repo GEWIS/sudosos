@@ -41,6 +41,7 @@ import { PaymentRequestStatus } from '../../../src/entity/payment-request/paymen
 import { ensureProductionRoles, signTokenFor } from '../../helpers/user-factory';
 import { CreatePaymentRequestRequest } from '../../../src/controller/request/payment-request-request';
 import { BasePaymentRequestResponse } from '../../../src/controller/response/payment-request-response';
+import AuditLogEntry, { AuditAction, AuditEntityType } from '../../../src/entity/audit/audit-log-entry';
 
 describe('PaymentRequestController', (): void => {
   let ctx: {
@@ -311,6 +312,25 @@ describe('PaymentRequestController', (): void => {
         false,
         true,
       ).valid).to.be.true;
+    });
+
+    it('should record the payment request id on the audit entry', async () => {
+      const body: CreatePaymentRequestRequest = {
+        forId: ctx.localUser.id,
+        amount: { amount: 1300, precision: 2, currency: 'EUR' },
+        expiresAt: futureDate(),
+      };
+      const res = await request(ctx.app)
+        .post('/payment-requests')
+        .set('Authorization', `Bearer ${ctx.userToken}`)
+        .send(body);
+      expect(res.status).to.equal(200);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.PAYMENT_REQUEST_CREATE, entityId: res.body.id },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.PAYMENT_REQUEST);
     });
 
     it('should return 403 when regular user tries to create for someone else', async () => {

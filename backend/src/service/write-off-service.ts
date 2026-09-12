@@ -129,7 +129,7 @@ export default class WriteOffService extends WithManager {
    * @param user - The user to create the write-off for
    */
   public async createWriteOff(user: User): Promise<WriteOff> {
-    const balance = await new BalanceService().getBalance(user.id);
+    const balance = await new BalanceService(this.manager).getBalance(user.id);
     if (balance.amount.amount > 0) {
       throw new Error('User has balance, cannot create write off');
     }
@@ -142,7 +142,7 @@ export default class WriteOffService extends WithManager {
     });
 
     await this.manager.save(writeOff);
-    const transfer = await (new TransferService()).createTransfer({
+    const transfer = await new TransferService(this.manager).createTransfer({
       amount: amount.toObject(),
       toId: user.id,
       description: 'Write off',
@@ -159,11 +159,15 @@ export default class WriteOffService extends WithManager {
     return writeOff;
   }
 
-  // TODO: This should be a transaction
-  //   wait for BalanceService to be refactored
+  /**
+   * Creates a write-off for the given user and closes their account. Both steps
+   * run on this service's manager, so constructing it with a transaction's manager
+   * makes them commit or roll back together.
+   * @param user - The user to write off and close
+   */
   public async createWriteOffAndCloseUser(user: User): Promise<WriteOff> {
     const writeOff = await this.createWriteOff(user);
-    await UserService.closeUser(user.id, true);
+    await UserService.closeUser(user.id, true, this.manager);
     return writeOff;
   }
 

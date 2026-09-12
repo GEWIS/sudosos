@@ -77,6 +77,123 @@ export interface AddRoleRequest {
 /**
  * 
  * @export
+ * @interface AuditLogEntryResponse
+ */
+export interface AuditLogEntryResponse {
+    /**
+     * The unique id of the entity.
+     * @type {number}
+     * @memberof AuditLogEntryResponse
+     */
+    'id': number;
+    /**
+     * The creation Date of the entity.
+     * @type {string}
+     * @memberof AuditLogEntryResponse
+     */
+    'createdAt'?: string;
+    /**
+     * The last update Date of the entity.
+     * @type {string}
+     * @memberof AuditLogEntryResponse
+     */
+    'updatedAt'?: string;
+    /**
+     * The version of the entity.
+     * @type {number}
+     * @memberof AuditLogEntryResponse
+     */
+    'version'?: number;
+    /**
+     * 
+     * @type {BaseUserResponse}
+     * @memberof AuditLogEntryResponse
+     */
+    'actor'?: BaseUserResponse;
+    /**
+     * The name the actor had at the time
+     * @type {string}
+     * @memberof AuditLogEntryResponse
+     */
+    'actorName': string;
+    /**
+     * The recorded mutation
+     * @type {string}
+     * @memberof AuditLogEntryResponse
+     */
+    'action': AuditLogEntryResponseActionEnum;
+    /**
+     * The kind of object that was mutated
+     * @type {string}
+     * @memberof AuditLogEntryResponse
+     */
+    'entityType': AuditLogEntryResponseEntityTypeEnum;
+    /**
+     * The id of the object that was mutated
+     * @type {string}
+     * @memberof AuditLogEntryResponse
+     */
+    'entityId'?: string;
+    /**
+     * The fields that changed, keyed by field name
+     * @type {object}
+     * @memberof AuditLogEntryResponse
+     */
+    'changes'?: object;
+}
+
+export const AuditLogEntryResponseActionEnum = {
+    InvoiceCreate: 'invoice.create',
+    InvoiceUpdate: 'invoice.update',
+    InvoiceDelete: 'invoice.delete',
+    SellerPayoutCreate: 'seller_payout.create',
+    SellerPayoutUpdate: 'seller_payout.update',
+    SellerPayoutDelete: 'seller_payout.delete',
+    PayoutRequestCreate: 'payout_request.create',
+    PayoutRequestUpdateStatus: 'payout_request.update_status',
+    WriteOffCreate: 'write_off.create',
+    TransactionUpdate: 'transaction.update',
+    TransactionDelete: 'transaction.delete',
+    TransferCreate: 'transfer.create',
+    TransferDelete: 'transfer.delete',
+    ProductCreate: 'product.create',
+    ProductUpdate: 'product.update',
+    ProductDelete: 'product.delete',
+    FineHandout: 'fine.handout',
+    FineDelete: 'fine.delete',
+    FineDeleteHandout: 'fine.delete_handout',
+    FineWaive: 'fine.waive',
+    PaymentRequestCreate: 'payment_request.create',
+    PaymentRequestCancel: 'payment_request.cancel',
+    PaymentRequestMarkFulfilled: 'payment_request.mark_fulfilled',
+    InactiveAdministrativeCostCreate: 'inactive_administrative_cost.create',
+    InactiveAdministrativeCostDelete: 'inactive_administrative_cost.delete',
+    VoucherGroupCreate: 'voucher_group.create',
+    VoucherGroupUpdate: 'voucher_group.update'
+} as const;
+
+export type AuditLogEntryResponseActionEnum = typeof AuditLogEntryResponseActionEnum[keyof typeof AuditLogEntryResponseActionEnum];
+export const AuditLogEntryResponseEntityTypeEnum = {
+    Invoice: 'Invoice',
+    SellerPayout: 'SellerPayout',
+    PayoutRequest: 'PayoutRequest',
+    WriteOff: 'WriteOff',
+    Transaction: 'Transaction',
+    Transfer: 'Transfer',
+    Product: 'Product',
+    Fine: 'Fine',
+    FineHandoutEvent: 'FineHandoutEvent',
+    UserFineGroup: 'UserFineGroup',
+    PaymentRequest: 'PaymentRequest',
+    InactiveAdministrativeCost: 'InactiveAdministrativeCost',
+    VoucherGroup: 'VoucherGroup'
+} as const;
+
+export type AuditLogEntryResponseEntityTypeEnum = typeof AuditLogEntryResponseEntityTypeEnum[keyof typeof AuditLogEntryResponseEntityTypeEnum];
+
+/**
+ * 
+ * @export
  * @interface AuthenticationEanRequest
  */
 export interface AuthenticationEanRequest {
@@ -3357,6 +3474,25 @@ export interface MessageResponse {
      * @memberof MessageResponse
      */
     'message': string;
+}
+/**
+ * 
+ * @export
+ * @interface PaginatedAuditLogEntryResponse
+ */
+export interface PaginatedAuditLogEntryResponse {
+    /**
+     * 
+     * @type {PaginationResult}
+     * @memberof PaginatedAuditLogEntryResponse
+     */
+    '_pagination': PaginationResult;
+    /**
+     * Returned audit log entries
+     * @type {Array<AuditLogEntryResponse>}
+     * @memberof PaginatedAuditLogEntryResponse
+     */
+    'records': Array<AuditLogEntryResponse>;
 }
 /**
  * 
@@ -7498,6 +7634,276 @@ export interface WriteOffResponse {
      */
     'transfer': TransferResponse;
 }
+
+/**
+ * AuditLogsApi - axios parameter creator
+ * @export
+ */
+export const AuditLogsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Returns the recorded financial mutations, newest first.
+         * @param {number} [actorId] Filter on the user that performed the mutation
+         * @param {GetAllAuditLogEntriesActionEnum} [action] Filter on the recorded mutation
+         * @param {GetAllAuditLogEntriesEntityTypeEnum} [entityType] Filter on the kind of object that was mutated
+         * @param {string} [entityId] Filter on the id of the object that was mutated
+         * @param {string} [fromDate] Filter on mutations recorded on or after this ISO date (inclusive)
+         * @param {string} [tillDate] Filter on mutations recorded strictly before this ISO date (exclusive)
+         * @param {number} [take] Number of entries to return
+         * @param {number} [skip] Number of entries to skip
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllAuditLogEntries: async (actorId?: number, action?: GetAllAuditLogEntriesActionEnum, entityType?: GetAllAuditLogEntriesEntityTypeEnum, entityId?: string, fromDate?: string, tillDate?: string, take?: number, skip?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/audit-logs`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (actorId !== undefined) {
+                localVarQueryParameter['actorId'] = actorId;
+            }
+
+            if (action !== undefined) {
+                localVarQueryParameter['action'] = action;
+            }
+
+            if (entityType !== undefined) {
+                localVarQueryParameter['entityType'] = entityType;
+            }
+
+            if (entityId !== undefined) {
+                localVarQueryParameter['entityId'] = entityId;
+            }
+
+            if (fromDate !== undefined) {
+                localVarQueryParameter['fromDate'] = fromDate;
+            }
+
+            if (tillDate !== undefined) {
+                localVarQueryParameter['tillDate'] = tillDate;
+            }
+
+            if (take !== undefined) {
+                localVarQueryParameter['take'] = take;
+            }
+
+            if (skip !== undefined) {
+                localVarQueryParameter['skip'] = skip;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * AuditLogsApi - functional programming interface
+ * @export
+ */
+export const AuditLogsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = AuditLogsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Returns the recorded financial mutations, newest first.
+         * @param {number} [actorId] Filter on the user that performed the mutation
+         * @param {GetAllAuditLogEntriesActionEnum} [action] Filter on the recorded mutation
+         * @param {GetAllAuditLogEntriesEntityTypeEnum} [entityType] Filter on the kind of object that was mutated
+         * @param {string} [entityId] Filter on the id of the object that was mutated
+         * @param {string} [fromDate] Filter on mutations recorded on or after this ISO date (inclusive)
+         * @param {string} [tillDate] Filter on mutations recorded strictly before this ISO date (exclusive)
+         * @param {number} [take] Number of entries to return
+         * @param {number} [skip] Number of entries to skip
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAllAuditLogEntries(actorId?: number, action?: GetAllAuditLogEntriesActionEnum, entityType?: GetAllAuditLogEntriesEntityTypeEnum, entityId?: string, fromDate?: string, tillDate?: string, take?: number, skip?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedAuditLogEntryResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllAuditLogEntries(actorId, action, entityType, entityId, fromDate, tillDate, take, skip, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['AuditLogsApi.getAllAuditLogEntries']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * AuditLogsApi - factory interface
+ * @export
+ */
+export const AuditLogsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = AuditLogsApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Returns the recorded financial mutations, newest first.
+         * @param {AuditLogsApiGetAllAuditLogEntriesRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllAuditLogEntries(requestParameters: AuditLogsApiGetAllAuditLogEntriesRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedAuditLogEntryResponse> {
+            return localVarFp.getAllAuditLogEntries(requestParameters.actorId, requestParameters.action, requestParameters.entityType, requestParameters.entityId, requestParameters.fromDate, requestParameters.tillDate, requestParameters.take, requestParameters.skip, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * Request parameters for getAllAuditLogEntries operation in AuditLogsApi.
+ * @export
+ * @interface AuditLogsApiGetAllAuditLogEntriesRequest
+ */
+export interface AuditLogsApiGetAllAuditLogEntriesRequest {
+    /**
+     * Filter on the user that performed the mutation
+     * @type {number}
+     * @memberof AuditLogsApiGetAllAuditLogEntries
+     */
+    readonly actorId?: number
+
+    /**
+     * Filter on the recorded mutation
+     * @type {'invoice.create' | 'invoice.update' | 'invoice.delete' | 'seller_payout.create' | 'seller_payout.update' | 'seller_payout.delete' | 'payout_request.create' | 'payout_request.update_status' | 'write_off.create' | 'transaction.update' | 'transaction.delete' | 'transfer.create' | 'transfer.delete' | 'product.create' | 'product.update' | 'product.delete' | 'fine.handout' | 'fine.delete' | 'fine.delete_handout' | 'fine.waive' | 'payment_request.create' | 'payment_request.cancel' | 'payment_request.mark_fulfilled' | 'inactive_administrative_cost.create' | 'inactive_administrative_cost.delete' | 'voucher_group.create' | 'voucher_group.update'}
+     * @memberof AuditLogsApiGetAllAuditLogEntries
+     */
+    readonly action?: GetAllAuditLogEntriesActionEnum
+
+    /**
+     * Filter on the kind of object that was mutated
+     * @type {'Invoice' | 'SellerPayout' | 'PayoutRequest' | 'WriteOff' | 'Transaction' | 'Transfer' | 'Product' | 'Fine' | 'FineHandoutEvent' | 'UserFineGroup' | 'PaymentRequest' | 'InactiveAdministrativeCost' | 'VoucherGroup'}
+     * @memberof AuditLogsApiGetAllAuditLogEntries
+     */
+    readonly entityType?: GetAllAuditLogEntriesEntityTypeEnum
+
+    /**
+     * Filter on the id of the object that was mutated
+     * @type {string}
+     * @memberof AuditLogsApiGetAllAuditLogEntries
+     */
+    readonly entityId?: string
+
+    /**
+     * Filter on mutations recorded on or after this ISO date (inclusive)
+     * @type {string}
+     * @memberof AuditLogsApiGetAllAuditLogEntries
+     */
+    readonly fromDate?: string
+
+    /**
+     * Filter on mutations recorded strictly before this ISO date (exclusive)
+     * @type {string}
+     * @memberof AuditLogsApiGetAllAuditLogEntries
+     */
+    readonly tillDate?: string
+
+    /**
+     * Number of entries to return
+     * @type {number}
+     * @memberof AuditLogsApiGetAllAuditLogEntries
+     */
+    readonly take?: number
+
+    /**
+     * Number of entries to skip
+     * @type {number}
+     * @memberof AuditLogsApiGetAllAuditLogEntries
+     */
+    readonly skip?: number
+}
+
+/**
+ * AuditLogsApi - object-oriented interface
+ * @export
+ * @class AuditLogsApi
+ * @extends {BaseAPI}
+ */
+export class AuditLogsApi extends BaseAPI {
+    /**
+     * 
+     * @summary Returns the recorded financial mutations, newest first.
+     * @param {AuditLogsApiGetAllAuditLogEntriesRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuditLogsApi
+     */
+    public getAllAuditLogEntries(requestParameters: AuditLogsApiGetAllAuditLogEntriesRequest = {}, options?: RawAxiosRequestConfig) {
+        return AuditLogsApiFp(this.configuration).getAllAuditLogEntries(requestParameters.actorId, requestParameters.action, requestParameters.entityType, requestParameters.entityId, requestParameters.fromDate, requestParameters.tillDate, requestParameters.take, requestParameters.skip, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+/**
+ * @export
+ */
+export const GetAllAuditLogEntriesActionEnum = {
+    InvoiceCreate: 'invoice.create',
+    InvoiceUpdate: 'invoice.update',
+    InvoiceDelete: 'invoice.delete',
+    SellerPayoutCreate: 'seller_payout.create',
+    SellerPayoutUpdate: 'seller_payout.update',
+    SellerPayoutDelete: 'seller_payout.delete',
+    PayoutRequestCreate: 'payout_request.create',
+    PayoutRequestUpdateStatus: 'payout_request.update_status',
+    WriteOffCreate: 'write_off.create',
+    TransactionUpdate: 'transaction.update',
+    TransactionDelete: 'transaction.delete',
+    TransferCreate: 'transfer.create',
+    TransferDelete: 'transfer.delete',
+    ProductCreate: 'product.create',
+    ProductUpdate: 'product.update',
+    ProductDelete: 'product.delete',
+    FineHandout: 'fine.handout',
+    FineDelete: 'fine.delete',
+    FineDeleteHandout: 'fine.delete_handout',
+    FineWaive: 'fine.waive',
+    PaymentRequestCreate: 'payment_request.create',
+    PaymentRequestCancel: 'payment_request.cancel',
+    PaymentRequestMarkFulfilled: 'payment_request.mark_fulfilled',
+    InactiveAdministrativeCostCreate: 'inactive_administrative_cost.create',
+    InactiveAdministrativeCostDelete: 'inactive_administrative_cost.delete',
+    VoucherGroupCreate: 'voucher_group.create',
+    VoucherGroupUpdate: 'voucher_group.update'
+} as const;
+export type GetAllAuditLogEntriesActionEnum = typeof GetAllAuditLogEntriesActionEnum[keyof typeof GetAllAuditLogEntriesActionEnum];
+/**
+ * @export
+ */
+export const GetAllAuditLogEntriesEntityTypeEnum = {
+    Invoice: 'Invoice',
+    SellerPayout: 'SellerPayout',
+    PayoutRequest: 'PayoutRequest',
+    WriteOff: 'WriteOff',
+    Transaction: 'Transaction',
+    Transfer: 'Transfer',
+    Product: 'Product',
+    Fine: 'Fine',
+    FineHandoutEvent: 'FineHandoutEvent',
+    UserFineGroup: 'UserFineGroup',
+    PaymentRequest: 'PaymentRequest',
+    InactiveAdministrativeCost: 'InactiveAdministrativeCost',
+    VoucherGroup: 'VoucherGroup'
+} as const;
+export type GetAllAuditLogEntriesEntityTypeEnum = typeof GetAllAuditLogEntriesEntityTypeEnum[keyof typeof GetAllAuditLogEntriesEntityTypeEnum];
+
 
 /**
  * AuthenticateApi - axios parameter creator

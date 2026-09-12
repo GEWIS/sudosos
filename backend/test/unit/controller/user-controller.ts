@@ -91,6 +91,7 @@ import AssignedRole from '../../../src/entity/rbac/assigned-role';
 import Wrapped from '../../../src/entity/wrapped';
 import Redis from 'ioredis';
 import Mailer from '../../../src/mailer';
+import AuditLogEntry, { AuditAction, AuditEntityType } from '../../../src/entity/audit/audit-log-entry';
 
 const { expect, request } = chai;
 
@@ -2165,6 +2166,29 @@ describe('UserController', (): void => {
       expect(dbFineGroup.waivedTransfer.amountInclVat.getAmount()).to.equal(amount.getAmount());
 
       // Cleanup
+      await Transfer.remove(dbFineGroup.waivedTransfer);
+      await User.save(user);
+    });
+    it('should record the waiver against the user fine group', async () => {
+      const user = ctx.users.find((u) => u.currentFines != null);
+      const amount = Dinero({ amount: 50 });
+
+      const res = await request(ctx.app)
+        .post(`/users/${user.id}/fines/waive`)
+        .send({ amount: amount.toObject() })
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(204);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.FINE_WAIVE },
+        order: { id: 'DESC' },
+      });
+      expect(entry.entityType).to.equal(AuditEntityType.USER_FINE_GROUP);
+      expect(entry.entityId).to.equal(String(user.currentFines!.id));
+      expect(entry.changes).to.deep.equal({ userId: user.id, amount: amount.toObject() });
+
+      // Cleanup
+      const dbFineGroup = await UserFineGroup.findOne({ where: { id: user.currentFines!.id }, relations: { waivedTransfer: true } });
       await Transfer.remove(dbFineGroup.waivedTransfer);
       await User.save(user);
     });

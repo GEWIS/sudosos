@@ -474,6 +474,18 @@ describe('TransferController', async (): Promise<void> => {
       });
       expect(databaseEntry).to.exist;
     });
+    it('should clear the inactive notification flag of the sender', async () => {
+      await User.update(validRequest.fromId, { inactiveNotificationSend: true });
+
+      const res = await request(app)
+        .post('/transfers')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send(validRequest);
+
+      expect(res.status).to.equal(200);
+      const sender = await User.findOne({ where: { id: validRequest.fromId } });
+      expect(sender.inactiveNotificationSend).to.be.false;
+    });
     it('should return an HTTP 400 if the given transfer is invalid', async () => {
       const transferCount = await Transfer.count();
       const res = await request(app)

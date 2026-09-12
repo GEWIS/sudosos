@@ -35,6 +35,7 @@ import ServerSettingsStore from '../../../src/server-settings/server-settings-st
 import { WriteOffSeeder } from '../../seed';
 import { BasePdfService } from '../../../src/service/pdf/pdf-service';
 import sinon from 'sinon';
+import AuditService from '../../../src/service/audit-service';
 import { Client } from 'pdf-generator-client';
 import { WRITE_OFF_PDF_LOCATION } from '../../../src/files/storage';
 import fs from 'fs';
@@ -236,6 +237,29 @@ describe('WriteOffController', () => {
         expect(newUser).to.not.be.undefined;
         expect(newUser.deleted).to.be.true;
         expect(newUser.active).to.be.false;
+      });
+    });
+    it('should roll back the write-off when its audit entry fails to record', async () => {
+      const amount = 1000;
+      const builder = await (await UserFactory()).addBalance(-amount);
+      await inUserContext([await builder.get()], async (user: User) => {
+        const countBefore = await WriteOff.count();
+        const stub = sinon.stub(AuditService.prototype, 'log').rejects(new Error('audit insert failed'));
+        try {
+          const res = await request(ctx.app)
+            .post('/writeoffs')
+            .set('Authorization', `Bearer ${ctx.adminToken}`)
+            .send({ toId: user.id });
+          expect(res.status).to.equal(500);
+        } finally {
+          stub.restore();
+        }
+
+        expect(await WriteOff.count()).to.equal(countBefore);
+        const balance = await new BalanceService().getBalance(user.id);
+        expect(balance.amount.amount).to.equal(-amount);
+        const dbUser = await User.findOne({ where: { id: user.id } });
+        expect(dbUser.deleted).to.be.false;
       });
     });
     it('should return a 404 if the user does not exist', async () => {

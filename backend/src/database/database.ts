@@ -130,6 +130,8 @@ import { PaymentRequestAttempt1784877357000 } from '../migrations/1784877357000-
 import {
   AddProductSelfServiceToUser1785401380818,
 } from '../migrations/1785401380818-add-product-self-service-to-user';
+import AuditLogEntry from '../entity/audit/audit-log-entry';
+import { AuditLog1789209435482 } from '../migrations/1789209435482-audit-log';
 
 function getDataSourceOptions(): DataSourceOptions {
   const config = Config.get();
@@ -185,6 +187,7 @@ function getDataSourceOptions(): DataSourceOptions {
       TerminalPayment1782294145719,
       PaymentRequestAttempt1784877357000,
       AddProductSelfServiceToUser1785401380818,
+      AuditLog1789209435482,
     ],
     extra: {
       authPlugins: {
@@ -263,6 +266,7 @@ function getDataSourceOptions(): DataSourceOptions {
       PaymentRequest,
       PaymentRequestAttempt,
       TermsOfServiceAcceptance,
+      AuditLogEntry,
     ],
     subscribers: [
       TransactionSubscriber,

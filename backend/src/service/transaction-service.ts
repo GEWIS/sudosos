@@ -24,7 +24,7 @@
  * @module transactions
  */
 
-import { In, IsNull, SelectQueryBuilder } from 'typeorm';
+import { EntityManager, In, IsNull, SelectQueryBuilder } from 'typeorm';
 import dinero from 'dinero.js';
 import { RequestWithToken } from '../middleware/token-middleware';
 import {
@@ -756,15 +756,17 @@ export default class TransactionService extends WithManager {
   /**
    * Invalidates user balance cache
    * @param {TransactionResponse.model} transaction - transaction holding users to invalidate
+   * @param manager - the manager to clear the cache with, so that a caller running in a
+   * database transaction does not wait on its own locks from a second connection.
    */
-  public static async invalidateBalanceCache(transaction: Transaction):
+  public static async invalidateBalanceCache(transaction: Transaction, manager?: EntityManager):
   Promise<void> {
     // get user ids to invalidate
     const userIds = [...new Set(transaction.subTransactions.map((sub) => sub.to.id))];
     if (!userIds.includes(transaction.from.id)) {
       userIds.push(transaction.from.id);
     }
-    await new BalanceService().clearBalanceCache(userIds);
+    await new BalanceService(manager).clearBalanceCache(userIds);
   }
 
   private buildGetTransactionsQueryBase(
@@ -1072,7 +1074,7 @@ export default class TransactionService extends WithManager {
     // invalidate updated transaction user balance cache
     const updatedTransaction = await this.getSingleTransaction(id);
     if (updatedTransaction) {
-      await TransactionService.invalidateBalanceCache(updatedTransaction);
+      await TransactionService.invalidateBalanceCache(updatedTransaction, this.manager);
     }
 
     return updatedTransaction;
@@ -1090,7 +1092,7 @@ export default class TransactionService extends WithManager {
     await this.manager.delete(Transaction, id);
 
     // invalidate user balance cache
-    await TransactionService.invalidateBalanceCache(transaction);
+    await TransactionService.invalidateBalanceCache(transaction, this.manager);
 
     // return deleted transaction
     return transaction;
