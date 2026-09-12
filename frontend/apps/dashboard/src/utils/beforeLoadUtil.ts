@@ -15,12 +15,15 @@ export default async function beforeLoad() {
   const termsOfServiceStore = useTermsOfServiceStore();
   initializeAuthHook();
 
+  // Settings and the websocket are not what authenticates anyone, so a failure
+  // here must not stop the stores being populated from the token. It used to
+  // return, which logged the user out of a reloaded page whenever one of these
+  // calls failed.
   try {
     setupWebSocket();
     await settingsStore.fetchKeys();
   } catch (e) {
     console.error(e);
-    return;
   }
 
   await populateStoresFromToken(apiService).catch(() => {

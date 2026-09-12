@@ -134,6 +134,10 @@ router.beforeEach((to, from, next) => {
     // Permission guard present, so let's test is
     if (to.meta?.isAllowed()) {
       next();
+    } else if (to.name === 'home') {
+      // Home is where a denied route is sent, so it cannot be redirected to
+      // itself: that aborts the navigation and leaves a blank page.
+      next();
     } else {
       next({ name: 'home' });
     }
