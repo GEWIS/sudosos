@@ -9,6 +9,7 @@ import seller_en from '../locales/en/modules/seller.json';
 import financial_en from '../locales/en/modules/financial.json';
 import footer_en from '../locales/en/components/footer.json';
 import general_en from '../locales/en/components/general.json';
+import audit_en from '../locales/en/components/audit.json';
 
 import admin_nl from '../locales/nl/modules/admin.json';
 import common_nl from '../locales/nl/common/common.json';
@@ -19,6 +20,7 @@ import seller_nl from '../locales/nl/modules/seller.json';
 import financial_nl from '../locales/nl/modules/financial.json';
 import footer_nl from '../locales/nl/components/footer.json';
 import general_nl from '../locales/nl/components/general.json';
+import audit_nl from '../locales/nl/components/audit.json';
 
 import admin_pl from '../locales/pl/modules/admin.json';
 import common_pl from '../locales/pl/common/common.json';
@@ -29,6 +31,7 @@ import seller_pl from '../locales/pl/modules/seller.json';
 import financial_pl from '../locales/pl/modules/financial.json';
 import footer_pl from '../locales/pl/components/footer.json';
 import general_pl from '../locales/pl/components/general.json';
+import audit_pl from '../locales/pl/components/audit.json';
 
 const i18n = createI18n({
   locale: localStorage.getItem('locale') || 'en',
@@ -42,6 +45,7 @@ const i18n = createI18n({
         ...general_en.components,
         ...mutations_en.components,
         ...footer_en.components,
+        ...audit_en.components,
       },
       modules: {
         ...auth_en.modules,
@@ -57,6 +61,7 @@ const i18n = createI18n({
         ...general_nl.components,
         ...mutations_nl.components,
         ...footer_nl.components,
+        ...audit_nl.components,
       },
       modules: {
         ...auth_nl.modules,
@@ -72,6 +77,7 @@ const i18n = createI18n({
         ...general_pl.components,
         ...mutations_pl.components,
         ...footer_pl.components,
+        ...audit_pl.components,
       },
       modules: {
         ...auth_pl.modules,

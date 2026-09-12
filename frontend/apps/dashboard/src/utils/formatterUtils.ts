@@ -25,6 +25,17 @@ function parseTime(value: number): string {
   return value.toString().padStart(2, '0');
 }
 
+/**
+ * A timestamp down to the minute, for logs where the order within a day matters.
+ */
+export function formatDateTimeShort(date: Date): string {
+  const day = parseTime(date.getDate());
+  const month = parseTime(date.getMonth() + 1);
+  const hours = parseTime(date.getHours());
+  const minutes = parseTime(date.getMinutes());
+  return `${day}-${month}-${date.getFullYear()} ${hours}:${minutes}`;
+}
+
 export function dateToTimeString(date: Date): string {
   const pad = (n: number) => n.toString().padStart(2, '0');
   return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
@@ -88,4 +99,20 @@ export function formatFineTimeSince(startDate: Date, now: Date) {
   } else {
     return diffInDays + t('common.time.daysAgo');
   }
+}
+
+export function isDineroObject(value: unknown): value is DineroObjectResponse {
+  return typeof value === 'object' && value !== null && 'amount' in value && 'currency' in value;
+}
+
+/**
+ * A readable form of an arbitrary recorded value: a Dinero amount formats as currency,
+ * an array joins its stringified members, everything else falls back to JSON.
+ */
+export function stringify(value: unknown): string {
+  if (isDineroObject(value)) return formatDineroObject(value);
+  if (Array.isArray(value)) return value.map(stringify).join(', ');
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  return JSON.stringify(value);
 }

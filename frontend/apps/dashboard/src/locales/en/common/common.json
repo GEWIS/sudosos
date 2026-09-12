@@ -184,7 +184,8 @@
       "financialOverview": "Overview",
       "maintainer": "Maintainer",
       "sellers": "Sellers",
-      "rbac": "RBAC"
+      "rbac": "RBAC",
+      "auditLog": "Audit log"
     },
     "validation": {
       "number": {
@@ -297,7 +298,8 @@
       "profile": "Profile",
       "error": "Error",
       "wrapped": "Wrapped",
-      "financialOverview": "Financial Overview"
+      "financialOverview": "Financial Overview",
+      "auditLog": "Audit log"
     }
   }
 }
