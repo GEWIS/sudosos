@@ -1,0 +1,100 @@
+{
+  "components": {
+    "audit": {
+      "actor": "Wie",
+      "action": "Wat",
+      "object": "Object",
+      "changes": "Details",
+      "entityHeader": "Activiteit",
+      "empty": "Geen overeenkomende items.",
+      "actions": {
+        "invoice": {
+          "create": "Factuur aangemaakt",
+          "update": "Factuur gewijzigd",
+          "delete": "Factuur verwijderd"
+        },
+        "seller_payout": {
+          "create": "Verkopersuitbetaling aangemaakt",
+          "update": "Verkopersuitbetaling gewijzigd",
+          "delete": "Verkopersuitbetaling verwijderd"
+        },
+        "payout_request": {
+          "create": "Uitbetalingsverzoek aangemaakt",
+          "update_status": "Status uitbetalingsverzoek gewijzigd"
+        },
+        "write_off": {
+          "create": "Afboeking aangemaakt"
+        },
+        "transaction": {
+          "update": "Transactie gewijzigd",
+          "delete": "Transactie verwijderd"
+        },
+        "transfer": {
+          "create": "Overboeking aangemaakt",
+          "delete": "Overboeking verwijderd"
+        },
+        "product": {
+          "create": "Product aangemaakt",
+          "update": "Product gewijzigd",
+          "delete": "Product verwijderd"
+        },
+        "fine": {
+          "handout": "Boetes uitgedeeld",
+          "delete": "Boete verwijderd",
+          "delete_handout": "Boete-uitdeling verwijderd",
+          "waive": "Boetes kwijtgescholden"
+        },
+        "payment_request": {
+          "create": "Betaalverzoek aangemaakt",
+          "cancel": "Betaalverzoek geannuleerd",
+          "mark_fulfilled": "Betaalverzoek als betaald gemarkeerd"
+        },
+        "inactive_administrative_cost": {
+          "create": "Inactiviteitskosten aangemaakt",
+          "delete": "Inactiviteitskosten verwijderd"
+        },
+        "voucher_group": {
+          "create": "Vouchergroep aangemaakt",
+          "update": "Vouchergroep gewijzigd"
+        }
+      },
+      "entities": {
+        "Invoice": "Factuur",
+        "SellerPayout": "Verkopersuitbetaling",
+        "PayoutRequest": "Uitbetalingsverzoek",
+        "WriteOff": "Afboeking",
+        "Transaction": "Transactie",
+        "Transfer": "Overboeking",
+        "Product": "Product",
+        "Fine": "Boete",
+        "FineHandoutEvent": "Boete-uitdeling",
+        "UserFineGroup": "Boetes van een gebruiker",
+        "PaymentRequest": "Betaalverzoek",
+        "InactiveAdministrativeCost": "Inactiviteitskosten",
+        "VoucherGroup": "Vouchergroep"
+      },
+      "fields": {
+        "state": "Status",
+        "amount": "Bedrag",
+        "reference": "Referentie",
+        "description": "Omschrijving",
+        "addressee": "Geadresseerde",
+        "name": "Naam",
+        "priceInclVat": "Prijs",
+        "vat": "Btw-groep",
+        "category": "Categorie",
+        "revision": "Revisie",
+        "ownerId": "Eigenaar",
+        "forId": "Voor",
+        "toId": "Naar",
+        "fromId": "Van",
+        "createdById": "Aangemaakt door",
+        "pointOfSaleId": "Verkooppunt",
+        "userId": "Gebruiker",
+        "userIds": "Gebruikers",
+        "referenceDate": "Referentiedatum",
+        "fineCount": "Boetes"
+      }
+    }
+  }
+}

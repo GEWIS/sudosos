@@ -190,6 +190,15 @@
         "selectProduct": "Wybierz produkt do dodania",
         "newProductsAdded": "Dodano nowe produkty",
         "newProduct": "NOWY"
+      },
+      "audit": {
+        "title": "Dziennik audytu",
+        "empty": "Jeszcze nic nie zapisano.",
+        "filters": {
+          "allActions": "Wszystkie akcje",
+          "allObjects": "Wszystkie obiekty",
+          "objectId": "ID obiektu"
+        }
       }
     }
   }
