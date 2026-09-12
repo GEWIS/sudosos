@@ -336,22 +336,27 @@ export default class DebtorService extends WithManager {
    * Deletes a fine handout event, all its associated fines, and the transfers linked to those fines.
    * Throws an Error if the 'fines' relation is not loaded on the provided fine handout event.
    * @param fineHandoutEvent - The fine handout event to delete
+   * @returns the fines that were deleted.
    * @throws Error if the 'fines' relation is not loaded
    */
-  public async deleteFineHandout(fineHandoutEvent: FineHandoutEvent): Promise<void> {
+  public async deleteFineHandout(fineHandoutEvent: FineHandoutEvent): Promise<Fine[]> {
     if (!Array.isArray(fineHandoutEvent.fines)) throw new Error('fine relation not loaded');
 
+    const deleted: Fine[] = [];
     for (const fine of fineHandoutEvent.fines) {
-      await this.deleteFine(fine.id);
+      const removed = await this.deleteFine(fine.id);
+      if (removed) deleted.push(removed);
     }
     await this.manager.remove(FineHandoutEvent, fineHandoutEvent);
+    return deleted;
   }
 
   /**
    * Delete a fine with its transfer, but keep the FineHandoutEvent (they can be empty)
    * @param id
+   * @returns the deleted fine, or undefined when it did not exist.
    */
-  public async deleteFine(id: number): Promise<void> {
+  public async deleteFine(id: number): Promise<Fine | undefined> {
     const fine = await this.manager.findOne(Fine, { where: { id }, relations: {
       transfer: true,
 
@@ -359,21 +364,25 @@ export default class DebtorService extends WithManager {
         fines: true,
       },
     } });
-    if (fine == null) return;
+    if (fine == null) return undefined;
 
     const { transfer, userFineGroup } = fine;
 
     await this.manager.remove(Fine, fine);
+    // remove() clears the primary key, but callers still need to know which fine this was.
+    Object.assign(fine, { id });
     await this.manager.remove(Transfer, transfer);
     if (userFineGroup.fines.length === 1) {
       await this.manager.remove(UserFineGroup, userFineGroup);
     }
     if (userFineGroup.fines.length > 1) {
       // If user does not have a debt anymore, remove the UserFineGroup reference
-      const newBalance = await new BalanceService().getBalance(userFineGroup.userId);
-      if (newBalance.amount.amount < 0) return;
-      await this.manager.update(User, userFineGroup.userId, { currentFines: null });
+      const newBalance = await new BalanceService(this.manager).getBalance(userFineGroup.userId);
+      if (newBalance.amount.amount >= 0) {
+        await this.manager.update(User, userFineGroup.userId, { currentFines: null });
+      }
     }
+    return fine;
   }
 
   /**

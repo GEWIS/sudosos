@@ -37,6 +37,7 @@ import CreateProductParams, {
   UpdateProductRequest,
 } from './request/product-request';
 import Product from '../entity/product/product';
+import ProductRevision from '../entity/product/product-revision';
 import User from '../entity/user/user';
 import FileService from '../service/file-service';
 import { PRODUCT_IMAGE_LOCATION } from '../files/storage';
@@ -45,6 +46,28 @@ import { createProductRequestSpecFactory, updateProductRequestSpecFactory } from
 import { globalAsyncValidatorRegistry } from '../middleware/async-validator-registry';
 import { asNumber } from '../helpers/validators';
 import userTokenInOrgan from '../helpers/token-helper';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
+
+/**
+ * The fields of a product revision recorded in the audit log when a product is updated.
+ * @param revision - the revision, with its vat group and category loaded.
+ */
+function auditedProductFields(revision: ProductRevision | null): Record<string, unknown> {
+  if (!revision) return {};
+  return {
+    revision: revision.revision,
+    name: revision.name,
+    priceInclVat: revision.priceInclVat.toObject(),
+    vatId: revision.vat?.id,
+    categoryId: revision.category?.id,
+    // A decimal column, which MariaDB hands back as a string.
+    alcoholPercentage: Number(revision.alcoholPercentage),
+    featured: revision.featured,
+    preferred: revision.preferred,
+    priceList: revision.priceList,
+  };
+}
 
 /**
  * Controller for managing all routes related to the `product` entity.
@@ -184,6 +207,14 @@ export default class ProductController extends BaseController {
         res.status(404).json('Product owner not found.');
         return;
       }
+      // ProductService is static and cannot join a transaction; see AuditService.logCommitted.
+      await new AuditService().logCommitted(req.token.user, {
+        action: AuditAction.PRODUCT_CREATE,
+        entityType: AuditEntityType.PRODUCT,
+        entityId: revision.productId,
+        changes: { name: request.name, priceInclVat: request.priceInclVat, ownerId: request.ownerId },
+      });
+
       res.json(ProductService.revisionToResponse(revision));
     } catch (error) {
       this.logger.error('Could not create product:', error);
@@ -223,11 +254,23 @@ export default class ProductController extends BaseController {
         return;
       }
 
+      const previous = await ProductRevision.findOne({
+        where: { productId, revision: product.currentRevision },
+        relations: { vat: true, category: true },
+      });
       const revision = await ProductService.updateProduct(params);
       if (!revision) {
         res.status(500).json('Could not update product.');
         return;
       }
+      // ProductService is static and cannot join a transaction; see AuditService.logCommitted.
+      await new AuditService().logCommitted(req.token.user, {
+        action: AuditAction.PRODUCT_UPDATE,
+        entityType: AuditEntityType.PRODUCT,
+        entityId: productId,
+        changes: AuditService.diff(auditedProductFields(previous), auditedProductFields(revision)),
+      });
+
       res.json(ProductService.revisionToResponse(revision));
     } catch (error) {
       this.logger.error('Could not update product:', error);
@@ -350,6 +393,15 @@ export default class ProductController extends BaseController {
       }
 
       await ProductService.deleteProduct(productId);
+      // ProductService is static and cannot join a transaction; see AuditService.logCommitted.
+      await new AuditService().logCommitted(req.token.user, {
+        action: AuditAction.PRODUCT_DELETE,
+        entityType: AuditEntityType.PRODUCT,
+        entityId: productId,
+        // A product is soft deleted, so its last revision still says what it was.
+        changes: { revision: product.currentRevision },
+      });
+
       res.status(204).send();
       return;
     } catch (error) {

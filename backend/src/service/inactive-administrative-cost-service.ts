@@ -224,11 +224,12 @@ export default class InactiveAdministrativeCostService extends WithManager {
   /**
    * Hard deletes the given InactiveAdministrativeCost and its linked Transfer.
    * @param inactiveAdministrativeCostId
+   * @returns the deleted cost, or undefined when it did not exist.
    */
-  public async deleteInactiveAdministrativeCost(inactiveAdministrativeCostId: number): Promise<void> {
+  public async deleteInactiveAdministrativeCost(inactiveAdministrativeCostId: number): Promise<InactiveAdministrativeCost | undefined> {
     // Find inactive administrative cost entity with transfer relation
     const inactiveAdministrativeCost = await this.manager.findOne(InactiveAdministrativeCost, { ...InactiveAdministrativeCostService.getOptions({ inactiveAdministrativeCostId }) });
-    if (!inactiveAdministrativeCost) return;
+    if (!inactiveAdministrativeCost) return undefined;
 
     // Store transfer reference before deletion
     const transfer = inactiveAdministrativeCost.transfer;
@@ -240,7 +241,8 @@ export default class InactiveAdministrativeCostService extends WithManager {
     await this.manager.delete(Transfer, transfer.id);
 
     // Invalidate balance caches for affected users
-    await TransferService.invalidateBalanceCaches(transfer);
+    await TransferService.invalidateBalanceCaches(transfer, this.manager);
+    return inactiveAdministrativeCost;
   }
 
   /**
@@ -399,9 +401,9 @@ export default class InactiveAdministrativeCostService extends WithManager {
    * Gets the high VAT group from server settings
    * @private
    */
-  private static async getHighVATGroup(): Promise<VatGroup> {
+  private async getHighVATGroup(): Promise<VatGroup> {
     const id = ServerSettingsStore.getInstance().getSetting('highVatGroupId') as ISettings['highVatGroupId'];
-    const vatGroup = await VatGroup.findOne({ where: { id } });
+    const vatGroup = await this.manager.findOne(VatGroup, { where: { id } });
     if (vatGroup) return vatGroup;
     else throw new Error('High vat group not found');
   }
@@ -426,7 +428,7 @@ export default class InactiveAdministrativeCostService extends WithManager {
     }
 
     // Get high VAT percentage from server settings
-    const highVatGroup = await InactiveAdministrativeCostService.getHighVATGroup();
+    const highVatGroup = await this.getHighVATGroup();
     const vatPercentage = highVatGroup.percentage;
 
     // Calculate base (excl VAT) from total (incl VAT) - total is the source of truth

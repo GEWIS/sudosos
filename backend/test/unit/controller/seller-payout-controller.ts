@@ -50,6 +50,7 @@ import {
 import { ensureProductionRoles, signTokenFor } from '../../helpers/user-factory';
 import { SELLER_PAYOUT_PDF_LOCATION } from '../../../src/files/storage';
 import fs from 'fs';
+import AuditLogEntry, { AuditAction, AuditEntityType } from '../../../src/entity/audit/audit-log-entry';
 
 const { expect, request } = chai;
 
@@ -373,6 +374,28 @@ describe('SellerPayoutController', () => {
       await SellerPayout.remove(dbSellerPayout);
       await Transfer.remove(dbSellerPayout.transfer);
     });
+    it('should record the creation in the audit log', async () => {
+      const res = await request(ctx.app)
+        .post('/seller-payouts')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send(req);
+      expect(res.status).to.equal(200);
+      const body = res.body as SellerPayoutResponse;
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.SELLER_PAYOUT_CREATE, entityId: String(body.id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.SELLER_PAYOUT);
+      expect(entry.actor.id).to.equal(ctx.admin.id);
+      expect(entry.changes).to.deep.equal({ requestedById: organ.id, amount: body.amount });
+
+      // Cleanup
+      const dbSellerPayout = await SellerPayout.findOne({ where: { id: body.id }, relations: { transfer: true } });
+      await SellerPayout.remove(dbSellerPayout);
+      await Transfer.remove(dbSellerPayout.transfer);
+    });
     it('should return HTTP 400 if user does not exist', async () => {
       const invalidReq: CreateSellerPayoutRequest = {
         ...req,
@@ -490,6 +513,28 @@ describe('SellerPayoutController', () => {
       // Cleanup
       await SellerPayout.save(sellerPayout);
     });
+    it('should record the amount change in the audit log', async () => {
+      const sellerPayout = ctx.sellerPayouts[1];
+      const res = await request(ctx.app)
+        .patch(`/seller-payouts/${sellerPayout.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send(req);
+      expect(res.status).to.equal(200);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.SELLER_PAYOUT_UPDATE, entityId: String(sellerPayout.id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.SELLER_PAYOUT);
+      expect(entry.actor.id).to.equal(ctx.admin.id);
+      expect(entry.changes).to.deep.equal({
+        amount: { before: sellerPayout.amount.toObject(), after: req.amount },
+      });
+
+      // Cleanup
+      await SellerPayout.save(sellerPayout);
+    });
     it('should return HTTP 404 if seller payout does not exist', async () => {
       const id = ctx.sellerPayouts.length + 1;
       const res = await request(ctx.app)
@@ -537,6 +582,25 @@ describe('SellerPayoutController', () => {
         .delete(`/seller-payouts/${sellerPayout.id}`)
         .set('Authorization', `Bearer ${ctx.userToken}`);
       expect(res.status).to.equal(403);
+    });
+    it('should record the deletion in the audit log', async () => {
+      const sellerPayout = ctx.sellerPayouts[1];
+      const res = await request(ctx.app)
+        .delete(`/seller-payouts/${sellerPayout.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(204);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.SELLER_PAYOUT_DELETE, entityId: String(sellerPayout.id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.SELLER_PAYOUT);
+      expect(entry.actor.id).to.equal(ctx.admin.id);
+      expect(entry.changes).to.deep.equal({
+        amount: sellerPayout.amount.toObject(),
+        reference: sellerPayout.reference,
+      });
     });
   });
 });
