@@ -37,6 +37,8 @@ import FileService from '../service/file-service';
 import { BANNER_IMAGE_LOCATION } from '../files/storage';
 import { parseRequestPagination, toResponse } from '../helpers/pagination';
 import { asBoolean } from '../helpers/validators';
+import { isFail } from '../helpers/specification-validation';
+import { validateImageUpload } from '../helpers/image-validation';
 
 /**
  * Controller for managing all routes related to the `banner` entity.
@@ -230,6 +232,11 @@ export default class BannerController extends BaseController {
         image: true,
       } });
       if (banner) {
+        const validation = await validateImageUpload(file, 'banner');
+        if (isFail(validation)) {
+          res.status(400).json(validation.fail.value);
+          return;
+        }
         await this.fileService.uploadEntityImage(
           banner, file, req.token.user,
         );
