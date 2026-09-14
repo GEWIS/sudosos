@@ -67,6 +67,53 @@ export default class FineSeeder extends WithManager {
   }
 
   /**
+   * Creates a single fine for dev seeding, then immediately waives it.
+   * Produces both a fine transfer and a waived-fine transfer for the given user.
+   *
+   * @param user - The user to fine and waive.
+   */
+  public async initWaived(user: User): Promise<{
+    fineHandoutEvent: FineHandoutEvent; fine: Fine; fineTransfer: Transfer; waivedTransfer: Transfer;
+  }> {
+    const amountInclVat = dinero({ amount: 500 });
+
+    const fineHandoutEvent = await this.manager.save(FineHandoutEvent, {
+      referenceDate: new Date(),
+    });
+
+    const userFineGroup = await this.manager.save(UserFineGroup, {
+      user,
+      userId: user.id,
+    });
+
+    const fineTransfer = await this.manager.save(Transfer, {
+      from: user,
+      fromId: user.id,
+      amountInclVat,
+      description: 'Dev seed fine (waived)',
+    });
+
+    const fine = await this.manager.save(Fine, {
+      fineHandoutEvent,
+      userFineGroup,
+      transfer: fineTransfer,
+      amount: amountInclVat,
+    });
+    fineTransfer.fine = fine;
+
+    const waivedTransfer = await this.manager.save(Transfer, {
+      to: user,
+      toId: user.id,
+      amountInclVat,
+      description: 'Dev seed waived fine',
+    });
+    userFineGroup.waivedTransfer = waivedTransfer;
+    await this.manager.save(UserFineGroup, userFineGroup);
+
+    return { fineHandoutEvent, fine, fineTransfer, waivedTransfer };
+  }
+
+  /**
    * Handout fines for all eligible users on the given reference date. Reuse the given user fine groups if it exists
    * @param users
    * @param transactions

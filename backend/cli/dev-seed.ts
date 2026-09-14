@@ -56,9 +56,9 @@ import { applyConfiguredLogLevel } from '../src/helpers/logging';
 
 export default async function devSeed() {
   // 1. Users
-  const { admin, alice, bob, organ, invoice } = await new UserSeeder().init();
+  const { admin, user, alice, bob, organ, invoice } = await new UserSeeder().init();
   const logger = log4js.getLogger('DevSeed');
-  logger.info('Users created: admin, alice, bob, organ, invoice');
+  logger.info('Users created: admin, user, alice, bob, organ, invoice');
 
   // 2. Roles (assigns Super Admin to admin automatically)
   await DefaultRoles.synchronize();
@@ -77,25 +77,29 @@ export default async function devSeed() {
   const { transactions: invoiceTransactions } = await new TransactionSeeder().init([invoice], barRevision);
   logger.info('Transactions created: alice and bob purchasing from Bar, invoice user purchasing for invoice');
 
-  // 5. Stripe deposit - credits alice with EUR 50.00
+  // 5. Stripe deposits - credits alice with EUR 50.00 and user with EUR 20.00
   await new DepositSeeder().init(alice);
-  logger.info('Stripe deposit created: alice +EUR 50.00');
+  await new DepositSeeder().init(user, 2000);
+  logger.info('Stripe deposits created: alice +EUR 50.00, user +EUR 20.00');
 
-  // 6. Payout request - alice requests EUR 10.00 back
+  // 6. Payout requests - alice has a pending request, user's has been approved by admin
   await new PayoutRequestSeeder().init(alice);
-  logger.info('Payout request created: alice requests EUR 10.00');
+  await new PayoutRequestSeeder().init(user, 1500, admin);
+  logger.info('Payout requests created: alice requests EUR 10.00 (pending), user requests EUR 15.00 (approved)');
 
-  // 7. Fine - bob receives a EUR 5.00 fine
+  // 7. Fines - bob's is still outstanding, alice's gets waived
   await new FineSeeder().init(bob);
-  logger.info('Fine created: bob fined EUR 5.00');
+  await new FineSeeder().initWaived(alice);
+  logger.info('Fines created: bob fined EUR 5.00 (outstanding), alice fined EUR 5.00 (waived)');
 
   // 8. Inactive administrative cost - bob charged EUR 0.05
   await new InactiveAdministrativeCostSeeder().init(bob);
   logger.info('Inactive administrative cost created: bob charged EUR 0.05');
 
-  // 9. Seller payout - organ withdraws EUR 5.00 in revenue
+  // 9. Seller payouts - organ withdraws revenue twice, in two separate payouts
   await new SellerPayoutSeeder().init(organ, dinero({ amount: 500 }));
-  logger.info('Seller payout created: organ withdraws EUR 5.00');
+  await new SellerPayoutSeeder().init(organ, dinero({ amount: 200 }), 'DEV-002');
+  logger.info('Seller payouts created: organ withdraws EUR 5.00 and EUR 2.00');
 
   // 10. Invoice - invoice for invoice user, rows derived from invoice user's transactions
   await new InvoiceSeeder().init(invoice, admin, invoiceTransactions);

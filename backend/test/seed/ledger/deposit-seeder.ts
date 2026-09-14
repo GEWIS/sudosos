@@ -31,15 +31,16 @@ import StripePaymentIntentStatus, {
 export default class DepositSeeder extends WithManager {
   /**
    * Creates a single completed Stripe deposit for dev seeding.
-   * Alice receives a EUR 50.00 top-up via a fake Stripe payment intent.
+   * The given user receives a top-up via a fake Stripe payment intent.
    *
-   * @param user - The user to deposit to (alice).
+   * @param user - The user to deposit to.
+   * @param amountInCents - The deposit amount in cents (defaults to EUR 50.00).
    */
-  public async init(user: User): Promise<{ stripeDeposit: StripeDeposit; transfer: Transfer }> {
-    const amount = DineroTransformer.Instance.from(5000);
+  public async init(user: User, amountInCents = 5000): Promise<{ stripeDeposit: StripeDeposit; transfer: Transfer }> {
+    const amount = DineroTransformer.Instance.from(amountInCents);
 
     const stripePaymentIntent = await this.manager.save(StripePaymentIntent, {
-      stripeId: 'FakeStripeIDDevSeed_alice',
+      stripeId: `FakeStripeIDDevSeed_${user.id}_${amountInCents}`,
       amount,
       paymentIntentStatuses: [],
     });
