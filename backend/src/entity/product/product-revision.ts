@@ -119,7 +119,10 @@ export default class ProductRevision extends BaseEntityWithoutId {
   })
   public  priceList: boolean;
 
-  @ManyToMany(() => ContainerRevision, (container) => container.products)
+  @ManyToMany(() => ContainerRevision, (container) => container.products, {
+    onDelete: 'NO ACTION',
+    onUpdate: 'NO ACTION',
+  })
   public containers: ContainerRevision[];
 
   @BeforeUpdate()
