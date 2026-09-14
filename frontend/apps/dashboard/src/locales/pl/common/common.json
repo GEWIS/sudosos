@@ -184,7 +184,8 @@
       "financialOverview": "Przegląd finansowy",
       "maintainer": "Utrzymanie",
       "sellers": "Sprzedawcy",
-      "rbac": "RBAC"
+      "rbac": "RBAC",
+      "auditLog": "Dziennik audytu"
     },
     "validation": {
       "number": {
@@ -297,7 +298,8 @@
       "profile": "Profil",
       "error": "Błąd",
       "wrapped": "Wrapped",
-      "financialOverview": "Przegląd finansowy"
+      "financialOverview": "Przegląd finansowy",
+      "auditLog": "Dziennik audytu"
     }
   }
 }

@@ -1,0 +1,82 @@
+{
+  "components": {
+    "audit": {
+      "actor": "Kto",
+      "action": "Co",
+      "object": "Obiekt",
+      "changes": "Szczegóły",
+      "entityHeader": "Aktywność",
+      "empty": "Jeszcze nic nie zapisano.",
+      "actions": {
+        "invoice": {
+          "create": "Faktura utworzona",
+          "update": "Faktura zmieniona",
+          "delete": "Faktura usunięta"
+        },
+        "seller_payout": {
+          "create": "Wypłata sprzedawcy utworzona",
+          "update": "Wypłata sprzedawcy zmieniona",
+          "delete": "Wypłata sprzedawcy usunięta"
+        },
+        "payout_request": {
+          "create": "Wniosek o wypłatę utworzony",
+          "update_status": "Status wniosku o wypłatę zmieniony"
+        },
+        "write_off": {
+          "create": "Odpis utworzony"
+        },
+        "transaction": {
+          "update": "Transakcja zmieniona",
+          "delete": "Transakcja usunięta"
+        },
+        "transfer": {
+          "create": "Przelew utworzony",
+          "delete": "Przelew usunięty"
+        },
+        "product": {
+          "create": "Produkt utworzony",
+          "update": "Produkt zmieniony",
+          "delete": "Produkt usunięty"
+        },
+        "fine": {
+          "handout": "Grzywny nałożone",
+          "delete": "Grzywna usunięta",
+          "delete_handout": "Nałożenie grzywien usunięte"
+        }
+      },
+      "entities": {
+        "Invoice": "Faktura",
+        "SellerPayout": "Wypłata sprzedawcy",
+        "PayoutRequest": "Wniosek o wypłatę",
+        "WriteOff": "Odpis",
+        "Transaction": "Transakcja",
+        "Transfer": "Przelew",
+        "Product": "Produkt",
+        "Fine": "Grzywna",
+        "FineHandoutEvent": "Nałożenie grzywien"
+      },
+      "fields": {
+        "state": "Status",
+        "amount": "Kwota",
+        "reference": "Referencja",
+        "description": "Opis",
+        "addressee": "Adresat",
+        "name": "Nazwa",
+        "priceInclVat": "Cena",
+        "vat": "Grupa VAT",
+        "category": "Kategoria",
+        "revision": "Wersja",
+        "ownerId": "Właściciel",
+        "forId": "Dla",
+        "toId": "Do",
+        "fromId": "Od",
+        "createdById": "Utworzone przez",
+        "pointOfSaleId": "Punkt sprzedaży",
+        "userId": "Użytkownik",
+        "userIds": "Użytkownicy",
+        "referenceDate": "Data referencyjna",
+        "fineCount": "Grzywny"
+      }
+    }
+  }
+}

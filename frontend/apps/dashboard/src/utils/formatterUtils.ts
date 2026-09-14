@@ -25,6 +25,17 @@ function parseTime(value: number): string {
   return value.toString().padStart(2, '0');
 }
 
+/**
+ * A timestamp down to the minute, for logs where the order within a day matters.
+ */
+export function formatDateTimeShort(date: Date): string {
+  const day = parseTime(date.getDate());
+  const month = parseTime(date.getMonth() + 1);
+  const hours = parseTime(date.getHours());
+  const minutes = parseTime(date.getMinutes());
+  return `${day}-${month}-${date.getFullYear()} ${hours}:${minutes}`;
+}
+
 export function dateToTimeString(date: Date): string {
   const pad = (n: number) => n.toString().padStart(2, '0');
   return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;

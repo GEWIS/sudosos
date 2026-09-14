@@ -1,0 +1,82 @@
+{
+  "components": {
+    "audit": {
+      "actor": "Who",
+      "action": "What",
+      "object": "Object",
+      "changes": "Details",
+      "entityHeader": "Activity",
+      "empty": "Nothing recorded yet.",
+      "actions": {
+        "invoice": {
+          "create": "Invoice created",
+          "update": "Invoice changed",
+          "delete": "Invoice deleted"
+        },
+        "seller_payout": {
+          "create": "Seller payout created",
+          "update": "Seller payout changed",
+          "delete": "Seller payout deleted"
+        },
+        "payout_request": {
+          "create": "Payout request created",
+          "update_status": "Payout request status changed"
+        },
+        "write_off": {
+          "create": "Write-off created"
+        },
+        "transaction": {
+          "update": "Transaction changed",
+          "delete": "Transaction deleted"
+        },
+        "transfer": {
+          "create": "Transfer created",
+          "delete": "Transfer deleted"
+        },
+        "product": {
+          "create": "Product created",
+          "update": "Product changed",
+          "delete": "Product deleted"
+        },
+        "fine": {
+          "handout": "Fines handed out",
+          "delete": "Fine deleted",
+          "delete_handout": "Fine handout deleted"
+        }
+      },
+      "entities": {
+        "Invoice": "Invoice",
+        "SellerPayout": "Seller payout",
+        "PayoutRequest": "Payout request",
+        "WriteOff": "Write-off",
+        "Transaction": "Transaction",
+        "Transfer": "Transfer",
+        "Product": "Product",
+        "Fine": "Fine",
+        "FineHandoutEvent": "Fine handout"
+      },
+      "fields": {
+        "state": "State",
+        "amount": "Amount",
+        "reference": "Reference",
+        "description": "Description",
+        "addressee": "Addressee",
+        "name": "Name",
+        "priceInclVat": "Price",
+        "vat": "VAT group",
+        "category": "Category",
+        "revision": "Revision",
+        "ownerId": "Owner",
+        "forId": "For",
+        "toId": "To",
+        "fromId": "From",
+        "createdById": "Created by",
+        "pointOfSaleId": "Point of sale",
+        "userId": "User",
+        "userIds": "Users",
+        "referenceDate": "Reference date",
+        "fineCount": "Fines"
+      }
+    }
+  }
+}
