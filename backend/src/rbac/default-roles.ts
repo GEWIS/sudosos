@@ -210,6 +210,9 @@ export default class DefaultRoles {
           override: { all: star },
           update: { all: star },
         },
+        AuditLog: {
+          get: { all: star },
+        },
         Authenticator: admin,
         Balance: admin,
         Banner: admin,

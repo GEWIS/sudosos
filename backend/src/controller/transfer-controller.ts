@@ -35,6 +35,8 @@ import Transfer from '../entity/transactions/transfer';
 import { parseRequestPagination, toResponse } from '../helpers/pagination';
 import userTokenInOrgan from '../helpers/token-helper';
 import { PdfError } from '../errors';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
 
 /**
  * Controller for the `transfers` module. Exposes CRUD over transfers, aggregate and per-category
@@ -303,6 +305,13 @@ export default class TransferController extends BaseController {
       }
 
       const transfer = await transferService.postTransfer(request);
+      await new AuditService().log(req.token.user, {
+        action: AuditAction.TRANSFER_CREATE,
+        entityType: AuditEntityType.TRANSFER,
+        entityId: transfer.id,
+        changes: { fromId: request.fromId, toId: request.toId, amount: request.amount },
+      });
+
       res.json(TransferService.asTransferResponse(transfer));
     } catch (error) {
       this.logger.error('Could not create transfer:', error);
@@ -326,7 +335,14 @@ export default class TransferController extends BaseController {
     this.logger.trace('transfer.delete', { id });
 
     try {
-      await new TransferService().deleteTransfer(parseInt(id));
+      const transferId = parseInt(id);
+      await new TransferService().deleteTransfer(transferId);
+      await new AuditService().log(req.token.user, {
+        action: AuditAction.TRANSFER_DELETE,
+        entityType: AuditEntityType.TRANSFER,
+        entityId: transferId,
+      });
+
       res.status(204).send();
     } catch (error) {
       if (error.message === 'Transfer not found') {

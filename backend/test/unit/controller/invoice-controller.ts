@@ -34,6 +34,7 @@ import TokenMiddleware from '../../../src/middleware/token-middleware';
 import { defaultPagination, PaginationResult } from '../../../src/helpers/pagination';
 import { BaseInvoiceResponse, InvoiceResponse } from '../../../src/controller/response/invoice-response';
 import Invoice from '../../../src/entity/invoices/invoice';
+import AuditLogEntry, { AuditAction } from '../../../src/entity/audit/audit-log-entry';
 import {
   CreateInvoiceParams,
   CreateInvoiceRequest,
@@ -639,6 +640,32 @@ describe('InvoiceController', async () => {
 
       expect(res.status).to.equal(204);
       expect(res.body).to.be.empty;
+    });
+    it('should record who deleted the invoice', async () => {
+      const invoice = (await Invoice.find())[0];
+
+      const res = await request(ctx.app)
+        .delete(`/invoices/${invoice.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(204);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.INVOICE_DELETE, entityId: invoice.id },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.actor.id).to.equal(ctx.adminUser.id);
+    });
+    it('should record nothing when the invoice does not exist', async () => {
+      const count = await Invoice.count();
+
+      const res = await request(ctx.app)
+        .delete(`/invoices/${count + 1}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(404);
+
+      expect(await AuditLogEntry.count({
+        where: { action: AuditAction.INVOICE_DELETE, entityId: count + 1 },
+      })).to.equal(0);
     });
     it('should return an HTTP 403 if not admin', async () => {
       const invoice = (await Invoice.find())[0];

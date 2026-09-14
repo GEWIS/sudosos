@@ -52,6 +52,29 @@ produced it, and with the `actorId` once the token middleware has accepted a tok
 Code that runs outside a request, such as a cron task, has no such context, so
 anything it needs to record it must pass explicitly.
 
+## Audit log
+
+Financial mutations are recorded in `audit_log_entry`, so it stays answerable who
+changed what. `AuditService.log` writes the entry and emits the matching log line
+at the `AUDIT` level. Each entry holds the actor, the name that actor had at the
+time, the action (`invoice.delete`), the kind and id of the mutated object, and
+optionally the fields that changed.
+
+Read them through `GET /audit-logs`, which filters on actor, action, and object.
+The `AuditLog` permission gates it; only Super admin holds it by default.
+
+Two rules keep the trail trustworthy:
+
+- **Append only.** Nothing updates or deletes an entry, and there is no job that
+  expires them. Bookkeeping needs the trail to stay complete.
+- **Recorded, not derived.** The actor is an argument to `AuditService.log`, never
+  read from ambient state, so no code path can quietly record a mutation with no
+  actor. Removing a user clears the reference but leaves the entry and the name.
+
+Purchases are deliberately not recorded. They arrive by the thousand each day and
+would bury the handful of monthly invoice and payout changes that the log exists
+to surface. `Transaction` is recorded only when one is changed or deleted.
+
 ## Where correctness is enforced
 
 Money is not “best effort”. SudoSOS relies on a few hard guarantees:
