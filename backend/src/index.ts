@@ -41,6 +41,7 @@ import Database from './database/database';
 import Swagger from './start/swagger';
 import TokenHandler from './authentication/token-handler';
 import TokenMiddleware from './middleware/token-middleware';
+import RequestContextMiddleware from './middleware/request-context-middleware';
 import AuthenticationController from './controller/authentication-controller';
 import RoleManager from './rbac/role-manager';
 import BannerController from './controller/banner-controller';
@@ -225,6 +226,8 @@ export default async function createApp(): Promise<Application> {
 
   // Create express application.
   application.app = express();
+  // Registered first, so that requests rejected by later middleware are correlatable too.
+  application.app.use(new RequestContextMiddleware().getMiddleware());
   application.specification = await Swagger.initialize(application.app);
   application.app.use(json({
     verify: extractRawBody,

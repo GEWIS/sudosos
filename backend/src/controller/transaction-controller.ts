@@ -135,7 +135,7 @@ export default class TransactionController extends BaseController {
    * @return {PaginatedBaseTransactionResponse} 200 - A list of all transactions
    */
   public async getAllTransactions(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all transactions by user', req.token.user);
+    this.logger.trace('transaction.list');
 
     // Parse the filters given in the query parameters. If there are any issues,
     // the parse method will throw an exception. We will then return a 400 error.
@@ -176,7 +176,7 @@ export default class TransactionController extends BaseController {
    */
   public async createTransaction(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as TransactionRequest;
-    this.logger.trace('Create transaction', body, 'by user', req.token.user);
+    this.logger.trace('transaction.create', { request: body });
 
     // handle request
     try {
@@ -229,7 +229,7 @@ export default class TransactionController extends BaseController {
    */
   public async getTransaction(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
-    this.logger.trace('Get single transaction', parameters, 'by user', req.token.user);
+    this.logger.trace('transaction.get', { id: parameters.id });
 
     let transaction;
     try {
@@ -267,7 +267,7 @@ export default class TransactionController extends BaseController {
   public async updateTransaction(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as TransactionRequest;
     const { id } = req.params;
-    this.logger.trace('Update Transaction', id, 'by user', req.token.user);
+    this.logger.trace('transaction.update', { id, request: body });
 
     // handle request
     try {
@@ -308,7 +308,7 @@ export default class TransactionController extends BaseController {
   // eslint-disable-next-line class-methods-use-this
   public async deleteTransaction(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Delete transaction', id, 'by user', req.token.user);
+    this.logger.trace('transaction.delete', { id });
 
     // handle request
     try {
@@ -338,7 +338,7 @@ export default class TransactionController extends BaseController {
   public async getTransactionInvoices(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const transactionId = parseInt(id, 10);
-    this.logger.trace('Get transaction invoices', id, 'by user', req.token.user);
+    this.logger.trace('transaction.list_invoices', { id });
 
     try {
       const transaction = await Transaction.findOne({ where: { id: transactionId } });
@@ -370,7 +370,7 @@ export default class TransactionController extends BaseController {
    */
   public async validateTransaction(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as TransactionRequest;
-    this.logger.trace('Validate transaction', body, 'by user', req.token.user);
+    this.logger.trace('transaction.validate', { request: body });
 
     try {
       // Verify POS token for lesser tokens
@@ -408,7 +408,7 @@ export default class TransactionController extends BaseController {
   public async getTransactionPdf(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const transactionId = parseInt(id, 10);
-    this.logger.trace('Get transaction PDF', id, 'by user', req.token.user);
+    this.logger.trace('transaction.get_pdf', { id });
 
     try {
       const transaction = await Transaction.findOne({ where: { id: transactionId }, relations: {
