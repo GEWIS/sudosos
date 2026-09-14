@@ -76,7 +76,10 @@ export default class ContainerRevision extends BaseEntityWithoutId {
   @JoinTable()
   public products: ProductRevision[];
 
-  @ManyToMany(() => PointOfSaleRevision, (pointOfSale) => pointOfSale.containers)
+  @ManyToMany(() => PointOfSaleRevision, (pointOfSale) => pointOfSale.containers, {
+    onDelete: 'NO ACTION',
+    onUpdate: 'NO ACTION',
+  })
   public pointsOfSale: PointOfSaleRevision[];
 
   @BeforeUpdate()
