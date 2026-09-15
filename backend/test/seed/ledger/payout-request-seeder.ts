@@ -29,12 +29,15 @@ import dinero from 'dinero.js';
 export default class PayoutRequestSeeder extends WithManager {
   /**
    * Creates a single payout request for dev seeding.
-   * The member requests EUR 10.00 back to their bank account.
+   * The member requests money back to their bank account. Pass an admin to also
+   * approve the request, which settles it with a linked transfer.
    *
-   * @param member - The MEMBER user who requests the payout (alice).
+   * @param member - The MEMBER user who requests the payout.
+   * @param amountInCents - The requested amount in cents (defaults to EUR 10.00).
+   * @param approvedBy - The admin who approves the request, or undefined to leave it pending.
    */
-  public async init(member: User): Promise<PayoutRequest> {
-    const amount = dinero({ amount: 1000 });
+  public async init(member: User, amountInCents = 1000, approvedBy?: User): Promise<PayoutRequest> {
+    const amount = dinero({ amount: amountInCents });
     const payoutRequest = Object.assign(new PayoutRequest(), {
       requestedBy: member,
       amount,
@@ -44,12 +47,31 @@ export default class PayoutRequestSeeder extends WithManager {
 
     const saved = await this.manager.save(PayoutRequest, payoutRequest);
 
-    const status = Object.assign(new PayoutRequestStatus(), {
+    const statuses = [Object.assign(new PayoutRequestStatus(), {
       payoutRequest: saved,
       state: PayoutRequestState.CREATED,
-    });
-    await this.manager.save(PayoutRequestStatus, status);
-    saved.payoutRequestStatus = [status];
+    })];
+
+    if (approvedBy) {
+      statuses.push(Object.assign(new PayoutRequestStatus(), {
+        payoutRequest: saved,
+        state: PayoutRequestState.APPROVED,
+      }));
+
+      const transfer = await this.manager.save(Transfer, {
+        from: member,
+        to: null,
+        amountInclVat: amount,
+        description: 'Dev seed payout request',
+      });
+      saved.approvedBy = approvedBy;
+      transfer.payoutRequest = saved;
+      saved.transfer = transfer;
+    }
+
+    await this.manager.save(PayoutRequestStatus, statuses);
+    await this.manager.save(PayoutRequest, saved);
+    saved.payoutRequestStatus = statuses;
 
     return saved;
   }

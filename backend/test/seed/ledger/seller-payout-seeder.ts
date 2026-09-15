@@ -35,8 +35,9 @@ export default class SellerPayoutSeeder extends WithManager {
    *
    * @param organ - The ORGAN user requesting the payout (gewis).
    * @param amount - The payout amount in dinero.
+   * @param reference - The payout reference (defaults to 'DEV-001').
    */
-  public async init(organ: User, amount: Dinero): Promise<SellerPayout> {
+  public async init(organ: User, amount: Dinero, reference = 'DEV-001'): Promise<SellerPayout> {
     const now = new Date();
     const startDate = new Date('2020-01-01');
     startDate.setMilliseconds(0);
@@ -54,7 +55,7 @@ export default class SellerPayoutSeeder extends WithManager {
       amount,
       startDate,
       endDate: now,
-      reference: 'DEV-001',
+      reference,
     });
 
     return sellerPayout;
