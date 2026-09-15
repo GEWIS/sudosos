@@ -170,8 +170,18 @@ watch(
 watch(
   () => terminalPaymentStore.phase,
   async (newPhase) => {
+    if (newPhase === 'error') {
+      toast.add({
+        severity: 'error',
+        summary: errorMessage.value ?? 'The terminal payment failed.',
+        life: 5000,
+      });
+      return;
+    }
+
     if (newPhase !== 'paid') return;
 
+    toast.add({ severity: 'success', summary: 'Terminal payment successful', life: 5000 });
     playAudio(Sound.CASHOUT);
     await cartStore.clearAfterCheckout();
     terminalPaymentStore.reset();
