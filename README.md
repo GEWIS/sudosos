@@ -102,6 +102,12 @@ pnpm --filter <pkg> <script>  # anything narrower than the above
 
 ---
 
+## 🚀 Deployment
+
+The deployment of SudoSOS at GEWIS is done via Kubernetes. You can see the files over [here.](https://github.com/GEWIS/abc-deployments/tree/main/sudosos)
+
+---
+
 ## 🤝 Contributing
 
 We're a small student association, so contributions from members are how this project moves forward. The
