@@ -13,6 +13,8 @@ import {
 } from '@sudosos/themes';
 import { registerPrimeVue } from './registerPrimeVue';
 import { mockRouter } from './mockRouter';
+import { createSeededPinia } from './withPiniaState';
+import type { PiniaSeed } from './withPiniaState';
 import i18n from '../src/utils/i18nUtils';
 import 'primeicons/primeicons.css';
 
@@ -70,6 +72,7 @@ const preview: Preview = {
   },
   decorators: [
     (story, context) => {
+      createSeededPinia((context.parameters.pinia as { initialState?: PiniaSeed })?.initialState);
       const preset = themePresets[context.globals.theme as keyof typeof themePresets] ?? SudososRed;
       usePreset(preset);
       document.documentElement.classList.toggle('dark-mode', context.globals.colorMode === 'dark');
