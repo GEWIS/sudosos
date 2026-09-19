@@ -12,6 +12,7 @@ import {
   GepwnageYellow,
 } from '@sudosos/themes';
 import { registerPrimeVue } from './registerPrimeVue';
+import { mockRouter } from './mockRouter';
 import 'primeicons/primeicons.css';
 
 const themePresets = {
@@ -27,6 +28,7 @@ const themePresets = {
 
 setup((app) => {
   registerPrimeVue(app, SudososRed);
+  app.use(mockRouter);
 });
 
 // src/assets/main.css sets this same rule for the real app. PrimeVue's own generated
