@@ -28,3 +28,5 @@ coverage
 *.sw?
 
 .env
+*storybook.log
+storybook-static
