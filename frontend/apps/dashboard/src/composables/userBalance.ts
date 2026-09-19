@@ -32,7 +32,7 @@ export function useUserBalance() {
 
   onMounted(() => {
     userBalance.value = userStore.getCurrentUser.balance;
-    setTimeout(updateUserBalance, 1000);
+    setTimeout(() => void updateUserBalance(), 1000);
   });
 
   watch(userStore, () => {
