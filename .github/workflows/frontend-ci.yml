@@ -43,6 +43,12 @@ jobs:
           pnpm --filter @sudosos/sudosos-frontend-common build
       - name: Lint all frontend workspaces
         run: pnpm run frontend:lint
+      - name: Install Playwright browser for Storybook tests
+        run: pnpm --filter sudosos-dashboard exec playwright install --with-deps chromium
+      - name: Build Storybook
+        run: pnpm --filter sudosos-dashboard build-storybook
+      - name: Run Storybook tests
+        run: pnpm --filter sudosos-dashboard test
       - name: Build apps
         run: pnpm run frontend:build
       - name: i18n translation consistency
