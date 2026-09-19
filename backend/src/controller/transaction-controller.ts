@@ -41,6 +41,8 @@ import UserService from '../service/user-service';
 import InvoiceService from '../service/invoice-service';
 import POSTokenVerifier from '../helpers/pos-token-verifier';
 import { PdfError } from '../errors';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
 
 /**
  * Controller for the `transactions` module. Exposes the buyer-facing CRUD for transactions,
@@ -285,6 +287,13 @@ export default class TransactionController extends BaseController {
           res.status(400).json('Could not update transaction.');
           return;
         }
+        await new AuditService().log(req.token.user, {
+          action: AuditAction.TRANSACTION_UPDATE,
+          entityType: AuditEntityType.TRANSACTION,
+          entityId: transaction.id,
+          changes: { fromId: body.from, createdById: body.createdBy, pointOfSaleId: body.pointOfSale?.id },
+        });
+
         res.status(200).json(await transactionService.asTransactionResponse(transaction));
       } else {
         res.status(404).json('Transaction not found.');
@@ -313,7 +322,21 @@ export default class TransactionController extends BaseController {
     // handle request
     try {
       if (await Transaction.findOne({ where: { id: parseInt(id, 10) } })) {
-        await new TransactionService().deleteTransaction(parseInt(id, 10));
+        const transactionId = parseInt(id, 10);
+        const deleted = await new TransactionService().deleteTransaction(transactionId);
+        // A deleted transaction leaves nothing to look up later, so keep who it
+        // was for on the entry itself.
+        await new AuditService().log(req.token.user, {
+          action: AuditAction.TRANSACTION_DELETE,
+          entityType: AuditEntityType.TRANSACTION,
+          entityId: transactionId,
+          changes: {
+            fromId: deleted?.from?.id,
+            createdById: deleted?.createdBy?.id,
+            pointOfSaleId: deleted?.pointOfSale?.pointOfSaleId,
+          },
+        });
+
         res.status(204).json();
       } else {
         res.status(404).json('Transaction not found.');

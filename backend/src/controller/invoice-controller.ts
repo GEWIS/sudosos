@@ -47,6 +47,8 @@ import InvoiceUser from '../entity/user/invoice-user';
 import { parseInvoiceUserToResponse } from '../helpers/revision-to-response';
 import { AppDataSource } from '../database/database';
 import { NotImplementedError, PdfError } from '../errors';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
 import { PdfUrlResponse } from './response/simple-file-response';
 
 /**
@@ -261,8 +263,15 @@ export default class InvoiceController extends BaseController {
         description: body.description ?? '',
       };
 
-      const invoice: Invoice = await AppDataSource.manager.transaction(async (manager) =>
-        new InvoiceService(manager).createInvoice(params));
+      const invoice: Invoice = await AppDataSource.manager.transaction(async (manager) => {
+        const created = await new InvoiceService(manager).createInvoice(params);
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.INVOICE_CREATE,
+          entityType: AuditEntityType.INVOICE,
+          entityId: created.id,
+        });
+        return created;
+      });
       res.json(InvoiceService.asInvoiceResponse(invoice));
     } catch (error) {
       if (error instanceof NotImplementedError) {
@@ -302,8 +311,29 @@ export default class InvoiceController extends BaseController {
         byId: body.byId ?? req.token.user.id,
       };
 
-      const invoice: Invoice = await AppDataSource.manager.transaction(async (manager) =>
-        new InvoiceService(manager).updateInvoice(params));
+      // Diff against the invoice as it stood before this update, so the audit entry
+      // records what actually changed rather than a copy of the request body.
+      const previous = (await new InvoiceService().getInvoices({ invoiceId }))[0];
+
+      const invoice: Invoice = await AppDataSource.manager.transaction(async (manager) => {
+        const updated = await new InvoiceService(manager).updateInvoice(params);
+        if (updated && previous) {
+          const changes: Record<string, unknown> = {};
+          const previousState = InvoiceService.getLatestInvoiceStatus(previous.invoiceStatus).state;
+          if (params.state !== undefined && params.state !== previousState) changes.state = body.state;
+          if (body.addressee !== undefined && body.addressee !== previous.addressee) changes.addressee = body.addressee;
+          if (body.reference !== undefined && body.reference !== previous.reference) changes.reference = body.reference;
+          if (body.description !== undefined && body.description !== previous.description) changes.description = body.description;
+
+          await new AuditService(manager).log(req.token.user, {
+            action: AuditAction.INVOICE_UPDATE,
+            entityType: AuditEntityType.INVOICE,
+            entityId: invoiceId,
+            changes: Object.keys(changes).length > 0 ? changes : undefined,
+          });
+        }
+        return updated;
+      });
 
       res.json(InvoiceService.asBaseInvoiceResponse(invoice));
     } catch (error) {
@@ -330,8 +360,17 @@ export default class InvoiceController extends BaseController {
     this.logger.trace('invoice.delete', { id });
 
     try {
-      const invoice = await AppDataSource.manager.transaction(async (manager) =>
-        new InvoiceService(manager).deleteInvoice(invoiceId, req.token.user.id));
+      const invoice = await AppDataSource.manager.transaction(async (manager) => {
+        const deleted = await new InvoiceService(manager).deleteInvoice(invoiceId, req.token.user.id);
+        if (deleted) {
+          await new AuditService(manager).log(req.token.user, {
+            action: AuditAction.INVOICE_DELETE,
+            entityType: AuditEntityType.INVOICE,
+            entityId: invoiceId,
+          });
+        }
+        return deleted;
+      });
       if (!invoice) {
         res.status(404).json('Invoice not found.');
         return;
