@@ -17,6 +17,7 @@ import { createSeededPinia } from './withPiniaState';
 import type { PiniaSeed } from './withPiniaState';
 import i18n from '../src/utils/i18nUtils';
 import 'primeicons/primeicons.css';
+import '../src/assets/main.css';
 
 const themePresets = {
   'sudosos-red': SudososRed,
@@ -34,16 +35,6 @@ setup((app) => {
   app.use(mockRouter);
   app.use(i18n);
 });
-
-// src/assets/main.css sets this same rule for the real app. PrimeVue's own generated
-// tokens already include --p-body-background without needing that (Tailwind-laden)
-// stylesheet, so applying just this one rule here is enough for the canvas background
-// to invert with the color mode toolbar in Storybook too.
-if (typeof document !== 'undefined') {
-  const style = document.createElement('style');
-  style.textContent = 'body { background-color: var(--p-body-background); }';
-  document.head.appendChild(style);
-}
 
 const preview: Preview = {
   globalTypes: {

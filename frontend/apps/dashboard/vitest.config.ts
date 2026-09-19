@@ -8,6 +8,7 @@ import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { playwright } from '@vitest/browser-playwright';
 
 import vue from '@vitejs/plugin-vue';
+import tailwindcss from '@tailwindcss/vite';
 
 const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
@@ -20,9 +21,13 @@ export default defineConfig({
         plugins: [
           // A sibling vitest.config.ts takes full precedence over vite.config.ts (it does
           // not merge with it), so this project's own vite.config.ts is never loaded by
-          // vitest run. The Vue SFC compiler needs to be registered here explicitly,
-          // otherwise .vue files fail to parse when a story imports one.
+          // vitest run. The Vue SFC compiler and the Tailwind CSS plugin need to be
+          // registered here explicitly: without vue(), .vue files fail to parse when a
+          // story imports one; without tailwindcss(), preview.ts's import of
+          // src/assets/main.css never expands `@import 'tailwindcss'`, so utility classes
+          // like text-primary or border-surface silently do nothing under test.
           vue(),
+          tailwindcss(),
           // The plugin will run tests for the stories defined in your Storybook config
           // See options at: https://storybook.js.org/docs/writing-tests/integrations/vitest-addon#storybooktest
           storybookTest({ configDir: path.join(dirname, '.storybook') }),
