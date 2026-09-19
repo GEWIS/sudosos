@@ -27,6 +27,15 @@ export default defineConfig({
           // See options at: https://storybook.js.org/docs/writing-tests/integrations/vitest-addon#storybooktest
           storybookTest({ configDir: path.join(dirname, '.storybook') }),
         ],
+        // Same reason as above: vite.config.ts's resolve.alias is not inherited, so it is
+        // repeated here. Without it, any component or story importing via the '@/...' alias
+        // (as ContainerActionsForm.vue and its story do) fails to resolve at test time.
+        resolve: {
+          alias: {
+            '@': path.join(dirname, 'src'),
+            'sudosos-dashboard': dirname,
+          },
+        },
         test: {
           name: 'storybook',
           browser: {
