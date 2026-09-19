@@ -29,6 +29,7 @@ import { RequestHandler, Response } from 'express';
 import TokenHandler from '../authentication/token-handler';
 import JsonWebToken from '../authentication/json-web-token';
 import { RequestWithRawBody } from '../helpers/raw-body';
+import { setRequestActor } from '../helpers/request-context';
 
 /**
  * The configuration options for the token middleware.
@@ -99,6 +100,7 @@ export default class TokenMiddleware {
       res.status(403).end('Invalid token supplied.');
       return;
     }
+    setRequestActor(req.token.user.id);
 
     // Refresh the token if needed.
     // There is no need to check if now is after the expiry, as verification would've failed.

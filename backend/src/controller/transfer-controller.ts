@@ -140,7 +140,7 @@ export default class TransferController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnTransferAggregate(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get transfer aggregate by user', req.token.user);
+    this.logger.trace('transfer.get_aggregate');
 
     let filters;
     try {
@@ -174,7 +174,7 @@ export default class TransferController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnTransferSummary(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get transfer summary by user', req.token.user);
+    this.logger.trace('transfer.get_summary');
 
     let filters;
     try {
@@ -225,7 +225,7 @@ export default class TransferController extends BaseController {
    */
   public async returnAllTransfers(req: RequestWithToken, res: Response): Promise<void> {
     const { body } = req;
-    this.logger.trace('Get all transfers by user', body, 'by user', req.token.user);
+    this.logger.trace('transfer.list', { filters: body });
 
     let filters;
     let take;
@@ -263,7 +263,7 @@ export default class TransferController extends BaseController {
    */
   public async returnTransfer(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get single transfer', id, 'by user', req.token.user);
+    this.logger.trace('transfer.get', { id });
     try {
       const parsedId = parseInt(id, 10);
       const [transfers] = await new TransferService().getTransfers({ id: parsedId }, {});
@@ -292,7 +292,7 @@ export default class TransferController extends BaseController {
    */
   public async postTransfer(req: RequestWithToken, res: Response) : Promise<void> {
     const request = req.body as TransferRequest;
-    this.logger.trace('Post transfer', request, 'by user', req.token.user);
+    this.logger.trace('transfer.create', { request });
 
     const transferService = new TransferService();
 
@@ -323,7 +323,7 @@ export default class TransferController extends BaseController {
      */
   public async deleteTransfer(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Delete transfer', id, 'by user', req.token.user);
+    this.logger.trace('transfer.delete', { id });
 
     try {
       await new TransferService().deleteTransfer(parseInt(id));
@@ -355,7 +355,7 @@ export default class TransferController extends BaseController {
   public async getTransferPdf(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const transferId = parseInt(id, 10);
-    this.logger.trace('Get transfer PDF', id, 'by user', req.token.user);
+    this.logger.trace('transfer.get_pdf', { id });
 
     try {
       const transfer = await Transfer.findOne({
