@@ -29,11 +29,13 @@
         :paginator="true"
         :rows="rows"
         :rows-per-page-options="[5, 10, 25, 50, 100]"
+        :selection="selection"
         table-style="min-width: 50rem"
         :total-records="totalRecords"
         :value="records"
         v-bind="dataTableProps"
         @page="onPage"
+        @update:selection="$emit('update:selection', $event)"
       >
         <slot :is-loading="isLoading" name="columns" />
       </DataTable>
@@ -61,7 +63,13 @@ withDefaults(
     useYears?: boolean;
     searchPlaceholder?: string;
     createLabel?: string;
-    dataTableProps?: Omit<DataTableProps, 'value' | 'rows' | 'totalRecords' | 'lazy' | 'paginator'>;
+    /**
+     * Extra DataTable props. `selection` is excluded on purpose: `v-bind="dataTableProps"`
+     * is applied after `:selection` (vue/attributes-order requires that order), so a
+     * `selection` key here would silently override the v-model. Use `v-model:selection`.
+     */
+    dataTableProps?: Omit<DataTableProps, 'value' | 'rows' | 'totalRecords' | 'lazy' | 'paginator' | 'selection'>;
+    selection?: unknown[];
   }>(),
   {
     useYears: true,
@@ -70,12 +78,14 @@ withDefaults(
     searchPlaceholder: undefined,
     createLabel: undefined,
     dataTableProps: undefined,
+    selection: undefined,
   },
 );
 
 const emit = defineEmits<{
   'update:year': [value: string];
   'update:search': [value: string];
+  'update:selection': [value: unknown[]];
   search: [];
   create: [];
   page: [event: DataTablePageEvent];
