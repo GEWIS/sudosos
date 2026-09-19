@@ -41,6 +41,8 @@
     "areYouSure": "Weet je het zeker?",
     "owner": "Eigenaar",
     "na": "N/A",
+    "from": "Van",
+    "to": "Naar",
     "back": "Terug",
     "signOut": "Uitloggen",
     "createdAt": "Aangemaakt op",
@@ -297,7 +299,8 @@
       "profile": "Profiel",
       "error": "Fout",
       "wrapped": "Wrapped",
-      "financialOverview": "Financieel Overzicht"
+      "financialOverview": "Financieel Overzicht",
+      "transferView": "Transactieoverzicht"
     }
   }
 }

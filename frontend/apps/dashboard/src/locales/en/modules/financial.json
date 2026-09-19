@@ -242,6 +242,33 @@
           "downloadSuccess": "Report successfully downloaded.",
           "downloadError": "Failed to download report. Please try again."
         }
+      },
+      "transfer": {
+        "titleForType": "{transferType} transfers",
+        "types": {
+          "deposits": "Deposit",
+          "sellerPayouts": "Seller payout",
+          "invoices": "Invoice",
+          "creditInvoices": "Credit invoice",
+          "fines": "Fine",
+          "waivedFines": "Waived fine",
+          "adminCosts": "Admin cost",
+          "writeOffs": "Write-off",
+          "payoutRequests": "Payout request",
+          "manualCreations": "Manual creation",
+          "manualDeletions": "Manual deletion"
+        },
+        "saldo": "Saldo (€)",
+        "widget": {
+          "count": "Transfers",
+          "credit": "Credit (€)",
+          "debit": "Debit (€)",
+          "balance": "Balance (€)",
+          "selected": "Selected ({count})",
+          "selectedAmount": "Amount (€)",
+          "remaining": "Remaining (€)",
+          "fetchError": "Failed to load the transfer totals. Please try again."
+        }
       }
     }
   }

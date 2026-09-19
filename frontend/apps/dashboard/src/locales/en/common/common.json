@@ -42,6 +42,8 @@
     "owner": "Owner",
     "back": "Back",
     "na": "N/A",
+    "from": "From",
+    "to": "To",
     "signOut": "Sign out",
     "createdAt": "Created at",
     "updatedAt": "Updated at",
@@ -297,7 +299,8 @@
       "profile": "Profile",
       "error": "Error",
       "wrapped": "Wrapped",
-      "financialOverview": "Financial Overview"
+      "financialOverview": "Financial Overview",
+      "transferView": "Transfer Overview"
     }
   }
 }
