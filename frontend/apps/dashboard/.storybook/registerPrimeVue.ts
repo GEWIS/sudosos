@@ -1,3 +1,4 @@
+/* eslint vue/multi-word-component-names: 0 */
 import type { App } from 'vue';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
@@ -64,6 +65,7 @@ export function registerPrimeVue(app: App, preset: typeof SudososRed) {
   app.use(ToastService);
   app.use(ConfirmationService);
 
+  // eslint-disable-next-line vue/no-reserved-component-names
   app.component('Button', Button);
   app.component('InputText', InputText);
   app.component('ToggleSwitch', ToggleSwitch);
@@ -73,8 +75,11 @@ export function registerPrimeVue(app: App, preset: typeof SudososRed) {
   app.component('DataTable', DataTable);
   app.component('DataView', DataView);
   app.component('InputNumber', InputNumber);
+  // eslint-disable-next-line vue/no-reserved-component-names
   app.component('Image', Image);
+  // eslint-disable-next-line vue/no-reserved-component-names
   app.component('Dialog', Dialog);
+  // eslint-disable-next-line vue/no-reserved-component-names
   app.component('Select', Select);
   app.component('Checkbox', Checkbox);
   app.component('ScrollPanel', ScrollPanel);

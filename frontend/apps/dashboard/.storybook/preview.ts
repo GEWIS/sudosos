@@ -11,11 +11,11 @@ import {
   DefiLilac,
   GepwnageYellow,
 } from '@sudosos/themes';
+import i18n from '../src/utils/i18nUtils';
 import { registerPrimeVue } from './registerPrimeVue';
 import { mockRouter } from './mockRouter';
 import { createSeededPinia } from './withPiniaState';
 import type { PiniaSeed } from './withPiniaState';
-import i18n from '../src/utils/i18nUtils';
 import 'primeicons/primeicons.css';
 import '../src/assets/main.css';
 
