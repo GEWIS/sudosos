@@ -5,5 +5,6 @@ export const mockRouter = createRouter({
   routes: [
     { path: '/', name: 'home', component: { template: '<div />' } },
     { path: '/mock/:id?', name: 'mock-route', component: { template: '<div />' } },
+    { path: '/user/:userId', name: 'user', component: { template: '<div />' } },
   ],
 });
