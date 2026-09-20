@@ -84,31 +84,35 @@ const i18n = createI18n({
   },
 });
 
+// Yup gives nested fields a path like "updatedAmounts[0].amount". Only the last
+// segment identifies the field itself, so that's what we look up a translation for.
+const lastPathSegment = (path?: string): string =>
+  (path ?? '')
+    .split('.')
+    .pop()
+    ?.replace(/\[\d+\]$/, '') ?? '';
+
+const humanizeFieldName = (segment: string): string =>
+  segment.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/^./, (char) => char.toUpperCase());
+
+// Falls back to a humanized field name instead of a missing-key warning, since new
+// yup schema fields are easy to add without remembering a matching fieldNames entry.
+const fieldName = (path?: string): string => {
+  const segment = lastPathSegment(path);
+  const key = `common.validation.fieldNames.${segment}`;
+  return i18n.global.te(key) ? i18n.global.t(key) : humanizeFieldName(segment);
+};
+
 setLocale({
   mixed: {
-    required: ({ path }) =>
-      i18n.global.t('common.validation.required', {
-        path: i18n.global.t(`common.validation.fieldNames.${path}`),
-      }),
+    required: ({ path }) => i18n.global.t('common.validation.required', { path: fieldName(path) }),
   },
   string: {
-    min: ({ path, min }) =>
-      i18n.global.t('common.validation.string.min', {
-        path: i18n.global.t(`common.validation.fieldNames.${path}`),
-        min,
-      }),
-    max: ({ path, max }) =>
-      i18n.global.t('common.validation.string.max', {
-        path: i18n.global.t(`common.validation.fieldNames.${path}`),
-        max,
-      }),
+    min: ({ path, min }) => i18n.global.t('common.validation.string.min', { path: fieldName(path), min }),
+    max: ({ path, max }) => i18n.global.t('common.validation.string.max', { path: fieldName(path), max }),
   },
   number: {
-    min: ({ path, min }) =>
-      i18n.global.t('common.validation.number.min', {
-        path: i18n.global.t(`common.validation.fieldNames.${path}`),
-        min,
-      }),
+    min: ({ path, min }) => i18n.global.t('common.validation.number.min', { path: fieldName(path), min }),
   },
 });
 
