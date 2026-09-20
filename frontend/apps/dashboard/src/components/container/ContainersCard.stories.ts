@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
+import { expect, within } from 'storybook/test';
 import type {
   BaseUserResponse,
   BaseVatGroupResponse,
@@ -102,11 +103,21 @@ export const Default: Story = {
   args: {
     containers: mockContainers,
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Bar')).toBeVisible();
+    await expect(canvas.getByText('Kitchen')).toBeVisible();
+    // showCreate is true in meta.args, but no permission is seeded, so it must stay hidden.
+    await expect(canvas.queryByRole('button', { name: 'Create' })).not.toBeInTheDocument();
+  },
 };
 
 export const Empty: Story = {
   args: {
     containers: [],
+  },
+  play: async ({ canvasElement }) => {
+    await expect(canvasElement.querySelectorAll('[data-pc-name="accordionpanel"]')).toHaveLength(0);
   },
 };
 
@@ -120,5 +131,9 @@ export const WithPermissions: Story = {
         user: { current: { rolesWithPermissions: [fullContainerPermissionsRole] } },
       },
     },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('button', { name: 'Create' })).toBeVisible();
   },
 };

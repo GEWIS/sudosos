@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
+import { expect, userEvent, within } from 'storybook/test';
+import { mockRouter } from '../../.storybook/mockRouter';
 import CardComponent from './CardComponent.vue';
 
 const meta: Meta<typeof CardComponent> = {
@@ -19,6 +21,11 @@ export const Default: Story = {
     },
     template: `<CardComponent v-bind="args">Card body content</CardComponent>`,
   }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('CONTAINERS')).toBeVisible();
+    await expect(canvas.getByText('Card body content')).toBeVisible();
+  },
 };
 
 export const WithRouterLink: Story = {
@@ -28,6 +35,14 @@ export const WithRouterLink: Story = {
     routerLink: 'mock-route',
     routerParams: { id: '1' },
     action: 'View all',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'VIEW ALL' }));
+    await expect(mockRouter.currentRoute.value.name).toBe('mock-route');
+    await expect(mockRouter.currentRoute.value.params.id).toBe('1');
+    // mockRouter is a shared singleton across every story (see the dashboard README), so put it back.
+    await mockRouter.push('/');
   },
 };
 
@@ -46,4 +61,8 @@ export const WithFooterSlot: Story = {
       </CardComponent>
     `,
   }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Custom footer')).toBeVisible();
+  },
 };

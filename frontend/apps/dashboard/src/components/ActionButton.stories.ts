@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import { ref } from 'vue';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import ActionButton from './ActionButton.vue';
 
 const meta: Meta<typeof ActionButton> = {
@@ -67,12 +68,28 @@ export const Default: Story = {
     },
     template: '<ActionButton v-bind="args" :submitting="submitting" :result="result" @click="handleClick" />',
   }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button');
+    await expect(button).not.toBeDisabled();
+    await userEvent.click(button);
+    await expect(button).toBeDisabled();
+    await waitFor(() => expect(button).toHaveClass('p-button-success'), { timeout: 2000 });
+  },
 };
 
 export const Submitting: Story = {
   args: { submitting: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('button')).toBeDisabled();
+  },
 };
 
 export const WithResult: Story = {
   args: { result: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('button')).toHaveClass('p-button-success');
+  },
 };
