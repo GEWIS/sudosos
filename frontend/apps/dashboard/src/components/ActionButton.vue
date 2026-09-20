@@ -27,6 +27,7 @@ const buttonIcon = ref('pi pi-check');
 const buttonSeverity = ref('primary');
 
 const updateResult = () => {
+  if (props.result === null) return;
   if (props.result) {
     buttonSeverity.value = 'success';
     buttonIcon.value = 'pi pi-check';
@@ -41,6 +42,7 @@ watch(
   () => {
     updateResult();
   },
+  { immediate: true },
 );
 
 watch(
