@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import InputSpan from './InputSpan.vue';
 
 const meta: Meta<typeof InputSpan> = {
@@ -141,5 +141,27 @@ export const WithError: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('This field is required')).toBeVisible();
+  },
+};
+
+export const UnsetBooleanDoesNotEmitOnMount: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A boolean field with no bound value does not emit update:value on mount. The mount handler falls back to the type-appropriate default, so an unset boolean stays unset.',
+      },
+    },
+  },
+  args: {
+    label: 'Active',
+    type: 'boolean',
+    value: undefined,
+    'onUpdate:value': fn(),
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('switch')).not.toBeChecked();
+    await expect(args['onUpdate:value']).not.toHaveBeenCalled();
   },
 };
