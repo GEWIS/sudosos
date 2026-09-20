@@ -75,6 +75,10 @@ export const Default: Story = {
     await userEvent.click(button);
     await expect(button).toBeDisabled();
     await waitFor(() => expect(button).toHaveClass('p-button-success'), { timeout: 2000 });
+    // A new attempt clears the success styling from the previous one while it loads.
+    await userEvent.click(button);
+    await expect(button).not.toHaveClass('p-button-success');
+    await waitFor(() => expect(button).toHaveClass('p-button-success'), { timeout: 2000 });
   },
 };
 
