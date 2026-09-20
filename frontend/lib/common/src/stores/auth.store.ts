@@ -51,6 +51,12 @@ interface AuthStoreState {
   token: string | null;
   acceptedToS: string | null;
 }
+
+// The JWT embeds the backend's raw User entity, not the UserResponse DTO a real
+// login response gives us. It never has a flat memberId: that field only exists
+// once the backend's asUserResponse() computes it from the separate MemberUser
+// relation, a step token decoding skips entirely.
+type RawJwtUser = UserResponse & { memberUser?: { memberId: number } };
 export const useAuthStore = defineStore('auth', {
   state: (): AuthStoreState => ({
     user: null,
@@ -229,7 +235,8 @@ export const useAuthStore = defineStore('auth', {
       const token = getTokenFromStorage(tokenKey);
       if (!token.token) return;
       const decoded = jwtDecode<JwtPayload>(token.token) as AuthStoreState;
-      this.user = decoded.user;
+      const rawUser: RawJwtUser | null = decoded.user;
+      this.user = rawUser ? { ...rawUser, memberId: rawUser.memberId ?? rawUser.memberUser?.memberId } : rawUser;
       this.token = token.token;
       this.organs = decoded.organs;
       this.acceptedToS = decoded.acceptedToS;
