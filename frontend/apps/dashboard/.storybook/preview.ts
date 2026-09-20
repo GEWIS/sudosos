@@ -19,17 +19,8 @@ import type { PiniaSeed } from './withPiniaState';
 import 'primeicons/primeicons.css';
 import '../src/assets/main.css';
 
-// Extending this setup with more stories, a few things aren't obvious from the code alone:
-// - Pinia seeds REPLACE a store's entire state, they don't merge with it. See the doc
-//   comment on createSeededPinia in ./withPiniaState.ts.
-// - Seeding Pinia state does not intercept store actions. A component that calls a store
-//   action on user interaction (e.g. ContainersCard.vue's accordion-expand triggering
-//   containerStore.fetchContainer) still hits the real network in Storybook and fails.
-//   Stub that specific method with a per-story vi.fn(), not a seeding parameter.
-// - mockRouter (./mockRouter.ts) is a shared singleton with real navigation state across
-//   all stories, not a fresh instance per story.
-// - registerPrimeVue.ts must be updated by hand whenever src/main.ts registers a new
-//   global PrimeVue component. Nothing keeps the two files in sync automatically.
+// Adding a new story? The Storybook section of ../README.md covers the provider
+// patterns every existing story maps onto, plus a few gotchas that aren't obvious here.
 
 const themePresets = {
   'sudosos-red': SudososRed,
