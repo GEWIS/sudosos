@@ -4,10 +4,9 @@
       "copyright": "© 2026 GEWIS",
       "localBuild": "Lokalna kompilacja",
       "contact": "Kontakt",
-      "mainContact": "Główny kontakt",
-      "incorrectTransactions": "Niepoprawne transakcje",
+      "financialMatters": "Sprawy finansowe",
       "security": "Bezpieczeństwo",
-      "featureRequests": "Propozycje funkcji",
+      "codeBugsFeatureRequests": "Code, błędy i propozycje funkcji",
       "termsOfService": "Regulamin",
       "version": "Wersja"
     }
