@@ -21,7 +21,6 @@ export default defineConfig([
       '@intlify/vue-i18n/no-unused-keys': ['error', { enableFix: false, extensions: ['.js', '.vue', '.ts'] }],
       '@intlify/vue-i18n/no-duplicate-keys-in-locale': 'error',
     },
-    ignores: ['/src/components/icons/*.vue'],
     languageOptions: {
       parser: vueParser,
       parserOptions: {
