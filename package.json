@@ -31,7 +31,7 @@
     "concurrently": "^9.2.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "prettier": "^3.7.4",
+    "prettier": "^3.9.8",
     "@gewis/prettier-config": "^2.2.2"
   },
   "lint-staged": {
