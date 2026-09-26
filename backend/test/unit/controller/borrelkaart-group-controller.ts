@@ -47,6 +47,10 @@ import { DineroObjectRequest } from '../../../src/controller/request/dinero-requ
 import { truncateAllTables } from '../../helpers/database-helpers';
 import { finishTestDB } from '../../helpers/test-helpers';
 import { ensureProductionRoles, signTokenFor } from '../../helpers/user-factory';
+import fs from 'fs';
+import VoucherGroupPdfService from '../../../src/service/pdf/voucher-group-pdf-service';
+import { VOUCHER_GROUP_PDF_LOCATION } from '../../../src/files/storage';
+import { PdfError } from '../../../src/errors';
 
 const { expect, request } = chai;
 
@@ -544,6 +548,111 @@ describe('VoucherGroupController', async (): Promise<void> => {
 
       expect(res.status).to.equal(403);
       expect(res.body).to.be.empty;
+    });
+  });
+
+  describe('GET /vouchergroups/:id/pdf', () => {
+    let compileHtmlStub: Sinon.SinonStub;
+
+    beforeEach(() => {
+      fs.mkdirSync(VOUCHER_GROUP_PDF_LOCATION, { recursive: true });
+      compileHtmlStub = Sinon.stub(VoucherGroupPdfService.prototype, 'compileHtml' as any)
+        .resolves(Buffer.from('PDF content'));
+    });
+
+    afterEach(() => {
+      compileHtmlStub.restore();
+    });
+
+    it('should return an HTTP 200 with the pdf download name if admin', async () => {
+      await saveBKG(ctx.validVoucherGroupReq);
+
+      const res = await request(ctx.app)
+        .get('/vouchergroups/1/pdf')
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+
+      expect(res.status).to.equal(200);
+      expect(ctx.specification.validateModel('PdfUrlResponse', res.body, false, true).valid).to.be.true;
+      expect(res.body.pdf).to.be.a('string').and.not.be.empty;
+      expect(compileHtmlStub.calledOnce).to.be.true;
+
+      const html = compileHtmlStub.firstCall.args[0] as string;
+      expect(html).to.include(ctx.validVoucherGroupReq.addressee);
+      expect(html).to.include(ctx.validVoucherGroupReq.street);
+
+      const voucherGroup = await VoucherGroup.findOne({ where: { id: 1 }, relations: { pdf: true } });
+      expect(voucherGroup.pdf.downloadName).to.equal(res.body.pdf);
+    });
+    it('should reuse the stored pdf when nothing changed, and regenerate when forced', async () => {
+      await saveBKG(ctx.validVoucherGroupReq);
+
+      await request(ctx.app)
+        .get('/vouchergroups/1/pdf')
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      await request(ctx.app)
+        .get('/vouchergroups/1/pdf')
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(compileHtmlStub.callCount).to.equal(1);
+
+      await request(ctx.app)
+        .get('/vouchergroups/1/pdf')
+        .query({ force: true })
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(compileHtmlStub.callCount).to.equal(2);
+    });
+    it('should regenerate the pdf when the address changed', async () => {
+      await saveBKG(ctx.validVoucherGroupReq);
+
+      await request(ctx.app)
+        .get('/vouchergroups/1/pdf')
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      await VoucherGroup.update(1, { city: 'Utrecht' });
+      await request(ctx.app)
+        .get('/vouchergroups/1/pdf')
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+
+      expect(compileHtmlStub.callCount).to.equal(2);
+      expect(compileHtmlStub.secondCall.args[0]).to.include('Utrecht');
+    });
+    it('should return an HTTP 400 if the voucher group has no address', async () => {
+      await saveBKG(ctx.validVoucherGroupReq);
+      await VoucherGroup.update(1, { addressee: '', street: '' });
+
+      const res = await request(ctx.app)
+        .get('/vouchergroups/1/pdf')
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+
+      expect(res.status).to.equal(400);
+      expect(res.body).to.equal('Voucher group has no address.');
+      expect(compileHtmlStub.called).to.be.false;
+    });
+    it('should return an HTTP 404 if the voucher group does not exist', async () => {
+      const res = await request(ctx.app)
+        .get('/vouchergroups/1/pdf')
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+
+      expect(res.status).to.equal(404);
+      expect(res.body).to.equal('Voucher group not found.');
+    });
+    it('should return an HTTP 403 if not admin', async () => {
+      await saveBKG(ctx.validVoucherGroupReq);
+
+      const res = await request(ctx.app)
+        .get('/vouchergroups/1/pdf')
+        .set('Authorization', `Bearer ${ctx.token}`);
+
+      expect(res.status).to.equal(403);
+      expect(res.body).to.be.empty;
+    });
+    it('should return an HTTP 502 if pdf generation fails', async () => {
+      await saveBKG(ctx.validVoucherGroupReq);
+      compileHtmlStub.rejects(new PdfError('HTML PDF generation failed'));
+
+      const res = await request(ctx.app)
+        .get('/vouchergroups/1/pdf')
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+
+      expect(res.status).to.equal(502);
     });
   });
 });

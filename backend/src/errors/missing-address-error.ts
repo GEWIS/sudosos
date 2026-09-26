@@ -19,22 +19,22 @@
  */
 
 /**
- * This is the module page of the locations.
+ * This is the module page of the missing-address-error.
  *
- * @module internal/files/storage
+ * @module internal/errors
  */
 
-export const ROOT_FILE_LOCATION = './data';
-export const SIMPLE_FILE_LOCATION = './data/simple';
-export const PRODUCT_IMAGE_LOCATION = './data/products';
-export const BANNER_IMAGE_LOCATION = './data/banners';
+/**
+ * Thrown when a document that must be addressed (e.g. a voucher group PDF)
+ * is generated for an entity without a complete address.
+ */
+export class MissingAddressError extends Error {
+  constructor(message?: string) {
+    super(message);
+    this.name = 'MissingAddressError';
 
-export const INVOICE_PDF_LOCATION = './data/invoices';
-
-export const SELLER_PAYOUT_PDF_LOCATION = './data/seller_payouts';
-
-export const PAYOUT_REQUEST_PDF_LOCATION = './data/payout_requests';
-
-export const WRITE_OFF_PDF_LOCATION = './data/write_offs';
-
-export const VOUCHER_GROUP_PDF_LOCATION = './data/voucher_groups';
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, MissingAddressError);
+    }
+  }
+}

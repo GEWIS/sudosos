@@ -33,6 +33,8 @@ import { RequestWithToken } from '../middleware/token-middleware';
 import VoucherGroup from '../entity/user/voucher-group';
 import VoucherGroupService from '../service/voucher-group-service';
 import { parseRequestPagination, toResponse } from '../helpers/pagination';
+import { MissingAddressError, PdfError } from '../errors';
+import { PdfUrlResponse } from './response/simple-file-response';
 
 export default class VoucherGroupController extends BaseController {
   private logger: Logger = log4js.getLogger('VoucherGroupController');
@@ -74,6 +76,12 @@ export default class VoucherGroupController extends BaseController {
           body: { modelName: 'VoucherGroupAddressRequest' },
           policy: async (req) => this.roleManager.can(req.token.roles, 'update', 'all', 'VoucherGroup', ['*']),
           handler: this.updateVoucherGroupAddress.bind(this),
+        },
+      },
+      '/:id(\\d+)/pdf': {
+        GET: {
+          policy: async (req) => this.roleManager.can(req.token.roles, 'get', 'all', 'VoucherGroup', ['*']),
+          handler: this.getVoucherGroupPdf.bind(this),
         },
       },
     };
@@ -266,6 +274,52 @@ export default class VoucherGroupController extends BaseController {
       );
     } catch (error) {
       this.logger.error('Could not update voucher group address:', error);
+      res.status(500).json('Internal server error.');
+    }
+  }
+
+  /**
+   * GET /vouchergroups/{id}/pdf
+   * @summary Get the statement pdf of a voucher group. Requires the group to have a complete address.
+   * @operationId getVoucherGroupPdf
+   * @tags vouchergroups - Operations of voucher group controller
+   * @security JWT
+   * @param {integer} id.path.required - The id of the voucher group
+   * @param {boolean} force.query - Force creation of pdf
+   * @return {PdfUrlResponse} 200 - The pdf location information.
+   * @return {string} 400 - Voucher group has no address
+   * @return {string} 404 - Voucher group not found
+   * @return {string} 500 - Internal server error
+   * @return {string} 502 - PDF generator service failed
+   */
+  public async getVoucherGroupPdf(req: RequestWithToken, res: Response): Promise<void> {
+    const { id } = req.params;
+    const bkgId = Number.parseInt(id, 10);
+    this.logger.trace('Get voucher group PDF', id, 'by user', req.token.user);
+
+    try {
+      const voucherGroup = await VoucherGroup.findOne({
+        where: { id: bkgId },
+        relations: { pdf: true, vouchers: { user: true } },
+      });
+      if (!voucherGroup) {
+        res.status(404).json('Voucher group not found.');
+        return;
+      }
+
+      const pdf = await voucherGroup.getOrCreatePdf(req.query.force === 'true');
+
+      res.status(200).json({ pdf: pdf.downloadName } as PdfUrlResponse);
+    } catch (error) {
+      if (error instanceof MissingAddressError) {
+        res.status(400).json('Voucher group has no address.');
+        return;
+      }
+      this.logger.error('Could not get voucher group PDF:', error);
+      if (error instanceof PdfError) {
+        res.status(502).json('PDF Generator service failed.');
+        return;
+      }
       res.status(500).json('Internal server error.');
     }
   }
