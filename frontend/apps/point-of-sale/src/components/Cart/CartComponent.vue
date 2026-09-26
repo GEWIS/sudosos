@@ -20,7 +20,7 @@
       </span>
     </div>
     <div v-if="!shouldShowTransactions || !showHistory" class="flex-col flex-grow-1 gap-2 mt-4 overflow-y-auto">
-      <div v-for="item in cartItems" :key="item.product.id">
+      <div v-for="item in cartItems" :key="cartLineKey(item)">
         <CartItemComponent :cart-product="item" />
       </div>
     </div>
@@ -40,7 +40,7 @@
       </div>
     </div>
     <div class="flex-col mt-3">
-      <CartActionsComponent @select-creator="emit('selectCreator')" />
+      <CartActionsComponent :flow="flow" />
     </div>
   </div>
 </template>
@@ -48,13 +48,18 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { StoreGeneric, storeToRefs } from 'pinia';
-import { useCartStore } from '@/stores/cart.store';
+import { cartLineKey, useCartStore } from '@/stores/cart.store';
 import CartItemComponent from '@/components/Cart/CartItemComponent.vue';
 import { formatPrice } from '@/utils/FormatUtils';
 import TransactionHistoryComponent from '@/components/Cart/TransactionHistory/TransactionHistoryComponent.vue';
 import CartActionsComponent from '@/components/Cart/CartActionsComponent.vue';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import { useCartTransactions } from '@/composables/useCartTransactions';
+import type { CheckoutFlow } from '@/composables/useCheckoutFlow';
+
+defineProps<{
+  flow: CheckoutFlow;
+}>();
 
 const cartStore = useCartStore();
 const posStore = usePointOfSaleStore();
@@ -106,16 +111,14 @@ watch(
   },
 );
 
-const emit = defineEmits(['selectUser', 'selectCreator']);
+const emit = defineEmits(['selectUser']);
 const selectUser = () => {
   emit('selectUser');
 };
 
-const formattedBalanceAfter = computed(() => {
-  if (cartStore.buyerBalance == null) return null;
-  const price = cartStore.buyerBalance.amount - totalPrice.value;
-  return formatPrice(price);
-});
+const formattedBalanceAfter = computed(() =>
+  cartStore.balanceAfterPurchase == null ? null : formatPrice(cartStore.balanceAfterPurchase),
+);
 </script>
 
 <style scoped lang="scss">

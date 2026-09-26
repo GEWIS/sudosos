@@ -13,6 +13,7 @@ import Dialog from 'primevue/dialog';
 import Select from 'primevue/select';
 import Toast from 'primevue/toast';
 import Card from 'primevue/card';
+import Drawer from 'primevue/drawer';
 
 import Message from 'primevue/message';
 import ToastService from 'primevue/toastservice';
@@ -55,6 +56,8 @@ app.component('Message', Message);
 app.component('Toast', Toast);
 // eslint-disable-next-line
 app.component('Card', Card);
+// eslint-disable-next-line
+app.component('Drawer', Drawer);
 app.use(createPinia());
 
 void beforeLoad()

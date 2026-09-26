@@ -19,6 +19,11 @@ export interface CartProduct {
   count: number;
 }
 
+/** Cart lines are unique per container, product and product revision. */
+export function cartLineKey(item: CartProduct): string {
+  return `${item.container.id}-${item.product.id}-${item.product.revision}`;
+}
+
 interface CartState {
   products: CartProduct[];
   buyer: UserResponse | null;
@@ -35,6 +40,11 @@ export const useCartStore = defineStore('cart', {
     lockedIn: null,
   }),
   getters: {
+    /** The buyer's balance once the cart is paid, or null if it is not known. */
+    balanceAfterPurchase(): number | null {
+      if (this.buyerBalance == null) return null;
+      return this.buyerBalance.amount - this.getTotalPrice;
+    },
     cartTotalCount(): number {
       return this.products.reduce((total, product) => total + product.count, 0);
     },

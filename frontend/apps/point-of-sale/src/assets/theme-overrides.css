@@ -3,4 +3,8 @@
   --p-progressspinner-color-two: var(--p-primary-color);
   --p-progressspinner-color-three: var(--p-primary-color);
   --p-progressspinner-color-four: var(--p-primary-color);
+
+  /* Shared by the kiosk and mobile checkout buttons. */
+  --pos-checkout-color: #0055fd;
+  --pos-checkout-countdown-color: green;
 }

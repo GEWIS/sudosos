@@ -2,6 +2,7 @@ import { computed, ref } from 'vue';
 import { logoutService } from '@/services/logoutService';
 import { useCartStore } from '@/stores/cart.store';
 import { useSettingStore } from '@/stores/settings.store';
+import { useTerminalPaymentStore } from '@/stores/terminalPayment.store';
 import { useCheckoutTimer } from '@/composables/useCheckoutTimer';
 import { playAudio, Sound } from '@/utils/audioUtil';
 
@@ -12,13 +13,15 @@ const STEEKPROEF_CHANCE = 0.45;
  * and April Fools interludes, and anonymous terminal payments. Render
  * CheckoutDialogs with the returned flow to show the dialogs it drives.
  *
+ * CashierView creates the flow once and hands it to both the kiosk and mobile
+ * layouts, so a checkout in progress survives switching between them.
+ *
  * @param onSelectCreator called in borrel mode, where checking out means
  *   picking which POS associate the sale is created by.
  */
 export function useCheckoutFlow(onSelectCreator: () => void) {
   const settings = useSettingStore();
   const cartStore = useCartStore();
-  const cartItems = cartStore.getProducts;
   const borrelMode = computed(() => settings.isBorrelmode);
   const buyer = computed(() => cartStore.getBuyer);
 
@@ -39,16 +42,20 @@ export function useCheckoutFlow(onSelectCreator: () => void) {
   });
 
   const enabled = computed(() => {
-    return cartItems.length > 0 && !!buyer.value;
+    return cartStore.getProducts.length > 0 && !!buyer.value;
   });
 
-  const showTerminalPayment = ref(false);
+  const terminalPaymentStore = useTerminalPaymentStore();
+  const showTerminalPayment = computed({
+    get: () => terminalPaymentStore.dialogVisible,
+    set: (value: boolean) => (terminalPaymentStore.dialogVisible = value),
+  });
 
   // Terminal payments are anonymous for now: the sale is booked in the name of
   // the POS itself. That only makes sense in borrel mode, where "select no one"
   // exists -- an authenticated POS always has someone to charge, so the
   // terminal button is only rendered in borrel mode.
-  const terminalEnabled = computed(() => cartItems.length > 0 && !buyer.value);
+  const terminalEnabled = computed(() => cartStore.getProducts.length > 0 && !buyer.value);
 
   const payWithTerminal = () => {
     if (!terminalEnabled.value || showTerminalPayment.value) return;

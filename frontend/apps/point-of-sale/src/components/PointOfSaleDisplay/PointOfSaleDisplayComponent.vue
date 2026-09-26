@@ -61,22 +61,21 @@ import { PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
 import ScrollPanel from 'primevue/scrollpanel';
 import { useCartStore } from '@/stores/cart.store';
 import PointOfSaleProductsComponent from '@/components/PointOfSaleDisplay/PointOfSaleProductsComponent.vue';
-import { usePosCategories } from '@/composables/usePosCategories';
+import type { PosCategories } from '@/composables/usePosCategories';
 
-const props = defineProps({
-  pointOfSale: {
-    type: Object as () => PointOfSaleWithContainersResponse | undefined,
-    required: true,
-  },
-});
+const props = defineProps<{
+  pointOfSale: PointOfSaleWithContainersResponse | undefined;
+  categories: PosCategories;
+}>();
 
 const cartStore = useCartStore();
 const searchQuery = ref('');
 const isSearchViewVisible = ref(false);
 const searchInput = ref<null | HTMLInputElement>(null);
 
+// Owned by CashierView so the selection is shared with the mobile layout.
 const { computedCategories, selectedCategoryId, selectCategory, shouldShowAlcoholWarning, alcoholTimeToday } =
-  usePosCategories(() => props.pointOfSale);
+  props.categories;
 
 const openSearchView = async () => {
   isSearchViewVisible.value = true;

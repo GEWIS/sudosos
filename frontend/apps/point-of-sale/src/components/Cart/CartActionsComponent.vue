@@ -1,5 +1,4 @@
 <template>
-  <CheckoutDialogs :flow="flow" />
   <!-- gap-6 matches the spacing justify-between happens to leave between the
        fixed-width Checkout button and the logout icon on an authenticated POS,
        so borrel mode (where Checkout is full width) looks identical. -->
@@ -34,12 +33,14 @@
 </template>
 
 <script setup lang="ts">
-import CheckoutDialogs from '@/components/Cart/CheckoutDialogs.vue';
-import { useCheckoutFlow } from '@/composables/useCheckoutFlow';
+import type { CheckoutFlow } from '@/composables/useCheckoutFlow';
 
-const emit = defineEmits(['selectCreator']);
+const props = defineProps<{
+  flow: CheckoutFlow;
+}>();
 
-const flow = useCheckoutFlow(() => emit('selectCreator'));
+// The flow is created once by CashierView and never replaced, so its refs can
+// be pulled out here and used directly in the template.
 const {
   borrelMode,
   checkingOut,
@@ -50,7 +51,7 @@ const {
   terminalEnabled,
   payWithTerminal,
   logout,
-} = flow;
+} = props.flow;
 </script>
 
 <style scoped lang="scss">
@@ -76,7 +77,7 @@ const {
 }
 
 .checkout {
-  background-color: #0055fd;
+  background-color: var(--pos-checkout-color);
   width: 262px;
   color: white;
 
@@ -85,7 +86,7 @@ const {
   }
 
   &.countdown {
-    background-color: green;
+    background-color: var(--pos-checkout-countdown-color);
   }
 
   &.disabled {

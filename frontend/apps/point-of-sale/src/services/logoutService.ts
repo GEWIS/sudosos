@@ -1,6 +1,7 @@
 import { clearTokenInStorage, useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
 import { useCartStore } from '@/stores/cart.store';
 import { usePointOfSaleStore } from '@/stores/pos.store';
+import { useTerminalPaymentStore } from '@/stores/terminalPayment.store';
 import router from '@/router';
 import { usePosToken } from '@/composables/usePosToken';
 
@@ -12,6 +13,9 @@ export async function logoutService(forceClear = false) {
 
   authStore.$reset();
   cartStore.$reset();
+  // The payment dialog's visibility lives in this store, so without this it
+  // would reopen (and start a new payment) on the next login.
+  useTerminalPaymentStore().reset();
 
   if (forceClear) {
     posStore.$reset();

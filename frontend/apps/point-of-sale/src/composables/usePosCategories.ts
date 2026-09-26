@@ -96,3 +96,5 @@ export function usePosCategories(pointOfSale: MaybeRefOrGetter<PointOfSaleWithCo
     alcoholTimeToday,
   };
 }
+
+export type PosCategories = ReturnType<typeof usePosCategories>;

@@ -44,6 +44,9 @@ export function useCheckoutTimer(onFinalize?: () => void) {
     }
 
     stopCheckout();
+    // The cart can be emptied while the countdown runs (e.g. "Clear order" on
+    // mobile); never book a sale without products.
+    if (!cartStore.getProducts.length) return;
     if (onFinalize) {
       onFinalize();
     }
@@ -76,6 +79,14 @@ export function useCheckoutTimer(onFinalize?: () => void) {
     () => cartStore.getProducts,
     () => {
       stopCheckout();
+    },
+  );
+
+  // clearCart() empties the array in place, which the watcher above misses.
+  watch(
+    () => cartStore.cartTotalCount,
+    (count) => {
+      if (count === 0) stopCheckout();
     },
   );
 
