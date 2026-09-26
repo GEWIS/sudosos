@@ -45,52 +45,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, Ref, ref, watch } from 'vue';
-import { BaseUserResponse, PaginatedUserResponse, UserResponse } from '@gewis/sudosos-client';
+import { onMounted, ref } from 'vue';
+import { UserResponse } from '@gewis/sudosos-client';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
-import { debounce } from 'lodash';
-import type { AxiosResponse } from 'axios';
 import ScrollPanel from 'primevue/scrollpanel';
-import Fuse from 'fuse.js';
 import { useSettingStore } from '@/stores/settings.store';
 import { useCartStore } from '@/stores/cart.store';
 import UserSearchRowComponent from '@/components/UserSearch/UserSearchRowComponent.vue';
-import apiService from '@/services/ApiService';
-import { usePointOfSaleStore } from '@/stores/pos.store';
+import { useUserSearch } from '@/composables/useUserSearch';
 
-const searchValue = ref<string>('');
-const searchQuery = computed(() => searchValue.value.split(' ')[0]);
-
-const users = ref<UserResponse[]>([]);
 const cartStore = useCartStore();
 const authStore = useAuthStore();
 const settings = useSettingStore();
-const posStore = usePointOfSaleStore();
-
-const getRecentUsers = async () => {
-  if (settings.isBorrelmode) {
-    // Borrelmode: derive recent users from POS transactions (existing behavior)
-    if (!posStore.getPos?.id) return;
-    const recentUsers: BaseUserResponse[] = [];
-    await apiService.pos.getTransactions({ id: posStore.getPos?.id, take: 100 }).then((res) => {
-      const data = res.data;
-      const ids = new Set<number>([]);
-      data.records.map((u) => {
-        if (!ids.has(u.from.id)) {
-          recentUsers.push(u.from);
-          ids.add(u.from.id);
-        }
-      });
-    });
-    return recentUsers;
-  } else {
-    // Authenticated POS: use pre-fetched store value (populated at login), or fall back to fetching now
-    if (posStore.recentUsers === null) {
-      await posStore.fetchRecentUsers();
-    }
-    return posStore.recentUsers ?? [];
-  }
-};
+const { searchValue, getUsers, loadRecentUsers } = useUserSearch();
 
 const updateSearchQuery = (event: InputEvent) => {
   if (event.target) {
@@ -98,62 +65,11 @@ const updateSearchQuery = (event: InputEvent) => {
   }
 };
 
-const delayedAPICall = debounce(() => {
-  void apiService.user
-    .getAllUsers({ take: 200, skip: 0, search: searchQuery.value, active: true })
-    .then((res: AxiosResponse<PaginatedUserResponse>) => {
-      users.value = res.data.records;
-    });
-}, 50);
-
-watch(searchQuery, () => {
-  delayedAPICall();
-});
-
-const recent: Ref<BaseUserResponse[]> = ref([]);
-
-const getUsers = computed(() => {
-  if (searchValue.value) return sortedUsers.value;
-  return recent.value;
-});
-
-const sortedUsers = computed(() => {
-  // This fuzzy search allows us to effectively search in the front-end, but this should be done in the backend.
-  const full = [...users.value].map((u: UserResponse) => {
-    return {
-      ...u,
-      fullName: `${u.firstName
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')} ${u.lastName.normalize('NFD').replace(/[\u0300-\u036f]/g, '')}`,
-    };
-  });
-  const fuzzed: UserResponse[] = new Fuse(full, {
-    keys: [
-      { name: 'fullName', weight: 0.3 },
-      { name: 'nickname', weight: 0.7 },
-    ],
-    isCaseSensitive: false,
-    shouldSort: true,
-    threshold: 0.2,
-  })
-    .search(searchValue.value)
-    .map((r) => r.item);
-
-  const filteredUsers = [...fuzzed].filter((user) =>
-    ['MEMBER', 'LOCAL_USER', 'LOCAL_ADMIN', 'INVOICE', 'AUTOMATIC_INVOICE'].includes(user.type),
-  );
-  const validUsers = filteredUsers.filter((user) => user.active && user.acceptedToS !== 'NOT_ACCEPTED');
-  const invalidUsers = filteredUsers.filter((user) => !user.active || user.acceptedToS === 'NOT_ACCEPTED');
-  return [...validUsers, ...invalidUsers];
-});
-
 const searchInput = ref<null | HTMLInputElement>(null);
 
 onMounted(async () => {
   if (searchInput.value) searchInput.value.focus();
-  const rec = await getRecentUsers();
-
-  if (rec) recent.value = rec;
+  await loadRecentUsers();
 });
 
 const emit = defineEmits(['cancelSearch']);

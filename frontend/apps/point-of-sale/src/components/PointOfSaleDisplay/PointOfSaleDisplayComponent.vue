@@ -38,13 +38,8 @@
     </div>
     <div class="m-2 mr-6">
       <Message v-if="shouldShowAlcoholWarning" severity="warn">
-        Please note that today, alcoholic drinks are only allowed to be served after
-        {{
-          new Date(useSettingStore().alcoholTimeToday).toLocaleTimeString('nl-NL', {
-            hour: '2-digit',
-            minute: '2-digit',
-          })
-        }}. This also applies to non-alcoholic alternatives on this page.
+        Please note that today, alcoholic drinks are only allowed to be served after {{ alcoholTimeToday }}. This also
+        applies to non-alcoholic alternatives on this page.
       </Message>
     </div>
     <div class="mr-6 h-full overflow-hidden">
@@ -61,13 +56,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import { PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
 import ScrollPanel from 'primevue/scrollpanel';
 import { useCartStore } from '@/stores/cart.store';
 import PointOfSaleProductsComponent from '@/components/PointOfSaleDisplay/PointOfSaleProductsComponent.vue';
-import { usePointOfSaleStore } from '@/stores/pos.store';
-import { useSettingStore } from '@/stores/settings.store';
+import { usePosCategories } from '@/composables/usePosCategories';
 
 const props = defineProps({
   pointOfSale: {
@@ -80,62 +74,9 @@ const cartStore = useCartStore();
 const searchQuery = ref('');
 const isSearchViewVisible = ref(false);
 const searchInput = ref<null | HTMLInputElement>(null);
-const AllCategory = { name: 'All', id: 'all' };
-const productCount = computed(() => {
-  if (!props.pointOfSale) return 0;
-  const ids = new Set();
-  props.pointOfSale.containers.forEach((container) => {
-    return container.products.forEach((product) => {
-      ids.add(product.id);
-    });
-  });
-  return ids.size;
-});
 
-const settingStore = useSettingStore();
-const shouldShowAlcoholWarning = computed(() => {
-  return (
-    settingStore.loaded &&
-    isCategoryAlcoholic.value &&
-    !settingStore.isAlcoholTime &&
-    props.pointOfSale?.useAuthentication
-  );
-});
-
-const shouldShowAllCategory = computed(() => {
-  return props.pointOfSale && productCount.value <= 15;
-});
-
-const shouldOnlyShowAllCategory = computed(() => {
-  return props.pointOfSale && productCount.value <= 5;
-});
-
-const selectedCategoryId = ref<string | undefined>(getDefaultCategoryId());
-
-const computedCategories = computed(() => {
-  if (shouldOnlyShowAllCategory.value) return [AllCategory];
-  if (shouldShowAllCategory.value) return [AllCategory].concat(usePointOfSaleStore().allProductCategories);
-  return usePointOfSaleStore().allProductCategories;
-});
-
-function getDefaultCategoryId(): string | undefined {
-  // Different target category based on borrelmode or not.
-  const target = useSettingStore().getTargetCategory;
-  const nonAlcoholicCategory = usePointOfSaleStore().allProductCategories.find(
-    (category: { name: string; id: string }) => category.name.toLowerCase() === target,
-  );
-  if (shouldShowAllCategory.value) return 'all';
-  return nonAlcoholicCategory ? nonAlcoholicCategory.id : undefined;
-}
-
-const isCategoryAlcoholic = computed(() => {
-  const category = computedCategories.value.find((c) => c.id == selectedCategoryId.value);
-  return category?.name === 'Alcoholic';
-});
-
-const selectCategory = (categoryId: string) => {
-  selectedCategoryId.value = categoryId;
-};
+const { computedCategories, selectedCategoryId, selectCategory, shouldShowAlcoholWarning, alcoholTimeToday } =
+  usePosCategories(() => props.pointOfSale);
 
 const openSearchView = async () => {
   isSearchViewVisible.value = true;
@@ -157,13 +98,6 @@ watch(
         searchInput.value.setSelectionRange(0, len);
       }
     }
-  },
-);
-
-watch(
-  () => props.pointOfSale,
-  (newPos) => {
-    if (newPos) selectedCategoryId.value = getDefaultCategoryId();
   },
 );
 </script>
