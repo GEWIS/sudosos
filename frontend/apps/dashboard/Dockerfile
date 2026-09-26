@@ -19,7 +19,7 @@ ENV VITE_GIT_COMMIT_SHA=${GIT_COMMIT_SHA}
 RUN pnpm --filter sudosos-dashboard... build
 
 # The target image that will be run
-FROM nginx:alpine AS target
-WORKDIR /app
-COPY frontend/apps/dashboard/docker/nginx.conf /etc/nginx/nginx.conf
-COPY --from=build --chown=nginx /repo/frontend/apps/dashboard/dist/ /app
+FROM caddy:alpine AS target
+WORKDIR /srv
+COPY frontend/apps/dashboard/docker/Caddyfile /etc/caddy/Caddyfile
+COPY --from=build /repo/frontend/apps/dashboard/dist/ /srv

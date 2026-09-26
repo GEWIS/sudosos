@@ -103,12 +103,12 @@ services:
     networks:
       - sudosos-network
 
-  nginx:
-    image: nginx:alpine
+  caddy:
+    image: caddy:alpine
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ../data:/app/data:ro
     depends_on:
       - backend

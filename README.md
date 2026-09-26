@@ -36,8 +36,7 @@ sudosos/
 |   |   `-- point-of-sale/   POS kiosk app, Vue 3 (@sudosos/point-of-sale)
 |   `-- lib/
 |       |-- common/          Shared Vue composables, Pinia stores, API client wrapper
-|       |-- themes/          Shared PrimeVue theme
-|       `-- nginx/           Nginx config and Dockerfile for serving the frontend apps (not a workspace package)
+|       `-- themes/          Shared PrimeVue theme
 `-- packages/
     `-- sudosos-client/      Generated TypeScript API client (@gewis/sudosos-client)
 ```
