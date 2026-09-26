@@ -29,7 +29,7 @@ RUN HUSKY=0 pnpm install --frozen-lockfile --filter sudosos-backend
 COPY . .
 
 # Create necessary directories
-RUN mkdir -p backend/data/products backend/data/banners backend/data/invoices backend/data/payout_requests backend/data/seller_payouts backend/data/write_offs backend/config
+RUN mkdir -p backend/data/products backend/data/banners backend/data/invoices backend/data/payout_requests backend/data/seller_payouts backend/data/write_offs backend/data/voucher_groups backend/config
 
 # Expose ports
 EXPOSE 3000 8080

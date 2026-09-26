@@ -7180,6 +7180,55 @@ export interface VatGroupResponse {
 /**
  * 
  * @export
+ * @interface VoucherGroupAddressRequest
+ */
+export interface VoucherGroupAddressRequest {
+    /**
+     * Name of the purchaser, shown on the voucher group PDF
+     * @type {string}
+     * @memberof VoucherGroupAddressRequest
+     */
+    'addressee': string;
+    /**
+     * \"For the attention of\" line on the voucher group PDF
+     * @type {string}
+     * @memberof VoucherGroupAddressRequest
+     */
+    'attention'?: string;
+    /**
+     * Street of the purchaser
+     * @type {string}
+     * @memberof VoucherGroupAddressRequest
+     */
+    'street': string;
+    /**
+     * Postal code of the purchaser
+     * @type {string}
+     * @memberof VoucherGroupAddressRequest
+     */
+    'postalCode': string;
+    /**
+     * City of the purchaser
+     * @type {string}
+     * @memberof VoucherGroupAddressRequest
+     */
+    'city': string;
+    /**
+     * Country of the purchaser
+     * @type {string}
+     * @memberof VoucherGroupAddressRequest
+     */
+    'country': string;
+    /**
+     * Date printed on the statement PDF; left unchanged when omitted
+     * @type {string}
+     * @memberof VoucherGroupAddressRequest
+     */
+    'invoiceDate'?: string;
+}
+/**
+ * 
+ * @export
  * @interface VoucherGroupRequest
  */
 export interface VoucherGroupRequest {
@@ -7213,6 +7262,48 @@ export interface VoucherGroupRequest {
      * @memberof VoucherGroupRequest
      */
     'amount': number;
+    /**
+     * Date printed on the statement PDF. Defaults to today on  create and is left unchanged on update when omitted.
+     * @type {string}
+     * @memberof VoucherGroupRequest
+     */
+    'invoiceDate'?: string;
+    /**
+     * Name of the purchaser, shown on the voucher group PDF
+     * @type {string}
+     * @memberof VoucherGroupRequest
+     */
+    'addressee': string;
+    /**
+     * \"For the attention of\" line on the voucher group PDF
+     * @type {string}
+     * @memberof VoucherGroupRequest
+     */
+    'attention'?: string;
+    /**
+     * Street of the purchaser
+     * @type {string}
+     * @memberof VoucherGroupRequest
+     */
+    'street': string;
+    /**
+     * Postal code of the purchaser
+     * @type {string}
+     * @memberof VoucherGroupRequest
+     */
+    'postalCode': string;
+    /**
+     * City of the purchaser
+     * @type {string}
+     * @memberof VoucherGroupRequest
+     */
+    'city': string;
+    /**
+     * Country of the purchaser
+     * @type {string}
+     * @memberof VoucherGroupRequest
+     */
+    'country': string;
 }
 /**
  * 
@@ -7280,6 +7371,54 @@ export interface VoucherGroupResponse {
      * @memberof VoucherGroupResponse
      */
     'amount': number;
+    /**
+     * Date printed on the statement PDF
+     * @type {string}
+     * @memberof VoucherGroupResponse
+     */
+    'invoiceDate': string;
+    /**
+     * Name of the purchaser
+     * @type {string}
+     * @memberof VoucherGroupResponse
+     */
+    'addressee': string;
+    /**
+     * \"For the attention of\" line
+     * @type {string}
+     * @memberof VoucherGroupResponse
+     */
+    'attention': string;
+    /**
+     * Street of the purchaser
+     * @type {string}
+     * @memberof VoucherGroupResponse
+     */
+    'street': string;
+    /**
+     * Postal code of the purchaser
+     * @type {string}
+     * @memberof VoucherGroupResponse
+     */
+    'postalCode': string;
+    /**
+     * City of the purchaser
+     * @type {string}
+     * @memberof VoucherGroupResponse
+     */
+    'city': string;
+    /**
+     * Country of the purchaser
+     * @type {string}
+     * @memberof VoucherGroupResponse
+     */
+    'country': string;
+    /**
+     * Download name of the latest statement PDF, if generated
+     * @type {string}
+     * @memberof VoucherGroupResponse
+     */
+    'pdf'?: string;
 }
 /**
  * The total request and all its fields are optional for backwards compatibility\'s sake. If this request object is extended, it is probably best to make everything required and remove the backwards compatibility, as the frontend will (and should) already use this new object. See https://github.com/GEWIS/sudosos-backend/pull/344
@@ -29684,6 +29823,49 @@ export const VouchergroupsApiAxiosParamCreator = function (configuration?: Confi
         },
         /**
          * 
+         * @summary Get the statement pdf of a voucher group. Requires the group to have a complete address.
+         * @param {number} id The id of the voucher group
+         * @param {boolean} [force] Force creation of pdf
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getVoucherGroupPdf: async (id: number, force?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getVoucherGroupPdf', 'id', id)
+            const localVarPath = `/vouchergroups/{id}/pdf`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (force !== undefined) {
+                localVarQueryParameter['force'] = force;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Returns the requested voucher group
          * @param {number} id The id of the voucher group which should be returned
          * @param {*} [options] Override http request option.
@@ -29764,6 +29946,50 @@ export const VouchergroupsApiAxiosParamCreator = function (configuration?: Confi
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary Updates the purchaser address and invoice date of the requested voucher group. Unlike PATCH /vouchergroups/{id}, this is allowed after the group has become active.
+         * @param {number} id The id of the voucher group which should be updated
+         * @param {VoucherGroupAddressRequest} voucherGroupAddressRequest The new address and invoice date
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateVoucherGroupAddress: async (id: number, voucherGroupAddressRequest: VoucherGroupAddressRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateVoucherGroupAddress', 'id', id)
+            // verify required parameter 'voucherGroupAddressRequest' is not null or undefined
+            assertParamExists('updateVoucherGroupAddress', 'voucherGroupAddressRequest', voucherGroupAddressRequest)
+            const localVarPath = `/vouchergroups/{id}/address`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(voucherGroupAddressRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -29803,6 +30029,20 @@ export const VouchergroupsApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Get the statement pdf of a voucher group. Requires the group to have a complete address.
+         * @param {number} id The id of the voucher group
+         * @param {boolean} [force] Force creation of pdf
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getVoucherGroupPdf(id: number, force?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PdfUrlResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getVoucherGroupPdf(id, force, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['VouchergroupsApi.getVoucherGroupPdf']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Returns the requested voucher group
          * @param {number} id The id of the voucher group which should be returned
          * @param {*} [options] Override http request option.
@@ -29826,6 +30066,20 @@ export const VouchergroupsApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.updateVoucherGroup(id, voucherGroupRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['VouchergroupsApi.updateVoucherGroup']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Updates the purchaser address and invoice date of the requested voucher group. Unlike PATCH /vouchergroups/{id}, this is allowed after the group has become active.
+         * @param {number} id The id of the voucher group which should be updated
+         * @param {VoucherGroupAddressRequest} voucherGroupAddressRequest The new address and invoice date
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateVoucherGroupAddress(id: number, voucherGroupAddressRequest: VoucherGroupAddressRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VoucherGroupResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateVoucherGroupAddress(id, voucherGroupAddressRequest, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['VouchergroupsApi.updateVoucherGroupAddress']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
     }
@@ -29860,6 +30114,16 @@ export const VouchergroupsApiFactory = function (configuration?: Configuration, 
         },
         /**
          * 
+         * @summary Get the statement pdf of a voucher group. Requires the group to have a complete address.
+         * @param {VouchergroupsApiGetVoucherGroupPdfRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getVoucherGroupPdf(requestParameters: VouchergroupsApiGetVoucherGroupPdfRequest, options?: RawAxiosRequestConfig): AxiosPromise<PdfUrlResponse> {
+            return localVarFp.getVoucherGroupPdf(requestParameters.id, requestParameters.force, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Returns the requested voucher group
          * @param {VouchergroupsApiGetVouchergroupIdRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
@@ -29877,6 +30141,16 @@ export const VouchergroupsApiFactory = function (configuration?: Configuration, 
          */
         updateVoucherGroup(requestParameters: VouchergroupsApiUpdateVoucherGroupRequest, options?: RawAxiosRequestConfig): AxiosPromise<VoucherGroupResponse> {
             return localVarFp.updateVoucherGroup(requestParameters.id, requestParameters.voucherGroupRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Updates the purchaser address and invoice date of the requested voucher group. Unlike PATCH /vouchergroups/{id}, this is allowed after the group has become active.
+         * @param {VouchergroupsApiUpdateVoucherGroupAddressRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateVoucherGroupAddress(requestParameters: VouchergroupsApiUpdateVoucherGroupAddressRequest, options?: RawAxiosRequestConfig): AxiosPromise<VoucherGroupResponse> {
+            return localVarFp.updateVoucherGroupAddress(requestParameters.id, requestParameters.voucherGroupAddressRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -29917,6 +30191,27 @@ export interface VouchergroupsApiGetAllVouchergroupsRequest {
 }
 
 /**
+ * Request parameters for getVoucherGroupPdf operation in VouchergroupsApi.
+ * @export
+ * @interface VouchergroupsApiGetVoucherGroupPdfRequest
+ */
+export interface VouchergroupsApiGetVoucherGroupPdfRequest {
+    /**
+     * The id of the voucher group
+     * @type {number}
+     * @memberof VouchergroupsApiGetVoucherGroupPdf
+     */
+    readonly id: number
+
+    /**
+     * Force creation of pdf
+     * @type {boolean}
+     * @memberof VouchergroupsApiGetVoucherGroupPdf
+     */
+    readonly force?: boolean
+}
+
+/**
  * Request parameters for getVouchergroupId operation in VouchergroupsApi.
  * @export
  * @interface VouchergroupsApiGetVouchergroupIdRequest
@@ -29952,6 +30247,27 @@ export interface VouchergroupsApiUpdateVoucherGroupRequest {
 }
 
 /**
+ * Request parameters for updateVoucherGroupAddress operation in VouchergroupsApi.
+ * @export
+ * @interface VouchergroupsApiUpdateVoucherGroupAddressRequest
+ */
+export interface VouchergroupsApiUpdateVoucherGroupAddressRequest {
+    /**
+     * The id of the voucher group which should be updated
+     * @type {number}
+     * @memberof VouchergroupsApiUpdateVoucherGroupAddress
+     */
+    readonly id: number
+
+    /**
+     * The new address and invoice date
+     * @type {VoucherGroupAddressRequest}
+     * @memberof VouchergroupsApiUpdateVoucherGroupAddress
+     */
+    readonly voucherGroupAddressRequest: VoucherGroupAddressRequest
+}
+
+/**
  * VouchergroupsApi - object-oriented interface
  * @export
  * @class VouchergroupsApi
@@ -29984,6 +30300,18 @@ export class VouchergroupsApi extends BaseAPI {
 
     /**
      * 
+     * @summary Get the statement pdf of a voucher group. Requires the group to have a complete address.
+     * @param {VouchergroupsApiGetVoucherGroupPdfRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof VouchergroupsApi
+     */
+    public getVoucherGroupPdf(requestParameters: VouchergroupsApiGetVoucherGroupPdfRequest, options?: RawAxiosRequestConfig) {
+        return VouchergroupsApiFp(this.configuration).getVoucherGroupPdf(requestParameters.id, requestParameters.force, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Returns the requested voucher group
      * @param {VouchergroupsApiGetVouchergroupIdRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -30004,6 +30332,18 @@ export class VouchergroupsApi extends BaseAPI {
      */
     public updateVoucherGroup(requestParameters: VouchergroupsApiUpdateVoucherGroupRequest, options?: RawAxiosRequestConfig) {
         return VouchergroupsApiFp(this.configuration).updateVoucherGroup(requestParameters.id, requestParameters.voucherGroupRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Updates the purchaser address and invoice date of the requested voucher group. Unlike PATCH /vouchergroups/{id}, this is allowed after the group has become active.
+     * @param {VouchergroupsApiUpdateVoucherGroupAddressRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof VouchergroupsApi
+     */
+    public updateVoucherGroupAddress(requestParameters: VouchergroupsApiUpdateVoucherGroupAddressRequest, options?: RawAxiosRequestConfig) {
+        return VouchergroupsApiFp(this.configuration).updateVoucherGroupAddress(requestParameters.id, requestParameters.voucherGroupAddressRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

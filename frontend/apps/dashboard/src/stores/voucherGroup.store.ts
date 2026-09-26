@@ -1,5 +1,10 @@
 import { defineStore } from 'pinia';
-import type { PaginatedVoucherGroupResponse, VoucherGroupRequest, VoucherGroupResponse } from '@gewis/sudosos-client';
+import type {
+  PaginatedVoucherGroupResponse,
+  VoucherGroupAddressRequest,
+  VoucherGroupRequest,
+  VoucherGroupResponse,
+} from '@gewis/sudosos-client';
 import apiService from '@/services/ApiService';
 
 export const useVoucherGroupStore = defineStore('voucherGroup', {
@@ -65,6 +70,26 @@ export const useVoucherGroupStore = defineStore('voucherGroup', {
       const updated = response.data;
       this.voucherGroups[updated.id] = updated;
       return updated;
+    },
+
+    async updateVoucherGroupAddress(id: number, address: VoucherGroupAddressRequest): Promise<VoucherGroupResponse> {
+      const response = await apiService.voucherGroup.updateVoucherGroupAddress({
+        id,
+        voucherGroupAddressRequest: address,
+      });
+      const updated = response.data;
+      this.voucherGroups[updated.id] = updated;
+      return updated;
+    },
+
+    /**
+     * Returns the download name of the statement PDF, generating it if needed.
+     */
+    async fetchVoucherGroupPdf(id: number, force = false): Promise<string | undefined> {
+      const response = await apiService.voucherGroup.getVoucherGroupPdf({ id, force });
+      const pdf = response.data.pdf;
+      if (this.voucherGroups[id]) this.voucherGroups[id].pdf = pdf;
+      return pdf;
     },
   },
 });

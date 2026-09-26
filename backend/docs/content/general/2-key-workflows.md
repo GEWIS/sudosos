@@ -166,6 +166,35 @@ flowchart TD
 - only admins can move a request to non-cancel states
 - only the requesting user can cancel their own request
 
+## Voucher group (borrelkaarten)
+
+**Trigger + actor**
+- Admin issues a batch of voucher cards for a purchaser, for example a company that sponsors drinks at an event. Each card is a `VOUCHER` user with a start balance.
+
+**API surface**
+- `POST /vouchergroups` (create group, cards and balances)
+- `GET /vouchergroups` and `GET /vouchergroups/:id` (read)
+- `PATCH /vouchergroups/:id` (update; only before `activeStartDate`)
+- `PATCH /vouchergroups/:id/address` (update only the purchaser address and invoice date; allowed at any time)
+- `GET /vouchergroups/:id/pdf` (statement PDF)
+
+**Entities touched**
+- `VoucherGroup` (with the purchaser address and invoice date) and `UserVoucherGroup` links
+- one `VOUCHER` user per card
+- one transfer (void → card) per card that sets the start balance
+- `VoucherGroupPdf` (the stored statement)
+
+**Critical checks**
+- the purchaser address is mandatory: `addressee`, `street`, `postalCode`, `city` and `country` must be non-empty on create and update (`attention` is optional)
+- groups created before addresses were mandatory have an empty address; `GET /vouchergroups/:id/pdf` returns 400 until one is added
+- the number of cards can only grow
+- `invoiceDate` is the date printed on the statement PDF; it defaults to today on create, and groups created before it existed use their creation date
+- the payment due date on the statement PDF is `invoiceDate` plus `BAC.paymentTermDays` (30 days), as on invoices
+- the statement PDF lists every card of the group (`UserVoucherGroup`) as its own line item
+
+**VAT note**
+- Voucher balance is balance like any other (a multi-purpose voucher), so the statement PDF shows a single 0% VAT band and cites Directive (EU) 2016/1065. VAT is recorded when the cards are spent.
+
 ## Next pages
 
 - **[System Architecture](/general/3-system-architecture)**
