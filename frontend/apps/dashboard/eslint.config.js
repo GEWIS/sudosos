@@ -2,6 +2,7 @@ import { defineConfig } from 'eslint/config';
 import vueI18n from '@intlify/eslint-plugin-vue-i18n';
 import vueParser from 'vue-eslint-parser';
 import * as typescriptParser from '@typescript-eslint/parser';
+import storybook from 'eslint-plugin-storybook';
 import { eslintConfig as common } from '@gewis/eslint-config-typescript';
 import { eslintConfig as vue } from '@gewis/eslint-config-vue';
 import { eslintConfig as prettier } from '@gewis/prettier-config';
@@ -52,5 +53,10 @@ export default defineConfig([
         messageSyntaxVersion: '^9.2.2',
       },
     },
+  },
+  // linting for Storybook story files
+  {
+    files: ['**/*.stories.ts'],
+    extends: [...storybook.configs['flat/recommended']],
   },
 ]);
