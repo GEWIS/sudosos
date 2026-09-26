@@ -30,6 +30,15 @@ import VoucherGroupService from '../../../src/service/voucher-group-service';
 import { truncateAllTables } from '../../helpers/database-helpers';
 import { finishTestDB } from '../../helpers/test-helpers';
 
+const address = {
+  addressee: 'Study association GEWIS',
+  attention: 'Treasurer',
+  street: 'Groene Loper 5',
+  postalCode: '5612 AE',
+  city: 'Eindhoven',
+  country: 'Netherlands',
+};
+
 export function bkgEq(req: VoucherGroupParams, voucherGroup: VoucherGroup, users: User[]): void {
   // check if non user fields are equal
   expect(voucherGroup.name).to.equal(req.name);
@@ -37,6 +46,11 @@ export function bkgEq(req: VoucherGroupParams, voucherGroup: VoucherGroup, users
   expect(voucherGroup.activeEndDate.toISOString()).to.equal(req.activeEndDate.toISOString());
   expect(users).to.be.of.length(req.amount);
   expect(voucherGroup.balance.getAmount()).to.equal(req.balance.getAmount());
+  expect(voucherGroup.addressee).to.equal(req.addressee);
+  expect(voucherGroup.street).to.equal(req.street);
+  expect(voucherGroup.postalCode).to.equal(req.postalCode);
+  expect(voucherGroup.city).to.equal(req.city);
+  expect(voucherGroup.country).to.equal(req.country);
 }
 
 export async function seedVoucherGroups(): Promise<{ paramss: VoucherGroupParams[], bkgIds: number[] }> {
@@ -45,6 +59,7 @@ export async function seedVoucherGroups(): Promise<{ paramss: VoucherGroupParams
   await Promise.all([...Array(5).keys()].map(async (i) => {
     const bkgReq: VoucherGroupRequest = {
       name: `test ${i}`,
+      ...address,
       activeStartDate: '2000-01-02T00:00:00Z',
       activeEndDate: '2000-01-03T00:00:00Z',
       balance: {
@@ -91,6 +106,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should return true when the voucher is valid', async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: '2000-01-02T00:00:00Z',
         activeEndDate: '2000-01-03T00:00:00Z',
         balance: {
@@ -106,6 +122,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should return false when the voucher has an invalid name', async () => {
       const req: VoucherGroupRequest = {
         name: '',
+        ...address,
         activeStartDate: '2000-01-02T00:00:00Z',
         activeEndDate: '2000-01-03T00:00:00Z',
         balance: {
@@ -121,6 +138,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should return false when the voucher has an invalid startDate', async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: 'aasdfasd',
         activeEndDate: '2000-01-03T00:00:00Z',
         balance: {
@@ -137,6 +155,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should return false when the voucher has an invalid endDate', async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: '2000-01-02T00:00:00Z',
         activeEndDate: 'asdafasd',
         balance: {
@@ -152,6 +171,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should return false when the voucher endDate is before startDate', async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: '2000-01-03T00:00:00Z',
         activeEndDate: '2000-01-01T00:00:00Z',
         balance: {
@@ -167,6 +187,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should return false when the voucher endDate is in the past', async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: '2000-01-02T00:00:00Z',
         activeEndDate: '1999-12-31T00:00:00Z',
         balance: {
@@ -182,6 +203,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should return false when the voucher has an invalid balance', async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: '2000-01-02T00:00:00Z',
         activeEndDate: '2000-01-03T00:00:00Z',
         balance: {
@@ -197,6 +219,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should return false when the voucher has an invalid amount of users', async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: '2000-01-02T00:00:00Z',
         activeEndDate: '2000-01-03T00:00:00Z',
         balance: {
@@ -209,12 +232,50 @@ describe('VoucherGroupService', async (): Promise<void> => {
       const params = VoucherGroupService.asVoucherGroupParams(req);
       expect(VoucherGroupService.validateVoucherGroup(params)).to.be.false;
     });
+    (['addressee', 'street', 'postalCode', 'city', 'country'] as const).forEach((field) => {
+      it(`should return false when the voucher has a blank ${field}`, async () => {
+        const req: VoucherGroupRequest = {
+          name: 'test',
+          ...address,
+          [field]: '  ',
+          activeStartDate: '2000-01-02T00:00:00Z',
+          activeEndDate: '2000-01-03T00:00:00Z',
+          balance: {
+            amount: 100,
+            currency: 'EUR',
+            precision: 2,
+          },
+          amount: 4,
+        };
+        const params = VoucherGroupService.asVoucherGroupParams(req);
+        expect(VoucherGroupService.validateVoucherGroup(params)).to.be.false;
+      });
+    });
+    it('should return true when the voucher has no attention line', async () => {
+      const req: VoucherGroupRequest = {
+        name: 'test',
+        ...address,
+        attention: undefined,
+        activeStartDate: '2000-01-02T00:00:00Z',
+        activeEndDate: '2000-01-03T00:00:00Z',
+        balance: {
+          amount: 100,
+          currency: 'EUR',
+          precision: 2,
+        },
+        amount: 4,
+      };
+      const params = VoucherGroupService.asVoucherGroupParams(req);
+      expect(VoucherGroupService.validateVoucherGroup(params)).to.be.true;
+      expect(params.attention).to.equal('');
+    });
   });
 
   describe('create voucher group', () => {
     it('should create a voucher group with inactive members', async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: '2000-01-02T00:00:00Z',
         activeEndDate: '2000-01-03T00:00:00Z',
         balance: {
@@ -239,6 +300,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should create a voucher group with active members', async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: '1999-12-31T00:00:00Z',
         activeEndDate: '2000-01-03T00:00:00Z',
         balance: {
@@ -266,6 +328,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     beforeEach(async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: '2000-01-02T00:00:00Z',
         activeEndDate: '2000-01-03T00:00:00Z',
         balance: {
@@ -283,6 +346,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should update an existing voucher groups name', async () => {
       const req: VoucherGroupRequest = {
         name: 'newTest',
+        ...address,
         activeStartDate: '2000-01-02T00:00:00Z',
         activeEndDate: '2000-01-03T00:00:00Z',
         balance: {
@@ -307,6 +371,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should update an existing voucher groups active start date', async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: '2000-01-03T00:00:00Z',
         activeEndDate: '2000-01-03T00:00:00Z',
         balance: {
@@ -331,6 +396,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should update an existing voucher groups active end date', async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: '2000-01-02T00:00:00Z',
         activeEndDate: '2000-01-04T00:00:00Z',
         balance: {
@@ -355,6 +421,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should update an existing voucher groups passed active start date', async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: '1999-12-31T00:00:00Z',
         activeEndDate: '2000-01-03T00:00:00Z',
         balance: {
@@ -379,6 +446,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should update an existing voucher groups increased user amount', async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: '2000-01-02T00:00:00Z',
         activeEndDate: '2000-01-03T00:00:00Z',
         balance: {
@@ -403,6 +471,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should update an existing voucher groups increased balance', async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: '2000-01-02T00:00:00Z',
         activeEndDate: '2000-01-03T00:00:00Z',
         balance: {
@@ -427,6 +496,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should update an existing voucher groups decreased balance', async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: '2000-01-02T00:00:00Z',
         activeEndDate: '2000-01-03T00:00:00Z',
         balance: {
@@ -455,6 +525,7 @@ describe('VoucherGroupService', async (): Promise<void> => {
     it('should return undefined when given an invalid id', async () => {
       const req: VoucherGroupRequest = {
         name: 'test',
+        ...address,
         activeStartDate: '2000-01-02T00:00:00Z',
         activeEndDate: '2000-01-03T00:00:00Z',
         balance: {
@@ -513,5 +584,32 @@ describe('VoucherGroupService', async (): Promise<void> => {
       }));
     });
   });
-});
 
+  describe('update voucher group address', () => {
+    it('should only update the address and leave balances untouched', async () => {
+      const { bkgIds, paramss } = await seedVoucherGroups();
+      const newAddress = {
+        addressee: 'New purchaser',
+        street: 'Other street 1',
+        postalCode: '1234 AB',
+        city: 'Utrecht',
+        country: 'Netherlands',
+      };
+
+      const result = await VoucherGroupService.updateVoucherGroupAddress(bkgIds[0], newAddress);
+
+      expect(result.voucherGroup.addressee).to.equal(newAddress.addressee);
+      expect(result.voucherGroup.attention).to.equal('');
+      expect(result.voucherGroup.city).to.equal(newAddress.city);
+      expect(result.voucherGroup.balance.getAmount()).to.equal(paramss[0].balance.getAmount());
+      expect(result.users).to.be.of.length(paramss[0].amount);
+      const transfers = await Transfer.find({ where: { toId: result.users[0].id } });
+      expect(transfers).to.be.of.length(1);
+    });
+
+    it('should return undefined when given an invalid id', async () => {
+      const result = await VoucherGroupService.updateVoucherGroupAddress(999, address);
+      expect(result).to.be.undefined;
+    });
+  });
+});

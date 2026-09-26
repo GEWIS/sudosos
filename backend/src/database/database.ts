@@ -130,6 +130,7 @@ import { PaymentRequestAttempt1784877357000 } from '../migrations/1784877357000-
 import {
   AddProductSelfServiceToUser1785401380818,
 } from '../migrations/1785401380818-add-product-self-service-to-user';
+import { VoucherGroupAddress1790440121000 } from '../migrations/1790440121000-voucher-group-address';
 
 function getDataSourceOptions(): DataSourceOptions {
   const config = Config.get();
@@ -185,6 +186,7 @@ function getDataSourceOptions(): DataSourceOptions {
       TerminalPayment1782294145719,
       PaymentRequestAttempt1784877357000,
       AddProductSelfServiceToUser1785401380818,
+      VoucherGroupAddress1790440121000,
     ],
     extra: {
       authPlugins: {

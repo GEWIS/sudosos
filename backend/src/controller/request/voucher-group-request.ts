@@ -35,8 +35,14 @@ import { DineroObjectRequest } from './dinero-request';
  * @property {DineroObjectRequest} balance.required - Start balance to be assigned
  *  to the voucher users
  * @property {number} amount.required - Amount of users to be assigned to the voucher group
+ * @property {string} addressee.required - Name of the purchaser, shown on the voucher group PDF
+ * @property {string} attention - "For the attention of" line on the voucher group PDF
+ * @property {string} street.required - Street of the purchaser
+ * @property {string} postalCode.required - Postal code of the purchaser
+ * @property {string} city.required - City of the purchaser
+ * @property {string} country.required - Country of the purchaser
  */
-export interface VoucherGroupRequest {
+export interface VoucherGroupRequest extends VoucherGroupAddress {
   name: string,
   activeStartDate: string,
   activeEndDate: string,
@@ -44,7 +50,25 @@ export interface VoucherGroupRequest {
   amount: number,
 }
 
-export interface VoucherGroupParams {
+/**
+ * @typedef {object} VoucherGroupAddressRequest
+ * @property {string} addressee.required - Name of the purchaser, shown on the voucher group PDF
+ * @property {string} attention - "For the attention of" line on the voucher group PDF
+ * @property {string} street.required - Street of the purchaser
+ * @property {string} postalCode.required - Postal code of the purchaser
+ * @property {string} city.required - City of the purchaser
+ * @property {string} country.required - Country of the purchaser
+ */
+export interface VoucherGroupAddress {
+  addressee: string,
+  attention?: string,
+  street: string,
+  postalCode: string,
+  city: string,
+  country: string,
+}
+
+export interface VoucherGroupParams extends VoucherGroupAddress {
   name: string,
   activeStartDate: Date,
   activeEndDate: Date,

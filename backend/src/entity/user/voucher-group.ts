@@ -40,6 +40,12 @@ import UserVoucherGroup from './user-voucher-group';
  * @property {string} activeStartDate.required - Date after which the included cards are active.
  * @property {string} activeEndDate - Date after which cards are no longer active.
  * @property {Array.<User>} vouchers.required - Cards included in this group.
+ * @property {string} addressee.required - Name of the purchaser of this group.
+ * @property {string} attention - "For the attention of" line for the purchaser.
+ * @property {string} street.required - Street of the purchaser.
+ * @property {string} postalCode.required - Postal code of the purchaser.
+ * @property {string} city.required - City of the purchaser.
+ * @property {string} country.required - Country of the purchaser.
  */
 @Entity()
 export default class VoucherGroup extends BaseEntity {
@@ -73,4 +79,26 @@ export default class VoucherGroup extends BaseEntity {
 
   @OneToMany(() => UserVoucherGroup, (user) => user.voucherGroup)
   public vouchers: UserVoucherGroup[];
+
+  /**
+   * Name of the purchaser, shown on the voucher group PDF.
+   * Groups created before addresses were mandatory have an empty address.
+   */
+  @Column({ default: '' })
+  public addressee: string;
+
+  @Column({ default: '' })
+  public attention: string;
+
+  @Column({ default: '' })
+  public street: string;
+
+  @Column({ default: '' })
+  public postalCode: string;
+
+  @Column({ default: '' })
+  public city: string;
+
+  @Column({ default: '' })
+  public country: string;
 }
