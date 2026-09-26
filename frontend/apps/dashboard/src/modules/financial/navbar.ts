@@ -27,7 +27,8 @@ export function useFinancialNav() {
           isAllowed('get', ['all'], 'Invoice', ['any']) ||
           isAllowed('get', ['all'], 'Fine', ['any']) ||
           isAllowed('get', ['all'], 'SellerPayout', ['any']) ||
-          isAllowed('get', ['all'], 'FinancialOverview', ['any']),
+          isAllowed('get', ['all'], 'FinancialOverview', ['any']) ||
+          isAllowed('get', ['all'], 'VoucherGroup', ['any']),
         items: [
           {
             label: t('common.navigation.financialOverview'),
@@ -81,6 +82,11 @@ export function useFinancialNav() {
             label: t('common.navigation.administrativeCosts'),
             route: '/financial/administrative',
             visible: isAllowed('get', ['all'], 'InactiveAdministrativeCost', ['any']),
+          },
+          {
+            label: t('common.navigation.socialDrinkCards'),
+            route: '/financial/voucher',
+            visible: isAllowed('get', ['all'], 'VoucherGroup', ['any']),
           },
         ].filter((item) => item.visible),
       },

@@ -269,6 +269,71 @@
           "remaining": "Resterend (€)",
           "fetchError": "Laden van de transactietotalen mislukt. Probeer het opnieuw."
         }
+      },
+      "vouchers": {
+        "title": "Vouchergroepen",
+        "detailTitle": "Vouchergroep: {name}",
+        "list": {
+          "header": "Vouchergroepen",
+          "name": "Naam",
+          "startDate": "Startdatum",
+          "endDate": "Einddatum",
+          "period": "Actieve periode",
+          "status": "Status",
+          "cards": "Vouchers",
+          "cardBalance": "Saldo per voucher",
+          "totalBalance": "Totaal saldo",
+          "actions": "Acties",
+          "viewDetails": "Details bekijken",
+          "empty": "Geen vouchergroepen gevonden"
+        },
+        "status": {
+          "upcoming": "Aankomend",
+          "active": "Actief",
+          "expired": "Verlopen"
+        },
+        "info": {
+          "header": "Groepsinformatie",
+          "allocated": "Totaal toegewezen saldo",
+          "userCount": "Aantal vouchers",
+          "validity": "Geldigheid",
+          "created": "Aangemaakt"
+        },
+        "cardsTable": {
+          "header": "Individuele vouchers",
+          "cardName": "Voucheridentificatie",
+          "cardUser": "Gebruiker",
+          "status": "Status",
+          "viewUser": "Bekijk gebruikersprofiel",
+          "empty": "Geen vouchers in deze groep"
+        },
+        "dialog": {
+          "createTitle": "Vouchergroep aanmaken",
+          "editTitle": "Vouchergroep bewerken",
+          "name": "Groepsnaam",
+          "namePlaceholder": "bijv. Intro 2026",
+          "startDate": "Startdatum",
+          "endDate": "Einddatum",
+          "amount": "Aantal vouchers",
+          "balance": "Saldo per voucher (€)",
+          "help": "Elke voucher wordt aangemaakt als een voucher-gebruiker met het opgegeven saldo.",
+          "save": "Opslaan",
+          "cancel": "Annuleren",
+          "errors": {
+            "nameRequired": "Naam is verplicht",
+            "startDateRequired": "Startdatum is verplicht",
+            "endDateRequired": "Einddatum is verplicht",
+            "endDateBeforeStart": "Einddatum moet na startdatum liggen",
+            "endDatePast": "Einddatum kan niet in het verleden liggen",
+            "amountMin": "Aantal moet minimaal 1 zijn",
+            "balanceMin": "Saldo moet groter zijn dan €0,00"
+          },
+          "toast": {
+            "createSuccess": "Vouchergroep succesvol aangemaakt",
+            "updateSuccess": "Vouchergroep succesvol bijgewerkt",
+            "error": "Opslaan van vouchergroep mislukt"
+          }
+        }
       }
     }
   }
