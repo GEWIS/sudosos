@@ -131,6 +131,8 @@ import {
   AddProductSelfServiceToUser1785401380818,
 } from '../migrations/1785401380818-add-product-self-service-to-user';
 import { VoucherGroupAddress1790440121000 } from '../migrations/1790440121000-voucher-group-address';
+import { VoucherGroupPdf1790440122000 } from '../migrations/1790440122000-voucher-group-pdf';
+import VoucherGroupPdf from '../entity/file/voucher-group-pdf';
 
 function getDataSourceOptions(): DataSourceOptions {
   const config = Config.get();
@@ -187,6 +189,7 @@ function getDataSourceOptions(): DataSourceOptions {
       PaymentRequestAttempt1784877357000,
       AddProductSelfServiceToUser1785401380818,
       VoucherGroupAddress1790440121000,
+      VoucherGroupPdf1790440122000,
     ],
     extra: {
       authPlugins: {
@@ -218,6 +221,7 @@ function getDataSourceOptions(): DataSourceOptions {
       PayoutRequestStatus,
       SellerPayout,
       SellerPayoutPdf,
+      VoucherGroupPdf,
       Fine,
       FineHandoutEvent,
       UserFineGroup,

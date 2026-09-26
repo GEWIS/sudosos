@@ -44,6 +44,7 @@ import { DineroObjectResponse } from './dinero-response';
   * @property {string} postalCode.required - Postal code of the purchaser
   * @property {string} city.required - City of the purchaser
   * @property {string} country.required - Country of the purchaser
+  * @property {string} pdf - Download name of the latest statement PDF, if generated
   */
 export default interface VoucherGroupResponse extends BaseResponse {
   name: string,
@@ -58,6 +59,7 @@ export default interface VoucherGroupResponse extends BaseResponse {
   postalCode: string,
   city: string,
   country: string,
+  pdf?: string,
 }
 
 /**

@@ -26,3 +26,4 @@
 
 export { NotImplementedError } from './not-implemented-error';
 export { PdfError } from './pdf-error';
+export { MissingAddressError } from './missing-address-error';

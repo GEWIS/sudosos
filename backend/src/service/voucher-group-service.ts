@@ -173,6 +173,7 @@ export default class VoucherGroupService {
       postalCode: bkg.postalCode ?? '',
       city: bkg.city ?? '',
       country: bkg.country ?? '',
+      pdf: bkg.pdf?.downloadName,
     };
   }
 
@@ -193,7 +194,7 @@ export default class VoucherGroupService {
 
     const options: FindManyOptions = {
       where: QueryFilter.createFilterWhereClause(mapping, filters),
-      relations: { vouchers: { user: true } },
+      relations: { vouchers: { user: true }, pdf: true },
     };
     const bkgs: VoucherGroup[] = await VoucherGroup.find({ ...options, take, skip });
     const count = await VoucherGroup.count({ where: options.where });
@@ -260,7 +261,16 @@ export default class VoucherGroupService {
     }
 
     // create new voucher group and update database
-    await VoucherGroup.update(id, this.asVoucherGroup(bkgReq));
+    // Pass plain column values: a VoucherGroup instance carries its pdfService,
+    // which is not a column and makes update() throw.
+    await VoucherGroup.update(id, {
+      name: bkgReq.name,
+      activeStartDate: bkgReq.activeStartDate,
+      activeEndDate: bkgReq.activeEndDate,
+      amount: bkgReq.amount,
+      balance: bkgReq.balance,
+      ...VoucherGroupService.asVoucherGroupAddress(bkgReq),
+    });
     const voucherGroup = await VoucherGroup.findOne({ where: { id } });
 
     let usersCurrent = (

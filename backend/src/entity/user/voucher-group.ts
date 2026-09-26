@@ -27,12 +27,17 @@
 
 import { Dinero } from 'dinero.js';
 import {
-  Column, Entity, OneToMany,
+  Column, Entity, JoinColumn, OneToMany, OneToOne,
 } from 'typeorm';
 import BaseEntity from '../base-entity';
 import DineroTransformer from '../transformer/dinero-transformer';
 // eslint-disable-next-line import/no-cycle
 import UserVoucherGroup from './user-voucher-group';
+import User from './user';
+import VoucherGroupPdf from '../file/voucher-group-pdf';
+import { PdfAble } from '../file/pdf-able';
+import VoucherGroupPdfService from '../../service/pdf/voucher-group-pdf-service';
+import { VOUCHER_GROUP_PDF_LOCATION } from '../../files/storage';
 
 /**
  * @typedef {BaseEntity} VoucherGroup
@@ -48,7 +53,7 @@ import UserVoucherGroup from './user-voucher-group';
  * @property {string} country.required - Country of the purchaser.
  */
 @Entity()
-export default class VoucherGroup extends BaseEntity {
+export default class VoucherGroup extends PdfAble(BaseEntity) {
   @Column({
     unique: true,
     length: 64,
@@ -101,4 +106,35 @@ export default class VoucherGroup extends BaseEntity {
 
   @Column({ default: '' })
   public country: string;
+
+  /**
+   * The ID of the statement PDF file
+   */
+  @Column({ nullable: true })
+  public pdfId?: number;
+
+  /**
+   * The statement PDF file
+   *
+   * onDelete: 'CASCADE' is not possible here, because removing the
+   * pdf from the database will not remove it from storage
+   */
+  @OneToOne(() => VoucherGroupPdf, { nullable: true, onDelete: 'RESTRICT' })
+  @JoinColumn()
+  public pdf?: VoucherGroupPdf;
+
+  pdfService = new VoucherGroupPdfService(VOUCHER_GROUP_PDF_LOCATION);
+
+  /**
+   * A voucher group has no owning account, so the PDF is attributed to the
+   * first voucher card of the group.
+   */
+  async getOwner(): Promise<User> {
+    const link = await UserVoucherGroup.findOne({
+      where: { voucherGroup: { id: this.id } },
+      relations: { user: true },
+      order: { userId: 'ASC' },
+    });
+    return link?.user;
+  }
 }
