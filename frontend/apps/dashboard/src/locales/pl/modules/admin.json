@@ -28,6 +28,7 @@
       "banners": {
         "title": "Banery",
         "noBannerFound": "Nie znaleziono baneru, proszę wgrać nowy!",
+        "imageRequirements": "PNG, JPEG, WebP lub GIF. Proporcje około 8:1, co najmniej 512x64 px.",
         "till": "do",
         "list": {
           "header": "Banery",
