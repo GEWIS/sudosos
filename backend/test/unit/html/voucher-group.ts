@@ -29,6 +29,7 @@ describe('createVoucherGroupPdf', () => {
     reference: 'SDS-VG-0001',
     identifier: '1',
     date: '1-9-2026',
+    dueDate: '1-10-2026',
     name: 'Freshers weekend',
     addressee: 'Study association GEWIS',
     attention: 'Treasurer',
@@ -99,6 +100,23 @@ describe('createVoucherGroupPdf', () => {
     expect(html).to.include('Multi Purpose Vouchers (MPV)');
     expect(html).to.include('Directive (EU) 2016/1065');
     expect(html).to.include('No VAT is due on the issue of these vouchers');
+  });
+
+  it('renders the invoice date and a payment due date', () => {
+    const html = createVoucherGroupPdf(params);
+    expect(html).to.include('>Date<');
+    expect(html).to.include('Due date');
+    expect(html).to.include(params.dueDate);
+    expect(html).to.include('must be paid within');
+  });
+
+  it('orders the meta rows from date to number of cards', () => {
+    const html = createVoucherGroupPdf(params);
+    const labels = ['Date', 'Due date', 'Voucher number', 'Sequence number',
+      'Valid from', 'Valid until', 'Number of cards'];
+    const positions = labels.map((l) => html.indexOf(`>${l}<`));
+    expect(positions).to.not.include(-1);
+    expect(positions).to.deep.equal([...positions].sort((a, b) => a - b));
   });
 
   it('uses the singular form for a single card', () => {

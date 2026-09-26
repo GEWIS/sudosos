@@ -42,8 +42,10 @@ export interface IVoucherGroupPdf {
   reference: string;
   /** VoucherGroup.id, shown as "Sequence number". */
   identifier: string;
-  /** Date the voucher group was created. */
+  /** VoucherGroup.invoiceDate. */
   date: string;
+  /** Payment due date: the invoice date plus the BAC payment term. */
+  dueDate: string;
   /** VoucherGroup.name; rendered as the "Description" section. */
   name: string;
   addressee: string;
@@ -79,7 +81,12 @@ export function createVoucherGroupPdf(options: IVoucherGroupPdf): string {
           <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016L1065">Directive (EU) 2016/1065</a>.
           No VAT is due on the issue of these vouchers; VAT only becomes applicable
           when the balance is used to purchase goods or services.
-          Please use reference <strong>${escapeHtml(options.reference)}</strong> in any correspondence.`;
+          The amount of <strong>${fmt(options.totalIncl)}</strong> must be paid within
+          <strong>${BAC.paymentTermDays} days</strong> (before <strong>${escapeHtml(options.dueDate)}</strong>)
+          to
+          <span style="white-space:nowrap"><strong>${escapeHtml(BAC.iban)}</strong></span>
+          in the name of ${escapeHtml(BAC.name)}, with reference
+          <strong>${escapeHtml(options.reference)}</strong>.`;
 
   return createDocumentPdf({
     bandLabel: 'Voucher Statement',
@@ -87,6 +94,7 @@ export function createVoucherGroupPdf(options: IVoucherGroupPdf): string {
     recipientHtml: recipientBlock(options.addressee, options.attention, options.address),
     metaRows: [
       { lbl: 'Date', v: escapeHtml(options.date) },
+      { lbl: 'Due date', v: escapeHtml(options.dueDate) },
       { lbl: 'Voucher number', v: escapeHtml(options.reference) },
       { lbl: 'Sequence number', v: escapeHtml(options.identifier) },
       { lbl: 'Valid from', v: escapeHtml(options.startDate) },

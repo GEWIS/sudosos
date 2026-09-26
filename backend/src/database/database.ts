@@ -132,6 +132,7 @@ import {
 } from '../migrations/1785401380818-add-product-self-service-to-user';
 import { VoucherGroupAddress1790440121000 } from '../migrations/1790440121000-voucher-group-address';
 import { VoucherGroupPdf1790440122000 } from '../migrations/1790440122000-voucher-group-pdf';
+import { VoucherGroupInvoiceDate1790440123000 } from '../migrations/1790440123000-voucher-group-invoice-date';
 import VoucherGroupPdf from '../entity/file/voucher-group-pdf';
 
 function getDataSourceOptions(): DataSourceOptions {
@@ -190,6 +191,7 @@ function getDataSourceOptions(): DataSourceOptions {
       AddProductSelfServiceToUser1785401380818,
       VoucherGroupAddress1790440121000,
       VoucherGroupPdf1790440122000,
+      VoucherGroupInvoiceDate1790440123000,
     ],
     extra: {
       authPlugins: {
