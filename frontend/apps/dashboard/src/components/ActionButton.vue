@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, type PropType } from 'vue';
 import Button from 'primevue/button';
 
 const props = defineProps({
@@ -22,7 +22,7 @@ const props = defineProps({
    * flashes danger (red X). Leave unset before the first attempt.
    */
   result: {
-    type: Boolean,
+    type: Boolean as PropType<boolean | null>,
     default: null,
   },
 });
@@ -33,7 +33,11 @@ const buttonIcon = ref('pi pi-check');
 const buttonSeverity = ref('primary');
 
 const updateResult = () => {
-  if (props.result === null) return;
+  if (props.result === null) {
+    buttonSeverity.value = 'primary';
+    buttonIcon.value = 'pi pi-check';
+    return;
+  }
   if (props.result) {
     buttonSeverity.value = 'success';
     buttonIcon.value = 'pi pi-check';
@@ -54,7 +58,6 @@ watch(
 watch(
   () => props.submitting,
   () => {
-    console.error('submitting', props.submitting, props.result);
     updateResult();
     if (props.submitting) {
       buttonIcon.value = 'pi pi-spin pi-spinner';
