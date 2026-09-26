@@ -14,6 +14,8 @@ import VatView from '@/modules/financial/views/vat/VatView.vue';
 import AdministrativeView from '@/modules/financial/views/administrative/AdministrativeView.vue';
 import FinancialOverviewView from '@/modules/financial/views/overview/FinancialOverviewView.vue';
 import TransferView from '@/modules/financial/views/transfer/TransferView.vue';
+import VouchersView from '@/modules/financial/views/voucher/VouchersView.vue';
+import VoucherGroupDetailView from '@/modules/financial/views/voucher/VoucherGroupDetailView.vue';
 import { isTransferCategory } from '@/modules/financial/utils/transferCategories';
 
 export function financialRoutes(): RouteRecordRaw[] {
@@ -92,6 +94,27 @@ export function financialRoutes(): RouteRecordRaw[] {
             requiresAuth: true,
             isAllowed: () => isAllowed('get', ['own', 'organ'], 'SellerPayout', ['any']),
             title: 'common.titles.payouts',
+          },
+        },
+        {
+          path: '/financial/voucher',
+          component: VouchersView,
+          name: 'vouchers',
+          meta: {
+            requiresAuth: true,
+            isAllowed: () => isAllowed('get', ['all'], 'VoucherGroup', ['any']),
+            title: 'common.titles.vouchers',
+          },
+        },
+        {
+          path: '/financial/voucher/:id',
+          component: VoucherGroupDetailView,
+          name: 'voucherDetail',
+          props: true,
+          meta: {
+            requiresAuth: true,
+            isAllowed: () => isAllowed('get', ['all'], 'VoucherGroup', ['any']),
+            title: 'common.titles.vouchers',
           },
         },
         {

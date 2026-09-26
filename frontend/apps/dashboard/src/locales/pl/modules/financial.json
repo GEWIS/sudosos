@@ -269,6 +269,71 @@
           "remaining": "Pozostało (€)",
           "fetchError": "Nie udało się wczytać sum transferów. Spróbuj ponownie."
         }
+      },
+      "vouchers": {
+        "title": "Grupy voucherów",
+        "detailTitle": "Grupa voucherów: {name}",
+        "list": {
+          "header": "Grupy voucherów",
+          "name": "Nazwa",
+          "startDate": "Data rozpoczęcia",
+          "endDate": "Data zakończenia",
+          "period": "Okres aktywności",
+          "status": "Status",
+          "cards": "Vouchery",
+          "cardBalance": "Saldo na voucher",
+          "totalBalance": "Całkowite saldo",
+          "actions": "Akcje",
+          "viewDetails": "Pokaż szczegóły",
+          "empty": "Nie znaleziono grup voucherów"
+        },
+        "status": {
+          "upcoming": "Nadchodzące",
+          "active": "Aktywne",
+          "expired": "Wygasłe"
+        },
+        "info": {
+          "header": "Informacje o grupie",
+          "allocated": "Całkowite przydzielone saldo",
+          "userCount": "Liczba voucherów",
+          "validity": "Ważność",
+          "created": "Utworzono"
+        },
+        "cardsTable": {
+          "header": "Pojedyncze vouchery",
+          "cardName": "Identyfikator vouchera",
+          "cardUser": "Użytkownik",
+          "status": "Status",
+          "viewUser": "Zobacz profil użytkownika",
+          "empty": "Brak voucherów w tej grupie"
+        },
+        "dialog": {
+          "createTitle": "Utwórz grupę voucherów",
+          "editTitle": "Edytuj grupę voucherów",
+          "name": "Nazwa grupy",
+          "namePlaceholder": "np. Intro 2026",
+          "startDate": "Data rozpoczęcia",
+          "endDate": "Data zakończenia",
+          "amount": "Liczba voucherów",
+          "balance": "Saldo na voucher (€)",
+          "help": "Każdy voucher zostanie utworzony jako użytkownik vouchera z podanym saldem.",
+          "save": "Zapisz",
+          "cancel": "Anuluj",
+          "errors": {
+            "nameRequired": "Nazwa jest wymagana",
+            "startDateRequired": "Data rozpoczęcia jest wymagana",
+            "endDateRequired": "Data zakończenia jest wymagana",
+            "endDateBeforeStart": "Data zakończenia musi być późniejsza niż data rozpoczęcia",
+            "endDatePast": "Data zakończenia nie może być w przeszłości",
+            "amountMin": "Liczba musi wynosić co najmniej 1",
+            "balanceMin": "Saldo musi być większe niż 0,00 €"
+          },
+          "toast": {
+            "createSuccess": "Pomyślnie utworzono grupę voucherów",
+            "updateSuccess": "Pomyślnie zaktualizowano grupę voucherów",
+            "error": "Nie udało się zapisać grupy voucherów"
+          }
+        }
       }
     }
   }
