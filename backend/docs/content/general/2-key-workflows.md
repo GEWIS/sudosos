@@ -166,6 +166,31 @@ flowchart TD
 - only admins can move a request to non-cancel states
 - only the requesting user can cancel their own request
 
+## Fine round (debt warnings and fines)
+
+**Trigger + actor**
+- An admin with the `create` and `notify` permissions on `Fine` runs a fine round from the dashboard (Financial → Debtors → **Start fine round**), usually once a week.
+
+**Flow**
+- The admin picks a **measurement date** (usually now) and the **previous measurement date** (defaults to the reference date of the last `FineHandoutEvent`).
+- `A`: users at or below -5 EUR on the measurement date (`GET /fines/eligible` with one reference date).
+- `F`: users at or below -5 EUR on both dates (`GET /fines/eligible` with both reference dates). These users are fined.
+- `W = A \ F`: users in debt now, but not at the previous measurement. These users only get a warning.
+- The dashboard first calls `POST /fines/handout` for `F`, then `POST /fines/notify` for `W`. If the handout fails, no warnings are sent.
+
+**Emails**
+- Users in `F` get one `UserGotFined` email. It also says they will be fined again if they are still in debt at the next measurement.
+- Users in `W` get one `UserWillGetFined` email.
+- Nobody gets both emails in the same round.
+
+**Entities touched**
+- `FineHandoutEvent`, `Fine`, `UserFineGroup`
+- fine transfers (user → void)
+
+**Critical checks**
+- the fine amount is based on the balance on the first reference date (the measurement date), capped at 5 EUR
+- `POST /fines/handout` does not re-check eligibility: every listed user gets a `Fine`, possibly of 0 EUR
+
 ## Next pages
 
 - **[System Architecture](/general/3-system-architecture)**
