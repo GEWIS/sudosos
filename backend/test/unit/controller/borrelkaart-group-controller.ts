@@ -59,6 +59,11 @@ function bkgResponseEq(req: VoucherGroupParams, res: VoucherGroupResponse): void
   expect(res.activeEndDate).to.equal(req.activeEndDate.toISOString());
   expect(res.users).to.be.of.length(req.amount);
   expect(res.balance.amount).to.equal(req.balance.getAmount());
+  expect(res.addressee).to.equal(req.addressee);
+  expect(res.street).to.equal(req.street);
+  expect(res.postalCode).to.equal(req.postalCode);
+  expect(res.city).to.equal(req.city);
+  expect(res.country).to.equal(req.country);
 }
 
 async function saveBKG(
@@ -145,6 +150,12 @@ describe('VoucherGroupController', async (): Promise<void> => {
         precision: 2,
       } as DineroObjectRequest,
       amount: 4,
+      addressee: 'Study association GEWIS',
+      attention: 'Treasurer',
+      street: 'Groene Loper 5',
+      postalCode: '5612 AE',
+      city: 'Eindhoven',
+      country: 'Netherlands',
     };
 
     const invalidVoucherGroupReq: VoucherGroupRequest = {
@@ -305,6 +316,15 @@ describe('VoucherGroupController', async (): Promise<void> => {
       // invalid code
       expect(res.status, 'status incorrect on invalid post').to.equal(400);
     });
+    it('should return an HTTP 400 if the given voucher group has no address', async () => {
+      const res = await request(ctx.app)
+        .post('/vouchergroups')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ ...ctx.validVoucherGroupReq, street: '' });
+
+      expect(res.status).to.equal(400);
+      expect(res.body).to.equal('Invalid voucher group.');
+    });
     it('should return an HTTP 403 if not admin', async () => {
       // post voucher group
       const res = await request(ctx.app)
@@ -463,6 +483,67 @@ describe('VoucherGroupController', async (): Promise<void> => {
 
       // check empty body
       expect(res.body, 'returned a voucher group').to.be.empty;
+    });
+  });
+
+  describe('PATCH /vouchergroups/:id/address', () => {
+    const newAddress = {
+      addressee: 'New purchaser',
+      street: 'Other street 1',
+      postalCode: '1234 AB',
+      city: 'Utrecht',
+      country: 'Netherlands',
+    };
+
+    it('should update the address of an active voucher group and return an HTTP 200 if admin', async () => {
+      await saveBKG(ctx.validVoucherGroupReq);
+      // Backdate the start date: the regular PATCH would now be refused.
+      await VoucherGroup.update(1, { activeStartDate: new Date('1999-12-31T00:00:00Z') });
+
+      const res = await request(ctx.app)
+        .patch('/vouchergroups/1/address')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send(newAddress);
+
+      expect(res.status).to.equal(200);
+      expect(
+        ctx.specification.validateModel('VoucherGroupResponse', res.body, false, true).valid,
+      ).to.be.true;
+      const body = res.body as VoucherGroupResponse;
+      expect(body.addressee).to.equal(newAddress.addressee);
+      expect(body.attention).to.equal('');
+      expect(body.city).to.equal(newAddress.city);
+      expect(body.balance.amount).to.equal(ctx.validVoucherGroupReq.balance.amount);
+    });
+    it('should return an HTTP 400 if the address is incomplete', async () => {
+      await saveBKG(ctx.validVoucherGroupReq);
+
+      const res = await request(ctx.app)
+        .patch('/vouchergroups/1/address')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ ...newAddress, city: ' ' });
+
+      expect(res.status).to.equal(400);
+    });
+    it('should return an HTTP 404 if the voucher group does not exist', async () => {
+      const res = await request(ctx.app)
+        .patch('/vouchergroups/1/address')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send(newAddress);
+
+      expect(res.status).to.equal(404);
+      expect(res.body).to.equal('Voucher group not found.');
+    });
+    it('should return an HTTP 403 if not admin', async () => {
+      await saveBKG(ctx.validVoucherGroupReq);
+
+      const res = await request(ctx.app)
+        .patch('/vouchergroups/1/address')
+        .set('Authorization', `Bearer ${ctx.token}`)
+        .send(newAddress);
+
+      expect(res.status).to.equal(403);
+      expect(res.body).to.be.empty;
     });
   });
 });

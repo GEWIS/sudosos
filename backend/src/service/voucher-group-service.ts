@@ -26,7 +26,11 @@
 
 import { FindManyOptions } from 'typeorm';
 import DineroFactory from 'dinero.js';
-import { VoucherGroupParams, VoucherGroupRequest } from '../controller/request/voucher-group-request';
+import {
+  VoucherGroupAddress,
+  VoucherGroupParams,
+  VoucherGroupRequest,
+} from '../controller/request/voucher-group-request';
 import VoucherGroupResponse from '../controller/response/voucher-group-response';
 import { UserResponse } from '../controller/response/user-response';
 import Transfer from '../entity/transactions/transfer';
@@ -55,10 +59,37 @@ export default class VoucherGroupService {
     endDate.setHours(23, 59, 59, 0);
     return {
       ...req,
+      ...VoucherGroupService.asVoucherGroupAddress(req),
       balance: DineroTransformer.Instance.from(req.balance.amount),
       activeStartDate: startDate,
       activeEndDate: endDate,
     };
+  }
+
+  /**
+   * Normalizes an address by trimming all fields and defaulting attention to ''.
+   * @param address - The (partial) address from a request
+   * @returns {VoucherGroupAddress} the normalized address
+   */
+  static asVoucherGroupAddress(address: Partial<VoucherGroupAddress>): Required<VoucherGroupAddress> {
+    return {
+      addressee: (address.addressee ?? '').trim(),
+      attention: (address.attention ?? '').trim(),
+      street: (address.street ?? '').trim(),
+      postalCode: (address.postalCode ?? '').trim(),
+      city: (address.city ?? '').trim(),
+      country: (address.country ?? '').trim(),
+    };
+  }
+
+  /**
+   * Whether all mandatory address fields are filled in. Attention is optional.
+   * @param address - The address to check
+   * @returns {boolean} whether the address is complete
+   */
+  static hasCompleteAddress(address: Partial<VoucherGroupAddress>): boolean {
+    return [address.addressee, address.street, address.postalCode, address.city, address.country]
+      .every((field) => typeof field === 'string' && field.trim() !== '');
   }
 
   /**
@@ -79,7 +110,9 @@ export default class VoucherGroupService {
       && bkgReq.balance.isPositive()
       && !bkgReq.balance.isZero()
       // voucher group must contain users
-      && bkgReq.amount > 0;
+      && bkgReq.amount > 0
+      // voucher group must be addressed to a purchaser
+      && VoucherGroupService.hasCompleteAddress(bkgReq);
   }
 
   static async updateBalance(users: User[], balance: DineroFactory.Dinero, isPositive = true) {
@@ -101,6 +134,7 @@ export default class VoucherGroupService {
       activeEndDate: bkgReq.activeEndDate,
       amount: bkgReq.amount,
       balance: bkgReq.balance,
+      ...VoucherGroupService.asVoucherGroupAddress(bkgReq),
     });
   }
 
@@ -133,6 +167,12 @@ export default class VoucherGroupService {
       activeEndDate: bkg.activeEndDate.toISOString(),
       balance: bkg.balance.toObject(),
       users: userResponses,
+      addressee: bkg.addressee ?? '',
+      attention: bkg.attention ?? '',
+      street: bkg.street ?? '',
+      postalCode: bkg.postalCode ?? '',
+      city: bkg.city ?? '',
+      country: bkg.country ?? '',
     };
   }
 
@@ -259,5 +299,25 @@ export default class VoucherGroupService {
     }
 
     return { voucherGroup, users: usersCurrent };
+  }
+
+  /**
+   * Updates only the address of a voucher group. Balances, dates and cards are
+   * left untouched, so this is allowed for groups that are already active.
+   * @param {number} id - requested voucher group id
+   * @param {VoucherGroupAddress} address - the new address
+   * @returns {{ voucherGroup: VoucherGroup, users: User[] } | undefined} updated voucher group with users, or undefined when not found
+   */
+  public static async updateVoucherGroupAddress(
+    id: number,
+    address: VoucherGroupAddress,
+  ): Promise<{ voucherGroup: VoucherGroup, users: User[] } | undefined> {
+    const exists = await VoucherGroup.exists({ where: { id } });
+    if (!exists) return undefined;
+
+    await VoucherGroup.update(id, VoucherGroupService.asVoucherGroupAddress(address));
+
+    const [[voucherGroup]] = await VoucherGroupService.getVoucherGroups({ bkgId: id });
+    return { voucherGroup, users: voucherGroup.vouchers.map((v) => v.user) };
   }
 }
