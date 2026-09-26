@@ -108,6 +108,31 @@
         {{ t('modules.financial.vouchers.dialog.help') }}
       </p>
 
+      <div class="flex flex-col gap-2">
+        <h3 class="font-semibold">{{ t('modules.financial.vouchers.address.header') }}</h3>
+        <p class="text-sm text-muted-color">{{ t('modules.financial.vouchers.address.help') }}</p>
+        <div class="flex flex-col gap-1">
+          <label class="font-medium" for="voucher-invoice-date">
+            {{ t('modules.financial.vouchers.dialog.invoiceDate') }}
+            <span class="text-red-500">{{ '*' }}</span>
+          </label>
+          <DatePickerString
+            id="voucher-invoice-date"
+            v-model="invoiceDate"
+            fluid
+            :invalid="submitted && !isInvoiceDateValid"
+            show-icon
+          />
+          <small v-if="submitted && !isInvoiceDateValid" class="text-red-500">
+            {{ t('modules.financial.vouchers.dialog.errors.invoiceDateRequired') }}
+          </small>
+          <small v-else class="text-muted-color">
+            {{ t('modules.financial.vouchers.dialog.invoiceDateHelp') }}
+          </small>
+        </div>
+        <VoucherGroupAddressFields v-model:address="address" :submitted="submitted" />
+      </div>
+
       <div class="flex justify-end gap-2 mt-4">
         <Button
           :label="t('modules.financial.vouchers.dialog.cancel')"
@@ -127,8 +152,15 @@ import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import type { AxiosError } from 'axios';
-import type { VoucherGroupRequest, VoucherGroupResponse } from '@gewis/sudosos-client';
+import type { VoucherGroupAddressRequest, VoucherGroupRequest, VoucherGroupResponse } from '@gewis/sudosos-client';
 import DatePickerString from '@/components/DatePickerString.vue';
+import VoucherGroupAddressFields from '@/modules/financial/components/voucher/VoucherGroupAddressFields.vue';
+import {
+  emptyVoucherGroupAddress,
+  isVoucherGroupAddressComplete,
+  pickVoucherGroupAddress,
+  trimVoucherGroupAddress,
+} from '@/modules/financial/components/voucher/voucherAddress';
 import { useVoucherGroupStore } from '@/stores/voucherGroup.store';
 import { handleError } from '@/utils/errorUtils';
 import { formatDateFromString } from '@/utils/formatterUtils';
@@ -156,8 +188,10 @@ const inAWeek = () => formatDateFromString(new Date(Date.now() + 7 * 24 * 60 * 6
 
 const startDate = ref(today());
 const endDate = ref(inAWeek());
+const invoiceDate = ref(today());
 const amount = ref<number>(10);
 const balanceEuros = ref<number>(10);
+const address = ref<VoucherGroupAddressRequest>(emptyVoucherGroupAddress());
 const isSaving = ref(false);
 const submitted = ref(false);
 
@@ -167,14 +201,18 @@ const resetForm = () => {
     name.value = props.voucherGroup.name;
     startDate.value = formatDateFromString(props.voucherGroup.activeStartDate) || today();
     endDate.value = formatDateFromString(props.voucherGroup.activeEndDate);
+    invoiceDate.value = formatDateFromString(props.voucherGroup.invoiceDate) || today();
     amount.value = props.voucherGroup.amount;
     balanceEuros.value = props.voucherGroup.balance.amount / 10 ** props.voucherGroup.balance.precision;
+    address.value = pickVoucherGroupAddress(props.voucherGroup);
   } else {
     name.value = '';
     startDate.value = today();
     endDate.value = inAWeek();
+    invoiceDate.value = today();
     amount.value = 10;
     balanceEuros.value = 10;
+    address.value = emptyVoucherGroupAddress();
   }
 };
 
@@ -200,12 +238,20 @@ const endDateError = computed(() => {
 });
 const isEndDateValid = computed(() => endDateError.value === '');
 
+const isInvoiceDateValid = computed(() => invoiceDate.value.length > 0);
+
 const isAmountValid = computed(() => typeof amount.value === 'number' && amount.value >= minAmount.value);
 const isBalanceValid = computed(() => typeof balanceEuros.value === 'number' && balanceEuros.value > 0);
 
 const isFormValid = computed(
   () =>
-    isNameValid.value && isStartDateValid.value && isEndDateValid.value && isAmountValid.value && isBalanceValid.value,
+    isNameValid.value &&
+    isStartDateValid.value &&
+    isEndDateValid.value &&
+    isInvoiceDateValid.value &&
+    isAmountValid.value &&
+    isBalanceValid.value &&
+    isVoucherGroupAddressComplete(address.value),
 );
 
 const handleSubmit = async () => {
@@ -218,12 +264,14 @@ const handleSubmit = async () => {
       name: name.value.trim(),
       activeStartDate: startDate.value,
       activeEndDate: endDate.value,
+      invoiceDate: invoiceDate.value,
       amount: amount.value,
       balance: {
         amount: Math.round(balanceEuros.value * 100),
         currency: 'EUR',
         precision: 2,
       },
+      ...trimVoucherGroupAddress(address.value),
     };
 
     let result: VoucherGroupResponse;

@@ -297,7 +297,8 @@
           "allocated": "Totaal toegewezen saldo",
           "userCount": "Aantal vouchers",
           "validity": "Geldigheid",
-          "created": "Aangemaakt"
+          "created": "Aangemaakt",
+          "invoiceDate": "Factuurdatum"
         },
         "cardsTable": {
           "header": "Individuele vouchers",
@@ -314,6 +315,8 @@
           "namePlaceholder": "bijv. Intro 2026",
           "startDate": "Startdatum",
           "endDate": "Einddatum",
+          "invoiceDate": "Factuurdatum",
+          "invoiceDateHelp": "De datum op de PDF met het voucheroverzicht.",
           "amount": "Aantal vouchers",
           "balance": "Saldo per voucher (€)",
           "help": "Elke voucher wordt aangemaakt als een voucher-gebruiker met het opgegeven saldo.",
@@ -325,6 +328,7 @@
             "endDateRequired": "Einddatum is verplicht",
             "endDateBeforeStart": "Einddatum moet na startdatum liggen",
             "endDatePast": "Einddatum kan niet in het verleden liggen",
+            "invoiceDateRequired": "Factuurdatum is verplicht",
             "amountMin": "Aantal moet minimaal 1 zijn",
             "balanceMin": "Saldo moet groter zijn dan €0,00"
           },
@@ -333,6 +337,22 @@
             "updateSuccess": "Vouchergroep succesvol bijgewerkt",
             "error": "Opslaan van vouchergroep mislukt"
           }
+        },
+        "address": {
+          "header": "Adres koper",
+          "help": "Het adres komt op de PDF met het vouchertoverzicht en is verplicht.",
+          "required": "Geadresseerde, straat, postcode, plaats en land zijn verplicht",
+          "edit": "Factuurgegevens bewerken",
+          "editTitle": "Factuurgegevens bewerken",
+          "missing": "Deze vouchergroep heeft nog geen adres. Voeg er een toe om de PDF te genereren.",
+          "attn": "T.a.v. {name}",
+          "toast": {
+            "success": "Factuurgegevens succesvol bijgewerkt"
+          }
+        },
+        "pdf": {
+          "download": "PDF downloaden",
+          "needsAddress": "Voeg een adres toe om de PDF te genereren"
         }
       }
     }

@@ -297,7 +297,8 @@
           "allocated": "Total allocated balance",
           "userCount": "Voucher count",
           "validity": "Validity",
-          "created": "Created"
+          "created": "Created",
+          "invoiceDate": "Invoice date"
         },
         "cardsTable": {
           "header": "Individual vouchers",
@@ -314,6 +315,8 @@
           "namePlaceholder": "e.g. Intro 2026",
           "startDate": "Start date",
           "endDate": "End date",
+          "invoiceDate": "Invoice date",
+          "invoiceDateHelp": "The date printed on the voucher statement PDF.",
           "amount": "Number of vouchers",
           "balance": "Balance per voucher (€)",
           "help": "Each voucher will be generated as a voucher user with the specified balance.",
@@ -325,6 +328,7 @@
             "endDateRequired": "End date is required",
             "endDateBeforeStart": "End date must be after start date",
             "endDatePast": "End date cannot be in the past",
+            "invoiceDateRequired": "Invoice date is required",
             "amountMin": "Amount must be at least 1",
             "balanceMin": "Balance must be greater than €0.00"
           },
@@ -333,6 +337,22 @@
             "updateSuccess": "Voucher group updated successfully",
             "error": "Failed to save voucher group"
           }
+        },
+        "address": {
+          "header": "Purchaser address",
+          "help": "The address is printed on the voucher statement PDF and is required.",
+          "required": "Addressee, street, postal code, city and country are required",
+          "edit": "Edit invoice details",
+          "editTitle": "Edit invoice details",
+          "missing": "This voucher group has no address yet. Add one to generate the statement PDF.",
+          "attn": "Attn. {name}",
+          "toast": {
+            "success": "Invoice details updated successfully"
+          }
+        },
+        "pdf": {
+          "download": "Download PDF",
+          "needsAddress": "Add an address to generate the PDF"
         }
       }
     }

@@ -3,6 +3,25 @@
     <template #topAction>
       <div class="flex items-center gap-2">
         <Badge :severity="statusSeverity" :value="statusLabel" />
+        <span v-tooltip.top="hasAddress ? undefined : t('modules.financial.vouchers.pdf.needsAddress')">
+          <Button
+            :disabled="!hasAddress"
+            icon="pi pi-file-pdf"
+            :label="t('modules.financial.vouchers.pdf.download')"
+            :loading="isDownloadingPdf"
+            outlined
+            size="small"
+            @click="downloadPdf"
+          />
+        </span>
+        <Button
+          v-if="canEditAddress"
+          icon="pi pi-file-edit"
+          :label="t('modules.financial.vouchers.address.edit')"
+          outlined
+          size="small"
+          @click="isAddressDialogOpen = true"
+        />
         <Button
           v-if="canEdit"
           icon="pi pi-pencil"
@@ -50,10 +69,38 @@
           {{ formatDateFromString(voucherGroup.createdAt) }}
         </span>
       </div>
+
+      <div class="flex flex-col gap-1 sm:col-span-2">
+        <span class="text-sm text-muted-color">{{ t('modules.financial.vouchers.info.invoiceDate') }}</span>
+        <span class="text-base font-medium">
+          {{ formatDateFromString(voucherGroup.invoiceDate) }}
+        </span>
+      </div>
+
+      <div class="flex flex-col gap-1 sm:col-span-2">
+        <span class="text-sm text-muted-color">{{ t('modules.financial.vouchers.address.header') }}</span>
+        <address v-if="hasAddress" class="not-italic text-base font-medium">
+          <div>{{ voucherGroup.addressee }}</div>
+          <div v-if="voucherGroup.attention">
+            {{ t('modules.financial.vouchers.address.attn', { name: voucherGroup.attention }) }}
+          </div>
+          <div>{{ voucherGroup.street }}</div>
+          <div>{{ `${voucherGroup.postalCode} ${voucherGroup.city}` }}</div>
+          <div>{{ voucherGroup.country }}</div>
+        </address>
+        <Message v-else severity="warn" size="small" variant="simple">
+          {{ t('modules.financial.vouchers.address.missing') }}
+        </Message>
+      </div>
     </div>
 
     <VoucherGroupDialog
       v-model:visible="isEditDialogOpen"
+      :voucher-group="voucherGroup"
+      @saved="(updated) => emit('updated', updated)"
+    />
+    <VoucherGroupAddressDialog
+      v-model:visible="isAddressDialogOpen"
       :voucher-group="voucherGroup"
       @saved="(updated) => emit('updated', updated)"
     />
@@ -63,13 +110,22 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useToast } from 'primevue/usetoast';
+import type { AxiosError } from 'axios';
 import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import type { VoucherGroupResponse } from '@gewis/sudosos-client';
 import CardComponent from '@/components/CardComponent.vue';
 import VoucherGroupDialog from '@/modules/financial/components/voucher/VoucherGroupDialog.vue';
+import VoucherGroupAddressDialog from '@/modules/financial/components/voucher/VoucherGroupAddressDialog.vue';
+import { isVoucherGroupAddressComplete } from '@/modules/financial/components/voucher/voucherAddress';
+import { useVoucherGroupStore } from '@/stores/voucherGroup.store';
 import { formatDineroObject, formatDateFromString, formatPrice } from '@/utils/formatterUtils';
+import { handleError } from '@/utils/errorUtils';
+import { getVoucherGroupPdfSrc } from '@/utils/urlUtils';
 
 const { t } = useI18n();
+const toast = useToast();
+const voucherGroupStore = useVoucherGroupStore();
 
 const props = defineProps<{
   voucherGroup: VoucherGroupResponse;
@@ -80,6 +136,25 @@ const emit = defineEmits<{
 }>();
 
 const isEditDialogOpen = ref(false);
+const isAddressDialogOpen = ref(false);
+const isDownloadingPdf = ref(false);
+
+const hasAddress = computed(() => isVoucherGroupAddressComplete(props.voucherGroup));
+
+// Unlike the full edit, the address and invoice date can be changed at any time: they do not touch balances.
+const canEditAddress = computed(() => isAllowed('update', ['all'], 'VoucherGroup', ['*']));
+
+const downloadPdf = async () => {
+  isDownloadingPdf.value = true;
+  try {
+    const pdf = await voucherGroupStore.fetchVoucherGroupPdf(props.voucherGroup.id);
+    if (pdf) window.location.href = getVoucherGroupPdfSrc(pdf);
+  } catch (error) {
+    handleError(error as AxiosError, toast);
+  } finally {
+    isDownloadingPdf.value = false;
+  }
+};
 
 const canEdit = computed(() => {
   if (!isAllowed('update', ['all'], 'VoucherGroup', ['*'])) return false;

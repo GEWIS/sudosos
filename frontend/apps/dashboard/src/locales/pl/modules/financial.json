@@ -297,7 +297,8 @@
           "allocated": "Całkowite przydzielone saldo",
           "userCount": "Liczba voucherów",
           "validity": "Ważność",
-          "created": "Utworzono"
+          "created": "Utworzono",
+          "invoiceDate": "Data faktury"
         },
         "cardsTable": {
           "header": "Pojedyncze vouchery",
@@ -314,6 +315,8 @@
           "namePlaceholder": "np. Intro 2026",
           "startDate": "Data rozpoczęcia",
           "endDate": "Data zakończenia",
+          "invoiceDate": "Data faktury",
+          "invoiceDateHelp": "Data drukowana na zestawieniu PDF voucherów.",
           "amount": "Liczba voucherów",
           "balance": "Saldo na voucher (€)",
           "help": "Każdy voucher zostanie utworzony jako użytkownik vouchera z podanym saldem.",
@@ -325,6 +328,7 @@
             "endDateRequired": "Data zakończenia jest wymagana",
             "endDateBeforeStart": "Data zakończenia musi być późniejsza niż data rozpoczęcia",
             "endDatePast": "Data zakończenia nie może być w przeszłości",
+            "invoiceDateRequired": "Data faktury jest wymagana",
             "amountMin": "Liczba musi wynosić co najmniej 1",
             "balanceMin": "Saldo musi być większe niż 0,00 €"
           },
@@ -333,6 +337,22 @@
             "updateSuccess": "Pomyślnie zaktualizowano grupę voucherów",
             "error": "Nie udało się zapisać grupy voucherów"
           }
+        },
+        "address": {
+          "header": "Adres nabywcy",
+          "help": "Adres jest drukowany na zestawieniu PDF voucherów i jest wymagany.",
+          "required": "Adresat, ulica, kod pocztowy, miasto i kraj są wymagane",
+          "edit": "Edytuj dane faktury",
+          "editTitle": "Edytuj dane faktury",
+          "missing": "Ta grupa voucherów nie ma jeszcze adresu. Dodaj go, aby wygenerować PDF.",
+          "attn": "Do wiadomości: {name}",
+          "toast": {
+            "success": "Dane faktury zostały zaktualizowane"
+          }
+        },
+        "pdf": {
+          "download": "Pobierz PDF",
+          "needsAddress": "Dodaj adres, aby wygenerować PDF"
         }
       }
     }
