@@ -1,7 +1,7 @@
 <template>
   <Dialog
     v-model:visible="visible"
-    class="w-120"
+    class="w-120 max-w-[95vw]"
     :closable="false"
     :close-on-escape="false"
     :dismissable-mask="false"

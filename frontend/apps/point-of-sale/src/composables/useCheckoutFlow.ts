@@ -2,6 +2,7 @@ import { computed, ref } from 'vue';
 import { logoutService } from '@/services/logoutService';
 import { useCartStore } from '@/stores/cart.store';
 import { useSettingStore } from '@/stores/settings.store';
+import { useTerminalPaymentStore } from '@/stores/terminalPayment.store';
 import { useCheckoutTimer } from '@/composables/useCheckoutTimer';
 import { playAudio, Sound } from '@/utils/audioUtil';
 
@@ -10,7 +11,9 @@ const STEEKPROEF_CHANCE = 0.45;
 /**
  * Everything behind the checkout button: the countdown, the age verification
  * and April Fools interludes, and anonymous terminal payments. Render
- * CheckoutDialogs with the returned flow to show the dialogs it drives.
+ * CheckoutDialogs with the returned flow to show the dialogs it drives. The
+ * terminal payment dialog is the exception: CashierView renders that one, so
+ * a payment in progress survives switching between the kiosk and mobile layouts.
  *
  * @param onSelectCreator called in borrel mode, where checking out means
  *   picking which POS associate the sale is created by.
@@ -42,7 +45,11 @@ export function useCheckoutFlow(onSelectCreator: () => void) {
     return cartItems.length > 0 && !!buyer.value;
   });
 
-  const showTerminalPayment = ref(false);
+  const terminalPaymentStore = useTerminalPaymentStore();
+  const showTerminalPayment = computed({
+    get: () => terminalPaymentStore.dialogVisible,
+    set: (value: boolean) => (terminalPaymentStore.dialogVisible = value),
+  });
 
   // Terminal payments are anonymous for now: the sale is booked in the name of
   // the POS itself. That only makes sense in borrel mode, where "select no one"

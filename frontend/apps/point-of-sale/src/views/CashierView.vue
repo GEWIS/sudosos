@@ -1,9 +1,42 @@
 <template>
-  <div class="flex flex-col h-screen">
-    <div v-if="posNotLoaded" class="items-center flex flex-col h-screen justify-center">
+  <div class="flex flex-col" :class="isMobile ? 'h-dvh' : 'h-screen'">
+    <div v-if="posNotLoaded" class="items-center flex flex-col h-full justify-center">
       <div>
         <ProgressSpinner aria-label="Loading" />
       </div>
+    </div>
+    <div v-else-if="isMobile" class="flex flex-col h-full overflow-hidden bg-gray-50">
+      <MobileUserSearchHeader ref="mobileHeader" @open-settings="mobileSettings?.openSettings()" />
+      <TopUpWarningComponent
+        v-if="shouldShowTopUpWarning"
+        :show="showTopUpWarning"
+        @update:show="handleTopUpWarningUpdate"
+      />
+      <div class="relative flex-1 min-h-0">
+        <main ref="mobileMain" class="h-full overflow-y-auto" :class="{ 'pb-24': cartStore.cartTotalCount > 0 }">
+          <div class="px-3 pt-2 text-sm empty:hidden"><ActivityComponent /></div>
+          <MobileProductList
+            ref="mobileProductList"
+            :alcohol-time-today="alcoholTimeToday"
+            :point-of-sale="currentPos"
+            :selected-category-id="selectedCategoryId"
+            :should-show-alcohol-warning="!!shouldShowAlcoholWarning"
+          />
+        </main>
+        <MobileCartActionBar @select-creator="selectCreator()" @select-user="mobileHeader?.openSearch()" />
+      </div>
+      <MobileCategoryBar
+        :categories="computedCategories"
+        :selected-category-id="selectedCategoryId"
+        @select-category="selectMobileCategory"
+      />
+      <div
+        v-if="currentState === PointOfSaleState.SELECT_CREATOR"
+        class="fixed inset-0 z-40 overflow-y-auto bg-white p-3"
+      >
+        <BuyerSelectionComponent @cancel-select-creator="cancelSelectCreator()" />
+      </div>
+      <SettingsIconComponent ref="mobileSettings" hide-trigger />
     </div>
     <div v-else class="mx-8 mt-8 bg-[#ffffffEE] shadow-lg flex-grow rounded-3xl min-h-0">
       <div class="wrapper">
@@ -29,16 +62,19 @@
         </div>
       </div>
     </div>
-    <div class="flex flex-row">
+    <div v-if="!isMobile" class="flex flex-row">
       <SettingsIconComponent />
       <ScannersUpdateComponent :handle-nfc-delete="nfcDelete" :handle-nfc-update="nfcUpdate" />
     </div>
     <NfcSearchComponent :handle-nfc-search="cartStore.setBuyerFromNfc" />
+    <!-- Outside the layout switch: rotating a phone past the breakpoint swaps
+         layouts, and must not unmount the dialog of a payment in progress. -->
+    <TerminalPaymentModal v-model:show="terminalPaymentStore.dialogVisible" />
   </div>
 </template>
 <script setup lang="ts">
 import { PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
-import { computed, onMounted, Ref, ref, watch } from 'vue';
+import { computed, onMounted, Ref, ref, useTemplateRef, watch } from 'vue';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { storeToRefs } from 'pinia';
 import { usePointOfSaleStore } from '@/stores/pos.store';
@@ -56,6 +92,14 @@ import { userApiService } from '@/services/ApiService';
 import { useCartStore } from '@/stores/cart.store';
 import TopUpWarningComponent from '@/components/TopUpWarningComponent.vue';
 import { useSettingStore } from '@/stores/settings.store';
+import { useIsMobile } from '@/composables/useIsMobile';
+import { usePosCategories } from '@/composables/usePosCategories';
+import MobileUserSearchHeader from '@/components/Mobile/MobileUserSearchHeader.vue';
+import MobileProductList from '@/components/Mobile/MobileProductList.vue';
+import MobileCartActionBar from '@/components/Mobile/MobileCartActionBar.vue';
+import MobileCategoryBar from '@/components/Mobile/MobileCategoryBar.vue';
+import TerminalPaymentModal from '@/components/Cart/TerminalPaymentModal.vue';
+import { useTerminalPaymentStore } from '@/stores/terminalPayment.store';
 
 const authStore = useAuthStore();
 const posNotLoaded = ref(true);
@@ -63,6 +107,7 @@ const currentPos: Ref<PointOfSaleWithContainersResponse | undefined> = ref(undef
 const pointOfSaleStore = usePointOfSaleStore();
 const activityStore = useActivityStore();
 const cartStore = useCartStore();
+const terminalPaymentStore = useTerminalPaymentStore();
 const { checkBuyerInDebt, buyerBalance } = storeToRefs(cartStore);
 const settingStore = useSettingStore();
 const shouldShowTimers = computed(() => settingStore.showTimers);
@@ -75,6 +120,31 @@ enum PointOfSaleState {
 }
 
 const currentState = ref(PointOfSaleState.DISPLAY_POS);
+
+const { isMobile } = useIsMobile();
+const mobileHeader = useTemplateRef('mobileHeader');
+const mobileSettings = useTemplateRef('mobileSettings');
+const mobileMain = useTemplateRef('mobileMain');
+const mobileProductList = useTemplateRef('mobileProductList');
+
+// The kiosk picks its category inside PointOfSaleDisplayComponent; the mobile
+// layout needs it here because the category bar and product list are siblings.
+const { computedCategories, selectedCategoryId, selectCategory, shouldShowAlcoholWarning, alcoholTimeToday } =
+  usePosCategories(currentPos);
+
+const selectMobileCategory = (categoryId: string) => {
+  selectCategory(categoryId);
+  mobileProductList.value?.clearSearch();
+  mobileMain.value?.scrollTo({ top: 0 });
+};
+
+// The mobile layout has no SEARCH_USER screen (the header handles search), so
+// don't get stuck in it when the window shrinks past the breakpoint.
+watch(isMobile, (mobile) => {
+  if (mobile && currentState.value === PointOfSaleState.SEARCH_USER) {
+    currentState.value = PointOfSaleState.DISPLAY_POS;
+  }
+});
 
 const showTopUpWarning = ref(false);
 const hasCheckedDebtAfterLogin = ref(false);

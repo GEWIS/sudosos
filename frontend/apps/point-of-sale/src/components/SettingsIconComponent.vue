@@ -1,10 +1,11 @@
 <template>
-  <div class="m-5 cursor-pointer" @click="openSettings">
+  <div v-if="!hideTrigger" class="m-5 cursor-pointer" @click="openSettings">
     <div class="pi pi-cog" style="font-size: 3rem" />
   </div>
   <Dialog
     ref="settings"
     v-model:visible="visible"
+    :breakpoints="{ '767px': '95vw' }"
     :draggable="false"
     header="Switch Point of Sale"
     modal
@@ -41,6 +42,14 @@ import { logoutPosService, logoutService } from '@/services/logoutService';
 import { usePointOfSaleSwitch } from '@/composables/usePointOfSaleSwitch';
 import { usePointOfSaleOptions } from '@/composables/usePointOfSaleOptions';
 
+withDefaults(
+  defineProps<{
+    /** Hide the cog, for layouts that open the dialog from their own button via `openSettings`. */
+    hideTrigger?: boolean;
+  }>(),
+  { hideTrigger: false },
+);
+
 const visible = ref(false);
 const settings: Ref<{ mask: HTMLElement; close: () => void } | null> = ref(null);
 const posStore = usePointOfSaleStore();
@@ -70,4 +79,6 @@ const openSettings = async () => {
     await loadPosOptions();
   }
 };
+
+defineExpose({ openSettings });
 </script>

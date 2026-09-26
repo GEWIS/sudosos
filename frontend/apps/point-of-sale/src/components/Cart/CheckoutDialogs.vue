@@ -9,6 +9,7 @@
       header: () => ({ class: ['dialog-header'] }),
       closeButton: () => ({ class: ['dialog-close'] }),
     }"
+    :style="{ maxWidth: '95vw' }"
     @click="resetDialog"
   >
     <Message :icon="undefined" severity="warn">
@@ -28,14 +29,12 @@
     @denied="onAgeVerificationDenied"
     @update:show="showAgeVerification = $event"
   />
-  <TerminalPaymentModal :show="showTerminalPayment" @update:show="showTerminalPayment = $event" />
 </template>
 
 <script setup lang="ts">
 import type { CheckoutFlow } from '@/composables/useCheckoutFlow';
 import AprilFoolsComponent from '@/components/AprilFoolsComponent.vue';
 import AgeVerificationComponent from '@/components/AgeVerificationComponent.vue';
-import TerminalPaymentModal from '@/components/Cart/TerminalPaymentModal.vue';
 
 const props = defineProps<{
   flow: CheckoutFlow;
@@ -51,7 +50,6 @@ const {
   showAgeVerification,
   onAgeVerificationConfirmed,
   onAgeVerificationDenied,
-  showTerminalPayment,
   logout,
 } = props.flow;
 </script>

@@ -72,6 +72,12 @@ interface TerminalPaymentState_ {
   payment: TerminalPaymentResponse | null;
   phase: TerminalPaymentPhase;
   errorMessage: string | null;
+  /**
+   * Whether the payment dialog is open. Lives here rather than in the checkout
+   * button's component because the kiosk and mobile layouts each have their
+   * own button, and the dialog must survive switching between them.
+   */
+  dialogVisible: boolean;
 }
 
 /**
@@ -86,6 +92,7 @@ export const useTerminalPaymentStore = defineStore('terminalPayment', {
     payment: null,
     phase: 'idle',
     errorMessage: null,
+    dialogVisible: false,
   }),
   getters: {
     getPayment(): TerminalPaymentResponse | null {
