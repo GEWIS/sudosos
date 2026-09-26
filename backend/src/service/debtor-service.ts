@@ -303,8 +303,8 @@ export default class DebtorService extends WithManager {
         notifications.push({ user, notificationOption: new UserGotFinedOptions(
           referenceDate,
           amount,
-          DineroTransformer.Instance.from(b.amount.amount),
           userFineGroup.fines.reduce((sum, f) => sum.add(f.amount), dinero({ amount :0 })).add(amount),
+          DineroTransformer.Instance.from(b.amount.amount),
         ) });
 
         return Object.assign(new Fine(), {
