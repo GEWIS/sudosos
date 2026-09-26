@@ -25,9 +25,15 @@ function parseTime(value: number): string {
   return value.toString().padStart(2, '0');
 }
 
-export function dateToTimeString(date: Date): string {
+export function dateToTimeString(date: Date, withSeconds = true): string {
   const pad = (n: number) => n.toString().padStart(2, '0');
-  return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  const time = `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  return withSeconds ? `${time}:${pad(date.getSeconds())}` : time;
+}
+
+export function formatDateAndTime(value: string | Date): string {
+  const date = new Date(value);
+  return `${formatDateTime(date)} ${dateToTimeString(date, false)}`;
 }
 
 export function formatPrice(value: Dinero, isNegative?: boolean): string {
@@ -36,6 +42,10 @@ export function formatPrice(value: Dinero, isNegative?: boolean): string {
   } else {
     return (value.amount / 100).toLocaleString('nl-NL', { style: 'currency', currency: 'EUR' });
   }
+}
+
+export function toDineroResponse(amount: number): DineroObjectResponse {
+  return { amount, currency: 'EUR', precision: 2 };
 }
 
 export function formatDineroObject(dinero: DineroObjectResponse, isNegative?: boolean): string {

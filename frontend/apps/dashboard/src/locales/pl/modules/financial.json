@@ -7,25 +7,12 @@
           "header": "Dłużnicy",
           "currentBalance": "Aktualne saldo",
           "balanceOn": "Saldo na dzień {date}",
-          "target": "data odniesienia",
-          "control": "kontrola",
-          "explanation": "Poniższa tabela wybiera wszystkich użytkowników, którzy mają co najwyżej -5€ na obie daty. Kary do nałożenia są obliczane na podstawie salda z daty odniesienia.",
           "apply": "Zastosuj",
-          "notify": "Powiadom",
-          "handout": "Nałóż kary",
           "toBeFined": "Do ukarania",
           "wasFined": "Ukarany",
-          "cannotDebt": "Wyłącz możliwość zadłużania się",
           "ofWhichFine": "Z czego kara",
           "fineSince": "Kara od",
-          "sumCurrentBalance": "Suma sald",
-          "sumToBeFined": "Suma \"Do ukarania\"",
-          "sumWasFined": "Suma \"Ukarany\"",
-          "confirm": {
-            "handoutMessage": "Czy chcesz nałożyć kary na {count} użytkowników?",
-            "notifyMessage": "Czy chcesz wysłać ostrzeżenie o karze do {count} użytkowników?",
-            "cannotGoInDebt": "Czy chcesz wyłączyć możliwość dalszego zadłużania się dla {count} użytkowników?"
-          }
+          "userCount": "Użytkownicy: {count}"
         },
         "handoutEvents": {
           "title": "Nałożenie kar",
@@ -41,6 +28,38 @@
             "deleteMessage": "Czy na pewno chcesz usunąć to wydarzenie nałożenia kar? Spowoduje to również usunięcie wszystkich powiązanych kar.",
             "delete": "Usuń"
           }
+        },
+        "fineRound": {
+          "title": "Runda kar",
+          "steps": {
+            "dates": "Daty",
+            "fines": "Kary",
+            "warnings": "Ostrzeżenia",
+            "confirm": "Potwierdzenie"
+          },
+          "overviewIntro": "Jeśli wszyscy zostaną zaznaczeni, runda kar na podstawie sald z {date}, w porównaniu z {previousDate}:",
+          "overviewNoPrevious": "Nie było jeszcze żadnego nałożenia kar. Wybierz obie daty pomiaru w następnym kroku.",
+          "overviewFined": "ukaranych użytkowników",
+          "overviewAmount": "suma kar",
+          "overviewWarned": "ostrzeżonych użytkowników",
+          "start": "Rozpocznij rundę kar",
+          "explanation": "Użytkownicy z saldem -€5,00 lub niższym w obu datach zostaną ukarani na podstawie salda z daty pomiaru. Użytkownicy z saldem -€5,00 lub niższym tylko w dacie pomiaru otrzymają zamiast tego ostrzeżenie.",
+          "measurementDate": "Data pomiaru",
+          "previousMeasurementDate": "Poprzednia data pomiaru",
+          "invalidDates": "Poprzednia data pomiaru musi być wcześniejsza niż data pomiaru.",
+          "next": "Dalej",
+          "finesInfo": "Ci użytkownicy byli zadłużeni na obie daty i zostaną ukarani. Otrzymają jednego e-maila, który ostrzega ich również przed następnym pomiarem.",
+          "deselectedNote": "Odznaczeni użytkownicy są całkowicie pomijani: nie zostaną ukarani ani ostrzeżeni.",
+          "selectedFines": "Zaznaczono {count} użytkownika, {amount} kar | Zaznaczono {count} użytkowników, {amount} kar",
+          "warningsInfo": "Ci użytkownicy są teraz zadłużeni, ale nie byli przy poprzednim pomiarze. Otrzymają tylko ostrzeżenie.",
+          "futureFine": "Kara, jeśli nadal zadłużony",
+          "selectedWarnings": "Zaznaczono {count} użytkownika, {amount} zadłużenia | Zaznaczono {count} użytkowników, {amount} zadłużenia",
+          "summaryFines": "{count} użytkownik zostanie ukarany na łączną kwotę {amount}. | {count} użytkowników zostanie ukaranych na łączną kwotę {amount}.",
+          "summaryWarnings": "{count} użytkownik otrzyma ostrzeżenie. | {count} użytkowników otrzyma ostrzeżenie.",
+          "outcome": "Wynik",
+          "outcomeFine": "Kara {amount}",
+          "outcomeWarning": "Ostrzeżenie",
+          "run": "Uruchom rundę kar"
         }
       },
       "invoice": {
