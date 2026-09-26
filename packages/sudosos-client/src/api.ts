@@ -5234,6 +5234,62 @@ export interface StripeRequest {
 /**
  * 
  * @export
+ * @interface StripeSettlementReportCategoryResponse
+ */
+export interface StripeSettlementReportCategoryResponse {
+    /**
+     * Number of settled payments in this category
+     * @type {number}
+     * @memberof StripeSettlementReportCategoryResponse
+     */
+    'count': number;
+    /**
+     * 
+     * @type {DineroObjectResponse}
+     * @memberof StripeSettlementReportCategoryResponse
+     */
+    'totalAmount': DineroObjectResponse;
+}
+/**
+ * 
+ * @export
+ * @interface StripeSettlementReportResponse
+ */
+export interface StripeSettlementReportResponse {
+    /**
+     * Start of the report period, inclusive
+     * @type {string}
+     * @memberof StripeSettlementReportResponse
+     */
+    'fromDate': string;
+    /**
+     * End of the report period, exclusive
+     * @type {string}
+     * @memberof StripeSettlementReportResponse
+     */
+    'toDate': string;
+    /**
+     * 
+     * @type {StripeSettlementReportCategoryResponse}
+     * @memberof StripeSettlementReportResponse
+     */
+    'deposits': StripeSettlementReportCategoryResponse;
+    /**
+     * 
+     * @type {StripeSettlementReportCategoryResponse}
+     * @memberof StripeSettlementReportResponse
+     */
+    'terminalPayments': StripeSettlementReportCategoryResponse;
+    /**
+     * 
+     * @type {StripeSettlementReportCategoryResponse}
+     * @memberof StripeSettlementReportResponse
+     */
+    'total': StripeSettlementReportCategoryResponse;
+}
+/**
+ * 
+ * @export
  * @interface SubTransactionRequest
  */
 export interface SubTransactionRequest {
@@ -21381,6 +21437,103 @@ export const StripeApiAxiosParamCreator = function (configuration?: Configuratio
         },
         /**
          * 
+         * @summary Get a report of everything settled through Stripe (deposits and terminal payments)
+         * @param {string} [fromDate] The start date of the report, inclusive
+         * @param {string} [toDate] The end date of the report, exclusive
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getStripeSettlementReport: async (fromDate?: string, toDate?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/stripe/report`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (fromDate !== undefined) {
+                localVarQueryParameter['fromDate'] = fromDate;
+            }
+
+            if (toDate !== undefined) {
+                localVarQueryParameter['toDate'] = toDate;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Get a report of everything settled through Stripe (deposits and terminal payments) in pdf format
+         * @param {string} fromDate The start date of the report, inclusive
+         * @param {string} toDate The end date of the report, exclusive
+         * @param {GetStripeSettlementReportPdfFileTypeEnum} [fileType] The file type of the report, defaults to PDF
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getStripeSettlementReportPdf: async (fromDate: string, toDate: string, fileType?: GetStripeSettlementReportPdfFileTypeEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'fromDate' is not null or undefined
+            assertParamExists('getStripeSettlementReportPdf', 'fromDate', fromDate)
+            // verify required parameter 'toDate' is not null or undefined
+            assertParamExists('getStripeSettlementReportPdf', 'toDate', toDate)
+            const localVarPath = `/stripe/report/pdf`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (fromDate !== undefined) {
+                localVarQueryParameter['fromDate'] = fromDate;
+            }
+
+            if (toDate !== undefined) {
+                localVarQueryParameter['toDate'] = toDate;
+            }
+
+            if (fileType !== undefined) {
+                localVarQueryParameter['fileType'] = fileType;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Webhook for Stripe event updates
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -21446,6 +21599,35 @@ export const StripeApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Get a report of everything settled through Stripe (deposits and terminal payments)
+         * @param {string} [fromDate] The start date of the report, inclusive
+         * @param {string} [toDate] The end date of the report, exclusive
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getStripeSettlementReport(fromDate?: string, toDate?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StripeSettlementReportResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getStripeSettlementReport(fromDate, toDate, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['StripeApi.getStripeSettlementReport']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Get a report of everything settled through Stripe (deposits and terminal payments) in pdf format
+         * @param {string} fromDate The start date of the report, inclusive
+         * @param {string} toDate The end date of the report, exclusive
+         * @param {GetStripeSettlementReportPdfFileTypeEnum} [fileType] The file type of the report, defaults to PDF
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getStripeSettlementReportPdf(fromDate: string, toDate: string, fileType?: GetStripeSettlementReportPdfFileTypeEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getStripeSettlementReportPdf(fromDate, toDate, fileType, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['StripeApi.getStripeSettlementReportPdf']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Webhook for Stripe event updates
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -21487,6 +21669,26 @@ export const StripeApiFactory = function (configuration?: Configuration, basePat
         },
         /**
          * 
+         * @summary Get a report of everything settled through Stripe (deposits and terminal payments)
+         * @param {StripeApiGetStripeSettlementReportRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getStripeSettlementReport(requestParameters: StripeApiGetStripeSettlementReportRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<StripeSettlementReportResponse> {
+            return localVarFp.getStripeSettlementReport(requestParameters.fromDate, requestParameters.toDate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Get a report of everything settled through Stripe (deposits and terminal payments) in pdf format
+         * @param {StripeApiGetStripeSettlementReportPdfRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getStripeSettlementReportPdf(requestParameters: StripeApiGetStripeSettlementReportPdfRequest, options?: RawAxiosRequestConfig): AxiosPromise<string> {
+            return localVarFp.getStripeSettlementReportPdf(requestParameters.fromDate, requestParameters.toDate, requestParameters.fileType, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Webhook for Stripe event updates
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -21509,6 +21711,55 @@ export interface StripeApiDepositRequest {
      * @memberof StripeApiDeposit
      */
     readonly stripeRequest: StripeRequest
+}
+
+/**
+ * Request parameters for getStripeSettlementReport operation in StripeApi.
+ * @export
+ * @interface StripeApiGetStripeSettlementReportRequest
+ */
+export interface StripeApiGetStripeSettlementReportRequest {
+    /**
+     * The start date of the report, inclusive
+     * @type {string}
+     * @memberof StripeApiGetStripeSettlementReport
+     */
+    readonly fromDate?: string
+
+    /**
+     * The end date of the report, exclusive
+     * @type {string}
+     * @memberof StripeApiGetStripeSettlementReport
+     */
+    readonly toDate?: string
+}
+
+/**
+ * Request parameters for getStripeSettlementReportPdf operation in StripeApi.
+ * @export
+ * @interface StripeApiGetStripeSettlementReportPdfRequest
+ */
+export interface StripeApiGetStripeSettlementReportPdfRequest {
+    /**
+     * The start date of the report, inclusive
+     * @type {string}
+     * @memberof StripeApiGetStripeSettlementReportPdf
+     */
+    readonly fromDate: string
+
+    /**
+     * The end date of the report, exclusive
+     * @type {string}
+     * @memberof StripeApiGetStripeSettlementReportPdf
+     */
+    readonly toDate: string
+
+    /**
+     * The file type of the report, defaults to PDF
+     * @type {'PDF' | 'TEX'}
+     * @memberof StripeApiGetStripeSettlementReportPdf
+     */
+    readonly fileType?: GetStripeSettlementReportPdfFileTypeEnum
 }
 
 /**
@@ -21543,6 +21794,30 @@ export class StripeApi extends BaseAPI {
 
     /**
      * 
+     * @summary Get a report of everything settled through Stripe (deposits and terminal payments)
+     * @param {StripeApiGetStripeSettlementReportRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StripeApi
+     */
+    public getStripeSettlementReport(requestParameters: StripeApiGetStripeSettlementReportRequest = {}, options?: RawAxiosRequestConfig) {
+        return StripeApiFp(this.configuration).getStripeSettlementReport(requestParameters.fromDate, requestParameters.toDate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get a report of everything settled through Stripe (deposits and terminal payments) in pdf format
+     * @param {StripeApiGetStripeSettlementReportPdfRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StripeApi
+     */
+    public getStripeSettlementReportPdf(requestParameters: StripeApiGetStripeSettlementReportPdfRequest, options?: RawAxiosRequestConfig) {
+        return StripeApiFp(this.configuration).getStripeSettlementReportPdf(requestParameters.fromDate, requestParameters.toDate, requestParameters.fileType, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Webhook for Stripe event updates
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -21553,6 +21828,14 @@ export class StripeApi extends BaseAPI {
     }
 }
 
+/**
+ * @export
+ */
+export const GetStripeSettlementReportPdfFileTypeEnum = {
+    Pdf: 'PDF',
+    Tex: 'TEX'
+} as const;
+export type GetStripeSettlementReportPdfFileTypeEnum = typeof GetStripeSettlementReportPdfFileTypeEnum[keyof typeof GetStripeSettlementReportPdfFileTypeEnum];
 
 
 /**
