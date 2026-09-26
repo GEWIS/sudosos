@@ -14,7 +14,6 @@ have a bootstrapped monorepo checkout; see the [root README](../README.md) if yo
 | `apps/point-of-sale` | `@sudosos/point-of-sale`           | POS kiosk app, Vue 3                                   |
 | `lib/common`         | `@sudosos/sudosos-frontend-common` | Shared components, composables, services, Pinia stores |
 | `lib/themes`         | `@sudosos/themes`                  | PrimeVue theme shared by both apps                     |
-| `lib/nginx`          | (not a workspace package)          | Nginx config + Dockerfile for serving the built apps   |
 
 ## Running the apps
 
