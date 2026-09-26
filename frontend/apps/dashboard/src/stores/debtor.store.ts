@@ -264,23 +264,29 @@ export const useDebtorStore = defineStore('debtor', {
     },
     async notifyFines(userIds: number[], referenceDate: Date) {
       this.isNotifyLoading = true;
-      await ApiService.debtor.notifyAboutFutureFines({
-        handoutFinesRequest: {
-          userIds: userIds,
-          referenceDate: referenceDate.toISOString(),
-        },
-      });
-      this.isNotifyLoading = false;
+      try {
+        await ApiService.debtor.notifyAboutFutureFines({
+          handoutFinesRequest: {
+            userIds: userIds,
+            referenceDate: referenceDate.toISOString(),
+          },
+        });
+      } finally {
+        this.isNotifyLoading = false;
+      }
     },
     async handoutFines(userIds: number[], referenceDate: Date) {
       this.isHandoutLoading = true;
-      await ApiService.debtor.handoutFines({
-        handoutFinesRequest: {
-          userIds: userIds,
-          referenceDate: referenceDate.toISOString(),
-        },
-      });
-      this.isHandoutLoading = false;
+      try {
+        await ApiService.debtor.handoutFines({
+          handoutFinesRequest: {
+            userIds: userIds,
+            referenceDate: referenceDate.toISOString(),
+          },
+        });
+      } finally {
+        this.isHandoutLoading = false;
+      }
     },
     async cannotGoIntoDebt(userIds: number[]) {
       this.isLockLoading = true;
@@ -294,9 +300,11 @@ export const useDebtorStore = defineStore('debtor', {
         });
       });
 
-      await Promise.all(requests);
-
-      this.isLockLoading = false;
+      try {
+        await Promise.all(requests);
+      } finally {
+        this.isLockLoading = false;
+      }
     },
   },
 });
