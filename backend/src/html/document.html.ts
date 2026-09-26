@@ -135,6 +135,31 @@ function metaList(rows: IDocumentMetaRow[]): string {
     .join('\n          ');
 }
 
+/** A postal address as shown in the cover-page recipient block. */
+export interface IDocumentAddress {
+  street: string;
+  postalCode: string;
+  city: string;
+  country: string;
+}
+
+/**
+ * Render the cover-page recipient block: addressee, an optional
+ * `Attn. <name>` line (omitted when empty), street, postal code + city and
+ * country. All values are escaped.
+ */
+export function recipientBlock(addressee: string, attention: string, address: IDocumentAddress): string {
+  const attn = (attention ?? '').trim();
+  const attentionLine = attn.length === 0
+    ? ''
+    : `Attn. ${escapeHtml(attn)}<br>`;
+
+  return `<p>${escapeHtml(addressee)}<br>
+          ${attentionLine}${escapeHtml(address.street)}<br>
+          ${escapeHtml(address.postalCode)} ${escapeHtml(address.city)}<br>
+          ${escapeHtml(address.country)}</p>`;
+}
+
 /**
  * Render the optional labeled section between the meta block and the total
  * headline (e.g. "Subject" on the invoice, "Description" on the seller

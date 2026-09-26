@@ -30,17 +30,14 @@ import {
   createDocumentPdf,
   escapeHtml,
   fmt,
+  IDocumentAddress,
   IDocumentLineItem,
   IDocumentVatBand,
+  recipientBlock,
   subjectSection,
 } from './document.html';
 
-export interface IInvoiceAddress {
-  street: string;
-  postalCode: string;
-  city: string;
-  country: string;
-}
+export interface IInvoiceAddress extends IDocumentAddress {}
 
 /** One row in the cover-page BTW specification matrix (per-VAT-band totals). */
 export interface IInvoiceVatBand extends IDocumentVatBand {}
@@ -93,15 +90,7 @@ export interface IInvoicePdf {
  * Render the Invoice PDF HTML via the shared document skeleton.
  */
 export function createInvoicePdf(options: IInvoicePdf): string {
-  const attention = (options.attention ?? '').trim();
-  const attentionLine = attention.length === 0
-    ? ''
-    : `Attn. ${escapeHtml(attention)}<br>`;
-
-  const recipientHtml = `<p>${escapeHtml(options.addressee)}<br>
-          ${attentionLine}${escapeHtml(options.address.street)}<br>
-          ${escapeHtml(options.address.postalCode)} ${escapeHtml(options.address.city)}<br>
-          ${escapeHtml(options.address.country)}</p>`;
+  const recipientHtml = recipientBlock(options.addressee, options.attention, options.address);
 
   const noteHtml = `
           The amount of <strong>${fmt(options.totalIncl)}</strong> must be paid within
