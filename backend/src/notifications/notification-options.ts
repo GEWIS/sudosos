@@ -181,7 +181,7 @@ export class UserGotFinedOptions extends TemplateOptions {
      * @param referenceDate - The date the fine is based on.
      * @param fine - The fine amount.
      * @param totalFine - Total accumulated fine amount.
-     * @param balance - The user's current balance after fines.
+     * @param balance - The user's balance on the reference date.
      */
   constructor(
     public referenceDate: Date,
