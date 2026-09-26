@@ -25,9 +25,10 @@ function parseTime(value: number): string {
   return value.toString().padStart(2, '0');
 }
 
-export function dateToTimeString(date: Date): string {
+export function dateToTimeString(date: Date, withSeconds = true): string {
   const pad = (n: number) => n.toString().padStart(2, '0');
-  return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  const time = `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  return withSeconds ? `${time}:${pad(date.getSeconds())}` : time;
 }
 
 export function formatPrice(value: Dinero, isNegative?: boolean): string {

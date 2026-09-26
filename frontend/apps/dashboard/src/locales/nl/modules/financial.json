@@ -7,25 +7,13 @@
           "header": "Debiteuren",
           "currentBalance": "Huidig saldo",
           "balanceOn": "Saldo op {date}",
-          "target": "doel",
-          "control": "controle",
-          "explanation": "De tabel hieronder selecteert alle gebruikers waarbij de gebruiker op beide data maximaal -€5 heeft. Boetes die uitgedeeld moeten worden, worden berekend op het saldo van de doeldatum.",
           "apply": "Toepassen",
-          "notify": "Waarschuwen",
-          "handout": "Uitdelen",
           "toBeFined": "Te beboeten",
           "wasFined": "Is beboet",
-          "cannotDebt": "Schakel schuld mogelijkheid uit",
           "ofWhichFine": "Waarvan boete",
           "fineSince": "Boete sinds",
           "sumCurrentBalance": "Totaal van saldi",
-          "sumToBeFined": "Totaal van \"Te beboeten\"",
-          "sumWasFined": "Totaal van \"Is beboet\"",
-          "confirm": {
-            "handoutMessage": "Wilt u boetes uitdelen aan {count} gebruikers?",
-            "notifyMessage": "Wilt u een boetewaarschuwing sturen naar {count} gebruikers?",
-            "cannotGoInDebt": "Wilt u het niet meer mogelijk maken voor {count} gebruikers om verder de schulden in te gaan?"
-          }
+          "sumWasFined": "Totaal van \"Is beboet\""
         },
         "handoutEvents": {
           "title": "Boete uitdeel moment",
@@ -41,6 +29,37 @@
             "deleteMessage": "Weet u zeker dat u dit boete uitdeel moment wilt verwijderen? Dit zal ook alle bijbehorende boetes verwijderen.",
             "delete": "Verwijderen"
           }
+        },
+        "fineRound": {
+          "title": "Boeteronde",
+          "steps": {
+            "dates": "Datums",
+            "fines": "Boetes",
+            "warnings": "Waarschuwingen",
+            "confirm": "Bevestigen"
+          },
+          "overviewIntro": "Als iedereen geselecteerd is, zal een boeteronde op basis van saldi op {date}, vergeleken met {previousDate}:",
+          "overviewNoPrevious": "Er is nog geen eerdere boete-uitdeling. Kies beide meetdatums in de volgende stap.",
+          "overviewFined": "gebruikers beboeten",
+          "overviewAmount": "aan boetes uitdelen",
+          "overviewWarned": "gebruikers waarschuwen",
+          "start": "Boeteronde starten",
+          "explanation": "Gebruikers met een saldo van hoogstens -€5 op beide datums krijgen een boete, gebaseerd op hun saldo op de meetdatum. Gebruikers die alleen op de meetdatum hoogstens -€5 hebben, krijgen in plaats daarvan een waarschuwing.",
+          "measurementDate": "Meetdatum",
+          "previousMeasurementDate": "Vorige meetdatum",
+          "invalidDates": "De vorige meetdatum moet vóór de meetdatum liggen.",
+          "next": "Volgende",
+          "finesInfo": "Deze gebruikers hadden op beide datums schuld en krijgen een boete. Ze ontvangen één e-mail die ook waarschuwt voor het volgende meetmoment.",
+          "deselectedNote": "Gedeselecteerde gebruikers worden volledig overgeslagen: ze krijgen geen boete en geen waarschuwing.",
+          "selectedFines": "{count} gebruikers geselecteerd, {amount} aan boetes",
+          "warningsInfo": "Deze gebruikers hebben nu schuld, maar hadden dat niet bij het vorige meetmoment. Ze krijgen alleen een waarschuwing.",
+          "futureFine": "Boete bij blijvende schuld",
+          "selectedWarnings": "{count} gebruikers geselecteerd, {amount} aan schuld",
+          "summary": "{fined} gebruikers krijgen in totaal {amount} aan boetes en {warned} gebruikers krijgen een waarschuwing.",
+          "outcome": "Uitkomst",
+          "outcomeFine": "Boete van {amount}",
+          "outcomeWarning": "Waarschuwing",
+          "run": "Boeteronde uitvoeren"
         }
       },
       "invoice": {

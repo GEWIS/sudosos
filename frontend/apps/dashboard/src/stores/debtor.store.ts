@@ -6,17 +6,20 @@ import type {
   UserResponse,
   UserToFineResponse,
 } from '@gewis/sudosos-client';
+import { UserType } from '@gewis/sudosos-client';
 // eslint-disable-next-line import/no-named-as-default
 import Dinero from 'dinero.js';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
 import ApiService from '@/services/ApiService';
+
+// Only these user types can be fined; ORGAN, VOUCHER, LOCAL_ADMIN, INVOICE and AUTOMATIC_INVOICE cannot
+export const FINEABLE_USER_TYPES: UserType[] = [UserType.Member, UserType.LocalUser];
 
 export enum SortField {
   NAME = 'name',
   FINE = 'fine',
   FINE_SINCE = 'fineSince',
   REFERENCE_BALANCE = 'referenceBalance',
-  CONTROL_BALANCE = 'controlBalance',
 }
 
 export enum SortDirection {
@@ -55,7 +58,6 @@ interface DebtorState {
   isDeleteLoading: boolean;
   isNotifyLoading: boolean;
   isHandoutLoading: boolean;
-  isLockLoading: boolean;
   fineHandoutEvents: BaseFineHandoutEventResponse[];
   totalFineHandoutEvents: number;
   summary: FinancialSummary;
@@ -77,7 +79,6 @@ export const useDebtorStore = defineStore('debtor', {
     isDeleteLoading: false,
     isNotifyLoading: false,
     isHandoutLoading: false,
-    isLockLoading: false,
     fineHandoutEvents: [],
     totalFineHandoutEvents: 10,
     summary: {
@@ -128,14 +129,6 @@ export const useDebtorStore = defineStore('debtor', {
           });
           break;
         }
-        case SortField.CONTROL_BALANCE: {
-          debtors.sort((a, b) => {
-            return (
-              (a.fine.balances[1].amount.amount - b.fine.balances[1].amount.amount) * (state.sort.direction || 1) * -1
-            );
-          });
-          break;
-        }
       }
 
       return debtors;
@@ -174,9 +167,8 @@ export const useDebtorStore = defineStore('debtor', {
         dates.push(secondaryDate.toISOString());
       }
 
-      // Don't calculate fines for ORGAN, VOUCHER, LOCAL_ADMIN, INVOICE, AUTOMATIC_INVOICE
       this.userToFineResponse = (
-        await ApiService.debtor.calculateFines({ referenceDates: dates, userTypes: ['MEMBER', 'LOCAL_USER'] })
+        await ApiService.debtor.calculateFines({ referenceDates: dates, userTypes: FINEABLE_USER_TYPES })
       ).data;
 
       await this.fetchDebtors(userIds);
@@ -215,7 +207,7 @@ export const useDebtorStore = defineStore('debtor', {
 
       const allBalances = await fetchAllPages<BalanceResponse>(async (take, skip) => {
         return ApiService.balance.getAllBalance({
-          userTypes: ['MEMBER', 'LOCAL_USER'],
+          userTypes: FINEABLE_USER_TYPES,
           take,
           skip,
         });
@@ -250,6 +242,15 @@ export const useDebtorStore = defineStore('debtor', {
       this.fineHandoutEvents = handoutEvents.data.records;
       this.totalFineHandoutEvents = handoutEvents.data._pagination.count;
       this.isFineHandoutEventsLoading = false;
+    },
+    /**
+     * Fetch the moment of the most recent fine handout, or undefined if there never was one
+     */
+    async fetchLastHandoutDate(): Promise<Date | undefined> {
+      // The backend returns handout events newest first
+      const events = await ApiService.debtor.returnAllFineHandoutEvents({ take: 1, skip: 0 });
+      const last = events.data.records[0];
+      return last && new Date(last.createdAt ?? last.referenceDate);
     },
     async fetchSingleHandoutEvent(id: number): Promise<FineHandoutEventResponse | undefined> {
       return (await ApiService.debtor.returnSingleFineHandoutEvent({ id })).data;
@@ -287,22 +288,6 @@ export const useDebtorStore = defineStore('debtor', {
       } finally {
         this.isHandoutLoading = false;
       }
-    },
-    async cannotGoIntoDebt(userIds: number[]) {
-      this.isLockLoading = true;
-
-      const requests = userIds.map((id) => {
-        return ApiService.user.updateUser({
-          id,
-          updateUserRequest: {
-            canGoIntoDebt: false,
-          },
-        });
-      });
-
-      await Promise.all(requests);
-
-      this.isLockLoading = false;
     },
   },
 });
