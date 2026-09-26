@@ -226,7 +226,7 @@ watch(
       if (!hasPlayed.value) {
         resetAnimationState();
         const token = animationToken;
-        setTimeout(() => runAnimation(token), 40);
+        setTimeout(() => void runAnimation(token), 40);
       } else {
         revealed.value = new Set(daysOfYear.value.map((d) => d.index));
         stage.value = 'finished';

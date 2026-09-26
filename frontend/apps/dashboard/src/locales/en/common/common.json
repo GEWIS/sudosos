@@ -42,6 +42,8 @@
     "owner": "Owner",
     "back": "Back",
     "na": "N/A",
+    "from": "From",
+    "to": "To",
     "signOut": "Sign out",
     "createdAt": "Created at",
     "updatedAt": "Updated at",
@@ -188,17 +190,71 @@
     },
     "validation": {
       "number": {
-        "min": "This field must be greater than {min}"
+        "min": "{path} must be greater than {min}"
       },
       "pin": {
         "match": "PINs must match.",
         "onlyDigits": "PIN must be only digits."
       },
-      "required": "This field is required",
+      "required": "{path} is required",
       "string": {
         "exact": "This field must be exactly {len} characters",
-        "max": "This field can't be greater than {max} characters",
-        "min": "This field must be at least {min} characters"
+        "max": "{path} can't be greater than {max} characters",
+        "min": "{path} must be at least {min} characters"
+      },
+      "fieldNames": {
+        "firstName": "First name",
+        "userType": "User type",
+        "isActive": "Active",
+        "ofAge": "Of age",
+        "canGoIntoDebt": "Can go into debt",
+        "password": "Password",
+        "passwordConfirm": "Confirm password",
+        "nfcCode": "NFC code",
+        "reference": "Reference",
+        "date": "Date",
+        "description": "Description",
+        "username": "Username",
+        "addressee": "Addressee",
+        "street": "Street",
+        "postalCode": "Postal code",
+        "city": "City",
+        "country": "Country",
+        "amount": "Amount",
+        "pin": "PIN",
+        "pinConfirm": "Confirm PIN",
+        "balance": "Balance",
+        "bankAccountNumber": "Bank account number",
+        "bankAccountName": "Bank account name",
+        "user": "User",
+        "name": "Name",
+        "priceInclVat": "Price incl. VAT",
+        "vat": "VAT",
+        "category": "Category",
+        "alcoholPercentage": "Alcohol percentage",
+        "owner": "Owner",
+        "useAuthentication": "Use authentication",
+        "containers": "Containers",
+        "id": "ID",
+        "container": "Container",
+        "public": "Public",
+        "fromDate": "From date",
+        "toDate": "To date",
+        "forId": "Invoice for",
+        "transactionIDs": "Transactions",
+        "transactionTotal": "Transaction total",
+        "duration": "Duration",
+        "startDate": "Start date",
+        "endDate": "End date",
+        "active": "Active",
+        "token": "Token",
+        "email": "Email address",
+        "role": "Role",
+        "currentPermission": "Current permission",
+        "currentUser": "Current User",
+        "currentAction": "Current action",
+        "subTransactionIndex": "Item",
+        "rowIndex": "Row"
       },
       "date": {
         "invalidStart": "Start date must be a valid date",
@@ -297,7 +353,8 @@
       "profile": "Profile",
       "error": "Error",
       "wrapped": "Wrapped",
-      "financialOverview": "Financial Overview"
+      "financialOverview": "Financial Overview",
+      "transferView": "Transfer Overview"
     }
   }
 }

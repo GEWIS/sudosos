@@ -18,6 +18,7 @@
     "backend:watch": "pnpm --filter sudosos-backend watch",
     "frontend:lint": "pnpm --filter './frontend/**' lint",
     "frontend:build": "pnpm --filter @gewis/sudosos-client build && pnpm --filter './frontend/**' build",
+    "storybook:todo": "pnpm --filter sudosos-dashboard storybook:todo",
     "dev:libraries": "concurrently --kill-others \"pnpm --filter @sudosos/sudosos-frontend-common dev\" \"pnpm --filter @sudosos/themes dev\"",
     "dev:dashboard": "concurrently --kill-others \"pnpm --filter sudosos-dashboard dev:local\" \"pnpm run dev:libraries\"",
     "dev:pos": "concurrently --kill-others \"pnpm --filter @sudosos/point-of-sale dev:local\" \"pnpm run dev:libraries\"",
@@ -31,7 +32,7 @@
     "concurrently": "^9.2.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "prettier": "^3.7.4",
+    "prettier": "^3.9.8",
     "@gewis/prettier-config": "^2.2.2"
   },
   "lint-staged": {

@@ -97,7 +97,7 @@ export default class WriteOffController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnAllWriteOffs(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all write offs by ', req.token.user);
+    this.logger.trace('write_off.list');
 
     let take;
     let skip;
@@ -134,7 +134,7 @@ export default class WriteOffController extends BaseController {
    */
   public async getSingleWriteOff(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get single write off', id, 'by user', req.token.user);
+    this.logger.trace('write_off.get', { id });
 
     try {
       const writeOffId = parseInt(id, 10);
@@ -165,7 +165,7 @@ export default class WriteOffController extends BaseController {
    */
   public async createWriteOff(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as WriteOffRequest;
-    this.logger.trace('Create write off by user', req.token.user);
+    this.logger.trace('write_off.create', { request: body });
 
     try {
       const user = await User.findOne({ where: { id: body.toId, deleted: false } });
@@ -204,7 +204,7 @@ export default class WriteOffController extends BaseController {
   public async getWriteOffPdf(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const writeOffId = parseInt(id, 10);
-    this.logger.trace('Get write off pdf', id, 'by user', req.token.user);
+    this.logger.trace('write_off.get_pdf', { id });
 
     try {
       const force = !!asBoolean(req.query.force);
