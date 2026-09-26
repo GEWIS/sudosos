@@ -41,6 +41,32 @@
             "deleteMessage": "Weet u zeker dat u dit boete uitdeel moment wilt verwijderen? Dit zal ook alle bijbehorende boetes verwijderen.",
             "delete": "Verwijderen"
           }
+        },
+        "fineRound": {
+          "title": "Boeteronde",
+          "intro": "Deel boetes uit en verstuur schuldwaarschuwingen in één keer. Beboete gebruikers krijgen één e-mail die ook waarschuwt voor de volgende ronde; gebruikers die alleen nu schuld hebben krijgen een waarschuwing.",
+          "start": "Start boeteronde",
+          "steps": {
+            "dates": "Datums",
+            "fines": "Boetes",
+            "warnings": "Waarschuwingen",
+            "confirm": "Bevestigen"
+          },
+          "explanation": "Gebruikers met een saldo van hoogstens -€5 op beide datums krijgen een boete, gebaseerd op hun saldo op de meetdatum. Gebruikers die alleen op de meetdatum hoogstens -€5 hebben, krijgen in plaats daarvan een waarschuwing.",
+          "measurementDate": "Meetdatum",
+          "previousMeasurementDate": "Vorige meetdatum",
+          "invalidDates": "De vorige meetdatum moet vóór de meetdatum liggen.",
+          "next": "Volgende",
+          "finesInfo": "Deze gebruikers hadden op beide datums schuld en krijgen een boete. Ze ontvangen één e-mail die ook waarschuwt voor het volgende meetmoment.",
+          "deselectedNote": "Gedeselecteerde gebruikers worden volledig overgeslagen: ze krijgen geen boete en geen waarschuwing.",
+          "selectedFines": "{count} gebruikers geselecteerd, {amount} aan boetes",
+          "warningsInfo": "Deze gebruikers hebben nu schuld, maar hadden dat niet bij het vorige meetmoment. Ze krijgen alleen een waarschuwing.",
+          "futureFine": "Boete bij blijvende schuld",
+          "selectedWarnings": "{count} gebruikers geselecteerd, {amount} aan schuld",
+          "summary": "{fined} gebruikers krijgen in totaal {amount} aan boetes en {warned} gebruikers krijgen een waarschuwing, gebaseerd op saldi op {date}.",
+          "handoutStep": "Boetes uitdelen aan {count} gebruikers",
+          "notifyStep": "Waarschuwingen sturen naar {count} gebruikers",
+          "run": "Boeteronde uitvoeren"
         }
       },
       "invoice": {

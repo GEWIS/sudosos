@@ -891,12 +891,22 @@ describe('DebtorService', (): void => {
       const user = ctx.users[0];
       expect(user).to.not.be.undefined;
 
+      const referenceDate = new Date();
+      const balance = await new BalanceService().getBalance(user.id, referenceDate);
+      const dbUser = await User.findOne({ where: { id: user.id }, relations: { currentFines: { fines: true } } });
+      const previousFines = dbUser.currentFines?.fines.reduce((sum, f) => sum + f.amount.getAmount(), 0) ?? 0;
+
       const fineHandoutEvent = await new DebtorService().handOutFines({
         userIds: [user.id],
-        referenceDate: new Date(),
+        referenceDate,
       }, ctx.actor);
 
       expect(sendNotifyFake).to.be.calledOnce;
+      const { params } = sendNotifyFake.firstCall.args[0];
+      const fineAmount = fineHandoutEvent.fines[0].amount.getAmount();
+      expect(params.fine.getAmount()).to.equal(fineAmount);
+      expect(params.balance.getAmount()).to.equal(balance.amount.amount);
+      expect(params.totalFine.getAmount()).to.equal(previousFines + fineAmount);
 
       // Cleanup
       await deleteFineHandoutEvent(fineHandoutEvent.id);

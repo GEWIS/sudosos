@@ -106,6 +106,7 @@
         "pinUpdated": "Pomyślnie zaktualizowano PIN.",
         "finesNotified": "Pomyślnie powiadomiono użytkowników.",
         "finesHandedOut": "Pomyślnie nałożono kary.",
+        "fineRoundCompleted": "Fine round completed.",
         "finesCannotGoIntoDebt": "Pomyślnie wyłączono możliwość zadłużenia.",
         "payoutCreated": "Pomyślnie utworzono wypłatę.",
         "invoiceDeleted": "Pomyślnie usunięto fakturę.",

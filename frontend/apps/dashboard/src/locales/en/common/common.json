@@ -106,6 +106,7 @@
         "pinUpdated": "Successfully updated PIN.",
         "finesNotified": "Successfully notified users.",
         "finesHandedOut": "Successfully handed out fines.",
+        "fineRoundCompleted": "Fine round completed.",
         "finesCannotGoIntoDebt": "Successfully disabled the ability to go into debt.",
         "payoutCreated": "Successfully created payout.",
         "invoiceDeleted": "Successfully deleted invoice.",

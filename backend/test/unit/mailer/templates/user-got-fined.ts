@@ -43,6 +43,18 @@ describe('UserGotFinedTemplate', () => {
     expect(options.text).to.include(fine.toFormat());
   });
 
+  it('warns about future fines in the English email', () => {
+    const options = new UserGotFined(opts).getOptions(user, Language.ENGLISH);
+    expect(options.html).to.include('you will be fined again');
+    expect(options.text).to.include('you will be fined again');
+  });
+
+  it('warns about future fines in the Dutch email', () => {
+    const options = new UserGotFined(opts).getOptions(user, Language.DUTCH);
+    expect(options.html).to.include('krijg je opnieuw een boete');
+    expect(options.text).to.include('krijg je opnieuw een boete');
+  });
+
   it('builds a Dutch email including the formatted fine amount in the subject', () => {
     const options = new UserGotFined(opts).getOptions(user, Language.DUTCH);
     expect(options.subject).to.include(fine.toFormat());

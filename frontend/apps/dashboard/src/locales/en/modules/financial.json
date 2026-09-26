@@ -41,6 +41,32 @@
             "deleteMessage": "Are you sure you want to delete this fine handout event? This will also delete all associated fines.",
             "delete": "Delete"
           }
+        },
+        "fineRound": {
+          "title": "Fine round",
+          "intro": "Hand out fines and send debt warnings in one go. Fined users get a single email that also warns them about the next round; users who are only in debt now get a warning.",
+          "start": "Start fine round",
+          "steps": {
+            "dates": "Dates",
+            "fines": "Fines",
+            "warnings": "Warnings",
+            "confirm": "Confirm"
+          },
+          "explanation": "Users who are at most -€5 on both dates will be fined, based on their balance on the measurement date. Users who are at most -€5 only on the measurement date will get a warning instead.",
+          "measurementDate": "Measurement date",
+          "previousMeasurementDate": "Previous measurement date",
+          "invalidDates": "The previous measurement date must be before the measurement date.",
+          "next": "Next",
+          "finesInfo": "These users were in debt on both dates and will be fined. They receive one email that also warns them about the next measurement.",
+          "deselectedNote": "Deselected users are skipped entirely: they are not fined and not warned.",
+          "selectedFines": "{count} users selected, {amount} in fines",
+          "warningsInfo": "These users are in debt now, but were not at the previous measurement. They will only receive a warning.",
+          "futureFine": "Fine if still in debt",
+          "selectedWarnings": "{count} users selected, {amount} in debt",
+          "summary": "{fined} users will be fined a total of {amount} and {warned} users will be warned, based on balances on {date}.",
+          "handoutStep": "Hand out fines to {count} users",
+          "notifyStep": "Send warnings to {count} users",
+          "run": "Run fine round"
         }
       },
       "invoice": {
