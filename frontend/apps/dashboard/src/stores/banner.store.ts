@@ -66,13 +66,14 @@ export const useBannersStore = defineStore('banners', {
 
     /**
      * Updates only the image of a banner.
+     * The stored banner only shows the new image once the backend has accepted it.
      */
     async updateBannerImage(bannerId: number, image: File) {
       const banner = this.banners[bannerId];
       if (!banner) return;
+      await apiService.banner.updateImage({ id: bannerId, file: image });
       banner.image = URL.createObjectURL(image);
       this.banners[banner.id] = { ...banner };
-      await apiService.banner.updateImage({ id: bannerId, file: image });
       this.lastUpdated = Date.now();
     },
 

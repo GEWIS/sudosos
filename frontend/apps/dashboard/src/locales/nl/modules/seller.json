@@ -27,6 +27,7 @@
         },
         "products": {
           "header": "Producten",
+          "imageRequirements": "PNG, JPEG, WebP of GIF. Ongeveer vierkant (1:1), minimaal 64x64 px.",
           "promo": "Promotie",
           "addExisting": "Bestaand product toevoegen",
           "category": "Categorie",

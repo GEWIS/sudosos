@@ -39,6 +39,6 @@
   },
   "pnpm": {
     "overrides": { "ioredis": "5.11.1" },
-    "onlyBuiltDependencies": ["@swc/core", "bcrypt", "better-sqlite3", "esbuild", "msgpackr-extract", "vue-demi"]
+    "onlyBuiltDependencies": ["@swc/core", "bcrypt", "better-sqlite3", "esbuild", "msgpackr-extract", "sharp", "vue-demi"]
   }
 }

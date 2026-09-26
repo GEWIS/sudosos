@@ -62,6 +62,7 @@
 import { type PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { BannerRequest } from '@gewis/sudosos-client';
+import type { AxiosError } from 'axios';
 import { useToast } from 'primevue/usetoast';
 import * as yup from 'yup';
 import type { bannerSchema } from '@/utils/validation-schema';
@@ -85,62 +86,69 @@ const emit = defineEmits(['close']);
 
 const bannersStore = useBannersStore();
 
-const updateImage = (id: number, file?: File | null) => {
+const updateImage = async (id: number, file?: File | null) => {
   if (!file) return;
-  return bannersStore.updateBannerImage(id, file).catch((e) => {
-    handleError(e, toast);
+  await bannersStore.updateBannerImage(id, file);
+};
+
+const showSuccess = (detail: string) => {
+  toast.add({
+    severity: 'success',
+    summary: t('common.toast.success.success'),
+    detail,
+    life: 3000,
   });
 };
 
-setSubmit(
-  props.form,
-  props.form.context.handleSubmit((values) => {
-    const bannerRequest: BannerRequest = {
-      name: values.name,
-      duration: values.duration,
-      active: values.active,
-      startDate: values.startDate,
-      endDate: values.endDate,
-    };
+const submitBanner = props.form.context.handleSubmit(async (values) => {
+  const bannerRequest: BannerRequest = {
+    name: values.name,
+    duration: values.duration,
+    active: values.active,
+    startDate: values.startDate,
+    endDate: values.endDate,
+  };
 
-    // Banner exists, update
-    if (values.id) {
-      void updateImage(values.id, values.file);
-      bannersStore
-        .updateBanner(values.id, bannerRequest)
-        .then(() => {
-          toast.add({
-            severity: 'success',
-            summary: t('common.toast.success.success'),
-            detail: t('modules.admin.forms.banner.toast.success.bannerUpdated'),
-            life: 3000,
-          });
-          emit('close', true);
-        })
-        .catch((e) => {
-          handleError(e, toast);
-        });
-    } else {
-      // Banner does not exist, create
-      bannersStore
-        .createBanner(bannerRequest)
-        .then((b) => {
-          if (!b.data.id) return;
-          void updateImage(b.data.id, values.file);
-          toast.add({
-            severity: 'success',
-            summary: t('common.toast.success.success'),
-            detail: t('modules.admin.forms.banner.toast.success.bannerCreated'),
-            life: 3000,
-          });
-          emit('close', true);
-        })
-        .catch((e) => {
-          handleError(e, toast);
-        });
+  // Banner exists, update
+  if (values.id) {
+    try {
+      // Upload the image first, so a rejected image leaves the banner untouched.
+      await updateImage(values.id, values.file);
+      await bannersStore.updateBanner(values.id, bannerRequest);
+    } catch (e) {
+      handleError(e as AxiosError, toast);
+      return;
     }
-  }),
-);
+    showSuccess(t('modules.admin.forms.banner.toast.success.bannerUpdated'));
+    emit('close', true);
+    return;
+  }
+
+  // Banner does not exist, create
+  let bannerId: number;
+  try {
+    const b = await bannersStore.createBanner(bannerRequest);
+    bannerId = b.data.id;
+  } catch (e) {
+    handleError(e as AxiosError, toast);
+    return;
+  }
+
+  try {
+    await updateImage(bannerId, values.file);
+  } catch (e) {
+    // The banner now exists, so submitting again must update it instead of creating a duplicate.
+    props.form.context.setFieldValue('id', bannerId);
+    handleError(e as AxiosError, toast);
+    return;
+  }
+  showSuccess(t('modules.admin.forms.banner.toast.success.bannerCreated'));
+  emit('close', true);
+});
+
+setSubmit(props.form, async () => {
+  await submitBanner();
+});
 </script>
 
 <style scoped lang="scss"></style>

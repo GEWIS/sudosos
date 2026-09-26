@@ -28,6 +28,7 @@
       "banners": {
         "title": "Banners",
         "noBannerFound": "Geen banner gevonden, upload er een!",
+        "imageRequirements": "PNG, JPEG, WebP of GIF. Beeldverhouding van ongeveer 8:1, minimaal 512x64 px.",
         "till": "totdat",
         "list": {
           "header": "Banners",
