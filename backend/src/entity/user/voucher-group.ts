@@ -44,6 +44,7 @@ import { VOUCHER_GROUP_PDF_LOCATION } from '../../files/storage';
  * @property {string} name.required - Name of the group.
  * @property {string} activeStartDate.required - Date after which the included cards are active.
  * @property {string} activeEndDate - Date after which cards are no longer active.
+ * @property {string} invoiceDate.required - Date printed on the statement PDF.
  * @property {Array.<User>} vouchers.required - Cards included in this group.
  * @property {string} addressee.required - Name of the purchaser of this group.
  * @property {string} attention - "For the attention of" line for the purchaser.
@@ -81,6 +82,17 @@ export default class VoucherGroup extends PdfAble(BaseEntity) {
     transformer: DineroTransformer.Instance,
   })
   public balance: Dinero;
+
+  /**
+   * Date printed on the statement PDF, stored at 12:00 UTC on that day (see
+   * VoucherGroupService.asInvoiceDate). Existing groups were backfilled with
+   * their creation date.
+   */
+  @Column({
+    type: 'datetime',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  public invoiceDate: Date;
 
   @OneToMany(() => UserVoucherGroup, (user) => user.voucherGroup)
   public vouchers: UserVoucherGroup[];

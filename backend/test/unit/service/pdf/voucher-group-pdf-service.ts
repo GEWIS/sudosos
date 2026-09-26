@@ -26,7 +26,7 @@ import { VOUCHER_GROUP_PDF_LOCATION } from '../../../../src/files/storage/locati
 import { MissingAddressError } from '../../../../src/errors';
 
 describe('VoucherGroupPdfService', () => {
-  const createdAt = new Date('2026-09-01T12:00:00');
+  const invoiceDate = new Date('2026-09-01T12:00:00Z');
   const activeStartDate = new Date('2026-09-02T00:00:00');
   const activeEndDate = new Date('2026-09-04T23:59:59');
 
@@ -37,7 +37,8 @@ describe('VoucherGroupPdfService', () => {
 
   const makeGroup = (overrides: Partial<VoucherGroup> = {}) => ({
     id: 3,
-    createdAt,
+    createdAt: new Date('2026-08-15T12:00:00'),
+    invoiceDate,
     name: 'Freshers weekend',
     activeStartDate,
     activeEndDate,
@@ -60,7 +61,8 @@ describe('VoucherGroupPdfService', () => {
 
     expect(params.reference).to.equal('SDS-VG-0003');
     expect(params.identifier).to.equal('3');
-    expect(params.date).to.equal(createdAt.toLocaleDateString('nl-NL'));
+    expect(params.date).to.equal(invoiceDate.toLocaleDateString('nl-NL'));
+    expect(params.dueDate).to.equal(new Date('2026-10-01T12:00:00Z').toLocaleDateString('nl-NL'));
     expect(params.startDate).to.equal(activeStartDate.toLocaleDateString('nl-NL'));
     expect(params.endDate).to.equal(activeEndDate.toLocaleDateString('nl-NL'));
     expect(params.name).to.equal('Freshers weekend');

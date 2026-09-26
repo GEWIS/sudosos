@@ -28,7 +28,7 @@ import { Response } from 'express';
 import log4js, { Logger } from 'log4js';
 import BaseController, { BaseControllerOptions } from './base-controller';
 import Policy from './policy';
-import { VoucherGroupAddress, VoucherGroupRequest } from './request/voucher-group-request';
+import { VoucherGroupAddressRequest, VoucherGroupRequest } from './request/voucher-group-request';
 import { RequestWithToken } from '../middleware/token-middleware';
 import VoucherGroup from '../entity/user/voucher-group';
 import VoucherGroupService from '../service/voucher-group-service';
@@ -241,12 +241,12 @@ export default class VoucherGroupController extends BaseController {
 
   /**
    * PATCH /vouchergroups/{id}/address
-   * @summary Updates the purchaser address of the requested voucher group.
+   * @summary Updates the purchaser address and invoice date of the requested voucher group.
    * Unlike PATCH /vouchergroups/{id}, this is allowed after the group has become active.
    * @operationId updateVoucherGroupAddress
    * @tags vouchergroups - Operations of voucher group controller
    * @param {integer} id.path.required - The id of the voucher group which should be updated
-   * @param {VoucherGroupAddressRequest} request.body.required - The new address
+   * @param {VoucherGroupAddressRequest} request.body.required - The new address and invoice date
    * @security JWT
    * @return {VoucherGroupResponse} 200 - The updated voucher group entity
    * @return {string} 400 - Validation error
@@ -254,7 +254,7 @@ export default class VoucherGroupController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async updateVoucherGroupAddress(req: RequestWithToken, res: Response): Promise<void> {
-    const body = req.body as VoucherGroupAddress;
+    const body = req.body as VoucherGroupAddressRequest;
     const { id } = req.params;
     const bkgId = Number.parseInt(id, 10);
     this.logger.trace('Update voucher group address', id, 'with', body, 'by user', req.token.user);
@@ -264,7 +264,12 @@ export default class VoucherGroupController extends BaseController {
         res.status(400).json('Invalid address.');
         return;
       }
-      const result = await VoucherGroupService.updateVoucherGroupAddress(bkgId, body);
+      const invoiceDate = VoucherGroupService.asInvoiceDate(body.invoiceDate);
+      if (!VoucherGroupService.isValidInvoiceDate(invoiceDate)) {
+        res.status(400).json('Invalid invoice date.');
+        return;
+      }
+      const result = await VoucherGroupService.updateVoucherGroupAddress(bkgId, body, invoiceDate);
       if (!result) {
         res.status(404).json('Voucher group not found.');
         return;

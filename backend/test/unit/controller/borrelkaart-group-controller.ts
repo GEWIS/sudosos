@@ -68,6 +68,7 @@ function bkgResponseEq(req: VoucherGroupParams, res: VoucherGroupResponse): void
   expect(res.postalCode).to.equal(req.postalCode);
   expect(res.city).to.equal(req.city);
   expect(res.country).to.equal(req.country);
+  if (req.invoiceDate) expect(res.invoiceDate).to.equal(req.invoiceDate.toISOString());
 }
 
 async function saveBKG(
@@ -519,6 +520,28 @@ describe('VoucherGroupController', async (): Promise<void> => {
       expect(body.city).to.equal(newAddress.city);
       expect(body.balance.amount).to.equal(ctx.validVoucherGroupReq.balance.amount);
     });
+    it('should update the invoice date when given', async () => {
+      await saveBKG(ctx.validVoucherGroupReq);
+
+      const res = await request(ctx.app)
+        .patch('/vouchergroups/1/address')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ ...newAddress, invoiceDate: '1999-12-15' });
+
+      expect(res.status).to.equal(200);
+      expect((res.body as VoucherGroupResponse).invoiceDate).to.equal('1999-12-15T12:00:00.000Z');
+    });
+    it('should return an HTTP 400 if the invoice date is invalid', async () => {
+      await saveBKG(ctx.validVoucherGroupReq);
+
+      const res = await request(ctx.app)
+        .patch('/vouchergroups/1/address')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ ...newAddress, invoiceDate: 'not a date' });
+
+      expect(res.status).to.equal(400);
+      expect(res.body).to.equal('Invalid invoice date.');
+    });
     it('should return an HTTP 400 if the address is incomplete', async () => {
       await saveBKG(ctx.validVoucherGroupReq);
 
@@ -613,6 +636,21 @@ describe('VoucherGroupController', async (): Promise<void> => {
 
       expect(compileHtmlStub.callCount).to.equal(2);
       expect(compileHtmlStub.secondCall.args[0]).to.include('Utrecht');
+    });
+    it('should regenerate the pdf when the invoice date changed', async () => {
+      await saveBKG(ctx.validVoucherGroupReq);
+
+      await request(ctx.app)
+        .get('/vouchergroups/1/pdf')
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      const invoiceDate = new Date('1999-12-15T12:00:00Z');
+      await VoucherGroup.update(1, { invoiceDate });
+      await request(ctx.app)
+        .get('/vouchergroups/1/pdf')
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+
+      expect(compileHtmlStub.callCount).to.equal(2);
+      expect(compileHtmlStub.secondCall.args[0]).to.include(invoiceDate.toLocaleDateString('nl-NL'));
     });
     it('should return an HTTP 400 if the voucher group has no address', async () => {
       await saveBKG(ctx.validVoucherGroupReq);

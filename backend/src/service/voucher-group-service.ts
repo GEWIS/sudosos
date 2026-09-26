@@ -63,7 +63,45 @@ export default class VoucherGroupService {
       balance: DineroTransformer.Instance.from(req.balance.amount),
       activeStartDate: startDate,
       activeEndDate: endDate,
+      invoiceDate: VoucherGroupService.asInvoiceDate(req.invoiceDate),
     };
+  }
+
+  /**
+   * An invoice date is a calendar date. It is stored at 12:00 UTC on that day,
+   * so both its ISO string and its local date in the server time zone show the
+   * same day.
+   * @param year - Full year
+   * @param month - Month, 1-12
+   * @param day - Day of the month
+   * @returns {Date} the invoice date, or an invalid date if the day does not exist
+   */
+  static asCalendarDate(year: number, month: number, day: number): Date {
+    const date = new Date(Date.UTC(year, month - 1, day, 12));
+    if (date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return new Date(NaN);
+    return date;
+  }
+
+  /**
+   * Parses an optional invoice date. Only the leading YYYY-MM-DD is used,
+   * so the day is kept as written regardless of time zones.
+   * @param invoiceDate - The date string from a request
+   * @returns {Date | undefined} the parsed date, or undefined when not given
+   */
+  static asInvoiceDate(invoiceDate?: string): Date | undefined {
+    if (invoiceDate === undefined || invoiceDate === null || invoiceDate === '') return undefined;
+    const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(invoiceDate);
+    if (!match) return new Date(NaN);
+    return VoucherGroupService.asCalendarDate(Number(match[1]), Number(match[2]), Number(match[3]));
+  }
+
+  /**
+   * Whether an optional invoice date is either absent or a valid date.
+   * @param invoiceDate - The parsed invoice date
+   * @returns {boolean} whether the invoice date is acceptable
+   */
+  static isValidInvoiceDate(invoiceDate?: Date): boolean {
+    return invoiceDate === undefined || !Number.isNaN(invoiceDate.valueOf());
   }
 
   /**
@@ -111,6 +149,7 @@ export default class VoucherGroupService {
       && !bkgReq.balance.isZero()
       // voucher group must contain users
       && bkgReq.amount > 0
+      && VoucherGroupService.isValidInvoiceDate(bkgReq.invoiceDate)
       // voucher group must be addressed to a purchaser
       && VoucherGroupService.hasCompleteAddress(bkgReq);
   }
@@ -128,8 +167,11 @@ export default class VoucherGroupService {
   static asVoucherGroup(
     bkgReq: VoucherGroupParams,
   ): VoucherGroup {
+    const now = new Date();
+    const today = VoucherGroupService.asCalendarDate(now.getFullYear(), now.getMonth() + 1, now.getDate());
     return Object.assign(new VoucherGroup(), {
       name: bkgReq.name,
+      invoiceDate: bkgReq.invoiceDate ?? today,
       activeStartDate: bkgReq.activeStartDate,
       activeEndDate: bkgReq.activeEndDate,
       amount: bkgReq.amount,
@@ -165,6 +207,7 @@ export default class VoucherGroupService {
       updatedAt: bkg.updatedAt.toISOString(),
       activeStartDate: bkg.activeStartDate.toISOString(),
       activeEndDate: bkg.activeEndDate.toISOString(),
+      invoiceDate: bkg.invoiceDate.toISOString(),
       balance: bkg.balance.toObject(),
       users: userResponses,
       addressee: bkg.addressee ?? '',
@@ -269,6 +312,7 @@ export default class VoucherGroupService {
       activeEndDate: bkgReq.activeEndDate,
       amount: bkgReq.amount,
       balance: bkgReq.balance,
+      ...(bkgReq.invoiceDate && { invoiceDate: bkgReq.invoiceDate }),
       ...VoucherGroupService.asVoucherGroupAddress(bkgReq),
     });
     const voucherGroup = await VoucherGroup.findOne({ where: { id } });
@@ -312,20 +356,26 @@ export default class VoucherGroupService {
   }
 
   /**
-   * Updates only the address of a voucher group. Balances, dates and cards are
-   * left untouched, so this is allowed for groups that are already active.
+   * Updates only the address (and optionally the invoice date) of a voucher
+   * group. Balances, validity dates and cards are left untouched, so this is
+   * allowed for groups that are already active.
    * @param {number} id - requested voucher group id
    * @param {VoucherGroupAddress} address - the new address
+   * @param {Date} invoiceDate - the new invoice date; left unchanged when undefined
    * @returns {{ voucherGroup: VoucherGroup, users: User[] } | undefined} updated voucher group with users, or undefined when not found
    */
   public static async updateVoucherGroupAddress(
     id: number,
     address: VoucherGroupAddress,
+    invoiceDate?: Date,
   ): Promise<{ voucherGroup: VoucherGroup, users: User[] } | undefined> {
     const exists = await VoucherGroup.exists({ where: { id } });
     if (!exists) return undefined;
 
-    await VoucherGroup.update(id, VoucherGroupService.asVoucherGroupAddress(address));
+    await VoucherGroup.update(id, {
+      ...VoucherGroupService.asVoucherGroupAddress(address),
+      ...(invoiceDate && { invoiceDate }),
+    });
 
     const [[voucherGroup]] = await VoucherGroupService.getVoucherGroups({ bkgId: id });
     return { voucherGroup, users: voucherGroup.vouchers.map((v) => v.user) };

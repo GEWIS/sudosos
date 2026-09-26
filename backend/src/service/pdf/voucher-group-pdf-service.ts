@@ -29,6 +29,7 @@ import VoucherGroupPdf from '../../entity/file/voucher-group-pdf';
 import { createVoucherGroupPdf, IVoucherGroupPdf } from '../../html/voucher-group.html';
 import { HtmlPdfService } from './pdf-service';
 import { MissingAddressError } from '../../errors';
+import { BAC } from '../../files/templates/bac-letterhead';
 import VoucherGroupService from '../voucher-group-service';
 import User from '../../entity/user/user';
 // eslint-disable-next-line import/no-cycle
@@ -67,11 +68,16 @@ export default class VoucherGroupPdfService extends HtmlPdfService<VoucherGroupP
     const perCardCents = group.balance.getAmount();
     const totalCents = perCardCents * cards.length;
 
+    // invoiceDate is a calendar date stored at 12:00 UTC, so add the payment
+    // term in UTC calendar days.
+    const dueDate = new Date(group.invoiceDate);
+    dueDate.setUTCDate(dueDate.getUTCDate() + BAC.paymentTermDays);
+
     return {
       reference: `SDS-VG-${String(group.id).padStart(4, '0')}`,
       identifier: String(group.id),
-      // createdAt rather than "now", so the parameter hash (and thus the cached PDF) stays stable.
-      date: group.createdAt.toLocaleDateString('nl-NL'),
+      date: group.invoiceDate.toLocaleDateString('nl-NL'),
+      dueDate: dueDate.toLocaleDateString('nl-NL'),
       name: group.name,
       addressee: group.addressee,
       attention: group.attention ?? '',

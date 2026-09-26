@@ -51,6 +51,9 @@ export function bkgEq(req: VoucherGroupParams, voucherGroup: VoucherGroup, users
   expect(voucherGroup.postalCode).to.equal(req.postalCode);
   expect(voucherGroup.city).to.equal(req.city);
   expect(voucherGroup.country).to.equal(req.country);
+  if (req.invoiceDate) {
+    expect(voucherGroup.invoiceDate.toISOString()).to.equal(req.invoiceDate.toISOString());
+  }
 }
 
 export async function seedVoucherGroups(): Promise<{ paramss: VoucherGroupParams[], bkgIds: number[] }> {
@@ -269,6 +272,45 @@ describe('VoucherGroupService', async (): Promise<void> => {
       expect(VoucherGroupService.validateVoucherGroup(params)).to.be.true;
       expect(params.attention).to.equal('');
     });
+    it('should return false when the voucher has an invalid invoice date', async () => {
+      const req: VoucherGroupRequest = {
+        name: 'test',
+        ...address,
+        invoiceDate: 'not a date',
+        activeStartDate: '2000-01-02T00:00:00Z',
+        activeEndDate: '2000-01-03T00:00:00Z',
+        balance: {
+          amount: 100,
+          currency: 'EUR',
+          precision: 2,
+        },
+        amount: 4,
+      };
+      const params = VoucherGroupService.asVoucherGroupParams(req);
+      expect(VoucherGroupService.validateVoucherGroup(params)).to.be.false;
+    });
+    it('should reject an invoice date that does not exist', async () => {
+      expect(VoucherGroupService.isValidInvoiceDate(VoucherGroupService.asInvoiceDate('2026-02-30'))).to.be.false;
+      expect(VoucherGroupService.isValidInvoiceDate(VoucherGroupService.asInvoiceDate('15-12-1999'))).to.be.false;
+      expect(VoucherGroupService.isValidInvoiceDate(VoucherGroupService.asInvoiceDate(undefined))).to.be.true;
+    });
+    it('should parse the invoice date to 12:00 UTC on the given day', async () => {
+      const params = VoucherGroupService.asVoucherGroupParams({
+        name: 'test',
+        ...address,
+        invoiceDate: '1999-12-15T13:37:00',
+        activeStartDate: '2000-01-02T00:00:00Z',
+        activeEndDate: '2000-01-03T00:00:00Z',
+        balance: {
+          amount: 100,
+          currency: 'EUR',
+          precision: 2,
+        },
+        amount: 4,
+      });
+      expect(params.invoiceDate.toISOString()).to.equal('1999-12-15T12:00:00.000Z');
+      expect(VoucherGroupService.validateVoucherGroup(params)).to.be.true;
+    });
   });
 
   describe('create voucher group', () => {
@@ -321,6 +363,43 @@ describe('VoucherGroupService', async (): Promise<void> => {
         expect(balance, 'correct transfers').to.equal(params.balance.getAmount());
       }));
     });
+    it('should default the invoice date to today', async () => {
+      const params = VoucherGroupService.asVoucherGroupParams({
+        name: 'test',
+        ...address,
+        activeStartDate: '2000-01-02T00:00:00Z',
+        activeEndDate: '2000-01-03T00:00:00Z',
+        balance: {
+          amount: 100,
+          currency: 'EUR',
+          precision: 2,
+        },
+        amount: 4,
+      });
+      const { voucherGroup } = await VoucherGroupService.createVoucherGroup(params);
+      const now = new Date();
+      const today = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 12));
+      expect(voucherGroup.invoiceDate.toISOString()).to.equal(today.toISOString());
+    });
+    it('should store the given invoice date', async () => {
+      const params = VoucherGroupService.asVoucherGroupParams({
+        name: 'test',
+        ...address,
+        invoiceDate: '1999-12-15',
+        activeStartDate: '2000-01-02T00:00:00Z',
+        activeEndDate: '2000-01-03T00:00:00Z',
+        balance: {
+          amount: 100,
+          currency: 'EUR',
+          precision: 2,
+        },
+        amount: 4,
+      });
+      const { voucherGroup, users } = await VoucherGroupService.createVoucherGroup(params);
+      bkgEq(params, voucherGroup, users);
+      const stored = await VoucherGroup.findOne({ where: { id: voucherGroup.id } });
+      expect(stored.invoiceDate.toISOString()).to.equal(params.invoiceDate.toISOString());
+    });
   });
 
   describe('update voucher group', () => {
@@ -366,6 +445,31 @@ describe('VoucherGroupService', async (): Promise<void> => {
         const balance = balanceAmounts.reduce((a, b) => a + b);
         expect(balance, 'correct transfers').to.equal(params.balance.getAmount());
       }));
+    });
+
+    it('should update the invoice date, and keep it when omitted', async () => {
+      const req: VoucherGroupRequest = {
+        name: 'test',
+        ...address,
+        invoiceDate: '1999-12-15',
+        activeStartDate: '2000-01-02T00:00:00Z',
+        activeEndDate: '2000-01-03T00:00:00Z',
+        balance: {
+          amount: 100,
+          currency: 'EUR',
+          precision: 2,
+        },
+        amount: 4,
+      };
+      const params = VoucherGroupService.asVoucherGroupParams(req);
+      const { voucherGroup } = await VoucherGroupService.updateVoucherGroup(bkgId, params);
+      expect(voucherGroup.invoiceDate.toISOString()).to.equal(params.invoiceDate.toISOString());
+
+      const { invoiceDate, ...withoutInvoiceDate } = req;
+      const result = await VoucherGroupService.updateVoucherGroup(
+        bkgId, VoucherGroupService.asVoucherGroupParams(withoutInvoiceDate),
+      );
+      expect(result.voucherGroup.invoiceDate.toISOString()).to.equal(params.invoiceDate.toISOString());
     });
 
     it('should update an existing voucher groups active start date', async () => {
@@ -605,6 +709,15 @@ describe('VoucherGroupService', async (): Promise<void> => {
       expect(result.users).to.be.of.length(paramss[0].amount);
       const transfers = await Transfer.find({ where: { toId: result.users[0].id } });
       expect(transfers).to.be.of.length(1);
+    });
+
+    it('should update the invoice date when given', async () => {
+      const { bkgIds } = await seedVoucherGroups();
+      const invoiceDate = new Date('1999-12-15T12:00:00Z');
+
+      const result = await VoucherGroupService.updateVoucherGroupAddress(bkgIds[0], address, invoiceDate);
+
+      expect(result.voucherGroup.invoiceDate.toISOString()).to.equal(invoiceDate.toISOString());
     });
 
     it('should return undefined when given an invalid id', async () => {
