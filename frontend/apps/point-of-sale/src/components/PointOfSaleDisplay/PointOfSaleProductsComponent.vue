@@ -12,10 +12,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
-import Fuse from 'fuse.js';
 import ProductComponent from '@/components/ProductComponent.vue';
+import { usePosProducts } from '@/composables/usePosProducts';
 
 const props = defineProps<{
   isProductSearch: boolean;
@@ -24,82 +24,17 @@ const props = defineProps<{
   searchQuery: string;
 }>();
 
-const searchQuery = ref(props.searchQuery);
 const wrapper = ref();
 
-watch(
-  () => props.searchQuery,
-  (newValue) => {
-    searchQuery.value = newValue;
-  },
-  { immediate: true },
-);
-
-const getFilteredProducts = () => {
-  if (!props.pointOfSale) return [];
-  wrapper.value?.scrollTo(0, 0);
-
-  let filteredProducts = props.pointOfSale.containers.flatMap((container) => {
-    return container.products.map((product) => ({
-      product,
-      container,
-    }));
-  });
-
-  if (props.selectedCategoryId && props.selectedCategoryId !== 'all' && !props.isProductSearch) {
-    filteredProducts = filteredProducts.filter((product) => {
-      return product.product.category.id === Number(props.selectedCategoryId);
-    });
-  }
-
-  if (props.isProductSearch) {
-    if (searchQuery.value === '') return filteredProducts;
-
-    if (props.searchQuery) {
-      filteredProducts = new Fuse(filteredProducts, {
-        keys: ['product.name'],
-        isCaseSensitive: false,
-        shouldSort: true,
-        threshold: 0.3,
-      })
-        .search(searchQuery.value)
-        .map((r) => r.item);
-    }
-  }
-
-  return filteredProducts;
-};
-
-const filteredProducts = computed(() => {
-  return getFilteredProducts();
+const { sortedProducts } = usePosProducts({
+  pointOfSale: () => props.pointOfSale,
+  selectedCategoryId: () => props.selectedCategoryId,
+  isProductSearch: () => props.isProductSearch,
+  searchQuery: () => props.searchQuery,
 });
 
-const sortedProducts = computed(() => {
-  const products = [...filteredProducts.value];
-
-  products.sort((a, b) => {
-    // Prioritize 'preferred', then sort alphabetically
-    if (a.product.preferred && !b.product.preferred) {
-      return -1;
-    } else if (!a.product.preferred && b.product.preferred) {
-      return 1;
-    }
-
-    // If category is 'all', first also sort by categoryId
-    if (props.selectedCategoryId === 'all') {
-      if (a.product.category.id < b.product.category.id) {
-        return -1;
-      } else if (a.product.category.id > b.product.category.id) {
-        return 1;
-      }
-    }
-
-    const nameA = a.product.name.toLowerCase();
-    const nameB = b.product.name.toLowerCase();
-    return nameA.localeCompare(nameB);
-  });
-
-  return products;
+watch(sortedProducts, () => {
+  wrapper.value?.scrollTo(0, 0);
 });
 </script>
 
