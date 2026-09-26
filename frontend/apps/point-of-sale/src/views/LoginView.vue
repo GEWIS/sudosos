@@ -1,13 +1,13 @@
 <template>
-  <div class="flex flex-col h-screen">
-    <div class="m-5 mb-0 p-5 bg-[#ffffffEE] shadow-lg rounded-lg flex-grow">
+  <div class="flex flex-col min-h-screen md:h-screen">
+    <div class="m-2 p-3 md:m-5 md:mb-0 md:p-5 bg-[#ffffffEE] shadow-lg rounded-lg flex-grow max-md:overflow-x-clip">
       <div v-if="loggingIn" class="items-center flex h-full justify-center">
         <div>
           <ProgressSpinner aria-label="Loading" />
         </div>
       </div>
-      <div v-else class="flex justify-center mt-8">
-        <div class="flex flex-col items-start w-[20rem]">
+      <div v-else class="flex justify-center mt-4 md:mt-8">
+        <div class="flex flex-col items-start w-[20rem] max-w-full">
           <div
             class="flex flex-row space-between transition-all duration-500 ease-in-out mb-5"
             :class="displayContainerClasses"
@@ -29,7 +29,7 @@
             @input="handleInput"
           />
         </div>
-        <BannerComponent v-if="shouldShowBanner" />
+        <BannerComponent v-if="shouldShowBanner && !isMobile" />
       </div>
     </div>
     <div class="m-2 flex justify-between">
@@ -55,9 +55,11 @@ import GitInfo from '@/components/GitInfo.vue';
 import PosInfo from '@/components/PosInfo.vue';
 import { useLoginForm } from '@/composables/useLoginForm';
 import { usePointOfSaleStore } from '@/stores/pos.store';
+import { useIsMobile } from '@/composables/useIsMobile';
 
 const authStore = useAuthStore();
 const posStore = usePointOfSaleStore();
+const { isMobile } = useIsMobile();
 
 let escaped = false;
 

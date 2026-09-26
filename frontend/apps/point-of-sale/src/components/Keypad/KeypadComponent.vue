@@ -48,6 +48,13 @@ const handleKeyClick = (key: string) => {
   &-row {
     gap: 8px;
   }
+
+  // Three 95px keys don't fit the smallest phones.
+  @media (max-width: 359px) {
+    width: 80px;
+    height: 80px;
+    font-size: 38px;
+  }
 }
 
 .backspace {
