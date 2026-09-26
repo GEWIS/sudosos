@@ -38,6 +38,8 @@ import BalanceService from '../service/balance-service';
 import { PdfUrlResponse } from './response/simple-file-response';
 import { PdfError } from '../errors';
 import { asBoolean } from '../helpers/validators';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
 
 /**
  * Controller for the `/payoutrequests` endpoints in the
@@ -207,6 +209,14 @@ export default class PayoutRequestController extends BaseController {
       }
 
       const payoutRequest = await PayoutRequestService.createPayoutRequest(body, user);
+      // PayoutRequestService is static and cannot join a transaction; see AuditService.logCommitted.
+      await new AuditService().logCommitted(req.token.user, {
+        action: AuditAction.PAYOUT_REQUEST_CREATE,
+        entityType: AuditEntityType.PAYOUT_REQUEST,
+        entityId: payoutRequest.id,
+        changes: { forId: body.forId, amount: body.amount },
+      });
+
       res.status(200).json(PayoutRequestService.asPayoutRequestResponse(payoutRequest));
     } catch (e) {
       res.status(500).send();
@@ -278,6 +288,14 @@ export default class PayoutRequestController extends BaseController {
     // Execute
     try {
       const updatedPayoutRequest = await PayoutRequestService.updateStatus(id, body.state, req.token.user);
+      // PayoutRequestService is static and cannot join a transaction; see AuditService.logCommitted.
+      await new AuditService().logCommitted(req.token.user, {
+        action: AuditAction.PAYOUT_REQUEST_UPDATE_STATUS,
+        entityType: AuditEntityType.PAYOUT_REQUEST,
+        entityId: id,
+        changes: { state: body.state },
+      });
+
       res.status(200).json(PayoutRequestService.asPayoutRequestResponse(updatedPayoutRequest));
     } catch (e) {
       res.status(500).send();

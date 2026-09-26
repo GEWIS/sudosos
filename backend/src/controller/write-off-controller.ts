@@ -36,6 +36,9 @@ import BalanceService from '../service/balance-service';
 import { PdfError } from '../errors';
 import { PdfUrlResponse } from './response/simple-file-response';
 import { asBoolean } from '../helpers/validators';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
+import { AppDataSource } from '../database/database';
 
 /**
  * Controller for the `/writeoffs` endpoints in the {@link write-offs | write-offs}
@@ -180,7 +183,17 @@ export default class WriteOffController extends BaseController {
         return;
       }
 
-      const writeOff = await new WriteOffService().createWriteOffAndCloseUser(user);
+      const writeOff = await AppDataSource.manager.transaction(async (manager) => {
+        const created = await new WriteOffService(manager).createWriteOffAndCloseUser(user);
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.WRITE_OFF_CREATE,
+          entityType: AuditEntityType.WRITE_OFF,
+          entityId: created.id,
+          changes: { toId: user.id, amount: created.amount.toObject() },
+        });
+        return created;
+      });
+
       res.status(200).json(WriteOffService.asWriteOffResponse(writeOff));
     } catch (error) {
       this.logger.error('Could not create write off:', error);

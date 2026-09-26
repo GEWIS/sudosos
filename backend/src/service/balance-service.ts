@@ -198,7 +198,7 @@ export default class BalanceService extends WithManager {
    */
   public async clearBalanceCache(ids?: number | number[]) {
     if (ids) {
-      await Balance.delete(ids);
+      await this.manager.delete(Balance, ids);
     } else {
       const entityManager = this.manager;
       await entityManager.query('DELETE from balance where 1=1;');
@@ -222,8 +222,6 @@ export default class BalanceService extends WithManager {
     if (ids?.length === 0) {
       return [[], 0];
     }
-
-    const connection = this.manager.connection;
 
     const parameters: any[] = [];
     const d = date ? toMySQLString(date) : undefined;
@@ -362,11 +360,13 @@ export default class BalanceService extends WithManager {
     if (take) recordsQuery += `limit ${take} `;
     if (skip) recordsQuery += `offset ${skip} `;
 
-    const balances = await connection.query(recordsQuery, parameters);
+    // Query through the manager, not its connection, so a caller inside a database
+    // transaction sees its own uncommitted transfers and transactions.
+    const balances = await this.manager.query(recordsQuery, parameters);
     if (balances.length > 0 && balances[0].amount === undefined) {
       throw new Error('No balance returned');
     }
-    const count = (await connection.query(query, parameters)).length;
+    const count = (await this.manager.query(query, parameters)).length;
 
 
     return [

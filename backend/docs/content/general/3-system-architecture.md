@@ -52,6 +52,67 @@ produced it, and with the `actorId` once the token middleware has accepted a tok
 Code that runs outside a request, such as a cron task, has no such context, so
 anything it needs to record it must pass explicitly.
 
+## Audit log
+
+Some financial mutations are recorded in `audit_log_entry`, so it stays answerable
+who changed what: invoices, seller payouts, payout requests, write-offs, products,
+transfers, fine handouts and deletions, fine waivers, payment requests (creation,
+cancellation, marking fulfilled externally), inactive administrative costs, and
+voucher groups. `AuditService.log` writes the entry and emits the matching log
+line at the `AUDIT` level. Each entry holds the actor, the name that actor had at
+the time, the action (`invoice.delete`), the kind and id of the mutated object,
+and optionally the fields that changed. The id is stored as a string, so numeric
+ids and the uuids of payment requests share one filterable column.
+
+Read them through `GET /audit-logs`, which filters on actor, action, object and a
+`createdAt` date range. The `AuditLog` permission gates it; only Super admin holds
+it by default.
+
+Two rules keep the trail trustworthy:
+
+- **Append only.** Nothing updates or deletes an entry, and there is no job that
+  expires them. Bookkeeping needs the trail to stay complete.
+- **Recorded, not derived.** The actor is an argument to `AuditService.log`, never
+  read from ambient state, so no code path can quietly record a mutation with no
+  actor. Removing a user clears the reference but leaves the entry and the name.
+
+Coverage is maintained by convention in each controller, not enforced by
+construction: a new mutating endpoint can skip calling `AuditService.log` and no
+test will catch it.
+
+Where the mutating service extends `WithManager`, the controller opens one
+`AppDataSource.manager.transaction` and hands its manager to both that service and
+`AuditService`, so the entry commits or rolls back with the mutation it describes.
+A failed insert answers 500 and leaves nothing changed. That covers:
+
+- invoices: create, update, delete (`InvoiceService`)
+- seller payouts: create, update, delete (`SellerPayoutService`)
+- write-offs: create (`WriteOffService`, including closing the user)
+- transactions: update, delete (`TransactionService`)
+- transfers: create, delete (`TransferService`)
+- fines: deleting a fine or a fine handout, waiving fines (`DebtorService`)
+- payment requests: create, cancel, mark fulfilled (`PaymentRequestService`)
+- inactive administrative costs: create, delete (`InactiveAdministrativeCostService`)
+
+This only holds if every write the service makes goes through that manager, so
+the services it calls along the way (`TransferService`, `BalanceService`,
+`UserService.closeUser`) are handed the same manager.
+
+The other audited endpoints write their entry with `AuditService.logCommitted`
+after the mutation has committed. A failed insert there is logged at error level
+and the request still succeeds, because a 500 for a change that did happen would
+invite a retry that repeats it. That covers:
+
+- payout requests: create, status update (`PayoutRequestService` is static)
+- products: create, update, delete (`ProductService` is static)
+- voucher groups: create, update (`VoucherGroupService` is static)
+- fine handouts: `DebtorService.handOutFines` commits its own transaction and
+  emails the fined users before the entry can be written
+
+Purchases are deliberately not recorded. They arrive by the thousand each day and
+would bury the handful of monthly invoice and payout changes that the log exists
+to surface. `Transaction` is recorded only when one is changed or deleted.
+
 ## Where correctness is enforced
 
 Money is not “best effort”. SudoSOS relies on a few hard guarantees:

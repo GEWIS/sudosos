@@ -25,7 +25,7 @@
  */
 
 import dinero, { Dinero } from 'dinero.js';
-import { FindManyOptions, FindOptionsWhere, Raw, SelectQueryBuilder } from 'typeorm';
+import { EntityManager, FindManyOptions, FindOptionsWhere, Raw, SelectQueryBuilder } from 'typeorm';
 import DineroTransformer from '../entity/transformer/dinero-transformer';
 import Transfer from '../entity/transactions/transfer';
 import { TransferResponse } from '../controller/response/transfer-response';
@@ -45,7 +45,6 @@ import { toMySQLString } from '../helpers/timestamps';
 import WriteOffService from './write-off-service';
 import SellerPayoutService from './seller-payout-service';
 import WithManager from '../database/with-manager';
-import UserService from './user-service';
 import BalanceService from './balance-service';
 
 export interface TransferFilterParameters {
@@ -313,7 +312,9 @@ export default class TransferService extends WithManager {
   public async postTransfer(request: TransferRequest) : Promise<Transfer> {
     const transfer = await this.createTransfer(request);
     if (transfer.from != undefined && transfer.from.inactiveNotificationSend == true) {
-      await UserService.updateUser(transfer.fromId, { inactiveNotificationSend: false });
+      // Through this service's manager, so a caller's transaction does not wait on the
+      // lock its own transfer insert holds on this user.
+      await this.manager.update(User, { id: transfer.from.id }, { inactiveNotificationSend: false });
     }
     return transfer;
   }
@@ -418,10 +419,16 @@ export default class TransferService extends WithManager {
 
     await this.manager.delete(Transfer, id);
 
-    await TransferService.invalidateBalanceCaches(transfer);
+    await TransferService.invalidateBalanceCaches(transfer, this.manager);
   }
 
-  public static async invalidateBalanceCaches(transfer: Transfer): Promise<void> {
+  /**
+   * Invalidates the balance cache of both sides of a transfer.
+   * @param transfer - the transfer whose users to invalidate.
+   * @param manager - the manager to clear the cache with, so that a caller running in a
+   * database transaction does not wait on its own locks from a second connection.
+   */
+  public static async invalidateBalanceCaches(transfer: Transfer, manager?: EntityManager): Promise<void> {
     // both the from and to users' balances are affected by a transfer
     const userIds: number[] = [];
     if (transfer.from?.id !== undefined) {
@@ -432,7 +439,7 @@ export default class TransferService extends WithManager {
     }
 
     if (userIds.length > 0) {
-      await new BalanceService().clearBalanceCache(userIds);
+      await new BalanceService(manager).clearBalanceCache(userIds);
     }
   }
 }
