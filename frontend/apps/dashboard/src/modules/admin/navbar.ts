@@ -12,6 +12,7 @@ export function useAdminNav() {
         visible:
           isAllowed('get', ['all'], 'User', ['any']) ||
           isAllowed('get', ['all'], 'Banner', ['any']) ||
+          isAllowed('get', ['all'], 'AuditLog', ['any']) ||
           isAllowed('get', ['all'], 'Transaction', ['any']),
         items: [
           {
@@ -28,6 +29,11 @@ export function useAdminNav() {
             label: t('common.navigation.rbac'),
             route: '/rbac',
             visible: isAllowed('get', ['all'], 'Role', ['any']),
+          },
+          {
+            label: t('common.navigation.auditLog'),
+            route: '/admin/audit-log',
+            visible: isAllowed('get', ['all'], 'AuditLog', ['any']),
           },
         ].filter((item) => item.visible),
       },

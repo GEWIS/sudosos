@@ -186,7 +186,8 @@
       "financialOverview": "Overzicht",
       "maintainer": "Maintainer",
       "sellers": "Verkopers",
-      "rbac": "RBAC"
+      "rbac": "RBAC",
+      "auditLog": "Auditlogboek"
     },
     "validation": {
       "number": {
@@ -354,7 +355,8 @@
       "error": "Fout",
       "wrapped": "Wrapped",
       "financialOverview": "Financieel Overzicht",
-      "transferView": "Transactieoverzicht"
+      "transferView": "Transactieoverzicht",
+      "auditLog": "Auditlogboek"
     }
   }
 }
