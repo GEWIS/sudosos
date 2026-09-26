@@ -41,6 +41,10 @@ export function getWriteOffPdfSrc(pdf: string): string {
   return `${window.location.origin}/static/writeOffs/${pdf}`;
 }
 
+export function getVoucherGroupPdfSrc(pdf: string): string {
+  return `${window.location.origin}/static/voucherGroups/${pdf}`;
+}
+
 /**
  * Link to a member's profile on the GEWIS website.
  */
