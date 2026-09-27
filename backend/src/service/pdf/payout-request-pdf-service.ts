@@ -24,35 +24,28 @@
  * @module internal/pdf/payout-request-pdf-service
  */
 
-import { FileResponse, PayoutRouteParams } from 'pdf-generator-client';
 import PayoutRequest from '../../entity/transactions/payout/payout-request';
-import {
-  PayoutParameters,
-  Payout,
-} from 'pdf-generator-client';
 import PayoutRequestPdf from '../../entity/file/payout-request-pdf';
-import { PdfService } from './pdf-service';
+import { HtmlPdfService } from './pdf-service';
+import { createPayoutRequestPdf, IPayoutRequestPdf } from '../../html/payout-request.html';
+import Config from '../../config';
 
-export default class PayoutRequestPdfService extends PdfService<PayoutRequestPdf, PayoutRequest, PayoutRouteParams> {
+export default class PayoutRequestPdfService extends HtmlPdfService<PayoutRequestPdf, PayoutRequest, IPayoutRequestPdf> {
 
   pdfConstructor = PayoutRequestPdf;
 
-  routeConstructor = PayoutRouteParams;
+  htmlGenerator = createPayoutRequestPdf;
 
-  generator(routeParams: PayoutRouteParams): Promise<FileResponse> {
-    return this.client.generatePayout(routeParams);
-  }
-
-  async getParameters(entity: PayoutRequest): Promise<PayoutParameters> {
-    return new PayoutParameters({
-      payout: new Payout({
-        bankAccountName: entity.bankAccountName,
-        bankAccountNumber: entity.bankAccountNumber,
-        amount: entity.amount.getAmount(),
-        reference: `SDS-PR-${String(entity.id).padStart(4, '0')}`,
-        date: entity.createdAt,
-        debtorNumber: String(entity.requestedBy.id),
-      }),
-    });
+  async getParameters(entity: PayoutRequest): Promise<IPayoutRequestPdf> {
+    return {
+      reference: `SDS-PR-${String(entity.id).padStart(4, '0')}`,
+      requestedBy: [entity.requestedBy.firstName, entity.requestedBy.lastName].filter(Boolean).join(' '),
+      accountId: String(entity.requestedBy.id),
+      bankAccountName: entity.bankAccountName,
+      bankAccountNumber: entity.bankAccountNumber,
+      date: entity.createdAt.toLocaleDateString('nl-NL'),
+      amount: entity.amount.toFormat(),
+      serviceEmail: Config.get().mail.financialResponsible || '',
+    };
   }
 }

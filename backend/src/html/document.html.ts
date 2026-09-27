@@ -31,6 +31,9 @@
 import fs from 'fs';
 import path from 'path';
 import { BAC } from '../files/templates/bac-letterhead';
+import { escapeHtml } from './escape';
+
+export { escapeHtml };
 
 const PRIMARY = '#004b31';
 const PRIMARY_DARK = '#074a33';
@@ -119,15 +122,6 @@ const eur = new Intl.NumberFormat('nl-NL', {
 /** Format a euro amount in nl-NL style with the locale's no-break space
  *  between symbol and amount removed (e.g. €1.234,56). */
 export const fmt = (n: number): string => eur.format(n).replace(/\s/g, '');
-
-export function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
 
 function metaList(rows: IDocumentMetaRow[]): string {
   return rows

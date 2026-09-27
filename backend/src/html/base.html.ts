@@ -20,6 +20,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { escapeHtml } from './escape';
 
 const bacLogo = fs.readFileSync(path.resolve(__dirname, '../../static/pdf/bac_logo.svg'), 'utf-8');
 
@@ -31,6 +32,58 @@ export interface IPdfBase {
   meta: string,
   details: string,
   serviceEmail: string,
+}
+
+/**
+ * Explanation block used on balance-movement documents (transfers, payouts,
+ * write-offs): SudoSOS balance is a Multi Purpose Voucher, so no VAT is due.
+ */
+export function balanceNoticeHtml(title: string, intro: string): string {
+  return `
+    <div style="margin-bottom: 1.5em; padding: 1em; background: #F9F9F9; border-left: 4px solid var(--primary); border-radius: 4px;">
+      <h3 style="margin: 0 0 0.5em 0; font-size: 16px; color: var(--ink);">${title}</h3>
+      <p style="margin: 0; font-size: 13px; line-height: 1.6; color: var(--muted);">
+        ${intro}
+        Balances in SudoSOS qualify as Multi Purpose Vouchers (MPV) under
+        <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016L1065" target="_blank" rel="noopener noreferrer">
+          Directive (EU) 2016/1065
+        </a>.
+        No VAT is due on balance top-ups, payouts, or transfers between accounts.
+        VAT only becomes applicable when a balance is used to purchase goods or services.
+      </p>
+    </div>`;
+}
+
+/**
+ * A single-row amount table plus grand total, as used by transfer-style documents.
+ * Both values are escaped here, so callers pass them raw.
+ */
+export function singleAmountHtml(description: string, amount: string): string {
+  const amt = escapeHtml(amount);
+  return `
+    <table class="items" role="table">
+      <thead>
+        <tr>
+          <td>Description</td>
+          <td class="total">Amount</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>${escapeHtml(description)}</td>
+          <td class="total">${amt}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="totals">
+      <table>
+        <tr>
+          <td class="label grand">Total</td>
+          <td class="amt grand">${amt}</td>
+        </tr>
+      </table>
+    </div>`;
 }
 
 export function createBasePdf(options: IPdfBase): string {

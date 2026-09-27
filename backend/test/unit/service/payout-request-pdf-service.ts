@@ -18,7 +18,6 @@
  *  @license
  */
 
-import { Client } from 'pdf-generator-client';
 import sinon, { SinonStub } from 'sinon';
 import chai, { expect } from 'chai';
 import { DataSource } from 'typeorm';
@@ -37,6 +36,7 @@ import PayoutRequestPdfService from '../../../src/service/pdf/payout-request-pdf
 import PayoutRequestPdf from '../../../src/entity/file/payout-request-pdf';
 import { PAYOUT_REQUEST_PDF_LOCATION } from '../../../src/files/storage';
 import { PayoutRequestSeeder, UserSeeder } from '../../seed';
+import { PdfError } from '../../../src/errors';
 
 chai.use(deepEqualInAnyOrder);
 describe('PayoutRequestPdfService', async () => {
@@ -48,7 +48,6 @@ describe('PayoutRequestPdfService', async () => {
     payoutRequests: PayoutRequest[],
     pdfParams: any,
     fileService: FileService,
-    client: Client,
   };
 
   beforeAll(async function test(): Promise<void> {
@@ -81,7 +80,6 @@ describe('PayoutRequestPdfService', async () => {
       payoutRequests,
       pdfParams,
       fileService,
-      client:  new Client('url', { fetch }),
     };
   });
 
@@ -89,21 +87,21 @@ describe('PayoutRequestPdfService', async () => {
     await finishTestDB(ctx.connection);
   });
 
-  let generatePayoutRequestStub: SinonStub;
+  let compileHtmlStub: SinonStub;
   let uploadPayoutStub: SinonStub;
   let createFileStub: SinonStub;
 
   let pdfService = new PayoutRequestPdfService(PAYOUT_REQUEST_PDF_LOCATION);
 
   beforeEach(function () {
-    generatePayoutRequestStub = sinon.stub(pdfService.client, 'generatePayout');
+    compileHtmlStub = sinon.stub(pdfService, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
     uploadPayoutStub = sinon.stub(pdfService.fileService, 'uploadPdf');
     createFileStub = sinon.stub(pdfService.fileService, 'createFile');
   });
 
   afterEach(function () {
     // Restore the original function after each test
-    generatePayoutRequestStub.restore();
+    compileHtmlStub.restore();
     uploadPayoutStub.restore();
     createFileStub.restore();
   });
@@ -165,10 +163,6 @@ describe('PayoutRequestPdfService', async () => {
       payoutRequest.pdf = pdf;
       await PayoutRequest.save(payoutRequest);
 
-      generatePayoutRequestStub.resolves({
-        data: new Blob(),
-        status: 200,
-      });
       const newPdf = Object.assign(new PayoutRequestPdf(), {
         ...ctx.pdfParams,
         hash: await payoutRequest.getPdfParamHash(),
@@ -195,10 +189,6 @@ describe('PayoutRequestPdfService', async () => {
       // Hash is valid
       expect(await payoutRequest.validatePdfHash()).to.be.true;
 
-      generatePayoutRequestStub.resolves({
-        data: new Blob(),
-        status: 200,
-      });
       const newPdf = Object.assign(new PayoutRequestPdf(), {
         ...ctx.pdfParams,
         hash: await payoutRequest.getPdfParamHash(),
@@ -215,10 +205,6 @@ describe('PayoutRequestPdfService', async () => {
 
   describe('createPayoutRequestPDF', () => {
     it('should generate and upload a new PDF for the given payoutRequest ID', async () => {
-      generatePayoutRequestStub.resolves({
-        data: new Blob(),
-        status: 200,
-      });
 
       const payoutRequest = await PayoutRequest.findOne({ where: { id: 1 }, relations: {
         requestedBy: true,
@@ -244,7 +230,7 @@ describe('PayoutRequestPdfService', async () => {
       expect(payoutRequestPdf.hash).to.eq(await payoutRequest.getPdfParamHash());
     });
     it('should throw an error if PDF generation fails', async () => {
-      generatePayoutRequestStub.rejects(new Error('Failed to generate PDF'));
+      compileHtmlStub.rejects(new PdfError('Failed to generate PDF'));
 
       const payoutRequest = await PayoutRequest.findOne({ where: { id: 1 }, relations: {
         requestedBy: true,
@@ -259,6 +245,23 @@ describe('PayoutRequestPdfService', async () => {
       } });
       payoutRequest.pdfService = pdfService;
       await expect(payoutRequest.createPdf()).to.eventually.be.rejectedWith();
+    });
+  });
+
+  describe('getParameters and createRaw', () => {
+    it('should render the payout request details into the HTML', async () => {
+      const payoutRequest = await PayoutRequest.findOne({ where: { id: 1 }, relations: { requestedBy: true } });
+      const params = await pdfService.getParameters(payoutRequest);
+
+      expect(params.reference).to.eq('SDS-PR-0001');
+      expect(params.accountId).to.eq(String(payoutRequest.requestedBy.id));
+      expect(params.bankAccountNumber).to.eq(payoutRequest.bankAccountNumber);
+      expect(params.amount).to.eq(payoutRequest.amount.toFormat());
+
+      const html = (await pdfService.createRaw(payoutRequest)).toString('utf-8');
+      expect(html).to.include('SDS-PR-0001');
+      expect(html).to.include(payoutRequest.bankAccountNumber);
+      expect(compileHtmlStub).to.not.have.been.called;
     });
   });
 });
