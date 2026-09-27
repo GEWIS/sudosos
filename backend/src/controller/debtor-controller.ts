@@ -34,7 +34,8 @@ import { asArrayOfDates, asArrayOfUserTypes, asDate, asFromAndTillDate, asReturn
 import { In } from 'typeorm';
 import { HandoutFinesRequest } from './request/debtor-request';
 import Fine from '../entity/fine/fine';
-import { ReturnFileType } from 'pdf-generator-client';
+import { ReturnFileType } from '../helpers/pdf';
+import { sendPdfOrHtml } from '../helpers/express-pdf';
 import { PdfError } from '../errors';
 import FineHandoutEvent from '../entity/fine/fineHandoutEvent';
 
@@ -402,7 +403,7 @@ export default class DebtorController extends BaseController {
    * @security JWT
    * @param {string} fromDate.query.required - The start date of the report, inclusive
    * @param {string} toDate.query.required - The end date of the report, exclusive
-   * @param {string} fileType.query.required - enum:PDF,TEX - The file type of the report
+   * @param {string} fileType.query - enum:PDF,HTML - The file type of the report (default PDF)
    * @returns {string} 200 - The requested report - application/pdf
    * @return {string} 400 - Validation error
    * @return {string} 500 - Internal server error
@@ -416,7 +417,6 @@ export default class DebtorController extends BaseController {
       const filters = asFromAndTillDate(req.query.fromDate, req.query.toDate);
       fromDate = filters.fromDate;
       toDate = filters.tillDate;
-      if (req.query.fileType === undefined) throw new Error('fileType is required');
       fileType = asReturnFileType(req.query.fileType);
     } catch (e) {
       res.status(400).json(e.message);
@@ -426,14 +426,10 @@ export default class DebtorController extends BaseController {
     try {
       const report = await new DebtorService().getFineReport(fromDate, toDate);
 
-      const buffer = fileType === 'PDF' ? await report.createPdf() : await report.createRaw();
+      const buffer = fileType === ReturnFileType.PDF ? await report.createPdf() : await report.createRaw();
       const from = `${fromDate.getFullYear()}${fromDate.getMonth() + 1}${fromDate.getDate()}`;
       const to = `${toDate.getFullYear()}${toDate.getMonth() + 1}${toDate.getDate()}`;
-      const fileName = `fine-report-${from}-${to}.${fileType}`;
-
-      res.setHeader('Content-Type', 'application/pdf+tex');
-      res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
-      res.send(buffer);
+      sendPdfOrHtml(res, buffer, `fine-report-${from}-${to}`, fileType);
     } catch (error) {
       this.logger.error('Could not get fine report pdf:', error);
       if (error instanceof PdfError) {

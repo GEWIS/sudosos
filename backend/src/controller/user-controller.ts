@@ -75,8 +75,7 @@ import UpdateKeyResponse from './response/update-key-response';
 import { randomBytes } from 'crypto';
 import DebtorService, { WaiveFinesParams } from '../service/debtor-service';
 import ReportService, { BuyerReportService, SalesReportService } from '../service/report-service';
-import { ReturnFileType } from 'pdf-generator-client';
-import { UserReportType } from '../helpers/pdf';
+import { ReturnFileType, UserReportType } from '../helpers/pdf';
 import { reportPDFhelper } from '../helpers/express-pdf';
 import { PdfError } from '../errors';
 import { WaiveFinesRequest } from './request/debtor-request';
@@ -1360,7 +1359,7 @@ export default class UserController extends BaseController {
    * @param {string} fromDate.query.required - Start date for selected sales (inclusive)
    * @param {string} tillDate.query.required - End date for selected sales (exclusive)
    * @param {string} description.query - Description of the report
-   * @param {string} fileType.query - enum:PDF,TEX - The file type of the report
+   * @param {string} fileType.query - enum:PDF,HTML - The file type of the report (default PDF)
    * @return {string} 404 - User not found error.
    * @returns {string} 200 - The requested report - application/pdf
    * @return {string} 400 - Validation error
@@ -1410,7 +1409,7 @@ export default class UserController extends BaseController {
    * @security JWT
    * @param {string} fromDate.query.required - Start date for selected purchases (inclusive)
    * @param {string} tillDate.query.required - End date for selected purchases (exclusive)
-   * @param {string} fileType.query - enum:PDF,TEX - The file type of the report
+   * @param {string} fileType.query - enum:PDF,HTML - The file type of the report (default PDF)
    * @return {string} 404 - User not found error.
    * @returns {string} 200 - The requested report - application/pdf
    * @return {string} 400 - Validation error

@@ -25,25 +25,35 @@
  */
 
 import { Response } from 'express';
-import { ReturnFileType } from 'pdf-generator-client';
-import { UserReportType } from './pdf';
+import { ReturnFileType, UserReportType } from './pdf';
 import { SalesReport } from '../entity/report/report';
 import { BuyerReportService, SalesReportService } from '../service/report-service';
 
 type PdfAbleService = SalesReportService | BuyerReportService;
+
+/**
+ * Send a rendered document as an attachment with the content type and
+ * extension that match its file type.
+ * @param res - The express response
+ * @param buffer - The PDF or HTML bytes
+ * @param baseName - File name without extension
+ * @param fileType - Whether the buffer is the PDF or the raw HTML
+ */
+export function sendPdfOrHtml(res: Response, buffer: Buffer, baseName: string, fileType: ReturnFileType) {
+  const isPdf = fileType === ReturnFileType.PDF;
+  res.setHeader('Content-Type', isPdf ? 'application/pdf' : 'text/html; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="${baseName}.${isPdf ? 'pdf' : 'html'}"`);
+  res.send(buffer);
+}
 
 export function reportPDFhelper(res: Response) {
   return async (service: PdfAbleService, filters: { fromDate: Date, tillDate: Date }, description: string, forId: number, reportType: UserReportType, fileType: ReturnFileType) => {
     const report = await service.getReport({ ...filters, forId });
     if (report instanceof SalesReport && description) report.description = description;
 
-    const buffer = fileType === 'PDF' ? await report.createPdf() : await report.createRaw();
+    const buffer = fileType === ReturnFileType.PDF ? await report.createPdf() : await report.createRaw();
     const from = `${filters.fromDate.getFullYear()}${filters.fromDate.getMonth() + 1}${filters.fromDate.getDate()}`;
     const to = `${filters.tillDate.getFullYear()}${filters.tillDate.getMonth() + 1}${filters.tillDate.getDate()}`;
-    const fileName = `${reportType}-${from}-${to}.${fileType}`;
-
-    res.setHeader('Content-Type', `application/${fileType}`);
-    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
-    res.send(buffer);
+    sendPdfOrHtml(res, buffer, `${reportType}-${from}-${to}`, fileType);
   };
 }

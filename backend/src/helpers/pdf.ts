@@ -186,3 +186,12 @@ export function reportToDocumentLines(report: Report): IReportDocumentLines {
     totalVat: (inclCents - exclCents) / 100,
   };
 }
+
+/**
+ * File type a PDF-able document can be returned as: the compiled PDF, or the
+ * raw HTML that is sent to pdf-compiler (useful for previews and debugging).
+ */
+export enum ReturnFileType {
+  PDF = 'PDF',
+  HTML = 'HTML',
+}
