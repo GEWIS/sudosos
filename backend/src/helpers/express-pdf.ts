@@ -25,14 +25,17 @@
  */
 
 import { Response } from 'express';
-import { ReturnFileType, UserReportParametersType } from 'pdf-generator-client';
+import { ReturnFileType } from 'pdf-generator-client';
+import { UserReportType } from './pdf';
+import { SalesReport } from '../entity/report/report';
 import { BuyerReportService, SalesReportService } from '../service/report-service';
 
 type PdfAbleService = SalesReportService | BuyerReportService;
 
 export function reportPDFhelper(res: Response) {
-  return async (service: PdfAbleService, filters: { fromDate: Date, tillDate: Date }, description: string, forId: number, reportType: UserReportParametersType, fileType: ReturnFileType) => {
+  return async (service: PdfAbleService, filters: { fromDate: Date, tillDate: Date }, description: string, forId: number, reportType: UserReportType, fileType: ReturnFileType) => {
     const report = await service.getReport({ ...filters, forId });
+    if (report instanceof SalesReport && description) report.description = description;
 
     const buffer = fileType === 'PDF' ? await report.createPdf() : await report.createRaw();
     const from = `${filters.fromDate.getFullYear()}${filters.fromDate.getMonth() + 1}${filters.fromDate.getDate()}`;
