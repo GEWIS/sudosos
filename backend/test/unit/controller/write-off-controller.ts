@@ -33,9 +33,9 @@ import { json } from 'body-parser';
 import VatGroup from '../../../src/entity/vat-group';
 import ServerSettingsStore from '../../../src/server-settings/server-settings-store';
 import { WriteOffSeeder } from '../../seed';
-import { BasePdfService } from '../../../src/service/pdf/pdf-service';
+import WriteOffPdfService from '../../../src/service/pdf/write-off-pdf-service';
+import { PdfError } from '../../../src/errors';
 import sinon from 'sinon';
-import { Client } from 'pdf-generator-client';
 import { WRITE_OFF_PDF_LOCATION } from '../../../src/files/storage';
 import fs from 'fs';
 
@@ -261,18 +261,10 @@ describe('WriteOffController', () => {
   });
 
   describe('GET /writeoffs/{id}/pdf', () => {
-    let clientStub: sinon.SinonStubbedInstance<Client>;
+    let compileHtmlStub: sinon.SinonStub;
 
-    function resolveSuccessful() {
-      clientStub.generateWriteOff.resolves({
-        data: new Blob(),
-        status: 200,
-      });
-    }
-    
     beforeEach(() => {
-      clientStub = sinon.createStubInstance(Client);
-      sinon.stub(BasePdfService, 'getClient').returns(clientStub);
+      compileHtmlStub = sinon.stub(WriteOffPdfService.prototype, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
     });
 
     afterEach(() => {
@@ -281,7 +273,6 @@ describe('WriteOffController', () => {
 
     it('should return HTTP 200 with the write off PDF belonging to the write off', async () => {
       fs.mkdirSync(WRITE_OFF_PDF_LOCATION, { recursive: true });
-      resolveSuccessful();
       const writeOff = await WriteOff.findOne({ where: { id: 1 }, relations: {
         to: true,
       } });
@@ -306,7 +297,7 @@ describe('WriteOffController', () => {
       expect(res.status).to.equal(403);
     });
     it('should return HTTP 502 if pdf generation fails', async () => {
-      clientStub.generateWriteOff.rejects(new Error('Failed to generate PDF'));
+      compileHtmlStub.rejects(new PdfError('Failed to generate PDF'));
       const writeOff = await WriteOff.findOne({ where: { id: 1 }, relations: {
         to: true,
       } });

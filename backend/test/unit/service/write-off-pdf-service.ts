@@ -24,10 +24,10 @@ import { defaultBefore, DefaultContext, finishTestDB } from '../../helpers/test-
 import { WriteOffSeeder } from '../../seed';
 import WriteOff from '../../../src/entity/transactions/write-off';
 import FileService from '../../../src/service/file-service';
-import { Client } from 'pdf-generator-client';
 import { WRITE_OFF_PDF_LOCATION } from '../../../src/files/storage';
 import sinon, { SinonStub } from 'sinon';
 import WriteOffPdfService from '../../../src/service/pdf/write-off-pdf-service';
+import { PdfError } from '../../../src/errors';
 import User from '../../../src/entity/user/user';
 import chai, { expect } from 'chai';
 import WriteOffPdf from '../../../src/entity/file/write-off-pdf';
@@ -44,7 +44,6 @@ describe('WriteOffPdfService', () => {
   let ctx: DefaultContext & {
     writeOffs: WriteOff[];
     fileService: FileService,
-    client: Client,
     pdfParams: PdfParams,
   };
   
@@ -65,7 +64,6 @@ describe('WriteOffPdfService', () => {
       ...defaultContext,
       writeOffs,
       fileService,
-      client: new Client('url', { fetch }),
       pdfParams,
     };
   });
@@ -74,20 +72,20 @@ describe('WriteOffPdfService', () => {
     await finishTestDB(ctx.connection);
   });
   
-  let generateWriteOffStub: SinonStub;
+  let compileHtmlStub: SinonStub;
   let uploadWriteOffStub: SinonStub;
   let createFileStub: SinonStub;
   
   let pdfService = new WriteOffPdfService(WRITE_OFF_PDF_LOCATION);
   
   beforeEach(function () {
-    generateWriteOffStub = sinon.stub(pdfService.client, 'generateWriteOff');
+    compileHtmlStub = sinon.stub(pdfService, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
     uploadWriteOffStub = sinon.stub(pdfService.fileService, 'uploadPdf');
     createFileStub = sinon.stub(pdfService.fileService, 'createFile');
   });
   
   afterEach(function () {
-    generateWriteOffStub.restore();
+    compileHtmlStub.restore();
     uploadWriteOffStub.restore();
     createFileStub.restore();
   });
@@ -149,10 +147,6 @@ describe('WriteOffPdfService', () => {
       writeOff.pdf = pdf;
       await WriteOff.save(writeOff);
 
-      generateWriteOffStub.resolves({
-        data: new Blob(),
-        status: 200,
-      });
       const newPdf = Object.assign(new WriteOffPdf(), {
         ...ctx.pdfParams,
         hash: await writeOff.getPdfParamHash(),
@@ -179,10 +173,6 @@ describe('WriteOffPdfService', () => {
       // Hash is valid
       expect(await writeOff.validatePdfHash()).to.be.true;
 
-      generateWriteOffStub.resolves({
-        data: new Blob(),
-        status: 200,
-      });
       const newPdf = Object.assign(new WriteOffPdf(), {
         ...ctx.pdfParams,
         hash: await writeOff.getPdfParamHash(),
@@ -199,10 +189,6 @@ describe('WriteOffPdfService', () => {
 
   describe('createWriteOffPDF', () => {
     it('should generate and upload a new PDF for the given writeOff ID', async () => {
-      generateWriteOffStub.resolves({
-        data: new Blob(),
-        status: 200,
-      });
 
       const writeOff = await WriteOff.findOne({ where: { id: 1 }, relations: {
         to: true,
@@ -228,7 +214,7 @@ describe('WriteOffPdfService', () => {
       expect(writeOffPdf.hash).to.eq(await writeOff.getPdfParamHash());
     });
     it('should throw an error if PDF generation fails', async () => {
-      generateWriteOffStub.rejects(new Error('Failed to generate PDF'));
+      compileHtmlStub.rejects(new PdfError('Failed to generate PDF'));
 
       const writeOff = await WriteOff.findOne({ where: { id: 1 }, relations: {
         to: true,
@@ -236,6 +222,21 @@ describe('WriteOffPdfService', () => {
       } });
       writeOff.pdfService = pdfService;
       await expect(writeOff.createPdf()).to.eventually.be.rejectedWith();
+    });
+  });
+
+  describe('getParameters and createRaw', () => {
+    it('should render the write-off details into the HTML', async () => {
+      const writeOff = await WriteOff.findOne({ where: { id: 1 }, relations: { to: true } });
+      const params = await pdfService.getParameters(writeOff);
+
+      expect(params.reference).to.eq('SDS-WR-0001');
+      expect(params.accountId).to.eq(String(writeOff.to.id));
+      expect(params.amount).to.eq(writeOff.amount.toFormat());
+
+      const html = (await pdfService.createRaw(writeOff)).toString('utf-8');
+      expect(html).to.include('SDS-WR-0001');
+      expect(compileHtmlStub).to.not.have.been.called;
     });
   });
 });
