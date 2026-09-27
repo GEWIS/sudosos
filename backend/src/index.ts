@@ -249,6 +249,9 @@ export default async function createApp(): Promise<Application> {
     application.app.use('/static/products', express.static('data/products'));
     application.app.use('/static/banners', express.static('data/banners'));
     application.app.use('/static/invoices', express.static('data/invoices'));
+    application.app.use('/static/payouts', express.static('data/payout_requests'));
+    application.app.use('/static/sellerPayouts', express.static('data/seller_payouts'));
+    application.app.use('/static/writeOffs', express.static('data/write_offs'));
   }
 
   application.roleManager = await new RoleManager().initialize();
