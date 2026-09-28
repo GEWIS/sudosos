@@ -38,14 +38,30 @@ import { DineroObjectResponse } from './dinero-response';
   * @property {DineroObjectRequest} balance.required - Start balance to be assigned
   *  to the voucher users
   * @property {number} amount.required - Amount of users to be assigned to the voucher group
+  * @property {string} invoiceDate.required - Date printed on the statement PDF
+  * @property {string} addressee.required - Name of the purchaser
+  * @property {string} attention.required - "For the attention of" line
+  * @property {string} street.required - Street of the purchaser
+  * @property {string} postalCode.required - Postal code of the purchaser
+  * @property {string} city.required - City of the purchaser
+  * @property {string} country.required - Country of the purchaser
+  * @property {string} pdf - Download name of the latest statement PDF, if generated
   */
 export default interface VoucherGroupResponse extends BaseResponse {
   name: string,
   activeStartDate?: string,
   activeEndDate: string,
   amount: number,
+  invoiceDate: string,
   balance: DineroObjectResponse,
   users: UserResponse[],
+  addressee: string,
+  attention: string,
+  street: string,
+  postalCode: string,
+  city: string,
+  country: string,
+  pdf?: string,
 }
 
 /**

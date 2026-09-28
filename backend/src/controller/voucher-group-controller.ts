@@ -28,11 +28,13 @@ import { Response } from 'express';
 import log4js, { Logger } from 'log4js';
 import BaseController, { BaseControllerOptions } from './base-controller';
 import Policy from './policy';
-import { VoucherGroupRequest } from './request/voucher-group-request';
+import { VoucherGroupAddressRequest, VoucherGroupRequest } from './request/voucher-group-request';
 import { RequestWithToken } from '../middleware/token-middleware';
 import VoucherGroup from '../entity/user/voucher-group';
 import VoucherGroupService from '../service/voucher-group-service';
 import { parseRequestPagination, toResponse } from '../helpers/pagination';
+import { MissingAddressError, PdfError } from '../errors';
+import { PdfUrlResponse } from './response/simple-file-response';
 
 export default class VoucherGroupController extends BaseController {
   private logger: Logger = log4js.getLogger('VoucherGroupController');
@@ -67,6 +69,19 @@ export default class VoucherGroupController extends BaseController {
           body: { modelName: 'VoucherGroupRequest' },
           policy: async (req) => this.roleManager.can(req.token.roles, 'update', 'all', 'VoucherGroup', ['*']),
           handler: this.updateVoucherGroup.bind(this),
+        },
+      },
+      '/:id(\\d+)/address': {
+        PATCH: {
+          body: { modelName: 'VoucherGroupAddressRequest' },
+          policy: async (req) => this.roleManager.can(req.token.roles, 'update', 'all', 'VoucherGroup', ['*']),
+          handler: this.updateVoucherGroupAddress.bind(this),
+        },
+      },
+      '/:id(\\d+)/pdf': {
+        GET: {
+          policy: async (req) => this.roleManager.can(req.token.roles, 'get', 'all', 'VoucherGroup', ['*']),
+          handler: this.getVoucherGroupPdf.bind(this),
         },
       },
     };
@@ -220,6 +235,96 @@ export default class VoucherGroupController extends BaseController {
       );
     } catch (error) {
       this.logger.error('Could not update voucher group:', error);
+      res.status(500).json('Internal server error.');
+    }
+  }
+
+  /**
+   * PATCH /vouchergroups/{id}/address
+   * @summary Updates the purchaser address and invoice date of the requested voucher group.
+   * Unlike PATCH /vouchergroups/{id}, this is allowed after the group has become active.
+   * @operationId updateVoucherGroupAddress
+   * @tags vouchergroups - Operations of voucher group controller
+   * @param {integer} id.path.required - The id of the voucher group which should be updated
+   * @param {VoucherGroupAddressRequest} request.body.required - The new address and invoice date
+   * @security JWT
+   * @return {VoucherGroupResponse} 200 - The updated voucher group entity
+   * @return {string} 400 - Validation error
+   * @return {string} 404 - Not found error
+   * @return {string} 500 - Internal server error
+   */
+  public async updateVoucherGroupAddress(req: RequestWithToken, res: Response): Promise<void> {
+    const body = req.body as VoucherGroupAddressRequest;
+    const { id } = req.params;
+    const bkgId = Number.parseInt(id, 10);
+    this.logger.trace('Update voucher group address', id, 'with', body, 'by user', req.token.user);
+
+    try {
+      if (!VoucherGroupService.hasCompleteAddress(body)) {
+        res.status(400).json('Invalid address.');
+        return;
+      }
+      const invoiceDate = VoucherGroupService.asInvoiceDate(body.invoiceDate);
+      if (!VoucherGroupService.isValidInvoiceDate(invoiceDate)) {
+        res.status(400).json('Invalid invoice date.');
+        return;
+      }
+      const result = await VoucherGroupService.updateVoucherGroupAddress(bkgId, body, invoiceDate);
+      if (!result) {
+        res.status(404).json('Voucher group not found.');
+        return;
+      }
+      res.status(200).json(
+        VoucherGroupService.asVoucherGroupResponse(result.voucherGroup, result.users),
+      );
+    } catch (error) {
+      this.logger.error('Could not update voucher group address:', error);
+      res.status(500).json('Internal server error.');
+    }
+  }
+
+  /**
+   * GET /vouchergroups/{id}/pdf
+   * @summary Get the statement pdf of a voucher group. Requires the group to have a complete address.
+   * @operationId getVoucherGroupPdf
+   * @tags vouchergroups - Operations of voucher group controller
+   * @security JWT
+   * @param {integer} id.path.required - The id of the voucher group
+   * @param {boolean} force.query - Force creation of pdf
+   * @return {PdfUrlResponse} 200 - The pdf location information.
+   * @return {string} 400 - Voucher group has no address
+   * @return {string} 404 - Voucher group not found
+   * @return {string} 500 - Internal server error
+   * @return {string} 502 - PDF generator service failed
+   */
+  public async getVoucherGroupPdf(req: RequestWithToken, res: Response): Promise<void> {
+    const { id } = req.params;
+    const bkgId = Number.parseInt(id, 10);
+    this.logger.trace('Get voucher group PDF', id, 'by user', req.token.user);
+
+    try {
+      const voucherGroup = await VoucherGroup.findOne({
+        where: { id: bkgId },
+        relations: { pdf: true, vouchers: { user: true } },
+      });
+      if (!voucherGroup) {
+        res.status(404).json('Voucher group not found.');
+        return;
+      }
+
+      const pdf = await voucherGroup.getOrCreatePdf(req.query.force === 'true');
+
+      res.status(200).json({ pdf: pdf.downloadName } as PdfUrlResponse);
+    } catch (error) {
+      if (error instanceof MissingAddressError) {
+        res.status(400).json('Voucher group has no address.');
+        return;
+      }
+      this.logger.error('Could not get voucher group PDF:', error);
+      if (error instanceof PdfError) {
+        res.status(502).json('PDF Generator service failed.');
+        return;
+      }
       res.status(500).json('Internal server error.');
     }
   }
