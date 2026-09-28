@@ -32,7 +32,7 @@ import DebtorService from '../service/debtor-service';
 import User from '../entity/user/user';
 import { asArrayOfDates, asArrayOfUserTypes, asDate, asFromAndTillDate, asReturnFileType } from '../helpers/validators';
 import { In } from 'typeorm';
-import { HandoutFinesRequest } from './request/debtor-request';
+import { HandoutFinesRequest, NotifyDebtRequest } from './request/debtor-request';
 import Fine from '../entity/fine/fine';
 import { ReturnFileType } from 'pdf-generator-client';
 import { PdfError } from '../errors';
@@ -96,6 +96,13 @@ export default class DebtorController extends BaseController {
           policy: async (req) => this.roleManager.can(req.token.roles, 'notify', 'all', 'Fine', ['*']),
           handler: this.notifyAboutFutureFines.bind(this),
           body: { modelName: 'HandoutFinesRequest' },
+        },
+      },
+      '/notify/debt': {
+        POST: {
+          policy: async (req) => this.roleManager.can(req.token.roles, 'notify', 'all', 'Fine', ['*']),
+          handler: this.notifyAboutDebt.bind(this),
+          body: { modelName: 'NotifyDebtRequest' },
         },
       },
       '/report': {
@@ -356,6 +363,39 @@ export default class DebtorController extends BaseController {
       res.status(204).send();
     } catch (error) {
       this.logger.error('Could not send future fine notification emails:', error);
+      res.status(500).json('Internal server error.');
+    }
+  }
+
+  /**
+   * POST /fines/notify/debt
+   * @summary Send an email to all given users that their balance is negative, without mentioning fines.
+   * @tags debtors - Operations of the debtor controller
+   * @operationId notifyAboutDebt
+   * @security JWT
+   * @param {NotifyDebtRequest} request.body.required
+   * @return 204 - Success
+   * @return {string} 400 - Validation error
+   * @return {string} 500 - Internal server error
+   */
+  public async notifyAboutDebt(req: RequestWithToken, res: Response): Promise<void> {
+    const body = req.body as NotifyDebtRequest;
+    this.logger.trace('fine.notify_debt', { request: body });
+
+    try {
+      if (!Array.isArray(body.userIds)) throw new Error('userIds is not an array');
+      const users = await User.find({ where: { id: In(body.userIds) } });
+      if (users.length !== body.userIds.length) throw new Error('userIds is not a valid array of user IDs');
+    } catch (e) {
+      res.status(400).json(e.message);
+      return;
+    }
+
+    try {
+      await new DebtorService().sendDebtNotifications({ userIds: body.userIds });
+      res.status(204).send();
+    } catch (error) {
+      this.logger.error('Could not send debt notification emails:', error);
       res.status(500).json('Internal server error.');
     }
   }

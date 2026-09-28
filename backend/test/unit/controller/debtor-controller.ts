@@ -561,6 +561,39 @@ describe('DebtorController', () => {
     });
   });
 
+  describe('POST /fines/notify/debt', () => {
+    it('should remind users with given ID', async () => {
+      const res = await request(ctx.app)
+        .post('/fines/notify/debt')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ userIds: ctx.users.map((u) => u.id) });
+      expect(res.status).to.equal(204);
+      expect(res.body).to.be.empty;
+      expect(sendNotifyFake.callCount).to.be.at.least(1);
+    });
+    it('should return 403 if user is not admin', async () => {
+      const res = await request(ctx.app)
+        .post('/fines/notify/debt')
+        .set('Authorization', `Bearer ${ctx.userToken}`)
+        .send({ userIds: ctx.users.map((u) => u.id) });
+      expect(res.status).to.equal(403);
+    });
+    it('should return 400 if userIds is not a list', async () => {
+      const res = await request(ctx.app)
+        .post('/fines/notify/debt')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ userIds: '39Vooo' });
+      expect(res.status).to.equal(400);
+    });
+    it('should return 400 if list of userIds is invalid', async () => {
+      const res = await request(ctx.app)
+        .post('/fines/notify/debt')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ userIds: ['WieDitLeestTrektBak'] });
+      expect(res.status).to.equal(400);
+    });
+  });
+
   describe('GET /fines/report', () => {
     it('should return report', async () => {
       const fromDate = new Date('2021-01-01');
