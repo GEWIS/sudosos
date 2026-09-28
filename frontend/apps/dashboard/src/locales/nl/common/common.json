@@ -128,7 +128,8 @@
           "verify": "Verificatie succesvol",
           "details": "Uitbetaling is geverifieerd."
         },
-        "writeOffCreated": "Succesvol een afschrijving gemaakt."
+        "writeOffCreated": "Succesvol een afschrijving gemaakt.",
+        "debtNotificationsSent": "De mails over het negatieve saldo zijn verstuurd."
       },
       "error": {
         "error": "Error",

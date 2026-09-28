@@ -1,36 +1,6 @@
 <template>
   <CardComponent class="w-full" :header="t('modules.financial.debtor.fineRound.title')">
-    <div v-if="!started" class="flex flex-col items-center text-center">
-      <Message v-if="!previousMeasurementDate && !isLoadingOverview" severity="info">
-        {{ t('modules.financial.debtor.fineRound.overviewNoPrevious') }}
-      </Message>
-      <template v-else>
-        <p class="mb-6">
-          {{
-            t('modules.financial.debtor.fineRound.overviewIntro', {
-              date: formatDateTime(measurementDate),
-              previousDate: previousMeasurementDate ? formatDateTime(previousMeasurementDate) : '',
-            })
-          }}
-        </p>
-        <div class="flex flex-wrap gap-12 justify-center">
-          <div v-for="stat in overviewStats" :key="stat.label" class="flex flex-col gap-1 items-center">
-            <Skeleton v-if="isLoadingOverview" height="2.5rem" width="6rem" />
-            <span v-else class="font-bold text-4xl">{{ stat.value }}</span>
-            <span>{{ stat.label }}</span>
-          </div>
-        </div>
-      </template>
-      <Button
-        v-if="canHandout"
-        class="mt-6"
-        icon="pi pi-play"
-        :label="t('modules.financial.debtor.fineRound.start')"
-        @click="started = true"
-      />
-    </div>
-
-    <Stepper v-else v-model:value="step" linear>
+    <Stepper v-model:value="step" linear>
       <StepList>
         <Step :value="STEP.DATES">{{ t('modules.financial.debtor.fineRound.steps.dates') }}</Step>
         <Step :value="STEP.FINES">{{ t('modules.financial.debtor.fineRound.steps.fines') }}</Step>
@@ -49,7 +19,7 @@
         <StepPanel :value="STEP.FINES">
           <FineRoundSelectStep
             v-model:selection="selectedFines"
-            :balance-dates="[measurementDate, previousMeasurementDate!]"
+            :balance-dates="finesBalanceDates"
             :debtors="finesToHandOut"
             :fine-header="t('modules.financial.debtor.debtorUsers.toBeFined')"
             :info="t('modules.financial.debtor.fineRound.finesInfo')"
@@ -90,8 +60,8 @@
       <div class="flex justify-between mt-6">
         <Button
           :disabled="isRunning || finesHandedOut"
-          icon="pi pi-arrow-left"
-          :label="t('common.back')"
+          :icon="step === STEP.DATES ? 'pi pi-times' : 'pi pi-arrow-left'"
+          :label="step === STEP.DATES ? t('common.cancel') : t('common.back')"
           outlined
           @click="back"
         />
@@ -123,26 +93,21 @@ import { useI18n } from 'vue-i18n';
 import { useToast } from 'openvue/usetoast';
 import type { AxiosError } from 'axios';
 import type { DineroObjectResponse, UserToFineResponse } from '@gewis/sudosos-client';
-import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import ApiService from '@/services/ApiService';
 import { FINEABLE_USER_TYPES, useDebtorStore } from '@/stores/debtor.store';
-import { formatDateTime, formatPrice, toDineroResponse } from '@/utils/formatterUtils';
+import { formatPrice, toDineroResponse } from '@/utils/formatterUtils';
 import { handleError } from '@/utils/errorUtils';
 import CardComponent from '@/components/CardComponent.vue';
 import FineRoundConfirmStep from '@/modules/financial/components/debtor/fineRound/FineRoundConfirmStep.vue';
 import FineRoundDatesStep from '@/modules/financial/components/debtor/fineRound/FineRoundDatesStep.vue';
 import FineRoundSelectStep from '@/modules/financial/components/debtor/fineRound/FineRoundSelectStep.vue';
 
-const emit = defineEmits<{ completed: [] }>();
+const emit = defineEmits<{ completed: []; cancel: [] }>();
 
 const { t } = useI18n();
 const toast = useToast();
 const debtorStore = useDebtorStore();
 
-// Users who may only view fines see the overview, but cannot start a round
-const canHandout = isAllowed('update', ['all'], 'Fine', ['any']);
-
-const started = ref(false);
 const STEP = { DATES: 1, FINES: 2, WARNINGS: 3, CONFIRM: 4 } as const;
 const step = ref<number>(STEP.DATES);
 const measurementDate = ref<Date>(new Date());
@@ -162,33 +127,20 @@ const datesValid = computed(
   () => !!previousMeasurementDate.value && previousMeasurementDate.value < measurementDate.value,
 );
 
+// All step panels render right away, before the previous date has loaded (or when there is none yet)
+const finesBalanceDates = computed(() =>
+  previousMeasurementDate.value ? [measurementDate.value, previousMeasurementDate.value] : [measurementDate.value],
+);
+
 const selectedFineTotal = computed(() => sumAmounts(selectedFines.value.map((f) => f.fineAmount)));
 const selectedWarningDebtTotal = computed(() => sumAmounts(selectedWarnings.value.map((f) => f.balances[0].amount)));
 
-const isLoadingOverview = ref(true);
-const overview = ref({ fined: 0, amount: sumAmounts([]), warned: 0 });
-const overviewStats = computed(() => [
-  { label: t('modules.financial.debtor.fineRound.overviewFined'), value: overview.value.fined },
-  { label: t('modules.financial.debtor.fineRound.overviewAmount'), value: formatPrice(overview.value.amount) },
-  { label: t('modules.financial.debtor.fineRound.overviewWarned'), value: overview.value.warned },
-]);
-
-// Preload what a round from the last handout until now would do, for the stats shown before starting
+// Prefill the previous measurement date with the last handout
 onMounted(async () => {
   try {
     previousMeasurementDate.value = await debtorStore.fetchLastHandoutDate();
-    if (!previousMeasurementDate.value) return;
-
-    const { toFine, toWarn } = await fetchCandidates(measurementDate.value, previousMeasurementDate.value);
-    overview.value = {
-      fined: toFine.length,
-      amount: sumAmounts(toFine.map((f) => f.fineAmount)),
-      warned: toWarn.length,
-    };
   } catch (err) {
     handleError(err as AxiosError, toast);
-  } finally {
-    isLoadingOverview.value = false;
   }
 });
 
@@ -197,7 +149,7 @@ function sumAmounts(amounts: DineroObjectResponse[]) {
 }
 
 function back() {
-  if (step.value === STEP.DATES) started.value = false;
+  if (step.value === STEP.DATES) emit('cancel');
   else step.value--;
 }
 

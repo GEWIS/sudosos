@@ -10,8 +10,8 @@
           "apply": "Zastosuj",
           "toBeFined": "Do ukarania",
           "wasFined": "Ukarany",
-          "ofWhichFine": "Z czego kara",
-          "fineSince": "Kara od",
+          "unpaidFines": "Niezapłacone kary",
+          "finedSince": "Ukarany od",
           "userCount": "Użytkownicy: {count}"
         },
         "handoutEvents": {
@@ -37,11 +37,6 @@
             "warnings": "Ostrzeżenia",
             "confirm": "Potwierdzenie"
           },
-          "overviewIntro": "Jeśli wszyscy zostaną zaznaczeni, runda kar na podstawie sald z {date}, w porównaniu z {previousDate}:",
-          "overviewNoPrevious": "Nie było jeszcze żadnego nałożenia kar. Wybierz obie daty pomiaru w następnym kroku.",
-          "overviewFined": "ukaranych użytkowników",
-          "overviewAmount": "suma kar",
-          "overviewWarned": "ostrzeżonych użytkowników",
           "start": "Rozpocznij rundę kar",
           "explanation": "Użytkownicy z saldem -€5,00 lub niższym w obu datach zostaną ukarani na podstawie salda z daty pomiaru. Użytkownicy z saldem -€5,00 lub niższym tylko w dacie pomiaru otrzymają zamiast tego ostrzeżenie.",
           "measurementDate": "Data pomiaru",
@@ -60,6 +55,15 @@
           "outcomeFine": "Kara {amount}",
           "outcomeWarning": "Ostrzeżenie",
           "run": "Uruchom rundę kar"
+        },
+        "overview": {
+          "title": "Użytkownicy z długiem",
+          "hideSmallDebts": "Ukryj salda od -€5,00 do -€0,01",
+          "warnHeader": "Ostrzeż zadłużonych użytkowników",
+          "warn": "Ostrzeż {count} użytkownika | Ostrzeż {count} użytkowników",
+          "confirmWarn": "Czy chcesz wysłać {count} użytkownikowi e-mail o ujemnym saldzie? E-mail nie wspomina o karach. | Czy chcesz wysłać {count} użytkownikom e-mail o ujemnym saldzie? E-mail nie wspomina o karach.",
+          "empty": "Żaden użytkownik nie ma długu.",
+          "total": "Użytkownicy: {count}, łącznie {amount}"
         }
       },
       "invoice": {

@@ -224,6 +224,15 @@ export const useDebtorStore = defineStore('debtor', {
       this.summary.totalPositive = totalPositive.toObject();
       this.summary.total = totalNegative.add(totalPositive).toObject();
     },
+    /**
+     * Fetch the balances of all fineable users in debt. Fetches every page, since the debtor overview
+     * filters and sorts in the browser.
+     */
+    async fetchDebtorBalances(): Promise<BalanceResponse[]> {
+      return fetchAllPages<BalanceResponse>((take, skip) =>
+        ApiService.balance.getAllBalance({ maxBalance: -1, userTypes: FINEABLE_USER_TYPES, take, skip }),
+      );
+    },
     async fetchFineHandoutEvents(take: number, skip: number) {
       this.isFineHandoutEventsLoading = true;
       const handoutEvents = await ApiService.debtor.returnAllFineHandoutEvents({ take, skip });

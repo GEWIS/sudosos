@@ -10,8 +10,8 @@
           "apply": "Apply",
           "toBeFined": "To be fined",
           "wasFined": "Was fined",
-          "ofWhichFine": "Of which fine",
-          "fineSince": "Fine since",
+          "unpaidFines": "Unpaid fines",
+          "finedSince": "Fined since",
           "userCount": "{count} user | {count} users"
         },
         "handoutEvents": {
@@ -37,11 +37,6 @@
             "warnings": "Warnings",
             "confirm": "Confirm"
           },
-          "overviewIntro": "If everyone is selected, a fine round based on balances on {date}, compared to {previousDate}, will:",
-          "overviewNoPrevious": "There is no previous fine handout yet. Pick both measurement dates in the next step.",
-          "overviewFined": "users fined",
-          "overviewAmount": "in fines",
-          "overviewWarned": "users warned",
           "start": "Start fine round",
           "explanation": "Users who have a balance of -€5.00 or less on both dates will be fined, based on their balance on the measurement date. Users who have a balance of -€5.00 or less on only the measurement date will get a warning instead.",
           "measurementDate": "Measurement date",
@@ -60,6 +55,15 @@
           "outcomeFine": "Fine of {amount}",
           "outcomeWarning": "Warning",
           "run": "Run fine round"
+        },
+        "overview": {
+          "title": "Users in debt",
+          "hideSmallDebts": "Hide balances between -€5.00 and -€0.01",
+          "warnHeader": "Warn users in debt",
+          "warn": "Warn {count} user | Warn {count} users",
+          "confirmWarn": "Do you want to email {count} user that their balance is negative? The email does not mention fines. | Do you want to email {count} users that their balance is negative? The email does not mention fines.",
+          "empty": "No users are in debt.",
+          "total": "{count} user, {amount} in total | {count} users, {amount} in total"
         }
       },
       "invoice": {
