@@ -128,7 +128,8 @@
           "verify": "Verification Success",
           "details": "Payout is verified."
         },
-        "writeOffCreated": "Successfully created write-off."
+        "writeOffCreated": "Successfully created write-off.",
+        "debtNotificationsSent": "Successfully sent the negative balance emails."
       },
       "error": {
         "error": "Error",

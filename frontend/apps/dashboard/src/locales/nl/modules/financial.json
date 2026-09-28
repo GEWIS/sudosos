@@ -10,8 +10,8 @@
           "apply": "Toepassen",
           "toBeFined": "Te beboeten",
           "wasFined": "Is beboet",
-          "ofWhichFine": "Waarvan boete",
-          "fineSince": "Boete sinds",
+          "unpaidFines": "Openstaande boetes",
+          "finedSince": "Beboet sinds",
           "sumCurrentBalance": "Totaal van saldi",
           "sumWasFined": "Totaal van \"Is beboet\""
         },
@@ -38,11 +38,6 @@
             "warnings": "Waarschuwingen",
             "confirm": "Bevestigen"
           },
-          "overviewIntro": "Als iedereen geselecteerd is, zal een boeteronde op basis van saldi op {date}, vergeleken met {previousDate}:",
-          "overviewNoPrevious": "Er is nog geen eerdere boete-uitdeling. Kies beide meetdatums in de volgende stap.",
-          "overviewFined": "gebruikers beboeten",
-          "overviewAmount": "aan boetes uitdelen",
-          "overviewWarned": "gebruikers waarschuwen",
           "start": "Boeteronde starten",
           "explanation": "Gebruikers met een saldo van hoogstens -€5 op beide datums krijgen een boete, gebaseerd op hun saldo op de meetdatum. Gebruikers die alleen op de meetdatum hoogstens -€5 hebben, krijgen in plaats daarvan een waarschuwing.",
           "measurementDate": "Meetdatum",
@@ -60,6 +55,14 @@
           "outcomeFine": "Boete van {amount}",
           "outcomeWarning": "Waarschuwing",
           "run": "Boeteronde uitvoeren"
+        },
+        "overview": {
+          "title": "Gebruikers met schuld",
+          "hideSmallDebts": "Verberg saldi tussen -€5,00 en -€0,01",
+          "warn": "Waarschuw {count} gebruikers",
+          "confirmWarn": "Wil je {count} gebruikers mailen dat hun saldo negatief is? De mail noemt geen boetes.",
+          "empty": "Er zijn geen gebruikers met schuld.",
+          "total": "{count} gebruikers, {amount} in totaal"
         }
       },
       "invoice": {

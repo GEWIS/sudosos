@@ -48,7 +48,7 @@
       <Column
         class="font-bold"
         field="referenceBalanceFine"
-        :header="t('modules.financial.debtor.debtorUsers.ofWhichFine')"
+        :header="t('modules.financial.debtor.debtorUsers.unpaidFines')"
         :sortable="true"
         style="width: 10%"
       >
@@ -70,7 +70,7 @@
 
       <Column
         field="fineSince"
-        :header="t('modules.financial.debtor.debtorUsers.fineSince')"
+        :header="t('modules.financial.debtor.debtorUsers.finedSince')"
         :sortable="true"
         style="width: 10%"
       >

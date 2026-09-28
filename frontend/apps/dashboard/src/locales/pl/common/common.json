@@ -128,7 +128,8 @@
           "verify": "Weryfikacja zakończona sukcesem",
           "details": "Wypłata została zweryfikowana."
         },
-        "writeOffCreated": "Pomyślnie utworzono umorzenie."
+        "writeOffCreated": "Pomyślnie utworzono umorzenie.",
+        "debtNotificationsSent": "Pomyślnie wysłano e-maile o ujemnym saldzie."
       },
       "error": {
         "error": "Błąd",
