@@ -421,26 +421,6 @@ describe('TransferService', async (): Promise<void> => {
       expect(lastEntry.from.id).to.equal(req.fromId);
       expect(lastEntry.to).to.be.undefined;
     });
-    it('should reset user inactive notification send to false', async () => {
-      const user = await User.findOne({ where: { inactiveNotificationSend: true } });
-
-      const req: TransferRequest = {
-        amount: {
-          amount: 10,
-          precision: dinero.defaultPrecision,
-          currency: dinero.defaultCurrency,
-        },
-        description: 'cool',
-        fromId: user.id,
-        toId: undefined,
-        vatId: ctx.vatGroups[0].id,
-      };
-      await new TransferService().postTransfer(req);
-
-      const updatedUser = await User.findOne({ where: { id: user.id } });
-
-      expect(updatedUser.inactiveNotificationSend).to.be.eq(false);
-    });
   });
   describe('createTransfer function', () => {
     it('should be able to create a new transfer', async () => {
@@ -468,6 +448,36 @@ describe('TransferService', async (): Promise<void> => {
       expect(lastEntry.from.id).to.equal(req.fromId);
       expect(lastEntry.to).to.be.undefined;
       expect(lastEntry.vat.id).to.equal(req.vatId);
+    });
+    it('should reset from and to user\'s inactiveNotificationSend', async () => {
+      const fromUser = ctx.users[0];
+      const toUser = ctx.users[1];
+
+      fromUser.inactiveNotificationSend = true;
+      toUser.inactiveNotificationSend = true;
+      await Promise.all([
+        fromUser.save(),
+        toUser.save(),
+      ]);
+
+      const req: TransferRequest = {
+        amount: {
+          amount: 10,
+          precision: dinero.defaultPrecision,
+          currency: dinero.defaultCurrency,
+        },
+        description: 'cool',
+        fromId: fromUser.id,
+        toId: toUser.id,
+        vatId: ctx.vatGroups[0].id,
+      };
+      const resPost = await new TransferService().createTransfer(req);
+      expect(resPost).to.not.be.null;
+
+      const updatedFromUser = await User.findOne({ where: { id: fromUser.id } });
+      const updatedToUser = await User.findOne({ where: { id: toUser.id } });
+      expect(updatedFromUser.inactiveNotificationSend).to.be.false;
+      expect(updatedToUser.inactiveNotificationSend).to.be.false;
     });
   });
   describe('deleteTransfer function', () => {
