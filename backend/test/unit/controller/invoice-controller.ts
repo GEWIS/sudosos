@@ -34,6 +34,7 @@ import TokenMiddleware from '../../../src/middleware/token-middleware';
 import { defaultPagination, PaginationResult } from '../../../src/helpers/pagination';
 import { BaseInvoiceResponse, InvoiceResponse } from '../../../src/controller/response/invoice-response';
 import Invoice from '../../../src/entity/invoices/invoice';
+import AuditLogEntry, { AuditAction } from '../../../src/entity/audit/audit-log-entry';
 import {
   CreateInvoiceParams,
   CreateInvoiceRequest,
@@ -628,6 +629,60 @@ describe('InvoiceController', async () => {
       expect(res.body.errors).to.be.an('array').with.length.greaterThan(0);
       expect(res.body.errors[0]).to.include(INVOICE_IS_PAID().value);
     });
+
+    async function updatableInvoices(): Promise<Invoice[]> {
+      return (await Invoice.find({ relations: { invoiceStatus: true, transfer: true }, order: { id: 'ASC' } }))
+        .filter((i) => ![InvoiceState.PAID, InvoiceState.DELETED]
+          .includes(i.invoiceStatus[i.invoiceStatus.length - 1].state));
+    }
+
+    it('should record every changed field of the update, including the amount', async () => {
+      const [invoice] = await updatableInvoices();
+      expect(invoice).to.not.be.undefined;
+      const amount = { amount: invoice.transfer.amountInclVat.getAmount() + 100, precision: 2, currency: 'EUR' as const };
+      const updateRequest: UpdateInvoiceRequest = {
+        street: `${invoice.street}-updated`,
+        attention: `${invoice.attention}-updated`,
+        date: '2020-01-01T00:00:00.000Z',
+        amount,
+        // Unchanged, so it must not show up in the recorded changes.
+        city: invoice.city,
+      };
+
+      const res = await request(ctx.app)
+        .patch(`/invoices/${invoice.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send(updateRequest);
+      expect(res.status).to.equal(200);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.INVOICE_UPDATE, entityId: String(invoice.id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.changes).to.deep.equal({
+        street: updateRequest.street,
+        attention: updateRequest.attention,
+        date: updateRequest.date,
+        amount,
+      });
+    });
+    it('should record a PATCH to DELETED as a deletion', async () => {
+      const invoices = await updatableInvoices();
+      // Take the last one: the DELETE tests below work on the first invoice.
+      const invoice = invoices[invoices.length - 1];
+      expect(invoices.length).to.be.greaterThan(1);
+
+      const res = await request(ctx.app)
+        .patch(`/invoices/${invoice.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ state: 'DELETED', street: 'Ignored-street' } as UpdateInvoiceRequest);
+      expect(res.status).to.equal(200);
+
+      const entityId = String(invoice.id);
+      expect(await AuditLogEntry.count({ where: { action: AuditAction.INVOICE_DELETE, entityId } })).to.equal(1);
+      expect(await AuditLogEntry.count({ where: { action: AuditAction.INVOICE_UPDATE, entityId } })).to.equal(0);
+    });
   });
   describe('DELETE /invoices/{id}', () => {
     it('should return an HTTP 200 and delete the requested invoice if exists and admin', async () => {
@@ -639,6 +694,32 @@ describe('InvoiceController', async () => {
 
       expect(res.status).to.equal(204);
       expect(res.body).to.be.empty;
+    });
+    it('should record who deleted the invoice', async () => {
+      const invoice = (await Invoice.find())[0];
+
+      const res = await request(ctx.app)
+        .delete(`/invoices/${invoice.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(204);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.INVOICE_DELETE, entityId: String(invoice.id) },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.actor.id).to.equal(ctx.adminUser.id);
+    });
+    it('should record nothing when the invoice does not exist', async () => {
+      const count = await Invoice.count();
+
+      const res = await request(ctx.app)
+        .delete(`/invoices/${count + 1}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(404);
+
+      expect(await AuditLogEntry.count({
+        where: { action: AuditAction.INVOICE_DELETE, entityId: String(count + 1) },
+      })).to.equal(0);
     });
     it('should return an HTTP 403 if not admin', async () => {
       const invoice = (await Invoice.find())[0];

@@ -205,7 +205,7 @@ export default class InactiveAdministrativeCostService extends WithManager {
     await this.manager.delete(Transfer, transfer.id);
 
     // Invalidate balance caches for affected users
-    await TransferService.invalidateBalanceCaches(transfer);
+    await TransferService.invalidateBalanceCaches(transfer, this.manager);
   }
 
   /**
