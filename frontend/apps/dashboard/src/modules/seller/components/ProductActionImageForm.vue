@@ -17,13 +17,14 @@
       @click="fileInput?.click()"
     >
       <i class="pi pi-upload text-white text-3xl"></i>
-      <input ref="fileInput" accept="image/*" class="hidden" type="file" @change="onImgUpload" />
+      <input ref="fileInput" :accept="IMAGE_UPLOAD_ACCEPT" class="hidden" type="file" @change="onImgUpload" />
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { IMAGE_UPLOAD_ACCEPT } from '@/utils/imageUtils';
 
 defineProps<{
   isEditable?: boolean;

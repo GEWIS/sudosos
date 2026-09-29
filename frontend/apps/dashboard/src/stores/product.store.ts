@@ -100,19 +100,19 @@ export const useProductStore = defineStore('products', {
     },
     /**
      * Update the image of a product.
+     * The stored product only shows the new image once the backend has accepted it.
      * @param id
      * @param productImage
      */
     async updateProductImage(id: number, productImage: File) {
       const product = this.products[id];
       if (!product) return;
+
+      await ApiService.products.updateProductImage({ id, file: productImage });
       product.image = URL.createObjectURL(productImage);
       this.products[product.id] = product;
-
-      return ApiService.products.updateProductImage({ id, file: productImage }).then(() => {
-        useContainerStore().handleProductUpdate(product);
-        return product;
-      });
+      useContainerStore().handleProductUpdate(product);
+      return product;
     },
     /**
      * Create a product and store it in the store.

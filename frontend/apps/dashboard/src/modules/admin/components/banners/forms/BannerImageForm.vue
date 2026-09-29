@@ -9,7 +9,7 @@
         @click="fileInput?.click()"
       >
         <i class="pi pi-upload text-white text-3xl"></i>
-        <input ref="fileInput" accept="image/*" class="hidden" type="file" @change="onImgUpload" />
+        <input ref="fileInput" :accept="IMAGE_UPLOAD_ACCEPT" class="hidden" type="file" @change="onImgUpload" />
       </button>
     </span>
 
@@ -19,9 +19,10 @@
           <i class="pi pi-upload mr-2" />
           {{ t('modules.admin.banners.noBannerFound') }}
         </button>
-        <input ref="fileInput" accept="image/*" class="hidden" type="file" @change="onImgUpload" />
+        <input ref="fileInput" :accept="IMAGE_UPLOAD_ACCEPT" class="hidden" type="file" @change="onImgUpload" />
       </div>
     </div>
+    <small class="block mt-2 text-sm text-muted-color">{{ t('modules.admin.banners.imageRequirements') }}</small>
   </div>
 </template>
 
@@ -33,6 +34,7 @@ import * as yup from 'yup';
 import type { bannerSchema } from '@/utils/validation-schema';
 import { type Form, getProperty } from '@/utils/formUtils';
 import { getBannerImageSrc } from '@/utils/urlUtils';
+import { IMAGE_UPLOAD_ACCEPT } from '@/utils/imageUtils';
 
 const { t } = useI18n();
 

@@ -28,6 +28,7 @@
       "banners": {
         "title": "Banners",
         "noBannerFound": "No banner found, please upload one!",
+        "imageRequirements": "PNG, JPEG, WebP or GIF. Aspect ratio of roughly 8:1, at least 512x64 px.",
         "till": "till",
         "list": {
           "header": "Banners",

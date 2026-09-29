@@ -208,6 +208,8 @@ export default class FileService {
     } else {
       // If the file does exist, we first have to remove it from storage
       await this.removeFile(entityImage);
+      // Storage derives the extension from the download name, so it must match the new file.
+      entityImage.downloadName = uploadedFile.name;
     }
     // Store the new file in storage.
     entityImage = await this.createFile(entityImage, uploadedFile.data);

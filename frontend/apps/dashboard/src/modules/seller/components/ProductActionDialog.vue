@@ -19,12 +19,16 @@
         />
         <Divider v-if="state.addToContainer" />
         <div class="flex flex-col gap-5 md:flex-row justify-center items-center">
-          <ProductActionImageForm
-            class="flex-grow"
-            :image-src="imageSrc"
-            :is-editable="isProductEditable"
-            @upload="onImageUpload($event)"
-          />
+          <div class="flex flex-col flex-grow items-center gap-2">
+            <ProductActionImageForm
+              :image-src="imageSrc"
+              :is-editable="isProductEditable"
+              @upload="onImageUpload($event)"
+            />
+            <small v-if="isProductEditable" class="max-w-[21rem] text-sm text-muted-color text-center">
+              {{ t('modules.seller.productContainers.products.imageRequirements') }}
+            </small>
+          </div>
           <div class="flex flex-col gap-3">
             <ProductActionForm
               v-model:existing-product="selectExistingProduct"
