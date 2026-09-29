@@ -114,7 +114,7 @@
   />
 </template>
 <script lang="ts" setup>
-import type { DataTablePageEvent } from 'primevue/datatable';
+import type { DataTablePageEvent } from 'openvue/datatable';
 import { onMounted, type Ref, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { formatPrice } from '@/utils/formatterUtils';

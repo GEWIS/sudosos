@@ -48,9 +48,9 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import Column from 'primevue/column';
-import Skeleton from 'primevue/skeleton';
-import DataTable from 'primevue/datatable';
+import Column from 'openvue/column';
+import Skeleton from 'openvue/skeleton';
+import DataTable from 'openvue/datatable';
 import { onMounted, ref, watch } from 'vue';
 import CardComponent from '@/components/CardComponent.vue';
 import { formatDateTime } from '@/utils/formatterUtils';

@@ -173,9 +173,9 @@ catalogs:
     '@gewis/prettier-config':
       specifier: ^2.2.2
       version: 2.2.2
-    '@primeuix/themes':
-      specifier: ^2.0.2
-      version: 2.0.3
+    '@openvue/themes':
+      specifier: 1.0.0
+      version: 1.0.0
     '@tailwindcss/vite':
       specifier: ^4.3.3
       version: 4.3.3
@@ -194,15 +194,15 @@ catalogs:
     eslint:
       specifier: ^9.39.1
       version: 9.39.5
+    openvue:
+      specifier: 1.0.0
+      version: 1.0.0
     pinia:
       specifier: ^3.0.4
       version: 3.0.4
     primeicons:
       specifier: ^7.0.0
       version: 7.0.0
-    primevue:
-      specifier: ^4.5.2
-      version: 4.5.5
     sass:
       specifier: ^1.103.1
       version: 1.104.1
@@ -557,12 +557,12 @@ importers:
       '@gewis/sudosos-client':
         specifier: workspace:*
         version: link:../../../packages/sudosos-client
-      '@primeuix/themes':
+      '@openvue/core':
+        specifier: 1.0.0
+        version: 1.0.0(vue@3.5.43(typescript@5.9.3))
+      '@openvue/themes':
         specifier: 'catalog:'
-        version: 2.0.3
-      '@primevue/core':
-        specifier: ^4.5.2
-        version: 4.5.5(vue@3.5.43(typescript@5.9.3))
+        version: 1.0.0
       '@stripe/stripe-js':
         specifier: ^8.5.3
         version: 8.11.0
@@ -596,15 +596,15 @@ importers:
       marked:
         specifier: ^17.0.1
         version: 17.0.6
+      openvue:
+        specifier: 'catalog:'
+        version: 1.0.0(vue@3.5.43(typescript@5.9.3))
       pinia:
         specifier: 'catalog:'
         version: 3.0.4(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
       primeicons:
         specifier: 'catalog:'
         version: 7.0.0
-      primevue:
-        specifier: 'catalog:'
-        version: 4.5.5(vue@3.5.43(typescript@5.9.3))
       sass:
         specifier: 'catalog:'
         version: 1.104.1
@@ -677,7 +677,7 @@ importers:
         version: 8.67.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3)
       '@vitejs/plugin-vue':
         specifier: 'catalog:'
-        version: 6.0.9(vite@8.3.1(@types/node@24.13.3)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0))(vue@3.5.43(typescript@5.9.3))
+        version: 6.0.9(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0))(vue@3.5.43(typescript@5.9.3))
       '@vitest/browser-playwright':
         specifier: ^5.0.1
         version: 5.0.2(playwright@1.63.0)(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0))(vitest@5.0.2)
@@ -732,9 +732,9 @@ importers:
       '@gewis/sudosos-client':
         specifier: workspace:*
         version: link:../../../packages/sudosos-client
-      '@primeuix/themes':
+      '@openvue/themes':
         specifier: 'catalog:'
-        version: 2.0.3
+        version: 1.0.0
       '@sudosos/sudosos-frontend-common':
         specifier: workspace:^
         version: link:../../lib/common
@@ -756,15 +756,15 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.18.1
+      openvue:
+        specifier: 'catalog:'
+        version: 1.0.0(vue@3.5.43(typescript@5.9.3))
       pinia:
         specifier: 'catalog:'
         version: 3.0.4(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
       primeicons:
         specifier: 'catalog:'
         version: 7.0.0
-      primevue:
-        specifier: 'catalog:'
-        version: 4.5.5(vue@3.5.43(typescript@5.9.3))
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
@@ -810,7 +810,7 @@ importers:
         version: 8.67.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3)
       '@vitejs/plugin-vue':
         specifier: 'catalog:'
-        version: 6.0.9(vite@8.3.1(@types/node@24.13.3)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0))(vue@3.5.43(typescript@5.9.3))
+        version: 6.0.9(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0))(vue@3.5.43(typescript@5.9.3))
       '@vue/tsconfig':
         specifier: 'catalog:'
         version: 0.9.1(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
@@ -883,7 +883,7 @@ importers:
         version: 8.67.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3)
       '@vitejs/plugin-vue':
         specifier: 'catalog:'
-        version: 6.0.9(vite@8.3.1(@types/node@24.13.3)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0))(vue@3.5.43(typescript@5.9.3))
+        version: 6.0.9(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0))(vue@3.5.43(typescript@5.9.3))
       '@vue/tsconfig':
         specifier: 'catalog:'
         version: 0.9.1(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
@@ -898,19 +898,19 @@ importers:
         version: 8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0)
       vite-plugin-dts:
         specifier: 'catalog:'
-        version: 4.5.4(@types/node@24.13.3)(rollup@4.62.4)(supports-color@10.2.2)(typescript@5.9.3)(vite@8.3.1(@types/node@24.13.3)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0))
+        version: 4.5.4(@types/node@24.13.3)(rollup@4.62.4)(supports-color@10.2.2)(typescript@5.9.3)(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0))
       vue-tsc:
         specifier: 'catalog:'
         version: 3.3.11(typescript@5.9.3)
 
   frontend/lib/themes:
     dependencies:
-      '@primeuix/themes':
+      '@openvue/themes':
         specifier: 'catalog:'
-        version: 2.0.3
-      primevue:
+        version: 1.0.0
+      openvue:
         specifier: 'catalog:'
-        version: 4.5.5(vue@3.5.43(typescript@5.9.3))
+        version: 1.0.0(vue@3.5.43(typescript@5.9.3))
       sass:
         specifier: 'catalog:'
         version: 1.104.1
@@ -935,7 +935,7 @@ importers:
         version: 8.67.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3)
       '@vitejs/plugin-vue':
         specifier: 'catalog:'
-        version: 6.0.9(vite@8.3.1(@types/node@24.13.3)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0))(vue@3.5.43(typescript@5.9.3))
+        version: 6.0.9(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0))(vue@3.5.43(typescript@5.9.3))
       '@vue/tsconfig':
         specifier: 'catalog:'
         version: 0.9.1(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
@@ -950,7 +950,7 @@ importers:
         version: 8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0)
       vite-plugin-dts:
         specifier: 'catalog:'
-        version: 4.5.4(@types/node@24.13.3)(rollup@4.62.4)(supports-color@10.2.2)(typescript@5.9.3)(vite@8.3.1(@types/node@24.13.3)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0))
+        version: 4.5.4(@types/node@24.13.3)(rollup@4.62.4)(supports-color@10.2.2)(typescript@5.9.3)(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0))
       vue-tsc:
         specifier: 'catalog:'
         version: 3.3.11(typescript@5.9.3)
@@ -1919,6 +1919,34 @@ packages:
     engines: {node: '>=22.0.0'}
     hasBin: true
 
+  '@openuxkit/styled@1.0.0':
+    resolution: {integrity: sha512-tXPv00g3qlhZJkDMMK2vxYFQldO5T6Y5HRISU+dfJ3/I1bV8JNx93N1aJb2SQN1xlrO/2UhsISDFYPTVMwXUFQ==}
+    engines: {node: '>=12.11.0'}
+
+  '@openuxkit/styles@1.1.0':
+    resolution: {integrity: sha512-DohE7jvtnTeapfFjqL0RmX63JmKfv1YbL4V2LFTruNXkdK+GfhtvkyUM/1pCrcmjWyflGfZhW5z8LJzUkzwLDQ==}
+
+  '@openuxkit/themes@1.1.0':
+    resolution: {integrity: sha512-0OuDQLFuhUGKWujAs8ejbhrRac9u0h03T349JqKyuGTQWCVaRyNJiShX9OcqCsVi9tbvFHuMkCxppCL/w1Hslw==}
+
+  '@openuxkit/utils@1.0.0':
+    resolution: {integrity: sha512-JCLEEFMJK7JVxlMpzC/szjzxem8XkehY3vknHjrs/mjyWcEIoDd8Gk4ySM+HGILuYbMymlzPqkELYnYQq44E4w==}
+    engines: {node: '>=12.11.0'}
+
+  '@openvue/core@1.0.0':
+    resolution: {integrity: sha512-cVgUD4gSTboMi+zM55fSNxeqrmGlECdrh5oYfZDFx7BwPgvgdZgDKTrIp2/pjiUoxracD+zlS2KYTyw96aai3Q==}
+    engines: {node: '>=12.11.0'}
+    peerDependencies:
+      vue: ^3.5.0
+
+  '@openvue/icons@1.0.0':
+    resolution: {integrity: sha512-xCBcHvs0SjEqrDkL54cwcSKUYkjbAPPbfISfygoxjkE/yibUGk3STyutVsGTAEeV5BIYmK/Hd4eUMN/FOTcsfw==}
+    engines: {node: '>=12.11.0'}
+
+  '@openvue/themes@1.0.0':
+    resolution: {integrity: sha512-YiLHzoa+0ic5yz/+vljDaH3UWNofgu5JLENq2FPMY+rPJD9L2F+/QumvUj7vUHvPIFexnb35FwM6fpetw6BfiA==}
+    engines: {node: '>=12.11.0'}
+
   '@oxc-parser/binding-android-arm-eabi@0.127.0':
     resolution: {integrity: sha512-0LC7ye4hvqbIKxAzThzvswgHLFu2AURKzYLeSVvLdu2TBOYWQDmHnTqPLeA597BcUCxiLqLsS4CJ5uoI5WYWCQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -2250,30 +2278,6 @@ packages:
 
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
-
-  '@primeuix/styled@0.7.4':
-    resolution: {integrity: sha512-QSO/NpOQg8e9BONWRBx9y8VGMCMYz0J/uKfNJEya/RGEu7ARx0oYW0ugI1N3/KB1AAvyGxzKBzGImbwg0KUiOQ==}
-    engines: {node: '>=12.11.0'}
-
-  '@primeuix/styles@2.0.3':
-    resolution: {integrity: sha512-2ykAB6BaHzR/6TwF8ShpJTsZrid6cVIEBVlookSdvOdmlWuevGu5vWOScgIwqWwlZcvkFYAGR/SUV3OHCTBMdw==}
-
-  '@primeuix/themes@2.0.3':
-    resolution: {integrity: sha512-3fS1883mtCWhgUgNf/feiaaDSOND4EBIOu9tZnzJlJ8QtYyL6eFLcA6V3ymCWqLVXQ1+lTVEZv1gl47FIdXReg==}
-
-  '@primeuix/utils@0.6.4':
-    resolution: {integrity: sha512-pZ5f+vj7wSzRhC7KoEQRU5fvYAe+RP9+m39CTscZ3UywCD1Y2o6Fe1rRgklMPSkzUcty2jzkA0zMYkiJBD1hgg==}
-    engines: {node: '>=12.11.0'}
-
-  '@primevue/core@4.5.5':
-    resolution: {integrity: sha512-JpkXhq1ddc70JdsC3CC4dM+UbeeWuCW/8DpS9dNBfrOk824TLSlRlMEGFyVKqRMn5WPQvYLiy3xXfLQeNdSqhQ==}
-    engines: {node: '>=12.11.0'}
-    peerDependencies:
-      vue: ^3.5.0
-
-  '@primevue/icons@4.5.5':
-    resolution: {integrity: sha512-eteOhTdAOXEYE9qW1AOrBBgDxQ2szHJxSkEK1XVdV2TKxGM5FQf03Ovms0VDyZTc16XBIgvwYjXJQS0BPbhPaA==}
-    engines: {node: '>=12.11.0'}
 
   '@rolldown/binding-android-arm-eabi@1.2.11':
     resolution: {integrity: sha512-A5kXfGKvKWWZE0TtPrfsvT+q4Y5d1QG8gGUzpYjGydM+fARM9MuX90PrXYXe0XbsDVgyxxNzHo6giCj90bsFNw==}
@@ -6798,6 +6802,18 @@ packages:
   openapi-types@12.1.3:
     resolution: {integrity: sha512-N4YtSYJqghVu4iek2ZUvcN/0aqH1kRDuNqzcycDxhOUpg7GdvLa2F3DgS6yBNhInhv2r/6I0Flkn7CqL8+nIcw==}
 
+  openvue@1.0.0:
+    resolution: {integrity: sha512-mbc1p+P5TMI2wT9W1Q9eUuK5xG4RJvsxDnfEJ53gBGCoYcr+jwZmsnds673YruEHAko49c958Mn/lzT/G31ZsA==}
+    engines: {node: '>=12.11.0'}
+    peerDependencies:
+      chart.js: ^4.0.0
+      quill: ^2.0.0
+    peerDependenciesMeta:
+      chart.js:
+        optional: true
+      quill:
+        optional: true
+
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
     engines: {node: '>= 0.8.0'}
@@ -7076,10 +7092,6 @@ packages:
 
   primeicons@7.0.0:
     resolution: {integrity: sha512-jK3Et9UzwzTsd6tzl2RmwrVY/b8raJ3QZLzoDACj+oTJ0oX7L9Hy+XnVwgo4QVKlKpnP/Ur13SXV/pVh4LzaDw==}
-
-  primevue@4.5.5:
-    resolution: {integrity: sha512-Kv5REIewCdP806QaoU+4nBXfmpzOGFKkZ9qH4KsL6MjiAQVc4PUzypt8erl4r3Vzh3nr3aWZIxkxYRRsLGiX2A==}
-    engines: {node: '>=12.11.0'}
 
   proc-log@4.2.0:
     resolution: {integrity: sha512-g8+OnU/L2v+wyiVK+D5fA34J7EH8jZ8DDlvwhRCMxmMj7UCBvxiO1mGeN+36JXIKF4zevU4kRBd8lVgG9vLelA==}
@@ -9842,6 +9854,39 @@ snapshots:
       - kerberos
       - supports-color
 
+  '@openuxkit/styled@1.0.0':
+    dependencies:
+      '@openuxkit/utils': 1.0.0
+
+  '@openuxkit/styles@1.1.0':
+    dependencies:
+      '@openuxkit/styled': 1.0.0
+
+  '@openuxkit/themes@1.1.0':
+    dependencies:
+      '@openuxkit/styled': 1.0.0
+
+  '@openuxkit/utils@1.0.0': {}
+
+  '@openvue/core@1.0.0(vue@3.5.43(typescript@5.9.3))':
+    dependencies:
+      '@openuxkit/styled': 1.0.0
+      '@openuxkit/styles': 1.1.0
+      '@openuxkit/utils': 1.0.0
+      vue: 3.5.43(typescript@5.9.3)
+
+  '@openvue/icons@1.0.0(vue@3.5.43(typescript@5.9.3))':
+    dependencies:
+      '@openuxkit/utils': 1.0.0
+      '@openvue/core': 1.0.0(vue@3.5.43(typescript@5.9.3))
+    transitivePeerDependencies:
+      - vue
+
+  '@openvue/themes@1.0.0':
+    dependencies:
+      '@openuxkit/styled': 1.0.0
+      '@openuxkit/themes': 1.1.0
+
   '@oxc-parser/binding-android-arm-eabi@0.127.0':
     optional: true
 
@@ -10038,33 +10083,6 @@ snapshots:
   '@pkgr/core@0.3.6': {}
 
   '@polka/url@1.0.0-next.29': {}
-
-  '@primeuix/styled@0.7.4':
-    dependencies:
-      '@primeuix/utils': 0.6.4
-
-  '@primeuix/styles@2.0.3':
-    dependencies:
-      '@primeuix/styled': 0.7.4
-
-  '@primeuix/themes@2.0.3':
-    dependencies:
-      '@primeuix/styled': 0.7.4
-
-  '@primeuix/utils@0.6.4': {}
-
-  '@primevue/core@4.5.5(vue@3.5.43(typescript@5.9.3))':
-    dependencies:
-      '@primeuix/styled': 0.7.4
-      '@primeuix/utils': 0.6.4
-      vue: 3.5.43(typescript@5.9.3)
-
-  '@primevue/icons@4.5.5(vue@3.5.43(typescript@5.9.3))':
-    dependencies:
-      '@primeuix/utils': 0.6.4
-      '@primevue/core': 4.5.5(vue@3.5.43(typescript@5.9.3))
-    transitivePeerDependencies:
-      - vue
 
   '@rolldown/binding-android-arm-eabi@1.2.11':
     optional: true
@@ -11181,7 +11199,7 @@ snapshots:
       vite: 5.4.21(@types/node@20.19.43)(lightningcss@1.32.0)(sass@1.104.1)
       vue: 3.5.41(typescript@5.9.3)
 
-  '@vitejs/plugin-vue@6.0.9(vite@8.3.1(@types/node@24.13.3)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0))(vue@3.5.43(typescript@5.9.3))':
+  '@vitejs/plugin-vue@6.0.9(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0))(vue@3.5.43(typescript@5.9.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
       vite: 8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0)
@@ -15088,6 +15106,16 @@ snapshots:
 
   openapi-types@12.1.3: {}
 
+  openvue@1.0.0(vue@3.5.43(typescript@5.9.3)):
+    dependencies:
+      '@openuxkit/styled': 1.0.0
+      '@openuxkit/styles': 1.1.0
+      '@openuxkit/utils': 1.0.0
+      '@openvue/core': 1.0.0(vue@3.5.43(typescript@5.9.3))
+      '@openvue/icons': 1.0.0(vue@3.5.43(typescript@5.9.3))
+    transitivePeerDependencies:
+      - vue
+
   optionator@0.9.4:
     dependencies:
       deep-is: 0.1.4
@@ -15382,16 +15410,6 @@ snapshots:
       react-is: 17.0.2
 
   primeicons@7.0.0: {}
-
-  primevue@4.5.5(vue@3.5.43(typescript@5.9.3)):
-    dependencies:
-      '@primeuix/styled': 0.7.4
-      '@primeuix/styles': 2.0.3
-      '@primeuix/utils': 0.6.4
-      '@primevue/core': 4.5.5(vue@3.5.43(typescript@5.9.3))
-      '@primevue/icons': 4.5.5(vue@3.5.43(typescript@5.9.3))
-    transitivePeerDependencies:
-      - vue
 
   proc-log@4.2.0: {}
 
@@ -16851,7 +16869,7 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-dts@4.5.4(@types/node@24.13.3)(rollup@4.62.4)(supports-color@10.2.2)(typescript@5.9.3)(vite@8.3.1(@types/node@24.13.3)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0)):
+  vite-plugin-dts@4.5.4(@types/node@24.13.3)(rollup@4.62.4)(supports-color@10.2.2)(typescript@5.9.3)(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0)):
     dependencies:
       '@microsoft/api-extractor': 7.58.12(@types/node@24.13.3)
       '@rollup/pluginutils': 5.4.0(rollup@4.62.4)

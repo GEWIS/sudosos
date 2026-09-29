@@ -3,55 +3,55 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import '@gewis/splash';
 import './assets/main.css';
-import PrimeVue from 'primevue/config';
-import Button from 'primevue/button';
-import Image from 'primevue/image';
-import InputText from 'primevue/inputtext';
-import Menubar from 'primevue/menubar';
-import Message from 'primevue/message';
-import Panel from 'primevue/panel';
-import DataTable from 'primevue/datatable';
-import DataView from 'primevue/dataview';
-import DatePicker from 'primevue/datepicker';
-import InputNumber from 'primevue/inputnumber';
-import Dialog from 'primevue/dialog';
-import Steps from 'primevue/steps';
+import PrimeVue from 'openvue/config';
+import Button from 'openvue/button';
+import Image from 'openvue/image';
+import InputText from 'openvue/inputtext';
+import Menubar from 'openvue/menubar';
+import Message from 'openvue/message';
+import Panel from 'openvue/panel';
+import DataTable from 'openvue/datatable';
+import DataView from 'openvue/dataview';
+import DatePicker from 'openvue/datepicker';
+import InputNumber from 'openvue/inputnumber';
+import Dialog from 'openvue/dialog';
+import Steps from 'openvue/steps';
 import 'primeicons/primeicons.css';
-import Select from 'primevue/select';
-import Checkbox from 'primevue/checkbox';
-import Tabs from 'primevue/tabs';
-import TabList from 'primevue/tablist';
-import ScrollPanel from 'primevue/scrollpanel';
-import FileUpload from 'primevue/fileupload';
-import Tooltip from 'primevue/tooltip';
-import SelectButton from 'primevue/selectbutton';
-import ToastService from 'primevue/toastservice';
-import Toast from 'primevue/toast';
-import Accordion from 'primevue/accordion';
-import Skeleton from 'primevue/skeleton';
-import IconField from 'primevue/iconfield';
-import InputIcon from 'primevue/inputicon';
-import ProgressSpinner from 'primevue/progressspinner';
-import ToggleButton from 'primevue/togglebutton';
-import ConfirmDialog from 'primevue/confirmdialog';
-import ConfirmationService from 'primevue/confirmationservice';
-import ToggleSwitch from 'primevue/toggleswitch';
-import Divider from 'primevue/divider';
-import Column from 'primevue/column';
-import Tab from 'primevue/tab';
-import TabPanels from 'primevue/tabpanels';
-import TabPanel from 'primevue/tabpanel';
-import Stepper from 'primevue/stepper';
-import Step from 'primevue/step';
-import StepList from 'primevue/steplist';
-import Card from 'primevue/card';
-import Badge from 'primevue/badge';
-import VirtualScroller from 'primevue/virtualscroller';
-import MultiSelect from 'primevue/multiselect';
+import Select from 'openvue/select';
+import Checkbox from 'openvue/checkbox';
+import Tabs from 'openvue/tabs';
+import TabList from 'openvue/tablist';
+import ScrollPanel from 'openvue/scrollpanel';
+import FileUpload from 'openvue/fileupload';
+import Tooltip from 'openvue/tooltip';
+import SelectButton from 'openvue/selectbutton';
+import ToastService from 'openvue/toastservice';
+import Toast from 'openvue/toast';
+import Accordion from 'openvue/accordion';
+import Skeleton from 'openvue/skeleton';
+import IconField from 'openvue/iconfield';
+import InputIcon from 'openvue/inputicon';
+import ProgressSpinner from 'openvue/progressspinner';
+import ToggleButton from 'openvue/togglebutton';
+import ConfirmDialog from 'openvue/confirmdialog';
+import ConfirmationService from 'openvue/confirmationservice';
+import ToggleSwitch from 'openvue/toggleswitch';
+import Divider from 'openvue/divider';
+import Column from 'openvue/column';
+import Tab from 'openvue/tab';
+import TabPanels from 'openvue/tabpanels';
+import TabPanel from 'openvue/tabpanel';
+import Stepper from 'openvue/stepper';
+import Step from 'openvue/step';
+import StepList from 'openvue/steplist';
+import Card from 'openvue/card';
+import Badge from 'openvue/badge';
+import VirtualScroller from 'openvue/virtualscroller';
+import MultiSelect from 'openvue/multiselect';
 
 import { SudososRed } from '@sudosos/themes';
 
-import { AccordionContent, AccordionHeader, AccordionPanel } from 'primevue';
+import { AccordionContent, AccordionHeader, AccordionPanel } from 'openvue';
 import App from './App.vue';
 import router from './router';
 import i18n from './utils/i18nUtils';
@@ -67,10 +67,10 @@ app.use(PrimeVue, {
     options: {
       darkModeSelector: '.dark-mode',
       cssLayer: {
-        name: 'primevue',
-        // First "basic" tailwind stuff, then overwrite that with primevue, then overwrite that with utility classes
+        name: 'openvue',
+        // First "basic" tailwind stuff, then overwrite that with openvue, then overwrite that with utility classes
         // See: https://tailwindcss.com/docs/preflight & https://primevue.org/theming/styled/#csslayer
-        order: 'theme, base, component, primevue, utilities',
+        order: 'theme, base, component, openvue, utilities',
       },
     },
   },

@@ -36,7 +36,7 @@ import { type PropType, ref, type Ref, watch } from 'vue';
 import * as yup from 'yup';
 import { useI18n } from 'vue-i18n';
 import type { BalanceResponse } from '@gewis/sudosos-client';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { type createWriteOffSchema } from '@/utils/validation-schema';
 import type { Form } from '@/utils/formUtils';
 import { setSubmit } from '@/utils/formUtils';

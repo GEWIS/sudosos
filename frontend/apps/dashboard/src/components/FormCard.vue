@@ -39,7 +39,7 @@
 
 <script setup lang="ts" generic="T extends AnyObject">
 import { ref, computed } from 'vue';
-import Button from 'primevue/button';
+import Button from 'openvue/button';
 import { useI18n } from 'vue-i18n';
 import { type AnyObject } from 'yup';
 import CardComponent from '@/components/CardComponent.vue';

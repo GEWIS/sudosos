@@ -30,9 +30,9 @@
 import { type PropType } from 'vue';
 import type { UserResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
-import { useConfirm } from 'primevue/useconfirm';
+import { useConfirm } from 'openvue/useconfirm';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
 import CardComponent from '@/components/CardComponent.vue';

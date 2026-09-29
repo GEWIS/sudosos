@@ -3,19 +3,19 @@ import 'primeicons/primeicons.css';
 
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
-import PrimeVue from 'primevue/config';
+import PrimeVue from 'openvue/config';
 import '@gewis/splash';
 
-import Button from 'primevue/button';
-import ProgressSpinner from 'primevue/progressspinner';
-import Panel from 'primevue/panel';
-import Dialog from 'primevue/dialog';
-import Select from 'primevue/select';
-import Toast from 'primevue/toast';
-import Card from 'primevue/card';
+import Button from 'openvue/button';
+import ProgressSpinner from 'openvue/progressspinner';
+import Panel from 'openvue/panel';
+import Dialog from 'openvue/dialog';
+import Select from 'openvue/select';
+import Toast from 'openvue/toast';
+import Card from 'openvue/card';
 
-import Message from 'primevue/message';
-import ToastService from 'primevue/toastservice';
+import Message from 'openvue/message';
+import ToastService from 'openvue/toastservice';
 import { SudososRed } from '@sudosos/themes';
 import router from '@/router';
 import App from '@/App.vue';
@@ -30,10 +30,10 @@ app.use(PrimeVue, {
     options: {
       darkModeSelector: '.dark-mode',
       cssLayer: {
-        name: 'primevue',
-        // First "basic" tailwind stuff, then overwrite that with primevue, then overwrite that with utility classes
+        name: 'openvue',
+        // First "basic" tailwind stuff, then overwrite that with openvue, then overwrite that with utility classes
         // See: https://tailwindcss.com/docs/preflight & https://primevue.org/theming/styled/#csslayer
-        order: 'theme, base, component, primevue, utilities',
+        order: 'theme, base, component, openvue, utilities',
       },
     },
   },

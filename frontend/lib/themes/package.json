@@ -28,8 +28,8 @@
     "directory": "frontend/lib/themes"
   },
   "dependencies": {
-    "@primeuix/themes": "catalog:",
-    "primevue": "catalog:",
+    "@openvue/themes": "catalog:",
+    "openvue": "catalog:",
     "sass": "catalog:",
     "tailwindcss": "catalog:"
   },

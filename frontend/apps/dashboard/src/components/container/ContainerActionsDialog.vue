@@ -29,9 +29,9 @@ import type {
   PointOfSaleWithContainersResponse,
   UpdateContainerRequest,
 } from '@gewis/sudosos-client';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { useI18n } from 'vue-i18n';
-import { useConfirm } from 'primevue/useconfirm';
+import { useConfirm } from 'openvue/useconfirm';
 import { useContainerStore } from '@/stores/container.store';
 import { handleError } from '@/utils/errorUtils';
 import { schemaToForm, setSubmit } from '@/utils/formUtils';

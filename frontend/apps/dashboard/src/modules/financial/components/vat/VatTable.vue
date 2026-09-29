@@ -35,11 +35,11 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import type { VatGroupResponse } from '@gewis/sudosos-client';
-import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
-import Column from 'primevue/column';
-import Skeleton from 'primevue/skeleton';
+import DataTable, { type DataTablePageEvent } from 'openvue/datatable';
+import Column from 'openvue/column';
+import Skeleton from 'openvue/skeleton';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { AxiosError } from 'axios';
 import ApiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';

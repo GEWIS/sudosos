@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { ref, watch, type PropType } from 'vue';
-import Button from 'primevue/button';
+import Button from 'openvue/button';
 
 const props = defineProps({
   /** Button text. */

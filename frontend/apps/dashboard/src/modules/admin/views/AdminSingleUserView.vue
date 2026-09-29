@@ -62,7 +62,7 @@ import type {
   UserResponse,
 } from '@gewis/sudosos-client';
 import { FinancialMutationResponseTypeEnum } from '@gewis/sudosos-client';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import type { AxiosError } from 'axios';
 import { useI18n } from 'vue-i18n';
 import AdminUserBalance from '@/modules/admin/components/users/AdminUserBalance.vue';

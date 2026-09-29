@@ -1,7 +1,7 @@
-import { useConfirm } from 'primevue/useconfirm';
+import { useConfirm } from 'openvue/useconfirm';
 import type { PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { handleError } from '@/utils/errorUtils';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import type { ContainerInStore } from '@/stores/container.store';
