@@ -1,4 +1,5 @@
 import {
+  AuditLogsApi,
   AuthenticateApi,
   BalanceApi,
   BannersApi,
@@ -32,6 +33,8 @@ import { getTokenFromStorage, updateTokenIfNecessary } from '../helpers/TokenHel
 
 export class ApiService {
   private readonly _axiosInstance: AxiosInstance;
+
+  private readonly _auditLogsApi: AuditLogsApi;
 
   private readonly _authenticateApi: AuthenticateApi;
 
@@ -128,6 +131,7 @@ export class ApiService {
     this._rbacApi = new RbacApi(withKeyConfiguration, basePath, this._axiosInstance);
     this._sellerPayoutsApi = new SellerPayoutsApi(withKeyConfiguration, basePath, this._axiosInstance);
     this._writeOffsApi = new WriteoffsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._auditLogsApi = new AuditLogsApi(withKeyConfiguration, basePath, this._axiosInstance);
     this._serverSettingsApi = new ServerSettingsApi(withKeyConfiguration, basePath, this._axiosInstance);
     this._userNotificationsApi = new UserNotificationPreferencesApi(
       withKeyConfiguration,
@@ -232,6 +236,10 @@ export class ApiService {
 
   get writeOffs(): WriteoffsApi {
     return this._writeOffsApi;
+  }
+
+  get auditLogs(): AuditLogsApi {
+    return this._auditLogsApi;
   }
 
   get serverSettings(): ServerSettingsApi {

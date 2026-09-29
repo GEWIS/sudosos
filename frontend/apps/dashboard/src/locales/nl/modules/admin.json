@@ -190,6 +190,15 @@
           "userTitle": "Gebruikers",
           "deleteUserConfirmationMessage": "Weet je zeker dat je {firstName} uit rol {role} wilt verwijderen?"
         }
+      },
+      "audit": {
+        "title": "Auditlogboek",
+        "empty": "Nog niets vastgelegd.",
+        "filters": {
+          "allActions": "Alle acties",
+          "allObjects": "Alle objecten",
+          "objectId": "Object-ID"
+        }
       }
     }
   }

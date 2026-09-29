@@ -1,0 +1,100 @@
+{
+  "components": {
+    "audit": {
+      "actor": "Kto",
+      "action": "Co",
+      "object": "Obiekt",
+      "changes": "Szczegóły",
+      "entityHeader": "Aktywność",
+      "empty": "Brak wyników spełniających kryteria.",
+      "actions": {
+        "invoice": {
+          "create": "Faktura utworzona",
+          "update": "Faktura zmieniona",
+          "delete": "Faktura usunięta"
+        },
+        "seller_payout": {
+          "create": "Wypłata sprzedawcy utworzona",
+          "update": "Wypłata sprzedawcy zmieniona",
+          "delete": "Wypłata sprzedawcy usunięta"
+        },
+        "payout_request": {
+          "create": "Wniosek o wypłatę utworzony",
+          "update_status": "Status wniosku o wypłatę zmieniony"
+        },
+        "write_off": {
+          "create": "Odpis utworzony"
+        },
+        "transaction": {
+          "update": "Transakcja zmieniona",
+          "delete": "Transakcja usunięta"
+        },
+        "transfer": {
+          "create": "Przelew utworzony",
+          "delete": "Przelew usunięty"
+        },
+        "product": {
+          "create": "Produkt utworzony",
+          "update": "Produkt zmieniony",
+          "delete": "Produkt usunięty"
+        },
+        "fine": {
+          "handout": "Grzywny nałożone",
+          "delete": "Grzywna usunięta",
+          "delete_handout": "Nałożenie grzywien usunięte",
+          "waive": "Grzywny umorzone"
+        },
+        "payment_request": {
+          "create": "Utworzono żądanie płatności",
+          "cancel": "Anulowano żądanie płatności",
+          "mark_fulfilled": "Oznaczono żądanie płatności jako opłacone"
+        },
+        "inactive_administrative_cost": {
+          "create": "Utworzono opłatę za nieaktywność",
+          "delete": "Usunięto opłatę za nieaktywność"
+        },
+        "voucher_group": {
+          "create": "Utworzono grupę voucherów",
+          "update": "Zmieniono grupę voucherów"
+        }
+      },
+      "entities": {
+        "Invoice": "Faktura",
+        "SellerPayout": "Wypłata sprzedawcy",
+        "PayoutRequest": "Wniosek o wypłatę",
+        "WriteOff": "Odpis",
+        "Transaction": "Transakcja",
+        "Transfer": "Przelew",
+        "Product": "Produkt",
+        "Fine": "Grzywna",
+        "FineHandoutEvent": "Nałożenie grzywien",
+        "UserFineGroup": "Grzywny użytkownika",
+        "PaymentRequest": "Żądanie płatności",
+        "InactiveAdministrativeCost": "Opłata za nieaktywność",
+        "VoucherGroup": "Grupa voucherów"
+      },
+      "fields": {
+        "state": "Status",
+        "amount": "Kwota",
+        "reference": "Referencja",
+        "description": "Opis",
+        "addressee": "Adresat",
+        "name": "Nazwa",
+        "priceInclVat": "Cena",
+        "vat": "Grupa VAT",
+        "category": "Kategoria",
+        "revision": "Wersja",
+        "ownerId": "Właściciel",
+        "forId": "Dla",
+        "toId": "Do",
+        "fromId": "Od",
+        "createdById": "Utworzone przez",
+        "pointOfSaleId": "Punkt sprzedaży",
+        "userId": "Użytkownik",
+        "userIds": "Użytkownicy",
+        "referenceDate": "Data referencyjna",
+        "fineCount": "Grzywny"
+      }
+    }
+  }
+}

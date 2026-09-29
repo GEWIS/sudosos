@@ -186,7 +186,8 @@
       "financialOverview": "Overview",
       "maintainer": "Maintainer",
       "sellers": "Sellers",
-      "rbac": "RBAC"
+      "rbac": "RBAC",
+      "auditLog": "Audit log"
     },
     "validation": {
       "number": {
@@ -354,7 +355,8 @@
       "error": "Error",
       "wrapped": "Wrapped",
       "financialOverview": "Financial Overview",
-      "transferView": "Transfer Overview"
+      "transferView": "Transfer Overview",
+      "auditLog": "Audit log"
     }
   }
 }

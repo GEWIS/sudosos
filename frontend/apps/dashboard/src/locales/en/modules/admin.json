@@ -190,6 +190,15 @@
           "userTitle": "Users",
           "deleteUserConfirmationMessage": "Are you sure you want to remove {firstName} from role {role}?"
         }
+      },
+      "audit": {
+        "title": "Audit log",
+        "empty": "Nothing recorded yet.",
+        "filters": {
+          "allActions": "All actions",
+          "allObjects": "All objects",
+          "objectId": "Object ID"
+        }
       }
     }
   }

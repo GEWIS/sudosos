@@ -24,6 +24,7 @@
         <div class="flex flex-col gap-5">
           <InvoiceVatCard v-if="invoice" :invoice-id="invoice.id" />
           <InvoicePdf v-if="invoice" :invoice-id="invoice.id" />
+          <EntityAuditLog v-if="canViewAuditLog" :entity-id="invoice.id" entity-type="Invoice" />
         </div>
       </div>
     </div>
@@ -35,6 +36,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeMount, ref, watchEffect, type Ref } from 'vue';
+import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import type { InvoiceResponse } from '@gewis/sudosos-client';
 import { useToast } from 'primevue/usetoast';
 import { useI18n } from 'vue-i18n';
@@ -53,6 +55,7 @@ import InvoiceAmountCard from '@/modules/financial/components/invoice/InvoiceAmo
 import { isDirty } from '@/utils/invoiceUtil';
 import PageContainer from '@/layout/PageContainer.vue';
 import InvoiceVatCard from '@/modules/financial/components/invoice/InvoiceVatCard.vue';
+import EntityAuditLog from '@/components/audit/EntityAuditLog.vue';
 
 const { t } = useI18n();
 const toast = useToast();
@@ -63,6 +66,8 @@ const invoice: Ref<InvoiceResponse | undefined> = ref(undefined);
 
 // Invoice is considered dirty if entry total does not match transfer total
 const dirty = computed(() => isDirty(invoice.value as InvoiceResponse));
+
+const canViewAuditLog = isAllowed('get', ['all'], 'AuditLog', ['any']);
 
 watchEffect(() => {
   if (invoice.value) {
