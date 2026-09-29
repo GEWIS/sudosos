@@ -54,7 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-      - run: npm install -g pnpm@10.33.0
+      - run: npm install -g pnpm@12.8.1
       - run: pnpm install --frozen-lockfile
       - run: mkdir -p backend/config && openssl genrsa -out backend/config/jwt.key 2048 && chmod 0777 backend/config/jwt.key
       - run: pnpm --filter sudosos-backend run swagger:validate
