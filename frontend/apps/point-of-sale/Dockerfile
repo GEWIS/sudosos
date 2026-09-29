@@ -19,7 +19,7 @@ ENV VITE_GIT_COMMIT_SHA=${GIT_COMMIT_SHA}
 RUN pnpm --filter '@sudosos/point-of-sale...' build
 
 # The target image that will be run
-FROM nginx:alpine AS target
-WORKDIR /app
-COPY frontend/apps/point-of-sale/docker/nginx.conf /etc/nginx/nginx.conf
-COPY --from=build --chown=nginx /repo/frontend/apps/point-of-sale/dist/ /app
+FROM caddy:alpine AS target
+WORKDIR /srv
+COPY frontend/apps/point-of-sale/docker/Caddyfile /etc/caddy/Caddyfile
+COPY --from=build /repo/frontend/apps/point-of-sale/dist/ /srv
