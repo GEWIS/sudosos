@@ -45,7 +45,7 @@ pnpm test               # runs every story as a Vitest browser test
 
 Every existing story uses one of four provider patterns. Copy the one that matches your component:
 
-- Bare, see `ActionButton.stories.ts`. The component needs nothing beyond PrimeVue.
+- Bare, see `ActionButton.stories.ts`. The component needs nothing beyond OpenVue.
 - Router, see `CardComponent.stories.ts`. The component needs `mockRouter`.
 - i18n, see `ContainerActionsForm.stories.ts`. The component needs the real i18n instance. For a
   `vee-validate` form prop, build it with the app's own `schemaToForm()` helper instead of mocking
@@ -63,8 +63,8 @@ Some behaviour is not obvious from the code:
   hits the real network and fails. Stub that method with a per-story `vi.fn()`.
 - `mockRouter` is one shared instance with real navigation state across all stories. A story that
   navigates should navigate back when it is done.
-- `.storybook/registerPrimeVue.ts` has to be kept in sync with `src/main.ts` by hand. When
-  `main.ts` registers a new global PrimeVue component, add it there too.
+- `.storybook/registerOpenVue.ts` has to be kept in sync with `src/main.ts` by hand. When
+  `main.ts` registers a new global OpenVue component, add it there too.
 
 ### Documenting a component
 

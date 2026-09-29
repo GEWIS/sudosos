@@ -47,7 +47,7 @@ import {
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { type Form, getProperty } from '@/utils/formUtils';
 import { createInvoiceObject } from '@/utils/validation-schema';
 import CardComponent from '@/components/CardComponent.vue';

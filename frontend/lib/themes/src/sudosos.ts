@@ -1,5 +1,7 @@
-import { definePreset } from '@primeuix/themes';
-import Aura from '@primeuix/themes/aura';
+import { definePreset } from '@openvue/themes';
+// @openvue/themes@1.0.0 ships aura/index.d.ts without its default export; the runtime module has it.
+// eslint-disable-next-line import/default
+import Aura from '@openvue/themes/aura';
 
 export const SudososPreset = definePreset(Aura, {
   semantic: {

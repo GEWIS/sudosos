@@ -42,7 +42,7 @@ import { marked } from 'marked';
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import router from '@/router';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';

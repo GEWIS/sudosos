@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { computed, type PropType } from 'vue';
 import type { InvoiceResponse } from '@gewis/sudosos-client';
 import * as yup from 'yup';

@@ -76,8 +76,8 @@ import type {
 } from '@gewis/sudosos-client';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
-import { useConfirm } from 'primevue/useconfirm';
+import { useToast } from 'openvue/usetoast';
+import { useConfirm } from 'openvue/useconfirm';
 import { schemaToForm, setSubmit } from '@/utils/formUtils';
 import { createProductSchema } from '@/utils/validation-schema';
 import FormDialog from '@/components/FormDialog.vue';

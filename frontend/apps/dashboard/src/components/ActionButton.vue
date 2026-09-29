@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { ref, watch, type PropType } from 'vue';
-import Button from 'primevue/button';
+import Button from 'openvue/button';
 
 const props = defineProps({
   /** Button text. */
@@ -12,7 +12,7 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  /** Shows a spinner and PrimeVue's loading state while true. */
+  /** Shows a spinner and OpenVue's loading state while true. */
   submitting: {
     type: Boolean,
     default: false,

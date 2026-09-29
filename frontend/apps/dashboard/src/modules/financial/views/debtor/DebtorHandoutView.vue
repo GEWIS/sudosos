@@ -18,9 +18,9 @@
 import { onMounted, ref } from 'vue';
 import type { FineHandoutEventResponse } from '@gewis/sudosos-client';
 import { useRoute } from 'vue-router';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { useI18n } from 'vue-i18n';
-import { useConfirm } from 'primevue/useconfirm';
+import { useConfirm } from 'openvue/useconfirm';
 import DebtorTable from '@/modules/financial/components/debtor/DebtorTable.vue';
 import { useDebtorStore } from '@/stores/debtor.store';
 import { handleError } from '@/utils/errorUtils';

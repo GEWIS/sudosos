@@ -27,7 +27,7 @@
 </template>
 <script setup lang="ts">
 import { ref, type Ref } from 'vue';
-import Dialog from 'primevue/dialog';
+import Dialog from 'openvue/dialog';
 import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
 const howToModalVisible: Ref<boolean> = ref<boolean>(false);
 const howToModal: Ref<null | { mask: HTMLElement; close: () => void }> = ref(null);

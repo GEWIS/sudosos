@@ -28,9 +28,9 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, watch } from 'vue';
 import type { PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
-import { useConfirm } from 'primevue/useconfirm';
+import { useConfirm } from 'openvue/useconfirm';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import FormCard from '@/components/FormCard.vue';
 import { updatePointOfSaleObject } from '@/utils/validation-schema';

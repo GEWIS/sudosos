@@ -37,7 +37,7 @@
 import * as yup from 'yup';
 import { type PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import type { AxiosError } from 'axios';
 import { type Form, setSubmit } from '@/utils/formUtils';

@@ -13,7 +13,7 @@ have a bootstrapped monorepo checkout; see the [root README](../README.md) if yo
 | `apps/dashboard`     | `sudosos-dashboard`                | Admin/seller dashboard, Vue 3                          |
 | `apps/point-of-sale` | `@sudosos/point-of-sale`           | POS kiosk app, Vue 3                                   |
 | `lib/common`         | `@sudosos/sudosos-frontend-common` | Shared components, composables, services, Pinia stores |
-| `lib/themes`         | `@sudosos/themes`                  | PrimeVue theme shared by both apps                     |
+| `lib/themes`         | `@sudosos/themes`                  | OpenVue theme shared by both apps                      |
 
 ## Running the apps
 

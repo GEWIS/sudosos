@@ -66,7 +66,7 @@ import { type PropType, watch } from 'vue';
 import * as yup from 'yup';
 import { useI18n } from 'vue-i18n';
 import type { PayoutRequestRequest } from '@gewis/sudosos-client';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { usePayoutStore } from '@/stores/payout.store';
 import apiService from '@/services/ApiService';
 import type { createPayoutSchema } from '@/utils/validation-schema';

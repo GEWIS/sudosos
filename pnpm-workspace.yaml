@@ -39,9 +39,9 @@ catalog:
   tailwindcss: ^4.3.3
   '@tailwindcss/vite': ^4.3.3
   tailwindcss-primeui: ^0.6.1
-  primevue: ^4.5.2
+  openvue: 1.0.0
   primeicons: ^7.0.0
-  '@primeuix/themes': ^2.0.2
+  '@openvue/themes': 1.0.0
   '@gewis/eslint-config-typescript': ^2.4.0
   '@gewis/eslint-config-vue': ^2.4.0
   '@gewis/prettier-config': ^2.2.2
