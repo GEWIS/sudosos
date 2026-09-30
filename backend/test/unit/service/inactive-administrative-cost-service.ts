@@ -66,6 +66,12 @@ import { inUserContext, UserFactory } from '../../helpers/user-factory';
 import VatGroup from '../../../src/entity/vat-group';
 import QueryFilter from '../../../src/helpers/query-filter';
 import Redis from 'ioredis';
+import Notifier from '../../../src/notifications/notifier';
+import { NotificationTypes } from '../../../src/notifications/notification-types';
+import {
+  InactiveAdministrativeCostNotificationOptions,
+  UserGotInactiveAdministrativeCostOptions,
+} from '../../../src/notifications/notification-options';
 
 chai.use(deepEqualInAnyOrder);
 
@@ -80,6 +86,42 @@ export type T = BaseInactiveAdministrativeCostResponse | InactiveAdministrativeC
 
 function returnsAll(response: T[], superset: InactiveAdministrativeCost[], mapping: any) {
   expect(response.map(mapping)).to.deep.equalInAnyOrder(superset.map(mapping));
+}
+
+// Inactive for 2.5 years: eligible for a notification only.
+const NOTIFY_INACTIVE_MONTHS = 30;
+// Inactive for 3.5 years: eligible for a handout only.
+const HANDOUT_INACTIVE_MONTHS = 42;
+
+function monthsAgo(months: number): Date {
+  const date = new Date();
+  date.setMonth(date.getMonth() - months);
+  return date;
+}
+
+/**
+ * Creates a fresh user whose only (and therefore last) activity is a deposit made
+ * `monthsInactive` months ago, leaving them with a positive balance.
+ * @param monthsInactive
+ * @param depositAmount
+ */
+async function createUserInactiveFor(monthsInactive: number, depositAmount = 1000): Promise<User> {
+  const [user] = await (await UserFactory()).clone(1);
+
+  const depositReq: TransferRequest = {
+    amount: {
+      amount: depositAmount,
+      precision: dinero.defaultPrecision,
+      currency: dinero.defaultCurrency,
+    },
+    description: `deposit ${monthsInactive} months ago`,
+    fromId: 0,
+    toId: user.id,
+    createdAt: monthsAgo(monthsInactive).toString(),
+  };
+  await new TransferService().createTransfer(depositReq);
+
+  return user;
 }
 
 
@@ -295,126 +337,93 @@ describe('InactiveAdministrativeCostService', () => {
   });
   
   describe('checkInactiveUsers', async (): Promise<void> => {
-    it('should return all users who should receive a notification', async () => {
-      const user = await User.findOne({ where: { id: ctx.users[0].id } });
-      await new BalanceService().updateBalances({});
+    it('should return only users who should receive a notification and not a handout', async () => {
+      const notifyUser = await createUserInactiveFor(NOTIFY_INACTIVE_MONTHS);
+      const handoutUser = await createUserInactiveFor(HANDOUT_INACTIVE_MONTHS);
 
-      // Ensure user has positive balance first - add enough to cover negative balance + buffer
-      const initialBalance = await new BalanceService().getBalance(user.id);
-      const amountToAdd = initialBalance.amount.amount <= 0 
-        ? Math.abs(initialBalance.amount.amount) + 1000 
-        : 0;
-      if (amountToAdd > 0) {
-        const addMoneyReq: TransferRequest = {
-          amount: {
-            amount: amountToAdd,
-            precision: dinero.defaultPrecision,
-            currency: dinero.defaultCurrency,
-          },
-          description: 'add money for test',
-          fromId: 0,
-          toId: user.id,
-          createdAt: new Date(2020, 1).toString(),
-        };
-        await new TransferService().createTransfer(addMoneyReq);
+      await inUserContext([notifyUser, handoutUser], async () => {
         await new BalanceService().updateBalances({});
+
+        const notifyUsers: UserToInactiveAdministrativeCostResponse[] = await new InactiveAdministrativeCostService().checkInactiveUsers({ notification: true });
+
+        const userIds = notifyUsers.map(u => u.id);
+        expect(userIds).to.include(notifyUser.id);
+        expect(userIds).to.not.include(handoutUser.id);
+      });
+    });
+    it('should return all users who should receive a handout', async () => {
+      const handoutUser = await createUserInactiveFor(HANDOUT_INACTIVE_MONTHS);
+
+      await inUserContext([handoutUser], async () => {
+        await new BalanceService().updateBalances({});
+
+        const handoutUsers: UserToInactiveAdministrativeCostResponse[] = await new InactiveAdministrativeCostService().checkInactiveUsers({ notification: false });
+
+        const userIds = handoutUsers.map(u => u.id);
+        expect(userIds).to.include(handoutUser.id);
+      });
+    });
+    it('should split notification and handout exactly at the 2 and 3 year boundaries', async () => {
+      const cases = [
+        { months: 23, notification: false, handout: false }, // just below 2 years
+        { months: 24, notification: true, handout: false }, // exactly 2 years
+        { months: 25, notification: true, handout: false }, // just above 2 years
+        { months: 35, notification: true, handout: false }, // just below 3 years
+        { months: 36, notification: false, handout: true }, // exactly 3 years
+        { months: 37, notification: false, handout: true }, // just above 3 years
+      ];
+
+      // Create sequentially: UserFactory derives ids from User.count(), so parallel creation collides.
+      const users: User[] = [];
+      for (const c of cases) {
+        users.push(await createUserInactiveFor(c.months));
       }
 
-      // Create old transfer (this debits money but user should still have positive balance)
-      const req: TransferRequest = {
-        amount: {
-          amount: 10,
-          precision: dinero.defaultPrecision,
-          currency: dinero.defaultCurrency,
-        },
-        description: 'cool',
-        fromId: user.id,
-        toId: undefined,
-        createdAt: new Date(2020, 1).toString(),
-      };
-      await new TransferService().createTransfer(req);
-      await new BalanceService().updateBalances({});
+      await inUserContext(users, async () => {
+        await new BalanceService().updateBalances({});
 
-      // Verify user has positive balance
-      const finalBalance = await new BalanceService().getBalance(user.id);
-      expect(finalBalance.amount.amount).to.be.greaterThan(0);
+        const service = new InactiveAdministrativeCostService();
+        const notifyIds = (await service.checkInactiveUsers({ notification: true })).map(u => u.id);
+        const handoutIds = (await service.checkInactiveUsers({ notification: false })).map(u => u.id);
 
-      const users: UserToInactiveAdministrativeCostResponse[] = await new InactiveAdministrativeCostService().checkInactiveUsers({ notification: true });
-
-      const userIds = users.map(u => u.id);
-      expect(userIds).to.include(user.id);
+        cases.forEach((c, i) => {
+          expect(notifyIds.includes(users[i].id), `notification at ${c.months} months`).to.eq(c.notification);
+          expect(handoutIds.includes(users[i].id), `handout at ${c.months} months`).to.eq(c.handout);
+        });
+      });
     });
     it('should still return users that had an inactive administrative cost as last transfer', async () => {
-      const user = await User.findOne({ where: { id: ctx.users[0].id } });
-      await new BalanceService().updateBalances({});
-
-      // Ensure user has positive balance first - add enough to cover negative balance + buffer + administrative cost
-      const initialBalance = await new BalanceService().getBalance(user.id);
       const administrativeCostValue = ServerSettingsStore.getInstance().getSetting('administrativeCostValue') as number;
-      const amountToAdd = initialBalance.amount.amount <= 0 
-        ? Math.abs(initialBalance.amount.amount) + administrativeCostValue + 1000 
-        : administrativeCostValue + 1000;
-      const addMoneyReq: TransferRequest = {
-        amount: {
-          amount: amountToAdd,
-          precision: dinero.defaultPrecision,
-          currency: dinero.defaultCurrency,
-        },
-        description: 'add money for test',
-        fromId: 0,
-        toId: user.id,
-        createdAt: new Date(2020, 1).toString(),
-      };
-      await new TransferService().createTransfer(addMoneyReq);
-      await new BalanceService().updateBalances({});
+      // Deposit more than the cost, so the balance stays positive after the deduction.
+      const user = await createUserInactiveFor(HANDOUT_INACTIVE_MONTHS, administrativeCostValue + 1000);
 
-      const req: TransferRequest = {
-        amount: {
-          amount: 10,
-          precision: dinero.defaultPrecision,
-          currency: dinero.defaultCurrency,
-        },
-        description: 'cool',
-        fromId: user.id,
-        toId: undefined,
-        createdAt: new Date(2020, 1).toString(),
-      };
-      const transfer = await new TransferService().createTransfer(req);
-      await new BalanceService().updateBalances({});
-      const inactiveAdministrativeCost = await new InactiveAdministrativeCostService().createInactiveAdministrativeCost({ forId: user.id });
-      await new BalanceService().updateBalances({});
+      await inUserContext([user], async () => {
+        await new InactiveAdministrativeCostService().createInactiveAdministrativeCost({ forId: user.id });
+        await new BalanceService().updateBalances({});
 
-      // Verify user has positive balance
-      const finalBalance = await new BalanceService().getBalance(user.id);
-      expect(finalBalance.amount.amount).to.be.greaterThan(0);
+        // Verify user has positive balance
+        const finalBalance = await new BalanceService().getBalance(user.id);
+        expect(finalBalance.amount.amount).to.be.greaterThan(0);
 
-      const users = await new InactiveAdministrativeCostService().checkInactiveUsers({ notification: false });
+        const users = await new InactiveAdministrativeCostService().checkInactiveUsers({ notification: false });
 
-      const userIds = users.map(u => u.id);
-      expect(userIds).to.include(user.id);
-      expect(transfer.id).to.not.eq(inactiveAdministrativeCost.transfer.id);
+        const userIds = users.map(u => u.id);
+        expect(userIds).to.include(user.id);
+      });
     });
     it('should not return users which already had a notification send', async () => {
-      const user = await User.findOne({ where: { id: ctx.users[0].id } });
-      user.inactiveNotificationSend = true;
-      await user.save();
+      const user = await createUserInactiveFor(NOTIFY_INACTIVE_MONTHS);
 
-      const req: TransferRequest = {
-        amount: {
-          amount: 10,
-          precision: dinero.defaultPrecision,
-          currency: dinero.defaultCurrency,
-        },
-        description: 'cool',
-        fromId: user.id,
-        toId: undefined,
-        createdAt: new Date(2020, 1).toString(),
-      };
-      await new TransferService().createTransfer(req);
+      await inUserContext([user], async () => {
+        user.inactiveNotificationSend = true;
+        await user.save();
+        await new BalanceService().updateBalances({});
 
-      const users = await new InactiveAdministrativeCostService().checkInactiveUsers({ notification: true });
+        const users = await new InactiveAdministrativeCostService().checkInactiveUsers({ notification: true });
 
-      expect(users).not.contain(user);
+        const userIds = users.map(u => u.id);
+        expect(userIds).to.not.include(user.id);
+      });
     });
     it('should not return users with balance <= 0', async () => {
       await inUserContext((await UserFactory()).clone(1), async (user: User) => {
@@ -428,7 +437,7 @@ describe('InactiveAdministrativeCostService', () => {
           description: 'old transfer creating negative balance',
           fromId: user.id,
           toId: 0,
-          createdAt: new Date(2020, 1).toString(),
+          createdAt: monthsAgo(NOTIFY_INACTIVE_MONTHS).toString(),
         };
         await new TransferService().createTransfer(oldTransferReq);
         await new BalanceService().updateBalances({});
@@ -483,6 +492,58 @@ describe('InactiveAdministrativeCostService', () => {
 
       expect(rootStubs.queueAdd.callCount).to.equal(users.length);
     });
+    it('should notify with the deducted amount and the balance after deduction', async () => {
+      const administrativeCostValue = ServerSettingsStore.getInstance().getSetting('administrativeCostValue') as number;
+      const startBalance = administrativeCostValue * 3;
+      const expectedBalance = startBalance - administrativeCostValue;
+      const user = await createUserInactiveFor(HANDOUT_INACTIVE_MONTHS, startBalance);
+
+      await inUserContext([user], async () => {
+        const notifySpy = sandbox.spy(Notifier.getInstance(), 'notify');
+
+        await new InactiveAdministrativeCostService().handOutInactiveAdministrativeCost({ userIds: [user.id] });
+
+        const payload = notifySpy.getCalls().find((c) => c.args[0].userId === user.id).args[0];
+        const params = payload.params as UserGotInactiveAdministrativeCostOptions;
+        expect(payload.type).to.eq(NotificationTypes.UserGotInactiveAdministrativeCost);
+        expect(params.amount.getAmount()).to.eq(administrativeCostValue);
+        expect(params.currentUserBalance.getAmount()).to.eq(expectedBalance);
+
+        const mailOptions = rootStubs.queueAdd.lastCall.args[1];
+        expect(mailOptions.to).to.eq(user.email);
+        expect(mailOptions.html).to.include(dinero({ amount: administrativeCostValue }).toFormat());
+        expect(mailOptions.html).to.include(dinero({ amount: expectedBalance }).toFormat());
+        expect(mailOptions.text).to.include(dinero({ amount: expectedBalance }).toFormat());
+      });
+    });
+    it('should notify with the amount that was actually deducted, capped to the user\'s balance', async () => {
+      const administrativeCostValue = ServerSettingsStore.getInstance().getSetting('administrativeCostValue') as number;
+      const lowBalance = Math.floor(administrativeCostValue / 2);
+      const user = await createUserInactiveFor(HANDOUT_INACTIVE_MONTHS, lowBalance);
+
+      await inUserContext([user], async () => {
+        const balance = await new BalanceService().getBalance(user.id);
+        expect(balance.amount.amount).to.be.eq(lowBalance);
+        expect(balance.amount.amount).to.be.lessThan(administrativeCostValue);
+
+        const notifySpy = sandbox.spy(Notifier.getInstance(), 'notify');
+
+        await new InactiveAdministrativeCostService().handOutInactiveAdministrativeCost({ userIds: [user.id] });
+
+        const payload = notifySpy.getCalls().find((c) => c.args[0].userId === user.id).args[0];
+        const params = payload.params as UserGotInactiveAdministrativeCostOptions;
+        expect(params.amount.getAmount()).to.eq(lowBalance);
+        // The whole balance is deducted, so nothing is left.
+        expect(params.currentUserBalance.getAmount()).to.eq(0);
+
+        const mailOptions = rootStubs.queueAdd.lastCall.args[1];
+        expect(mailOptions.html).to.include(dinero({ amount: lowBalance }).toFormat());
+        expect(mailOptions.html).to.not.include(dinero({ amount: administrativeCostValue }).toFormat());
+        // Nothing is left, so the email uses the past tense and has no "avoid further costs" line.
+        expect(mailOptions.html).to.include('You still had money in your SudoSOS account.');
+        expect(mailOptions.html).to.not.include('Want to avoid further administrative costs?');
+      });
+    });
   });
 
   describe('sendInactiveNotification', async (): Promise<void> => {
@@ -498,28 +559,47 @@ describe('InactiveAdministrativeCostService', () => {
       expect(rootStubs.queueAdd.callCount).to.equal(users.length);
       expect(updatedUsers[0].inactiveNotificationSend).to.be.eq(true);
     });
+    it('should notify of the upcoming administrative cost with the cost and the current balance', async () => {
+      const administrativeCostValue = ServerSettingsStore.getInstance().getSetting('administrativeCostValue') as number;
+      // Nothing is deducted yet, so the balance in the email is the balance as deposited.
+      const startBalance = administrativeCostValue * 3;
+      const user = await createUserInactiveFor(NOTIFY_INACTIVE_MONTHS, startBalance);
+
+      await inUserContext([user], async () => {
+        const notifySpy = sandbox.spy(Notifier.getInstance(), 'notify');
+
+        await new InactiveAdministrativeCostService().sendInactiveNotification({ userIds: [user.id] });
+
+        const payload = notifySpy.getCalls().find((c) => c.args[0].userId === user.id).args[0];
+        const params = payload.params as InactiveAdministrativeCostNotificationOptions;
+        expect(payload.type).to.eq(NotificationTypes.InactiveAdministrativeCostNotification);
+        expect(params.administrativeCostValue.getAmount()).to.eq(administrativeCostValue);
+        expect(params.currentUserBalance.getAmount()).to.eq(startBalance);
+
+        const mailOptions = rootStubs.queueAdd.lastCall.args[1];
+        expect(mailOptions.to).to.eq(user.email);
+        expect(mailOptions.html).to.include(dinero({ amount: administrativeCostValue }).toFormat());
+        expect(mailOptions.html).to.include(dinero({ amount: startBalance }).toFormat());
+        expect(mailOptions.text).to.include(dinero({ amount: startBalance }).toFormat());
+      });
+    });
     it('should notify with the amount that will actually be deducted, capped to the user\'s balance', async () => {
-      await inUserContext((await UserFactory()).clone(1), async (user: User) => {
-        const administrativeCostValue = ServerSettingsStore.getInstance().getSetting('administrativeCostValue') as number;
-        const lowBalance = Math.floor(administrativeCostValue / 2);
+      const administrativeCostValue = ServerSettingsStore.getInstance().getSetting('administrativeCostValue') as number;
+      const lowBalance = Math.floor(administrativeCostValue / 2);
+      const user = await createUserInactiveFor(NOTIFY_INACTIVE_MONTHS, lowBalance);
 
-        const depositReq: TransferRequest = {
-          amount: {
-            amount: lowBalance,
-            precision: dinero.defaultPrecision,
-            currency: dinero.defaultCurrency,
-          },
-          description: 'deposit lower than administrative cost value',
-          fromId: 0,
-          toId: user.id,
-        };
-        await new TransferService().createTransfer(depositReq);
-
+      await inUserContext([user], async () => {
         const balance = await new BalanceService().getBalance(user.id);
         expect(balance.amount.amount).to.be.eq(lowBalance);
         expect(balance.amount.amount).to.be.lessThan(administrativeCostValue);
 
+        const notifySpy = sandbox.spy(Notifier.getInstance(), 'notify');
+
         await new InactiveAdministrativeCostService().sendInactiveNotification({ userIds: [user.id] });
+
+        const payload = notifySpy.getCalls().find((c) => c.args[0].userId === user.id).args[0];
+        const params = payload.params as InactiveAdministrativeCostNotificationOptions;
+        expect(params.administrativeCostValue.getAmount()).to.eq(lowBalance);
 
         const mailOptions = rootStubs.queueAdd.lastCall.args[1];
         expect(mailOptions.html).to.include(dinero({ amount: lowBalance }).toFormat());
@@ -527,6 +607,7 @@ describe('InactiveAdministrativeCostService', () => {
       });
     });
   });
+
   describe('getPaginatedInactiveAdministrativeCosts', async (): Promise<void> => {
     it('should paginate inactive administrative costs correctly', async () => {
       const [costs, count] = await new InactiveAdministrativeCostService()

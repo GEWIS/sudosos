@@ -78,9 +78,11 @@ export class HelloWorldOptions extends TemplateOptions {
 export class InactiveAdministrativeCostNotificationOptions extends TemplateOptions {
   /**
      * @param administrativeCostValue - The configured administrative cost value.
+     * @param currentUserBalance - The user's current balance.
      */
   constructor(
     public administrativeCostValue: Dinero,
+    public currentUserBalance: Dinero,
   ) {
     super();
   }
@@ -198,9 +200,11 @@ export class UserGotFinedOptions extends TemplateOptions {
 export class UserGotInactiveAdministrativeCostOptions extends TemplateOptions {
   /**
      * @param amount - The administrative cost amount.
+     * @param currentUserBalance - The user's current balance.
      */
   constructor(
     public amount: Dinero,
+    public currentUserBalance: Dinero,
   ) {
     super();
   }
