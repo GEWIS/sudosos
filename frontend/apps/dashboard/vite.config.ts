@@ -37,13 +37,6 @@ export default defineConfig(({ mode }) => {
     optimizeDeps: {
       exclude: ['ToastService'],
     },
-    css: {
-      preprocessorOptions: {
-        scss: {
-          api: 'modern-compiler',
-        },
-      },
-    },
     server: {
       port: 5173,
       proxy: {
