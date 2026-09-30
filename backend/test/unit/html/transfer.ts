@@ -19,6 +19,7 @@
  */
 
 import { expect } from 'chai';
+import { BAC } from '../../../src/files/templates/bac-letterhead';
 import { createTransferPdf, ITransferPdf } from '../../../src/html/transfer.html';
 
 describe('createTransferPdf', () => {
@@ -33,7 +34,6 @@ describe('createTransferPdf', () => {
     date: '1-1-2026',
     description: 'Borrel refund',
     amount: '€5,00',
-    serviceEmail: 'treasurer@example.com',
   };
 
   it('renders the transfer id, both accounts, description and amount', () => {
@@ -55,5 +55,13 @@ describe('createTransferPdf', () => {
   it('escapes user names', () => {
     const html = createTransferPdf({ ...params, fromUserFirstName: '<i>Eve</i>' });
     expect(html).to.include('&lt;i&gt;Eve&lt;/i&gt;');
+  });
+
+  it('renders the BAC letterhead footer', () => {
+    const html = createTransferPdf(params);
+    expect(html).to.include(BAC.email);
+    expect(html).to.include(BAC.iban);
+    expect(html).to.include(BAC.kvk);
+    expect(html).to.not.include('Service:');
   });
 });

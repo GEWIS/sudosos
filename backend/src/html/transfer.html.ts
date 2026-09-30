@@ -32,7 +32,6 @@ export interface ITransferPdf {
   date: string;
   description: string;
   amount: string;
-  serviceEmail: string;
 }
 
 export function createTransferPdf(options: ITransferPdf): string {
@@ -65,6 +64,5 @@ export function createTransferPdf(options: ITransferPdf): string {
     headerRightSub: escapeHtml(options.transferId),
     meta,
     details,
-    serviceEmail: options.serviceEmail,
   });
 }

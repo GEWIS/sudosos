@@ -60,24 +60,6 @@ describe('InactiveAdministrativeCostReportPdfService', () => {
       expect(params.vatPercentage).to.equal(21);
       expect(params.count).to.equal(7);
     });
-
-    it('uses the configured FINANCIAL_RESPONSIBLE for the service email', async () => {
-      process.env.FINANCIAL_RESPONSIBLE = 'treasurer@example.test';
-      try {
-        const service = new InactiveAdministrativeCostReportPdfService();
-        const params = await service.getParameters(makeReport());
-        expect(params.serviceEmail).to.equal('treasurer@example.test');
-      } finally {
-        delete process.env.FINANCIAL_RESPONSIBLE;
-      }
-    });
-
-    it('falls back to an empty service email when no financial responsible is configured', async () => {
-      delete process.env.FINANCIAL_RESPONSIBLE;
-      const service = new InactiveAdministrativeCostReportPdfService();
-      const params = await service.getParameters(makeReport());
-      expect(params.serviceEmail).to.equal('');
-    });
   });
 
   describe('htmlGenerator', () => {

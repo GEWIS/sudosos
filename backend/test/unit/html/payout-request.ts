@@ -19,6 +19,7 @@
  */
 
 import { expect } from 'chai';
+import { BAC } from '../../../src/files/templates/bac-letterhead';
 import { createPayoutRequestPdf, IPayoutRequestPdf } from '../../../src/html/payout-request.html';
 
 describe('createPayoutRequestPdf', () => {
@@ -30,7 +31,6 @@ describe('createPayoutRequestPdf', () => {
     bankAccountNumber: 'NL00BANK0123456789',
     date: '1-1-2026',
     amount: '€12,50',
-    serviceEmail: 'treasurer@example.com',
   };
 
   it('renders the header, reference, requester and bank account', () => {
@@ -43,10 +43,17 @@ describe('createPayoutRequestPdf', () => {
     expect(html).to.include(params.bankAccountNumber);
   });
 
-  it('renders the amount and the service email', () => {
+  it('renders the amount', () => {
     const html = createPayoutRequestPdf(params);
     expect(html).to.include(params.amount);
-    expect(html).to.include(params.serviceEmail);
+  });
+
+  it('renders the BAC letterhead footer', () => {
+    const html = createPayoutRequestPdf(params);
+    expect(html).to.include(BAC.email);
+    expect(html).to.include(BAC.iban);
+    expect(html).to.include(BAC.kvk);
+    expect(html).to.not.include('Service:');
   });
 
   it('escapes user-supplied values', () => {

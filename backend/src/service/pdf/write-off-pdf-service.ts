@@ -29,7 +29,6 @@ import WriteOff from '../../entity/transactions/write-off';
 import WriteOffPdf from '../../entity/file/write-off-pdf';
 import { HtmlPdfService } from './pdf-service';
 import { createWriteOffPdf, IWriteOffPdf } from '../../html/write-off.html';
-import Config from '../../config';
 
 export default class WriteOffPdfService extends HtmlPdfService<WriteOffPdf, WriteOff, IWriteOffPdf> {
 
@@ -44,7 +43,6 @@ export default class WriteOffPdfService extends HtmlPdfService<WriteOffPdf, Writ
       accountId: String(entity.to.id),
       date: entity.createdAt.toLocaleDateString('nl-NL'),
       amount: entity.amount.toFormat(),
-      serviceEmail: Config.get().mail.financialResponsible || '',
     };
   }
 }

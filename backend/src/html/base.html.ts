@@ -21,6 +21,7 @@
 import fs from 'fs';
 import path from 'path';
 import { escapeHtml } from './escape';
+import { BAC_FOOTER_CSS, bacFooterHtml } from './bac-footer.html';
 
 const bacLogo = fs.readFileSync(path.resolve(__dirname, '../../static/pdf/bac_logo.svg'), 'utf-8');
 
@@ -31,7 +32,6 @@ export interface IPdfBase {
   headerRightSub: string,
   meta: string,
   details: string,
-  serviceEmail: string,
 }
 
 /**
@@ -134,7 +134,7 @@ export function createBasePdf(options: IPdfBase): string {
         .head-right .title{font-weight:700;font-size:16px}
         .head-right .sub{font-size:12px;opacity:0.95}
 
-        .body{padding:26px;padding-bottom:90px;}
+        .body{padding:26px;padding-bottom:110px;}
         .meta{display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:18px;margin-bottom:18px}
         .card{background:linear-gradient(180deg, #FFFFFF, #FCFCFC);border:1px solid #EFEFEF;padding:16px;border-radius:10px}
         .card h3{margin:0 0 6px 0;font-size:13px;color:var(--muted)}
@@ -155,34 +155,19 @@ export function createBasePdf(options: IPdfBase): string {
         .totals .amt{font-weight:700;text-align:right}
         .grand{font-size:18px;color:var(--accent)}
 
+        ${BAC_FOOTER_CSS}
+        /* Absolutely positioned against the initial containing block, i.e.
+           the bottom of the first page only, like the invoice cover page.
+           The repeating <tfoot> spacer keeps rows clear of it. */
         .foot {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            padding: 18px 26px;
-            background: #FFFFFF;
-            border-top: 1px solid #F0F0F0;
-            position: fixed;
+            position: absolute;
             bottom: 0;
             left: 0;
-            right: 0;
             width: 210mm;
             box-sizing: border-box;
-            z-index: 100;
+            background: #FFFFFF;
         }
 
-        .foot > div {
-            max-width: 48%; /* prevent overflowing */
-        }
-
-        .foot div[style*="text-align:right"] {
-            text-align: right;
-        }
-
-
-        .contact{font-size:12px;color:var(--muted)}
-        .contact a{color:var(--primary);text-decoration:none;font-weight:600}
         .small{font-size:11px;color:#8A8A8A;margin-top:12px}
 
         @media print{
@@ -228,20 +213,12 @@ export function createBasePdf(options: IPdfBase): string {
     </tbody>
     <tfoot>
         <tr>
-            <td style="padding:0;border:0;height:90px;"></td>
+            <td style="padding:0;border:0;height:110px;"></td>
         </tr>
     </tfoot>
 </table>
 
-<footer class="foot">
-    <div>
-        <div class="contact">Service: <a href="mailto:${options.serviceEmail}">${options.serviceEmail}</a></div>
-        <div class="small">Tel: <a href="tel:+31402472815">+31 40 247 2815</a></div>
-    </div>
-    <div style="text-align:right">
-        <div style="font-weight:700"> SudoSOS - BAr Committee GEWIS</div>
-        <div class="small">Study Association GEWIS, MF 3.155, Groene Loper 5, 5612 AE Eindhoven, Nederland</div>
-    </div>
+<footer class="foot bac-foot">${bacFooterHtml()}
 </footer>
 </body>
 </html>

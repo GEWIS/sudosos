@@ -37,7 +37,6 @@ export interface IPayoutRequestPdf {
   bankAccountNumber: string;
   date: string;
   amount: string;
-  serviceEmail: string;
 }
 
 export function createPayoutRequestPdf(options: IPayoutRequestPdf): string {
@@ -70,6 +69,5 @@ export function createPayoutRequestPdf(options: IPayoutRequestPdf): string {
     headerRightSub: escapeHtml(options.reference),
     meta,
     details,
-    serviceEmail: options.serviceEmail,
   });
 }

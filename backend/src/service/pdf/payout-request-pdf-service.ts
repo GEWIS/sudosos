@@ -28,7 +28,6 @@ import PayoutRequest from '../../entity/transactions/payout/payout-request';
 import PayoutRequestPdf from '../../entity/file/payout-request-pdf';
 import { HtmlPdfService } from './pdf-service';
 import { createPayoutRequestPdf, IPayoutRequestPdf } from '../../html/payout-request.html';
-import Config from '../../config';
 
 export default class PayoutRequestPdfService extends HtmlPdfService<PayoutRequestPdf, PayoutRequest, IPayoutRequestPdf> {
 
@@ -45,7 +44,6 @@ export default class PayoutRequestPdfService extends HtmlPdfService<PayoutReques
       bankAccountNumber: entity.bankAccountNumber,
       date: entity.createdAt.toLocaleDateString('nl-NL'),
       amount: entity.amount.toFormat(),
-      serviceEmail: Config.get().mail.financialResponsible || '',
     };
   }
 }

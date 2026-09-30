@@ -19,6 +19,7 @@
  */
 
 import { expect } from 'chai';
+import { BAC } from '../../../src/files/templates/bac-letterhead';
 import { createWriteOffPdf, IWriteOffPdf } from '../../../src/html/write-off.html';
 
 describe('createWriteOffPdf', () => {
@@ -28,7 +29,6 @@ describe('createWriteOffPdf', () => {
     accountId: '7',
     date: '1-1-2026',
     amount: '€12,50',
-    serviceEmail: 'treasurer@example.com',
   };
 
   it('renders the header, reference and account', () => {
@@ -39,10 +39,17 @@ describe('createWriteOffPdf', () => {
     expect(html).to.include(`Account: ${params.accountId}`);
   });
 
-  it('renders the amount and the service email', () => {
+  it('renders the amount', () => {
     const html = createWriteOffPdf(params);
     expect(html).to.include(params.amount);
-    expect(html).to.include(params.serviceEmail);
+  });
+
+  it('renders the BAC letterhead footer', () => {
+    const html = createWriteOffPdf(params);
+    expect(html).to.include(BAC.email);
+    expect(html).to.include(BAC.iban);
+    expect(html).to.include(BAC.kvk);
+    expect(html).to.not.include('Service:');
   });
 
   it('escapes user-supplied values', () => {

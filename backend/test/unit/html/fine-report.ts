@@ -19,6 +19,7 @@
  */
 
 import { expect } from 'chai';
+import { BAC } from '../../../src/files/templates/bac-letterhead';
 import {
   createFineReportPdf,
   IFineReportPdf,
@@ -36,7 +37,6 @@ describe('createFineReportPdf', () => {
     vatAmount: '€0,17',
     vatPercentage: 21,
     totalInclVat: '€1,00',
-    serviceEmail: 'treasurer@example.test',
   };
 
   it('returns an HTML document containing the report period and totals', () => {
@@ -57,9 +57,12 @@ describe('createFineReportPdf', () => {
     expect(html).to.include(`${params.vatPercentage}%`);
   });
 
-  it('uses the supplied service email in the wrapper template', () => {
+  it('renders the BAC letterhead footer', () => {
     const html = createFineReportPdf(params);
-    expect(html).to.include(params.serviceEmail);
+    expect(html).to.include(BAC.email);
+    expect(html).to.include(BAC.iban);
+    expect(html).to.include(BAC.kvk);
+    expect(html).to.not.include('Service:');
   });
 
   it('omits the Waived row when waivedCount is 0', () => {

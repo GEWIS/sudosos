@@ -35,7 +35,6 @@ export interface IWriteOffPdf {
   accountId: string;
   date: string;
   amount: string;
-  serviceEmail: string;
 }
 
 export function createWriteOffPdf(options: IWriteOffPdf): string {
@@ -63,6 +62,5 @@ export function createWriteOffPdf(options: IWriteOffPdf): string {
     headerRightSub: escapeHtml(options.reference),
     meta,
     details,
-    serviceEmail: options.serviceEmail,
   });
 }

@@ -28,7 +28,6 @@ import { HtmlUnstoredPdfService } from './pdf-service';
 import { FineReport } from '../../entity/report/fine-report';
 import { createFineReportPdf, IFineReportPdf } from '../../html/fine-report.html';
 import { PDF_VAT_HIGH } from '../../helpers/pdf';
-import Config from '../../config';
 import DineroTransformer from '../../entity/transformer/dinero-transformer';
 
 export default class FineReportPdfService extends HtmlUnstoredPdfService<FineReport, IFineReportPdf> {
@@ -51,7 +50,6 @@ export default class FineReportPdfService extends HtmlUnstoredPdfService<FineRep
       vatAmount: DineroTransformer.Instance.from(vat).toFormat(),
       vatPercentage: PDF_VAT_HIGH,
       totalInclVat: DineroTransformer.Instance.from(inclVat).toFormat(),
-      serviceEmail: Config.get().mail.financialResponsible || '',
     };
   }
 }

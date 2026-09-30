@@ -19,6 +19,7 @@
  */
 
 import { expect } from 'chai';
+import { BAC } from '../../../src/files/templates/bac-letterhead';
 import { createTransactionPdf, ITransactionPdf } from '../../../src/html/transaction.html';
 
 describe('transaction.html', () => {
@@ -41,7 +42,6 @@ describe('transaction.html', () => {
             vatRate: 21,
           },
         ],
-        serviceEmail: 'test@example.com',
       };
 
       const html = createTransactionPdf(options);
@@ -51,7 +51,7 @@ describe('transaction.html', () => {
       expect(html).to.include('Transaction Info');
       expect(html).to.include('Transaction ID');
       expect(html).to.include('123');
-      expect(html).to.include('test@example.com');
+      expect(html).to.include(BAC.email);
       expect(html).to.include('John Doe');
       expect(html).to.include('Jane Smith');
       expect(html).to.include('Test Product');
@@ -89,7 +89,6 @@ describe('transaction.html', () => {
             vatRate: 21,
           },
         ],
-        serviceEmail: 'finance@example.com',
       };
 
       const html = createTransactionPdf(options);
@@ -127,7 +126,6 @@ describe('transaction.html', () => {
             vatRate: 21,
           },
         ],
-        serviceEmail: 'test@example.com',
       };
 
       const html = createTransactionPdf(options);
@@ -146,7 +144,6 @@ describe('transaction.html', () => {
         createdByUserLastName: 'User',
         date: '01-01-2024',
         items: [],
-        serviceEmail: 'test@example.com',
       };
 
       const html = createTransactionPdf(options);
@@ -174,7 +171,6 @@ describe('transaction.html', () => {
             vatRate: 21,
           },
         ],
-        serviceEmail: 'test@example.com',
       };
 
       const html = createTransactionPdf(options);

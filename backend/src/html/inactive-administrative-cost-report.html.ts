@@ -28,7 +28,6 @@ export interface IInactiveAdministrativeCostReportPdf {
   vatAmount: string;
   vatPercentage: number;
   count: number;
-  serviceEmail: string;
 }
 
 export function createInactiveAdministrativeCostReportPdf(options: IInactiveAdministrativeCostReportPdf): string {
@@ -113,6 +112,5 @@ export function createInactiveAdministrativeCostReportPdf(options: IInactiveAdmi
     headerRightSub: `${options.fromDate} - ${options.toDate}`,
     meta,
     details,
-    serviceEmail: options.serviceEmail,
   });
 }
