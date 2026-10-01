@@ -652,6 +652,15 @@ describe('DebtorController', () => {
         .query({ fromDate, toDate, fileType: 'PDF' });
       expect(res.status).to.equal(200);
     });
+    it('should return 400 if fileType is omitted', async () => {
+      const fromDate = new Date();
+      const toDate = new Date(fromDate.getTime() + 1000 * 60 * 60 * 24);
+      const res = await request(ctx.app)
+        .get('/fines/report/pdf')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .query({ fromDate, toDate });
+      expect(res.status).to.equal(400);
+    });
     it('should return 502 if pdf generation fails', async () => {
       compileHtmlStub = sinon.stub(FineReportPdfService.prototype, 'compileHtml' as any).rejects(new PdfError('Failed to generate PDF'));
       const fromDate = new Date();
