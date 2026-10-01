@@ -127,6 +127,7 @@ import { PaymentRequestAttempt1784877357000 } from '../migrations/1784877357000-
 import {
   AddProductSelfServiceToUser1785401380818,
 } from '../migrations/1785401380818-add-product-self-service-to-user';
+import { RemoveEvents1790890129497 } from '../migrations/1790890129497-remove-events';
 
 function getDataSourceOptions(): DataSourceOptions {
   const config = Config.get();
@@ -182,6 +183,7 @@ function getDataSourceOptions(): DataSourceOptions {
       TerminalPayment1782294145719,
       PaymentRequestAttempt1784877357000,
       AddProductSelfServiceToUser1785401380818,
+      RemoveEvents1790890129497,
     ],
     extra: {
       authPlugins: {
