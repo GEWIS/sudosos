@@ -416,6 +416,7 @@ export default class DebtorController extends BaseController {
       const filters = asFromAndTillDate(req.query.fromDate, req.query.toDate);
       fromDate = filters.fromDate;
       toDate = filters.tillDate;
+      if (req.query.fileType === undefined) throw new Error('fileType is required');
       fileType = asReturnFileType(req.query.fileType);
     } catch (e) {
       res.status(400).json(e.message);
