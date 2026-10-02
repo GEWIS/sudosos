@@ -64,7 +64,7 @@ When creating the restricted API key, grant only:
 ## Available scripts
 
 Run these from `backend/`, or via `pnpm --filter sudosos-backend <script>` / `pnpm backend:<script>` from
-the repo root (see the root [command reference](../README.md#command-reference)).
+the repo root (see the root [command reference](../README.md#-command-reference)).
 
 | Script                   | Description                                       |
 | ------------------------ | ------------------------------------------------- |

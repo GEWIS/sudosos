@@ -81,7 +81,7 @@ that don't need them day to day.
 
 ---
 
-## 🛠️ Command reference
+## 🔧 Command reference
 
 ```bash
 pnpm build                # everything, in topo order
@@ -121,7 +121,7 @@ short version:
 - **Rebase, don't merge.** Keep history linear; force-push your own branch with `--force-with-lease` after
   a rebase, never plain `--force`.
 - **Before opening a PR**, run the linter and the relevant test suite for the area you touched (see the
-  [Command reference](#command-reference) above). CI runs the same checks and will block merging
+  [Command reference](#-command-reference) above). CI runs the same checks and will block merging
   otherwise.
 - Every PR needs at least one approval before it can merge into `develop` (branch protection enforces
   this), and the required CI checks above need to be green.

@@ -23,7 +23,7 @@ pnpm dev:pos     # point-of-sale :5174 (run alongside pnpm dev)
 ```
 
 Dashboard at `localhost:5173`, point of sale at `localhost:5174`. See the root
-[command reference](../README.md#command-reference) for the full list (`pnpm frontend:lint`,
+[command reference](../README.md#-command-reference) for the full list (`pnpm frontend:lint`,
 `pnpm frontend:build`, `pnpm format` / `pnpm format:fix`, ...).
 
 > [!TIP]
