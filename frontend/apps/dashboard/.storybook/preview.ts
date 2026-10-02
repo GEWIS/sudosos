@@ -1,6 +1,6 @@
 import { setup } from '@storybook/vue3-vite';
 import type { Preview } from '@storybook/vue3-vite';
-import { usePreset } from '@primeuix/themes';
+import { usePreset } from '@openvue/themes';
 import {
   SudososRed,
   GrolschGreen,

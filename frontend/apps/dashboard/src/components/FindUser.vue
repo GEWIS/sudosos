@@ -24,8 +24,8 @@ import { onMounted, ref, watch, type Ref } from 'vue';
 import { debounce } from 'lodash';
 import { type BaseUserResponse, GetAllUsersTypeEnum, type UserResponse } from '@gewis/sudosos-client';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
-import { useToast } from 'primevue/usetoast';
-import type { SelectFilterEvent } from 'primevue/select';
+import { useToast } from 'openvue/usetoast';
+import type { SelectFilterEvent } from 'openvue/select';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
 

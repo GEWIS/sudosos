@@ -98,15 +98,15 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import type { UserToInactiveAdministrativeCostResponse } from '@gewis/sudosos-client';
-import type { DataTablePageEvent } from 'primevue/datatable';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Button from 'primevue/button';
-import Skeleton from 'primevue/skeleton';
-import Message from 'primevue/message';
+import type { DataTablePageEvent } from 'openvue/datatable';
+import DataTable from 'openvue/datatable';
+import Column from 'openvue/column';
+import Button from 'openvue/button';
+import Skeleton from 'openvue/skeleton';
+import Message from 'openvue/message';
 import { useI18n } from 'vue-i18n';
-import { useConfirm } from 'primevue/useconfirm';
-import { useToast } from 'primevue/usetoast';
+import { useConfirm } from 'openvue/useconfirm';
+import { useToast } from 'openvue/usetoast';
 import { AxiosError } from 'axios';
 import CardComponent from '@/components/CardComponent.vue';
 import UserLink from '@/components/UserLink.vue';

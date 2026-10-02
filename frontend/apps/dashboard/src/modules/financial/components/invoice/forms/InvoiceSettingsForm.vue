@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import { type PropType } from 'vue';
 import type { InvoiceResponse } from '@gewis/sudosos-client';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { useI18n } from 'vue-i18n';
 import * as yup from 'yup';
 import { type Form, setSubmit } from '@/utils/formUtils';

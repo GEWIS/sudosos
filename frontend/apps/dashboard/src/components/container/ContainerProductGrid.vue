@@ -88,8 +88,8 @@
 import type { ContainerWithProductsResponse, ProductResponse } from '@gewis/sudosos-client';
 import { type Ref, ref, type PropType, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useConfirm } from 'primevue/useconfirm';
-import { useToast } from 'primevue/usetoast';
+import { useConfirm } from 'openvue/useconfirm';
+import { useToast } from 'openvue/usetoast';
 import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import ContainerProductDisplay from '@/components/container/ContainerProductDisplay.vue';
 import ProductActionDialog from '@/modules/seller/components/ProductActionDialog.vue';

@@ -79,8 +79,8 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import Button from 'primevue/button';
-import { useToast } from 'primevue/usetoast';
+import Button from 'openvue/button';
+import { useToast } from 'openvue/usetoast';
 import { playAudio, Sound } from '@/utils/audioUtil';
 
 const toast = useToast();

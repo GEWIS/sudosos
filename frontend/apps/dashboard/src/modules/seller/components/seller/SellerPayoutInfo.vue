@@ -76,10 +76,10 @@
 <script setup lang="ts">
 import { computed, ref, type ComputedRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
-import Button from 'primevue/button';
+import { useToast } from 'openvue/usetoast';
+import Button from 'openvue/button';
 import type { SellerPayoutResponse } from '@gewis/sudosos-client';
-import InputNumber from 'primevue/inputnumber';
+import InputNumber from 'openvue/inputnumber';
 import { useSellerPayoutStore } from '@/stores/seller-payout.store';
 import { formatDateFromString, formatPrice } from '@/utils/formatterUtils';
 import { useVerifyPayout } from '@/composables/verifyPayout';

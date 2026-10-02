@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import type { DataTablePageEvent, DataTableProps } from 'primevue/datatable';
+import type { DataTablePageEvent, DataTableProps } from 'openvue/datatable';
 import CardComponent from '@/components/CardComponent.vue';
 
 const { t } = useI18n();

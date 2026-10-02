@@ -1,4 +1,4 @@
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { type Ref, watch } from 'vue';
 import type {
   ActionResponse,

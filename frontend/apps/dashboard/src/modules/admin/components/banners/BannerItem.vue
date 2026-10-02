@@ -55,8 +55,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import Image from 'primevue/image';
-import Tag from 'primevue/tag';
+import Image from 'openvue/image';
+import Tag from 'openvue/tag';
 
 import type { BannerResponse } from '@gewis/sudosos-client';
 import { computed } from 'vue';

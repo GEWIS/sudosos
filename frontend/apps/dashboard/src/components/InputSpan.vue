@@ -121,10 +121,10 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, useAttrs, computed } from 'vue';
 import type { Ref } from 'vue';
-import InputText from 'primevue/inputtext';
-import Textarea from 'primevue/textarea';
-import InputNumber from 'primevue/inputnumber';
-import type { HintedString } from '@primevue/core';
+import InputText from 'openvue/inputtext';
+import Textarea from 'openvue/textarea';
+import InputNumber from 'openvue/inputnumber';
+import type { HintedString } from '@openvue/core';
 import ErrorSpan from '@/components/ErrorSpan.vue';
 import DatePickerString from '@/components/DatePickerString.vue';
 import { userTypes, userTypesCreate } from '@/utils/validation-schema';

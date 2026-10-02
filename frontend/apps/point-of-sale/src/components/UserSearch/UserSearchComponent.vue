@@ -50,7 +50,7 @@ import { BaseUserResponse, PaginatedUserResponse, UserResponse } from '@gewis/su
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { debounce } from 'lodash';
 import type { AxiosResponse } from 'axios';
-import ScrollPanel from 'primevue/scrollpanel';
+import ScrollPanel from 'openvue/scrollpanel';
 import Fuse from 'fuse.js';
 import { useSettingStore } from '@/stores/settings.store';
 import { useCartStore } from '@/stores/cart.store';

@@ -1,4 +1,4 @@
-@layer properties, theme, base, components, primevue, utilities;
+@layer properties, theme, base, components, openvue, utilities;
 
 @import 'tailwindcss';
 @import 'tailwindcss-primeui';

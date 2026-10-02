@@ -17,8 +17,8 @@
 <script setup lang="ts">
 import { onMounted, type PropType, ref, watch, type Ref } from 'vue';
 import { type RoleResponse } from '@gewis/sudosos-client';
-import type { SelectFilterEvent } from 'primevue/select';
-import { useToast } from 'primevue/usetoast';
+import type { SelectFilterEvent } from 'openvue/select';
+import { useToast } from 'openvue/usetoast';
 import { handleError } from '@/utils/errorUtils';
 import apiService from '@/services/ApiService';
 

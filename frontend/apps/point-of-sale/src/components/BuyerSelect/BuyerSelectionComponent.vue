@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import Button from 'primevue/button';
+import Button from 'openvue/button';
 import { PointOfSaleAssociate, usePointOfSaleStore } from '@/stores/pos.store';
 import BuyerSelectButtonComponent from '@/components/BuyerSelect/BuyerSelectButtonComponent.vue';
 
