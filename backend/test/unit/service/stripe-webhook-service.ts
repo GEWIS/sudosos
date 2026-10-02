@@ -43,6 +43,7 @@ import PaymentRequestAttempt from '../../../src/entity/payment-request/payment-r
 import PaymentRequestService from '../../../src/service/payment-request-service';
 import PaymentRequestCheckoutService from '../../../src/service/payment-request-checkout-service';
 import Transfer from '../../../src/entity/transactions/transfer';
+import TmpTransaction from '../../../src/entity/transactions/terminal/tmp-transaction';
 
 const shouldSkipStripe = (process.env.STRIPE_PUBLIC_KEY === '' || process.env.STRIPE_PUBLIC_KEY === undefined
   || process.env.STRIPE_PRIVATE_KEY === '' || process.env.STRIPE_PRIVATE_KEY === undefined);
@@ -193,6 +194,25 @@ describe.skipIf(shouldSkipStripe)('StripeWebhookService', async (): Promise<void
       expect(terminalPayment.stripePaymentIntent.paymentIntentStatuses.length).to.equal(2);
       expect(cancelPaymentIntentStub).to.not.have.been.called;
     });
+    it('should record a failed status for a terminal payment without ending it', async () => {
+      const { id } = (ctx.terminalPayments.filter((t) => t.getState() === TerminalPaymentState.PROCESSING))[1];
+      let terminalPayment = await new TerminalPaymentService().getTerminalPayment(id);
+      expect(terminalPayment).to.not.be.null;
+      expect(terminalPayment.getState()).to.equal(TerminalPaymentState.PROCESSING);
+
+      // A soft decline (PIN required) fails the intent while the reader carries on
+      await testStatusCreation(terminalPayment.stripePaymentIntent.id, StripePaymentIntentState.FAILED);
+
+      terminalPayment = await new TerminalPaymentService().getTerminalPayment(id);
+      expect(terminalPayment.getState()).to.equal(TerminalPaymentState.PROCESSING);
+      expect(terminalPayment.temporaryTransaction).to.not.be.null;
+
+      // The customer enters their PIN and the payment goes through
+      await testStatusCreation(terminalPayment.stripePaymentIntent.id, StripePaymentIntentState.SUCCEEDED);
+
+      terminalPayment = await new TerminalPaymentService().getTerminalPayment(id);
+      expect(terminalPayment.getState()).to.equal(TerminalPaymentState.PAID);
+    });
     it('should not create duplicate created status', async () => {
       const deposit = ctx.stripeDeposits[0];
       const state = StripePaymentIntentState.CREATED;
@@ -200,13 +220,11 @@ describe.skipIf(shouldSkipStripe)('StripeWebhookService', async (): Promise<void
       await expect(AppDataSource.manager.transaction(async (manager) => new StripeWebhookService(manager).createNewPaymentIntentStatus(deposit.stripePaymentIntent.id, state)))
         .to.eventually.be.rejectedWith(`Status ${state} already exists.`);
     });
-    it('should not create "SUCCEEDED" state when "FAILED" already exists', async () => {
+    it('should create "SUCCEEDED" state when "FAILED" already exists', async () => {
       const deposit = (ctx.stripeDeposits.filter((d) => d.stripePaymentIntent.paymentIntentStatuses
-        .some((s) => s.state === StripePaymentIntentState.FAILED)))[0];
-      const state = StripePaymentIntentState.SUCCEEDED;
+        .some((s) => s.state === StripePaymentIntentState.FAILED)))[1];
 
-      await expect(AppDataSource.manager.transaction(async (manager) => new StripeWebhookService(manager).createNewPaymentIntentStatus(deposit.stripePaymentIntent.id, state)))
-        .to.eventually.be.rejectedWith('Cannot create status SUCCEEDED, because FAILED already exists');
+      await testStatusCreation(deposit.stripePaymentIntent.id, StripePaymentIntentState.SUCCEEDED);
     });
     it('should not create "SUCCEEDED" state when "CANCELLED" already exists', async () => {
       const deposit = (ctx.stripeDeposits.filter((d) => d.stripePaymentIntent.paymentIntentStatuses
@@ -216,13 +234,11 @@ describe.skipIf(shouldSkipStripe)('StripeWebhookService', async (): Promise<void
       await expect(AppDataSource.manager.transaction(async (manager) => new StripeWebhookService(manager).createNewPaymentIntentStatus(deposit.stripePaymentIntent.id, state)))
         .to.eventually.be.rejectedWith('Cannot create status SUCCEEDED, because CANCELLED already exists');
     });
-    it('should not create "FAILED" state when "SUCCEEDED" already exists', async () => {
+    it('should create "FAILED" state when "SUCCEEDED" already exists', async () => {
       const deposit = (ctx.stripeDeposits.filter((d) => d.stripePaymentIntent.paymentIntentStatuses
         .some((s) => s.state === StripePaymentIntentState.SUCCEEDED)))[0];
-      const state = StripePaymentIntentState.FAILED;
 
-      await expect(AppDataSource.manager.transaction(async (manager) => new StripeWebhookService(manager).createNewPaymentIntentStatus(deposit.stripePaymentIntent.id, state)))
-        .to.eventually.be.rejectedWith('Cannot create status FAILED, because SUCCEEDED already exists');
+      await testStatusCreation(deposit.stripePaymentIntent.id, StripePaymentIntentState.FAILED);
     });
     it('should not create "CANCELLED" state when "SUCCEEDED" already exists', async () => {
       const deposit = (ctx.stripeDeposits.filter((d) => d.stripePaymentIntent.paymentIntentStatuses
@@ -232,13 +248,11 @@ describe.skipIf(shouldSkipStripe)('StripeWebhookService', async (): Promise<void
       await expect(AppDataSource.manager.transaction(async (manager) => new StripeWebhookService(manager).createNewPaymentIntentStatus(deposit.stripePaymentIntent.id, state)))
         .to.eventually.be.rejectedWith('Cannot create status CANCELLED, because SUCCEEDED already exists');
     });
-    it('should not create "CANCELLED" state when "FAILED" already exists', async () => {
+    it('should create "CANCELLED" state when "FAILED" already exists', async () => {
       const deposit = (ctx.stripeDeposits.filter((d) => d.stripePaymentIntent.paymentIntentStatuses
         .some((s) => s.state === StripePaymentIntentState.FAILED)))[0];
-      const state = StripePaymentIntentState.CANCELLED;
 
-      await expect(AppDataSource.manager.transaction(async (manager) => new StripeWebhookService(manager).createNewPaymentIntentStatus(deposit.stripePaymentIntent.id, state)))
-        .to.eventually.be.rejectedWith('Cannot create status CANCELLED, because FAILED already exists');
+      await testStatusCreation(deposit.stripePaymentIntent.id, StripePaymentIntentState.CANCELLED);
     });
     it('should throw when paymentIntent does not exist', async () => {
       const id = ctx.stripeDeposits.length + ctx.terminalPayments.length + 100;
@@ -407,6 +421,177 @@ describe.skipIf(shouldSkipStripe)('StripeWebhookService', async (): Promise<void
       } finally {
         errorStub.restore();
       }
+    });
+  });
+
+  describe('handleWebhookEvent with terminal.reader.action_failed', () => {
+    const readerActionFailedEvent = (stripeId: string, failureCode: string) => ({
+      type: 'terminal.reader.action_failed',
+      api_version: STRIPE_API_VERSION,
+      data: {
+        object: {
+          id: 'test_terminal_id',
+          object: 'terminal.reader',
+          action: {
+            type: 'process_payment_intent',
+            status: 'failed',
+            failure_code: failureCode,
+            process_payment_intent: { payment_intent: stripeId },
+          },
+        } as any,
+      },
+    } as Stripe.Event);
+
+    const paymentFailedEvent = (stripeId: string) => ({
+      type: 'payment_intent.payment_failed',
+      api_version: STRIPE_API_VERSION,
+      data: { object: { id: stripeId } as any },
+    } as Stripe.Event);
+
+    const getTerminalPayment = async (state: TerminalPaymentState, index: number) => {
+      const { id } = ctx.terminalPayments.filter((t) => t.getState() === state)[index];
+      const terminalPayment = await new TerminalPaymentService().getTerminalPayment(id);
+      expect(terminalPayment.getState()).to.equal(state);
+      return terminalPayment;
+    };
+
+    const countFailedStatuses = (terminalPayment: TerminalPayment) => terminalPayment.stripePaymentIntent.paymentIntentStatuses
+      .filter((s) => s.state === StripePaymentIntentState.FAILED).length;
+
+    // Ending a declined payment must never call Stripe back
+    const stubStripeCancellation = () => {
+      const cancelPaymentIntentStub = sinon.stub(StripeService.prototype, 'cancelPaymentIntent');
+      const cancelTerminalActionStub = sinon.stub(StripeService.prototype, 'cancelTerminalAction');
+      stubs.push(cancelPaymentIntentStub, cancelTerminalActionStub);
+      return { cancelPaymentIntentStub, cancelTerminalActionStub };
+    };
+
+    it('should fail the terminal payment when the card is declined', async () => {
+      let terminalPayment = await getTerminalPayment(TerminalPaymentState.PROCESSING, 2);
+      const tmpTransactionId = terminalPayment.temporaryTransaction.id;
+      const { cancelPaymentIntentStub, cancelTerminalActionStub } = stubStripeCancellation();
+
+      await ctx.stripeWebhookService.handleWebhookEvent(readerActionFailedEvent(terminalPayment.stripePaymentIntent.stripeId, 'card_declined'));
+
+      terminalPayment = await new TerminalPaymentService().getTerminalPayment(terminalPayment.id);
+      expect(terminalPayment.getState()).to.equal(TerminalPaymentState.FAILED);
+      expect(terminalPayment.temporaryTransaction).to.be.null;
+      expect(await TmpTransaction.findOne({ where: { id: tmpTransactionId } })).to.be.null;
+      expect(countFailedStatuses(terminalPayment)).to.equal(1);
+      expect(cancelPaymentIntentStub).to.not.have.been.called;
+      expect(cancelTerminalActionStub).to.not.have.been.called;
+    });
+    it('should record the decline once, whichever webhook arrives first', async () => {
+      let terminalPayment = await getTerminalPayment(TerminalPaymentState.PROCESSING, 3);
+      const { stripeId } = terminalPayment.stripePaymentIntent;
+      stubStripeCancellation();
+
+      await ctx.stripeWebhookService.handleWebhookEvent(paymentFailedEvent(stripeId));
+      terminalPayment = await new TerminalPaymentService().getTerminalPayment(terminalPayment.id);
+      expect(terminalPayment.getState()).to.equal(TerminalPaymentState.PROCESSING);
+      expect(countFailedStatuses(terminalPayment)).to.equal(1);
+
+      await ctx.stripeWebhookService.handleWebhookEvent(readerActionFailedEvent(stripeId, 'card_declined'));
+      terminalPayment = await new TerminalPaymentService().getTerminalPayment(terminalPayment.id);
+      expect(terminalPayment.getState()).to.equal(TerminalPaymentState.FAILED);
+      expect(countFailedStatuses(terminalPayment)).to.equal(1);
+
+      await ctx.stripeWebhookService.handleWebhookEvent(paymentFailedEvent(stripeId));
+      terminalPayment = await new TerminalPaymentService().getTerminalPayment(terminalPayment.id);
+      expect(terminalPayment.getState()).to.equal(TerminalPaymentState.FAILED);
+      expect(countFailedStatuses(terminalPayment)).to.equal(1);
+    });
+    it('should still fail the terminal payment when the other webhook records the decline first', async () => {
+      let terminalPayment = await getTerminalPayment(TerminalPaymentState.PROCESSING, 6);
+      const intentId = terminalPayment.stripePaymentIntent.id;
+      stubStripeCancellation();
+
+      // payment_intent.payment_failed commits its FAILED status right after
+      // this webhook has read the intent, so this webhook does not see it
+      const findOne = StripePaymentIntent.findOne.bind(StripePaymentIntent);
+      const findOneStub = sinon.stub(StripePaymentIntent, 'findOne').callsFake(async (options) => {
+        const intent = await findOne(options);
+        await StripePaymentIntentStatus.save({ stripePaymentIntentId: intentId, state: StripePaymentIntentState.FAILED } as StripePaymentIntentStatus);
+        return intent;
+      });
+      try {
+        await ctx.stripeWebhookService.handleWebhookEvent(readerActionFailedEvent(terminalPayment.stripePaymentIntent.stripeId, 'card_declined'));
+      } finally {
+        findOneStub.restore();
+      }
+
+      terminalPayment = await new TerminalPaymentService().getTerminalPayment(terminalPayment.id);
+      expect(terminalPayment.getState()).to.equal(TerminalPaymentState.FAILED);
+      expect(countFailedStatuses(terminalPayment)).to.equal(1);
+    });
+
+    describe('when the customer cancels on the reader', () => {
+      // Let StripeService cancel the intent for real, minus the API call
+      const stubStripeApi = () => {
+        const sampleStripe = new Stripe('sk_test_dummy', { apiVersion: STRIPE_API_VERSION });
+        const paymentIntentsCancelStub = sinon.stub(Object.getPrototypeOf(sampleStripe.paymentIntents), 'cancel')
+          .resolves({ status: 'canceled' } as any);
+        const cancelTerminalActionStub = sinon.stub(StripeService.prototype, 'cancelTerminalAction');
+        stubs.push(paymentIntentsCancelStub, cancelTerminalActionStub);
+        return { paymentIntentsCancelStub, cancelTerminalActionStub };
+      };
+
+      it('should cancel the terminal payment and its intent at Stripe', async () => {
+        let terminalPayment = await getTerminalPayment(TerminalPaymentState.PROCESSING, 4);
+        const { stripeId } = terminalPayment.stripePaymentIntent;
+        const { paymentIntentsCancelStub, cancelTerminalActionStub } = stubStripeApi();
+
+        await ctx.stripeWebhookService.handleWebhookEvent(readerActionFailedEvent(stripeId, 'customer_canceled'));
+
+        terminalPayment = await new TerminalPaymentService().getTerminalPayment(terminalPayment.id);
+        expect(terminalPayment.getState()).to.equal(TerminalPaymentState.CANCELLED);
+        expect(terminalPayment.stripePaymentIntent.cancelledWithAPI).to.be.true;
+        expect(countFailedStatuses(terminalPayment)).to.equal(0);
+        expect(paymentIntentsCancelStub).to.have.been.calledOnceWith(stripeId);
+        // The reader action has already ended
+        expect(cancelTerminalActionStub).to.not.have.been.called;
+      });
+      it('should report the terminal payment as cancelled after a soft decline', async () => {
+        let terminalPayment = await getTerminalPayment(TerminalPaymentState.PROCESSING, 7);
+        const { stripeId } = terminalPayment.stripePaymentIntent;
+        stubStripeApi();
+
+        await ctx.stripeWebhookService.handleWebhookEvent(paymentFailedEvent(stripeId));
+        await ctx.stripeWebhookService.handleWebhookEvent(readerActionFailedEvent(stripeId, 'customer_canceled'));
+
+        terminalPayment = await new TerminalPaymentService().getTerminalPayment(terminalPayment.id);
+        expect(countFailedStatuses(terminalPayment)).to.equal(1);
+        expect(terminalPayment.getState()).to.equal(TerminalPaymentState.CANCELLED);
+
+        // Stripe confirms the cancellation afterwards
+        await ctx.stripeWebhookService.handleWebhookEvent({
+          type: 'payment_intent.canceled',
+          api_version: STRIPE_API_VERSION,
+          data: { object: { id: stripeId } as any },
+        } as Stripe.Event);
+        terminalPayment = await new TerminalPaymentService().getTerminalPayment(terminalPayment.id);
+        expect(terminalPayment.getState()).to.equal(TerminalPaymentState.CANCELLED);
+      });
+    });
+    it('should leave the terminal payment open when the reader loses its connection', async () => {
+      let terminalPayment = await getTerminalPayment(TerminalPaymentState.PROCESSING, 5);
+
+      await ctx.stripeWebhookService.handleWebhookEvent(readerActionFailedEvent(terminalPayment.stripePaymentIntent.stripeId, 'connection_error'));
+
+      terminalPayment = await new TerminalPaymentService().getTerminalPayment(terminalPayment.id);
+      expect(terminalPayment.getState()).to.equal(TerminalPaymentState.PROCESSING);
+      expect(terminalPayment.temporaryTransaction).to.not.be.null;
+      expect(countFailedStatuses(terminalPayment)).to.equal(0);
+    });
+    it('should ignore a failed reader action for a terminal payment that has already ended', async () => {
+      let terminalPayment = await getTerminalPayment(TerminalPaymentState.CANCELLED, 1);
+      const statusCount = terminalPayment.stripePaymentIntent.paymentIntentStatuses.length;
+
+      await ctx.stripeWebhookService.handleWebhookEvent(readerActionFailedEvent(terminalPayment.stripePaymentIntent.stripeId, 'card_declined'));
+
+      terminalPayment = await new TerminalPaymentService().getTerminalPayment(terminalPayment.id);
+      expect(terminalPayment.getState()).to.equal(TerminalPaymentState.CANCELLED);
+      expect(terminalPayment.stripePaymentIntent.paymentIntentStatuses.length).to.equal(statusCount);
     });
   });
 });

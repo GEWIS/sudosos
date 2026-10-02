@@ -61,6 +61,8 @@ When creating the restricted API key, grant only:
 - Write access on all webhooks
 - Write access on payment intents
 
+Subscribe the webhook endpoint to the `payment_intent.*` events and to `terminal.reader.action_failed`. Without the latter, a declined card on a terminal leaves the point of sale waiting.
+
 ## Available scripts
 
 Run these from `backend/`, or via `pnpm --filter sudosos-backend <script>` / `pnpm backend:<script>` from
