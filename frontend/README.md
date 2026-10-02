@@ -43,4 +43,4 @@ Dashboard at `localhost:5173`, point of sale at `localhost:5174`. See the root
 ---
 
 Contributing conventions and the license are the same for the whole monorepo -- see the
-[root README](../README.md#contributing).
+[root README](../README.md#-contributing).

@@ -100,4 +100,4 @@ Code Quality Tools -> ESLint -> check "Run eslint --fix on save".
 ---
 
 Contributing conventions, commit style, and the license are the same for the whole monorepo -- see the
-[root README](../README.md#contributing).
+[root README](../README.md#-contributing).

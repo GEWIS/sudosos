@@ -109,7 +109,7 @@ The deployment of SudoSOS at GEWIS is done via Kubernetes. You can see the files
 
 ## 🤝 Contributing
 
-We're a small student association, so contributions from members are how this project moves forward. The
+We're a student association, so contributions from members are how this project moves forward. The
 short version:
 
 - **Branch from `develop`; PRs target `develop`.** `main` only moves via releases, so don't branch from it
@@ -125,6 +125,9 @@ short version:
   otherwise.
 - Every PR needs at least one approval before it can merge into `develop` (branch protection enforces
   this), and the required CI checks above need to be green.
+- **AI tools are welcome; your voice is required.** Use AI to write code or explore ideas, but write
+  comments, issues, and PR descriptions yourself, and only submit changes you understand and can explain.
+  See the [AI Contribution Policy](./AI_POLICY.md).
 
 This covers the everyday flow. For the exhaustive version, including commit history philosophy, how we
 triage automated review feedback, and the full code quality checklist, see [CLAUDE.md](./CLAUDE.md).
