@@ -40,7 +40,8 @@ import { BaseUserResponse } from './user-response';
  * @property {BaseUserResponse} createdBy.required - The user who created this
  * terminal payment.
  * @property {string} state.required - The state of the terminal
- * payment. One of 'created', 'processing', 'paid' or 'cancelled'.
+ * payment. One of 'created', 'processing', 'paid', 'cancelled' or
+ * 'failed'.
  * @property {DineroObjectResponse} amount.required - The total amount to be
  * paid
  */

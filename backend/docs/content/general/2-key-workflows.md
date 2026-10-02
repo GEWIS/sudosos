@@ -104,6 +104,7 @@ flowchart TD
 **Critical checks**
 - Amount is fixed at creation. When transaction needs to be edited, a new TerminalPayment must be created.
 - Terminal can only process one TerminalPayment at a time.
+- A TerminalPayment ends when its reader action fails (`terminal.reader.action_failed`). A decline (`card_declined`, `expired_card` or `processing_error`) makes it `failed`. A lost connection or an unknown failure code leaves it open for the cashier to cancel. A customer cancel on the reader makes it `cancelled` and also cancels the intent at Stripe. A cancel takes precedence over an earlier soft decline. `payment_intent.payment_failed` alone does not end it: a soft decline (PIN required) fails the intent while the reader continues.
 
 **Simplified flow**
 1. Temporary transaction is created (as if you are creating an actual transaction).
