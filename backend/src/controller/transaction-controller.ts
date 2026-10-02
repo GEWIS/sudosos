@@ -210,7 +210,7 @@ export default class TransactionController extends BaseController {
       // create the transaction using context
       const transaction = await transactionService.createTransaction(body, context);
 
-      res.json(await transactionService.asTransactionResponse(transaction));
+      res.json(await transactionService.asTransactionResponse(transaction, undefined, undefined, false));
     } catch (error) {
       this.logger.error('Could not create transaction:', error);
       res.status(500).json('Internal server error.');

@@ -597,11 +597,13 @@ export default class TransactionService extends WithManager {
    * @param transaction
    * @param totalCost - Optional pre-calculated total cost
    * @param context - Optional transaction context with cached entities and costs
+   * @param paidByTerminal - Optional known terminal payment status, looked up if omitted
    */
   public async asTransactionResponse(
     transaction: Transaction,
     totalCost?: Dinero.Dinero,
     context?: TransactionContext,
+    paidByTerminal?: boolean,
   ): Promise<TransactionResponse | undefined> {
     if (!transaction) {
       return undefined;
@@ -646,7 +648,18 @@ export default class TransactionService extends WithManager {
       subTransactions,
       pointOfSale: parsePOSToBasePOS(transaction.pointOfSale, false),
       totalPriceInclVat: { ...cost.toObject() } as DineroObjectResponse,
+      paidByTerminal: paidByTerminal ?? await this.isPaidByTerminal(transaction.id),
     } as TransactionResponse;
+  }
+
+  /**
+   * Whether the transaction was paid with a card terminal. The payment is already captured
+   * by Stripe, so such a transaction must not be edited or deleted.
+   * @param id - the id of the transaction
+   */
+  public async isPaidByTerminal(id: number): Promise<boolean> {
+    // Referenced by name, importing the entity here causes a circular import.
+    return this.manager.exists('TerminalPayment', { where: { finalTransaction: { id } } });
   }
 
   /**
@@ -803,7 +816,9 @@ export default class TransactionService extends WithManager {
       .leftJoin('transaction.subTransactions', 'subTransaction')
       .leftJoin('subTransaction.subTransactionRows', 'subTransactionRow')
       .leftJoin('subTransactionRow.product', 'product')
+      .leftJoin('TerminalPayment', 'terminalPayment', 'terminalPayment.finalTransactionId = transaction.id')
       .addSelect('SUM(subTransactionRow.amount * product.priceInclVat)', 'value')
+      .addSelect('MAX(terminalPayment.id)', 'terminalPaymentId')
       .groupBy('transaction.id')
       .addGroupBy('from.id')
       .addGroupBy('createdBy.id')
@@ -813,7 +828,7 @@ export default class TransactionService extends WithManager {
 
     // Transaction main filters
     if (p.excludeById) {
-      query.andWhere('createdById != :excludeById', { excludeById: p.excludeById });
+      query.andWhere('transaction.createdById != :excludeById', { excludeById: p.excludeById });
     }
     if (p.excludeFromId) {
       query.andWhere('transaction.fromId != :excludeFromId', { excludeFromId: p.excludeFromId });
@@ -874,6 +889,7 @@ export default class TransactionService extends WithManager {
         useAuthentication: Boolean(o.pointOfSaleRev_useAuthentication),
       },
       value: value.toObject(),
+      paidByTerminal: o.terminalPaymentId != null,
     };
   }
 
@@ -996,8 +1012,9 @@ export default class TransactionService extends WithManager {
       await UserService.updateUser(savedTransaction.from.id, { inactiveNotificationSend: false });
     }
 
-    // Emit WebSocket event for transaction creation (fire-and-forget to not block transaction flow)
-    const transactionResponse = await this.asTransactionResponse(savedTransaction, context.totalCost, context);
+    // Emit WebSocket event for transaction creation (fire-and-forget to not block transaction flow).
+    // A terminal payment links its final transaction only after creation, so it cannot be paid by terminal yet.
+    const transactionResponse = await this.asTransactionResponse(savedTransaction, context.totalCost, context, false);
     if (transactionResponse) {
       void WebSocketService.emitTransactionCreated(transactionResponse).catch((error) => {
         // Log error but don't fail transaction creation if WebSocket emission fails
