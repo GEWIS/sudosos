@@ -33,7 +33,7 @@ import PointOfSaleRevision from '../point-of-sale/point-of-sale-revision';
 import ContainerRevision from '../container/container-revision';
 import { UnstoredPdfAble } from '../file/pdf-able';
 import UserReportPdfService from '../../service/pdf/user-report-pdf-service';
-import { UserReportParametersType } from 'pdf-generator-client';
+import { UserReportType } from '../../helpers/pdf';
 
 export interface IReport {
   forId: number;
@@ -104,11 +104,11 @@ export interface Report {
 
 
 export class SalesReport extends UnstoredPdfAble(Report) {
-  pdfService = new UserReportPdfService(UserReportParametersType.Sales);
+  pdfService = new UserReportPdfService(UserReportType.Sales);
 
   description: string;
 }
 
 export class BuyerReport extends UnstoredPdfAble(Report) {
-  pdfService = new UserReportPdfService(UserReportParametersType.Purchases);
+  pdfService = new UserReportPdfService(UserReportType.Purchases);
 }

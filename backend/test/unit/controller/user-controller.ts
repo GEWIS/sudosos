@@ -82,8 +82,8 @@ import TransactionService from '../../../src/service/transaction-service';
 import { TransactionRequest } from '../../../src/controller/request/transaction-request';
 import { toMySQLString } from '../../../src/helpers/timestamps';
 import sinon from 'sinon';
-import { Client } from 'pdf-generator-client';
-import { BasePdfService } from '../../../src/service/pdf/pdf-service';
+import UserReportPdfService from '../../../src/service/pdf/user-report-pdf-service';
+import { PdfError } from '../../../src/errors';
 import { ensureProductionRoles, signTokenFor } from '../../helpers/user-factory';
 import Dinero from 'dinero.js';
 import NfcAuthenticator from '../../../src/entity/authenticator/nfc-authenticator';
@@ -2526,18 +2526,10 @@ describe('UserController', (): void => {
     });
   });
   describe('GET pdf', () => {
-    let clientStub: sinon.SinonStubbedInstance<Client>;
-
-    function resolveSuccessful() {
-      clientStub.generateUserReport.resolves({
-        data: new Blob(),
-        status: 200,
-      });
-    }
+    let compileHtmlStub: sinon.SinonStub;
 
     beforeEach(() => {
-      clientStub = sinon.createStubInstance(Client);
-      sinon.stub(BasePdfService, 'getClient').returns(clientStub);
+      compileHtmlStub = sinon.stub(UserReportPdfService.prototype, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
     });
 
     afterEach(() => {
@@ -2546,7 +2538,6 @@ describe('UserController', (): void => {
 
     describe('GET /users/{id}/transactions/sales/report/pdf', () => {
       it('should return 200 if admin', async () => {
-        resolveSuccessful();
         const id = 1;
         const parameters = { fromDate: '2021-01-01', tillDate: '2021-12-31' };
         const user = await User.findOne({ where: { id } });
@@ -2558,9 +2549,9 @@ describe('UserController', (): void => {
         expect(res.status).to.equal(200);
       });
       it('should return 502 if pdf generation fails', async () => {
-        clientStub.generateUserReport.rejects(new Error('Failed to generate PDF'));
+        compileHtmlStub.rejects(new PdfError('Failed to generate PDF'));
         const id = 1;
-        const parameters = { fromDate: '2021-01-01', tillDate: '2021-12-31' };
+        const parameters = { fromDate: '2021-01-01', tillDate: '2021-12-31', fileType: 'PDF' };
         const user = await User.findOne({ where: { id } });
         expect(user).to.not.be.null;
         const res = await request(ctx.app)
@@ -2639,7 +2630,6 @@ describe('UserController', (): void => {
     });
     describe('GET /users/{id}/transactions/purchases/report/pdf', () => {
       it('should return 200 if admin', async () => {
-        resolveSuccessful();
         const id = 1;
         const parameters = { fromDate: '2021-01-01', tillDate: '2021-12-31' };
         const user = await User.findOne({ where: { id } });
@@ -2651,9 +2641,9 @@ describe('UserController', (): void => {
         expect(res.status).to.equal(200);
       });
       it('should return 502 if pdf generation fails', async () => {
-        clientStub.generateUserReport.rejects(new Error('Failed to generate PDF'));
+        compileHtmlStub.rejects(new PdfError('Failed to generate PDF'));
         const id = 1;
-        const parameters = { fromDate: '2021-01-01', tillDate: '2021-12-31' };
+        const parameters = { fromDate: '2021-01-01', tillDate: '2021-12-31', fileType: 'PDF' };
         const user = await User.findOne({ where: { id } });
         expect(user).to.not.be.null;
         const res = await request(ctx.app)

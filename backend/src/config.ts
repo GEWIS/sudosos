@@ -144,7 +144,6 @@ export default class Config {
   };
 
   public readonly pdf: {
-    pdfGeneratorUrl: string;
     htmlPdfGeneratorUrl: string;
   };
 
@@ -328,7 +327,6 @@ export default class Config {
     };
 
     this.pdf = {
-      pdfGeneratorUrl: getOptionalString('PDF_GEN_URL') ?? 'http://pdf:3001/pdf',
       htmlPdfGeneratorUrl: getOptionalString('HTML_PDF_GEN_URL') ?? 'http://pdf-compiler:80/api/v1',
     };
 

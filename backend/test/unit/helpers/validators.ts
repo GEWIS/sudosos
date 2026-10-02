@@ -18,7 +18,8 @@
  *  @license
  */
 
-import { asArrayOfUserTypes, asUserType } from '../../../src/helpers/validators';
+import { asArrayOfUserTypes, asReturnFileType, asUserType } from '../../../src/helpers/validators';
+import { ReturnFileType } from '../../../src/helpers/pdf';
 import { expect } from 'chai';
 import { UserType } from '../../../src/entity/user/user';
 
@@ -62,6 +63,22 @@ describe('Validators', (): void => {
     });
     it('should throw if one invalid userType', () => {
       expect(() => asArrayOfUserTypes([UserType.MEMBER, 'TEST'])).to.throw();
+    });
+  });
+  describe('asReturnFileType', (): void => {
+    it('should default to PDF when no input is given', () => {
+      expect(asReturnFileType(undefined)).to.equal(ReturnFileType.PDF);
+      expect(asReturnFileType('')).to.equal(ReturnFileType.PDF);
+    });
+    it('should accept file types case-insensitively', () => {
+      expect(asReturnFileType('pdf')).to.equal(ReturnFileType.PDF);
+      expect(asReturnFileType('HTML')).to.equal(ReturnFileType.HTML);
+    });
+    it('should throw for invalid input', () => {
+      expect(() => asReturnFileType('DOCX')).to.throw(TypeError);
+      expect(() => asReturnFileType('TEX')).to.throw(TypeError);
+      expect(() => asReturnFileType(1)).to.throw(TypeError);
+      expect(() => asReturnFileType(['PDF'])).to.throw(TypeError);
     });
   });
 });

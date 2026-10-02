@@ -18,33 +18,38 @@
  *  @license
  */
 
+/**
+ * Payout request PDF: records a payout of SudoSOS balance to a bank account.
+ * Compiled to a PDF by `pdf-compiler`.
+ */
+
 import { balanceNoticeHtml, createBasePdf, singleAmountHtml } from './base.html';
 import { escapeHtml } from './escape';
 
-export interface ITransferPdf {
-  transferId: string;
-  fromUserFirstName: string;
-  fromUserLastName: string;
-  fromAccount: string;
-  toUserFirstName: string;
-  toUserLastName: string;
-  toAccount: string;
+export interface IPayoutRequestPdf {
+  /** Payout request number, e.g. SDS-PR-0001. */
+  reference: string;
+  /** Name of the user who requested the payout. */
+  requestedBy: string;
+  /** The requester's User.id. */
+  accountId: string;
+  bankAccountName: string;
+  bankAccountNumber: string;
   date: string;
-  description: string;
   amount: string;
 }
 
-export function createTransferPdf(options: ITransferPdf): string {
+export function createPayoutRequestPdf(options: IPayoutRequestPdf): string {
   const meta = `
     <div class="card">
-      <h3>From</h3>
-      <p>${escapeHtml(options.fromUserFirstName)} ${escapeHtml(options.fromUserLastName)}</p>
-      <div class="small">Account: ${escapeHtml(options.fromAccount)}</div>
+      <h3>Requested by</h3>
+      <p>${escapeHtml(options.requestedBy)}</p>
+      <div class="small">Account: ${escapeHtml(options.accountId)}</div>
     </div>
     <div class="card">
-      <h3>To</h3>
-      <p>${escapeHtml(options.toUserFirstName)} ${escapeHtml(options.toUserLastName)}</p>
-      <div class="small">Account: ${escapeHtml(options.toAccount)}</div>
+      <h3>Paid out to</h3>
+      <p>${escapeHtml(options.bankAccountName)}</p>
+      <div class="small">IBAN: ${escapeHtml(options.bankAccountNumber)}</div>
     </div>
     <div class="card">
       <h3>Date</h3>
@@ -53,15 +58,15 @@ export function createTransferPdf(options: ITransferPdf): string {
   `;
 
   const details = balanceNoticeHtml(
-    'Balance Transfer',
-    'This document records a balance movement within SudoSOS, showing the transferred amount and the originating and/or receiving account.',
-  ) + singleAmountHtml(options.description, options.amount);
+    'Payout',
+    'This document records a payout of SudoSOS balance to the bank account shown above.',
+  ) + singleAmountHtml('Payout of SudoSOS balance', options.amount);
 
   return createBasePdf({
-    pageTitle: 'Transfer PDF',
-    headerTitle: 'Transfer Info',
-    headerRightTitle: 'Transfer ID',
-    headerRightSub: escapeHtml(options.transferId),
+    pageTitle: 'Payout PDF',
+    headerTitle: 'Payout',
+    headerRightTitle: 'Payout number',
+    headerRightSub: escapeHtml(options.reference),
     meta,
     details,
   });

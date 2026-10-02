@@ -651,15 +651,32 @@ describe('DebtorController', () => {
         .set('Authorization', `Bearer ${ctx.adminToken}`)
         .query({ fromDate, toDate, fileType: 'PDF' });
       expect(res.status).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/pdf');
+      expect(res.headers['content-disposition']).to.match(/\.pdf"$/);
     });
-    it('should return 400 if fileType is omitted', async () => {
+    it('should return raw HTML without compiling when fileType is HTML', async () => {
+      compileHtmlStub = sinon.stub(FineReportPdfService.prototype, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
+      const fromDate = new Date();
+      const toDate = new Date(fromDate.getTime() + 1000 * 60 * 60 * 24);
+      const res = await request(ctx.app)
+        .get('/fines/report/pdf')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .query({ fromDate, toDate, fileType: 'HTML' });
+      expect(res.status).to.equal(200);
+      expect(res.headers['content-type']).to.match(/^text\/html/);
+      expect(res.headers['content-disposition']).to.match(/\.html"$/);
+      expect(compileHtmlStub).to.not.have.been.called;
+    });
+    it('should default to PDF if fileType is omitted', async () => {
+      compileHtmlStub = sinon.stub(FineReportPdfService.prototype, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
       const fromDate = new Date();
       const toDate = new Date(fromDate.getTime() + 1000 * 60 * 60 * 24);
       const res = await request(ctx.app)
         .get('/fines/report/pdf')
         .set('Authorization', `Bearer ${ctx.adminToken}`)
         .query({ fromDate, toDate });
-      expect(res.status).to.equal(400);
+      expect(res.status).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/pdf');
     });
     it('should return 502 if pdf generation fails', async () => {
       compileHtmlStub = sinon.stub(FineReportPdfService.prototype, 'compileHtml' as any).rejects(new PdfError('Failed to generate PDF'));

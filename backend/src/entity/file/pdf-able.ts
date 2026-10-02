@@ -137,7 +137,7 @@ export function UnstoredPdfAble<TBase extends Constructor>(Base: TBase) {
   abstract class UnstoredPdfAbleClass extends Base implements IUnstoredPdfAble {
     /**
      * The service that creates the Pdf buffer.
-     * Can be either a LaTeX-based service (UnstoredPdfService) or HTML-based service (HtmlUnstoredPdfService).
+     * An HTML-based service (HtmlUnstoredPdfService).
      */
     abstract pdfService: IPdfServiceBase<UnstoredPdfAbleClass>;
 
@@ -151,13 +151,6 @@ export function UnstoredPdfAble<TBase extends Constructor>(Base: TBase) {
 
     async createRaw(): Promise<Buffer> {
       return this.pdfService.createRaw(this as UnstoredPdfAbleClass);
-    }
-
-    /**
-     * @deprecated Use createRaw() instead
-     */
-    async createTex(): Promise<Buffer> {
-      return this.createRaw();
     }
 
     async getPdfParamHash(): Promise<string> {

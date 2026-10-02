@@ -18,33 +18,31 @@
  *  @license
  */
 
+/**
+ * Write-off PDF: records that a negative SudoSOS balance was written off.
+ * Compiled to a PDF by `pdf-compiler`.
+ */
+
 import { balanceNoticeHtml, createBasePdf, singleAmountHtml } from './base.html';
 import { escapeHtml } from './escape';
 
-export interface ITransferPdf {
-  transferId: string;
-  fromUserFirstName: string;
-  fromUserLastName: string;
-  fromAccount: string;
-  toUserFirstName: string;
-  toUserLastName: string;
-  toAccount: string;
+export interface IWriteOffPdf {
+  /** Write-off number, e.g. SDS-WR-0001. */
+  reference: string;
+  /** Name of the user whose balance was written off. */
+  account: string;
+  /** The user's User.id. */
+  accountId: string;
   date: string;
-  description: string;
   amount: string;
 }
 
-export function createTransferPdf(options: ITransferPdf): string {
+export function createWriteOffPdf(options: IWriteOffPdf): string {
   const meta = `
     <div class="card">
-      <h3>From</h3>
-      <p>${escapeHtml(options.fromUserFirstName)} ${escapeHtml(options.fromUserLastName)}</p>
-      <div class="small">Account: ${escapeHtml(options.fromAccount)}</div>
-    </div>
-    <div class="card">
-      <h3>To</h3>
-      <p>${escapeHtml(options.toUserFirstName)} ${escapeHtml(options.toUserLastName)}</p>
-      <div class="small">Account: ${escapeHtml(options.toAccount)}</div>
+      <h3>Account</h3>
+      <p>${escapeHtml(options.account)}</p>
+      <div class="small">Account: ${escapeHtml(options.accountId)}</div>
     </div>
     <div class="card">
       <h3>Date</h3>
@@ -53,15 +51,15 @@ export function createTransferPdf(options: ITransferPdf): string {
   `;
 
   const details = balanceNoticeHtml(
-    'Balance Transfer',
-    'This document records a balance movement within SudoSOS, showing the transferred amount and the originating and/or receiving account.',
-  ) + singleAmountHtml(options.description, options.amount);
+    'Write-off',
+    'This document records that the negative balance of the account shown above has been written off, bringing the balance back to zero.',
+  ) + singleAmountHtml('Write-off of negative balance', options.amount);
 
   return createBasePdf({
-    pageTitle: 'Transfer PDF',
-    headerTitle: 'Transfer Info',
-    headerRightTitle: 'Transfer ID',
-    headerRightSub: escapeHtml(options.transferId),
+    pageTitle: 'Write-off PDF',
+    headerTitle: 'Write-off',
+    headerRightTitle: 'Write-off number',
+    headerRightSub: escapeHtml(options.reference),
     meta,
     details,
   });
