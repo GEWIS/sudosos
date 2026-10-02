@@ -31,6 +31,7 @@ import Policy from './policy';
 import { RequestWithToken } from '../middleware/token-middleware';
 import TransactionService, {
   parseGetTransactionsFilters,
+  TerminalPaidTransactionError,
 } from '../service/transaction-service';
 import { parseRequestPagination, toResponse } from '../helpers/pagination';
 import { TransactionRequest } from './request/transaction-request';
@@ -262,6 +263,7 @@ export default class TransactionController extends BaseController {
    * @return {string} 400 - Validation error
    * @return {string} 403 - Lesser tokens cannot update transactions
    * @return {string} 404 - Not found error
+   * @return {string} 409 - Transaction was paid by card terminal
    * @return {string} 500 - Internal server error
    */
   public async updateTransaction(req: RequestWithToken, res: Response): Promise<void> {
@@ -285,11 +287,15 @@ export default class TransactionController extends BaseController {
           res.status(400).json('Could not update transaction.');
           return;
         }
-        res.status(200).json(await transactionService.asTransactionResponse(transaction));
+        res.status(200).json(await transactionService.asTransactionResponse(transaction, undefined, undefined, false));
       } else {
         res.status(404).json('Transaction not found.');
       }
     } catch (error) {
+      if (error instanceof TerminalPaidTransactionError) {
+        res.status(409).json('Transaction was paid by card terminal and cannot be modified.');
+        return;
+      }
       this.logger.error('Could not update transaction:', error);
       res.status(500).json('Internal server error.');
     }
@@ -304,6 +310,7 @@ export default class TransactionController extends BaseController {
    * @security JWT
    * @return 204 - No content
    * @return {string} 404 - Nonexistent transaction id
+   * @return {string} 409 - Transaction was paid by card terminal
    */
   // eslint-disable-next-line class-methods-use-this
   public async deleteTransaction(req: RequestWithToken, res: Response): Promise<void> {
@@ -319,6 +326,10 @@ export default class TransactionController extends BaseController {
         res.status(404).json('Transaction not found.');
       }
     } catch (error) {
+      if (error instanceof TerminalPaidTransactionError) {
+        res.status(409).json('Transaction was paid by card terminal and cannot be modified.');
+        return;
+      }
       this.logger.error('Could not delete transaction:', error);
       res.status(500).json('Internal server error.');
     }
