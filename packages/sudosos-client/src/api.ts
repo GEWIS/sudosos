@@ -1340,6 +1340,12 @@ export interface BaseTransactionResponse {
      * @memberof BaseTransactionResponse
      */
     'value': Dinero;
+    /**
+     * Whether this transaction was paid with a card terminal. Such transactions cannot be edited or deleted.
+     * @type {boolean}
+     * @memberof BaseTransactionResponse
+     */
+    'paidByTerminal': boolean;
 }
 /**
  * 
@@ -5848,6 +5854,12 @@ export interface TransactionResponse {
      * @memberof TransactionResponse
      */
     'totalPriceInclVat': DineroObjectResponse;
+    /**
+     * Whether this transaction was paid with a card terminal. Such transactions cannot be edited or deleted.
+     * @type {boolean}
+     * @memberof TransactionResponse
+     */
+    'paidByTerminal': boolean;
 }
 /**
  * 
