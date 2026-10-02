@@ -35,13 +35,14 @@ import {
   ValidationError,
 } from '../../../helpers/specification-validation';
 import Transaction from '../../../entity/transactions/transaction';
-import stringSpec from './string-spec';
+import stringSpec, { maxLength } from './string-spec';
+import { validOrUndefinedDate } from './duration-spec';
 import { userMustExist } from './general-validators';
 import {
   INVALID_INVOICE_ID,
   INVALID_TRANSACTION_IDS,
   INVALID_TRANSACTION_OWNER,
-  INVOICE_IS_DELETED, INVOICE_IS_PAID, NO_TRANSACTION_IDS,
+  INVOICE_IS_DELETED, INVOICE_IS_PAID, NO_TRANSACTION_IDS, NULL_VALUE,
   SAME_INVOICE_STATE, SUBTRANSACTION_ALREADY_INVOICED,
 } from './validation-errors';
 import { InvoiceState } from '../../../entity/invoices/invoice-status';
@@ -128,6 +129,18 @@ const userMustExistIfProvided = async (p: number | undefined) => {
   return userMustExist(p);
 };
 
+const notNull = (p: string) => {
+  if (p === null) return toFail(NULL_VALUE());
+  return toPass(p);
+};
+
+/**
+ * Specification for an optional update of a NOT NULL varchar(255) column.
+ */
+function requiredColumnSpec(): Specification<string, ValidationError> {
+  return [notNull, maxLength(255)] as Specification<string, ValidationError>;
+}
+
 /**
  * Specification for an InvoiceRequest
  */
@@ -146,7 +159,16 @@ function baseInvoiceRequestSpec<T extends BaseInvoice>(): Specification<T, Valid
  */
 export function updateInvoiceRequestSpec(): Specification<UpdateInvoiceParams, ValidationError> {
   return [
-    [stringSpec(), 'description', new ValidationError('description:')],
+    [[userMustExistIfProvided], 'byId', new ValidationError('byId:')],
+    [requiredColumnSpec(), 'addressee', new ValidationError('addressee:')],
+    [requiredColumnSpec(), 'street', new ValidationError('street:')],
+    [requiredColumnSpec(), 'postalCode', new ValidationError('postalCode:')],
+    [requiredColumnSpec(), 'city', new ValidationError('city:')],
+    [requiredColumnSpec(), 'country', new ValidationError('country:')],
+    [requiredColumnSpec(), 'reference', new ValidationError('reference:')],
+    [[maxLength(255)], 'attention', new ValidationError('attention:')],
+    [[...stringSpec(), maxLength(255)], 'description', new ValidationError('description:')],
+    [[validOrUndefinedDate], 'date', new ValidationError('date:')],
     differentState,
     existsAndNotPaidOrDeleted,
   ];
