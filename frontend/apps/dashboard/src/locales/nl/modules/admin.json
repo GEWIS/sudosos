@@ -152,7 +152,8 @@
         "addProduct": "Product toevoegen",
         "selectProduct": "Selecteer een product om toe te voegen",
         "newProductsAdded": "Nieuwe producten toegevoegd",
-        "newProduct": "NIEUW"
+        "newProduct": "NIEUW",
+        "paidByTerminal": "Deze transactie is betaald met de pinautomaat. Hij kan niet worden bewerkt of verwijderd, omdat de betaling al door Stripe is verwerkt."
       },
       "rbac": {
         "title": "RBAC Beheer",
