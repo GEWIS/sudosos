@@ -148,6 +148,17 @@ export function parseGetTransactionsFilters(req: RequestWithToken): TransactionF
   return filters;
 }
 
+/**
+ * Thrown when a transaction paid with a card terminal is edited or deleted.
+ * The payment is already captured by Stripe, so the transaction is immutable.
+ */
+export class TerminalPaidTransactionError extends Error {
+  public constructor(id: number) {
+    super(`Transaction ${id} was paid by card terminal and cannot be modified.`);
+    this.name = 'TerminalPaidTransactionError';
+  }
+}
+
 export default class TransactionService extends WithManager {
   /**
    * Gets total cost of a transaction with values stored in the database
@@ -1099,9 +1110,14 @@ export default class TransactionService extends WithManager {
    * Deletes a transaction
    * @param {number} id - the id of the requested transaction
    * @returns {TransactionResponse.model} - the deleted transaction
+   * @throws {TerminalPaidTransactionError} when the transaction was paid by card terminal
    */
   public async deleteTransaction(id: number):
   Promise<Transaction | undefined> {
+    if (await this.isPaidByTerminal(id)) {
+      throw new TerminalPaidTransactionError(id);
+    }
+
     // get the transaction we should delete
     const transaction = await this.getSingleTransaction(id);
     await this.manager.delete(Transaction, id);

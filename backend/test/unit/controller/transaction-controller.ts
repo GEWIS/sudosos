@@ -1025,6 +1025,24 @@ describe('TransactionController', (): void => {
         .set('Authorization', `Bearer ${ctx.adminToken}`);
       expect(res.body).to.eql(toUpdate);
     });
+    it('should return an HTTP 409 if the transaction was paid by card terminal', async () => {
+      const id = await createTerminalPaidTransaction();
+      const before = await request(ctx.app)
+        .get(`/transactions/${id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+
+      const res = await request(ctx.app)
+        .patch(`/transactions/${id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ ...ctx.validTransReq, from: ctx.users[0].id });
+      expect(res.status).to.equal(409);
+      expect(res.body).to.equal('Transaction was paid by card terminal and cannot be modified.');
+
+      const after = await request(ctx.app)
+        .get(`/transactions/${id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(after.body).to.eql(before.body);
+    });
     it('should return an HTTP 404 if the transaction does not exist', async () => {
       // update a nonexistent transaction in the database
       const res = await request(ctx.app)
@@ -1071,6 +1089,15 @@ describe('TransactionController', (): void => {
   });
 
   describe('DELETE /transactions', () => {
+    it('should return an HTTP 409 if the transaction was paid by card terminal', async () => {
+      const id = await createTerminalPaidTransaction();
+      const res = await request(ctx.app)
+        .delete(`/transactions/${id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(409);
+      expect(res.body).to.equal('Transaction was paid by card terminal and cannot be modified.');
+      expect(await Transaction.findOne({ where: { id } })).to.not.be.null;
+    });
     it('should return an HTTP 204 if the transaction exists and user is admin', async () => {
       let res = await request(ctx.app)
         .get('/transactions/1')
