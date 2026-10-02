@@ -326,4 +326,20 @@ describe('PointOfSaleService', async (): Promise<void> => {
       await dbPointOfSale.recover();
     });
   });
+  describe('point of sale without containers', () => {
+    it('should not attach any containers when updating with an empty container list', async () => {
+      const created = await PointOfSaleService.createPointOfSale(ctx.validPOSParams);
+      const update: UpdatePointOfSaleParams = {
+        containers: [],
+        id: created.pointOfSale.id,
+        name: 'Empty POS',
+        useAuthentication: true,
+        cashierRoleIds: [],
+      };
+
+      const revision = await PointOfSaleService.updatePointOfSale(update);
+      expect(revision).to.not.be.null;
+      expect(revision.containers).to.be.empty;
+    });
+  });
 });
