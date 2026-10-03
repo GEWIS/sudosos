@@ -81,7 +81,7 @@ that don't need them day to day.
 
 ---
 
-## 🛠️ Command reference
+## 🔧 Command reference
 
 ```bash
 pnpm build                # everything, in topo order
@@ -109,7 +109,7 @@ The deployment of SudoSOS at GEWIS is done via Kubernetes. You can see the files
 
 ## 🤝 Contributing
 
-We're a small student association, so contributions from members are how this project moves forward. The
+We're a student association, so contributions from members are how this project moves forward. The
 short version:
 
 - **Branch from `develop`; PRs target `develop`.** `main` only moves via releases, so don't branch from it
@@ -121,10 +121,13 @@ short version:
 - **Rebase, don't merge.** Keep history linear; force-push your own branch with `--force-with-lease` after
   a rebase, never plain `--force`.
 - **Before opening a PR**, run the linter and the relevant test suite for the area you touched (see the
-  [Command reference](#command-reference) above). CI runs the same checks and will block merging
+  [Command reference](#-command-reference) above). CI runs the same checks and will block merging
   otherwise.
 - Every PR needs at least one approval before it can merge into `develop` (branch protection enforces
   this), and the required CI checks above need to be green.
+- **AI tools are welcome; your voice is required.** Use AI to write code or explore ideas, but write
+  comments, issues, and PR descriptions yourself, and only submit changes you understand and can explain.
+  See the [AI Contribution Policy](./AI_POLICY.md).
 
 This covers the everyday flow. For the exhaustive version, including commit history philosophy, how we
 triage automated review feedback, and the full code quality checklist, see [CLAUDE.md](./CLAUDE.md).
