@@ -34,7 +34,8 @@ import { asArrayOfDates, asArrayOfUserTypes, asDate, asFromAndTillDate, asReturn
 import { In } from 'typeorm';
 import { HandoutFinesRequest } from './request/debtor-request';
 import Fine from '../entity/fine/fine';
-import { ReturnFileType } from 'pdf-generator-client';
+import { ReturnFileType } from '../helpers/pdf';
+import { sendPdfOrHtml } from '../helpers/express-pdf';
 import { PdfError } from '../errors';
 import FineHandoutEvent from '../entity/fine/fineHandoutEvent';
 
@@ -126,7 +127,7 @@ export default class DebtorController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnAllFineHandoutEvents(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all fine handout events by ', req.token.user);
+    this.logger.trace('fine.list_handout_events');
 
     let take;
     let skip;
@@ -162,7 +163,7 @@ export default class DebtorController extends BaseController {
    */
   public async returnSingleFineHandoutEvent(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get fine handout event', id, 'by', req.token.user);
+    this.logger.trace('fine.get_handout_event', { id });
 
     try {
       const event = await new DebtorService().getSingleFineHandoutEvent(Number.parseInt(id, 10));
@@ -190,7 +191,7 @@ export default class DebtorController extends BaseController {
    */
   public async deleteFine(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Delete fine', id, 'by', req.token.user);
+    this.logger.trace('fine.delete', { id });
 
     try {
       const parsedId = Number.parseInt(id, 10);
@@ -223,7 +224,7 @@ export default class DebtorController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async calculateFines(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all possible fines by ', req.token.user);
+    this.logger.trace('fine.calculate');
 
     let params;
     try {
@@ -261,7 +262,7 @@ export default class DebtorController extends BaseController {
    */
   public async handoutFines(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as HandoutFinesRequest;
-    this.logger.trace('Handout fines', body, 'by user', req.token.user);
+    this.logger.trace('fine.handout', { request: body });
 
     let referenceDate: Date;
     try {
@@ -301,7 +302,7 @@ export default class DebtorController extends BaseController {
    */
   public async deleteFineHandout(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Delete fine handout', id, 'by', req.token.user);
+    this.logger.trace('fine.delete_handout', { id });
 
     try {
       const parsedId = Number.parseInt(id, 10);
@@ -334,7 +335,7 @@ export default class DebtorController extends BaseController {
    */
   public async notifyAboutFutureFines(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as HandoutFinesRequest;
-    this.logger.trace('Send future fine notification emails', body, 'by user', req.token.user);
+    this.logger.trace('fine.notify_future', { request: body });
 
     let referenceDate: Date;
     try {
@@ -373,7 +374,7 @@ export default class DebtorController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async getFineReport(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get fine report by ', req.token.user);
+    this.logger.trace('fine.get_report');
 
     let fromDate, toDate;
     try {
@@ -402,13 +403,13 @@ export default class DebtorController extends BaseController {
    * @security JWT
    * @param {string} fromDate.query.required - The start date of the report, inclusive
    * @param {string} toDate.query.required - The end date of the report, exclusive
-   * @param {string} fileType.query.required - enum:PDF,TEX - The file type of the report
+   * @param {string} fileType.query - enum:PDF,HTML - The file type of the report (default PDF)
    * @returns {string} 200 - The requested report - application/pdf
    * @return {string} 400 - Validation error
    * @return {string} 500 - Internal server error
    */
   public async getFineReportPdf(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get fine report by ', req.token.user);
+    this.logger.trace('fine.get_report_pdf');
 
     let fromDate, toDate;
     let fileType: ReturnFileType;
@@ -425,14 +426,10 @@ export default class DebtorController extends BaseController {
     try {
       const report = await new DebtorService().getFineReport(fromDate, toDate);
 
-      const buffer = fileType === 'PDF' ? await report.createPdf() : await report.createRaw();
+      const buffer = fileType === ReturnFileType.PDF ? await report.createPdf() : await report.createRaw();
       const from = `${fromDate.getFullYear()}${fromDate.getMonth() + 1}${fromDate.getDate()}`;
       const to = `${toDate.getFullYear()}${toDate.getMonth() + 1}${toDate.getDate()}`;
-      const fileName = `fine-report-${from}-${to}.${fileType}`;
-
-      res.setHeader('Content-Type', 'application/pdf+tex');
-      res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
-      res.send(buffer);
+      sendPdfOrHtml(res, buffer, `fine-report-${from}-${to}`, fileType);
     } catch (error) {
       this.logger.error('Could not get fine report pdf:', error);
       if (error instanceof PdfError) {

@@ -124,7 +124,7 @@ export default class PayoutRequestController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnAllPayoutRequests(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all payout requests by user', req.token.user);
+    this.logger.trace('payout_request.list');
 
     let filters;
     let pagination;
@@ -158,7 +158,7 @@ export default class PayoutRequestController extends BaseController {
    */
   public async returnSinglePayoutRequest(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
-    this.logger.trace('Get single payout request', parameters, 'by user', req.token.user);
+    this.logger.trace('payout_request.get', { id: parameters.id });
 
     let payoutRequest;
     try {
@@ -191,7 +191,7 @@ export default class PayoutRequestController extends BaseController {
    */
   public async createPayoutRequest(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as PayoutRequestRequest;
-    this.logger.trace('Create payout request by user', req.token.user);
+    this.logger.trace('payout_request.create', { request: body });
 
     try {
       const user = await User.findOne({ where: { id: body.forId } });
@@ -229,7 +229,7 @@ export default class PayoutRequestController extends BaseController {
   public async updatePayoutRequestStatus(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
     const body = req.body as PayoutRequestStatusRequest;
-    this.logger.trace('Update single payout request status', parameters, 'by user', req.token.user);
+    this.logger.trace('payout_request.update_status', { id: parameters.id, request: body });
 
     const id = parseInt(parameters.id, 10);
 
@@ -302,7 +302,7 @@ export default class PayoutRequestController extends BaseController {
   public async getPayoutRequestPdf(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const payoutRequestId = parseInt(id, 10);
-    this.logger.trace('Get payout request pdf', id, 'by user', req.token.user);
+    this.logger.trace('payout_request.get_pdf', { id });
 
     try {
       const force = !!asBoolean(req.query.force);

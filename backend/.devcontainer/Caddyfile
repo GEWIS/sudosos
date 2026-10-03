@@ -1,0 +1,57 @@
+# Devcontainer edge: proxies the API and WebSocket server with their
+# /api and /ws prefixes stripped, and serves uploaded files from
+# ../data with the disk folders mapped to their public URL paths.
+:80 {
+	# API — strip /api, proxy to the backend, handle CORS preflights
+	handle_path /api/* {
+		header Access-Control-Allow-Origin "*"
+		header Access-Control-Expose-Headers "*"
+
+		@preflight method OPTIONS
+		handle @preflight {
+			header Access-Control-Allow-Methods "GET, HEAD, POST, OPTIONS, PATCH"
+			header Access-Control-Allow-Headers "*"
+			header Access-Control-Max-Age "1728000"
+			respond "" 204
+		}
+
+		reverse_proxy backend:3000
+	}
+
+	# WebSocket — strip /ws, proxy to the backend (upgrade is automatic)
+	handle_path /ws/* {
+		reverse_proxy backend:8080
+	}
+
+	# Uploaded files — disk folders mapped to their public URL paths
+	handle_path /static/products/* {
+		header Cache-Control "max-age=31536000"
+		root * /app/data/products
+		file_server
+	}
+	handle_path /static/banners/* {
+		header Cache-Control "max-age=31536000"
+		root * /app/data/banners
+		file_server
+	}
+	handle_path /static/invoices/* {
+		header Cache-Control "max-age=31536000"
+		root * /app/data/invoices
+		file_server
+	}
+	handle_path /static/payouts/* {
+		header Cache-Control "max-age=31536000"
+		root * /app/data/payout_requests
+		file_server
+	}
+	handle_path /static/sellerPayouts/* {
+		header Cache-Control "max-age=31536000"
+		root * /app/data/seller_payouts
+		file_server
+	}
+	handle_path /static/writeOffs/* {
+		header Cache-Control "max-age=31536000"
+		root * /app/data/write_offs
+		file_server
+	}
+}

@@ -29,6 +29,9 @@ const VALID_DATABASE_CONNECTIONS: readonly string[] = ['better-sqlite3', 'postgr
 export type StorageMethod = 'disk';
 const VALID_STORAGE_METHODS: readonly string[] = ['disk'];
 
+export type LogFormat = 'json' | 'pretty';
+const VALID_LOG_FORMATS: readonly string[] = ['json', 'pretty'];
+
 function getOptionalString(name: string): string | undefined {
   const value = process.env[name];
   if (value == null) return undefined;
@@ -67,6 +70,7 @@ export default class Config {
     isTest: boolean;
     httpPort: number;
     logLevel: string;
+    logFormat: LogFormat;
     apiHost: string;
     apiBasePath: string;
     frontendUrl: string;
@@ -140,7 +144,6 @@ export default class Config {
   };
 
   public readonly pdf: {
-    pdfGeneratorUrl: string;
     htmlPdfGeneratorUrl: string;
   };
 
@@ -176,6 +179,14 @@ export default class Config {
     const nodeEnv = getOptionalString('NODE_ENV');
     const isTest = nodeEnv === 'test';
     const defaultRedisConnectTimeoutMs = isTest ? 100 : 3000;
+
+    // Machine-readable logs in production, readable ones everywhere else.
+    const rawLogFormat = getOptionalString('LOG_FORMAT')
+      ?? (nodeEnv === 'production' ? 'json' : 'pretty');
+    if (!VALID_LOG_FORMATS.includes(rawLogFormat)) {
+      throw new Error(`Unsupported LOG_FORMAT: '${rawLogFormat}'. Must be one of: ${VALID_LOG_FORMATS.join(', ')}`);
+    }
+    const logFormat = rawLogFormat as LogFormat;
 
     const rawConnection = getOptionalString('TYPEORM_CONNECTION') ?? 'better-sqlite3';
     if (!VALID_DATABASE_CONNECTIONS.includes(rawConnection)) {
@@ -240,6 +251,7 @@ export default class Config {
       isTest,
       httpPort: getInteger('HTTP_PORT', 3000),
       logLevel: getOptionalString('LOG_LEVEL') ?? 'info',
+      logFormat,
       apiHost: getOptionalString('API_HOST') ?? 'localhost:3000',
       apiBasePath: getOptionalString('API_BASEPATH') ?? '/api/v1',
       frontendUrl: getOptionalString('URL') ?? 'http://localhost:5173',
@@ -315,7 +327,6 @@ export default class Config {
     };
 
     this.pdf = {
-      pdfGeneratorUrl: getOptionalString('PDF_GEN_URL') ?? 'http://pdf:3001/pdf',
       htmlPdfGeneratorUrl: getOptionalString('HTML_PDF_GEN_URL') ?? 'http://pdf-compiler:80/api/v1',
     };
 

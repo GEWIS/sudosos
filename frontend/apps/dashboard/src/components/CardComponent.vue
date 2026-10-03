@@ -7,7 +7,10 @@
   >
     <template #header>
       <div class="flex flex-row w-full justify-between p-5 pb-0">
-        <div class="font-semibold text-primary">{{ header.toUpperCase() }}</div>
+        <div>
+          <div class="font-semibold text-primary">{{ header.toUpperCase() }}</div>
+          <div v-if="subtitle" class="text-muted-color text-sm font-normal">{{ subtitle }}</div>
+        </div>
         <div><slot name="topAction" /></div>
       </div>
     </template>
@@ -29,6 +32,7 @@ import { type RouteParamsRawGeneric, useRouter } from 'vue-router';
 const props = withDefaults(
   defineProps<{
     header: string;
+    subtitle?: string;
     routerLink?: string;
     routerParams?: RouteParamsRawGeneric;
     action?: string;
@@ -36,6 +40,7 @@ const props = withDefaults(
     center?: boolean;
   }>(),
   {
+    subtitle: undefined,
     routerLink: undefined,
     routerParams: undefined,
     action: undefined,

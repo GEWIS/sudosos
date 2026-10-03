@@ -28,6 +28,7 @@ import log4js from 'log4js';
 import sinon from 'sinon';
 import { Client } from 'ldapts';
 import User, { UserType } from '../../../src/entity/user/user';
+import MemberUser from '../../../src/entity/user/member-user';
 import TokenHandler from '../../../src/authentication/token-handler';
 import Database from '../../../src/database/database';
 import Swagger from '../../../src/start/swagger';
@@ -122,6 +123,13 @@ describe('AuthenticationController', async (): Promise<void> => {
         nonce: 'test',
       },
     };
+
+    // Linked so logging in as ctx.user should surface a memberId (see testHashAuthentication).
+    await MemberUser.save({
+      userId: ctx.user.id,
+      user: ctx.user,
+      memberId: 1234,
+    } as MemberUser);
 
     const userSeeder = new UserSeeder();
     await userSeeder.seedHashAuthenticator([ctx.user, ctx.user2], LocalAuthenticator);
@@ -249,6 +257,9 @@ describe('AuthenticationController', async (): Promise<void> => {
         .send(right);
       expect(res.status).to.equal(200);
       expect((res.body as AuthenticationResponse).user.id).to.be.equal(1);
+      // Regression: the User query backing this login must load the memberUser
+      // relation, or the response (and the JWT it signs) has no memberId at all.
+      expect((res.body as AuthenticationResponse).user.memberId).to.be.equal(1234);
     });
     it('should return an HTTP 403 if incorrect', async () => {
       const res = await request(ctx.app)

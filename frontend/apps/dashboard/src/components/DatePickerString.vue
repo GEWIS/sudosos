@@ -5,7 +5,6 @@
     v-bind="attributes"
     :disabled="disabled"
     :placeholder="placeholder"
-    @input="updateStringValue"
   />
 </template>
 
@@ -74,11 +73,5 @@ function dateToString(date: Date | null): string {
   const month = String(date.getMonth() + 1).padStart(2, '0'); // Zero-padding
   const day = String(date.getDate()).padStart(2, '0'); // Zero-padding
   return `${year}-${month}-${day}`;
-}
-
-// Function to emit the updated string representation of the date
-function updateStringValue(newDate: Event) {
-  const newString = dateToString(newDate as unknown as Date);
-  emit('update:modelValue', newString); // Emit the string representation
 }
 </script>

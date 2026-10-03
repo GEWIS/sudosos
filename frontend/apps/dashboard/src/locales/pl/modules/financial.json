@@ -242,6 +242,33 @@
           "downloadSuccess": "Raport został pomyślnie pobrany.",
           "downloadError": "Nie udało się pobrać raportu. Spróbuj ponownie."
         }
+      },
+      "transfer": {
+        "titleForType": "Transfery: {transferType}",
+        "types": {
+          "deposits": "Depozyt",
+          "sellerPayouts": "Wypłata dla sprzedawcy",
+          "invoices": "Faktura",
+          "creditInvoices": "Faktura korygująca",
+          "fines": "Kara",
+          "waivedFines": "Umorzona kara",
+          "adminCosts": "Koszt administracyjny",
+          "writeOffs": "Umorzenie",
+          "payoutRequests": "Wniosek o wypłatę",
+          "manualCreations": "Ręczne tworzenie",
+          "manualDeletions": "Ręczne usunięcie"
+        },
+        "saldo": "Saldo (€)",
+        "widget": {
+          "count": "Transfery",
+          "credit": "Uznanie (€)",
+          "debit": "Obciążenie (€)",
+          "balance": "Saldo (€)",
+          "selected": "Zaznaczone ({count})",
+          "selectedAmount": "Kwota (€)",
+          "remaining": "Pozostało (€)",
+          "fetchError": "Nie udało się wczytać sum transferów. Spróbuj ponownie."
+        }
       }
     }
   }

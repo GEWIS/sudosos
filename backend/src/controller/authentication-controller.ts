@@ -188,9 +188,10 @@ export default class AuthenticationController extends BaseController {
         return;
       }
 
-      const pinAuthenticator = await PinAuthenticator.findOne({ where: { user: { id: user.id } }, relations: {
-        user: true,
-      } });
+      const pinAuthenticator = await PinAuthenticator.findOne({
+        where: { user: { id: user.id } },
+        relations: UserService.getRelations<PinAuthenticator>(),
+      });
       if (!pinAuthenticator) {
         res.status(403).json({
           message: 'Invalid credentials.',
@@ -300,9 +301,10 @@ export default class AuthenticationController extends BaseController {
         return;
       }
 
-      const localAuthenticator = await LocalAuthenticator.findOne({ where: { user: { id: user.id } }, relations: {
-        user: true,
-      } });
+      const localAuthenticator = await LocalAuthenticator.findOne({
+        where: { user: { id: user.id } },
+        relations: UserService.getRelations<LocalAuthenticator>(),
+      });
       if (!localAuthenticator) {
         res.status(403).json({
           message: 'Invalid credentials.',

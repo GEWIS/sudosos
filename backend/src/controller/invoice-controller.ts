@@ -158,7 +158,7 @@ export default class InvoiceController extends BaseController {
    */
   public async getAllInvoices(req: RequestWithToken, res: Response): Promise<void> {
     const { body } = req;
-    this.logger.trace('Get all invoices', body, 'by user', req.token.user);
+    this.logger.trace('invoice.list', { filters: body });
 
     let take;
     let skip;
@@ -206,7 +206,7 @@ export default class InvoiceController extends BaseController {
   public async getSingleInvoice(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const invoiceId = parseInt(id, 10);
-    this.logger.trace('Get invoice', invoiceId, 'by user', req.token.user);
+    this.logger.trace('invoice.get', { id });
 
     // Handle request
     try {
@@ -246,7 +246,7 @@ export default class InvoiceController extends BaseController {
    */
   public async createInvoice(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as CreateInvoiceRequest;
-    this.logger.trace('Create Invoice', body, 'by user', req.token.user);
+    this.logger.trace('invoice.create', { request: body });
 
     // handle request
     try {
@@ -291,7 +291,7 @@ export default class InvoiceController extends BaseController {
     const body = req.body as UpdateInvoiceRequest;
     const { id } = req.params;
     const invoiceId = parseInt(id, 10);
-    this.logger.trace('Update Invoice', body, 'by user', req.token.user);
+    this.logger.trace('invoice.update', { id, request: body });
 
     try {
       // Default byId to token user id.
@@ -327,7 +327,7 @@ export default class InvoiceController extends BaseController {
   public async deleteInvoice(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const invoiceId = parseInt(id, 10);
-    this.logger.trace('Delete Invoice', id, 'by user', req.token.user);
+    this.logger.trace('invoice.delete', { id });
 
     try {
       const invoice = await AppDataSource.manager.transaction(async (manager) =>
@@ -358,7 +358,7 @@ export default class InvoiceController extends BaseController {
   public async getInvoicePDF(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const invoiceId = parseInt(id, 10);
-    this.logger.trace('Get Invoice PDF', id, 'by user', req.token.user);
+    this.logger.trace('invoice.get_pdf', { id });
 
     try {
       const invoice = await Invoice.findOne(InvoiceService.getOptions({ invoiceId, returnInvoiceEntries: true }) );
@@ -394,7 +394,7 @@ export default class InvoiceController extends BaseController {
   public async deleteInvoiceUser(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const userId = parseInt(id, 10);
-    this.logger.trace('Delete Invoice User', id, 'by user', req.token.user);
+    this.logger.trace('invoice_user.delete', { id });
 
     try {
       const invoiceUser = await InvoiceUser.findOne({ where: { userId } });
@@ -427,7 +427,7 @@ export default class InvoiceController extends BaseController {
   public async getSingleInvoiceUser(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const userId = parseInt(id, 10);
-    this.logger.trace('Get Invoice User', id, 'by user', req.token.user);
+    this.logger.trace('invoice_user.get', { id });
 
     try {
       const user = await User.findOne({ where: { id: userId, deleted: false } });
@@ -473,7 +473,7 @@ export default class InvoiceController extends BaseController {
     const { id } = req.params;
     const body = req.body as UpdateInvoiceUserRequest;
     const userId = parseInt(id, 10);
-    this.logger.trace('Update Invoice User', id, 'by user', req.token.user);
+    this.logger.trace('invoice_user.update', { id, request: body });
 
     try {
       const user = await User.findOne({ where: { id: userId, deleted: false } });
@@ -514,7 +514,7 @@ export default class InvoiceController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async getEligibleTransactions(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get eligible transactions for invoice creation', req.query, 'by user', req.token.user);
+    this.logger.trace('invoice.list_eligible_transactions', { query: req.query });
 
     let fromDate, tillDate;
     let forId;
@@ -551,7 +551,7 @@ export default class InvoiceController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async getDriftedInvoices(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get drifted invoices by user', req.token.user);
+    this.logger.trace('invoice.list_drifted');
     try {
       const results = await new InvoiceService().findDriftedInvoices();
       res.json(results.map(InvoiceService.asInvoiceDriftResponse));

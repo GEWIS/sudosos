@@ -30,7 +30,10 @@
 
 import fs from 'fs';
 import path from 'path';
-import { BAC } from '../files/templates/bac-letterhead';
+import { escapeHtml } from './escape';
+import { BAC_FOOTER_CSS, bacFooterHtml } from './bac-footer.html';
+
+export { escapeHtml };
 
 const PRIMARY = '#004b31';
 const PRIMARY_DARK = '#074a33';
@@ -119,15 +122,6 @@ const eur = new Intl.NumberFormat('nl-NL', {
 /** Format a euro amount in nl-NL style with the locale's no-break space
  *  between symbol and amount removed (e.g. €1.234,56). */
 export const fmt = (n: number): string => eur.format(n).replace(/\s/g, '');
-
-export function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
 
 function metaList(rows: IDocumentMetaRow[]): string {
   return rows
@@ -220,13 +214,8 @@ export function createDocumentPdf(options: IDocumentPdf): string {
 
   .questions { font-size:9pt; color:${MUTED}; margin-top:24px; text-align:right }
 
-  /* Footer column proportions: BAC name+address | VAT+KvK | IBAN | contact.
-     All four columns lead with a header line; the BTW/IBAN columns use an
-     invisible <strong> spacer so their data rows align with the address /
-     email rows in the bold-labelled columns. */
-  .page-foot { padding:24px 56px 30px; margin-top:60px; font-size:8.5pt; color:${MUTED}; line-height:1.5; display:grid; grid-template-columns:1.3fr 1.2fr 1.6fr 1.1fr; gap:24px; flex:0 0 auto }
-  .page-foot .col { white-space:nowrap }
-  .page-foot .col strong { display:block; color:#111; font-size:9pt; margin-bottom:4px; font-weight:700; white-space:normal }
+  ${BAC_FOOTER_CSS}
+  .page-foot { margin-top:60px; flex:0 0 auto }
 
   /* Line-items page: per-row items table. Compact rows so a typical document
      fits on one page; tr.total is glued to the previous row so it never
@@ -303,26 +292,7 @@ export function createDocumentPdf(options: IDocumentPdf): string {
       <div class="questions">${options.questionsLine}</div>
     </div>
 
-    <div class="page-foot">
-      <div class="col">
-        <strong>${escapeHtml(BAC.name)}</strong>
-        ${escapeHtml(BAC.street)}<br>
-        ${escapeHtml(BAC.postalCity)}
-      </div>
-      <div class="col">
-        <strong style="visibility:hidden">&nbsp;</strong>
-        VAT ${escapeHtml(BAC.vat)}<br>
-        KvK ${escapeHtml(BAC.kvk)}
-      </div>
-      <div class="col">
-        <strong style="visibility:hidden">&nbsp;</strong>
-        IBAN ${escapeHtml(BAC.iban)}
-      </div>
-      <div class="col">
-        <strong>contact</strong>
-        ${escapeHtml(BAC.email)}<br>
-        ${escapeHtml(BAC.phone)}
-      </div>
+    <div class="page-foot bac-foot">${bacFooterHtml()}
     </div>
   </section>
 

@@ -22,33 +22,27 @@
 /**
  * This is the page of write-off-pdf-service.
  *
- * @module internal/write-off-pdf-service
+ * @module internal/pdf/write-off-pdf-service
  */
 
-import { WriteOff as PdfWriteOff, WriteOffParameters, WriteOffRouteParams, FileResponse } from 'pdf-generator-client';
 import WriteOff from '../../entity/transactions/write-off';
-import { PdfService } from './pdf-service';
 import WriteOffPdf from '../../entity/file/write-off-pdf';
+import { HtmlPdfService } from './pdf-service';
+import { createWriteOffPdf, IWriteOffPdf } from '../../html/write-off.html';
 
-export default class WriteOffPdfService extends PdfService<WriteOffPdf, WriteOff, WriteOffRouteParams> {
+export default class WriteOffPdfService extends HtmlPdfService<WriteOffPdf, WriteOff, IWriteOffPdf> {
 
   pdfConstructor = WriteOffPdf;
 
-  routeConstructor = WriteOffRouteParams;
+  htmlGenerator = createWriteOffPdf;
 
-  generator(routeParams: WriteOffRouteParams): Promise<FileResponse> {
-    return this.client.generateWriteOff(routeParams);
-  }
-
-  async getParameters(entity: WriteOff): Promise<WriteOffParameters> {
-    return new WriteOffParameters({
-      writeOff: new PdfWriteOff({
-        name: entity.to.firstName + ' ' + entity.to.lastName,
-        amount: entity.amount.getAmount(),
-        reference: `SDS-WR-${String(entity.id).padStart(4, '0')}`,
-        date: entity.createdAt,
-        debtorNumber: String(entity.to.id),
-      }),
-    });
+  async getParameters(entity: WriteOff): Promise<IWriteOffPdf> {
+    return {
+      reference: `SDS-WR-${String(entity.id).padStart(4, '0')}`,
+      account: [entity.to.firstName, entity.to.lastName].filter(Boolean).join(' '),
+      accountId: String(entity.to.id),
+      date: entity.createdAt.toLocaleDateString('nl-NL'),
+      amount: entity.amount.toFormat(),
+    };
   }
 }

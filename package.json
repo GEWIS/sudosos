@@ -1,8 +1,10 @@
 {
   "name": "sudosos",
   "private": true,
-  "packageManager": "pnpm@10.33.0",
-  "engines": { "node": ">=22" },
+  "packageManager": "pnpm@12.8.1+sha512.f64ba907507f5ceafe06c8d38e6052d0179444580ec1279ddd5bfc11cb48aa8a2644b66598e07e761da84872a9fc57d5f902b87fa49d024198d558612aabbe45",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "prepare": "husky || true",
     "build": "pnpm -r build",
@@ -18,6 +20,7 @@
     "backend:watch": "pnpm --filter sudosos-backend watch",
     "frontend:lint": "pnpm --filter './frontend/**' lint",
     "frontend:build": "pnpm --filter @gewis/sudosos-client build && pnpm --filter './frontend/**' build",
+    "storybook:todo": "pnpm --filter sudosos-dashboard storybook:todo",
     "dev:libraries": "concurrently --kill-others \"pnpm --filter @sudosos/sudosos-frontend-common dev\" \"pnpm --filter @sudosos/themes dev\"",
     "dev:dashboard": "concurrently --kill-others \"pnpm --filter sudosos-dashboard dev:local\" \"pnpm run dev:libraries\"",
     "dev:pos": "concurrently --kill-others \"pnpm --filter @sudosos/point-of-sale dev:local\" \"pnpm run dev:libraries\"",
@@ -31,14 +34,10 @@
     "concurrently": "^9.2.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "prettier": "^3.7.4",
+    "prettier": "^3.9.9",
     "@gewis/prettier-config": "^2.2.2"
   },
   "lint-staged": {
     "frontend/**/*": "prettier --write --ignore-unknown"
-  },
-  "pnpm": {
-    "overrides": { "ioredis": "5.11.1" },
-    "onlyBuiltDependencies": ["@swc/core", "bcrypt", "better-sqlite3", "esbuild", "msgpackr-extract", "vue-demi"]
   }
 }

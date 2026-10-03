@@ -27,7 +27,7 @@
       <ActionButton
         :disabled="!form?.context.meta.value.valid"
         :label="t('common.create')"
-        :result="form.success?.value != null"
+        :result="form.success?.value"
         :submitting="form.context.isSubmitting.value"
         type="submit"
         @click="() => form && form.submit()"

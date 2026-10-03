@@ -1,6 +1,6 @@
 # Build in a different image to keep the target image clean
 FROM node:22 AS build
-RUN npm install -g pnpm@10.33.0
+RUN npm install -g pnpm@12.8.1
 WORKDIR /repo
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc .prettierrc.js ./
 COPY packages/sudosos-client/package.json packages/sudosos-client/
@@ -19,7 +19,7 @@ ENV VITE_GIT_COMMIT_SHA=${GIT_COMMIT_SHA}
 RUN pnpm --filter '@sudosos/point-of-sale...' build
 
 # The target image that will be run
-FROM nginx:alpine AS target
-WORKDIR /app
-COPY frontend/apps/point-of-sale/docker/nginx.conf /etc/nginx/nginx.conf
-COPY --from=build --chown=nginx /repo/frontend/apps/point-of-sale/dist/ /app
+FROM caddy:alpine AS target
+WORKDIR /srv
+COPY frontend/apps/point-of-sale/docker/Caddyfile /etc/caddy/Caddyfile
+COPY --from=build /repo/frontend/apps/point-of-sale/dist/ /srv

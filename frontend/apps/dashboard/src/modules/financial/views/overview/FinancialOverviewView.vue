@@ -2,18 +2,18 @@
   <div>
     <PageContainer>
       <div class="flex flex-col gap-5 md:flex-col">
-        <Card class="w-full">
-          <template #title> {{ t('modules.financial.financialOverview.title') }}</template>
-          <template #subtitle> {{ t('modules.financial.financialOverview.subtitle') }} </template>
-          <template #content>
-            <Tabs v-model:value="year" class="w-full">
-              <TabList>
-                <Tab v-for="y in years" :key="y" :value="y.toString()">{{ y }}</Tab>
-              </TabList>
-            </Tabs>
-            <FinancialOverviewTable :loading="loading" :sellers="sellers" :year="Number(year)" />
-          </template>
-        </Card>
+        <CardComponent
+          class="w-full"
+          :header="t('modules.financial.financialOverview.title')"
+          :subtitle="t('modules.financial.financialOverview.subtitle')"
+        >
+          <Tabs v-model:value="year" class="w-full">
+            <TabList>
+              <Tab v-for="y in years" :key="y" :value="y.toString()">{{ y }}</Tab>
+            </TabList>
+          </Tabs>
+          <FinancialOverviewTable :loading="loading" :sellers="sellers" :year="Number(year)" />
+        </CardComponent>
       </div>
     </PageContainer>
   </div>
@@ -27,6 +27,7 @@ import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import { useToast } from 'primevue/usetoast';
 import type { AxiosError } from 'axios';
 import FinancialOverviewTable from '@/modules/financial/views/overview/FinancialOverviewTable.vue';
+import CardComponent from '@/components/CardComponent.vue';
 import PageContainer from '@/layout/PageContainer.vue';
 import { useFiscalYear } from '@/composables/fiscalYear';
 import ApiService from '@/services/ApiService';

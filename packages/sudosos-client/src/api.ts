@@ -11431,17 +11431,15 @@ export const DebtorsApiAxiosParamCreator = function (configuration?: Configurati
          * @summary Get a report of all fines in pdf format
          * @param {string} fromDate The start date of the report, inclusive
          * @param {string} toDate The end date of the report, exclusive
-         * @param {GetFineReportPdfFileTypeEnum} fileType The file type of the report
+         * @param {GetFineReportPdfFileTypeEnum} [fileType] The file type of the report (default PDF)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFineReportPdf: async (fromDate: string, toDate: string, fileType: GetFineReportPdfFileTypeEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getFineReportPdf: async (fromDate: string, toDate: string, fileType?: GetFineReportPdfFileTypeEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fromDate' is not null or undefined
             assertParamExists('getFineReportPdf', 'fromDate', fromDate)
             // verify required parameter 'toDate' is not null or undefined
             assertParamExists('getFineReportPdf', 'toDate', toDate)
-            // verify required parameter 'fileType' is not null or undefined
-            assertParamExists('getFineReportPdf', 'fileType', fileType)
             const localVarPath = `/fines/report/pdf`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11712,11 +11710,11 @@ export const DebtorsApiFp = function(configuration?: Configuration) {
          * @summary Get a report of all fines in pdf format
          * @param {string} fromDate The start date of the report, inclusive
          * @param {string} toDate The end date of the report, exclusive
-         * @param {GetFineReportPdfFileTypeEnum} fileType The file type of the report
+         * @param {GetFineReportPdfFileTypeEnum} [fileType] The file type of the report (default PDF)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getFineReportPdf(fromDate: string, toDate: string, fileType: GetFineReportPdfFileTypeEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+        async getFineReportPdf(fromDate: string, toDate: string, fileType?: GetFineReportPdfFileTypeEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getFineReportPdf(fromDate, toDate, fileType, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['DebtorsApi.getFineReportPdf']?.[index]?.url;
@@ -11969,11 +11967,11 @@ export interface DebtorsApiGetFineReportPdfRequest {
     readonly toDate: string
 
     /**
-     * The file type of the report
-     * @type {'PDF' | 'TEX'}
+     * The file type of the report (default PDF)
+     * @type {'PDF' | 'HTML'}
      * @memberof DebtorsApiGetFineReportPdf
      */
-    readonly fileType: GetFineReportPdfFileTypeEnum
+    readonly fileType?: GetFineReportPdfFileTypeEnum
 }
 
 /**
@@ -12160,7 +12158,7 @@ export class DebtorsApi extends BaseAPI {
  */
 export const GetFineReportPdfFileTypeEnum = {
     Pdf: 'PDF',
-    Tex: 'TEX'
+    Html: 'HTML'
 } as const;
 export type GetFineReportPdfFileTypeEnum = typeof GetFineReportPdfFileTypeEnum[keyof typeof GetFineReportPdfFileTypeEnum];
 
@@ -25665,7 +25663,7 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
          * @param {number} id The id of the user to get the purchase report for
          * @param {string} fromDate Start date for selected purchases (inclusive)
          * @param {string} tillDate End date for selected purchases (exclusive)
-         * @param {GetUsersPurchaseReportPdfFileTypeEnum} [fileType] The file type of the report
+         * @param {GetUsersPurchaseReportPdfFileTypeEnum} [fileType] The file type of the report (default PDF)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -25827,7 +25825,7 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
          * @param {string} fromDate Start date for selected sales (inclusive)
          * @param {string} tillDate End date for selected sales (exclusive)
          * @param {string} [description] Description of the report
-         * @param {GetUsersSalesReportPdfFileTypeEnum} [fileType] The file type of the report
+         * @param {GetUsersSalesReportPdfFileTypeEnum} [fileType] The file type of the report (default PDF)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -26842,7 +26840,7 @@ export const UsersApiFp = function(configuration?: Configuration) {
          * @param {number} id The id of the user to get the purchase report for
          * @param {string} fromDate Start date for selected purchases (inclusive)
          * @param {string} tillDate End date for selected purchases (exclusive)
-         * @param {GetUsersPurchaseReportPdfFileTypeEnum} [fileType] The file type of the report
+         * @param {GetUsersPurchaseReportPdfFileTypeEnum} [fileType] The file type of the report (default PDF)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -26889,7 +26887,7 @@ export const UsersApiFp = function(configuration?: Configuration) {
          * @param {string} fromDate Start date for selected sales (inclusive)
          * @param {string} tillDate End date for selected sales (exclusive)
          * @param {string} [description] Description of the report
-         * @param {GetUsersSalesReportPdfFileTypeEnum} [fileType] The file type of the report
+         * @param {GetUsersSalesReportPdfFileTypeEnum} [fileType] The file type of the report (default PDF)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -28031,8 +28029,8 @@ export interface UsersApiGetUsersPurchaseReportPdfRequest {
     readonly tillDate: string
 
     /**
-     * The file type of the report
-     * @type {'PDF' | 'TEX'}
+     * The file type of the report (default PDF)
+     * @type {'PDF' | 'HTML'}
      * @memberof UsersApiGetUsersPurchaseReportPdf
      */
     readonly fileType?: GetUsersPurchaseReportPdfFileTypeEnum
@@ -28129,8 +28127,8 @@ export interface UsersApiGetUsersSalesReportPdfRequest {
     readonly description?: string
 
     /**
-     * The file type of the report
-     * @type {'PDF' | 'TEX'}
+     * The file type of the report (default PDF)
+     * @type {'PDF' | 'HTML'}
      * @memberof UsersApiGetUsersSalesReportPdf
      */
     readonly fileType?: GetUsersSalesReportPdfFileTypeEnum
@@ -29005,7 +29003,7 @@ export type GetUsersPaymentRequestsStatusEnum = typeof GetUsersPaymentRequestsSt
  */
 export const GetUsersPurchaseReportPdfFileTypeEnum = {
     Pdf: 'PDF',
-    Tex: 'TEX'
+    Html: 'HTML'
 } as const;
 export type GetUsersPurchaseReportPdfFileTypeEnum = typeof GetUsersPurchaseReportPdfFileTypeEnum[keyof typeof GetUsersPurchaseReportPdfFileTypeEnum];
 /**
@@ -29013,7 +29011,7 @@ export type GetUsersPurchaseReportPdfFileTypeEnum = typeof GetUsersPurchaseRepor
  */
 export const GetUsersSalesReportPdfFileTypeEnum = {
     Pdf: 'PDF',
-    Tex: 'TEX'
+    Html: 'HTML'
 } as const;
 export type GetUsersSalesReportPdfFileTypeEnum = typeof GetUsersSalesReportPdfFileTypeEnum[keyof typeof GetUsersSalesReportPdfFileTypeEnum];
 

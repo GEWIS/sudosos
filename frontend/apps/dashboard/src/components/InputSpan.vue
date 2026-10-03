@@ -191,7 +191,7 @@ const showInline = computed(() => {
 });
 
 onMounted(() => {
-  internalValue.value = props.value ?? '';
+  internalValue.value = props.value ?? initialValue();
 });
 
 watch(

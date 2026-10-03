@@ -18,6 +18,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["run", "dev:pos"],
       "port": 5174
+    },
+    {
+      "name": "storybook",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "sudosos-dashboard", "storybook"],
+      "port": 6006
     }
   ]
 }

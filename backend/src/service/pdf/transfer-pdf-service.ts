@@ -36,7 +36,6 @@ import PayoutRequest from '../../entity/transactions/payout/payout-request';
 import Fine from '../../entity/fine/fine';
 import UserFineGroup from '../../entity/fine/userFineGroup';
 import InactiveAdministrativeCost from '../../entity/transactions/inactive-administrative-cost';
-import Config from '../../config';
 
 export default class TransferPdfService extends HtmlUnstoredPdfService<Transfer, ITransferPdf> {
 
@@ -97,7 +96,6 @@ export default class TransferPdfService extends HtmlUnstoredPdfService<Transfer,
       date: transfer.createdAt.toLocaleDateString('nl-NL'),
       description: transfer.description || '',
       amount: transfer.amountInclVat.toFormat(),
-      serviceEmail: Config.get().mail.financialResponsible || '',
     };
   }
 }

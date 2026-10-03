@@ -41,6 +41,7 @@ import Database from './database/database';
 import Swagger from './start/swagger';
 import TokenHandler from './authentication/token-handler';
 import TokenMiddleware from './middleware/token-middleware';
+import RequestContextMiddleware from './middleware/request-context-middleware';
 import AuthenticationController from './controller/authentication-controller';
 import RoleManager from './rbac/role-manager';
 import BannerController from './controller/banner-controller';
@@ -225,6 +226,8 @@ export default async function createApp(): Promise<Application> {
 
   // Create express application.
   application.app = express();
+  // Registered first, so that requests rejected by later middleware are correlatable too.
+  application.app.use(new RequestContextMiddleware().getMiddleware());
   application.specification = await Swagger.initialize(application.app);
   application.app.use(json({
     verify: extractRawBody,
@@ -246,6 +249,9 @@ export default async function createApp(): Promise<Application> {
     application.app.use('/static/products', express.static('data/products'));
     application.app.use('/static/banners', express.static('data/banners'));
     application.app.use('/static/invoices', express.static('data/invoices'));
+    application.app.use('/static/payouts', express.static('data/payout_requests'));
+    application.app.use('/static/sellerPayouts', express.static('data/seller_payouts'));
+    application.app.use('/static/writeOffs', express.static('data/write_offs'));
   }
 
   application.roleManager = await new RoleManager().initialize();

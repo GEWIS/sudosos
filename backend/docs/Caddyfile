@@ -1,0 +1,15 @@
+# Serves the built VitePress docs: clean URLs (foo -> foo.html),
+# hashed /assets cached for a year, and 404.html for missing pages.
+:80 {
+	root * /srv
+	encode gzip
+	try_files {path} {path}.html {path}/
+	file_server
+
+	header /assets/* Cache-Control "public, immutable, max-age=31536000"
+
+	handle_errors 404 {
+		rewrite * /404.html
+		file_server
+	}
+}

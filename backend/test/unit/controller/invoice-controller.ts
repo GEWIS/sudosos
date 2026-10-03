@@ -557,6 +557,59 @@ describe('InvoiceController', async () => {
       expect(body.addressee).to.equal(updateRequest.addressee);
       expect(body.currentState.state).to.equal(updateRequest.state);
     });
+    it('should return an HTTP 400 if an addressing field exceeds 255 characters', async () => {
+      const invoice = ctx.invoices.find((i) => InvoiceService.isState(i, InvoiceState.CREATED));
+      expect(invoice).to.not.be.undefined;
+      const fields: (keyof UpdateInvoiceRequest)[] = ['addressee', 'street', 'postalCode', 'city', 'country', 'attention', 'reference'];
+
+      for (const field of fields) {
+        const res = await request(ctx.app)
+          .patch(`/invoices/${invoice.id}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`)
+          .send({ [field]: 'x'.repeat(256) });
+
+        expect(res.status, field).to.equal(400);
+      }
+    });
+    it('should return an HTTP 400 if a required addressing field is null', async () => {
+      const invoice = ctx.invoices.find((i) => InvoiceService.isState(i, InvoiceState.CREATED));
+      expect(invoice).to.not.be.undefined;
+      const fields: (keyof UpdateInvoiceRequest)[] = ['addressee', 'street', 'postalCode', 'city', 'country', 'reference'];
+
+      for (const field of fields) {
+        const res = await request(ctx.app)
+          .patch(`/invoices/${invoice.id}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`)
+          .send({ [field]: null });
+
+        expect(res.status, field).to.equal(400);
+      }
+    });
+    it('should return an HTTP 400 if the date is invalid', async () => {
+      const invoice = ctx.invoices.find((i) => InvoiceService.isState(i, InvoiceState.CREATED));
+      expect(invoice).to.not.be.undefined;
+
+      for (const date of ['garbage', '2026-13-45']) {
+        const res = await request(ctx.app)
+          .patch(`/invoices/${invoice.id}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`)
+          .send({ date });
+
+        expect(res.status, date).to.equal(400);
+      }
+    });
+    it('should return an HTTP 400 if byId does not exist', async () => {
+      const invoice = ctx.invoices.find((i) => InvoiceService.isState(i, InvoiceState.CREATED));
+      expect(invoice).to.not.be.undefined;
+      const byId = (await User.count()) + 1;
+
+      const res = await request(ctx.app)
+        .patch(`/invoices/${invoice.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ state: 'SENT', byId });
+
+      expect(res.status).to.equal(400);
+    });
     it('should return an HTTP 403 if not admin', async () => {
       const invoice = (await Invoice.find())[0];
       const updateRequest: UpdateInvoiceRequest = {

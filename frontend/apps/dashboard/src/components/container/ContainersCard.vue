@@ -84,13 +84,16 @@
 </template>
 <script setup lang="ts">
 import Accordion, { type AccordionTabOpenEvent } from 'primevue/accordion';
+import { useToast } from 'primevue/usetoast';
 import { computed, type Ref, ref } from 'vue';
+import type { AxiosError } from 'axios';
 import type { ContainerWithProductsResponse, PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import CardComponent from '../CardComponent.vue';
 import POSAddContainerModal from '@/modules/seller/components/POSAddContainerModal.vue';
 import ContainerActionsDialog from '@/components/container/ContainerActionsDialog.vue';
+import { handleError } from '@/utils/errorUtils';
 import { type ContainerInStore, useContainerStore } from '@/stores/container.store';
 import ContainerProductGrid from '@/components/container/ContainerProductGrid.vue';
 import { useDeleteContainerPOS } from '@/composables/deleteContainerPOS';
@@ -112,10 +115,15 @@ const props = withDefaults(
 
 const containerStore = useContainerStore();
 const { t } = useI18n();
+const toast = useToast();
 const onTabOpen = async (event: AccordionTabOpenEvent) => {
   const index = props.containers.findIndex((c) => c.id === event.index);
   if (index === -1) return;
-  await containerStore.fetchContainer(props.containers[index].id);
+  try {
+    await containerStore.fetchContainer(props.containers[index].id);
+  } catch (err) {
+    handleError(err as AxiosError, toast);
+  }
 };
 
 const handleEditClick = async (event: Event, id: number) => {
@@ -126,7 +134,14 @@ const handleEditClick = async (event: Event, id: number) => {
 const openContainerEdit = async (id?: number) => {
   if (id) {
     const container = props.containers.find((c) => c.id === id);
-    if (container) selectedContainer.value = await containerStore.fetchContainer(container.id);
+    if (container) {
+      try {
+        selectedContainer.value = await containerStore.fetchContainer(container.id);
+      } catch (err) {
+        handleError(err as AxiosError, toast);
+        return;
+      }
+    }
   } else selectedContainer.value = undefined;
   visible.value = true;
 };

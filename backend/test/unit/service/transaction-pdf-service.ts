@@ -75,7 +75,6 @@ describe('TransactionPdfService', () => {
       expect(params.createdByUserFirstName).to.equal(transaction.createdBy.firstName);
       expect(params.createdByUserLastName).to.equal(transaction.createdBy.lastName);
       expect(params.items).to.be.an('array');
-      expect(params.serviceEmail).to.be.a('string');
     });
 
     it('should throw error if transaction not found', async () => {

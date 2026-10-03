@@ -75,7 +75,7 @@ import UpdateKeyResponse from './response/update-key-response';
 import { randomBytes } from 'crypto';
 import DebtorService, { WaiveFinesParams } from '../service/debtor-service';
 import ReportService, { BuyerReportService, SalesReportService } from '../service/report-service';
-import { ReturnFileType, UserReportParametersType } from 'pdf-generator-client';
+import { ReturnFileType, UserReportType } from '../helpers/pdf';
 import { reportPDFhelper } from '../helpers/express-pdf';
 import { PdfError } from '../errors';
 import { WaiveFinesRequest } from './request/debtor-request';
@@ -1359,7 +1359,7 @@ export default class UserController extends BaseController {
    * @param {string} fromDate.query.required - Start date for selected sales (inclusive)
    * @param {string} tillDate.query.required - End date for selected sales (exclusive)
    * @param {string} description.query - Description of the report
-   * @param {string} fileType.query - enum:PDF,TEX - The file type of the report
+   * @param {string} fileType.query - enum:PDF,HTML - The file type of the report (default PDF)
    * @return {string} 404 - User not found error.
    * @returns {string} 200 - The requested report - application/pdf
    * @return {string} 400 - Validation error
@@ -1375,7 +1375,7 @@ export default class UserController extends BaseController {
     let fileType: ReturnFileType;
     try {
       filters = asFromAndTillDate(req.query.fromDate, req.query.tillDate);
-      description = String(req.query.description);
+      description = req.query.description ? String(req.query.description) : undefined;
       fileType = asReturnFileType(req.query.fileType);
     } catch (e) {
       res.status(400).json(e.message);
@@ -1389,7 +1389,7 @@ export default class UserController extends BaseController {
         return;
       }
       const service = new SalesReportService();
-      await reportPDFhelper(res)(service, filters, description, user.id, UserReportParametersType.Sales, fileType);
+      await reportPDFhelper(res)(service, filters, description, user.id, UserReportType.Sales, fileType);
     } catch (error) {
       this.logger.error('Could not get sales report:', error);
       if (error instanceof PdfError) {
@@ -1409,7 +1409,7 @@ export default class UserController extends BaseController {
    * @security JWT
    * @param {string} fromDate.query.required - Start date for selected purchases (inclusive)
    * @param {string} tillDate.query.required - End date for selected purchases (exclusive)
-   * @param {string} fileType.query - enum:PDF,TEX - The file type of the report
+   * @param {string} fileType.query - enum:PDF,HTML - The file type of the report (default PDF)
    * @return {string} 404 - User not found error.
    * @returns {string} 200 - The requested report - application/pdf
    * @return {string} 400 - Validation error
@@ -1421,11 +1421,9 @@ export default class UserController extends BaseController {
     this.logger.trace('Get purchase report pdf for user ', id, ' by user', req.token.user);
 
     let filters: { fromDate: Date, tillDate: Date };
-    let description: string;
     let fileType: ReturnFileType;
     try {
       filters = asFromAndTillDate(req.query.fromDate, req.query.tillDate);
-      description = String(req.query.description);
       fileType = asReturnFileType(req.query.fileType);
     } catch (e) {
       res.status(400).json(e.message);
@@ -1439,7 +1437,7 @@ export default class UserController extends BaseController {
         return;
       }
       const service = new BuyerReportService();
-      await (reportPDFhelper(res))(service, filters, description, user.id, UserReportParametersType.Purchases, fileType);
+      await (reportPDFhelper(res))(service, filters, undefined, user.id, UserReportType.Purchases, fileType);
     } catch (error) {
       this.logger.error('Could not get sales report:', error);
       if (error instanceof PdfError) {

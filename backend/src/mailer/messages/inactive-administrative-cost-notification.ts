@@ -18,6 +18,7 @@
  *  @license
  */
 
+import { Dinero } from 'dinero.js';
 import MailContentBuilder from './mail-content-builder';
 import MailMessage, { Language, MailLanguageMap } from '../mail-message';
 import { InactiveAdministrativeCostNotificationOptions } from '../../notifications/notification-options';
@@ -29,29 +30,53 @@ import { InactiveAdministrativeCostNotificationOptions } from '../../notificatio
  * @module internal/mailer
  */
 
+const formatBalance = (b: Dinero) => {
+  return `<span style="font-weight: bold;">${b.toFormat()}</span>`;
+};
+
 const inactiveAdministrativeCostNotificationDutch = new MailContentBuilder<InactiveAdministrativeCostNotificationOptions>({
   getHTML: (context) => `
-  <p> Je hebt al 2 jaar geen transacties binnen SudoSOS gedaan. Dit betekent dat je volgend jaar administratie kosten zal betalen.<br>
-  Er zal dan ${context.administrativeCostValue.toFormat()} van je account worden afgehaald ter betaling voor administratie kosten. </p>
+  <p>Je hebt nog geld op je SudoSOS-account staan.</p>
+
+  <p>Je hebt de afgelopen 2 jaar geen transacties of opwaarderingen gedaan binnen SudoSOS. Als je account nog een jaar inactief blijft, worden er administratiekosten in rekening gebracht.</p>
+
+  <p>Er wordt dan ${formatBalance(context.administrativeCostValue)} aan administratiekosten van je SudoSOS-saldo afgeschreven. Je huidige saldo is ${formatBalance(context.currentUserBalance)}.</p>
+
+  <p>Wil je dit voorkomen? Doe dan binnen een jaar een transactie of waardeer je saldo op in SudoSOS.</p>
   `,
-  getSubject: () => 'Notificatie administratie kosten SudoSOS',
-  getTitle: 'Administratie notificatie',
+  getSubject: () => 'Aankondiging administratiekosten SudoSOS',
+  getTitle: 'Aankondiging administratiekosten',
   getText: (context) => `
-  Je hebt al 2 jaar geen transacties binnen SudoSOS gedaan. Dit betekent dat je volgend jaar administratie kosten zal betalen.
-  Er zal dan ${context.administrativeCostValue.toFormat()} van je account worden afgehaald ter betaling voor administratie kosten.
+  Je hebt nog geld op je SudoSOS-account staan.
+
+  Je hebt de afgelopen 2 jaar geen transacties of opwaarderingen gedaan binnen SudoSOS. Als je account nog een jaar inactief blijft, worden er administratiekosten in rekening gebracht.
+
+  Er wordt dan ${context.administrativeCostValue.toFormat()} aan administratiekosten van je SudoSOS-saldo afgeschreven. Je huidige saldo is ${context.currentUserBalance.toFormat()}.
+
+  Wil je dit voorkomen? Doe dan binnen een jaar een transactie of waardeer je saldo op in SudoSOS.
   `,
 });
 
 const inactiveAdministrativeCostNotificationEnglish = new MailContentBuilder<InactiveAdministrativeCostNotificationOptions>({
   getHTML: (context) => `
-  <p> You haven't made any transfers on SudoSOS for the last 2 years. This means that next year you will pay an administration fee.<br>
-  This means that ${context.administrativeCostValue.toFormat()} will be deducted from your account. </p>
+  <p>You still have money left in your SudoSOS account.</p>
+
+  <p>You have not made any transactions or top-ups in SudoSOS in the past 2 years. If your account remains inactive for another year, administrative costs will be charged.</p>
+
+  <p>At that point, ${formatBalance(context.administrativeCostValue)} in administrative costs will be deducted from your SudoSOS balance. Your current balance is ${formatBalance(context.currentUserBalance)}.</p>
+
+  <p>Want to avoid this? Make a transaction or top up your balance in SudoSOS within the next year.</p>
   `,
-  getSubject: () => 'Notification administration costs SudoSOS',
-  getTitle: 'Administration notification',
+  getSubject: () => 'Upcoming administrative costs SudoSOS',
+  getTitle: 'Upcoming administrative costs',
   getText: (context) => `
-  You haven't made any transfers on SudoSOS for the last 2 years. This means that next year you will pay an administration fee.
-  This means that ${context.administrativeCostValue.toFormat()} will be deducted from your account.
+  You still have money left in your SudoSOS account.
+
+  You have not made any transactions or top-ups in SudoSOS in the past 2 years. If your account remains inactive for another year, administrative costs will be charged.
+
+  At that point, ${context.administrativeCostValue.toFormat()} in administrative costs will be deducted from your SudoSOS balance. Your current balance is ${context.currentUserBalance.toFormat()}.
+
+  Want to avoid this? Make a transaction or top up your balance in SudoSOS within the next year.
   `,
 });
 

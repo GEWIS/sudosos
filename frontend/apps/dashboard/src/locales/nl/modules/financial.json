@@ -242,6 +242,33 @@
           "downloadSuccess": "Rapport succesvol gedownload.",
           "downloadError": "Rapport downloaden mislukt. Probeer het opnieuw."
         }
+      },
+      "transfer": {
+        "titleForType": "{transferType}",
+        "types": {
+          "deposits": "Stortingstransacties",
+          "sellerPayouts": "Verkopersuitbetalingstransacties",
+          "invoices": "Factuurtransacties",
+          "creditInvoices": "Creditfactuurtransacties",
+          "fines": "Boetetransacties",
+          "waivedFines": "Transacties van kwijtgescholden boetes",
+          "adminCosts": "Administratiekostentransacties",
+          "writeOffs": "Afschrijvingstransacties",
+          "payoutRequests": "Uitbetalingsverzoektransacties",
+          "manualCreations": "Transacties van handmatige aanmaak",
+          "manualDeletions": "Transacties van handmatige verwijdering"
+        },
+        "saldo": "Saldo (€)",
+        "widget": {
+          "count": "Transacties",
+          "credit": "Credit (€)",
+          "debit": "Debet (€)",
+          "balance": "Saldo (€)",
+          "selected": "Geselecteerd ({count})",
+          "selectedAmount": "Bedrag (€)",
+          "remaining": "Resterend (€)",
+          "fetchError": "Laden van de transactietotalen mislukt. Probeer het opnieuw."
+        }
       }
     }
   }

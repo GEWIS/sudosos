@@ -28,6 +28,8 @@ import User from '../../../src/entity/user/user';
 import { generateKeys } from '../../helpers/crypto-helpers';
 import TokenMiddleware, { RequestWithToken } from '../../../src/middleware/token-middleware';
 import JsonWebToken from '../../../src/authentication/json-web-token';
+import RequestContextMiddleware from '../../../src/middleware/request-context-middleware';
+import { getRequestContext, RequestContext } from '../../../src/helpers/request-context';
 
 const { expect, request } = chai;
 
@@ -143,6 +145,41 @@ describe('TokenMiddleware', (): void => {
 
       // eslint-disable-next-line @typescript-eslint/dot-notation
       ctx.middleware['options']['refreshFactor'] = 0.5;
+    });
+  });
+
+  describe('request context', () => {
+    let app: Application;
+    let seen: RequestContext | undefined;
+
+    beforeAll(() => {
+      app = express();
+      app.use(new RequestContextMiddleware().getMiddleware());
+      app.use(ctx.middleware.getMiddleware());
+      app.use((req, res: Response) => {
+        seen = getRequestContext();
+        res.end('Success');
+      });
+    });
+
+    afterEach(() => {
+      seen = undefined;
+    });
+
+    it('should record the token user as the actor of the request', async () => {
+      const res = await request(app)
+        .get('/')
+        .set('Authorization', `Bearer ${ctx.tokenString}`);
+
+      expect(res.status).to.equal(200);
+      expect(seen?.actorId).to.equal(ctx.user.id);
+    });
+
+    it('should not record an actor when the token is rejected', async () => {
+      const res = await request(app).get('/');
+
+      expect(res.status).to.equal(401);
+      expect(seen).to.be.undefined;
     });
   });
 });
