@@ -269,6 +269,71 @@
           "remaining": "Remaining (€)",
           "fetchError": "Failed to load the transfer totals. Please try again."
         }
+      },
+      "vouchers": {
+        "title": "Voucher Groups",
+        "detailTitle": "Voucher group: {name}",
+        "list": {
+          "header": "Voucher Groups",
+          "name": "Name",
+          "startDate": "Start date",
+          "endDate": "End date",
+          "period": "Active period",
+          "status": "Status",
+          "cards": "Vouchers",
+          "cardBalance": "Balance per voucher",
+          "totalBalance": "Total balance",
+          "actions": "Actions",
+          "viewDetails": "View details",
+          "empty": "No voucher groups found"
+        },
+        "status": {
+          "upcoming": "Upcoming",
+          "active": "Active",
+          "expired": "Expired"
+        },
+        "info": {
+          "header": "Group information",
+          "allocated": "Total allocated balance",
+          "userCount": "Voucher count",
+          "validity": "Validity",
+          "created": "Created"
+        },
+        "cardsTable": {
+          "header": "Individual vouchers",
+          "cardName": "Voucher identifier",
+          "cardUser": "User",
+          "status": "Status",
+          "viewUser": "View user profile",
+          "empty": "No vouchers in this group"
+        },
+        "dialog": {
+          "createTitle": "Create voucher group",
+          "editTitle": "Edit voucher group",
+          "name": "Group name",
+          "namePlaceholder": "e.g. Intro 2026",
+          "startDate": "Start date",
+          "endDate": "End date",
+          "amount": "Number of vouchers",
+          "balance": "Balance per voucher (€)",
+          "help": "Each voucher will be generated as a voucher user with the specified balance.",
+          "save": "Save",
+          "cancel": "Cancel",
+          "errors": {
+            "nameRequired": "Name is required",
+            "startDateRequired": "Start date is required",
+            "endDateRequired": "End date is required",
+            "endDateBeforeStart": "End date must be after start date",
+            "endDatePast": "End date cannot be in the past",
+            "amountMin": "Amount must be at least 1",
+            "balanceMin": "Balance must be greater than €0.00"
+          },
+          "toast": {
+            "createSuccess": "Voucher group created successfully",
+            "updateSuccess": "Voucher group updated successfully",
+            "error": "Failed to save voucher group"
+          }
+        }
       }
     }
   }
