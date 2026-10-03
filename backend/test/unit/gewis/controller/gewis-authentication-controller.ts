@@ -41,6 +41,7 @@ import AuthenticationLDAPRequest from '../../../../src/controller/request/authen
 import userIsAsExpected from '../../../helpers/authentication-helpers';
 import AuthenticationService from '../../../../src/service/authentication-service';
 import PinAuthenticator from '../../../../src/entity/authenticator/pin-authenticator';
+import LDAPAuthenticator from '../../../../src/entity/authenticator/ldap-authenticator';
 import { truncateAllTables } from '../../../helpers/database-helpers';
 import { finishTestDB } from '../../../helpers/test-helpers';
 import { RbacSeeder } from '../../../seed';
@@ -216,6 +217,53 @@ describe('GewisAuthenticationController', async (): Promise<void> => {
         .send(req);
       expect(res.status).to.equal(403);
     });
+    it('should give an HTTP 403 and not re-activate a deleted user', async () => {
+      const userId = ctx.memberUser1.user.id;
+      await User.update(userId, { deleted: true, active: false });
+      try {
+        const req = {
+          token: jwt.sign({ lidnr: ctx.memberUser1.memberId } as GewiswebToken, ctx.secret, {
+            algorithm: 'HS512',
+          }),
+          nonce: 'HelloWorld',
+        };
+        const res = await request(ctx.app)
+          .post('/authentication/gewisweb')
+          .send(req);
+        expect(res.status).to.equal(403);
+        expect(res.body.message).to.equal('Invalid credentials.');
+
+        const user = await User.findOne({ where: { id: userId } });
+        expect(user.active).to.be.false;
+      } finally {
+        await User.update(userId, { deleted: false, active: true });
+      }
+    });
+    it('should re-activate and update an inactive local user', async () => {
+      const userId = ctx.memberUser1.user.id;
+      const { firstName, type } = await User.findOne({ where: { id: userId } });
+      await User.update(userId, { active: false, type: UserType.LOCAL_USER });
+      try {
+        const req = {
+          token: jwt.sign({ lidnr: ctx.memberUser1.memberId, given_name: 'Renamed' } as GewiswebToken, ctx.secret, {
+            algorithm: 'HS512',
+          }),
+          nonce: 'HelloWorld',
+        };
+        const res = await request(ctx.app)
+          .post('/authentication/gewisweb')
+          .send(req);
+        expect(res.status).to.equal(200);
+        expect((res.body as AuthenticationResponse).user.firstName).to.equal('Renamed');
+
+        const user = await User.findOne({ where: { id: userId } });
+        expect(user.active).to.be.true;
+        expect(user.firstName).to.equal('Renamed');
+        expect(user.type).to.equal(UserType.MEMBER);
+      } finally {
+        await User.update(userId, { firstName, type, active: true });
+      }
+    });
     it('should give an HTTP 403 with invalid JWT signature', async () => {
       const req = {
         token: jwt.sign({ lidnr: ctx.memberUser2.memberId } as GewiswebToken, 'Imposter', {
@@ -290,6 +338,52 @@ describe('GewisAuthenticationController', async (): Promise<void> => {
         .send(validLDAPRequest);
       expect(res.status).to.equal(403);
       expect(res.body.message).to.equal('Invalid credentials.');
+    });
+
+    it('should return an HTTP 403 if the bound user is deleted', async () => {
+      stubLDAP([validADUser]);
+      const first = await request(ctx.app)
+        .post('/authentication/GEWIS/LDAP')
+        .send(validLDAPRequest);
+      expect(first.status).to.equal(200);
+      const userId = (first.body as AuthenticationResponse).user.id;
+
+      await User.update(userId, { deleted: true });
+      try {
+        const res = await request(ctx.app)
+          .post('/authentication/GEWIS/LDAP')
+          .send(validLDAPRequest);
+        expect(res.status).to.equal(403);
+        expect(res.body.message).to.equal('Invalid credentials.');
+      } finally {
+        await User.update(userId, { deleted: false });
+      }
+    });
+
+    it('should return an HTTP 403 and not bind a deleted unbound user', async () => {
+      const unboundADUser = {
+        ...validADUser,
+        dn: 'CN=Roy Clone (m12),OU=Member accounts,DC=gewiswg,DC=gewis,DC=nl',
+        objectGUID: Buffer.from('12', 'hex'),
+        employeeNumber: String(ctx.memberUser2.memberId),
+        sAMAccountName: 'm12',
+        mail: 'm12@gewis.nl',
+      };
+      stubLDAP([unboundADUser]);
+
+      const userId = ctx.memberUser2.user.id;
+      await User.update(userId, { deleted: true });
+      try {
+        const res = await request(ctx.app)
+          .post('/authentication/GEWIS/LDAP')
+          .send({ ...validLDAPRequest, accountName: 'm12' });
+        expect(res.status).to.equal(403);
+        expect(res.body.message).to.equal('Invalid credentials.');
+
+        expect(await LDAPAuthenticator.count({ where: { user: { id: userId } } })).to.equal(0);
+      } finally {
+        await User.update(userId, { deleted: false });
+      }
     });
   });
 });

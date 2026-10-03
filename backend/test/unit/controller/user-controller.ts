@@ -621,6 +621,15 @@ describe('UserController', (): void => {
         .set('Authorization', `Bearer ${ctx.adminToken}`);
       expect(res.status).to.equal(404);
     });
+    it('should give an HTTP 403 when the token belongs to a deleted user', async () => {
+      // Exercises the default database check of TokenMiddleware
+      const deletedUserToken = await signTokenFor(ctx.deletedUser, ctx.tokenHandler);
+      const res = await request(ctx.app)
+        .get(`/users/${ctx.deletedUser.id}`)
+        .set('Authorization', `Bearer ${deletedUserToken}`);
+      expect(res.status).to.equal(403);
+      expect(res.text).to.equal('Invalid token supplied.');
+    });
     it('should include email when admin requests a user (all relation)', async () => {
       const res = await request(ctx.app)
         .get('/users/1')
