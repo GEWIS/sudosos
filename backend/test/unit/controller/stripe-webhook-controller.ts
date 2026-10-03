@@ -266,5 +266,65 @@ describe.skipIf(shouldSkipStripe)('StripeWebhookController', async (): Promise<v
 
       expect(handleWebhookEventStub).to.not.have.been.called;
     });
+    it('should handle a failed reader action for a known payment intent without service metadata', async () => {
+      const handleWebhookEventStub = sinon.stub(StripeWebhookService.prototype, 'handleWebhookEvent').resolves();
+      stubs.push(handleWebhookEventStub);
+
+      const payload = {
+        type: 'terminal.reader.action_failed',
+        data: {
+          object: {
+            id: 'tmr_test',
+            object: 'terminal.reader',
+            action: {
+              type: 'process_payment_intent',
+              status: 'failed',
+              failure_code: 'card_declined',
+              process_payment_intent: { payment_intent: ctx.stripeDeposits[0].stripePaymentIntent.stripeId },
+            },
+          },
+        },
+      };
+      const res = await request(ctx.app)
+        .post('/stripe/webhook')
+        .set('stripe-signature', getSignatureHeader(payload))
+        .send(payload);
+      expect(res.status).to.equal(204);
+
+      // Race condition (by design), because the webhook event is and should be handled asynchronously
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      expect(handleWebhookEventStub).to.have.been.calledOnce;
+    });
+    it('should return 204 for a failed reader action of an unknown payment intent', async () => {
+      const handleWebhookEventStub = sinon.stub(StripeWebhookService.prototype, 'handleWebhookEvent').resolves();
+      stubs.push(handleWebhookEventStub);
+
+      const payload = {
+        type: 'terminal.reader.action_failed',
+        data: {
+          object: {
+            id: 'tmr_test',
+            object: 'terminal.reader',
+            action: {
+              type: 'process_payment_intent',
+              status: 'failed',
+              failure_code: 'card_declined',
+              process_payment_intent: { payment_intent: 'pi_of_another_service' },
+            },
+          },
+        },
+      };
+      const res = await request(ctx.app)
+        .post('/stripe/webhook')
+        .set('stripe-signature', getSignatureHeader(payload))
+        .send(payload);
+      expect(res.status).to.equal(204);
+
+      // Race condition (by design), because the webhook event is and should be handled asynchronously
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      expect(handleWebhookEventStub).to.not.have.been.called;
+    });
   });
 });
