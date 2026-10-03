@@ -32,6 +32,8 @@ import { asNumber } from '../helpers/validators';
 import { bindUser, LDAPUser } from '../helpers/ad';
 import GewiswebToken from './gewisweb-token';
 import WithManager from '../database/with-manager';
+import UserService from '../service/user-service';
+import { webResponseToUpdate } from './helpers/gewis-helper';
 
 /**
  * The GEWIS-specific module with definitions and helper functions.
@@ -53,6 +55,8 @@ export default class Gewis extends WithManager {
         user: true,
       } });
       if (memberUser) {
+        // Deleted users may not log in; reject before binding so no authenticator is created
+        if (memberUser.user.deleted) return undefined;
         // If user exists we only have to bind the AD user
         await bindUser(this.manager, ADUser, memberUser.user);
       } else {
@@ -65,6 +69,34 @@ export default class Gewis extends WithManager {
     }
 
     return memberUser.user;
+  }
+
+  /**
+   * Finds the member user belonging to a GEWIS Web token, or creates it if it does not exist yet.
+   * Existing users are updated with the token data and re-activated.
+   * @param token - The verified GEWIS Web token.
+   * @returns the member user, or undefined if the user is deleted.
+   */
+  public async findOrCreateUserFromWeb(token: GewiswebToken): Promise<MemberUser | undefined> {
+    let memberUser = await MemberUser.findOne({
+      where: { memberId: token.lidnr },
+      relations: UserService.getRelations<MemberUser>(),
+    });
+    // Reject before updateUser below re-activates the account
+    if (memberUser?.user.deleted) return undefined;
+
+    if (!memberUser) {
+      memberUser = await this.createUserFromWeb(token);
+    } else {
+      const update = webResponseToUpdate(token);
+      await UserService.updateUser(memberUser.user.id, { ...update, active: true });
+    }
+
+    // If a LOCAL_USER authenticates through GEWIS, implicitly convert the account back to a MEMBER account
+    if (memberUser.user.type === UserType.LOCAL_USER) {
+      await UserService.updateUserType(memberUser.user, UserType.MEMBER);
+    }
+    return memberUser;
   }
 
   /**

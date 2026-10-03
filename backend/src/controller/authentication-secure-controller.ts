@@ -340,7 +340,7 @@ export default class AuthenticationSecureController extends BaseController {
 
       // Look up the NFC authenticator
       const authenticator = await NfcAuthenticator.findOne({
-        where: { nfcCode: body.nfcCode },
+        where: { nfcCode: body.nfcCode, user: { deleted: false } },
         relations: UserService.getRelations<NfcAuthenticator>(),
       });
       if (authenticator == null || authenticator.user == null) {
@@ -401,7 +401,7 @@ export default class AuthenticationSecureController extends BaseController {
 
       // Look up the EAN authenticator
       const authenticator = await EanAuthenticator.findOne({
-        where: { eanCode: body.eanCode },
+        where: { eanCode: body.eanCode, user: { deleted: false } },
         relations: UserService.getRelations<EanAuthenticator>(),
       });
       if (authenticator == null || authenticator.user == null) {

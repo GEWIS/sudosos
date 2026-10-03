@@ -455,6 +455,26 @@ describe('AuthenticationController', async (): Promise<void> => {
       expect(res.status).to.equal(403);
       expect(res.body.message).to.equal('Invalid credentials.');
     });
+
+    it('should return an HTTP 403 if the bound user is deleted', async () => {
+      stubLDAP([validADUser]);
+      const first = await request(ctx.app)
+        .post('/authentication/LDAP')
+        .send(validLDAPRequest);
+      expect(first.status).to.equal(200);
+      const userId = (first.body as AuthenticationResponse).user.id;
+
+      await User.update(userId, { deleted: true });
+      try {
+        const res = await request(ctx.app)
+          .post('/authentication/LDAP')
+          .send(validLDAPRequest);
+        expect(res.status).to.equal(403);
+        expect(res.body.message).to.equal('Invalid credentials.');
+      } finally {
+        await User.update(userId, { deleted: false });
+      }
+    });
   });
 
   describe('POST /authentication/local/reset', async () => {

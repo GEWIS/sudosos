@@ -30,6 +30,7 @@ import TokenHandler from '../authentication/token-handler';
 import JsonWebToken from '../authentication/json-web-token';
 import { RequestWithRawBody } from '../helpers/raw-body';
 import { setRequestActor } from '../helpers/request-context';
+import User from '../entity/user/user';
 
 /**
  * The configuration options for the token middleware.
@@ -45,6 +46,12 @@ export interface MiddlewareOptions {
    * refeshing, as tokens will expire before a possible refresh.
    */
   refreshFactor: number;
+  /**
+   * Checks whether the user with the given id has been soft-deleted. Tokens of deleted users
+   * are rejected, so deleting a user also revokes their existing tokens.
+   * Defaults to a database lookup.
+   */
+  isUserDeleted?: (userId: number) => Promise<boolean>;
 }
 
 /**
@@ -62,6 +69,7 @@ export interface RequestWithToken extends RequestWithRawBody {
  * This class is responsible for:
  * - parsing JWT tokens in the request Authorization header.
  * - validating parsed JWT tokens.
+ * - rejecting tokens of deleted users.
  * - refreshing the JWT tokens in the request header allowing sliding expiration.
  */
 export default class TokenMiddleware {
@@ -75,7 +83,10 @@ export default class TokenMiddleware {
    * @param options - the options to be used by this middleware.
    */
   public constructor(options: MiddlewareOptions) {
-    this.options = options;
+    this.options = {
+      isUserDeleted: (userId) => User.exists({ where: { id: userId, deleted: true } }),
+      ...options,
+    };
   }
 
   /**
@@ -97,6 +108,17 @@ export default class TokenMiddleware {
       tokenString = tokenString.substr('Bearer '.length);
       req.token = await this.options.tokenHandler.verifyToken(tokenString);
     } catch {
+      res.status(403).end('Invalid token supplied.');
+      return;
+    }
+    let deleted: boolean;
+    try {
+      deleted = await this.options.isUserDeleted(req.token.user.id);
+    } catch {
+      res.status(500).end('Internal server error.');
+      return;
+    }
+    if (deleted) {
       res.status(403).end('Invalid token supplied.');
       return;
     }
