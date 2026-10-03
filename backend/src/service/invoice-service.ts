@@ -412,6 +412,7 @@ export default class InvoiceService extends WithManager {
 
     const [tRecords] = await transactionService.getTransactions({ fromId: forId, fromDate, tillDate }, {});
     const tIds = tRecords.map((t) => t.id);
+    const paidByTerminal = new Set(tRecords.filter((t) => t.paidByTerminal).map((t) => t.id));
 
 
     // TODO: Remove after TransactionService migration to `getOptions`
@@ -434,7 +435,9 @@ export default class InvoiceService extends WithManager {
     withDeleted: true });
     
     const response: Promise<TransactionResponse>[] = [];
-    transactions.forEach((t) => response.push(transactionService.asTransactionResponse(t)));
+    transactions.forEach((t) => response.push(
+      transactionService.asTransactionResponse(t, undefined, undefined, paidByTerminal.has(t.id)),
+    ));
 
     return Promise.all(response);
   }
