@@ -172,6 +172,22 @@ export class UserDebtNotificationOptions extends TemplateOptions {
   }
 }
 
+/**
+ * Reminder that a user's balance is negative, without any mention of fines.
+ */
+export class UserDebtReminderOptions extends TemplateOptions {
+  /**
+     * @param url - URL to top up the balance.
+     * @param balance - The current (negative) balance.
+     */
+  constructor(
+    public url: string,
+    public balance: Dinero,
+  ) {
+    super();
+  }
+}
+
 
 /**
  * Options for notifying a user that they have received a fine.

@@ -50,6 +50,16 @@
  * period; if they top up before the handout they drop off the list. The endpoint is
  * `POST /fines/notify`.
  *
+ * A fine round combines both: users in debt on both the current and the previous
+ * measurement date are fined, and the users who are only in debt now are warned. Nobody
+ * gets both emails; see the "Fine round" section in the key workflows docs.
+ *
+ * ### Remind
+ * {@link DebtorService.sendDebtNotifications | sendDebtNotifications} emails the given
+ * users that their balance is negative, for any amount below zero. Unlike the fine warning,
+ * this email does not mention fines, so it can be used in periods without fine rounds. The
+ * endpoint is `POST /fines/notify/debt`.
+ *
  * ### Hand out
  * {@link DebtorService.handOutFines | handOutFines} runs the whole batch in a single
  * database transaction: one {@link fines!FineHandoutEvent | FineHandoutEvent}, one
@@ -105,7 +115,7 @@ import Transfer from '../entity/transactions/transfer';
 import { FineReport } from '../entity/report/fine-report';
 import WithManager from '../database/with-manager';
 import QueryFilter from '../helpers/query-filter';
-import Notifier, { UserGotFinedOptions, UserWillGetFinedOptions } from '../notifications';
+import Notifier, { UserDebtReminderOptions, UserGotFinedOptions, UserWillGetFinedOptions } from '../notifications';
 import { NotificationTypes } from '../notifications/notification-types';
 
 export interface CalculateFinesParams {
@@ -116,6 +126,10 @@ export interface CalculateFinesParams {
 
 export interface HandOutFinesParams {
   referenceDate: Date;
+  userIds: number[];
+}
+
+export interface SendDebtNotificationsParams {
   userIds: number[];
 }
 
@@ -303,8 +317,8 @@ export default class DebtorService extends WithManager {
         notifications.push({ user, notificationOption: new UserGotFinedOptions(
           referenceDate,
           amount,
-          DineroTransformer.Instance.from(b.amount.amount),
           userFineGroup.fines.reduce((sum, f) => sum.add(f.amount), dinero({ amount :0 })).add(amount),
+          DineroTransformer.Instance.from(b.amount.amount),
         ) });
 
         return Object.assign(new Fine(), {
@@ -422,11 +436,10 @@ export default class DebtorService extends WithManager {
   }
 
   /**
-   * Send an email to all users with the given ID, notifying them that they will get fined a certain amount. The date
-   * the fine and email will be based on is the reference date, the date of the last fine handout event or the current
-   * date (in this order if one is undefined). However, users only receive an email when they have a debt both on the
-   * reference date and now.
-   * If a user has no debt, they will be skipped and not sent an email.
+   * Send an email to all users with the given ID, notifying them that they will get fined a certain amount. The fine
+   * amount and the balance in the email are based on the reference date.
+   * Users who are not at or below -5 EUR on the reference date are skipped and not sent an email. Users who are
+   * fined in the same round should not be passed here: the fined email already warns about future fines.
    * @param params - see {@link HandOutFinesParams} for `referenceDate` and `userIds`.
    */
   public async sendFineWarnings({
@@ -449,6 +462,26 @@ export default class DebtorService extends WithManager {
         ),
       });
     }));
+  }
+
+  /**
+   * Email all users with the given IDs that their balance is currently negative. The email
+   * does not mention fines. Users who are not in debt (anymore) are skipped.
+   * @param params - see {@link SendDebtNotificationsParams}: `userIds` are the users to remind.
+   */
+  public async sendDebtNotifications({ userIds }: SendDebtNotificationsParams): Promise<void> {
+    if (userIds.length === 0) return;
+
+    const [debtors] = await new BalanceService().getBalances({
+      ids: userIds,
+      maxBalance: DineroTransformer.Instance.from(-1),
+    });
+
+    await Promise.all(debtors.map((b) => Notifier.getInstance().notify({
+      type: NotificationTypes.UserDebtReminder,
+      userId: b.id,
+      params: new UserDebtReminderOptions('', dinero(b.amount as any)),
+    })));
   }
 
   /**

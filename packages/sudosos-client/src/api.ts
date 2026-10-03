@@ -3361,6 +3361,19 @@ export interface MessageResponse {
 /**
  * 
  * @export
+ * @interface NotifyDebtRequest
+ */
+export interface NotifyDebtRequest {
+    /**
+     * Users to remind of their negative balance. Users who are no longer in debt are skipped.
+     * @type {Array<number>}
+     * @memberof NotifyDebtRequest
+     */
+    'userIds': Array<number>;
+}
+/**
+ * 
+ * @export
  * @interface PaginatedBalanceResponse
  */
 export interface PaginatedBalanceResponse {
@@ -11521,6 +11534,46 @@ export const DebtorsApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary Send an email to all given users that their balance is negative, without mentioning fines.
+         * @param {NotifyDebtRequest} notifyDebtRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        notifyAboutDebt: async (notifyDebtRequest: NotifyDebtRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'notifyDebtRequest' is not null or undefined
+            assertParamExists('notifyAboutDebt', 'notifyDebtRequest', notifyDebtRequest)
+            const localVarPath = `/fines/notify/debt`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(notifyDebtRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Send an email to all given users about their possible future fine.
          * @param {HandoutFinesRequest} handoutFinesRequest 
          * @param {*} [options] Override http request option.
@@ -11735,6 +11788,19 @@ export const DebtorsApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Send an email to all given users that their balance is negative, without mentioning fines.
+         * @param {NotifyDebtRequest} notifyDebtRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async notifyAboutDebt(notifyDebtRequest: NotifyDebtRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.notifyAboutDebt(notifyDebtRequest, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['DebtorsApi.notifyAboutDebt']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Send an email to all given users about their possible future fine.
          * @param {HandoutFinesRequest} handoutFinesRequest 
          * @param {*} [options] Override http request option.
@@ -11842,6 +11908,16 @@ export const DebtorsApiFactory = function (configuration?: Configuration, basePa
          */
         handoutFines(requestParameters: DebtorsApiHandoutFinesRequest, options?: RawAxiosRequestConfig): AxiosPromise<FineHandoutEventResponse> {
             return localVarFp.handoutFines(requestParameters.handoutFinesRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Send an email to all given users that their balance is negative, without mentioning fines.
+         * @param {DebtorsApiNotifyAboutDebtRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        notifyAboutDebt(requestParameters: DebtorsApiNotifyAboutDebtRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.notifyAboutDebt(requestParameters.notifyDebtRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -11989,6 +12065,20 @@ export interface DebtorsApiHandoutFinesRequest {
 }
 
 /**
+ * Request parameters for notifyAboutDebt operation in DebtorsApi.
+ * @export
+ * @interface DebtorsApiNotifyAboutDebtRequest
+ */
+export interface DebtorsApiNotifyAboutDebtRequest {
+    /**
+     * 
+     * @type {NotifyDebtRequest}
+     * @memberof DebtorsApiNotifyAboutDebt
+     */
+    readonly notifyDebtRequest: NotifyDebtRequest
+}
+
+/**
  * Request parameters for notifyAboutFutureFines operation in DebtorsApi.
  * @export
  * @interface DebtorsApiNotifyAboutFutureFinesRequest
@@ -12114,6 +12204,18 @@ export class DebtorsApi extends BaseAPI {
      */
     public handoutFines(requestParameters: DebtorsApiHandoutFinesRequest, options?: RawAxiosRequestConfig) {
         return DebtorsApiFp(this.configuration).handoutFines(requestParameters.handoutFinesRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Send an email to all given users that their balance is negative, without mentioning fines.
+     * @param {DebtorsApiNotifyAboutDebtRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DebtorsApi
+     */
+    public notifyAboutDebt(requestParameters: DebtorsApiNotifyAboutDebtRequest, options?: RawAxiosRequestConfig) {
+        return DebtorsApiFp(this.configuration).notifyAboutDebt(requestParameters.notifyDebtRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
