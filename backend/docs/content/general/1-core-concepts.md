@@ -131,6 +131,7 @@ Relation is computed per request (for example: “is this payout request request
 SudoSOS keeps financial history. Deletion is therefore conservative:
 - many models are soft-deleted (or have a `deleted` flag)
 - invoices and payouts keep records even when cancelled/deleted
+- a deleted user (`User.deleted`) can no longer log in on any path, including GEWIS LDAP and gewisweb, and `TokenMiddleware` rejects their existing tokens. There is no API to undo this.
 
 When in doubt, prefer “make it inactive” over “remove it from the database”.
 
