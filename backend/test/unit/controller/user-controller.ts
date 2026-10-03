@@ -461,6 +461,21 @@ describe('UserController', (): void => {
       ).valid).to.be.true;
       expect(res.body.id).to.equal(user.id);
     });
+    it('should return an HTTP 404 if the nfc code belongs to a deleted user', async () => {
+      const nfc = await NfcAuthenticator.save({
+        userId: ctx.deletedUser.id,
+        nfcCode: 'deleted-user-nfc',
+      });
+      try {
+        const res = await request(ctx.app)
+          .get(`/users/nfc/${nfc.nfcCode}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`);
+        expect(res.status).to.equal(404);
+        expect(res.body).to.equal('Unknown nfc code');
+      } finally {
+        await NfcAuthenticator.delete({ userId: ctx.deletedUser.id });
+      }
+    });
   });
 
   describe('GET /users/usertype/:userType', () => {
