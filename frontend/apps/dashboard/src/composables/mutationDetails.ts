@@ -51,7 +51,8 @@ export function useMutationDetails(type: Ref<FinancialMutationType>, id: Ref<num
         (r.name as UserRole) === UserRole.BAC_PM || (r.name as UserRole) === UserRole.BOARD,
     );
 
-    const isDeletable = deletable.includes(type.value);
+    // Terminal payments are already captured by Stripe, so they cannot be deleted
+    const isDeletable = deletable.includes(type.value) && !transaction.value?.paidByTerminal;
 
     return isLoaded && hasPermission && isDeletable;
   });

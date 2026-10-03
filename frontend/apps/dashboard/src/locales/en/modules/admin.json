@@ -152,7 +152,8 @@
         "addProduct": "Add Product",
         "selectProduct": "Select a product to add",
         "newProductsAdded": "New Products Added",
-        "newProduct": "NEW"
+        "newProduct": "NEW",
+        "paidByTerminal": "This transaction was paid by card terminal. It cannot be edited or deleted, because the payment has already been processed by Stripe."
       },
       "rbac": {
         "title": "RBAC Management",

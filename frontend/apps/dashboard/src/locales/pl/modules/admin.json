@@ -189,7 +189,8 @@
         "addProduct": "Dodaj produkt",
         "selectProduct": "Wybierz produkt do dodania",
         "newProductsAdded": "Dodano nowe produkty",
-        "newProduct": "NOWY"
+        "newProduct": "NOWY",
+        "paidByTerminal": "Ta transakcja została opłacona terminalem płatniczym. Nie można jej edytować ani usunąć, ponieważ płatność została już przetworzona przez Stripe."
       }
     }
   }
