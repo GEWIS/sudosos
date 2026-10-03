@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, type Ref } from 'vue';
+import { computed, onMounted, ref, type Ref, watch } from 'vue';
 import type { BalanceResponse } from '@gewis/sudosos-client';
 import DataTable, { type DataTablePageEvent, type DataTableSortEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -136,6 +136,8 @@ const loadUsers = async (): Promise<void> => {
     .catch((err) => handleError(err, toast));
   isLoading.value = false;
 };
+
+watch(() => writeOffStore.getUpdatedAt, loadUsers);
 
 onMounted(async () => {
   if (writeOffStore.getShouldRefresh) {
