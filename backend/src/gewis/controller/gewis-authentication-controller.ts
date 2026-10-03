@@ -31,16 +31,12 @@ import * as util from 'util';
 import BaseController, { BaseControllerOptions } from '../../controller/base-controller';
 import Policy from '../../controller/policy';
 import TokenHandler from '../../authentication/token-handler';
-import MemberUser from '../../entity/user/member-user';
 import GewiswebToken from '../gewisweb-token';
 import GewiswebAuthenticationRequest from './request/gewisweb-authentication-request';
 import AuthenticationService from '../../service/authentication-service';
 import AuthenticationLDAPRequest from '../../controller/request/authentication-ldap-request';
 import AuthenticationController from '../../controller/authentication-controller';
 import Gewis from '../gewis';
-import UserService from '../../service/user-service';
-import { webResponseToUpdate } from '../helpers/gewis-helper';
-import { UserType } from '../../entity/user/user';
 import Config from '../../config';
 
 /**
@@ -153,22 +149,12 @@ export default class GewisAuthenticationController extends BaseController {
       }
       this.logger.trace('Gewisweb authentication for user with membership id', gewisweb.lidnr);
 
-      let memberUser = await MemberUser.findOne({
-        where: { memberId: gewisweb.lidnr },
-        relations: UserService.getRelations<MemberUser>(),
-      });
+      const memberUser = await new Gewis().findOrCreateUserFromWeb(gewisweb);
       if (!memberUser) {
-        this.logger.log('User not found in database, creating user');
-        memberUser = await new Gewis().createUserFromWeb(gewisweb);
-      } else {
-        //
-        const update = webResponseToUpdate(gewisweb);
-        await UserService.updateUser(memberUser.user.id, { ...update, active: true });
-      }
-
-      // If a LOCAL_USER authenticates through GEWIS, implicitly convert the account back to a MEMBER account
-      if (memberUser.user.type === UserType.LOCAL_USER) {
-        await UserService.updateUserType(memberUser.user, UserType.MEMBER);
+        res.status(403).json({
+          message: 'Invalid credentials.',
+        });
+        return;
       }
 
       const result = await new AuthenticationService().getSaltedToken({

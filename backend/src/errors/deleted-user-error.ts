@@ -19,11 +19,17 @@
  */
 
 /**
- * This is the module page of the errors.
+ * This is the module page of the deleted-user-error.
  *
  * @module internal/errors
  */
 
-export { DeletedUserError } from './deleted-user-error';
-export { NotImplementedError } from './not-implemented-error';
-export { PdfError } from './pdf-error';
+/**
+ * Thrown when a token is requested for a user that has been soft-deleted.
+ */
+export class DeletedUserError extends Error {
+  constructor() {
+    super('Cannot create a token for a deleted user.');
+    this.name = 'DeletedUserError';
+  }
+}
