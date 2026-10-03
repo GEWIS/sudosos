@@ -26,7 +26,7 @@ flowchart LR
 Most endpoints follow the same shape:
 
 1. `RequestContextMiddleware` assigns a request id, which every log line of the request carries.
-2. **Middleware** authenticates the request and attaches a token.
+2. `TokenMiddleware` authenticates the request and attaches a token. It rejects tokens of deleted users.
 3. `RequestValidatorMiddleware` validates the request body structure against the Swagger spec.
 4. `PolicyMiddleware` checks RBAC and `RestrictionMiddleware` applies row-level restrictions.
 5. `AsyncValidatorMiddleware` runs registered business-rule specs (which may include async/DB checks). Runs after authorization so unauthorized requests never trigger DB-hitting validation.
