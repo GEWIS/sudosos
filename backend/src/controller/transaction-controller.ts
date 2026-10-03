@@ -41,6 +41,33 @@ import UserService from '../service/user-service';
 import InvoiceService from '../service/invoice-service';
 import POSTokenVerifier from '../helpers/pos-token-verifier';
 import { PdfError } from '../errors';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
+import { AppDataSource } from '../database/database';
+
+/**
+ * The fields of a transaction recorded in the audit log when it is changed or deleted.
+ * @param service - the service to price the transaction with.
+ * @param transaction - the transaction, with its sub transactions loaded.
+ */
+async function auditedTransactionFields(
+  service: TransactionService, transaction: Transaction,
+): Promise<Record<string, unknown>> {
+  const response = await service.asTransactionResponse(transaction);
+  return {
+    fromId: transaction.from?.id,
+    createdById: transaction.createdBy?.id,
+    pointOfSaleId: transaction.pointOfSale?.pointOfSaleId,
+    totalPriceInclVat: response?.totalPriceInclVat,
+    // Sorted, because an update recreates the rows and their order is not guaranteed.
+    rows: transaction.subTransactions?.flatMap((sub) => sub.subTransactionRows.map((row) => ({
+      toId: sub.to?.id,
+      productId: row.product?.productId,
+      revision: row.product?.revision,
+      amount: row.amount,
+    }))).sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))),
+  };
+}
 
 /**
  * Controller for the `transactions` module. Exposes the buyer-facing CRUD for transactions,
@@ -278,13 +305,28 @@ export default class TransactionController extends BaseController {
           res.status(400).json('Invalid transaction.');
           return;
         }
-        const transaction = await transactionService.updateTransaction(
-          parseInt(id, 10), body,
-        );
+        const transaction = await AppDataSource.manager.transaction(async (manager) => {
+          const service = new TransactionService(manager);
+          const previous = await service.getSingleTransaction(parseInt(id, 10));
+          const updated = await service.updateTransaction(parseInt(id, 10), body);
+          if (updated) {
+            await new AuditService(manager).log(req.token.user, {
+              action: AuditAction.TRANSACTION_UPDATE,
+              entityType: AuditEntityType.TRANSACTION,
+              entityId: updated.id,
+              changes: AuditService.diff(
+                await auditedTransactionFields(service, previous),
+                await auditedTransactionFields(service, updated),
+              ),
+            });
+          }
+          return updated;
+        });
         if (!transaction) {
           res.status(400).json('Could not update transaction.');
           return;
         }
+
         res.status(200).json(await transactionService.asTransactionResponse(transaction));
       } else {
         res.status(404).json('Transaction not found.');
@@ -313,7 +355,20 @@ export default class TransactionController extends BaseController {
     // handle request
     try {
       if (await Transaction.findOne({ where: { id: parseInt(id, 10) } })) {
-        await new TransactionService().deleteTransaction(parseInt(id, 10));
+        const transactionId = parseInt(id, 10);
+        await AppDataSource.manager.transaction(async (manager) => {
+          const service = new TransactionService(manager);
+          const deleted = await service.deleteTransaction(transactionId);
+          // A deleted transaction leaves nothing to look up later, so keep what it
+          // was on the entry itself.
+          await new AuditService(manager).log(req.token.user, {
+            action: AuditAction.TRANSACTION_DELETE,
+            entityType: AuditEntityType.TRANSACTION,
+            entityId: transactionId,
+            changes: await auditedTransactionFields(service, deleted),
+          });
+        });
+
         res.status(204).json();
       } else {
         res.status(404).json('Transaction not found.');

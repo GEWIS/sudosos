@@ -47,6 +47,7 @@ import { DineroObjectRequest } from '../../../src/controller/request/dinero-requ
 import { truncateAllTables } from '../../helpers/database-helpers';
 import { finishTestDB } from '../../helpers/test-helpers';
 import { ensureProductionRoles, signTokenFor } from '../../helpers/user-factory';
+import AuditLogEntry, { AuditAction, AuditEntityType } from '../../../src/entity/audit/audit-log-entry';
 
 const { expect, request } = chai;
 
@@ -290,6 +291,30 @@ describe('VoucherGroupController', async (): Promise<void> => {
       expect(res.status, 'status incorrect on valid post').to.equal(200);
       bkgResponseEq(VoucherGroupService.asVoucherGroupParams(ctx.validVoucherGroupReq), res.body);
     });
+    it('should record the created voucher group in the audit log', async () => {
+      const res = await request(ctx.app)
+        .post('/vouchergroups')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send(ctx.validVoucherGroupReq);
+      expect(res.status).to.equal(200);
+
+      // The service moves the dates to the start and end of their day.
+      const params = VoucherGroupService.asVoucherGroupParams(ctx.validVoucherGroupReq);
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.VOUCHER_GROUP_CREATE, entityId: String(res.body.id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.VOUCHER_GROUP);
+      expect(entry.actor.id).to.equal(ctx.adminUser.id);
+      expect(entry.changes).to.deep.equal({
+        name: ctx.validVoucherGroupReq.name,
+        balance: ctx.validVoucherGroupReq.balance,
+        amount: ctx.validVoucherGroupReq.amount,
+        activeStartDate: params.activeStartDate.toISOString(),
+        activeEndDate: params.activeEndDate.toISOString(),
+      });
+    });
     it('should return an HTTP 400 if the given voucher group is invalid', async () => {
       // post invalid voucher group
       const res = await request(ctx.app)
@@ -415,6 +440,28 @@ describe('VoucherGroupController', async (): Promise<void> => {
         VoucherGroupService.asVoucherGroupParams(ctx.validVoucherGroupReq),
         res.body as VoucherGroupResponse,
       );
+    });
+    it('should record only the changed fields in the audit log', async () => {
+      const bkg = await saveBKG(ctx.validVoucherGroupReq);
+      const update: VoucherGroupRequest = { ...ctx.validVoucherGroupReq, name: 'renamed', amount: 6 };
+
+      const res = await request(ctx.app)
+        .patch(`/vouchergroups/${bkg.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send(update);
+      expect(res.status).to.equal(200);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.VOUCHER_GROUP_UPDATE, entityId: String(bkg.id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.VOUCHER_GROUP);
+      expect(entry.actor.id).to.equal(ctx.adminUser.id);
+      expect(entry.changes).to.deep.equal({
+        name: { before: ctx.validVoucherGroupReq.name, after: 'renamed' },
+        amount: { before: ctx.validVoucherGroupReq.amount, after: 6 },
+      });
     });
     it('should return an HTTP 400 if given voucher group is invalid', async () => {
       await saveBKG(ctx.validVoucherGroupReq);

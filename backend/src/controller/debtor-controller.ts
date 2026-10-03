@@ -33,11 +33,13 @@ import User from '../entity/user/user';
 import { asArrayOfDates, asArrayOfUserTypes, asDate, asFromAndTillDate, asReturnFileType } from '../helpers/validators';
 import { In } from 'typeorm';
 import { HandoutFinesRequest } from './request/debtor-request';
-import Fine from '../entity/fine/fine';
 import { ReturnFileType } from '../helpers/pdf';
 import { sendPdfOrHtml } from '../helpers/express-pdf';
 import { PdfError } from '../errors';
 import FineHandoutEvent from '../entity/fine/fineHandoutEvent';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
+import { AppDataSource } from '../database/database';
 
 /**
  * Controller for the `/fines` endpoints in the {@link debtors | debtors} module. Covers
@@ -187,6 +189,7 @@ export default class DebtorController extends BaseController {
    * @param {integer} id.path.required - The id of the fine which should be deleted
    * @return 204 - Success
    * @return {string} 400 - Validation error
+   * @return 404 - Fine not found
    * @return {string} 500 - Internal server error
    */
   public async deleteFine(req: RequestWithToken, res: Response): Promise<void> {
@@ -195,13 +198,22 @@ export default class DebtorController extends BaseController {
 
     try {
       const parsedId = Number.parseInt(id, 10);
-      const fine = await Fine.findOne({ where: { id: parsedId } });
-      if (fine == null) {
+      const fine = await AppDataSource.manager.transaction(async (manager) => {
+        const deleted = await new DebtorService(manager).deleteFine(parsedId);
+        if (!deleted) return undefined;
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.FINE_DELETE,
+          entityType: AuditEntityType.FINE,
+          entityId: parsedId,
+          changes: { userId: deleted.userFineGroup.userId, amount: deleted.amount.toObject() },
+        });
+        return deleted;
+      });
+      if (!fine) {
         res.status(404).send();
         return;
       }
 
-      await new DebtorService().deleteFine(parsedId);
       res.status(204).send();
     } catch (error) {
       this.logger.error('Could not return fine handout event:', error);
@@ -279,11 +291,29 @@ export default class DebtorController extends BaseController {
       return;
     }
 
+    let event;
     try {
-      const event = await new DebtorService().handOutFines({ referenceDate, userIds: body.userIds }, req.token.user);
-      res.json(DebtorService.asFineHandoutEventResponse(event));
+      event = await new DebtorService().handOutFines({ referenceDate, userIds: body.userIds }, req.token.user);
     } catch (error) {
       this.logger.error('Could not handout fines:', error);
+      res.status(500).json('Internal server error.');
+      return;
+    }
+
+    try {
+      // handOutFines has already committed and emailed the fined users (it opens its own
+      // transaction), so a failed audit write is logged instead of answering 500, which
+      // would invite a retry that hands out a second round of fines.
+      await new AuditService().logCommitted(req.token.user, {
+        action: AuditAction.FINE_HANDOUT,
+        entityType: AuditEntityType.FINE_HANDOUT_EVENT,
+        entityId: event.id,
+        changes: { userIds: body.userIds, referenceDate: body.referenceDate },
+      });
+
+      res.json(DebtorService.asFineHandoutEventResponse(event));
+    } catch (error) {
+      this.logger.error('Could not return fine handout event:', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -314,7 +344,20 @@ export default class DebtorController extends BaseController {
         return;
       }
 
-      await new DebtorService().deleteFineHandout(event);
+      await AppDataSource.manager.transaction(async (manager) => {
+        const deleted = await new DebtorService(manager).deleteFineHandout(event);
+        // The handout and its fines are gone after this, so keep who was fined for how much.
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.FINE_HANDOUT_DELETE,
+          entityType: AuditEntityType.FINE_HANDOUT_EVENT,
+          entityId: parsedId,
+          changes: {
+            referenceDate: event.referenceDate.toISOString(),
+            fines: deleted.map((f) => ({ fineId: f.id, userId: f.userFineGroup.userId, amount: f.amount.toObject() })),
+          },
+        });
+      });
+
       res.status(204).send();
     } catch (error) {
       this.logger.error('Could not delete fine handout:', error);

@@ -53,6 +53,9 @@ describe('Database', async (): Promise<void> => {
         'float': ['real', 'float'],
         'integer': ['integer', 'int'],
         'int': ['integer', 'int'],
+        // TypeORM serialises these into a text column on every driver.
+        'simple-json': ['text'],
+        'simple-array': ['text'],
       };
 
       if (typeof type === 'function') {
