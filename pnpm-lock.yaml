@@ -323,8 +323,8 @@ importers:
         specifier: 2.1.35
         version: 2.1.35
       mysql2:
-        specifier: 3.24.4
-        version: 3.24.4(@types/node@20.19.43)
+        specifier: 3.24.5
+        version: 3.24.5(@types/node@20.19.43)
       node-cron:
         specifier: 3.0.3
         version: 3.0.3
@@ -335,11 +335,11 @@ importers:
         specifier: 0.2.2
         version: 0.2.2
       socket.io:
-        specifier: 4.8.3
-        version: 4.8.3(supports-color@5.5.0)
+        specifier: 4.8.4
+        version: 4.8.4(supports-color@5.5.0)
       socket.io-client:
-        specifier: 4.8.3
-        version: 4.8.3(supports-color@5.5.0)
+        specifier: 4.8.4
+        version: 4.8.4(supports-color@5.5.0)
       stripe:
         specifier: 22.6.2
         version: 22.6.2(@types/node@20.19.43)
@@ -351,7 +351,7 @@ importers:
         version: 5.0.1(express@4.22.3(supports-color@5.5.0))
       typeorm:
         specifier: 1.1.1
-        version: 1.1.1(better-sqlite3@12.11.1)(ioredis@5.11.1(supports-color@5.5.0))(mysql2@3.24.4(@types/node@20.19.43))(supports-color@5.5.0)(ts-node@10.9.2(@swc/core@1.16.12(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3))
+        version: 1.1.1(better-sqlite3@12.11.1)(ioredis@5.11.1(supports-color@5.5.0))(mysql2@3.24.5(@types/node@20.19.43))(supports-color@5.5.0)(ts-node@10.9.2(@swc/core@1.16.2(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3))
       uuid:
         specifier: 10.0.0
         version: 10.0.0
@@ -769,8 +769,8 @@ importers:
         specifier: 'catalog:'
         version: 1.104.1
       socket.io-client:
-        specifier: ^4.8.1
-        version: 4.8.3(supports-color@10.2.2)
+        specifier: ^4.8.4
+        version: 4.8.4(supports-color@10.2.2)
       tailwindcss:
         specifier: 'catalog:'
         version: 4.3.3
@@ -854,8 +854,8 @@ importers:
         specifier: 'catalog:'
         version: 3.0.4(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
       socket.io-client:
-        specifier: ^4.8.1
-        version: 4.8.3(supports-color@10.2.2)
+        specifier: ^4.8.4
+        version: 4.8.4(supports-color@10.2.2)
       vue:
         specifier: 'catalog:'
         version: 3.5.43(typescript@5.9.3)
@@ -6583,8 +6583,8 @@ packages:
     resolution: {integrity: sha512-avsJQhyd+680gKXyG/sQc0nXaC6rBkPOfyHYcFb9+hdkqQkR9bdnkJ0AMZhke0oesPqIO+mFFJ+IdBc7mst4IA==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
-  mysql2@3.24.4:
-    resolution: {integrity: sha512-A2olluVlj0mvgyIRRISMEzXc51m+21mRtcMVjJyIpt2GG98+XrC9m9HzsqcMsX2LcnfccJvY5NB22g8fENBnOA==}
+  mysql2@3.24.5:
+    resolution: {integrity: sha512-X6Ujsr2QSkkLpkQGjxzpKRAPn9nu4axpR63ntBzquFVEvPOArgbUQ1sJjFKI7hnaYtiVZxa17Z7q18KSubW0IQ==}
     engines: {node: '>= 8.0'}
     peerDependencies:
       '@types/node': '>= 8'
@@ -7543,16 +7543,16 @@ packages:
   socket.io-adapter@2.5.8:
     resolution: {integrity: sha512-6Oy52pbg+kvdCVvjcN+FnY7BvxZ7cIHNScbvztT/It5d0vbwoJoVZmF2gjJmnV0/4WlXRfG15zc45ySk9Ah8bw==}
 
-  socket.io-client@4.8.3:
-    resolution: {integrity: sha512-uP0bpjWrjQmUt5DTHq9RuoCBdFJF10cdX9X+a368j/Ft0wmaVgxlrjvK3kjvgCODOMMOz9lcaRzxmso0bTWZ/g==}
+  socket.io-client@4.8.4:
+    resolution: {integrity: sha512-7wjKAvVXYOJsbmUgkWbnhPD4bFpkqrUR0++XOjpGFmqDqsqV1CI93VTraeExLxpjxEqrWgFoSRZu1ihjLWfkAA==}
     engines: {node: '>=10.0.0'}
 
   socket.io-parser@4.2.7:
     resolution: {integrity: sha512-IH/iSeO9T6gz1KkFleGDWkG9N3dl4jXVYUtMhIqH10Md0ttMer8nUNWiP1DKuNrybD2xBrixLJdCC9J6ECoYkg==}
     engines: {node: '>=10.0.0'}
 
-  socket.io@4.8.3:
-    resolution: {integrity: sha512-2Dd78bqzzjE6KPkD5fHZmDAKRNe3J15q+YHDrIsy9WEkqttc7GY+kT9OBLSMaPbQaEd0x1BjcmtMtXkfpc+T5A==}
+  socket.io@4.8.4:
+    resolution: {integrity: sha512-9ZV9zg8vN8hO3Y25DhR7nUkJ1VDnBhq5O/JrXhFT9s6+F0gqytSASTHVfCFc2mJXaTfARroErplXlzFWwETZqQ==}
     engines: {node: '>=10.2.0'}
 
   socks-proxy-agent@10.1.0:
@@ -10641,7 +10641,7 @@ snapshots:
 
   '@types/cors@2.8.19':
     dependencies:
-      '@types/node': 24.13.3
+      '@types/node': 20.19.43
 
   '@types/d3-array@3.2.2': {}
 
@@ -12823,7 +12823,7 @@ snapshots:
   engine.io@6.6.9(supports-color@5.5.0):
     dependencies:
       '@types/cors': 2.8.19
-      '@types/node': 24.13.3
+      '@types/node': 20.19.43
       '@types/ws': 8.18.1
       accepts: 1.3.8
       base64id: 2.0.0
@@ -14825,7 +14825,7 @@ snapshots:
 
   mute-stream@1.0.0: {}
 
-  mysql2@3.24.4(@types/node@20.19.43):
+  mysql2@3.24.5(@types/node@20.19.43):
     dependencies:
       '@types/node': 20.19.43
       aws-ssl-profiles: 1.1.2
@@ -15991,7 +15991,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  socket.io-client@4.8.3(supports-color@10.2.2):
+  socket.io-client@4.8.4(supports-color@10.2.2):
     dependencies:
       '@socket.io/component-emitter': 3.1.2
       debug: 4.4.3(supports-color@10.2.2)
@@ -16002,7 +16002,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  socket.io-client@4.8.3(supports-color@5.5.0):
+  socket.io-client@4.8.4(supports-color@5.5.0):
     dependencies:
       '@socket.io/component-emitter': 3.1.2
       debug: 4.4.3(supports-color@5.5.0)
@@ -16027,10 +16027,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  socket.io@4.8.3(supports-color@5.5.0):
+  socket.io@4.8.4(supports-color@5.5.0):
     dependencies:
       accepts: 1.3.8
-      base64id: 2.0.0
       cors: 2.8.6
       debug: 4.4.3(supports-color@5.5.0)
       engine.io: 6.6.9(supports-color@5.5.0)
@@ -16622,7 +16621,7 @@ snapshots:
       typescript: 5.9.3
       yaml: 2.9.0
 
-  typeorm@1.1.1(better-sqlite3@12.11.1)(ioredis@5.11.1(supports-color@5.5.0))(mysql2@3.24.4(@types/node@20.19.43))(supports-color@5.5.0)(ts-node@10.9.2(@swc/core@1.16.12(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3)):
+  typeorm@1.1.1(better-sqlite3@12.11.1)(ioredis@5.11.1(supports-color@5.5.0))(mysql2@3.24.5(@types/node@20.19.43))(supports-color@5.5.0)(ts-node@10.9.2(@swc/core@1.16.2(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3)):
     dependencies:
       '@sqltools/formatter': 1.2.5
       ansis: 4.3.1
@@ -16637,8 +16636,8 @@ snapshots:
     optionalDependencies:
       better-sqlite3: 12.11.1
       ioredis: 5.11.1(supports-color@5.5.0)
-      mysql2: 3.24.4(@types/node@20.19.43)
-      ts-node: 10.9.2(@swc/core@1.16.12(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3)
+      mysql2: 3.24.5(@types/node@20.19.43)
+      ts-node: 10.9.2(@swc/core@1.16.2(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
