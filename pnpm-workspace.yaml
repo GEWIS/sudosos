@@ -17,6 +17,11 @@ allowBuilds:
   msgpackr-extract: true
   unrs-resolver: true
 
+# @swc/core >=1.16.10 rejects world-writable cache roots like /github/home in CI
+# containers (swc-project/swc#12469 adds an opt-out, unreleased). Drop once it ships.
+overrides:
+  '@swc/core': 1.16.2
+
 catalog:
   axios: 1.20.0
   vue: ^3.5.43
