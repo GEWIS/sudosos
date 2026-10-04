@@ -188,24 +188,13 @@ export const useDebtorStore = defineStore('debtor', {
      * @param userIds Only fetch these userIds
      */
     async fetchDebtors(userIds?: number[]) {
-      const users = await Promise.all(
-        this.userToFineResponse
-          .filter((user) => (userIds ? userIds.includes(user.id) : true))
-          .map((user) => {
-            return ApiService.user.getIndividualUser({ id: user.id });
-          }),
-      );
+      const fines = this.userToFineResponse.filter((user) => (userIds ? userIds.includes(user.id) : true));
+      const users = await Promise.all(fines.map((fine) => ApiService.user.getIndividualUser({ id: fine.id })));
 
-      const allDebtors: Debtor[] = [];
-
-      users.forEach((user, i) => {
-        allDebtors.push({
-          user: user.data,
-          fine: this.userToFineResponse[i],
-        });
-      });
-
-      this.allDebtors = allDebtors;
+      this.allDebtors = users.map((user, i) => ({
+        user: user.data,
+        fine: fines[i],
+      }));
     },
     /**
      * Fetch the financial summary of SudoSOS
