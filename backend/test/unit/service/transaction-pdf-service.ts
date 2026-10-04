@@ -25,6 +25,7 @@ import { DataSource } from 'typeorm';
 import Database from '../../../src/database/database';
 import Transaction from '../../../src/entity/transactions/transaction';
 import TransactionPdfService from '../../../src/service/pdf/transaction-pdf-service';
+import { PdfCompiler } from '../../../src/service/pdf/pdf-service';
 import { finishTestDB } from '../../helpers/test-helpers';
 import { truncateAllTables } from '../../helpers/database-helpers';
 import { ContainerSeeder, PointOfSaleSeeder, ProductSeeder, TransactionSeeder, UserSeeder } from '../../seed';
@@ -33,7 +34,7 @@ import { PdfError } from '../../../src/errors';
 describe('TransactionPdfService', () => {
   let connection: DataSource;
   let service: TransactionPdfService;
-  let compileHtmlStub: SinonStub;
+  let compileStub: SinonStub;
   let transaction: Transaction;
 
   beforeAll(async () => {
@@ -55,12 +56,12 @@ describe('TransactionPdfService', () => {
   });
 
   beforeEach(() => {
-    compileHtmlStub = sinon.stub(service, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
+    compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
   });
 
   afterEach(() => {
-    if (compileHtmlStub) {
-      compileHtmlStub.restore();
+    if (compileStub) {
+      compileStub.restore();
     }
   });
 
@@ -123,12 +124,12 @@ describe('TransactionPdfService', () => {
     });
   });
 
-  describe('createPdfBuffer', () => {
+  describe('pdf', () => {
     it('should create PDF buffer for transaction', async () => {
-      const pdfBuffer = await service.createPdfBuffer(transaction);
+      const pdfBuffer = await service.pdf(transaction);
 
       expect(pdfBuffer).to.be.instanceOf(Buffer);
-      expect(compileHtmlStub).to.have.been.calledOnce;
+      expect(compileStub).to.have.been.calledOnce;
     });
   });
 });

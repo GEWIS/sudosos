@@ -25,8 +25,6 @@
  */
 
 import { Dinero } from 'dinero.js';
-import { UnstoredPdfAble } from '../file/pdf-able';
-import InactiveAdministrativeCostReportPdfService from '../../service/pdf/inactive-administrative-cost-report-pdf-service';
 import { InactiveAdministrativeCostReportResponse } from '../../controller/response/inactive-administrative-cost-response';
 
 class IInactiveAdministrativeCostReport {
@@ -49,8 +47,7 @@ class IInactiveAdministrativeCostReport {
   }
 }
 
-export class InactiveAdministrativeCostReport extends UnstoredPdfAble(IInactiveAdministrativeCostReport) {
-  pdfService = new InactiveAdministrativeCostReportPdfService();
+export class InactiveAdministrativeCostReport extends IInactiveAdministrativeCostReport {
 
   toResponse(): InactiveAdministrativeCostReportResponse {
     return {

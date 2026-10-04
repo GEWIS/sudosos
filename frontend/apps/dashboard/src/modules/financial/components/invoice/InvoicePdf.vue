@@ -15,13 +15,13 @@
             icon="pi pi-sync"
             :label="t('modules.financial.invoice.recompile')"
             severity="primary"
-            @click="reloadPdf"
+            @click="reloadPdf(true)"
           />
           <Button
             icon="pi pi-refresh"
             :label="t('modules.financial.invoice.reload')"
             severity="secondary"
-            @click="reloadPdf"
+            @click="reloadPdf()"
           />
         </div>
       </div>
@@ -75,20 +75,17 @@ const props = defineProps({
 const showPdf = computed(() => pdfLoaded.value && !missingPdf.value);
 const showTable = ref(false);
 const pdfLoaded = ref(false);
-const missingPdf = ref(false);
+const missingPdf = computed(() => !invoice.value?.pdf);
 
 onMounted(() => {
   pdfLoaded.value = true;
-  if (!invoice.value.pdf) {
-    missingPdf.value = true;
-  }
 });
 
-const reloadPdf = () => {
+const reloadPdf = (force = false) => {
   if (!invoice.value) return;
   pdfLoaded.value = false;
   invoiceStore
-    .fetchInvoicePdf(invoice.value.id)
+    .fetchInvoicePdf(invoice.value.id, force)
     .catch((error) => handleError(error, toast))
     .finally(() => {
       pdfLoaded.value = true;

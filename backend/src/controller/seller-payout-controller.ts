@@ -34,6 +34,8 @@ import User from '../entity/user/user';
 import ReportService, { SalesReportService } from '../service/report-service';
 import { PdfError } from '../errors';
 import { PdfUrlResponse } from './response/simple-file-response';
+import SellerPayoutPdfService from '../service/pdf/seller-payout-pdf-service';
+import { asBoolean } from '../helpers/validators';
 
 /**
  * Controller for the `/seller-payouts` endpoints in the
@@ -217,7 +219,7 @@ export default class SellerPayoutController extends BaseController {
 
     try {
       const sellerPayoutId = Number(req.params.id);
-      const force = req.query.force === 'true';
+      const force = !!asBoolean(req.query.force);
       const service = new SellerPayoutService();
       const [[sellerPayout]] = await service.getSellerPayouts({ sellerPayoutId });
       if (!sellerPayout) {
@@ -225,7 +227,7 @@ export default class SellerPayoutController extends BaseController {
         return;
       }
 
-      const pdf = await sellerPayout.getOrCreatePdf(force);
+      const pdf = await new SellerPayoutPdfService().getOrCreate(sellerPayout, force);
       res.status(200).json({ pdf: pdf.downloadName } as PdfUrlResponse);
     } catch (error) {
       this.logger.error('Could not get sales report for seller payout:', error);

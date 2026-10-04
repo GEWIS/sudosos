@@ -24,7 +24,8 @@ import dinero from 'dinero.js';
 import SellerPayoutPdfService from '../../../../src/service/pdf/seller-payout-pdf-service';
 import { SalesReportService } from '../../../../src/service/report-service';
 import SellerPayout from '../../../../src/entity/transactions/payout/seller-payout';
-import { SELLER_PAYOUT_PDF_LOCATION } from '../../../../src/files/storage/locations';
+import SellerPayoutPdf from '../../../../src/entity/file/seller-payout-pdf';
+import { PdfCompiler } from '../../../../src/service/pdf/pdf-service';
 
 describe('SellerPayoutPdfService', () => {
   const startDate = new Date('2022-01-01');
@@ -72,11 +73,26 @@ describe('SellerPayoutPdfService', () => {
 
   afterEach(() => sinon.restore());
 
+  it('keeps the stored PDF when the seller is renamed, without rebuilding the report', async () => {
+    const getReport = sinon.stub(SalesReportService.prototype, 'getReport').resolves(makeReport() as any);
+    const compile = sinon.stub(PdfCompiler, 'compile');
+    const pdf = Object.assign(new SellerPayoutPdf(), { hash: 'issued' });
+    const renamed = {
+      ...payout,
+      pdf,
+      requestedBy: { ...payout.requestedBy, firstName: 'Renamed' },
+    } as unknown as SellerPayout;
+
+    expect(await new SellerPayoutPdfService().getOrCreate(renamed)).to.equal(pdf);
+    expect(getReport).to.not.have.been.called;
+    expect(compile).to.not.have.been.called;
+  });
+
   it('maps the sales report into seller payout pdf parameters', async () => {
     const report = makeReport();
     sinon.stub(SalesReportService.prototype, 'getReport').resolves(report as any);
 
-    const service = new SellerPayoutPdfService(SELLER_PAYOUT_PDF_LOCATION);
+    const service = new SellerPayoutPdfService();
     const params = await service.getParameters(payout);
 
     expect(params.reference).to.equal('SDS-SP-0001');
@@ -111,11 +127,11 @@ describe('SellerPayoutPdfService', () => {
     );
   });
 
-  it('renders the parameters to an HTML buffer via createRaw', async () => {
+  it('renders the parameters to an HTML buffer via html', async () => {
     sinon.stub(SalesReportService.prototype, 'getReport').resolves(makeReport() as any);
 
-    const service = new SellerPayoutPdfService(SELLER_PAYOUT_PDF_LOCATION);
-    const buffer = await service.createRaw(payout);
+    const service = new SellerPayoutPdfService();
+    const buffer = await service.html(payout);
 
     expect(buffer).to.be.instanceOf(Buffer);
     const text = buffer.toString('utf-8');
@@ -131,7 +147,7 @@ describe('SellerPayoutPdfService', () => {
     };
     sinon.stub(SalesReportService.prototype, 'getReport').resolves(report as any);
 
-    const service = new SellerPayoutPdfService(SELLER_PAYOUT_PDF_LOCATION);
+    const service = new SellerPayoutPdfService();
     const params = await service.getParameters(payout);
 
     expect(params.lineItems).to.deep.equal([]);

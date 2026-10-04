@@ -26,14 +26,21 @@
 
 import PayoutRequest from '../../entity/transactions/payout/payout-request';
 import PayoutRequestPdf from '../../entity/file/payout-request-pdf';
-import { HtmlPdfService } from './pdf-service';
+import { StoredPdfService } from './pdf-service';
+import User from '../../entity/user/user';
+import { PAYOUT_REQUEST_PDF_LOCATION } from '../../files/storage';
 import { createPayoutRequestPdf, IPayoutRequestPdf } from '../../html/payout-request.html';
 
-export default class PayoutRequestPdfService extends HtmlPdfService<PayoutRequestPdf, PayoutRequest, IPayoutRequestPdf> {
+export default class PayoutRequestPdfService extends StoredPdfService<PayoutRequest, PayoutRequestPdf, IPayoutRequestPdf> {
+  readonly location = PAYOUT_REQUEST_PDF_LOCATION;
 
-  pdfConstructor = PayoutRequestPdf;
+  readonly pdfConstructor = PayoutRequestPdf;
 
-  htmlGenerator = createPayoutRequestPdf;
+  render = createPayoutRequestPdf;
+
+  getOwner(entity: PayoutRequest): User {
+    return entity.requestedBy;
+  }
 
   async getParameters(entity: PayoutRequest): Promise<IPayoutRequestPdf> {
     return {

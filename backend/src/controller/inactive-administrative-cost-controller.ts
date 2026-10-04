@@ -44,6 +44,7 @@ import InactiveAdministrativeCost from '../entity/transactions/inactive-administ
 import { asBoolean, asFromAndTillDate } from '../helpers/validators';
 import { PdfError } from '../errors';
 import { formatTitleDate } from '../helpers/pdf';
+import InactiveAdministrativeCostReportPdfService from '../service/pdf/inactive-administrative-cost-report-pdf-service';
 
 
 export default class InactiveAdministrativeCostController extends BaseController {
@@ -405,7 +406,7 @@ export default class InactiveAdministrativeCostController extends BaseController
     try {
       const report = await new InactiveAdministrativeCostService().getInactiveAdministrativeCostReport(fromDate, toDate);
 
-      const pdf = await report.createPdf();
+      const pdf = await new InactiveAdministrativeCostReportPdfService().pdf(report);
       const from = formatTitleDate(fromDate);
       const to = formatTitleDate(toDate);
       const fileName = `inactive-cost-report-${from}-${to}.pdf`;

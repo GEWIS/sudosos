@@ -31,9 +31,6 @@ import VatGroup from '../vat-group';
 import ProductCategory from '../product/product-category';
 import PointOfSaleRevision from '../point-of-sale/point-of-sale-revision';
 import ContainerRevision from '../container/container-revision';
-import { UnstoredPdfAble } from '../file/pdf-able';
-import UserReportPdfService from '../../service/pdf/user-report-pdf-service';
-import { UserReportType } from '../../helpers/pdf';
 
 export interface IReport {
   forId: number;
@@ -103,12 +100,8 @@ export interface Report {
 }
 
 
-export class SalesReport extends UnstoredPdfAble(Report) {
-  pdfService = new UserReportPdfService(UserReportType.Sales);
-
+export class SalesReport extends Report {
   description: string;
 }
 
-export class BuyerReport extends UnstoredPdfAble(Report) {
-  pdfService = new UserReportPdfService(UserReportType.Purchases);
-}
+export class BuyerReport extends Report {}

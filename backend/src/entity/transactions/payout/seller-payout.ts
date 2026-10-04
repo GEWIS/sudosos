@@ -63,10 +63,11 @@
  *
  * ### Inspecting the window
  * `GET /seller-payouts/{id}/report` returns the live sales report for the stored window
- * (see the drift note above). `GET /seller-payouts/{id}/report/pdf` is the printable
- * version. {@link SellerPayout} itself is `PdfAble` too:
- * `GET /seller-payouts/{id}/pdf` produces the payout receipt using the snapshotted
- * amount, with the period and the `reference` printed on it.
+ * (see the drift note above). `GET /seller-payouts/{id}/report/pdf` stores the printable
+ * version using `SellerPayoutPdfService`, with the period and the `reference` printed on
+ * it. Its totals come from the sales report at the time it is first stored, not the
+ * snapshotted `amount`. The stored PDF is frozen after that, like every issued PDF;
+ * use `?force=true` to re-render it from the live report.
  *
  * @module seller-payouts
  * @mergeTarget
@@ -75,12 +76,9 @@
 import BasePayout from './base-payout';
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import SellerPayoutPdf from '../../file/seller-payout-pdf';
-import SellerPayoutPdfService from '../../../service/pdf/seller-payout-pdf-service';
-import { PdfAble } from '../../file/pdf-able';
-import { SELLER_PAYOUT_PDF_LOCATION } from '../../../files/storage';
 
 @Entity()
-export default class SellerPayout extends PdfAble(BasePayout) {
+export default class SellerPayout extends BasePayout {
   @Column({ type: 'datetime', nullable: false })
   public startDate: Date;
 
@@ -96,6 +94,4 @@ export default class SellerPayout extends PdfAble(BasePayout) {
   @OneToOne(() => SellerPayoutPdf, { eager: true, nullable: true, onDelete: 'RESTRICT' })
   @JoinColumn()
   public pdf?: SellerPayoutPdf;
-
-  pdfService = new SellerPayoutPdfService(SELLER_PAYOUT_PDF_LOCATION);
 }

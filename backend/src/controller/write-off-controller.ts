@@ -36,6 +36,7 @@ import BalanceService from '../service/balance-service';
 import { PdfError } from '../errors';
 import { PdfUrlResponse } from './response/simple-file-response';
 import { asBoolean } from '../helpers/validators';
+import WriteOffPdfService from '../service/pdf/write-off-pdf-service';
 
 /**
  * Controller for the `/writeoffs` endpoints in the {@link write-offs | write-offs}
@@ -216,7 +217,7 @@ export default class WriteOffController extends BaseController {
         return;
       }
 
-      const pdf = await writeOff.getOrCreatePdf(force);
+      const pdf = await new WriteOffPdfService().getOrCreate(writeOff, force);
 
       res.status(200).json({ pdf: pdf.downloadName } as PdfUrlResponse);
     } catch (error) {

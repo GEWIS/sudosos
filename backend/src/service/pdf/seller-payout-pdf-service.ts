@@ -28,17 +28,25 @@ import SellerPayout from '../../entity/transactions/payout/seller-payout';
 import SellerPayoutPdf from '../../entity/file/seller-payout-pdf';
 import { createSellerPayoutPdf, ISellerPayoutPdf } from '../../html/seller-payout.html';
 import { SalesReportService } from '../report-service';
-import { HtmlPdfService } from './pdf-service';
+import { StoredPdfService } from './pdf-service';
+import User from '../../entity/user/user';
+import { SELLER_PAYOUT_PDF_LOCATION } from '../../files/storage';
 import { reportToDocumentLines } from '../../helpers/pdf';
 
-export default class SellerPayoutPdfService extends HtmlPdfService<SellerPayoutPdf, SellerPayout, ISellerPayoutPdf> {
-  pdfConstructor = SellerPayoutPdf;
+export default class SellerPayoutPdfService extends StoredPdfService<SellerPayout, SellerPayoutPdf, ISellerPayoutPdf> {
+  readonly location = SELLER_PAYOUT_PDF_LOCATION;
 
-  htmlGenerator = createSellerPayoutPdf;
+  readonly pdfConstructor = SellerPayoutPdf;
+
+  render = createSellerPayoutPdf;
+
+  getOwner(entity: SellerPayout): User {
+    return entity.requestedBy;
+  }
 
   async getParameters(entity: SellerPayout): Promise<ISellerPayoutPdf> {
     const { startDate, endDate, reference, requestedBy } = entity;
-    const report = await new SalesReportService().getReport({
+    const report = await new SalesReportService(this.manager).getReport({
       fromDate: startDate,
       tillDate: endDate,
       forId: requestedBy.id,

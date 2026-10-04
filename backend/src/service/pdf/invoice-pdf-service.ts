@@ -19,14 +19,16 @@
  */
 
 /**
- * This is the page of invoice-html-pdf-service.
+ * This is the page of invoice-pdf-service.
  *
- * @module internal/pdf/invoice-html-pdf-service
+ * @module internal/pdf/invoice-pdf-service
  */
 
 import Invoice from '../../entity/invoices/invoice';
 import InvoicePdf from '../../entity/file/invoice-pdf';
-import { HtmlPdfService } from './pdf-service';
+import { StoredPdfService } from './pdf-service';
+import User from '../../entity/user/user';
+import { INVOICE_PDF_LOCATION } from '../../files/storage';
 import {
   createInvoicePdf,
   IInvoiceLineItem,
@@ -38,10 +40,16 @@ import { InvoiceState } from '../../entity/invoices/invoice-status';
 import SubTransactionRow from '../../entity/transactions/sub-transaction-row';
 import { BAC } from '../../files/templates/bac-letterhead';
 
-export default class InvoiceHtmlPdfService extends HtmlPdfService<InvoicePdf, Invoice, IInvoicePdf> {
-  pdfConstructor = InvoicePdf;
+export default class InvoicePdfService extends StoredPdfService<Invoice, InvoicePdf, IInvoicePdf> {
+  readonly location = INVOICE_PDF_LOCATION;
 
-  htmlGenerator = createInvoicePdf;
+  readonly pdfConstructor = InvoicePdf;
+
+  render = createInvoicePdf;
+
+  getOwner(invoice: Invoice): User {
+    return invoice.to;
+  }
 
   async getParameters(invoice: Invoice): Promise<IInvoicePdf> {
     const rows = (InvoiceService.isState(invoice, InvoiceState.DELETED)

@@ -51,6 +51,7 @@ import Transfer from '../../../src/entity/transactions/transfer';
 import DineroTransformer from '../../../src/entity/transformer/dinero-transformer';
 import { Currency } from 'dinero.js';
 import SubTransactionRow from '../../../src/entity/transactions/sub-transaction-row';
+import InvoicePdf from '../../../src/entity/file/invoice-pdf';
 
 chai.use(deepEqualInAnyOrder);
 
@@ -412,6 +413,26 @@ describe('InvoiceService', () => {
             validUpdateInvoiceParams.description,
           );
           expect(fromDB.addressee).to.equal(validUpdateInvoiceParams.addressee);
+        },
+      );
+    });
+    it('should mark the stored PDF stale when a printed field changes, but not on a state change', async () => {
+      await inUserContext(
+        await (await UserFactory()).clone(2),
+        async (debtor: User, creditor: User) => {
+          const invoice = await createInvoiceWithTransfers(debtor.id, creditor.id, 1);
+          const pdf = await InvoicePdf.save(Object.assign(new InvoicePdf(), {
+            downloadName: 'issued.pdf', location: 'issued.pdf', createdBy: creditor, hash: 'issued',
+          }));
+          await Invoice.update(invoice.id, { pdfId: pdf.id });
+
+          await AppDataSource.manager.transaction((manager) => new InvoiceService(manager)
+            .updateInvoice({ byId: creditor.id, invoiceId: invoice.id, state: InvoiceState.SENT }));
+          expect((await InvoicePdf.findOne({ where: { id: pdf.id } })).hash).to.equal('issued');
+
+          await AppDataSource.manager.transaction((manager) => new InvoiceService(manager)
+            .updateInvoice({ byId: creditor.id, invoiceId: invoice.id, reference: 'Changed' }));
+          expect((await InvoicePdf.findOne({ where: { id: pdf.id } })).hash).to.equal('');
         },
       );
     });

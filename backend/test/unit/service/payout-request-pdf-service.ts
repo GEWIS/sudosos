@@ -33,8 +33,9 @@ import { truncateAllTables } from '../../helpers/database-helpers';
 import { finishTestDB } from '../../helpers/test-helpers';
 import PayoutRequest from '../../../src/entity/transactions/payout/payout-request';
 import PayoutRequestPdfService from '../../../src/service/pdf/payout-request-pdf-service';
+import { PdfCompiler } from '../../../src/service/pdf/pdf-service';
 import PayoutRequestPdf from '../../../src/entity/file/payout-request-pdf';
-import { PAYOUT_REQUEST_PDF_LOCATION } from '../../../src/files/storage';
+import { hashJSON } from '../../../src/helpers/hash';
 import { PayoutRequestSeeder, UserSeeder } from '../../seed';
 import { PdfError } from '../../../src/errors';
 
@@ -87,168 +88,65 @@ describe('PayoutRequestPdfService', async () => {
     await finishTestDB(ctx.connection);
   });
 
-  let compileHtmlStub: SinonStub;
-  let uploadPayoutStub: SinonStub;
-  let createFileStub: SinonStub;
+  let compileStub: SinonStub;
+  let uploadStub: SinonStub;
 
-  let pdfService = new PayoutRequestPdfService(PAYOUT_REQUEST_PDF_LOCATION);
+  const pdfService = new PayoutRequestPdfService();
+
+  const getPayoutRequest = () => PayoutRequest.findOne({ where: { id: 1 }, relations: { requestedBy: true } });
 
   beforeEach(function () {
-    compileHtmlStub = sinon.stub(pdfService, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
-    uploadPayoutStub = sinon.stub(pdfService.fileService, 'uploadPdf');
-    createFileStub = sinon.stub(pdfService.fileService, 'createFile');
+    compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
+    uploadStub = sinon.stub(FileService.prototype, 'uploadPdf');
   });
 
   afterEach(function () {
-    // Restore the original function after each test
-    compileHtmlStub.restore();
-    uploadPayoutStub.restore();
-    createFileStub.restore();
+    compileStub.restore();
+    uploadStub.restore();
   });
 
-  describe('PayoutRequest: validatePdfHash', () => {
-    it('should return true if the PDF hash matches the expected hash', async () => {
-      const payoutRequest = ctx.payoutRequests[0];
-      const pdf = new PayoutRequestPdf();
-      pdf.hash = await payoutRequest.getPdfParamHash();
+  describe('getOrCreate', () => {
+    it('should return the stored PDF even if the requester was renamed', async () => {
+      const payoutRequest = await getPayoutRequest();
+      const pdf = Object.assign(new PayoutRequestPdf(), ctx.pdfParams);
       payoutRequest.pdf = pdf;
+      payoutRequest.requestedBy.firstName = 'Renamed';
 
-      const result = await payoutRequest.validatePdfHash();
-
-      expect(result).to.be.true;
+      expect(await pdfService.getOrCreate(payoutRequest)).to.eq(pdf);
+      expect(compileStub).to.not.have.been.called;
+      expect(uploadStub).to.not.have.been.called;
     });
-    it('should return false if the PDF hash does not match the expected hash', async () => {
-      const payoutRequest = ctx.payoutRequests[0];
-      const pdf = new PayoutRequestPdf();
-      pdf.hash = 'false';
-      payoutRequest.pdf = pdf;
+    it('should regenerate the stored PDF if force is true', async () => {
+      const payoutRequest = await getPayoutRequest();
+      payoutRequest.pdf = Object.assign(new PayoutRequestPdf(), ctx.pdfParams);
 
-      const result = await payoutRequest.validatePdfHash();
+      await pdfService.getOrCreate(payoutRequest, true);
 
-      expect(result).to.be.false;
+      expect(compileStub).to.have.been.calledOnce;
+      expect(uploadStub).to.have.been.calledOnce;
     });
-    it('should return false if the payoutRequest has no associated PDF', async () => {
-      const payoutRequest = ctx.payoutRequests[0];
-      const result = await payoutRequest.validatePdfHash();
+    it('should upload a new PDF with the parameter hash if none is stored', async () => {
+      const payoutRequest = await getPayoutRequest();
+      payoutRequest.pdf = undefined;
+      const newPdf = Object.assign(new PayoutRequestPdf(), ctx.pdfParams);
+      uploadStub.resolves(newPdf);
 
-      expect(result).to.be.false;
-    });
-  });
-
-  describe('PayoutRequest: getOrCreatePDF', () => {
-    it('should return an existing PDF if the hash matches and force is false', async () => {
-      const payoutRequest = ctx.payoutRequests[0];
-
-      const pdf = Object.assign(new PayoutRequestPdf(), {
-        ...ctx.pdfParams,
-      });
-
-      pdf.hash = await payoutRequest.getPdfParamHash();
-      await PayoutRequestPdf.save(pdf);
-
-      payoutRequest.pdf = pdf;
-      await PayoutRequest.save(payoutRequest);
-
-      const file = await payoutRequest.getOrCreatePdf();
-      expect(file.downloadName).to.eq(pdf.downloadName);
-    });
-    it('should regenerate and return a new PDF if the hash does not match', async () => {
-      const payoutRequest = ctx.payoutRequests[0];
-
-      const pdf = Object.assign(new PayoutRequestPdf(), {
-        ...ctx.pdfParams,
-      });
-      await PayoutRequestPdf.save(pdf);
-
-      payoutRequest.pdf = pdf;
-      await PayoutRequest.save(payoutRequest);
-
-      const newPdf = Object.assign(new PayoutRequestPdf(), {
-        ...ctx.pdfParams,
-        hash: await payoutRequest.getPdfParamHash(),
-      });
-      uploadPayoutStub.resolves(newPdf);
-      payoutRequest.pdfService = pdfService;
-
-      await payoutRequest.getOrCreatePdf();
-      expect(uploadPayoutStub).to.have.been.calledOnce;
-    });
-    it('should always regenerate and return a new PDF if force is true, even if the hash matches', async () => {
-      const payoutRequest = ctx.payoutRequests[0];
-
-      const pdf = Object.assign(new PayoutRequestPdf(), {
-        ...ctx.pdfParams,
-      });
-
-      pdf.hash = await payoutRequest.getPdfParamHash();
-      await PayoutRequestPdf.save(pdf);
-
-      payoutRequest.pdf = pdf;
-      await PayoutRequest.save(payoutRequest);
-
-      // Hash is valid
-      expect(await payoutRequest.validatePdfHash()).to.be.true;
-
-      const newPdf = Object.assign(new PayoutRequestPdf(), {
-        ...ctx.pdfParams,
-        hash: await payoutRequest.getPdfParamHash(),
-      });
-      uploadPayoutStub.resolves(newPdf);
-      payoutRequest.pdfService = pdfService;
-
-      await payoutRequest.getOrCreatePdf(true);
-
-      // Upload was still called.
-      expect(uploadPayoutStub).to.have.been.calledOnce;
-    });
-  });
-
-  describe('createPayoutRequestPDF', () => {
-    it('should generate and upload a new PDF for the given payoutRequest ID', async () => {
-
-      const payoutRequest = await PayoutRequest.findOne({ where: { id: 1 }, relations: {
-        requestedBy: true,
-      } });
-      const newPdf = Object.assign(new PayoutRequestPdf(), {
-        hash: await payoutRequest.getPdfParamHash(),
-        downloadName: 'test',
-        location: 'test',
-        createdBy: payoutRequest.requestedBy,
-        id: 42,
-      });
-      uploadPayoutStub.resolves(newPdf);
-      createFileStub.resolves({
-        downloadName: 'test',
-        location: 'test',
-        createdBy: payoutRequest.requestedBy.id,
-        id: 42,
-      });
-      payoutRequest.pdfService = pdfService;
-      const payoutRequestPdf = await payoutRequest.createPdf();
-
-      expect(payoutRequestPdf).to.not.be.undefined;
-      expect(payoutRequestPdf.hash).to.eq(await payoutRequest.getPdfParamHash());
+      expect(await pdfService.getOrCreate(payoutRequest)).to.eq(newPdf);
+      expect(uploadStub).to.have.been.calledOnceWith(
+        payoutRequest, PayoutRequestPdf, Buffer.from('PDF content'), payoutRequest.requestedBy, hashJSON(await pdfService.getParameters(payoutRequest)),
+      );
     });
     it('should throw an error if PDF generation fails', async () => {
-      compileHtmlStub.rejects(new PdfError('Failed to generate PDF'));
+      compileStub.rejects(new PdfError('Failed to generate PDF'));
+      const payoutRequest = await getPayoutRequest();
+      payoutRequest.pdf = undefined;
 
-      const payoutRequest = await PayoutRequest.findOne({ where: { id: 1 }, relations: {
-        requestedBy: true,
-        payoutRequestStatus: true,
-
-        transfer: {
-          to: true,
-          from: true,
-        },
-
-        pdf: true,
-      } });
-      payoutRequest.pdfService = pdfService;
-      await expect(payoutRequest.createPdf()).to.eventually.be.rejectedWith();
+      await expect(pdfService.getOrCreate(payoutRequest)).to.eventually.be.rejectedWith(PdfError);
+      expect(uploadStub).to.not.have.been.called;
     });
   });
 
-  describe('getParameters and createRaw', () => {
+  describe('getParameters and html', () => {
     it('should render the payout request details into the HTML', async () => {
       const payoutRequest = await PayoutRequest.findOne({ where: { id: 1 }, relations: { requestedBy: true } });
       const params = await pdfService.getParameters(payoutRequest);
@@ -258,10 +156,10 @@ describe('PayoutRequestPdfService', async () => {
       expect(params.bankAccountNumber).to.eq(payoutRequest.bankAccountNumber);
       expect(params.amount).to.eq(payoutRequest.amount.toFormat());
 
-      const html = (await pdfService.createRaw(payoutRequest)).toString('utf-8');
+      const html = (await pdfService.html(payoutRequest)).toString('utf-8');
       expect(html).to.include('SDS-PR-0001');
       expect(html).to.include(payoutRequest.bankAccountNumber);
-      expect(compileHtmlStub).to.not.have.been.called;
+      expect(compileStub).to.not.have.been.called;
     });
   });
 });

@@ -35,8 +35,8 @@ import ProductImage from '../entity/file/product-image';
 import Banner from '../entity/banner';
 import BannerImage from '../entity/file/banner-image';
 import Pdf from '../entity/file/pdf-file';
-import { IPdfAble } from '../entity/file/pdf-able';
 import { AppDataSource } from '../database/database';
+import { EntityManager } from 'typeorm';
 import Config from '../config';
 
 /**
@@ -150,44 +150,43 @@ export default class FileService {
 
 
   /**
-   * Upload a pdf file. The hash of the file params is derived from the entity itself.
+   * Upload a pdf file, replacing the entity's current pdf if it has one.
+   * The new file is written before the old one is removed, so a failed upload keeps the issued pdf.
    * @param entity - The entity that has the pdf property
    * @param PdfType - The pdf type, must be manually specified since the entities pdf can be undefined
    * @param fileData - The file data
    * @param createdBy - The user that created the file
+   * @param hash - The hash of the parameters the pdf was rendered from
+   * @param manager - The entity manager to save with, so the pdf follows the caller's transaction
    */
-  public async uploadPdf<T extends IPdfAble<S>, S extends Pdf>(entity: T, PdfType: new () => S, fileData: Buffer, createdBy: User): Promise<S> {
-    let pdf = entity.pdf;
+  public async uploadPdf<T extends { pdf?: S }, S extends Pdf>(
+    entity: T, PdfType: new () => S, fileData: Buffer, createdBy: User, hash: string,
+    manager: EntityManager = AppDataSource.manager,
+  ): Promise<S> {
+    const old = entity.pdf;
+    const location = await this.fileStorage.saveFile('', fileData);
+    const pdf = Object.assign(new PdfType(), { createdBy }, old, {
+      location,
+      downloadName: path.parse(location).base,
+      hash,
+    });
 
-    const entityRepo = AppDataSource.getRepository(entity.constructor as new () => T);
-    const entityPdf = AppDataSource.getRepository(PdfType);
-
-    const hash = await entity.getPdfParamHash();
-    if (pdf == null) {
-      pdf = Object.assign(new PdfType(), {
-        downloadName: '',
-        createdBy,
-        location: '',
-        hash,
+    try {
+      await manager.transaction(async (m) => {
+        await m.save(PdfType, pdf);
+        if (!old) await m.save(entity.constructor as new () => T, Object.assign(entity, { pdf }));
       });
-      await entityPdf.save(pdf);
-    } else {
-      // If the file does exist, we first have to remove it from storage
-      await this.removeFile(pdf);
+    } catch (error) {
+      if (!old) Object.assign(entity, { pdf: undefined });
+      await this.fileStorage.deleteFile(pdf);
+      throw error;
     }
 
-    const file = await this.createFile(pdf, fileData);
-
-    // Save the file name as the download name.
-    pdf.downloadName = path.parse(file.location).base;
-
-    pdf.hash = hash;
-    await entityPdf.save(pdf);
+    // Removed right away: an outer transaction that rolls back after this would point at a deleted file.
+    if (old) await this.removeFile(old);
     // eslint-disable-next-line no-param-reassign
     entity.pdf = pdf;
-
-    await entityRepo.save(entity);
-    return entity.pdf;
+    return pdf;
   }
 
   /**

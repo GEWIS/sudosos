@@ -63,6 +63,7 @@ import Transfer from '../entity/transactions/transfer';
 import WithManager from '../database/with-manager';
 import DineroTransformer from '../entity/transformer/dinero-transformer';
 import { Dinero } from 'dinero.js';
+import InvoicePdf from '../entity/file/invoice-pdf';
 
 export interface InvoiceFilterParameters {
   /**
@@ -319,6 +320,8 @@ export default class InvoiceService extends WithManager {
 
     if (amount) await this.manager.update(Transfer, { id: base.transfer.id }, { amountInclVat: DineroTransformer.Instance.from(amount.amount) });
     await this.manager.update(Invoice, { id: base.id }, { ...props, date: props.date ? new Date(props.date) : undefined });
+    // The stored PDF is frozen and every prop is printed on it, so mark it stale to re-render it on the next request.
+    if (base.pdf && Object.keys(props).length > 0) await this.manager.update(InvoicePdf, { id: base.pdf.id }, { hash: '' });
     // Return the newly updated Invoice.
 
     const options = InvoiceService.getOptions({ invoiceId: base.id, returnInvoiceEntries: true });

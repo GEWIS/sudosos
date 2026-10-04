@@ -59,9 +59,9 @@
  *
  * ### Listing and PDFs
  * `GET /payoutrequests` paginates with filters (status, requestedBy, date range);
- * `GET /payoutrequests/{id}` returns the full status history. `PayoutRequest` extends
- * `PdfAble`, so `GET /payoutrequests/{id}/pdf` produces the treasurer's printable receipt
- * with the bank details on it.
+ * `GET /payoutrequests/{id}` returns the full status history.
+ * `GET /payoutrequests/{id}/pdf` uses `PayoutRequestPdfService` to produce the
+ * treasurer's printable receipt with the bank details on it.
  *
  * ### Versus seller-payouts
  * Both modules share `BasePayout` (`requestedBy`, `amount`, `transfer`) and both debit a
@@ -83,12 +83,9 @@ import User from '../../user/user';
 import PayoutRequestStatus from './payout-request-status';
 import PayoutRequestPdf from '../../file/payout-request-pdf';
 import BasePayout from './base-payout';
-import { PdfAble } from '../../file/pdf-able';
-import PayoutRequestPdfService from '../../../service/pdf/payout-request-pdf-service';
-import { PAYOUT_REQUEST_PDF_LOCATION } from '../../../files/storage';
 
 @Entity()
-export default class PayoutRequest extends PdfAble(BasePayout) {
+export default class PayoutRequest extends BasePayout {
 
   @OneToMany(() => PayoutRequestStatus, (status) => status.payoutRequest, { cascade: true })
   public payoutRequestStatus: PayoutRequestStatus[];
@@ -109,6 +106,4 @@ export default class PayoutRequest extends PdfAble(BasePayout) {
   @OneToOne(() => PayoutRequestPdf, { eager: true, nullable: true, onDelete: 'RESTRICT' })
   @JoinColumn()
   public pdf?: PayoutRequestPdf;
-
-  pdfService = new PayoutRequestPdfService(PAYOUT_REQUEST_PDF_LOCATION);
 }

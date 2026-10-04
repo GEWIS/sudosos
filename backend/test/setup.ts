@@ -43,6 +43,7 @@ import sinonChai from 'sinon-chai';
 import { config } from 'dotenv';
 import '../src/database/database';
 import Config from '../src/config';
+import initializeDiskStorage from '../src/files/initialize';
 
 // Root hooks (registers Vitest beforeAll/beforeEach/afterEach/afterAll globally)
 import './root-hooks';
@@ -128,6 +129,9 @@ process.env = new Proxy(originalEnv, {
   },
 });
 Config.reset();
+
+// Tests that write real files need the storage folders, which a fresh checkout lacks.
+initializeDiskStorage();
 
 dinero.defaultCurrency = 'EUR';
 dinero.defaultPrecision = 2;

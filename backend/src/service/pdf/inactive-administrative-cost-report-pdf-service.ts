@@ -24,13 +24,13 @@
  * @module internal/pdf/inactive-administrative-cost-report-pdf-service
  */
 
-import { HtmlUnstoredPdfService } from './pdf-service';
+import { PdfService } from './pdf-service';
 import { InactiveAdministrativeCostReport } from '../../entity/report/inactive-administrative-cost-report';
 import { createInactiveAdministrativeCostReportPdf, IInactiveAdministrativeCostReportPdf } from '../../html/inactive-administrative-cost-report.html';
 
-export default class InactiveAdministrativeCostReportPdfService extends HtmlUnstoredPdfService<InactiveAdministrativeCostReport, IInactiveAdministrativeCostReportPdf> {
+export default class InactiveAdministrativeCostReportPdfService extends PdfService<InactiveAdministrativeCostReport, IInactiveAdministrativeCostReportPdf> {
 
-  htmlGenerator = createInactiveAdministrativeCostReportPdf;
+  render = createInactiveAdministrativeCostReportPdf;
 
   async getParameters(entity: InactiveAdministrativeCostReport): Promise<IInactiveAdministrativeCostReportPdf> {
     return {

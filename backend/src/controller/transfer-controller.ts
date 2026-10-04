@@ -35,6 +35,7 @@ import Transfer from '../entity/transactions/transfer';
 import { parseRequestPagination, toResponse } from '../helpers/pagination';
 import userTokenInOrgan from '../helpers/token-helper';
 import { PdfError } from '../errors';
+import TransferPdfService from '../service/pdf/transfer-pdf-service';
 
 /**
  * Controller for the `transfers` module. Exposes CRUD over transfers, aggregate and per-category
@@ -366,7 +367,7 @@ export default class TransferController extends BaseController {
         return;
       }
 
-      const pdf = await transfer.createPdf();
+      const pdf = await new TransferPdfService().pdf(transfer);
       const fileName = `transfer-${transfer.id}.pdf`;
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);

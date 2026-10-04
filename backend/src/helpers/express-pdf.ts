@@ -25,11 +25,12 @@
  */
 
 import { Response } from 'express';
-import { ReturnFileType, UserReportType } from './pdf';
+import { ReturnFileType } from './pdf';
 import { SalesReport } from '../entity/report/report';
 import { BuyerReportService, SalesReportService } from '../service/report-service';
+import UserReportPdfService from '../service/pdf/user-report-pdf-service';
 
-type PdfAbleService = SalesReportService | BuyerReportService;
+type UserReportSource = SalesReportService | BuyerReportService;
 
 /**
  * Send a rendered document as an attachment with the content type and
@@ -47,13 +48,13 @@ export function sendPdfOrHtml(res: Response, buffer: Buffer, baseName: string, f
 }
 
 export function reportPDFhelper(res: Response) {
-  return async (service: PdfAbleService, filters: { fromDate: Date, tillDate: Date }, description: string, forId: number, reportType: UserReportType, fileType: ReturnFileType) => {
+  return async (service: UserReportSource, filters: { fromDate: Date, tillDate: Date }, description: string, forId: number, fileType: ReturnFileType) => {
     const report = await service.getReport({ ...filters, forId });
     if (report instanceof SalesReport && description) report.description = description;
 
-    const buffer = fileType === ReturnFileType.PDF ? await report.createPdf() : await report.createRaw();
+    const buffer = await new UserReportPdfService().output(report, fileType);
     const from = `${filters.fromDate.getFullYear()}${filters.fromDate.getMonth() + 1}${filters.fromDate.getDate()}`;
     const to = `${filters.tillDate.getFullYear()}${filters.tillDate.getMonth() + 1}${filters.tillDate.getDate()}`;
-    sendPdfOrHtml(res, buffer, `${reportType}-${from}-${to}`, fileType);
+    sendPdfOrHtml(res, buffer, `${UserReportPdfService.kind(report)}-${from}-${to}`, fileType);
   };
 }
