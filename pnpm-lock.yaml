@@ -351,7 +351,7 @@ importers:
         version: 5.0.1(express@4.22.3(supports-color@5.5.0))
       typeorm:
         specifier: 1.1.1
-        version: 1.1.1(better-sqlite3@12.11.1)(ioredis@5.11.1(supports-color@5.5.0))(mysql2@3.24.5(@types/node@20.19.43))(supports-color@5.5.0)(ts-node@10.9.2(@swc/core@1.16.2(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3))
+        version: 1.1.1(better-sqlite3@12.11.1)(ioredis@5.11.1(supports-color@5.5.0))(mysql2@3.24.5(@types/node@20.19.43))(supports-color@5.5.0)(ts-node@10.9.2(@swc/core@1.16.12(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3))
       uuid:
         specifier: 10.0.0
         version: 10.0.0
@@ -16621,7 +16621,7 @@ snapshots:
       typescript: 5.9.3
       yaml: 2.9.0
 
-  typeorm@1.1.1(better-sqlite3@12.11.1)(ioredis@5.11.1(supports-color@5.5.0))(mysql2@3.24.5(@types/node@20.19.43))(supports-color@5.5.0)(ts-node@10.9.2(@swc/core@1.16.2(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3)):
+  typeorm@1.1.1(better-sqlite3@12.11.1)(ioredis@5.11.1(supports-color@5.5.0))(mysql2@3.24.5(@types/node@20.19.43))(supports-color@5.5.0)(ts-node@10.9.2(@swc/core@1.16.12(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3)):
     dependencies:
       '@sqltools/formatter': 1.2.5
       ansis: 4.3.1
@@ -16637,7 +16637,7 @@ snapshots:
       better-sqlite3: 12.11.1
       ioredis: 5.11.1(supports-color@5.5.0)
       mysql2: 3.24.5(@types/node@20.19.43)
-      ts-node: 10.9.2(@swc/core@1.16.2(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3)
+      ts-node: 10.9.2(@swc/core@1.16.12(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
