@@ -29,6 +29,7 @@ Format issues on GitHub as `#XXX`. Tickets from support.gewis.nl can also be aut
 - [ ] **Test Coverage**: New functionality has appropriate test coverage and all tests pass (`npm run test`)
 - [ ] **Documentation**: New functionality is documented with TypeDoc comments and API documentation is updated
 - [ ] **Database Changes**: Database migrations created (if applicable) and tested with both SQLite and MariaDB
+- [ ] **AI Contribution Policy**: Comments and the PR description are written in my own voice, and I understand every change. This PR conforms to SudoSOS's [AI contribution policy](https://github.com/GEWIS/sudosos/blob/develop/AI_POLICY.md).
 
 ## 🔗 Additional Notes
 <!-- Any additional information that reviewers should know -->

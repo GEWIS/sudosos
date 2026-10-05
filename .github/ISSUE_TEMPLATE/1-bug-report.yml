@@ -40,3 +40,10 @@ body:
     attributes:
       label: Other Information
       description: Any other details? Things like additional configurations, specific modules or packages, etc.
+  - type: checkboxes
+    id: ai-policy
+    attributes:
+      label: AI Contribution Policy
+      options:
+        - label: This issue is written in my own words and follows the [AI contribution policy](https://github.com/GEWIS/sudosos/blob/develop/AI_POLICY.md).
+          required: true

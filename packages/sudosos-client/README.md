@@ -113,4 +113,5 @@ pnpm --filter @gewis/sudosos-client run genbuild   # regenerate + rebuild the cl
 This package is generated — do not edit files under `src/` by hand; they will be overwritten on the next
 `pnpm gen`. To change the client's output, update the backend API and regenerate.
 
-Issues and contributions go through the [GEWIS/sudosos issue tracker](https://github.com/GEWIS/sudosos/issues).
+Issues and contributions go through the [GEWIS/sudosos issue tracker](https://github.com/GEWIS/sudosos/issues) and
+follow the [AI Contribution Policy](https://github.com/GEWIS/sudosos/blob/develop/AI_POLICY.md).

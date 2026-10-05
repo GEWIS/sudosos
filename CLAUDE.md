@@ -1,6 +1,6 @@
 # SudoSOS — Claude Code Guidelines
 
-**Last updated:** 2026-04-23
+**Last updated:** 2026-10-02
 
 **Monorepo layout:**
 - `backend/` — Express API, TypeORM, RBAC, TypeScript.
@@ -29,6 +29,16 @@ SudoSOS is GEWIS' point-of-sale and internal financial system. It records purcha
 
 ---
 
+## AI Contribution Policy
+
+SudoSOS follows the [AI Contribution Policy](./AI_POLICY.md): AI may write code and explore ideas, but comments, issues, and PR descriptions must be in the contributor's own voice, and every contribution must be understood by the contributor. For agents this means:
+
+- **Never post prose under the user's name.** Do not write or post PR descriptions, issue bodies, review replies, or other GitHub comments on the user's behalf. When opening a PR, fill in the title and checklist structure only and leave the description for the user. If the user asks for help, give notes in chat that they rewrite themselves.
+- **Never tick the AI Contribution Policy checkbox** in the PR template or issue forms. Only the contributor can confirm they followed the policy.
+- **Keep the contributor able to explain the change.** After making changes, say what changed and why, and call out non-obvious decisions, so the contributor can review and own them.
+
+---
+
 ## GitHub / PR Workflow
 
 - **PR titles**: PR titles are displayed on a screen in a GEWIS room, so they must be **short, human-readable, and complete on their own**. Do **not** use conventional-commit prefixes (`feat:`, `chore:`, etc.) — those belong in commit messages, not PR titles. Start with an imperative verb and write a plain sentence.
@@ -40,8 +50,8 @@ SudoSOS is GEWIS' point-of-sale and internal financial system. It records purcha
   gh api graphql -f query='mutation { resolveReviewThread(input: { threadId: "<THREAD_NODE_ID>" }) { thread { isResolved } } }'
   ```
   Thread node IDs (e.g. `PRRT_kwDOJ75ivs50YLQG`) come from `get_review_comments` — the `ID` field on each `reviewThread`.
-- **PR template checklist**: Check each item `[x]` if completed or not applicable. Leave `[ ]` only if it genuinely still needs work.
-  - For docs-only PRs: all three items can be `[x]` (no new tests needed, docs are the change, no DB migration).
+- **PR template checklist**: Check each item `[x]` if completed or not applicable. Leave `[ ]` only if it genuinely still needs work. **Exception:** never check the **AI Contribution Policy** item, the contributor checks it themselves (see [AI Contribution Policy](#ai-contribution-policy)).
+  - For docs-only PRs: the Test Coverage, Documentation, and Database Changes items can be `[x]` (no new tests needed, docs are the change, no DB migration).
 
 ### Handling PR Feedback
 
@@ -57,7 +67,7 @@ When asked to "go over PR feedback" or "handle PR comments":
 4. **Apply fixes into the correct original commits** — do NOT create a new `fix: apply PR review feedback` commit. Instead, amend the commit where the issue was introduced. A PR should read as a clean story; review feedback is rewriting that story, not appending errata. See [Commit history philosophy](#commit-history-philosophy) below.
 5. **Verify**: `pnpm backend:lint && pnpm --filter sudosos-backend exec tsc --noEmit` (backend) or `pnpm frontend:lint && pnpm --filter sudosos-dashboard exec vue-tsc --noEmit -p tsconfig.app.json` (frontend).
 6. **Force-push** with `--force-with-lease` to the remote branch.
-7. **Resolve every Copilot thread** via `gh api graphql` (`resolveReviewThread` mutation) — addressed, hallucinated, or skipped. Do **not** use `add_reply_to_pull_request_comment` for Copilot threads — resolve only, no reply. For human reviewer comments, reply with a short "Addressed — <what changed>" message, then the maintainer resolves their threads.
+7. **Resolve every Copilot thread** via `gh api graphql` (`resolveReviewThread` mutation) — addressed, hallucinated, or skipped. Do **not** use `add_reply_to_pull_request_comment` for Copilot threads — resolve only, no reply. Do **not** reply to human reviewer comments either: list for the user which comments were addressed and how, so they can reply in their own words (see [AI Contribution Policy](#ai-contribution-policy)). The maintainer resolves their own threads.
 
 ---
 

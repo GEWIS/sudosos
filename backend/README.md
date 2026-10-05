@@ -64,7 +64,7 @@ When creating the restricted API key, grant only:
 ## Available scripts
 
 Run these from `backend/`, or via `pnpm --filter sudosos-backend <script>` / `pnpm backend:<script>` from
-the repo root (see the root [command reference](../README.md#command-reference)).
+the repo root (see the root [command reference](../README.md#-command-reference)).
 
 | Script                   | Description                                       |
 | ------------------------ | ------------------------------------------------- |
@@ -100,4 +100,4 @@ Code Quality Tools -> ESLint -> check "Run eslint --fix on save".
 ---
 
 Contributing conventions, commit style, and the license are the same for the whole monorepo -- see the
-[root README](../README.md#contributing).
+[root README](../README.md#-contributing).
