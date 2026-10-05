@@ -41,6 +41,7 @@ import {
 } from '../../../src/controller/request/invoice-request';
 import Transaction from '../../../src/entity/transactions/transaction';
 import {
+  INVALID_INVOICE_ID,
   INVALID_TRANSACTION_OWNER,
   INVALID_USER_ID, INVOICE_IS_DELETED,
   INVOICE_IS_PAID, NO_TRANSACTION_IDS,
@@ -608,6 +609,17 @@ describe('InvoiceController', async () => {
         .send({ state: 'SENT', byId });
 
       expect(res.status).to.equal(400);
+    });
+    it('should return an HTTP 400 if invoice does not exist and state is given', async () => {
+      const id = (await Invoice.count()) + 1;
+
+      const res = await request(ctx.app)
+        .patch(`/invoices/${id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ state: 'SENT' });
+
+      expect(res.status).to.equal(400);
+      expect(res.body.errors[0]).to.include(INVALID_INVOICE_ID().value);
     });
     it('should return an HTTP 403 if not admin', async () => {
       const invoice = (await Invoice.find())[0];

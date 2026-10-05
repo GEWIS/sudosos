@@ -40,7 +40,7 @@ import BalanceService from '../../../src/service/balance-service';
 import { createTransactionRequest, createTransactions, requestToTransaction } from '../../helpers/transaction-factory';
 import { inUserContext, UserFactory } from '../../helpers/user-factory';
 import { TransactionRequest } from '../../../src/controller/request/transaction-request';
-import { InvoiceState } from '../../../src/entity/invoices/invoice-status';
+import InvoiceStatus, { InvoiceState } from '../../../src/entity/invoices/invoice-status';
 import Transaction from '../../../src/entity/transactions/transaction';
 import InvoiceUser from '../../../src/entity/user/invoice-user';
 import { truncateAllTables } from '../../helpers/database-helpers';
@@ -103,6 +103,22 @@ describe('InvoiceService', () => {
   // close database connection
   afterAll(async () => {
     await finishTestDB(ctx.connection);
+  });
+
+  describe('isState', () => {
+    it('should agree with getLatestInvoiceStatus when two statuses share a timestamp', () => {
+      const createdAt = new Date();
+      const invoice = Object.assign(new Invoice(), {
+        invoiceStatus: [
+          { id: 1, state: InvoiceState.CREATED, createdAt },
+          { id: 2, state: InvoiceState.DELETED, createdAt },
+        ],
+      });
+
+      expect(InvoiceService.getLatestInvoiceStatus(invoice.invoiceStatus).state).to.equal(InvoiceState.DELETED);
+      expect(InvoiceService.isState(invoice, InvoiceState.DELETED)).to.be.true;
+      expect(invoice.invoiceStatus.map((s) => s.id)).to.deep.equal([1, 2]);
+    });
   });
 
   describe('getInvoices function', () => {
@@ -375,6 +391,30 @@ describe('InvoiceService', () => {
       );
     });
   });
+  describe('getInvoices with latestState', () => {
+    it('should filter on one latest state when two statuses share a timestamp', async () => {
+      await inUserContext(
+        await (await UserFactory()).clone(2),
+        async (debtor: User, creditor: User) => {
+          const invoice = await createInvoiceWithTransfers(debtor.id, creditor.id, 1);
+          await InvoiceStatus.save(Object.assign(new InvoiceStatus(), {
+            invoice, changedBy: creditor, state: InvoiceState.DELETED,
+          }));
+          // Give both statuses the same timestamp, as MariaDB's second precision can. Raw SQL,
+          // since TypeORM skips createdAt on update and formats it differently on insert.
+          const [{ createdAt }] = await AppDataSource.query(
+            'SELECT MIN(createdAt) AS createdAt FROM invoice_status WHERE invoiceId = ?', [invoice.id]);
+          await AppDataSource.query('UPDATE invoice_status SET createdAt = ? WHERE invoiceId = ?', [createdAt, invoice.id]);
+
+          const ids = async (latestState: InvoiceState) => (await new InvoiceService()
+            .getInvoices({ invoiceId: invoice.id, latestState })).map((i) => i.id);
+          expect(await ids(InvoiceState.DELETED)).to.deep.equal([invoice.id]);
+          expect(await ids(InvoiceState.CREATED)).to.deep.equal([]);
+        },
+      );
+    });
+  });
+
   describe('updateInvoice function', () => {
     it('should update an invoice description and addressee', async () => {
       await inUserContext(
