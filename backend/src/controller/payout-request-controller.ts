@@ -38,6 +38,7 @@ import BalanceService from '../service/balance-service';
 import { PdfUrlResponse } from './response/simple-file-response';
 import { PdfError } from '../errors';
 import { asBoolean } from '../helpers/validators';
+import PayoutRequestPdfService from '../service/pdf/payout-request-pdf-service';
 
 /**
  * Controller for the `/payoutrequests` endpoints in the
@@ -75,7 +76,9 @@ export default class PayoutRequestController extends BaseController {
       },
       '/:id(\\d+)/pdf': {
         GET: {
-          policy: async (req) => this.roleManager.can(req.token.roles, 'get', await PayoutRequestController.getRelation(req), 'PayoutRequest', ['*']),
+          // Forcing re-renders a frozen PDF, so only those who can see all payout requests may do it.
+          policy: async (req) => this.roleManager.can(req.token.roles, 'get',
+            asBoolean(req.query.force) ? 'all' : await PayoutRequestController.getRelation(req), 'PayoutRequest', ['*']),
           handler: this.getPayoutRequestPdf.bind(this),
         },
       },
@@ -316,7 +319,7 @@ export default class PayoutRequestController extends BaseController {
         return;
       }
 
-      const pdf = await payoutRequest.getOrCreatePdf(force);
+      const pdf = await new PayoutRequestPdfService().getOrCreate(payoutRequest, force);
 
       res.status(200).json({ pdf: pdf.downloadName } as PdfUrlResponse);
     } catch (error) {

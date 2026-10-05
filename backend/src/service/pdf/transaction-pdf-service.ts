@@ -25,14 +25,14 @@
  * @module internal/pdf/transaction-pdf-service
  */
 
-import { HtmlUnstoredPdfService } from './pdf-service';
+import { PdfService } from './pdf-service';
 import Transaction from '../../entity/transactions/transaction';
 import { createTransactionPdf, ITransactionPdf } from '../../html/transaction.html';
 import { PdfError } from '../../errors';
 
-export default class TransactionPdfService extends HtmlUnstoredPdfService<Transaction, ITransactionPdf> {
+export default class TransactionPdfService extends PdfService<Transaction, ITransactionPdf> {
 
-  htmlGenerator = createTransactionPdf;
+  render = createTransactionPdf;
 
   async getParameters(entity: Transaction): Promise<ITransactionPdf> {
     const transaction = await this.manager.findOne(Transaction, {

@@ -82,7 +82,7 @@ import TransactionService from '../../../src/service/transaction-service';
 import { TransactionRequest } from '../../../src/controller/request/transaction-request';
 import { toMySQLString } from '../../../src/helpers/timestamps';
 import sinon from 'sinon';
-import UserReportPdfService from '../../../src/service/pdf/user-report-pdf-service';
+import { PdfCompiler } from '../../../src/service/pdf/pdf-service';
 import { PdfError } from '../../../src/errors';
 import { ensureProductionRoles, signTokenFor } from '../../helpers/user-factory';
 import Dinero from 'dinero.js';
@@ -2526,10 +2526,10 @@ describe('UserController', (): void => {
     });
   });
   describe('GET pdf', () => {
-    let compileHtmlStub: sinon.SinonStub;
+    let compileStub: sinon.SinonStub;
 
     beforeEach(() => {
-      compileHtmlStub = sinon.stub(UserReportPdfService.prototype, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
+      compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
     });
 
     afterEach(() => {
@@ -2549,7 +2549,7 @@ describe('UserController', (): void => {
         expect(res.status).to.equal(200);
       });
       it('should return 502 if pdf generation fails', async () => {
-        compileHtmlStub.rejects(new PdfError('Failed to generate PDF'));
+        compileStub.rejects(new PdfError('Failed to generate PDF'));
         const id = 1;
         const parameters = { fromDate: '2021-01-01', tillDate: '2021-12-31', fileType: 'PDF' };
         const user = await User.findOne({ where: { id } });
@@ -2641,7 +2641,7 @@ describe('UserController', (): void => {
         expect(res.status).to.equal(200);
       });
       it('should return 502 if pdf generation fails', async () => {
-        compileHtmlStub.rejects(new PdfError('Failed to generate PDF'));
+        compileStub.rejects(new PdfError('Failed to generate PDF'));
         const id = 1;
         const parameters = { fromDate: '2021-01-01', tillDate: '2021-12-31', fileType: 'PDF' };
         const user = await User.findOne({ where: { id } });

@@ -75,7 +75,7 @@ import UpdateKeyResponse from './response/update-key-response';
 import { randomBytes } from 'crypto';
 import DebtorService, { WaiveFinesParams } from '../service/debtor-service';
 import ReportService, { BuyerReportService, SalesReportService } from '../service/report-service';
-import { ReturnFileType, UserReportType } from '../helpers/pdf';
+import { ReturnFileType } from '../helpers/pdf';
 import { reportPDFhelper } from '../helpers/express-pdf';
 import { PdfError } from '../errors';
 import { WaiveFinesRequest } from './request/debtor-request';
@@ -1389,7 +1389,7 @@ export default class UserController extends BaseController {
         return;
       }
       const service = new SalesReportService();
-      await reportPDFhelper(res)(service, filters, description, user.id, UserReportType.Sales, fileType);
+      await reportPDFhelper(res)(service, filters, description, user.id, fileType);
     } catch (error) {
       this.logger.error('Could not get sales report:', error);
       if (error instanceof PdfError) {
@@ -1437,7 +1437,7 @@ export default class UserController extends BaseController {
         return;
       }
       const service = new BuyerReportService();
-      await (reportPDFhelper(res))(service, filters, undefined, user.id, UserReportType.Purchases, fileType);
+      await (reportPDFhelper(res))(service, filters, undefined, user.id, fileType);
     } catch (error) {
       this.logger.error('Could not get sales report:', error);
       if (error instanceof PdfError) {

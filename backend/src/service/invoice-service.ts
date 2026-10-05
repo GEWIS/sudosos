@@ -63,6 +63,7 @@ import Transfer from '../entity/transactions/transfer';
 import WithManager from '../database/with-manager';
 import DineroTransformer from '../entity/transformer/dinero-transformer';
 import { Dinero } from 'dinero.js';
+import InvoicePdf from '../entity/file/invoice-pdf';
 
 export interface InvoiceFilterParameters {
   /**
@@ -143,7 +144,7 @@ export default class InvoiceService extends WithManager {
   }
 
   static getLatestInvoiceStatus(invoiceStatus: InvoiceStatus[]): InvoiceStatus {
-    const sorted = invoiceStatus.sort((a, b) => {
+    const sorted = [...invoiceStatus].sort((a, b) => {
       const diff = b.createdAt.getTime() - a.createdAt.getTime();
       if (diff !== 0) return diff;
       return b.id - a.id;
@@ -230,9 +231,7 @@ export default class InvoiceService extends WithManager {
   }
 
   static isState(invoice: Invoice, state: InvoiceState): boolean {
-    // Sort to make sure we have the latest status.
-    // Sort createdAt ascending, take the last element. We do this in case timestamps are equal.
-    return invoice.invoiceStatus.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[invoice.invoiceStatus.length - 1].state === state;
+    return InvoiceService.getLatestInvoiceStatus(invoice.invoiceStatus).state === state;
   }
 
   /**
@@ -319,6 +318,8 @@ export default class InvoiceService extends WithManager {
 
     if (amount) await this.manager.update(Transfer, { id: base.transfer.id }, { amountInclVat: DineroTransformer.Instance.from(amount.amount) });
     await this.manager.update(Invoice, { id: base.id }, { ...props, date: props.date ? new Date(props.date) : undefined });
+    // The stored PDF is frozen and every prop is printed on it, so mark it stale to re-render it on the next request.
+    if (base.pdf && Object.keys(props).length > 0) await this.manager.update(InvoicePdf, { id: base.pdf.id }, { hash: '' });
     // Return the newly updated Invoice.
 
     const options = InvoiceService.getOptions({ invoiceId: base.id, returnInvoiceEntries: true });
@@ -532,11 +533,18 @@ export default class InvoiceService extends WithManager {
     return [invoices, count];
   }
 
+  /**
+   * The id of the latest status of an invoice, ordered like getLatestInvoiceStatus,
+   * since createdAt alone can tie (MariaDB stores it with second precision).
+   */
   public static stateSubQuery(): string {
     return InvoiceStatus.getRepository()
-      .createQueryBuilder('invoiceStatus')
-      .select('MAX(createdAt) as createdAt')
-      .where('invoiceStatus.invoiceId = `Invoice`.`id`')
+      .createQueryBuilder('latestStatus')
+      .select('latestStatus.id')
+      .where('latestStatus.invoiceId = `Invoice`.`id`')
+      .orderBy('latestStatus.createdAt', 'DESC')
+      .addOrderBy('latestStatus.id', 'DESC')
+      .limit(1)
       .getSql();
   }
 
@@ -552,7 +560,7 @@ export default class InvoiceService extends WithManager {
     if (params.latestState) {
       stateFilter.invoiceStatus = {
         // Get the latest status
-        createdAt: Raw((raw) => `${raw} = (${this.stateSubQuery()})`),
+        id: Raw((raw) => `${raw} = (${this.stateSubQuery()})`),
         state: Raw((raw) => `${raw} = '${params.latestState}'`),
       };
     }

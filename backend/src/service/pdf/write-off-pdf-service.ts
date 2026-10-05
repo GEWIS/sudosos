@@ -27,14 +27,21 @@
 
 import WriteOff from '../../entity/transactions/write-off';
 import WriteOffPdf from '../../entity/file/write-off-pdf';
-import { HtmlPdfService } from './pdf-service';
+import { StoredPdfService } from './pdf-service';
+import User from '../../entity/user/user';
+import { WRITE_OFF_PDF_LOCATION } from '../../files/storage';
 import { createWriteOffPdf, IWriteOffPdf } from '../../html/write-off.html';
 
-export default class WriteOffPdfService extends HtmlPdfService<WriteOffPdf, WriteOff, IWriteOffPdf> {
+export default class WriteOffPdfService extends StoredPdfService<WriteOff, WriteOffPdf, IWriteOffPdf> {
+  readonly location = WRITE_OFF_PDF_LOCATION;
 
-  pdfConstructor = WriteOffPdf;
+  readonly pdfConstructor = WriteOffPdf;
 
-  htmlGenerator = createWriteOffPdf;
+  render = createWriteOffPdf;
+
+  getOwner(entity: WriteOff): User {
+    return entity.to;
+  }
 
   async getParameters(entity: WriteOff): Promise<IWriteOffPdf> {
     return {

@@ -59,8 +59,8 @@ export const useInvoiceStore = defineStore('invoice', {
           return this.invoices[invoice.id];
         });
     },
-    async fetchInvoicePdf(id: number): Promise<string | undefined> {
-      return await ApiService.invoices.getInvoicePdf({ id }).then((res) => {
+    async fetchInvoicePdf(id: number, force = false): Promise<string | undefined> {
+      return await ApiService.invoices.getInvoicePdf({ id, force }).then((res) => {
         const pdf = res.data.pdf;
         if (!this.invoices[id]) return undefined;
 

@@ -38,6 +38,7 @@ import { ReturnFileType } from '../helpers/pdf';
 import { sendPdfOrHtml } from '../helpers/express-pdf';
 import { PdfError } from '../errors';
 import FineHandoutEvent from '../entity/fine/fineHandoutEvent';
+import FineReportPdfService from '../service/pdf/fine-report-pdf-service';
 
 /**
  * Controller for the `/fines` endpoints in the {@link debtors | debtors} module. Covers
@@ -426,7 +427,7 @@ export default class DebtorController extends BaseController {
     try {
       const report = await new DebtorService().getFineReport(fromDate, toDate);
 
-      const buffer = fileType === ReturnFileType.PDF ? await report.createPdf() : await report.createRaw();
+      const buffer = await new FineReportPdfService().output(report, fileType);
       const from = `${fromDate.getFullYear()}${fromDate.getMonth() + 1}${fromDate.getDate()}`;
       const to = `${toDate.getFullYear()}${toDate.getMonth() + 1}${toDate.getDate()}`;
       sendPdfOrHtml(res, buffer, `fine-report-${from}-${to}`, fileType);

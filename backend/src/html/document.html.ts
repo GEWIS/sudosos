@@ -25,7 +25,7 @@
  * line-items pages. The Invoice and the Seller Payout PDFs are both this
  * document with a different band label, meta rows and note text.
  *
- * Compiled to a PDF by `pdf-compiler` via `BaseHtmlPdfService`.
+ * Compiled to a PDF by `pdf-compiler` via `PdfService`.
  */
 
 import fs from 'fs';

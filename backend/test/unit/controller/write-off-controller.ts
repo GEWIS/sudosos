@@ -33,7 +33,7 @@ import { json } from 'body-parser';
 import VatGroup from '../../../src/entity/vat-group';
 import ServerSettingsStore from '../../../src/server-settings/server-settings-store';
 import { WriteOffSeeder } from '../../seed';
-import WriteOffPdfService from '../../../src/service/pdf/write-off-pdf-service';
+import { PdfCompiler } from '../../../src/service/pdf/pdf-service';
 import { PdfError } from '../../../src/errors';
 import sinon from 'sinon';
 import { WRITE_OFF_PDF_LOCATION } from '../../../src/files/storage';
@@ -261,10 +261,10 @@ describe('WriteOffController', () => {
   });
 
   describe('GET /writeoffs/{id}/pdf', () => {
-    let compileHtmlStub: sinon.SinonStub;
+    let compileStub: sinon.SinonStub;
 
     beforeEach(() => {
-      compileHtmlStub = sinon.stub(WriteOffPdfService.prototype, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
+      compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
     });
 
     afterEach(() => {
@@ -297,7 +297,7 @@ describe('WriteOffController', () => {
       expect(res.status).to.equal(403);
     });
     it('should return HTTP 502 if pdf generation fails', async () => {
-      compileHtmlStub.rejects(new PdfError('Failed to generate PDF'));
+      compileStub.rejects(new PdfError('Failed to generate PDF'));
       const writeOff = await WriteOff.findOne({ where: { id: 1 }, relations: {
         to: true,
       } });

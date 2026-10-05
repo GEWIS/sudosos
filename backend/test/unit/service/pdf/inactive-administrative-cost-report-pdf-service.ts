@@ -62,21 +62,21 @@ describe('InactiveAdministrativeCostReportPdfService', () => {
     });
   });
 
-  describe('htmlGenerator', () => {
+  describe('render', () => {
     it('produces a HTML string from the parameters', async () => {
       const service = new InactiveAdministrativeCostReportPdfService();
       const params = await service.getParameters(makeReport());
-      const html = service.htmlGenerator(params);
+      const html = service.render(params);
       expect(html).to.be.a('string');
       expect(html).to.include(params.totalAmountInclVat);
       expect(html).to.include(`${params.vatPercentage}%`);
     });
   });
 
-  describe('createRaw', () => {
+  describe('html', () => {
     it('returns a Buffer with HTML bytes for the supplied entity', async () => {
       const service = new InactiveAdministrativeCostReportPdfService();
-      const buffer = await service.createRaw(makeReport());
+      const buffer = await service.html(makeReport());
       expect(buffer).to.be.instanceOf(Buffer);
       const text = buffer.toString('utf-8');
       expect(text).to.include(totalAmountInclVat.toFormat());

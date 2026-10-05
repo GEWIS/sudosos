@@ -41,6 +41,7 @@ import {
 } from '../../../src/controller/request/invoice-request';
 import Transaction from '../../../src/entity/transactions/transaction';
 import {
+  INVALID_INVOICE_ID,
   INVALID_TRANSACTION_OWNER,
   INVALID_USER_ID, INVOICE_IS_DELETED,
   INVOICE_IS_PAID, NO_TRANSACTION_IDS,
@@ -56,7 +57,6 @@ import InvoiceService from '../../../src/service/invoice-service';
 import InvoiceUser from '../../../src/entity/user/invoice-user';
 import { UpdateInvoiceUserRequest } from '../../../src/controller/request/user-request';
 import InvoicePdf from '../../../src/entity/file/invoice-pdf';
-import sinon from 'sinon';
 import { truncateAllTables } from '../../helpers/database-helpers';
 import { finishTestDB } from '../../helpers/test-helpers';
 import { createTransactionRequest, requestToTransaction } from '../../helpers/transaction-factory';
@@ -610,6 +610,17 @@ describe('InvoiceController', async () => {
 
       expect(res.status).to.equal(400);
     });
+    it('should return an HTTP 400 if invoice does not exist and state is given', async () => {
+      const id = (await Invoice.count()) + 1;
+
+      const res = await request(ctx.app)
+        .patch(`/invoices/${id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ state: 'SENT' });
+
+      expect(res.status).to.equal(400);
+      expect(res.body.errors[0]).to.include(INVALID_INVOICE_ID().value);
+    });
     it('should return an HTTP 403 if not admin', async () => {
       const invoice = (await Invoice.find())[0];
       const updateRequest: UpdateInvoiceRequest = {
@@ -718,13 +729,11 @@ describe('InvoiceController', async () => {
     it('should return the file name of the pdf', async () => {
       let invoice = (await Invoice.find())[0];
 
-      const stub = sinon.stub(Invoice.prototype, 'validatePdfHash').resolves(true);
-
       const pdf = Object.assign(new InvoicePdf(), {
         downloadName: 'test-file.pdf',
         createdBy: ctx.adminUser,
         location: '/etc/test-file.pdf',
-        hash: 'fake_hash',
+        hash: 'issued',
       });
 
       await InvoicePdf.save(pdf);
@@ -737,7 +746,31 @@ describe('InvoiceController', async () => {
 
       expect(res.status).to.equal(200);
       expect(res.body.pdf).to.equal('test-file.pdf');
-      stub.restore();
+    });
+    it('should not let the invoice owner force a re-render', async () => {
+      const invoice = await Invoice.findOne({ where: { to: { id: ctx.invoiceUser.id } } });
+      expect(invoice).to.not.be.null;
+
+      const pdf = Object.assign(new InvoicePdf(), {
+        downloadName: 'owner-file.pdf',
+        createdBy: ctx.adminUser,
+        location: '/etc/owner-file.pdf',
+        hash: 'issued',
+      });
+      await InvoicePdf.save(pdf);
+      invoice.pdf = pdf;
+      await Invoice.save(invoice);
+
+      const res = await request(ctx.app)
+        .get(`/invoices/${invoice.id}/pdf`)
+        .set('Authorization', `Bearer ${ctx.invoiceToken}`);
+      expect(res.status).to.equal(200);
+
+      const forced = await request(ctx.app)
+        .get(`/invoices/${invoice.id}/pdf`)
+        .query({ force: true })
+        .set('Authorization', `Bearer ${ctx.invoiceToken}`);
+      expect(forced.status).to.equal(403);
     });
     it('should return an HTTP 404 if invoice does not exist', async () => {
       const res = await request(ctx.app)

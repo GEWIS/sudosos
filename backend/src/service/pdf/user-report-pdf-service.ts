@@ -25,21 +25,17 @@
  */
 
 import { BuyerReport, SalesReport } from '../../entity/report/report';
-import { HtmlUnstoredPdfService } from './pdf-service';
+import { PdfService } from './pdf-service';
 import { reportToDocumentLines, UserReportType } from '../../helpers/pdf';
 import { createUserReportPdf, IUserReportPdf } from '../../html/user-report.html';
 import User from '../../entity/user/user';
-import { EntityManager } from 'typeorm';
 
-export default class UserReportPdfService<T extends SalesReport | BuyerReport> extends HtmlUnstoredPdfService<T, IUserReportPdf> {
+export default class UserReportPdfService<T extends SalesReport | BuyerReport> extends PdfService<T, IUserReportPdf> {
 
-  htmlGenerator = createUserReportPdf;
+  render = createUserReportPdf;
 
-  private readonly type: UserReportType;
-
-  constructor(type: UserReportType, manager?: EntityManager) {
-    super(manager);
-    this.type = type;
+  static kind(report: SalesReport | BuyerReport): UserReportType {
+    return report instanceof SalesReport ? UserReportType.Sales : UserReportType.Purchases;
   }
 
   async getParameters(entity: T): Promise<IUserReportPdf> {
@@ -49,7 +45,7 @@ export default class UserReportPdfService<T extends SalesReport | BuyerReport> e
     if (!user) throw new Error('User not found');
 
     return {
-      kind: this.type,
+      kind: UserReportPdfService.kind(entity),
       account: [user.firstName, user.lastName].filter(Boolean).join(' '),
       customerNumber: String(user.id),
       startDate: entity.fromDate.toLocaleDateString('nl-NL'),

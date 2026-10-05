@@ -24,9 +24,10 @@ import { defaultBefore, DefaultContext, finishTestDB } from '../../helpers/test-
 import { WriteOffSeeder } from '../../seed';
 import WriteOff from '../../../src/entity/transactions/write-off';
 import FileService from '../../../src/service/file-service';
-import { WRITE_OFF_PDF_LOCATION } from '../../../src/files/storage';
+import { hashJSON } from '../../../src/helpers/hash';
 import sinon, { SinonStub } from 'sinon';
 import WriteOffPdfService from '../../../src/service/pdf/write-off-pdf-service';
+import { PdfCompiler } from '../../../src/service/pdf/pdf-service';
 import { PdfError } from '../../../src/errors';
 import User from '../../../src/entity/user/user';
 import chai, { expect } from 'chai';
@@ -72,160 +73,65 @@ describe('WriteOffPdfService', () => {
     await finishTestDB(ctx.connection);
   });
   
-  let compileHtmlStub: SinonStub;
-  let uploadWriteOffStub: SinonStub;
-  let createFileStub: SinonStub;
-  
-  let pdfService = new WriteOffPdfService(WRITE_OFF_PDF_LOCATION);
-  
+  let compileStub: SinonStub;
+  let uploadStub: SinonStub;
+
+  const pdfService = new WriteOffPdfService();
+
+  const getWriteOff = () => WriteOff.findOne({ where: { id: 1 }, relations: { to: true } });
+
   beforeEach(function () {
-    compileHtmlStub = sinon.stub(pdfService, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
-    uploadWriteOffStub = sinon.stub(pdfService.fileService, 'uploadPdf');
-    createFileStub = sinon.stub(pdfService.fileService, 'createFile');
+    compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
+    uploadStub = sinon.stub(FileService.prototype, 'uploadPdf');
   });
-  
+
   afterEach(function () {
-    compileHtmlStub.restore();
-    uploadWriteOffStub.restore();
-    createFileStub.restore();
-  });
-  
-  describe('WriteOff: validatePdfHash', () => {
-    it('should return true if the PDF hash matches the expected hash', async () => {
-      const writeOff = ctx.writeOffs[0];
-      const pdf = new WriteOffPdf();
-      pdf.hash = await writeOff.getPdfParamHash();
-      writeOff.pdf = pdf;
-        
-      const result = await writeOff.validatePdfHash();
-        
-      expect(result).to.be.true;
-    });
-    it('should return false if the PDF hash does not match the expected hash', async () => {
-      const writeOff = ctx.writeOffs[0];
-      const pdf = new WriteOffPdf();
-      pdf.hash = 'false';
-      writeOff.pdf = pdf;
-        
-      const result = await writeOff.validatePdfHash();
-        
-      expect(result).to.be.false;
-    });
-    it('should return false if the writeOff has no associated PDF', async () => {
-      const writeOff = ctx.writeOffs[0];
-      const result = await writeOff.validatePdfHash();
-        
-      expect(result).to.be.false;
-    });
+    compileStub.restore();
+    uploadStub.restore();
   });
 
-  describe('WriteOff: getOrCreatePDF', () => {
-    it('should return an existing PDF if the hash matches and force is false', async () => {
-      const writeOff = ctx.writeOffs[0];
-
-      const pdf = Object.assign(new WriteOffPdf(), {
-        ...ctx.pdfParams,
-      });
-
-      pdf.hash = await writeOff.getPdfParamHash();
-      await WriteOffPdf.save(pdf);
-
+  describe('getOrCreate', () => {
+    it('should return the stored PDF even if the owner was renamed', async () => {
+      const writeOff = await getWriteOff();
+      const pdf = Object.assign(new WriteOffPdf(), ctx.pdfParams);
       writeOff.pdf = pdf;
-      await WriteOff.save(writeOff);
+      writeOff.to.firstName = 'Renamed';
 
-      const file = await writeOff.getOrCreatePdf();
-      expect(file.downloadName).to.eq(pdf.downloadName);
+      expect(await pdfService.getOrCreate(writeOff)).to.eq(pdf);
+      expect(compileStub).to.not.have.been.called;
+      expect(uploadStub).to.not.have.been.called;
     });
-    it('should regenerate and return a new PDF if the hash does not match', async () => {
-      const writeOff = ctx.writeOffs[0];
+    it('should regenerate the stored PDF if force is true', async () => {
+      const writeOff = await getWriteOff();
+      writeOff.pdf = Object.assign(new WriteOffPdf(), ctx.pdfParams);
 
-      const pdf = Object.assign(new WriteOffPdf(), {
-        ...ctx.pdfParams,
-      });
-      await WriteOffPdf.save(pdf);
+      await pdfService.getOrCreate(writeOff, true);
 
-      writeOff.pdf = pdf;
-      await WriteOff.save(writeOff);
-
-      const newPdf = Object.assign(new WriteOffPdf(), {
-        ...ctx.pdfParams,
-        hash: await writeOff.getPdfParamHash(),
-      });
-      uploadWriteOffStub.resolves(newPdf);
-      writeOff.pdfService = pdfService;
-
-      await writeOff.getOrCreatePdf();
-      expect(uploadWriteOffStub).to.have.been.calledOnce;
+      expect(compileStub).to.have.been.calledOnce;
+      expect(uploadStub).to.have.been.calledOnce;
     });
-    it('should always regenerate and return a new PDF if force is true, even if the hash matches', async () => {
-      const writeOff = ctx.writeOffs[0];
+    it('should upload a new PDF with the parameter hash if none is stored', async () => {
+      const writeOff = await getWriteOff();
+      writeOff.pdf = undefined;
+      const newPdf = Object.assign(new WriteOffPdf(), ctx.pdfParams);
+      uploadStub.resolves(newPdf);
 
-      const pdf = Object.assign(new WriteOffPdf(), {
-        ...ctx.pdfParams,
-      });
-
-      pdf.hash = await writeOff.getPdfParamHash();
-      await WriteOffPdf.save(pdf);
-
-      writeOff.pdf = pdf;
-      await WriteOff.save(writeOff);
-
-      // Hash is valid
-      expect(await writeOff.validatePdfHash()).to.be.true;
-
-      const newPdf = Object.assign(new WriteOffPdf(), {
-        ...ctx.pdfParams,
-        hash: await writeOff.getPdfParamHash(),
-      });
-      uploadWriteOffStub.resolves(newPdf);
-      writeOff.pdfService = pdfService;
-
-      await writeOff.getOrCreatePdf(true);
-
-      // Upload was still called.
-      expect(uploadWriteOffStub).to.have.been.calledOnce;
-    });
-  });
-
-  describe('createWriteOffPDF', () => {
-    it('should generate and upload a new PDF for the given writeOff ID', async () => {
-
-      const writeOff = await WriteOff.findOne({ where: { id: 1 }, relations: {
-        to: true,
-      } });
-      const newPdf = Object.assign(new WriteOffPdf(), {
-        hash: await writeOff.getPdfParamHash(),
-        downloadName: 'test',
-        location: 'test',
-        createdBy: writeOff.to,
-        id: 42,
-      });
-      uploadWriteOffStub.resolves(newPdf);
-      createFileStub.resolves({
-        downloadName: 'test',
-        location: 'test',
-        createdBy: writeOff.to.id,
-        id: 42,
-      });
-      writeOff.pdfService = pdfService;
-      const writeOffPdf = await writeOff.createPdf();
-
-      expect(writeOffPdf).to.not.be.undefined;
-      expect(writeOffPdf.hash).to.eq(await writeOff.getPdfParamHash());
+      expect(await pdfService.getOrCreate(writeOff)).to.eq(newPdf);
+      expect(uploadStub).to.have.been.calledOnceWith(
+        writeOff, WriteOffPdf, Buffer.from('PDF content'), writeOff.to, hashJSON(await pdfService.getParameters(writeOff)),
+      );
     });
     it('should throw an error if PDF generation fails', async () => {
-      compileHtmlStub.rejects(new PdfError('Failed to generate PDF'));
+      compileStub.rejects(new PdfError('Failed to generate PDF'));
+      const writeOff = await getWriteOff();
+      writeOff.pdf = undefined;
 
-      const writeOff = await WriteOff.findOne({ where: { id: 1 }, relations: {
-        to: true,
-        transfer: true,
-      } });
-      writeOff.pdfService = pdfService;
-      await expect(writeOff.createPdf()).to.eventually.be.rejectedWith();
+      await expect(pdfService.getOrCreate(writeOff)).to.eventually.be.rejectedWith(PdfError);
+      expect(uploadStub).to.not.have.been.called;
     });
   });
 
-  describe('getParameters and createRaw', () => {
+  describe('getParameters and html', () => {
     it('should render the write-off details into the HTML', async () => {
       const writeOff = await WriteOff.findOne({ where: { id: 1 }, relations: { to: true } });
       const params = await pdfService.getParameters(writeOff);
@@ -234,9 +140,9 @@ describe('WriteOffPdfService', () => {
       expect(params.accountId).to.eq(String(writeOff.to.id));
       expect(params.amount).to.eq(writeOff.amount.toFormat());
 
-      const html = (await pdfService.createRaw(writeOff)).toString('utf-8');
+      const html = (await pdfService.html(writeOff)).toString('utf-8');
       expect(html).to.include('SDS-WR-0001');
-      expect(compileHtmlStub).to.not.have.been.called;
+      expect(compileStub).to.not.have.been.called;
     });
   });
 });

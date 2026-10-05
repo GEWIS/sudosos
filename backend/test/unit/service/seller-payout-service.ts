@@ -32,6 +32,7 @@ import { calculateBalance } from '../../helpers/balance';
 import { DineroObjectRequest } from '../../../src/controller/request/dinero-request';
 import dinero from 'dinero.js';
 import { SellerPayoutSeeder, TransactionSeeder, TransferSeeder, UserSeeder } from '../../seed';
+import SellerPayoutPdf from '../../../src/entity/file/seller-payout-pdf';
 
 describe('SellerPayoutService', () => {
   let ctx: {
@@ -368,6 +369,21 @@ describe('SellerPayoutService', () => {
 
       // Cleanup
       await SellerPayout.save(oldSellerPayout);
+    });
+    it('should mark the stored PDF stale', async () => {
+      const oldSellerPayout = ctx.sellerPayouts[0];
+      const pdf = await SellerPayoutPdf.save(Object.assign(new SellerPayoutPdf(), {
+        downloadName: 'issued.pdf', location: 'issued.pdf', createdBy: oldSellerPayout.requestedBy, hash: 'issued',
+      }));
+      await SellerPayout.update(oldSellerPayout.id, { pdfId: pdf.id });
+
+      await new SellerPayoutService().updateSellerPayout(oldSellerPayout.id, {
+        amount: oldSellerPayout.amount.toObject(),
+      });
+      expect((await SellerPayoutPdf.findOne({ where: { id: pdf.id } })).hash).to.equal('');
+
+      // Cleanup
+      await SellerPayout.update(oldSellerPayout.id, { pdfId: null });
     });
     it('should throw if seller payout does not exist', async () => {
       const id = (await SellerPayout.count()) + 41;

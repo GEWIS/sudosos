@@ -47,6 +47,7 @@ import {
 } from './validation-errors';
 import { InvoiceState } from '../../../entity/invoices/invoice-status';
 import Invoice from '../../../entity/invoices/invoice';
+import InvoiceService from '../../../service/invoice-service';
 
 /**
  * Checks whether all the transactions exists and are credited to the debtor or sold in case of credit Invoice.
@@ -83,38 +84,25 @@ async function validTransactionIds<T extends BaseInvoice>(p: T) {
 }
 
 /**
- * Validates that Invoice exists and is not of state DELETED.
+ * Validates that the Invoice exists, that the update changes its state (if it sets one),
+ * and that the Invoice is not PAID or DELETED.
  * @param p
  */
-async function existsAndNotPaidOrDeleted<T extends UpdateInvoiceParams>(p: T) {
+async function existsAndUpdatable<T extends UpdateInvoiceParams>(p: T) {
   const base: Invoice = await Invoice.findOne({ where: { id: p.invoiceId }, relations: {
     invoiceStatus: true,
   } });
 
   if (!base) return toFail(INVALID_INVOICE_ID());
-  const current = base.invoiceStatus.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[base.invoiceStatus.length - 1].state;
+  const { state: current } = InvoiceService.getLatestInvoiceStatus(base.invoiceStatus);
+  if (p.state && current === p.state) {
+    return toFail(SAME_INVOICE_STATE());
+  }
   if (current === InvoiceState.DELETED) {
     return toFail(INVOICE_IS_DELETED());
   }
   if (current === InvoiceState.PAID) {
     return toFail(INVOICE_IS_PAID());
-  }
-
-  return toPass(p);
-}
-
-/**
- * Validates that the state of the update request is different than the current state.
- * @param p
- */
-async function differentState<T extends UpdateInvoiceParams>(p: T) {
-  if (!p.state) return toPass(p);
-
-  const base: Invoice = await Invoice.findOne({ where: { id: p.invoiceId }, relations: {
-    invoiceStatus: true,
-  } });
-  if (base.invoiceStatus[base.invoiceStatus.length - 1].state === p.state) {
-    return toFail(SAME_INVOICE_STATE());
   }
 
   return toPass(p);
@@ -169,8 +157,7 @@ export function updateInvoiceRequestSpec(): Specification<UpdateInvoiceParams, V
     [[maxLength(255)], 'attention', new ValidationError('attention:')],
     [[...stringSpec(), maxLength(255)], 'description', new ValidationError('description:')],
     [[validOrUndefinedDate], 'date', new ValidationError('date:')],
-    differentState,
-    existsAndNotPaidOrDeleted,
+    existsAndUpdatable,
   ];
 }
 

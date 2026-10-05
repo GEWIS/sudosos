@@ -42,6 +42,7 @@ import UserService from '../service/user-service';
 import InvoiceService from '../service/invoice-service';
 import POSTokenVerifier from '../helpers/pos-token-verifier';
 import { PdfError } from '../errors';
+import TransactionPdfService from '../service/pdf/transaction-pdf-service';
 
 /**
  * Controller for the `transactions` module. Exposes the buyer-facing CRUD for transactions,
@@ -431,7 +432,7 @@ export default class TransactionController extends BaseController {
         return;
       }
 
-      const pdf = await transaction.createPdf();
+      const pdf = await new TransactionPdfService().pdf(transaction);
       const fileName = `transaction-${transaction.id}.pdf`;
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);

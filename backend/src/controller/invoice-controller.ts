@@ -48,6 +48,7 @@ import { parseInvoiceUserToResponse } from '../helpers/revision-to-response';
 import { AppDataSource } from '../database/database';
 import { NotImplementedError, PdfError } from '../errors';
 import { PdfUrlResponse } from './response/simple-file-response';
+import InvoicePdfService from '../service/pdf/invoice-pdf-service';
 
 /**
  * The Invoice controller.
@@ -119,7 +120,9 @@ export default class InvoiceController extends BaseController {
       },
       '/:id(\\d+)/pdf': {
         GET: {
-          policy: async (req) => this.roleManager.can(req.token.roles, 'get', await InvoiceController.getRelation(req), 'Invoice', ['*']),
+          // Forcing re-renders a frozen PDF, so only those who can see all invoices may do it.
+          policy: async (req) => this.roleManager.can(req.token.roles, 'get',
+            asBoolean(req.query.force) ? 'all' : await InvoiceController.getRelation(req), 'Invoice', ['*']),
           handler: this.getInvoicePDF.bind(this),
         },
       },
@@ -367,7 +370,7 @@ export default class InvoiceController extends BaseController {
         return;
       }
 
-      const pdf = await invoice.getOrCreatePdf(req.query.force === 'true');
+      const pdf = await new InvoicePdfService().getOrCreate(invoice, !!asBoolean(req.query.force));
 
       res.status(200).json({ pdf: pdf.downloadName } as PdfUrlResponse);
     } catch (error) {

@@ -49,6 +49,7 @@ import { ensureProductionRoles, signTokenFor } from '../../helpers/user-factory'
 import { PdfError } from '../../../src/errors';
 import StripePaymentIntent from '../../../src/entity/stripe/stripe-payment-intent';
 import TerminalPayment from '../../../src/entity/transactions/terminal/terminal-payment';
+import TransactionPdfService from '../../../src/service/pdf/transaction-pdf-service';
 
 const { expect, request } = chai;
 
@@ -1259,7 +1260,7 @@ describe('TransactionController', (): void => {
     });
 
     beforeEach(() => {
-      createPdfStub = sinon.stub(Transaction.prototype, 'createPdf').resolves(Buffer.from('PDF content'));
+      createPdfStub = sinon.stub(TransactionPdfService.prototype, 'pdf').resolves(Buffer.from('PDF content'));
     });
 
     afterEach(() => {
@@ -1292,7 +1293,7 @@ describe('TransactionController', (): void => {
 
     it('should return HTTP 400 if PDF generation fails with PdfError', async () => {
       createPdfStub.restore();
-      createPdfStub = sinon.stub(Transaction.prototype, 'createPdf').rejects(new PdfError('Transaction missing required relations'));
+      createPdfStub = sinon.stub(TransactionPdfService.prototype, 'pdf').rejects(new PdfError('Transaction missing required relations'));
 
       expect(testTransaction).to.not.be.null;
 
@@ -1306,7 +1307,7 @@ describe('TransactionController', (): void => {
 
     it('should return HTTP 500 if PDF generation fails with other error', async () => {
       createPdfStub.restore();
-      createPdfStub = sinon.stub(Transaction.prototype, 'createPdf').rejects(new Error('PDF generation failed'));
+      createPdfStub = sinon.stub(TransactionPdfService.prototype, 'pdf').rejects(new Error('PDF generation failed'));
 
       expect(testTransaction).to.not.be.null;
 

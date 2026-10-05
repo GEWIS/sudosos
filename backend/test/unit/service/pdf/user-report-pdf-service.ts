@@ -57,7 +57,7 @@ describe('UserReportPdfService', () => {
     const report = new SalesReport(reportData());
     report.description = 'Borrel';
 
-    const service = new UserReportPdfService<SalesReport>(UserReportType.Sales, manager);
+    const service = new UserReportPdfService<SalesReport>(manager);
     const params = await service.getParameters(report);
 
     expect(params.kind).to.equal(UserReportType.Sales);
@@ -72,7 +72,7 @@ describe('UserReportPdfService', () => {
     expect(params.subtotalExcl).to.be.closeTo(2, 0.001);
     expect(params.totalVat).to.be.closeTo(0.42, 0.001);
 
-    const html = (await service.createRaw(report)).toString('utf-8');
+    const html = (await service.html(report)).toString('utf-8');
     expect(html).to.include('Sales Report');
     expect(html).to.include('Borrel');
   });
@@ -80,26 +80,26 @@ describe('UserReportPdfService', () => {
   it('maps a purchase report without a description', async () => {
     const report = new BuyerReport(reportData());
 
-    const service = new UserReportPdfService<BuyerReport>(UserReportType.Purchases, manager);
+    const service = new UserReportPdfService<BuyerReport>(manager);
     const params = await service.getParameters(report);
 
     expect(params.kind).to.equal(UserReportType.Purchases);
     expect(params.description).to.equal('');
 
-    const html = (await service.createRaw(report)).toString('utf-8');
+    const html = (await service.html(report)).toString('utf-8');
     expect(html).to.include('Purchase Report');
   });
 
   it('throws when the report has no products', async () => {
     const report = new BuyerReport({ ...reportData(), data: {} });
-    const service = new UserReportPdfService<BuyerReport>(UserReportType.Purchases, manager);
+    const service = new UserReportPdfService<BuyerReport>(manager);
     await expect(service.getParameters(report)).to.eventually.be.rejectedWith(Error, 'No products found in report');
   });
 
   it('throws when the user does not exist', async () => {
     const report = new BuyerReport(reportData());
     const noUserManager = { findOne: async (): Promise<null> => null } as unknown as EntityManager;
-    const service = new UserReportPdfService<BuyerReport>(UserReportType.Purchases, noUserManager);
+    const service = new UserReportPdfService<BuyerReport>(noUserManager);
     await expect(service.getParameters(report)).to.eventually.be.rejectedWith(Error, 'User not found');
   });
 });

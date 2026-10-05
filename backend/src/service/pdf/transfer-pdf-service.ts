@@ -25,7 +25,7 @@
  * @module internal/pdf/transfer-pdf-service
  */
 
-import { HtmlUnstoredPdfService } from './pdf-service';
+import { PdfService } from './pdf-service';
 import Transfer from '../../entity/transactions/transfer';
 import { createTransferPdf, ITransferPdf } from '../../html/transfer.html';
 import { PdfError } from '../../errors';
@@ -37,9 +37,9 @@ import Fine from '../../entity/fine/fine';
 import UserFineGroup from '../../entity/fine/userFineGroup';
 import InactiveAdministrativeCost from '../../entity/transactions/inactive-administrative-cost';
 
-export default class TransferPdfService extends HtmlUnstoredPdfService<Transfer, ITransferPdf> {
+export default class TransferPdfService extends PdfService<Transfer, ITransferPdf> {
 
-  htmlGenerator = createTransferPdf;
+  render = createTransferPdf;
 
   async getParameters(entity: Transfer): Promise<ITransferPdf> {
     const transfer = await this.manager.findOne(Transfer, {

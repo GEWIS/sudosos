@@ -42,6 +42,7 @@ import { RequestWithToken } from '../middleware/token-middleware';
 import { asDate, asNumber } from '../helpers/validators';
 import { SalesReportService } from './report-service';
 import WithManager from '../database/with-manager';
+import SellerPayoutPdf from '../entity/file/seller-payout-pdf';
 
 export interface SellerPayoutFilterParameters {
   sellerPayoutId?: number;
@@ -159,6 +160,8 @@ export default class SellerPayoutService extends WithManager {
     const { transfer } = payout;
     transfer.amountInclVat = amount;
     await this.manager.save(transfer);
+    // The stored PDF is frozen, so mark it stale to re-render it from the reconciled data on the next request.
+    if (payout.pdfId) await this.manager.update(SellerPayoutPdf, { id: payout.pdfId }, { hash: '' });
 
     [[payout]] = await this.getSellerPayouts({ sellerPayoutId: id, returnTransfer: true });
     return payout;

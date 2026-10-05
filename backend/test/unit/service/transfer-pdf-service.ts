@@ -26,6 +26,7 @@ import Database from '../../../src/database/database';
 import Transfer from '../../../src/entity/transactions/transfer';
 import User from '../../../src/entity/user/user';
 import TransferPdfService from '../../../src/service/pdf/transfer-pdf-service';
+import { PdfCompiler } from '../../../src/service/pdf/pdf-service';
 import DineroTransformer from '../../../src/entity/transformer/dinero-transformer';
 import { finishTestDB } from '../../helpers/test-helpers';
 import { truncateAllTables } from '../../helpers/database-helpers';
@@ -43,7 +44,7 @@ describe('TransferPdfService', () => {
   let connection: DataSource;
   let service: TransferPdfService;
   let users: User[];
-  let compileHtmlStub: SinonStub;
+  let compileStub: SinonStub;
 
   beforeAll(async () => {
     connection = await Database.initialize();
@@ -57,12 +58,12 @@ describe('TransferPdfService', () => {
   });
 
   beforeEach(() => {
-    compileHtmlStub = sinon.stub(service, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
+    compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
   });
 
   afterEach(() => {
-    if (compileHtmlStub) {
-      compileHtmlStub.restore();
+    if (compileStub) {
+      compileStub.restore();
     }
   });
 
@@ -251,7 +252,7 @@ describe('TransferPdfService', () => {
     });
   });
 
-  describe('createPdfBuffer', () => {
+  describe('pdf', () => {
     it('should create PDF buffer for undecorated transfer', async () => {
       const transfer = await Transfer.save({
         fromId: users[0].id,
@@ -261,10 +262,10 @@ describe('TransferPdfService', () => {
         version: 1,
       });
 
-      const pdfBuffer = await service.createPdfBuffer(transfer);
+      const pdfBuffer = await service.pdf(transfer);
 
       expect(pdfBuffer).to.be.instanceOf(Buffer);
-      expect(compileHtmlStub).to.have.been.calledOnce;
+      expect(compileStub).to.have.been.calledOnce;
     });
   });
 });
