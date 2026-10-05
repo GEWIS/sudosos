@@ -45,6 +45,9 @@ import { asBoolean, asFromAndTillDate } from '../helpers/validators';
 import { PdfError } from '../errors';
 import { formatTitleDate } from '../helpers/pdf';
 import InactiveAdministrativeCostReportPdfService from '../service/pdf/inactive-administrative-cost-report-pdf-service';
+import { AppDataSource } from '../database/database';
+import AuditService from '../service/audit-service';
+import { AuditAction, AuditEntityType } from '../entity/audit/audit-log-entry';
 
 
 export default class InactiveAdministrativeCostController extends BaseController {
@@ -221,7 +224,16 @@ export default class InactiveAdministrativeCostController extends BaseController
 
     // handle request
     try {
-      const inactiveAdministrativeCost = await new InactiveAdministrativeCostService().createInactiveAdministrativeCost(body);
+      const inactiveAdministrativeCost = await AppDataSource.manager.transaction(async (manager) => {
+        const created = await new InactiveAdministrativeCostService(manager).createInactiveAdministrativeCost(body);
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.INACTIVE_ADMINISTRATIVE_COST_CREATE,
+          entityType: AuditEntityType.INACTIVE_ADMINISTRATIVE_COST,
+          entityId: created.id,
+          changes: { forId: body.forId, amount: created.amount.toObject() },
+        });
+        return created;
+      });
       res.json(inactiveAdministrativeCost.toResponse());
     } catch (error) {
       if (error instanceof NotImplementedError) {
@@ -257,7 +269,22 @@ export default class InactiveAdministrativeCostController extends BaseController
         return;
       }
 
-      await new InactiveAdministrativeCostService().deleteInactiveAdministrativeCost(inactiveAdministrativeCostId);
+      const deleted = await AppDataSource.manager.transaction(async (manager) => {
+        const cost = await new InactiveAdministrativeCostService(manager).deleteInactiveAdministrativeCost(inactiveAdministrativeCostId);
+        // Undefined when a concurrent request deleted it first: nothing happened, so nothing is recorded.
+        if (!cost) return undefined;
+        await new AuditService(manager).log(req.token.user, {
+          action: AuditAction.INACTIVE_ADMINISTRATIVE_COST_DELETE,
+          entityType: AuditEntityType.INACTIVE_ADMINISTRATIVE_COST,
+          entityId: inactiveAdministrativeCostId,
+          changes: { forId: cost.fromId, amount: cost.amount.toObject() },
+        });
+        return cost;
+      });
+      if (!deleted) {
+        res.status(404).json('InactiveAdministrativeCost not found.');
+        return;
+      }
       res.status(204).send();
     } catch (error) {
       this.logger.error('Could not delete InactiveAdministrativeCost:', error);

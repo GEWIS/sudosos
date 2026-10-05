@@ -41,6 +41,7 @@ import { PaymentRequestStatus } from '../../../src/entity/payment-request/paymen
 import { ensureProductionRoles, signTokenFor } from '../../helpers/user-factory';
 import { CreatePaymentRequestRequest } from '../../../src/controller/request/payment-request-request';
 import { BasePaymentRequestResponse } from '../../../src/controller/response/payment-request-response';
+import AuditLogEntry, { AuditAction, AuditEntityType } from '../../../src/entity/audit/audit-log-entry';
 
 describe('PaymentRequestController', (): void => {
   let ctx: {
@@ -313,6 +314,26 @@ describe('PaymentRequestController', (): void => {
       ).valid).to.be.true;
     });
 
+    it('should record the payment request id on the audit entry', async () => {
+      const body: CreatePaymentRequestRequest = {
+        forId: ctx.localUser.id,
+        amount: { amount: 1300, precision: 2, currency: 'EUR' },
+        expiresAt: futureDate(),
+      };
+      const res = await request(ctx.app)
+        .post('/payment-requests')
+        .set('Authorization', `Bearer ${ctx.userToken}`)
+        .send(body);
+      expect(res.status).to.equal(200);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.PAYMENT_REQUEST_CREATE, entityId: res.body.uuid },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.PAYMENT_REQUEST);
+      expect(entry.entityId).to.equal(res.body.uuid);
+    });
+
     it('should return 403 when regular user tries to create for someone else', async () => {
       const body: CreatePaymentRequestRequest = {
         forId: ctx.otherUser.id,
@@ -367,6 +388,24 @@ describe('PaymentRequestController', (): void => {
     });
   });
 
+  /**
+   * Create a PENDING payment request of our own, so tests that change its state leave
+   * the seeded requests alone.
+   */
+  async function createPendingRequest(): Promise<BasePaymentRequestResponse> {
+    const body: CreatePaymentRequestRequest = {
+      forId: ctx.localUser.id,
+      amount: { amount: 900, precision: 2, currency: 'EUR' },
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    };
+    const res = await request(ctx.app)
+      .post('/payment-requests')
+      .set('Authorization', `Bearer ${ctx.adminToken}`)
+      .send(body);
+    expect(res.status).to.equal(200);
+    return res.body as BasePaymentRequestResponse;
+  }
+
   // Seeder assigns statuses by `i % 4`: 0=PENDING, 1=PAID, 2=CANCELLED, 3=EXPIRED.
   // With count=8 we have two rows per status. We use indices explicitly (rather
   // than `.find(status===X)`) so that tests which mutate state (cancel, mark-
@@ -380,6 +419,23 @@ describe('PaymentRequestController', (): void => {
       expect(res.status).to.equal(200);
       expect(res.body.status).to.equal(PaymentRequestStatus.CANCELLED);
       expect(res.body.cancelledBy.id).to.equal(ctx.adminUser.id);
+    });
+
+    it('should record the cancellation in the audit log', async () => {
+      const created = await createPendingRequest();
+      const res = await request(ctx.app)
+        .post(`/payment-requests/${created.uuid}/cancel`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(200);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.PAYMENT_REQUEST_CANCEL, entityId: created.uuid },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.PAYMENT_REQUEST);
+      expect(entry.entityId).to.equal(created.uuid);
+      expect(entry.actor.id).to.equal(ctx.adminUser.id);
     });
 
     it('should return 409 when cancelling an already-cancelled request', async () => {
@@ -419,6 +475,26 @@ describe('PaymentRequestController', (): void => {
       // The admin performing the escape hatch is recorded for audit.
       expect(res.body.fulfilledBy).to.not.be.null;
       expect(res.body.fulfilledBy.id).to.equal(ctx.adminUser.id);
+    });
+
+    it('should record the reason in the audit log', async () => {
+      const created = await createPendingRequest();
+      const reason = 'bank transfer 2026-04-24';
+      const res = await request(ctx.app)
+        .post(`/payment-requests/${created.uuid}/mark-fulfilled`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ reason });
+      expect(res.status).to.equal(200);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.PAYMENT_REQUEST_MARK_FULFILLED, entityId: created.uuid },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.PAYMENT_REQUEST);
+      expect(entry.entityId).to.equal(created.uuid);
+      expect(entry.actor.id).to.equal(ctx.adminUser.id);
+      expect(entry.changes).to.deep.equal({ reason });
     });
 
     it('should return 400 on empty reason', async () => {

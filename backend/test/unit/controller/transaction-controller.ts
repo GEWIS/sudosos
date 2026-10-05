@@ -50,6 +50,7 @@ import { PdfError } from '../../../src/errors';
 import StripePaymentIntent from '../../../src/entity/stripe/stripe-payment-intent';
 import TerminalPayment from '../../../src/entity/transactions/terminal/terminal-payment';
 import TransactionPdfService from '../../../src/service/pdf/transaction-pdf-service';
+import AuditLogEntry, { AuditAction, AuditEntityType } from '../../../src/entity/audit/audit-log-entry';
 
 const { expect, request } = chai;
 
@@ -980,6 +981,27 @@ describe('TransactionController', (): void => {
     });
   });
 
+  /**
+   * The rows of a transaction request as the audit log records them.
+   */
+  function auditedRows(req: TransactionRequest) {
+    return req.subTransactions.flatMap((sub) => sub.subTransactionRows.map((row) => ({
+      toId: sub.to,
+      productId: row.product.id,
+      revision: row.product.revision,
+      amount: row.amount,
+    }))).sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
+  }
+
+  async function createTransaction(): Promise<number> {
+    const res = await request(ctx.app)
+      .post('/transactions')
+      .set('Authorization', `Bearer ${ctx.adminToken}`)
+      .send(ctx.validTransReq);
+    expect(res.status).to.equal(200);
+    return res.body.id;
+  }
+
   describe('PATCH /transactions', () => {
     it('should return an HTTP 200 and the updated transaction if the transaction is valid and user is admin', async () => {
       let res = await request(ctx.app)
@@ -1001,6 +1023,43 @@ describe('TransactionController', (): void => {
 
       expect(res.body).to.not.eql(toUpdate);
       expect(res.status).to.equal(200);
+    });
+    it('should record only the changed fields in the audit log', async () => {
+      const id = await createTransaction();
+
+      // Buy one more of the first product; everything but the rows and totals stays the same.
+      const updateReq = JSON.parse(JSON.stringify(ctx.validTransReq)) as TransactionRequest;
+      const sub = updateReq.subTransactions[0];
+      const row = sub.subTransactionRows[0];
+      const unitPrice = row.totalPriceInclVat.amount / row.amount;
+      row.amount += 1;
+      row.totalPriceInclVat.amount += unitPrice;
+      sub.totalPriceInclVat.amount += unitPrice;
+      updateReq.totalPriceInclVat.amount += unitPrice;
+
+      const res = await request(ctx.app)
+        .patch(`/transactions/${id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send(updateReq);
+      expect(res.status).to.equal(200);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.TRANSACTION_UPDATE, entityId: String(id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.TRANSACTION);
+      expect(entry.actor.id).to.equal(ctx.users[6].id);
+      expect(entry.changes).to.deep.equal({
+        totalPriceInclVat: {
+          before: ctx.validTransReq.totalPriceInclVat,
+          after: updateReq.totalPriceInclVat,
+        },
+        rows: {
+          before: auditedRows(ctx.validTransReq),
+          after: auditedRows(updateReq),
+        },
+      });
     });
     it('should return an HTTP 400 if the request is invalid', async () => {
       let res = await request(ctx.app)
@@ -1111,6 +1170,29 @@ describe('TransactionController', (): void => {
 
       expect(res.body).to.be.empty;
       expect(res.status).to.equal(204);
+    });
+    it('should record the deleted transaction in the audit log', async () => {
+      const id = await createTransaction();
+
+      const res = await request(ctx.app)
+        .delete(`/transactions/${id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(204);
+
+      const entry = await AuditLogEntry.findOne({
+        where: { action: AuditAction.TRANSACTION_DELETE, entityId: String(id) },
+        order: { id: 'DESC' },
+      });
+      expect(entry).to.not.be.null;
+      expect(entry.entityType).to.equal(AuditEntityType.TRANSACTION);
+      expect(entry.actor.id).to.equal(ctx.users[6].id);
+      expect(entry.changes).to.deep.equal({
+        fromId: ctx.validTransReq.from,
+        createdById: ctx.validTransReq.createdBy,
+        pointOfSaleId: ctx.validTransReq.pointOfSale.id,
+        totalPriceInclVat: ctx.validTransReq.totalPriceInclVat,
+        rows: auditedRows(ctx.validTransReq),
+      });
     });
     it('should return an HTTP 404 if the transaction does not exist', async () => {
       // delete a nonexistent transaction in the database

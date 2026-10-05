@@ -44,6 +44,8 @@ import generateBalance, { finishTestDB } from '../../helpers/test-helpers';
 import BalanceService from '../../../src/service/balance-service';
 import { ensureProductionRoles, inUserContext, signTokenFor, UserFactory } from '../../helpers/user-factory';
 import { PayoutRequestSeeder, UserSeeder } from '../../seed';
+import sinon from 'sinon';
+import AuditService from '../../../src/service/audit-service';
 
 const { expect, request } = chai;
 
@@ -463,6 +465,21 @@ describe('PayoutRequestController', () => {
 
       const validation = ctx.specification.validateModel('PayoutRequestResponse', payoutRequest, false, true);
       expect(validation.valid).to.be.true;
+      expect(await PayoutRequest.count()).to.equal(countBefore + 1);
+    });
+
+    it('should still answer 200 when the audit entry fails to record', async () => {
+      const countBefore = await PayoutRequest.count();
+      const stub = sinon.stub(AuditService.prototype, 'log').rejects(new Error('audit insert failed'));
+      try {
+        const res = await request(ctx.app)
+          .post('/payoutrequests')
+          .set('Authorization', `Bearer ${ctx.adminToken}`)
+          .send(ctx.validPayoutRequestRequest);
+        expect(res.status).to.equal(200);
+      } finally {
+        stub.restore();
+      }
       expect(await PayoutRequest.count()).to.equal(countBefore + 1);
     });
 

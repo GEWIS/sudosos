@@ -25,7 +25,7 @@
  */
 
 import dinero, { Dinero } from 'dinero.js';
-import { FindManyOptions, FindOptionsWhere, Raw, SelectQueryBuilder } from 'typeorm';
+import { EntityManager, FindManyOptions, FindOptionsWhere, Raw, SelectQueryBuilder } from 'typeorm';
 import DineroTransformer from '../entity/transformer/dinero-transformer';
 import Transfer from '../entity/transactions/transfer';
 import { TransferResponse } from '../controller/response/transfer-response';
@@ -405,7 +405,13 @@ export default class TransferService extends WithManager {
     return { total, deposits, payoutRequests, sellerPayouts, invoices, creditInvoices, fines, waivedFines, writeOffs, inactiveAdministrativeCosts, manualCreations, manualDeletions };
   }
 
-  public async deleteTransfer(id: number): Promise<void> {
+  /**
+   * Hard deletes a manual transfer.
+   * @param id - the id of the transfer to delete.
+   * @returns the deleted transfer, with its from and to users loaded.
+   * @throws Error when the transfer does not exist or another entity references it.
+   */
+  public async deleteTransfer(id: number): Promise<Transfer> {
     const transfer = await this.manager.findOne(Transfer, {
       where: { id },
       relations: {
@@ -433,10 +439,17 @@ export default class TransferService extends WithManager {
 
     await this.manager.delete(Transfer, id);
 
-    await TransferService.invalidateBalanceCaches(transfer);
+    await TransferService.invalidateBalanceCaches(transfer, this.manager);
+    return transfer;
   }
 
-  public static async invalidateBalanceCaches(transfer: Transfer): Promise<void> {
+  /**
+   * Invalidates the balance cache of both sides of a transfer.
+   * @param transfer - the transfer whose users to invalidate.
+   * @param manager - the manager to clear the cache with, so that a caller running in a
+   * database transaction does not wait on its own locks from a second connection.
+   */
+  public static async invalidateBalanceCaches(transfer: Transfer, manager?: EntityManager): Promise<void> {
     // both the from and to users' balances are affected by a transfer
     const userIds: number[] = [];
     if (transfer.from?.id !== undefined) {
@@ -447,7 +460,7 @@ export default class TransferService extends WithManager {
     }
 
     if (userIds.length > 0) {
-      await new BalanceService().clearBalanceCache(userIds);
+      await new BalanceService(manager).clearBalanceCache(userIds);
     }
   }
 }
