@@ -366,8 +366,9 @@ export default class BalanceService extends WithManager {
     if (balances.length > 0 && balances[0].amount === undefined) {
       throw new Error('No balance returned');
     }
-    const count = (await connection.query(query, parameters)).length;
-
+    const count = take || skip ?
+      (await connection.query(query, parameters)).length
+      : balances.length;
 
     return [
       balances.map((b: object) => BalanceService.asBalanceResponse(b, date ?? new Date())),
@@ -390,34 +391,23 @@ export default class BalanceService extends WithManager {
    * @param allowDeleted allow balances of deleted users to be returned
    */
   public async calculateTotalBalances(date: Date, allowDeleted?: boolean): Promise<TotalBalanceResponse> {
-    const posBalanceRes = (await this.getBalances(
-      { date, minBalance: DineroTransformer.Instance.from(0), allowDeleted }))[0];
-    const negBalanceRes = (await this.getBalances(
-      { date, maxBalance: DineroTransformer.Instance.from(0), allowDeleted }))[0];
+    const getBalancesResponse = await this.getBalances({ date, allowDeleted });
+    const allBalanceResponses = getBalancesResponse[0];
+
+    const posBalanceRes = allBalanceResponses.filter((response) => response.amount.amount >= 0);
+    const negBalanceRes = allBalanceResponses.filter((response) => response.amount.amount < 0);
 
     const totalPos =  BalanceService.calculateTotal(posBalanceRes);
     const totalNeg = BalanceService.calculateTotal(negBalanceRes);
 
     const typeTotals: UserTypeTotalBalanceResponse[] = [];
-    const typedPosBalance: BalanceResponse[][] = [];
-    const typedNegBalance: BalanceResponse[][] = [];
-    const promises: Promise<any>[] = [];
-
     const userTypes = Object.values(UserType);
 
-    for (const [index, type] of userTypes.entries()) {
-      promises.push(this.getBalances(
-        { userTypes: [type], date, minBalance: DineroTransformer.Instance.from(0), allowDeleted })
-        .then((r) => typedPosBalance[index] = r[0]));
-      promises.push(this.getBalances({ userTypes: [type], date, maxBalance: DineroTransformer.Instance.from(0), allowDeleted })
-        .then((r) => typedNegBalance[index] = r[0]));
-    }
-
-    await Promise.all(promises);
-
-    userTypes.forEach((type, index) => {
-      const totalTypedPos = BalanceService.calculateTotal(typedPosBalance[index]);
-      const totalTypedNeg = BalanceService.calculateTotal(typedNegBalance[index]);
+    userTypes.forEach((type) => {
+      const typesPosBalanceResponse = allBalanceResponses.filter((response) => response.type === type && response.amount.amount >= 0);
+      const typesNegBalanceResponse = allBalanceResponses.filter((response) => response.type === type && response.amount.amount < 0);
+      const totalTypedPos = BalanceService.calculateTotal(typesPosBalanceResponse);
+      const totalTypedNeg = BalanceService.calculateTotal(typesNegBalanceResponse);
 
       typeTotals.push({
         userType: type,
