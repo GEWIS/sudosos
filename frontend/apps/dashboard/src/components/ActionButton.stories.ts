@@ -10,7 +10,7 @@ const meta: Meta<typeof ActionButton> = {
     docs: {
       description: {
         component:
-          'A PrimeVue button that reflects the outcome of an async action. Set `submitting` while the action is in flight to show a spinner, then set `result` to `true` or `false` once it resolves to flash success or danger styling. `result` stays unset before the first attempt, rendering as a plain primary button.',
+          'A OpenVue button that reflects the outcome of an async action. Set `submitting` while the action is in flight to show a spinner, then set `result` to `true` or `false` once it resolves to flash success or danger styling. `result` stays unset before the first attempt, rendering as a plain primary button.',
       },
     },
   },
@@ -19,7 +19,7 @@ const meta: Meta<typeof ActionButton> = {
       description: 'Button text.',
     },
     submitting: {
-      description: "Shows a spinner and PrimeVue's loading state while `true`.",
+      description: "Shows a spinner and OpenVue's loading state while `true`.",
     },
     result: {
       description:

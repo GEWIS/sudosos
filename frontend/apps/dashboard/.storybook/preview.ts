@@ -1,6 +1,6 @@
 import { setup } from '@storybook/vue3-vite';
 import type { Preview } from '@storybook/vue3-vite';
-import { usePreset } from '@primeuix/themes';
+import { usePreset } from '@openvue/themes';
 import {
   SudososRed,
   GrolschGreen,
@@ -12,7 +12,7 @@ import {
   GepwnageYellow,
 } from '@sudosos/themes';
 import i18n from '../src/utils/i18nUtils';
-import { registerPrimeVue } from './registerPrimeVue';
+import { registerOpenVue } from './registerOpenVue';
 import { mockRouter } from './mockRouter';
 import { createSeededPinia } from './withPiniaState';
 import type { PiniaSeed } from './withPiniaState';
@@ -34,7 +34,7 @@ const themePresets = {
 } as const;
 
 setup((app) => {
-  registerPrimeVue(app, SudososRed);
+  registerOpenVue(app, SudososRed);
   app.use(mockRouter);
   app.use(i18n);
 });
@@ -42,7 +42,7 @@ setup((app) => {
 const preview: Preview = {
   globalTypes: {
     theme: {
-      description: 'PrimeVue tenant preset',
+      description: 'OpenVue tenant preset',
       toolbar: {
         title: 'Theme',
         icon: 'paintbrush',

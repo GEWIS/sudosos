@@ -4,7 +4,7 @@
 
 **Monorepo layout:**
 - `backend/` — Express API, TypeORM, RBAC, TypeScript.
-- `frontend/apps/dashboard/` — Admin/seller dashboard (Vue 3, PrimeVue, Pinia).
+- `frontend/apps/dashboard/` — Admin/seller dashboard (Vue 3, OpenVue, Pinia).
 - `frontend/apps/point-of-sale/` — POS kiosk app.
 - `frontend/lib/common/`, `frontend/lib/themes/` — shared frontend libraries.
 - `packages/sudosos-client/` — generated API client (`@gewis/sudosos-client`), published to npm.
@@ -219,7 +219,7 @@ See **[backend/CLAUDE.md](./backend/CLAUDE.md)** for:
 See **[frontend/CLAUDE.md](./frontend/CLAUDE.md)** for:
 
 - Vue composable and component patterns
-- PrimeVue conventions (global registration, confirm dialogs)
+- OpenVue conventions (global registration, confirm dialogs)
 - Pinia store patterns and API client bumps
 - i18n/locale handling
 - WebSocket token management

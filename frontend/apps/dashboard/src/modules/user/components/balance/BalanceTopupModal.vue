@@ -40,7 +40,7 @@ import { loadStripe } from '@stripe/stripe-js/pure';
 import type { PaymentIntentResult } from '@stripe/stripe-js';
 import type { Dinero } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import apiService from '@/services/ApiService';
 import { formatPrice } from '@/utils/formatterUtils';
 import { useSettingsStore } from '@/stores/settings.store';

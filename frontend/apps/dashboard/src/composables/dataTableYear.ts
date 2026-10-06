@@ -1,6 +1,6 @@
 import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import type { DataTablePageEvent } from 'primevue/datatable';
+import type { DataTablePageEvent } from 'openvue/datatable';
 import type { LocationQuery } from 'vue-router';
 
 export interface QueryParamSync<F> {

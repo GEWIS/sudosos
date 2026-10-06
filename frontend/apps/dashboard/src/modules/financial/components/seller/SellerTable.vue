@@ -44,10 +44,10 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { UserResponse } from '@gewis/sudosos-client';
-import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
-import Column from 'primevue/column';
-import Checkbox from 'primevue/checkbox';
-import Skeleton from 'primevue/skeleton';
+import DataTable, { type DataTablePageEvent } from 'openvue/datatable';
+import Column from 'openvue/column';
+import Checkbox from 'openvue/checkbox';
+import Skeleton from 'openvue/skeleton';
 import CardComponent from '@/components/CardComponent.vue';
 import UserLink from '@/components/UserLink.vue';
 import apiService from '@/services/ApiService';

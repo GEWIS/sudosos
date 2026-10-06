@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import KeypadComponent from '@/components/Keypad/KeypadComponent.vue';
 import KeypadDisplayComponent from '@/components/Keypad/KeypadDisplayComponent.vue';
 import { posApiService, userApiService } from '@/services/ApiService';

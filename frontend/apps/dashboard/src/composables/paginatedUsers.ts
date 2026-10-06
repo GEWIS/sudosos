@@ -1,8 +1,8 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import Fuse from 'fuse.js';
-import { FilterMatchMode } from '@primevue/core/api';
+import { FilterMatchMode } from '@openvue/core/api';
 import type { UserResponse } from '@gewis/sudosos-client';
-import type { DataTablePageEvent } from 'primevue/datatable';
+import type { DataTablePageEvent } from 'openvue/datatable';
 import apiService from '@/services/ApiService';
 import { debounce } from '@/utils/debounceUtil';
 

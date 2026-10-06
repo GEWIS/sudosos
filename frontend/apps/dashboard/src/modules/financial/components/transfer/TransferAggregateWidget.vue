@@ -49,7 +49,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import type { DineroObjectResponse, TransferResponse } from '@gewis/sudosos-client';
 import ApiService from '@/services/ApiService';
 import CardComponent from '@/components/CardComponent.vue';

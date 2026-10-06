@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { PointOfSaleResponse } from '@gewis/sudosos-client';
 import { GrolschGreen, SudososRed } from '@sudosos/themes';
-import { usePreset } from '@primeuix/themes';
+import { usePreset } from '@openvue/themes';
 import { usePointOfSaleStore } from '@/stores/pos.store';
 import { useCartStore } from '@/stores/cart.store';
 import { useActivityStore } from '@/stores/activity.store';

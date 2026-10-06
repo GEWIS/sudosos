@@ -55,7 +55,7 @@
 
 <script setup lang="ts" generic="T extends AnyObject">
 import { computed, ref } from 'vue';
-import Button from 'primevue/button';
+import Button from 'openvue/button';
 import { useI18n } from 'vue-i18n';
 import { type AnyObject } from 'yup';
 import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';

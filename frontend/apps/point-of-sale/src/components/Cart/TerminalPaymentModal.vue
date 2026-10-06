@@ -65,7 +65,7 @@
 
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watch } from 'vue';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { useCartStore } from '@/stores/cart.store';
 import { useTerminalPaymentStore } from '@/stores/terminalPayment.store';
 import { usePosToken } from '@/composables/usePosToken';

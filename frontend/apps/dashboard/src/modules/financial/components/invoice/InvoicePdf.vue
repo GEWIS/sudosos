@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import type { InvoiceResponse } from '@gewis/sudosos-client';
 import VuePdfApp from 'vue3-pdf-app';
 import { useI18n } from 'vue-i18n';

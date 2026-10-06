@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import Button from 'primevue/button';
+import Button from 'openvue/button';
 import { storeToRefs } from 'pinia';
 import { useCartStore } from '@/stores/cart.store';
 import { formatPrice } from '@/utils/FormatUtils';

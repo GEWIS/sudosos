@@ -39,8 +39,8 @@
 import { ref, computed, watch } from 'vue';
 import { addListenerOnDialogueOverlay, isAllowed } from '@sudosos/sudosos-frontend-common';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
-import Skeleton from 'primevue/skeleton';
+import { useToast } from 'openvue/usetoast';
+import Skeleton from 'openvue/skeleton';
 import type { BaseInactiveAdministrativeCostResponse, TransferResponse } from '@gewis/sudosos-client';
 import ConfirmButton from '@/components/ConfirmButton.vue';
 import { useAdministrativeCostsStore } from '@/stores/administrativeCosts.store';

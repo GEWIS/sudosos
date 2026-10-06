@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue';
-import Toast from 'primevue/toast';
+import Toast from 'openvue/toast';
 import SplashComponent from '@/components/SplashComponent.vue';
 import ConnectionLostOverlay from '@/components/ConnectionLostOverlay.vue';
 import MaintenanceModeOverlay from '@/components/MaintenanceModeOverlay.vue';

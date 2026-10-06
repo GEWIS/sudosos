@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import { useAuthStore, useUserStore } from '@sudosos/sudosos-frontend-common';
 import type { PaginatedFinancialMutationResponse } from '@gewis/sudosos-client';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { storeToRefs } from 'pinia';

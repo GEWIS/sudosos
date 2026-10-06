@@ -9,7 +9,7 @@ const meta: Meta<typeof InputSpan> = {
     docs: {
       description: {
         component:
-          'A labeled input row that renders one of several PrimeVue widgets depending on `type`: a text field, a textarea, a date picker, a currency or percentage number input, a password or pin field, a boolean toggle, or a user-type select. Pairs with a vee-validate `errors` string to show inline validation state.',
+          'A labeled input row that renders one of several OpenVue widgets depending on `type`: a text field, a textarea, a date picker, a currency or percentage number input, a password or pin field, a boolean toggle, or a user-type select. Pairs with a vee-validate `errors` string to show inline validation state.',
       },
     },
   },
