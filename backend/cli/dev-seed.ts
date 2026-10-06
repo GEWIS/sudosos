@@ -53,6 +53,7 @@ import InvoiceSeeder from '../test/seed/ledger/invoice-seeder';
 import WriteOffSeeder from '../test/seed/ledger/write-off-seeder';
 import Config from '../src/config';
 import { applyConfiguredLogLevel } from '../src/helpers/logging';
+import ServerSettingsStore from '../src/server-settings/server-settings-store';
 
 export default async function devSeed() {
   // 1. Users
@@ -66,6 +67,7 @@ export default async function devSeed() {
 
   // 3. Catalogue
   const vatGroups = await new VatGroupSeeder().init();
+  await ServerSettingsStore.getInstance().setSetting('highVatGroupId', vatGroups.high.id);
   const categories = await new ProductCategorySeeder().init();
   const products = await new ProductSeeder().init(organ, vatGroups, categories);
   const containers = await new ContainerSeeder().init(organ, products);
@@ -118,6 +120,9 @@ async function createApp() {
   application.logger.info('Starting dev seed...');
 
   application.connection = await Database.initialize();
+
+  const store = ServerSettingsStore.getInstance();
+  if (!store.initialized) await store.initialize();
 
   dinero.defaultCurrency = config.currency.code as Currency;
   dinero.defaultPrecision = config.currency.precision;
