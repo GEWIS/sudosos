@@ -78,7 +78,7 @@ export default class Swagger {
       const instance = expressJSDocSwagger(app)(options);
 
       instance.on('finish', async (swaggerObject) => {
-        Swagger.logger.trace('Swagger specification generation finished');
+        Swagger.logger.trace('swagger.generate.finished');
 
         // Fix express-jsdoc-swagger bug: enum is emitted on the array schema instead of on items,
         // which causes openapi-generator-cli to ignore the enum values for array item typing.
@@ -100,14 +100,14 @@ export default class Swagger {
           JSON.stringify(swaggerObject),
           { encoding: 'utf-8' },
         ).catch((e) => {
-          Swagger.logger.error('Failed to write Swagger specification:', e);
+          Swagger.logger.error('swagger.write.failed', e);
         });
         instance.removeAllListeners();
         resolve(swaggerObject); // Resolve the promise with the swaggerObject
       });
 
       instance.on('error', (error) => {
-        Swagger.logger.error('Error generating Swagger specification:', error);
+        Swagger.logger.error('swagger.generate.failed', error);
         instance.removeAllListeners();
         reject(error); // Reject the promise in case of an error
       });

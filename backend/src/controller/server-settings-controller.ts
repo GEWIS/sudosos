@@ -100,7 +100,7 @@ export default class ServerSettingsController extends BaseController {
    * @return {string} 500 - Internal server error.
    */
   public async setMaintenanceMode(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Set maintenance mode by', req.token.user);
+    this.logger.trace('server_settings.update_maintenance_mode');
 
     try {
       const body = req.body as UpdateMaintenanceModeRequest;
@@ -113,7 +113,7 @@ export default class ServerSettingsController extends BaseController {
 
       res.status(204).send();
     } catch (error) {
-      this.logger.error('Could not update maintenance mode:', error);
+      this.logger.error('server_settings.update_maintenance_mode.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -128,7 +128,7 @@ export default class ServerSettingsController extends BaseController {
    * @return {string} 500 - Internal server error.
    */
   public async getWrappedEnabled(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get wrapped-enabled by', req.token.user);
+    this.logger.trace('server_settings.get_wrapped_enabled');
 
     try {
       const store = ServerSettingsStore.getInstance();
@@ -138,7 +138,7 @@ export default class ServerSettingsController extends BaseController {
         enabled,
       } as WrappedEnabledResponse);
     } catch (error) {
-      this.logger.error('Could not get wrapped-enabled:', error);
+      this.logger.error('server_settings.get_wrapped_enabled.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -154,7 +154,7 @@ export default class ServerSettingsController extends BaseController {
    * @return {string} 500 - Internal server error.
    */
   public async setWrappedEnabled(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Set wrapped-enabled by', req.token.user);
+    this.logger.trace('server_settings.update_wrapped_enabled');
 
     try {
       const body = req.body as UpdateWrappedEnabledRequest;
@@ -165,7 +165,7 @@ export default class ServerSettingsController extends BaseController {
 
       res.status(204).send();
     } catch (error) {
-      this.logger.error('Could not update wrapped-enabled:', error);
+      this.logger.error('server_settings.update_wrapped_enabled.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

@@ -35,7 +35,7 @@ export default async function migrate() {
   const application = new Application();
   application.logger = log4js.getLogger('Migration');
   applyConfiguredLogLevel(application.logger);
-  application.logger.info('Starting Migrator');
+  application.logger.info('database.migrator_starting');
 
   application.connection = await Database.initialize();
 
@@ -45,12 +45,12 @@ export default async function migrate() {
   console.log = (message: any, ...additional: any[]) => logger.debug(message, ...additional);
 
   try {
-    application.logger.log('Starting migrations.');
+    application.logger.log('database.migrations.started');
     await application.connection.runMigrations({ transaction: 'all' });
     await application.connection.destroy();
-    application.logger.log('Finished migrations.');
+    application.logger.log('database.migrations.finished');
   } catch (e) {
-    application.logger.error('Error migrating db', e);
+    application.logger.error('database.migrations.failed', e);
   }
 }
 
@@ -59,7 +59,7 @@ if (require.main === module) {
   if (Config.get().database.isSqlite) {
     const logger = log4js.getLogger('Migration');
     applyConfiguredLogLevel(logger);
-    logger.warn('Migrations in sqlite most likely have no effect.');
+    logger.warn('database.migrations_sqlite_no_effect');
   }
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   migrate();

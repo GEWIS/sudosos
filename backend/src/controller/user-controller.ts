@@ -467,7 +467,7 @@ export default class UserController extends BaseController {
    * @return {PaginatedUserResponse} 200 - A list of all users
    */
   public async getAllUsers(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all users by user', req.token.user);
+    this.logger.trace('user.list');
 
     let take;
     let skip;
@@ -493,7 +493,7 @@ export default class UserController extends BaseController {
         records,
       });
     } catch (error) {
-      this.logger.error('Could not get users:', error);
+      this.logger.error('user.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -512,7 +512,7 @@ export default class UserController extends BaseController {
    */
   public async getAllUsersOfUserType(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
-    this.logger.trace('Get all users of userType', parameters, 'by user', req.token.user);
+    this.logger.trace('user.list_by_type', { userType: parameters.userType });
     const userType = req.params.userType.toUpperCase();
 
     // If it does not exist, return a 404 error
@@ -526,7 +526,7 @@ export default class UserController extends BaseController {
       req.query.type = userType;
       await this.getAllUsers(req, res);
     } catch (error) {
-      this.logger.error('Could not get users:', error);
+      this.logger.error('user.list_by_type.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -547,7 +547,7 @@ export default class UserController extends BaseController {
   public async updateUserPin(req: RequestWithToken, res: Response): Promise<void> {
     const { params } = req;
     const updatePinRequest = req.body as UpdatePinRequest;
-    this.logger.trace('Update user pin', params, 'by user', req.token.user);
+    this.logger.trace('user.update_pin', { id: params.id });
 
     try {
       // Get the user object if it exists
@@ -562,7 +562,7 @@ export default class UserController extends BaseController {
         updatePinRequest.pin.toString(), PinAuthenticator);
       res.status(204).json();
     } catch (error) {
-      this.logger.error('Could not update pin:', error);
+      this.logger.error('user.update_pin.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -583,7 +583,7 @@ export default class UserController extends BaseController {
   public async updateUserNfc(req: RequestWithToken, res: Response): Promise<void> {
     const { params } = req;
     const updateNfcRequest = req.body as UpdateNfcRequest;
-    this.logger.trace('Update user NFC', params, 'by user', req.token.user);
+    this.logger.trace('user.update_nfc', { id: params.id });
 
     try {
       // Get the user object if it exists
@@ -598,7 +598,7 @@ export default class UserController extends BaseController {
         updateNfcRequest.nfcCode.toString(), NfcAuthenticator);
       res.status(204).json();
     } catch (error) {
-      this.logger.error('Could not update NFC:', error);
+      this.logger.error('user.update_nfc.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -617,7 +617,7 @@ export default class UserController extends BaseController {
    */
   public async deleteUserNfc(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
-    this.logger.trace('Delete user NFC', parameters, 'by user', req.token.user);
+    this.logger.trace('user.delete_nfc', { id: parameters.id });
 
     try {
       // Get the user object if it exists
@@ -636,7 +636,7 @@ export default class UserController extends BaseController {
       await NfcAuthenticator.delete(parseInt(parameters.id, 10));
       res.status(204).json();
     } catch (error) {
-      this.logger.error('Could not update NFC:', error);
+      this.logger.error('user.delete_nfc.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -654,7 +654,7 @@ export default class UserController extends BaseController {
    */
   public async updateUserKey(req: RequestWithToken, res: Response): Promise<void> {
     const { params } = req;
-    this.logger.trace('Update user key', params, 'by user', req.token.user);
+    this.logger.trace('user.update_key', { id: params.id });
 
     try {
       const userId = parseInt(params.id, 10);
@@ -672,7 +672,7 @@ export default class UserController extends BaseController {
       const response = { key: generatedKey } as UpdateKeyResponse;
       res.status(200).json(response);
     } catch (error) {
-      this.logger.error('Could not update key:', error);
+      this.logger.error('user.update_key.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -690,7 +690,7 @@ export default class UserController extends BaseController {
    */
   public async deleteUserKey(req: RequestWithToken, res: Response): Promise<void> {
     const { params } = req;
-    this.logger.trace('Delete user key', params, 'by user', req.token.user);
+    this.logger.trace('user.delete_key', { id: params.id });
 
     try {
       // Get the user object if it exists
@@ -705,7 +705,7 @@ export default class UserController extends BaseController {
       await KeyAuthenticator.delete(parseInt(params.id, 10));
       res.status(204).json();
     } catch (error) {
-      this.logger.error('Could not delete key:', error);
+      this.logger.error('user.delete_key.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -726,7 +726,7 @@ export default class UserController extends BaseController {
   public async updateUserLocalPassword(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
     const updateLocalRequest = req.body as UpdateLocalRequest;
-    this.logger.trace('Update user local password', parameters, 'by user', req.token.user);
+    this.logger.trace('user.update_local_password', { id: parameters.id });
 
     try {
       const id = Number.parseInt(parameters.id, 10);
@@ -742,7 +742,7 @@ export default class UserController extends BaseController {
         updateLocalRequest.password, LocalAuthenticator);
       res.status(204).json();
     } catch (error) {
-      this.logger.error('Could not update local password:', error);
+      this.logger.error('user.update_local_password.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -762,7 +762,7 @@ export default class UserController extends BaseController {
    */
   public async getOrganMembers(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
-    this.logger.trace('Get organ members', parameters, 'by user', req.token.user);
+    this.logger.trace('user.get_organ_members', { id: parameters.id });
 
     let take;
     let skip;
@@ -800,7 +800,7 @@ export default class UserController extends BaseController {
         records,
       });
     } catch (error) {
-      this.logger.error('Could not get organ members:', error);
+      this.logger.error('user.get_organ_members.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -817,7 +817,7 @@ export default class UserController extends BaseController {
    */
   public async getIndividualUser(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
-    this.logger.trace('Get individual user', parameters, 'by user', req.token.user);
+    this.logger.trace('user.get', { id: parameters.id });
 
     try {
       // Get the user object if it exists
@@ -834,7 +834,7 @@ export default class UserController extends BaseController {
       }
       res.status(200).json(response);
     } catch (error) {
-      this.logger.error('Could not get individual user:', error);
+      this.logger.error('user.get.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -853,13 +853,13 @@ export default class UserController extends BaseController {
   // eslint-disable-next-line class-methods-use-this
   public async createUser(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as CreateUserRequest;
-    this.logger.trace('Create user', body, 'by user', req.token.user);
+    this.logger.trace('user.create', { type: body.type });
 
     try {
       const user = await UserService.createUser(body);
       res.status(201).json(asUserResponse(user, true));
     } catch (error) {
-      this.logger.error('Could not create user:', error);
+      this.logger.error('user.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -878,7 +878,7 @@ export default class UserController extends BaseController {
   public async updateUser(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as UpdateUserRequest;
     const parameters = req.params;
-    this.logger.trace('Update user', parameters.id, 'with', body, 'by user', req.token.user);
+    this.logger.trace('user.update', { id: parameters.id });
 
     if (body.firstName !== undefined && body.firstName.length === 0) {
       res.status(400).json('firstName cannot be empty');
@@ -949,7 +949,7 @@ export default class UserController extends BaseController {
       const updatedUser = await UserService.getSingleUser(asNumber(parameters.id));
       res.status(200).json(asUserResponse(updatedUser, true));
     } catch (error) {
-      this.logger.error('Could not update user:', error);
+      this.logger.error('user.update.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -966,7 +966,7 @@ export default class UserController extends BaseController {
    */
   public async deleteUser(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
-    this.logger.trace('Delete individual user', parameters, 'by user', req.token.user);
+    this.logger.trace('user.delete', { id: parameters.id });
 
     if (req.token.user.id === parseInt(parameters.id, 10)) {
       res.status(400).json('Cannot delete yourself');
@@ -987,7 +987,7 @@ export default class UserController extends BaseController {
       await user.save();
       res.status(204).json('User deleted');
     } catch (error) {
-      this.logger.error('Could not create product:', error);
+      this.logger.error('user.delete.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -1004,7 +1004,7 @@ export default class UserController extends BaseController {
    */
   public async findUserNfc(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
-    this.logger.trace('Find user nfc', parameters, 'by user', req.token.user);
+    this.logger.trace('user.find_by_nfc');
 
     try {
       const nfcCode = String(parameters.nfcCode);
@@ -1021,7 +1021,7 @@ export default class UserController extends BaseController {
       }
       res.status(200).json(userResponse);
     } catch (error) {
-      this.logger.error('Could not find user using nfc:', error);
+      this.logger.error('user.find_by_nfc.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -1038,7 +1038,7 @@ export default class UserController extends BaseController {
    * @return {string} 404 - User not found
    */
   public async acceptToS(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Accept ToS for user', req.token.user);
+    this.logger.trace('user.accept_tos');
 
     const { id } = req.token.user;
     const body = req.body as AcceptTosRequest;
@@ -1060,7 +1060,7 @@ export default class UserController extends BaseController {
           return;
       }
     } catch (error) {
-      this.logger.error('Could not accept ToS for user:', error);
+      this.logger.error('user.accept_tos.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -1077,7 +1077,7 @@ export default class UserController extends BaseController {
    */
   public async getUserTos(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
-    this.logger.trace('Get user TOS status', parameters, 'by user', req.token.user);
+    this.logger.trace('user.get_tos', { id: parameters.id });
 
     try {
       const id = parseInt(parameters.id, 10);
@@ -1103,7 +1103,7 @@ export default class UserController extends BaseController {
       };
       res.json(response);
     } catch (error) {
-      this.logger.error('Could not get user TOS status:', error);
+      this.logger.error('user.get_tos.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -1121,7 +1121,7 @@ export default class UserController extends BaseController {
    */
   public async getUsersProducts(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
-    this.logger.trace("Get user's products", parameters, 'by user', req.token.user);
+    this.logger.trace('user.get_products', { id: parameters.id });
 
     let take;
     let skip;
@@ -1147,7 +1147,7 @@ export default class UserController extends BaseController {
       const records = revisions.map((r) => ProductService.revisionToResponse(r));
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all products:', error);
+      this.logger.error('user.get_products.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -1167,7 +1167,7 @@ export default class UserController extends BaseController {
    */
   public async getUsersContainers(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace("Get user's containers", id, 'by user', req.token.user);
+    this.logger.trace('user.get_containers', { id });
 
     let take;
     let skip;
@@ -1195,7 +1195,7 @@ export default class UserController extends BaseController {
       const records = revisions.map((r) => ContainerService.revisionToResponse(r));
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return containers:', error);
+      this.logger.error('user.get_containers.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -1215,7 +1215,7 @@ export default class UserController extends BaseController {
    */
   public async getUsersPointsOfSale(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace("Get user's points of sale", id, 'by user', req.token.user);
+    this.logger.trace('user.get_points_of_sale', { id });
 
     let take;
     let skip;
@@ -1243,7 +1243,7 @@ export default class UserController extends BaseController {
       const records = revisions.map((r) => PointOfSaleService.revisionToResponse(r));
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return point of sale:', error);
+      this.logger.error('user.get_points_of_sale.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -1271,7 +1271,7 @@ export default class UserController extends BaseController {
    */
   public async getUsersTransactions(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace("Get user's", id, 'transactions by user', req.token.user);
+    this.logger.trace('user.get_transactions', { id });
 
     // Parse the filters given in the query parameters. If there are any issues,
     // the parse method will throw an exception. We will then return a 400 error.
@@ -1304,7 +1304,7 @@ export default class UserController extends BaseController {
 
       res.status(200).json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all transactions:', error);
+      this.logger.error('user.get_transactions.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -1324,7 +1324,7 @@ export default class UserController extends BaseController {
    */
   public async getUsersSalesReport(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get sales report for user ', id, ' by user', req.token.user);
+    this.logger.trace('user.get_sales_report', { id });
 
     let filters: { fromDate: Date, tillDate: Date };
     try {
@@ -1344,7 +1344,7 @@ export default class UserController extends BaseController {
       const report = await (new SalesReportService()).getReport({ ...filters, forId: user.id });
       res.status(200).json(ReportService.reportToResponse(report));
     } catch (error) {
-      this.logger.error('Could not get sales report:', error);
+      this.logger.error('user.get_sales_report.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -1368,7 +1368,7 @@ export default class UserController extends BaseController {
    */
   public async getUsersSalesReportPdf(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get sales report pdf for user ', id, ' by user', req.token.user);
+    this.logger.trace('user.get_sales_report_pdf', { id });
 
     let filters: { fromDate: Date, tillDate: Date };
     let description: string;
@@ -1391,7 +1391,7 @@ export default class UserController extends BaseController {
       const service = new SalesReportService();
       await reportPDFhelper(res)(service, filters, description, user.id, fileType);
     } catch (error) {
-      this.logger.error('Could not get sales report:', error);
+      this.logger.error('user.get_sales_report_pdf.failed', error);
       if (error instanceof PdfError) {
         res.status(502).json('PDF Generator service failed.');
         return;
@@ -1418,7 +1418,7 @@ export default class UserController extends BaseController {
    */
   public async getUsersPurchaseReportPdf(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get purchase report pdf for user ', id, ' by user', req.token.user);
+    this.logger.trace('user.get_purchase_report_pdf', { id });
 
     let filters: { fromDate: Date, tillDate: Date };
     let fileType: ReturnFileType;
@@ -1439,7 +1439,7 @@ export default class UserController extends BaseController {
       const service = new BuyerReportService();
       await (reportPDFhelper(res))(service, filters, undefined, user.id, fileType);
     } catch (error) {
-      this.logger.error('Could not get sales report:', error);
+      this.logger.error('user.get_purchase_report_pdf.failed', error);
       if (error instanceof PdfError) {
         res.status(502).json('PDF Generator service failed.');
         return;
@@ -1463,7 +1463,7 @@ export default class UserController extends BaseController {
    */
   public async getUsersPurchasesReport(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get purchases report for user ', id, ' by user', req.token.user);
+    this.logger.trace('user.get_purchase_report', { id });
 
     let filters: { fromDate: Date, tillDate: Date };
     try {
@@ -1483,7 +1483,7 @@ export default class UserController extends BaseController {
       const report = await (new BuyerReportService()).getReport({ ...filters, forId: user.id });
       res.status(200).json(ReportService.reportToResponse(report));
     } catch (error) {
-      this.logger.error('Could not get sales report:', error);
+      this.logger.error('user.get_purchase_report.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -1505,7 +1505,7 @@ export default class UserController extends BaseController {
    */
   public async getUsersTransfers(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace("Get user's transfers", id, 'by user', req.token.user);
+    this.logger.trace('user.get_transfers', { id });
 
     // Parse the filters given in the query parameters. If there are any issues,
     // the parse method will throw an exception. We will then return a 400 error.
@@ -1544,7 +1544,7 @@ export default class UserController extends BaseController {
       const records = transfers.map((t) => TransferService.asTransferResponse(t));
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return user transfers', error);
+      this.logger.error('user.get_transfers.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -1569,7 +1569,7 @@ export default class UserController extends BaseController {
    */
   public async getUsersPaymentRequests(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace("Get user's payment requests", id, 'by user', req.token.user);
+    this.logger.trace('user.get_payment_requests', { id });
 
     let filters;
     let pagination;
@@ -1595,7 +1595,7 @@ export default class UserController extends BaseController {
       const records = rows.map((r) => PaymentRequestService.asBasePaymentRequestResponse(r));
       res.json(toResponse(records, count, pagination));
     } catch (e) {
-      this.logger.error('Could not return user payment requests', e);
+      this.logger.error('user.get_payment_requests.failed', e);
       res.status(500).json('Internal server error.');
     }
   }
@@ -1612,7 +1612,7 @@ export default class UserController extends BaseController {
    */
   public async getUserRoles(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
-    this.logger.trace('Get roles of user', parameters, 'by user', req.token.user);
+    this.logger.trace('user.get_roles', { id: parameters.id });
 
     try {
       const id = parseInt(parameters.id, 10);
@@ -1628,7 +1628,7 @@ export default class UserController extends BaseController {
       const response = rolesWithPermissions.map((r) => RBACService.asRoleResponse(r));
       res.status(200).json(response);
     } catch (error) {
-      this.logger.error('Could not get roles of user:', error);
+      this.logger.error('user.get_roles.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -1649,7 +1649,7 @@ export default class UserController extends BaseController {
    */
   public async getUsersFinancialMutations(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
-    this.logger.trace('Get financial mutations of user', parameters, 'by user', req.token.user);
+    this.logger.trace('user.get_financial_mutations', { id: parameters.id });
 
     let filters;
     let take;
@@ -1677,7 +1677,7 @@ export default class UserController extends BaseController {
       const mutations = await UserService.getUserFinancialMutations(user, filters, { take, skip });
       res.status(200).json(mutations);
     } catch (error) {
-      this.logger.error('Could not get financial mutations of user:', error);
+      this.logger.error('user.get_financial_mutations.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -1694,7 +1694,7 @@ export default class UserController extends BaseController {
    */
   public async getUsersProcessingDeposits(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
-    this.logger.trace('Get users processing deposits from user', parameters.id);
+    this.logger.trace('user.get_processing_deposits', { id: parameters.id });
 
     try {
       const id = parseInt(parameters.id, 10);
@@ -1708,7 +1708,7 @@ export default class UserController extends BaseController {
       const deposits = await StripeService.getProcessingStripeDepositsFromUser(id);
       res.status(200).json(deposits.map((d) => StripeService.asStripeDepositResponse(d)));
     } catch (error) {
-      this.logger.error('Could not get processing deposits of user:', error);
+      this.logger.error('user.get_processing_deposits.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -1731,7 +1731,7 @@ export default class UserController extends BaseController {
    */
   public async getUsersTransactionsReport(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
-    this.logger.trace('Get transaction report for user ', req.params.id, ' by user', req.token.user);
+    this.logger.trace('user.get_transactions_report', { id: parameters.id });
 
     let filters;
     try {
@@ -1759,7 +1759,7 @@ export default class UserController extends BaseController {
       res.status(200).json(report);
     } catch (e) {
       res.status(500).send();
-      this.logger.error(e);
+      this.logger.error('user.get_transactions_report.failed', e);
     }
   }
 
@@ -1779,7 +1779,7 @@ export default class UserController extends BaseController {
   public async waiveUserFines(req: RequestWithToken, res: Response): Promise<void> {
     const { id: rawId } = req.params;
     const body = req.body as WaiveFinesRequest;
-    this.logger.trace('Waive fines', body, 'of user', rawId, 'by', req.token.user);
+    this.logger.trace('user.waive_fines', { id: rawId, request: body });
 
     try {
       const id = parseInt(rawId, 10);
@@ -1810,7 +1810,7 @@ export default class UserController extends BaseController {
       res.status(204).send();
     } catch (e) {
       res.status(500).send();
-      this.logger.error(e);
+      this.logger.error('user.waive_fines.failed', e);
     }
   }
 
@@ -1954,7 +1954,7 @@ export default class UserController extends BaseController {
       const response = UserSettingsStore.toResponse(settings);
       res.json(response);
     } catch (error) {
-      this.logger.error('Could not get user settings:', error);
+      this.logger.error('user.get_settings.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -1991,7 +1991,7 @@ export default class UserController extends BaseController {
 
       res.json(UserSettingsStore.toResponse(settings));
     } catch (error) {
-      this.logger.error('Could not update user settings:', error);
+      this.logger.error('user.update_settings.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -2056,7 +2056,7 @@ export default class UserController extends BaseController {
       res.status(200).json(asUserResponse(updatedUser, true));
     } catch (e) {
       res.status(500).send('Internal server error.');
-      this.logger.error(e);
+      this.logger.error('user.update_type.failed', e);
     }
   }
 
@@ -2072,7 +2072,7 @@ export default class UserController extends BaseController {
    * @return {Array.<UserResponse>} 200 - List of recently charged users.
    */
   public async getRecentlyChargedUsers(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get recently charged users by user', req.token.user);
+    this.logger.trace('user.list_recently_charged');
 
     let take: number;
     try {
@@ -2092,7 +2092,7 @@ export default class UserController extends BaseController {
       res.status(200).json(records);
     } catch (e) {
       res.status(500).send('Internal server error.');
-      this.logger.error(e);
+      this.logger.error('user.list_recently_charged.failed', e);
     }
   }
 }

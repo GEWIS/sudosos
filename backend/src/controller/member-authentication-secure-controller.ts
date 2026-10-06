@@ -91,7 +91,7 @@ export default class MemberAuthenticationSecureController extends BaseController
    */
   private async memberPINLogin(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as MemberAuthenticationPinRequest;
-    this.logger.trace('Member PIN authentication for memberId', body.memberId, 'by POS user', req.token.user.id);
+    this.logger.trace('authentication.member_pin_login', { memberId: body.memberId });
 
     try {
       // Verify the caller is a POS user
@@ -127,7 +127,7 @@ export default class MemberAuthenticationSecureController extends BaseController
       await (AuthenticationController.PINLoginConstructor(this.roleManager,
         this.tokenHandler, body.pin, memberUser.user.id, body.posId))(req, res);
     } catch (error) {
-      this.logger.error('Could not authenticate using member PIN:', error);
+      this.logger.error('authentication.member_pin_login.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

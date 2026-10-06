@@ -190,7 +190,7 @@ export default class InvoiceController extends BaseController {
 
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all invoices:', error);
+      this.logger.error('invoice.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -232,7 +232,7 @@ export default class InvoiceController extends BaseController {
 
       res.json(response);
     } catch (error) {
-      this.logger.error('Could not return invoice:', error);
+      this.logger.error('invoice.get.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -274,7 +274,7 @@ export default class InvoiceController extends BaseController {
         res.status(501).json(error.message);
         return;
       }
-      this.logger.error('Could not create invoice:', error);
+      this.logger.error('invoice.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -312,7 +312,7 @@ export default class InvoiceController extends BaseController {
 
       res.json(InvoiceService.asBaseInvoiceResponse(invoice));
     } catch (error) {
-      this.logger.error('Could not update invoice:', error);
+      this.logger.error('invoice.update.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -353,7 +353,7 @@ export default class InvoiceController extends BaseController {
       }
       res.status(204).send();
     } catch (error) {
-      this.logger.error('Could not delete invoice:', error);
+      this.logger.error('invoice.delete.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -386,7 +386,7 @@ export default class InvoiceController extends BaseController {
 
       res.status(200).json({ pdf: pdf.downloadName } as PdfUrlResponse);
     } catch (error) {
-      this.logger.error('Could get invoice PDF:', error);
+      this.logger.error('invoice.get_pdf.failed', error);
       if (error instanceof PdfError) {
         res.status(502).json('PDF Generator service failed.');
         return;
@@ -421,7 +421,7 @@ export default class InvoiceController extends BaseController {
       await InvoiceUser.delete(userId);
       res.status(204).json();
     } catch (error) {
-      this.logger.error('Could not get invoice user:', error);
+      this.logger.error('invoice_user.delete.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -466,7 +466,7 @@ export default class InvoiceController extends BaseController {
 
       res.status(200).json(parseInvoiceUserToResponse(invoiceUser));
     } catch (error) {
-      this.logger.error('Could not get invoice user:', error);
+      this.logger.error('invoice_user.get.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -511,7 +511,7 @@ export default class InvoiceController extends BaseController {
 
       res.status(200).json(parseInvoiceUserToResponse(invoiceUser));
     } catch (error) {
-      this.logger.error('Could not update invoice user:', error);
+      this.logger.error('invoice_user.update.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -550,7 +550,7 @@ export default class InvoiceController extends BaseController {
       });
       res.json(transactions);
     } catch (error) {
-      this.logger.error('Could not get eligible transactions:', error);
+      this.logger.error('invoice.list_eligible_transactions.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -571,7 +571,7 @@ export default class InvoiceController extends BaseController {
       const results = await new InvoiceService().findDriftedInvoices();
       res.json(results.map(InvoiceService.asInvoiceDriftResponse));
     } catch (error) {
-      this.logger.error('Could not return drifted invoices:', error);
+      this.logger.error('invoice.list_drifted.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

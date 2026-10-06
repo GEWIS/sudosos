@@ -47,7 +47,7 @@ import FineReportPdfService from '../service/pdf/fine-report-pdf-service';
  * {@link users!UserController.waiveUserFines | waiveUserFines} (`POST /users/<id>/fines/waive`).
  */
 export default class DebtorController extends BaseController {
-  private logger: Logger = log4js.getLogger(' DebtorController');
+  private logger: Logger = log4js.getLogger('DebtorController');
 
   public constructor(options: BaseControllerOptions) {
     super(options);
@@ -153,7 +153,7 @@ export default class DebtorController extends BaseController {
       const records = events.map((e) => DebtorService.asBaseFineHandoutEventResponse(e));
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all fine handout event:', error);
+      this.logger.error('fine.list_handout_events.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -181,7 +181,7 @@ export default class DebtorController extends BaseController {
       }
       res.json(DebtorService.asFineHandoutEventResponse(event));
     } catch (error) {
-      this.logger.error('Could not return fine handout event:', error);
+      this.logger.error('fine.get_handout_event.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -212,7 +212,7 @@ export default class DebtorController extends BaseController {
       await new DebtorService().deleteFine(parsedId);
       res.status(204).send();
     } catch (error) {
-      this.logger.error('Could not return fine handout event:', error);
+      this.logger.error('fine.delete.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -252,7 +252,7 @@ export default class DebtorController extends BaseController {
     try {
       res.json(await new DebtorService().calculateFinesOnDate(params));
     } catch (error) {
-      this.logger.error('Could not calculate fines:', error);
+      this.logger.error('fine.calculate.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -291,7 +291,7 @@ export default class DebtorController extends BaseController {
       const event = await new DebtorService().handOutFines({ referenceDate, userIds: body.userIds }, req.token.user);
       res.json(DebtorService.asFineHandoutEventResponse(event));
     } catch (error) {
-      this.logger.error('Could not handout fines:', error);
+      this.logger.error('fine.handout.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -325,7 +325,7 @@ export default class DebtorController extends BaseController {
       await new DebtorService().deleteFineHandout(event);
       res.status(204).send();
     } catch (error) {
-      this.logger.error('Could not delete fine handout:', error);
+      this.logger.error('fine.delete_handout.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -364,7 +364,7 @@ export default class DebtorController extends BaseController {
       await new DebtorService().sendFineWarnings({ referenceDate, userIds: body.userIds });
       res.status(204).send();
     } catch (error) {
-      this.logger.error('Could not send future fine notification emails:', error);
+      this.logger.error('fine.notify_future.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -431,7 +431,7 @@ export default class DebtorController extends BaseController {
       const report = await new DebtorService().getFineReport(fromDate, toDate);
       res.json(report.toResponse());
     } catch (error) {
-      this.logger.error('Could not get fine report:', error);
+      this.logger.error('fine.get_report.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -472,7 +472,7 @@ export default class DebtorController extends BaseController {
       const to = `${toDate.getFullYear()}${toDate.getMonth() + 1}${toDate.getDate()}`;
       sendPdfOrHtml(res, buffer, `fine-report-${from}-${to}`, fileType);
     } catch (error) {
-      this.logger.error('Could not get fine report pdf:', error);
+      this.logger.error('fine.get_report_pdf.failed', error);
       if (error instanceof PdfError) {
         res.status(502).json('PDF Generator service failed.');
         return;

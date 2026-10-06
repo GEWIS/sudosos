@@ -81,13 +81,13 @@ export default class AuthenticationQRController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async generateQRCode(req: Request, res: Response): Promise<void> {
-    this.logger.trace('Generating QR code for authentication');
+    this.logger.trace('authentication.qr_generate');
 
     try {
       const qr = await (new QRService()).create();
       res.json(qr.response());
     } catch (error) {
-      this.logger.error('Could not generate QR code:', error);
+      this.logger.error('authentication.qr_generate.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -104,7 +104,7 @@ export default class AuthenticationQRController extends BaseController {
    */
   public async getQRStatus(req: Request, res: Response): Promise<void> {
     const { sessionId } = req.params;
-    this.logger.trace('Getting QR status for session', sessionId);
+    this.logger.trace('authentication.qr_get_status');
 
     try {
       const qr = await (new QRService()).get(sessionId);
@@ -118,7 +118,7 @@ export default class AuthenticationQRController extends BaseController {
         status: qr.status,
       });
     } catch (error) {
-      this.logger.error('Could not get QR status:', error);
+      this.logger.error('authentication.qr_get_status.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -135,7 +135,7 @@ export default class AuthenticationQRController extends BaseController {
    */
   private async cancelQRCode(req: Request, res: Response): Promise<void> {
     const { sessionId } = req.params;
-    this.logger.trace('Cancelling QR code for session', sessionId);
+    this.logger.trace('authentication.qr_cancel');
 
     try {
       const qr = await (new QRService()).get(sessionId);
@@ -148,7 +148,7 @@ export default class AuthenticationQRController extends BaseController {
       await (new QRService()).cancel(qr);
       res.status(204).send();
     } catch (error) {
-      this.logger.error('Could not cancel QR code:', error);
+      this.logger.error('authentication.qr_cancel.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

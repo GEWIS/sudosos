@@ -159,7 +159,7 @@ export default class TransactionController extends BaseController {
       res.status(200).json(toResponse(records, count, { take, skip }));
     } catch (e) {
       res.status(500).send();
-      this.logger.error(e);
+      this.logger.error('transaction.list.failed', e);
     }
   }
 
@@ -214,7 +214,7 @@ export default class TransactionController extends BaseController {
 
       res.json(await transactionService.asTransactionResponse(transaction, undefined, undefined, false));
     } catch (error) {
-      this.logger.error('Could not create transaction:', error);
+      this.logger.error('transaction.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -247,7 +247,7 @@ export default class TransactionController extends BaseController {
       res.status(200).json(await transactionService.asTransactionResponse(transaction));
     } catch (e) {
       res.status(500).send();
-      this.logger.error(e);
+      this.logger.error('transaction.get.failed', e);
     }
   }
 
@@ -297,7 +297,7 @@ export default class TransactionController extends BaseController {
         res.status(409).json('Transaction was paid by card terminal and cannot be modified.');
         return;
       }
-      this.logger.error('Could not update transaction:', error);
+      this.logger.error('transaction.update.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -331,7 +331,7 @@ export default class TransactionController extends BaseController {
         res.status(409).json('Transaction was paid by card terminal and cannot be modified.');
         return;
       }
-      this.logger.error('Could not delete transaction:', error);
+      this.logger.error('transaction.delete.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -362,7 +362,7 @@ export default class TransactionController extends BaseController {
       const invoices = await new InvoiceService().getTransactionInvoices(transactionId);
       res.status(200).json(InvoiceService.toArrayWithoutEntriesResponse(invoices));
     } catch (error) {
-      this.logger.error('Could not return transaction invoices:', error);
+      this.logger.error('transaction.list_invoices.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -400,7 +400,7 @@ export default class TransactionController extends BaseController {
       }
       res.status(200).json(true);
     } catch (error) {
-      this.logger.error('Could not validate transaction:', error);
+      this.logger.error('transaction.validate.failed', error);
       res.status(500).json('Internal server error');
     }
   }
@@ -442,7 +442,7 @@ export default class TransactionController extends BaseController {
         res.status(400).json(error.message);
         return;
       }
-      this.logger.error('Could not return transaction PDF:', error);
+      this.logger.error('transaction.get_pdf.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

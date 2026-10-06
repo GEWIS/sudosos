@@ -86,7 +86,7 @@ export default class TermsOfServiceController extends BaseController {
         res.status(404).json({ error: error.message });
         return;
       }
-      this.logger.error('Could not get Terms of Service', error);
+      this.logger.error('terms_of_service.get.failed', { version }, error);
       res.status(500).json('Internal server error.');
     }
   }

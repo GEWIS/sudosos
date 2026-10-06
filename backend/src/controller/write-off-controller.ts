@@ -45,7 +45,7 @@ import WriteOffPdfService from '../service/pdf/write-off-pdf-service';
  * the PDF receipt.
  */
 export default class WriteOffController extends BaseController {
-  private logger: Logger = log4js.getLogger(' WriteOffController');
+  private logger: Logger = log4js.getLogger('WriteOffController');
 
   public constructor(options: BaseControllerOptions) {
     super(options);
@@ -118,7 +118,7 @@ export default class WriteOffController extends BaseController {
       );
       res.json(toResponse(writeOffs.map(WriteOffService.asWriteOffResponse), count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all write offs:', error);
+      this.logger.error('write_off.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -148,7 +148,7 @@ export default class WriteOffController extends BaseController {
 
       res.status(200).json(WriteOffService.asWriteOffResponse(writeOff));
     } catch (error) {
-      this.logger.error('Could not return single write off:', error);
+      this.logger.error('write_off.get.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -184,7 +184,7 @@ export default class WriteOffController extends BaseController {
       const writeOff = await new WriteOffService().createWriteOffAndCloseUser(user);
       res.status(200).json(WriteOffService.asWriteOffResponse(writeOff));
     } catch (error) {
-      this.logger.error('Could not create write off:', error);
+      this.logger.error('write_off.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -221,7 +221,7 @@ export default class WriteOffController extends BaseController {
 
       res.status(200).json({ pdf: pdf.downloadName } as PdfUrlResponse);
     } catch (error) {
-      this.logger.error('Could get write off PDF:', error);
+      this.logger.error('write_off.get_pdf.failed', error);
       if (error instanceof PdfError) {
         res.status(502).json('PDF Generator service failed.');
         return;

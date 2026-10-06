@@ -101,7 +101,7 @@ export async function getLDAPConnection(): Promise<Client> {
   try {
     await client.bind(ldapSettings.reader, ldapSettings.readerPassword);
   } catch (error) {
-    logger.error(`Could not bind LDAP reader: ${ldapSettings.reader} err: ${String(error)}`);
+    logger.error('ldap.bind_reader.failed', { reader: ldapSettings.reader }, error);
     return undefined;
   }
 

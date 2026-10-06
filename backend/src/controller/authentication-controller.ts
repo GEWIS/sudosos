@@ -156,13 +156,13 @@ export default class AuthenticationController extends BaseController {
    * @returns {string} 200 - Public key
    */
   public async getJWTPublicKey(req: Request, res: Response): Promise<void> {
-    this.logger.trace('Get JWT public key by IP', req.ip);
+    this.logger.trace('authentication.get_jwt_public_key', { ip: req.ip });
 
     try {
       const publicKey = this.tokenHandler.getOptions().publicKey;
       res.json(publicKey);
     } catch (error) {
-      this.logger.error('Could not get JWT public key:', error);
+      this.logger.error('authentication.get_jwt_public_key.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -229,8 +229,7 @@ export default class AuthenticationController extends BaseController {
    * @return {string} 403 - Authentication error.
    */
   public async LDAPLogin(req: Request, res: Response): Promise<void> {
-    const body = req.body as AuthenticationLDAPRequest;
-    this.logger.trace('LDAP authentication for user', body.accountName);
+    this.logger.trace('authentication.ldap_login');
 
     try {
       await AppDataSource.transaction(async (manager) => {
@@ -238,7 +237,7 @@ export default class AuthenticationController extends BaseController {
         await AuthenticationController.LDAPLoginConstructor(this.roleManager, this.tokenHandler, service.createUserAndBind.bind(service))(req, res);
       });
     } catch (error) {
-      this.logger.error('Could not authenticate using LDAP:', error);
+      this.logger.error('authentication.ldap_login.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -286,7 +285,7 @@ export default class AuthenticationController extends BaseController {
    */
   public async LocalLogin(req: Request, res: Response): Promise<void> {
     const body = req.body as AuthenticationLocalRequest;
-    this.logger.trace('Local authentication for user', body.accountMail);
+    this.logger.trace('authentication.local_login');
 
     try {
       // Email-based lookup is specific to local auth; UserService.getOptions does not support email filter
@@ -329,7 +328,7 @@ export default class AuthenticationController extends BaseController {
 
       res.json(AuthenticationService.asAuthenticationResponse(result));
     } catch (error) {
-      this.logger.error('Could not authenticate using Local:', error);
+      this.logger.error('authentication.local_login.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -345,7 +344,7 @@ export default class AuthenticationController extends BaseController {
    */
   public async resetLocalUsingToken(req: Request, res: Response): Promise<void> {
     const body = req.body as AuthenticationResetTokenRequest;
-    this.logger.trace('Reset using token for user', body.accountMail);
+    this.logger.trace('authentication.reset_local');
 
     try {
       const service = new AuthenticationService();
@@ -368,7 +367,7 @@ export default class AuthenticationController extends BaseController {
       res.status(204).send();
       return;
     } catch (error) {
-      this.logger.error('Could not reset using token:', error);
+      this.logger.error('authentication.reset_local.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -383,7 +382,7 @@ export default class AuthenticationController extends BaseController {
    */
   public async createResetToken(req: Request, res: Response): Promise<void> {
     const body = req.body as ResetLocalRequest;
-    this.logger.trace('Reset request for user', body.accountMail);
+    this.logger.trace('authentication.request_reset');
     try {
       // Email-based lookup is specific to local auth; UserService.getOptions does not support email filter
       const user = await User.findOne({
@@ -408,7 +407,7 @@ export default class AuthenticationController extends BaseController {
       res.status(204).send();
       return;
     } catch (error) {
-      this.logger.error('Could not create reset token:', error);
+      this.logger.error('authentication.request_reset.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -425,7 +424,7 @@ export default class AuthenticationController extends BaseController {
    */
   public async keyLogin(req: Request, res: Response): Promise<void> {
     const body = req.body as AuthenticationKeyRequest;
-    this.logger.trace('key authentication for user', body.userId);
+    this.logger.trace('authentication.key_login', { userId: body.userId });
 
     try {
       const user = await User.findOne(UserService.getOptions({ id: body.userId, allowPos: true }));
@@ -465,7 +464,7 @@ export default class AuthenticationController extends BaseController {
 
       res.json(AuthenticationService.asAuthenticationResponse(result));
     } catch (error) {
-      this.logger.error('Could not authenticate using key:', error);
+      this.logger.error('authentication.key_login.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -481,7 +480,7 @@ export default class AuthenticationController extends BaseController {
    */
   public async mockLogin(req: Request, res: Response): Promise<void> {
     const body = req.body as AuthenticationMockRequest;
-    this.logger.trace('Mock authentication for user', body.userId);
+    this.logger.trace('authentication.mock_login', { userId: body.userId });
 
     try {
       const userOptions = UserService.getOptions({ id: body.userId });
@@ -497,7 +496,7 @@ export default class AuthenticationController extends BaseController {
       });
       res.json(AuthenticationService.asAuthenticationResponse(result));
     } catch (error) {
-      this.logger.error('Could not create token:', error);
+      this.logger.error('authentication.mock_login.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

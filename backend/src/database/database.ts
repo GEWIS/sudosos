@@ -137,7 +137,7 @@ function getDataSourceOptions(): DataSourceOptions {
   if (config.app.isTest) {
     const logger: Logger = log4js.getLogger('Database');
     applyConfiguredLogLevel(logger);
-    logger.info(`TYPEORM_CONNECTION: ${config.database.connection}`);
+    logger.info('database.connection_type', { connection: config.database.connection });
   }
 
   const options = {

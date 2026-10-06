@@ -71,7 +71,7 @@ export default class TestController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async helloWorld(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Hello world email by', req.token.user.id);
+    this.logger.trace('test.hello_world');
 
     try {
       await Notifier.getInstance().notify({

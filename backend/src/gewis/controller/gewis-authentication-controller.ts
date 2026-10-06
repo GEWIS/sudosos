@@ -35,7 +35,6 @@ import MemberUser from '../../entity/user/member-user';
 import GewiswebToken from '../gewisweb-token';
 import GewiswebAuthenticationRequest from './request/gewisweb-authentication-request';
 import AuthenticationService from '../../service/authentication-service';
-import AuthenticationLDAPRequest from '../../controller/request/authentication-ldap-request';
 import AuthenticationController from '../../controller/authentication-controller';
 import Gewis from '../gewis';
 import UserService from '../../service/user-service';
@@ -116,7 +115,7 @@ export default class GewisAuthenticationController extends BaseController {
    * @returns {string} 200 - Public key
    */
   public async getGEWISWebPublic(req: Request, res: Response): Promise<void> {
-    this.logger.trace('Get GEWISWeb public token by IP', req.ip);
+    this.logger.trace('authentication.get_gewisweb_public_key', { ip: req.ip });
 
     res.json(Config.get().gewis.gewiswebPublicToken);
   }
@@ -151,14 +150,14 @@ export default class GewisAuthenticationController extends BaseController {
         });
         return;
       }
-      this.logger.trace('Gewisweb authentication for user with membership id', gewisweb.lidnr);
+      this.logger.trace('authentication.gewisweb_login', { memberId: gewisweb.lidnr });
 
       let memberUser = await MemberUser.findOne({
         where: { memberId: gewisweb.lidnr },
         relations: UserService.getRelations<MemberUser>(),
       });
       if (!memberUser) {
-        this.logger.log('User not found in database, creating user');
+        this.logger.log('authentication.gewisweb_user_created');
         memberUser = await new Gewis().createUserFromWeb(gewisweb);
       } else {
         //
@@ -178,7 +177,7 @@ export default class GewisAuthenticationController extends BaseController {
       });
       res.json(AuthenticationService.asAuthenticationResponse(result));
     } catch (error) {
-      this.logger.error('Could not create token:', error);
+      this.logger.error('authentication.gewisweb_login.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -195,14 +194,13 @@ export default class GewisAuthenticationController extends BaseController {
    * @return {string} 403 - Authentication error.
    */
   public async ldapLogin(req: Request, res: Response): Promise<void> {
-    const body = req.body as AuthenticationLDAPRequest;
-    this.logger.trace('GEWIS LDAP authentication for user', body.accountName);
+    this.logger.trace('authentication.gewis_ldap_login');
 
     try {
       const gewisService = new Gewis();
       await AuthenticationController.LDAPLoginConstructor(this.roleManager, this.tokenHandler, gewisService.findOrCreateGEWISUserAndBind.bind(gewisService))(req, res);
     } catch (error) {
-      this.logger.error('Could not authenticate using LDAP:', error);
+      this.logger.error('authentication.gewis_ldap_login.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

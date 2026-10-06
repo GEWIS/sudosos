@@ -154,7 +154,7 @@ export default class AuthenticationService extends WithManager {
     } catch (error) {
       // Log error but don't throw
       const logger = log4js.getLogger('AuthenticationService');
-      logger.warn('Failed to migrate PIN authenticator:', error);
+      logger.warn('authentication.migrate_pin.failed', error);
     }
   }
 
@@ -369,18 +369,18 @@ export default class AuthenticationService extends WithManager {
       if (searchEntries[0]) {
         ADUser = userFromLDAP(searchEntries[0] as any as LDAPResult);
       } else {
-        logger.trace(`User ${uid} not found in DB`);
+        logger.trace('authentication.ldap_user_not_found');
         return undefined;
       }
     } catch (error) {
-      logger.error(`Could not get user data during: ${String(error)}`);
+      logger.error('authentication.ldap_search.failed', error);
       await client.unbind();
       return undefined;
     }
 
     // EXTRACT ROLES FROM GROUPS
     if (ADUser.mail === '' || ADUser.dn === '' || !ADUser) {
-      logger.trace(`User ${ADUser.dn} is invalid`);
+      logger.trace('authentication.ldap_user_invalid');
       return undefined;
     }
 
@@ -388,7 +388,7 @@ export default class AuthenticationService extends WithManager {
     try {
       await client.bind(ADUser.dn, password);
     } catch (ex) {
-      logger.trace(`Could not bind User: ${uid} err: ${String(ex)}`);
+      logger.trace('authentication.ldap_bind.failed', ex);
       return undefined;
     } finally {
       await client.unbind();
@@ -551,7 +551,7 @@ export default class AuthenticationService extends WithManager {
     this.manager.save(User, user).catch((error) => {
       // Log error but don't block
       const logger: Logger = log4js.getLogger('AuthenticationService');
-      logger.error('Failed to save lastSeen timestamp:', error);
+      logger.error('authentication.save_last_seen.failed', error);
     });
 
     const [froles, organs] = await Promise.all([

@@ -39,7 +39,7 @@ export default class QRService extends WithManager {
       return await this.manager.findOne<QRAuthenticator>(QRAuthenticator, { where: { sessionId } });
     } catch (error) {
       const logger = log4js.getLogger('QRService');
-      logger.error('Failed to get QR authenticator', error);
+      logger.error('qr_authenticator.get.failed', error);
       return null;
     }
   }

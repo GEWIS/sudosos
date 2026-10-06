@@ -155,7 +155,7 @@ export default class TransferController extends BaseController {
       const { total, count } = await new TransferService().getTransferAggregate(filters);
       res.json({ total: total.toObject(), count });
     } catch (error) {
-      this.logger.error('Could not return transfer aggregate:', error);
+      this.logger.error('transfer.get_aggregate.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -202,7 +202,7 @@ export default class TransferController extends BaseController {
         manualDeletions: { total: summary.manualDeletions.total.toObject(), count: summary.manualDeletions.count },
       });
     } catch (error) {
-      this.logger.error('Could not return transfer summary:', error);
+      this.logger.error('transfer.get_summary.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -246,7 +246,7 @@ export default class TransferController extends BaseController {
       const records = transfers.map((t) => TransferService.asTransferResponse(t));
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all transfers:', error);
+      this.logger.error('transfer.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -274,7 +274,7 @@ export default class TransferController extends BaseController {
         res.status(404).json('Transfer not found.');
       }
     } catch (error) {
-      this.logger.error('Could not return transfer:', error);
+      this.logger.error('transfer.get.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -306,7 +306,7 @@ export default class TransferController extends BaseController {
       const transfer = await transferService.postTransfer(request);
       res.json(TransferService.asTransferResponse(transfer));
     } catch (error) {
-      this.logger.error('Could not create transfer:', error);
+      this.logger.error('transfer.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -335,7 +335,7 @@ export default class TransferController extends BaseController {
       } else if (error.message === 'Cannot delete transfer because it is referenced by another entity') {
         res.status(400).json('Cannot delete transfer because it is referenced by another entity.');
       } else {
-        this.logger.error('Could not delete transfer:', error);
+        this.logger.error('transfer.delete.failed', error);
         res.status(500).json('Internal server error.');
       }
     }
@@ -377,7 +377,7 @@ export default class TransferController extends BaseController {
         res.status(400).json(error.message);
         return;
       }
-      this.logger.error('Could not return transfer PDF:', error);
+      this.logger.error('transfer.get_pdf.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

@@ -43,7 +43,14 @@ The practical rule: **controllers should stay thin**. Structural validation belo
 Log calls pass a constant message first and their variable parts in an object after
 it, for example `logger.trace('invoice.delete', { id })`. A constant message can be
 grouped and counted across requests; a message with values interpolated into it
-cannot. Never log a whole entity: log the id.
+cannot. Never log a whole entity: log the id. Never log the caller either: the
+`actorId` is added for you.
+
+Messages are event names of the form `<domain>.<action>`, such as `user.update_pin`
+or `cron.sync_balances.started`. A failure uses the event of the operation with
+`.failed` appended and passes the error as its own argument, for example
+`logger.error('invoice.delete.failed', { id }, error)`. Wrapping it as `{ error }`
+loses the message and stack.
 
 `LOG_FORMAT` picks the output format. `json` emits one object per line and is the
 default in production; `pretty` emits readable lines and is the default everywhere

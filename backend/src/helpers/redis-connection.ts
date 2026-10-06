@@ -67,10 +67,10 @@ export async function initRedisConnection(logger: Logger): Promise<Redis | undef
     });
 
     redisClient.on('error', (err: Error) => {
-      logger.error(`Redis client error: ${err.message}`);
+      logger.error('redis.client_error', err);
     });
 
-    logger.info('Redis connection established.');
+    logger.info('redis.connected');
     return redisClient;
   } catch (err) {
     if (redisClient) {
@@ -84,11 +84,10 @@ export async function initRedisConnection(logger: Logger): Promise<Redis | undef
       );
     }
 
-    logger.warn(
-      `Could not connect to Redis (${err instanceof Error ? err.message : String(err)}). `
-      + 'Email queueing will be disabled – emails will be sent directly via SMTP. '
-      + 'Start Redis or set REDIS_HOST / REDIS_PORT to enable queued sending.',
-    );
+    logger.warn('redis.connect.failed', {
+      fallback: 'Email queueing is disabled, emails are sent directly via SMTP. '
+        + 'Start Redis or set REDIS_HOST / REDIS_PORT to enable queued sending.',
+    }, err);
     return undefined;
   }
 }

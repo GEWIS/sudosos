@@ -145,7 +145,7 @@ export default class PayoutRequestController extends BaseController {
       res.status(200).json(toResponse(records, count, pagination));
     } catch (e) {
       res.status(500).send('Internal server error.');
-      this.logger.error(e);
+      this.logger.error('payout_request.list.failed', e);
     }
   }
 
@@ -169,7 +169,7 @@ export default class PayoutRequestController extends BaseController {
         .getSinglePayoutRequest(parseInt(parameters.id, 10));
     } catch (e) {
       res.status(500).send();
-      this.logger.error(e);
+      this.logger.error('payout_request.get.failed', e);
       return;
     }
 
@@ -213,7 +213,7 @@ export default class PayoutRequestController extends BaseController {
       res.status(200).json(PayoutRequestService.asPayoutRequestResponse(payoutRequest));
     } catch (e) {
       res.status(500).send();
-      this.logger.error(e);
+      this.logger.error('payout_request.create.failed', e);
     }
   }
 
@@ -242,7 +242,7 @@ export default class PayoutRequestController extends BaseController {
       payoutRequest = await PayoutRequestService.getSinglePayoutRequest(id);
     } catch (e) {
       res.status(500).send();
-      this.logger.error(e);
+      this.logger.error('payout_request.update_status.failed', e);
       return;
     }
 
@@ -284,7 +284,7 @@ export default class PayoutRequestController extends BaseController {
       res.status(200).json(PayoutRequestService.asPayoutRequestResponse(updatedPayoutRequest));
     } catch (e) {
       res.status(500).send();
-      this.logger.error(e);
+      this.logger.error('payout_request.update_status.failed', e);
     }
   }
 
@@ -323,7 +323,7 @@ export default class PayoutRequestController extends BaseController {
 
       res.status(200).json({ pdf: pdf.downloadName } as PdfUrlResponse);
     } catch (error) {
-      this.logger.error('Could get payout request PDF:', error);
+      this.logger.error('payout_request.get_pdf.failed', error);
       if (error instanceof PdfError) {
         res.status(502).json('PDF Generator service failed.');
         return;
