@@ -58,6 +58,8 @@ import InvoiceUser from '../../../src/entity/user/invoice-user';
 import { UpdateInvoiceUserRequest } from '../../../src/controller/request/user-request';
 import InvoicePdf from '../../../src/entity/file/invoice-pdf';
 import { truncateAllTables } from '../../helpers/database-helpers';
+import { createInvoiceWithTransfers } from '../../helpers/invoice-helpers';
+import Transfer from '../../../src/entity/transactions/transfer';
 import { finishTestDB } from '../../helpers/test-helpers';
 import { createTransactionRequest, requestToTransaction } from '../../helpers/transaction-factory';
 import { InvoiceSeeder, TransactionSeeder, UserSeeder } from '../../seed';
@@ -712,6 +714,29 @@ describe('InvoiceController', async () => {
         .set('Authorization', `Bearer ${ctx.localUser}`);
 
       expect(res.status).to.equal(403);
+    });
+    it('should return an HTTP 400 and not create a second credit transfer if invoice is already deleted', async () => {
+      await inUserContext(await (await UserFactory()).clone(2), async (debtor: User, creditor: User) => {
+        const invoice = await createInvoiceWithTransfers(debtor.id, creditor.id, 1);
+
+        const first = await request(ctx.app)
+          .delete(`/invoices/${invoice.id}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`);
+        expect(first.status).to.equal(204);
+        const transferCount = await Transfer.count();
+        const balance = await new BalanceService().getBalance(debtor.id);
+
+        const second = await request(ctx.app)
+          .delete(`/invoices/${invoice.id}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`);
+
+        expect(second.status).to.eq(400);
+        expect(second.body.valid).to.be.false;
+        expect(second.body.errors).to.be.an('array').with.length.greaterThan(0);
+        expect(second.body.errors[0]).to.include(INVOICE_IS_DELETED().value);
+        expect(await Transfer.count()).to.equal(transferCount);
+        expect((await new BalanceService().getBalance(debtor.id)).amount.amount).to.equal(balance.amount.amount);
+      });
     });
     it('should return an HTTP 404 if invoice does not exist', async () => {
       const count = await Invoice.count();

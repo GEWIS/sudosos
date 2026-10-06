@@ -245,6 +245,10 @@ export default class InvoiceService extends WithManager {
     const invoice = await this.manager.findOne(Invoice, { ...InvoiceService.getOptions({ invoiceId, returnInvoiceEntries: true }) });
     if (!invoice) return undefined;
 
+    if (InvoiceService.isState(invoice, InvoiceState.DELETED)) {
+      throw new Error(`Invoice ${invoiceId} is already deleted`);
+    }
+
     // Extract amount from transfer
     const amount: DineroObjectRequest = invoice.transfer.amountInclVat.toObject();
 
