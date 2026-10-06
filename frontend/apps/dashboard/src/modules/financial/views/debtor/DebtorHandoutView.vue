@@ -1,5 +1,6 @@
 <template>
   <PageContainer class="max-w-[100rem]">
+    <ConfirmDialog />
     <div class="flex flex-col gap-5">
       <DebtorTable v-if="handout" :handout-event="handout" />
     </div>
