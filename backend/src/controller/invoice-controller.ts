@@ -41,6 +41,8 @@ import { createInvoiceRequestSpec, updateInvoiceRequestSpec } from './request/va
 import { globalAsyncValidatorRegistry } from '../middleware/async-validator-registry';
 import { asBoolean, asDate, asInvoiceState, asNumber } from '../helpers/validators';
 import Invoice from '../entity/invoices/invoice';
+import { InvoiceState } from '../entity/invoices/invoice-status';
+import { INVOICE_IS_DELETED } from './request/validators/validation-errors';
 import User, { UserType } from '../entity/user/user';
 import { UpdateInvoiceUserRequest } from './request/user-request';
 import InvoiceUser from '../entity/user/invoice-user';
@@ -323,16 +325,26 @@ export default class InvoiceController extends BaseController {
    * @security JWT
    * @param {integer} id.path.required - The id of the invoice which should be deleted
    * @return {string} 404 - Invoice not found
+   * @return {ValidationResponse} 400 - Validation error
    * @return 204 - Deletion success
    * @return {string} 500 - Internal server error
    */
-  // TODO Deleting of invoices that are not of state CREATED?
   public async deleteInvoice(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const invoiceId = parseInt(id, 10);
     this.logger.trace('invoice.delete', { id });
 
     try {
+      const existing = await Invoice.findOne(InvoiceService.getOptions({ invoiceId }));
+      if (!existing) {
+        res.status(404).json('Invoice not found.');
+        return;
+      }
+      if (InvoiceService.isState(existing, InvoiceState.DELETED)) {
+        res.status(400).json({ valid: false, errors: [INVOICE_IS_DELETED().value] });
+        return;
+      }
+
       const invoice = await AppDataSource.manager.transaction(async (manager) =>
         new InvoiceService(manager).deleteInvoice(invoiceId, req.token.user.id));
       if (!invoice) {

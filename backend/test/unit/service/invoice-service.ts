@@ -831,6 +831,33 @@ describe('InvoiceService', () => {
         },
       );
     });
+    it('should not create a second credit transfer when deleting an already deleted invoice', async () => {
+      await inUserContext(
+        await (await UserFactory()).clone(2),
+        async (debtor: User, creditor: User) => {
+          const invoice = await createInvoiceWithTransfers(debtor.id, creditor.id, 1);
+
+          const deletedInvoice = await AppDataSource.manager.transaction(async (manager) => {
+            return new InvoiceService(manager).deleteInvoice(invoice.id, creditor.id);
+          });
+          const transferCount = await Transfer.count();
+
+          // The second deletion may either throw or return undefined, but must not touch any money.
+          try {
+            await AppDataSource.manager.transaction(async (manager) => {
+              return new InvoiceService(manager).deleteInvoice(invoice.id, creditor.id);
+            });
+          } catch {
+            // Rejecting is fine.
+          }
+
+          expect(await Transfer.count()).to.equal(transferCount);
+          const reloaded = await Invoice.findOne(InvoiceService.getOptions({ invoiceId: invoice.id }));
+          expect(reloaded.creditTransfer.id).to.equal(deletedInvoice.creditTransfer.id);
+          expect(reloaded.invoiceStatus.filter((s) => s.state === InvoiceState.DELETED)).to.have.length(1);
+        },
+      );
+    });
     it('should include creditTransfer in asBaseInvoiceResponse for a deleted invoice', async () => {
       await inUserContext(
         await (await UserFactory()).clone(2),
