@@ -37,6 +37,15 @@ export interface HandoutFinesRequest {
 }
 
 /**
+ * @typedef {object} NotifyDebtRequest
+ * @property {Array<integer>} userIds.required - Users to remind of their negative balance.
+ * Users who are no longer in debt are skipped.
+ */
+export interface NotifyDebtRequest {
+  userIds: number[];
+}
+
+/**
  * The total request and all its fields are optional for backwards compatibility's sake.
  * If this request object is extended, it is probably best to make everything required
  * and remove the backwards compatibility, as the frontend will (and should) already use
