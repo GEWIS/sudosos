@@ -24,13 +24,15 @@
         <ProgressSpinner />
         <p class="text-2xl font-semibold text-center">{{ formattedAmount }}</p>
         <p class="text-xl text-center">Let the customer tap or insert their card on the terminal.</p>
-        <p class="text-center opacity-70">
-          The terminal keeps asking until the payment goes through. Press Cancel to give up on this payment.
-        </p>
+        <p class="text-center opacity-70">Press Cancel to give up on this payment.</p>
       </template>
 
       <template v-else-if="phase === 'cancelled'">
         <Message :icon="undefined" severity="warn">The payment was cancelled. Nothing has been charged.</Message>
+      </template>
+
+      <template v-else-if="phase === 'declined'">
+        <Message :icon="undefined" severity="error">The card was declined. Nothing has been charged.</Message>
       </template>
 
       <template v-else-if="phase === 'error'">
@@ -50,7 +52,7 @@
           <span v-else>Cancel</span>
         </Button>
         <Button
-          v-else-if="phase === 'cancelled' || phase === 'error'"
+          v-else-if="phase === 'cancelled' || phase === 'declined' || phase === 'error'"
           class="terminal-close text-xl px-6 py-3"
           :disabled="closing"
           @click="close"
@@ -170,6 +172,11 @@ watch(
 watch(
   () => terminalPaymentStore.phase,
   async (newPhase) => {
+    if (newPhase === 'declined') {
+      toast.add({ severity: 'error', summary: 'The card was declined.', life: 5000 });
+      return;
+    }
+
     if (newPhase === 'error') {
       toast.add({
         severity: 'error',
