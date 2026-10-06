@@ -86,7 +86,7 @@ export default class VoucherGroupController extends BaseController {
    */
   public async getAllVoucherGroups(req: RequestWithToken, res: Response): Promise<void> {
     const { body } = req;
-    this.logger.trace('Get all voucher groups', body, 'by user', req.token.user);
+    this.logger.trace('voucher_group.list', { filters: body });
 
     let take;
     let skip;
@@ -105,7 +105,7 @@ export default class VoucherGroupController extends BaseController {
       const records = bkgs.map((bkg) => VoucherGroupService.asVoucherGroupResponse(bkg, bkg.vouchers.map((v) => v.user)));
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all voucher groups:', error);
+      this.logger.error('voucher_group.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -124,7 +124,7 @@ export default class VoucherGroupController extends BaseController {
    */
   public async createVoucherGroup(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as VoucherGroupRequest;
-    this.logger.trace('Create voucher group', body, 'by user', req.token.user);
+    this.logger.trace('voucher_group.create', { request: body });
 
     const voucherGroupParams = VoucherGroupService.asVoucherGroupParams(body);
 
@@ -137,7 +137,7 @@ export default class VoucherGroupController extends BaseController {
       const { voucherGroup, users } = await VoucherGroupService.createVoucherGroup(voucherGroupParams);
       res.json(VoucherGroupService.asVoucherGroupResponse(voucherGroup, users));
     } catch (error) {
-      this.logger.error('Could not create voucher group:', error);
+      this.logger.error('voucher_group.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -156,7 +156,7 @@ export default class VoucherGroupController extends BaseController {
   public async getVoucherGroupById(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const bkgId = Number.parseInt(id, 10);
-    this.logger.trace('Get single voucher group', id, 'by user', req.token.user);
+    this.logger.trace('voucher_group.get', { id });
 
     // handle request
     try {
@@ -168,7 +168,7 @@ export default class VoucherGroupController extends BaseController {
         res.status(404).json('Voucher group not found.');
       }
     } catch (error) {
-      this.logger.error('Could not get voucher group:', error);
+      this.logger.error('voucher_group.get.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -191,7 +191,7 @@ export default class VoucherGroupController extends BaseController {
     const body = req.body as VoucherGroupRequest;
     const { id } = req.params;
     const bkgId = Number.parseInt(id, 10);
-    this.logger.trace('Update voucher group', id, 'with', body, 'by user', req.token.user);
+    this.logger.trace('voucher_group.update', { id, request: body });
 
     const voucherGroupParams = VoucherGroupService.asVoucherGroupParams(body);
 
@@ -219,7 +219,7 @@ export default class VoucherGroupController extends BaseController {
         VoucherGroupService.asVoucherGroupResponse(result.voucherGroup, result.users),
       );
     } catch (error) {
-      this.logger.error('Could not update voucher group:', error);
+      this.logger.error('voucher_group.update.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

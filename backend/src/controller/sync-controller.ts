@@ -83,7 +83,7 @@ export default class SyncController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async getUserSyncResults(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Getting user sync results (dry-run) by', req.token.user.id);
+    this.logger.trace('sync.dry_run');
 
     try {
       // Parse and validate service filter from query parameters
@@ -132,11 +132,11 @@ export default class SyncController extends BaseController {
         },
       };
 
-      this.logger.info(`Sync dry-run completed: ${results.passed.length} passed, ${results.failed.length} failed, ${results.skipped.length} skipped`);
+      this.logger.info('sync.dry_run.finished', { passed: results.passed.length, failed: results.failed.length, skipped: results.skipped.length });
       res.status(200).json(response);
 
     } catch (error) {
-      this.logger.error('Error during sync dry-run:', error);
+      this.logger.error('sync.dry_run.failed', error);
       res.status(500).json('Internal server error during sync operation.');
     }
   }

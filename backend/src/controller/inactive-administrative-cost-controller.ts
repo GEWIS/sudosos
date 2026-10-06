@@ -139,7 +139,7 @@ export default class InactiveAdministrativeCostController extends BaseController
    */
   public async getAllInactiveAdministrativeCosts(req: RequestWithToken, res: Response): Promise<void> {
     const { body } = req;
-    this.logger.trace('Get all inactive administrative costs', body, 'by user', req.token.user);
+    this.logger.trace('inactive_administrative_cost.list', { filters: body });
 
     let take;
     let skip;
@@ -163,7 +163,7 @@ export default class InactiveAdministrativeCostController extends BaseController
       const records = InactiveAdministrativeCostService.toArrayResponse(costs);
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all inactive administrative costs', error);
+      this.logger.error('inactive_administrative_cost.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -182,7 +182,7 @@ export default class InactiveAdministrativeCostController extends BaseController
   public async getSingleInactiveAdministrativeCost(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const inactiveAdministrativeCostId = parseInt(id, 10);
-    this.logger.trace('Get inactive administrative costs', inactiveAdministrativeCostId, 'by user', req.token.user);
+    this.logger.trace('inactive_administrative_cost.get', { id: inactiveAdministrativeCostId });
 
     try {
       const inactiveAdministrativeCosts: InactiveAdministrativeCost[] = await new InactiveAdministrativeCostService().getInactiveAdministrativeCosts(
@@ -197,7 +197,7 @@ export default class InactiveAdministrativeCostController extends BaseController
 
       res.json(inactiveAdministrativeCost.toResponse());
     } catch (error) {
-      this.logger.error('Could not return inactive administrative cost', error);
+      this.logger.error('inactive_administrative_cost.get.failed', error);
       res.status(500).json('Internal server error.');
     }
 
@@ -217,7 +217,7 @@ export default class InactiveAdministrativeCostController extends BaseController
    */
   public async createInactiveAdministrativeCost(req: RequestWithToken, res: Response): Promise<void> {
     const body   = req.body as CreateInactiveAdministrativeCostRequest;
-    this.logger.trace('Create InactiveAdministrativeCosts', body, 'by user', req.token.user);
+    this.logger.trace('inactive_administrative_cost.create', { request: body });
 
     // handle request
     try {
@@ -228,7 +228,7 @@ export default class InactiveAdministrativeCostController extends BaseController
         res.status(501).json(error.message);
         return;
       }
-      this.logger.error('Could not create inactive administrative cost:', error);
+      this.logger.error('inactive_administrative_cost.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -247,7 +247,7 @@ export default class InactiveAdministrativeCostController extends BaseController
   public async deleteInactiveAdministrativeCost(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const inactiveAdministrativeCostId = parseInt(id, 10);
-    this.logger.trace('Delete inactive administrative costs', inactiveAdministrativeCostId, 'by user', req.token.user);
+    this.logger.trace('inactive_administrative_cost.delete', { id: inactiveAdministrativeCostId });
 
     try {
       // Check if entity exists before attempting deletion
@@ -260,7 +260,7 @@ export default class InactiveAdministrativeCostController extends BaseController
       await new InactiveAdministrativeCostService().deleteInactiveAdministrativeCost(inactiveAdministrativeCostId);
       res.status(204).send();
     } catch (error) {
-      this.logger.error('Could not delete InactiveAdministrativeCost:', error);
+      this.logger.error('inactive_administrative_cost.delete.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -277,7 +277,7 @@ export default class InactiveAdministrativeCostController extends BaseController
    */
   public async checkInactiveUsers(req: RequestWithToken, res: Response): Promise<void> {
     const { body } = req;
-    this.logger.trace('Check Inactive Users', body, 'by user', req.token.user);
+    this.logger.trace('inactive_administrative_cost.check_inactive_users', { request: body });
 
     try {
       const notification = asBoolean(req.query.notification);
@@ -286,7 +286,7 @@ export default class InactiveAdministrativeCostController extends BaseController
 
       res.json(usersResponses);
     } catch (error) {
-      this.logger.error('Could not check inactive users:', error);
+      this.logger.error('inactive_administrative_cost.check_inactive_users.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -305,13 +305,13 @@ export default class InactiveAdministrativeCostController extends BaseController
    */
   public async notifyInactiveUsers(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as HandoutInactiveAdministrativeCostsRequest;
-    this.logger.trace('Notify Inactive Users', body, 'by user', req.token.user);
+    this.logger.trace('inactive_administrative_cost.notify', { request: body });
 
     try {
       await new InactiveAdministrativeCostService().sendInactiveNotification(body);
       res.status(204).send();
     } catch (error) {
-      this.logger.error('Could not check inactive users:', error);
+      this.logger.error('inactive_administrative_cost.notify.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -330,7 +330,7 @@ export default class InactiveAdministrativeCostController extends BaseController
    */
   public async handoutInactiveAdministrativeCost(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as HandoutInactiveAdministrativeCostsRequest;
-    this.logger.trace('Handout InactiveAdministrativeCosts', body, 'by user', req.token.user);
+    this.logger.trace('inactive_administrative_cost.handout', { request: body });
 
     try {
       const inactiveAdministrativeCosts = await new InactiveAdministrativeCostService().handOutInactiveAdministrativeCost(body);
@@ -338,7 +338,7 @@ export default class InactiveAdministrativeCostController extends BaseController
 
       res.status(200).send(response);
     } catch (error) {
-      this.logger.error('Could not check inactive users:', error);
+      this.logger.error('inactive_administrative_cost.handout.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -356,7 +356,7 @@ export default class InactiveAdministrativeCostController extends BaseController
    * @return {string} 500 - Internal server error
    */
   public async getInactiveAdministrativeCostReport(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get inactive administrative cost report by user', req.token.user);
+    this.logger.trace('inactive_administrative_cost.get_report', { query: req.query });
 
     let fromDate, toDate;
     try {
@@ -372,7 +372,7 @@ export default class InactiveAdministrativeCostController extends BaseController
       const report = await new InactiveAdministrativeCostService().getInactiveAdministrativeCostReport(fromDate, toDate);
       res.json(report.toResponse());
     } catch (error) {
-      this.logger.error('Could not get inactive administrative cost report:', error);
+      this.logger.error('inactive_administrative_cost.get_report.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -391,7 +391,7 @@ export default class InactiveAdministrativeCostController extends BaseController
    * @return {string} 500 - Internal server error
    */
   public async getInactiveAdministrativeCostReportPdf(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get inactive administrative cost report PDF by user', req.token.user);
+    this.logger.trace('inactive_administrative_cost.get_report_pdf', { query: req.query });
 
     let fromDate, toDate;
     try {
@@ -415,7 +415,7 @@ export default class InactiveAdministrativeCostController extends BaseController
       res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
       res.status(200).send(pdf);
     } catch (error) {
-      this.logger.error('Could not get inactive administrative cost report PDF:', error);
+      this.logger.error('inactive_administrative_cost.get_report_pdf.failed', error);
       if (error instanceof PdfError) {
         res.status(502).json('PDF Generator service failed.');
         return;

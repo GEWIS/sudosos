@@ -123,7 +123,7 @@ export default class RbacController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async getAllRoles(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all roles by user', req.token.user);
+    this.logger.trace('rbac.list_roles');
 
     // handle request
     try {
@@ -133,7 +133,7 @@ export default class RbacController extends BaseController {
       const responses = roles.map((r) => RBACService.asRoleResponse(r));
       res.json(responses);
     } catch (error) {
-      this.logger.error('Could not return all roles:', error);
+      this.logger.error('rbac.list_roles.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -150,7 +150,7 @@ export default class RbacController extends BaseController {
    */
   public async getSingleRole(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get single role', id, 'by user', req.token.user);
+    this.logger.trace('rbac.get_role', { id });
 
     try {
       const roleId = Number(id);
@@ -162,7 +162,7 @@ export default class RbacController extends BaseController {
 
       res.json(RBACService.asRoleResponse(role));
     } catch (error) {
-      this.logger.error('Could not get single role:', error);
+      this.logger.error('rbac.get_role.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -179,7 +179,7 @@ export default class RbacController extends BaseController {
    */
   public async getRoleUsers(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get all users of role', id, 'by user', req.token.user);
+    this.logger.trace('rbac.get_role_users', { id });
 
     try {
       const roleId = Number(id);
@@ -195,7 +195,7 @@ export default class RbacController extends BaseController {
       const records = users.map((u) => asUserResponse(u, true));
       res.json(toResponse(records, count, pagination));
     } catch (error) {
-      this.logger.error('Could not get users of role:', error);
+      this.logger.error('rbac.get_role_users.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -213,7 +213,7 @@ export default class RbacController extends BaseController {
    */
   public async createRole(req: RequestWithToken, res: Response): Promise<void> {
     const { body } = req;
-    this.logger.trace('Create new role by', req.token.user);
+    this.logger.trace('rbac.create_role');
 
     try {
       const request = { ...body } as UpdateRoleRequest;
@@ -222,7 +222,7 @@ export default class RbacController extends BaseController {
       const response = RBACService.asRoleResponse(role);
       res.json(response);
     } catch (error) {
-      this.logger.error('Could not create role:', error);
+      this.logger.error('rbac.create_role.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -243,7 +243,7 @@ export default class RbacController extends BaseController {
   public async updateRole(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const { body } = req;
-    this.logger.trace('Update role', id, 'by', req.token.user);
+    this.logger.trace('rbac.update_role', { id });
 
     try {
       const roleId = Number(id);
@@ -263,7 +263,7 @@ export default class RbacController extends BaseController {
       const response = RBACService.asRoleResponse(role);
       res.json(response);
     } catch (error) {
-      this.logger.error('Could not update role:', error);
+      this.logger.error('rbac.update_role.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -281,7 +281,7 @@ export default class RbacController extends BaseController {
    */
   public async deleteRole(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Delete role', id, 'by', req.token.user);
+    this.logger.trace('rbac.delete_role', { id });
 
     try {
       const roleId = Number(id);
@@ -299,7 +299,7 @@ export default class RbacController extends BaseController {
       await RBACService.removeRole(roleId);
       res.status(204).json();
     } catch (error) {
-      this.logger.error('Could not delete role:', error);
+      this.logger.error('rbac.delete_role.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -320,7 +320,7 @@ export default class RbacController extends BaseController {
   public async addPermissions(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const { body } = req;
-    this.logger.trace('Add permissions to role', id, 'by', req.token.user);
+    this.logger.trace('rbac.add_permissions', { id });
 
     try {
       const roleId = Number(id);
@@ -356,7 +356,7 @@ export default class RbacController extends BaseController {
       res.json(response);
       return;
     } catch (error) {
-      this.logger.error('Could not add permissions:', error);
+      this.logger.error('rbac.add_permissions.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -378,7 +378,7 @@ export default class RbacController extends BaseController {
    */
   public async deletePermission(req: RequestWithToken, res: Response): Promise<void> {
     const { id, action, entity, relation } = req.params;
-    this.logger.trace('Delete permission', action, relation, entity, 'from role', id, 'by', req.token.user);
+    this.logger.trace('rbac.delete_permission', { id, action, relation, entity });
 
     try {
       const roleId = Number(id);
@@ -402,7 +402,7 @@ export default class RbacController extends BaseController {
       await RBACService.removePermission(roleId, { entity, action, relation });
       res.status(204).json();
     } catch (error) {
-      this.logger.error('Could not delete permission:', error);
+      this.logger.error('rbac.delete_permission.failed', { id, action, relation, entity }, error);
       res.status(500).json('Internal server error.');
     }
   }

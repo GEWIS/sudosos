@@ -136,7 +136,7 @@ export default class AuthenticationSecureController extends BaseController {
    * @return {AuthenticationResponse} 200 - The created json web token.
    */
   private async refreshToken(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Refresh token for user', req.token.user.id);
+    this.logger.trace('authentication.refresh_token');
 
     try {
       const userOptions = UserService.getOptions({ id: req.token.user.id, allowPos: true });
@@ -163,7 +163,7 @@ export default class AuthenticationSecureController extends BaseController {
       });
       res.json(AuthenticationService.asAuthenticationResponse(result));
     } catch (error) {
-      this.logger.error('Could not create token:', error);
+      this.logger.error('authentication.refresh_token.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -180,7 +180,7 @@ export default class AuthenticationSecureController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   private async authenticatePointOfSale(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Authenticate point of sale', req.params.id, 'by user', req.token.user.id);
+    this.logger.trace('authentication.point_of_sale', { pointOfSaleId: req.params.id });
 
     try {
       const pointOfSaleId = Number(req.params.id);
@@ -202,7 +202,7 @@ export default class AuthenticationSecureController extends BaseController {
       });
       res.json(AuthenticationService.asAuthenticationResponse(result));
     } catch (error) {
-      this.logger.error('Could not create token:', error);
+      this.logger.error('authentication.point_of_sale.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -222,7 +222,7 @@ export default class AuthenticationSecureController extends BaseController {
    */
   private async confirmQRCode(req: RequestWithToken, res: Response): Promise<void> {
     const { sessionId } = req.params;
-    this.logger.trace('Confirming QR code for session', sessionId, 'by user', req.token.user);
+    this.logger.trace('authentication.qr_confirm');
 
     try {
       const qrAuthenticator = await (new QRService()).get(sessionId);
@@ -264,7 +264,7 @@ export default class AuthenticationSecureController extends BaseController {
       WebSocketService.emitQRConfirmed(qrAuthenticator, authResponse);
       res.status(200).json({ message: 'QR code confirmed successfully.' });
     } catch (error) {
-      this.logger.error('Could not confirm QR code:', error);
+      this.logger.error('authentication.qr_confirm.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -282,7 +282,7 @@ export default class AuthenticationSecureController extends BaseController {
    */
   private async pinLogin(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as AuthenticationPinRequest;
-    this.logger.trace('PIN authentication for user', body.userId, 'by POS user', req.token.user.id);
+    this.logger.trace('authentication.pin_login', { userId: body.userId });
 
     try {
       // Verify the caller is a POS user
@@ -303,7 +303,7 @@ export default class AuthenticationSecureController extends BaseController {
       await (AuthenticationController.PINLoginConstructor(this.roleManager,
         this.tokenHandler, body.pin, body.userId, body.posId))(req, res);
     } catch (error) {
-      this.logger.error('Could not authenticate using PIN:', error);
+      this.logger.error('authentication.pin_login.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -321,7 +321,7 @@ export default class AuthenticationSecureController extends BaseController {
    */
   private async nfcLogin(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as AuthenticationNfcRequest;
-    this.logger.trace('NFC authentication for nfcCode', body.nfcCode, 'by POS user', req.token.user.id);
+    this.logger.trace('authentication.nfc_login');
 
     try {
       // Verify the caller is a POS user
@@ -355,7 +355,7 @@ export default class AuthenticationSecureController extends BaseController {
         tokenHandler: this.tokenHandler,
       };
 
-      this.logger.trace('Successful NFC authentication for user', authenticator.user);
+      this.logger.trace('authentication.nfc_login.succeeded', { userId: authenticator.user.id });
 
       const result = await new AuthenticationService().getSaltedToken({
         user: authenticator.user,
@@ -364,7 +364,7 @@ export default class AuthenticationSecureController extends BaseController {
       });
       res.json(AuthenticationService.asAuthenticationResponse(result));
     } catch (error) {
-      this.logger.error('Could not authenticate using NFC:', error);
+      this.logger.error('authentication.nfc_login.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -382,7 +382,7 @@ export default class AuthenticationSecureController extends BaseController {
    */
   private async eanLogin(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as AuthenticationEanRequest;
-    this.logger.trace('EAN authentication for eanCode', body.eanCode, 'by POS user', req.token.user.id);
+    this.logger.trace('authentication.ean_login');
 
     try {
       // Verify the caller is a POS user
@@ -416,7 +416,7 @@ export default class AuthenticationSecureController extends BaseController {
         tokenHandler: this.tokenHandler,
       };
 
-      this.logger.trace('Successful EAN authentication for user', authenticator.user);
+      this.logger.trace('authentication.ean_login.succeeded', { userId: authenticator.user.id });
 
       const result = await new AuthenticationService().getSaltedToken({
         user: authenticator.user,
@@ -425,7 +425,7 @@ export default class AuthenticationSecureController extends BaseController {
       });
       res.json(AuthenticationService.asAuthenticationResponse(result));
     } catch (error) {
-      this.logger.error('Could not authenticate using EAN:', error);
+      this.logger.error('authentication.ean_login.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

@@ -45,7 +45,7 @@ import { asBoolean } from '../helpers/validators';
  * `PATCH /seller-payouts/<id>` is the lever for reconciling once drift is found.
  */
 export default class SellerPayoutController extends BaseController {
-  private logger: Logger = log4js.getLogger(' SellerPayoutController');
+  private logger: Logger = log4js.getLogger('SellerPayoutController');
 
   public constructor(options: BaseControllerOptions) {
     super(options);
@@ -130,7 +130,7 @@ export default class SellerPayoutController extends BaseController {
 
       res.json(toResponse(records.map(SellerPayoutService.asSellerPayoutResponse), count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all seller payouts:', error);
+      this.logger.error('seller_payout.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -160,7 +160,7 @@ export default class SellerPayoutController extends BaseController {
 
       res.json(SellerPayoutService.asSellerPayoutResponse(sellerPayout));
     } catch (error) {
-      this.logger.error('Could not return single seller payout:', error);
+      this.logger.error('seller_payout.get.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -196,7 +196,7 @@ export default class SellerPayoutController extends BaseController {
       });
       res.json(ReportService.reportToResponse(report));
     } catch (error) {
-      this.logger.error('Could not get sales report for seller payout:', error);
+      this.logger.error('seller_payout.get_report.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -230,7 +230,7 @@ export default class SellerPayoutController extends BaseController {
       const pdf = await new SellerPayoutPdfService().getOrCreate(sellerPayout, force);
       res.status(200).json({ pdf: pdf.downloadName } as PdfUrlResponse);
     } catch (error) {
-      this.logger.error('Could not get sales report for seller payout:', error);
+      this.logger.error('seller_payout.get_report_pdf.failed', error);
       if (error instanceof PdfError) {
         res.status(502).json('PDF Generator service failed.');
         return;
@@ -302,7 +302,7 @@ export default class SellerPayoutController extends BaseController {
 
       res.json(SellerPayoutService.asSellerPayoutResponse(payout));
     } catch (error) {
-      this.logger.error('Could not create seller payout:', error);
+      this.logger.error('seller_payout.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -337,7 +337,7 @@ export default class SellerPayoutController extends BaseController {
       sellerPayout = await service.updateSellerPayout(sellerPayoutId, body);
       res.json(SellerPayoutService.asSellerPayoutResponse(sellerPayout));
     } catch (error) {
-      this.logger.error('Could not update seller payout:', error);
+      this.logger.error('seller_payout.update.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -369,7 +369,7 @@ export default class SellerPayoutController extends BaseController {
       await service.deleteSellerPayout(sellerPayoutId);
       res.status(204).json(null);
     } catch (error) {
-      this.logger.error('Could not delete seller payout:', error);
+      this.logger.error('seller_payout.delete.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

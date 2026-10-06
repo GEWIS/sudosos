@@ -152,7 +152,7 @@ export default class ProductController extends BaseController {
       const records = revisions.map((r) => ProductService.revisionToResponse(r));
       res.status(200).json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all products:', error);
+      this.logger.error('product.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -186,7 +186,7 @@ export default class ProductController extends BaseController {
       }
       res.json(ProductService.revisionToResponse(revision));
     } catch (error) {
-      this.logger.error('Could not create product:', error);
+      this.logger.error('product.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -230,7 +230,7 @@ export default class ProductController extends BaseController {
       }
       res.json(ProductService.revisionToResponse(revision));
     } catch (error) {
-      this.logger.error('Could not update product:', error);
+      this.logger.error('product.update.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -261,7 +261,7 @@ export default class ProductController extends BaseController {
         res.status(404).json('Product not found.');
       }
     } catch (error) {
-      this.logger.error('Could not return product:', error);
+      this.logger.error('product.get.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -319,7 +319,7 @@ export default class ProductController extends BaseController {
         return;
       }
     } catch (error) {
-      this.logger.error('Could not upload image:', error);
+      this.logger.error('product.update_image.failed', error);
       res.status(500).json('Internal server error');
     }
   }
@@ -353,7 +353,7 @@ export default class ProductController extends BaseController {
       res.status(204).send();
       return;
     } catch (error) {
-      this.logger.error('Could not delete product', error);
+      this.logger.error('product.delete.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

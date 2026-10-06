@@ -101,7 +101,7 @@ export default class SimpleFileController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async uploadFile(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Upload simple file by user', req.token.user);
+    this.logger.trace('simple_file.upload');
     const { body, files } = req;
 
     if (!req.files || Object.keys(files).length !== 1) {
@@ -119,7 +119,7 @@ export default class SimpleFileController extends BaseController {
         req.token.user, files.file as UploadedFile, body as SimpleFileRequest,
       ));
     } catch (error) {
-      this.logger.error('Could not upload file:', error);
+      this.logger.error('simple_file.upload.failed', error);
       res.status(500).json('Internal server error');
     }
   }
@@ -137,7 +137,7 @@ export default class SimpleFileController extends BaseController {
    */
   public async downloadFile(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Download simple file', id, ' by user', req.token.user);
+    this.logger.trace('simple_file.download', { id });
 
     try {
       const fileInfo = await this.fileService.getSimpleFile(Number.parseInt(id, 10));
@@ -148,7 +148,7 @@ export default class SimpleFileController extends BaseController {
       const { file, data } = fileInfo;
       putFileInResponse(res, file, data);
     } catch (error) {
-      this.logger.error('Could not download file:', error);
+      this.logger.error('simple_file.download.failed', { id }, error);
       res.status(500).json('Internal server error');
     }
   }
@@ -166,14 +166,14 @@ export default class SimpleFileController extends BaseController {
    */
   public async deleteFile(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Download simple file', id, 'by user', req.token.user);
+    this.logger.trace('simple_file.delete', { id });
 
     try {
       await this.fileService.deleteSimpleFile(Number.parseInt(id, 10));
       res.status(204);
       res.send();
     } catch (error) {
-      this.logger.error('Could not delete file:', error);
+      this.logger.error('simple_file.delete.failed', { id }, error);
       res.status(500).json('Internal server error');
     }
   }

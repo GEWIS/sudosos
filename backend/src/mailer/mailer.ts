@@ -62,14 +62,14 @@ export default class Mailer {
       this.mailQueue = new Queue('mail-queue', {
         connection: redisConnection as unknown as ConnectionOptions,
       });
-      this.logger.info('Mailer initialised in queued mode (Redis).');
+      this.logger.info('mailer.initialized', { mode: 'queued' });
     } else {
       this.transporter = createSMTPTransporter();
-      this.logger.warn(
-        'Redis unavailable – Mailer running in direct-send mode. '
-        + 'Emails will be sent synchronously without retries. '
-        + 'Set REDIS_HOST / REDIS_PORT to enable queued sending.',
-      );
+      this.logger.warn('mailer.initialized', {
+        mode: 'direct',
+        reason: 'Redis unavailable, emails are sent synchronously without retries. '
+          + 'Set REDIS_HOST / REDIS_PORT to enable queued sending.',
+      });
     }
 
     Mailer.instance = this;
@@ -102,16 +102,15 @@ export default class Mailer {
           backoff: { type: 'exponential', delay: 2000 },
         });
 
-        this.logger.info({
+        this.logger.info('mailer.queue', {
           template: template.constructor.name,
-          to: to.email,
-        }, 'Email successfully queued');
+          userId: to.id,
+        });
       } catch (error) {
-        this.logger.error({
-          err: error.message,
+        this.logger.error('mailer.queue.failed', {
           template: template.constructor.name,
-          to: to.email,
-        }, 'Failed to add email to queue');
+          userId: to.id,
+        }, error);
 
         throw error;
       }
@@ -120,16 +119,15 @@ export default class Mailer {
       try {
         await this.transporter.sendMail(mailOptions);
 
-        this.logger.info({
+        this.logger.info('mailer.send', {
           template: template.constructor.name,
-          to: to.email,
-        }, 'Email sent directly (no-Redis fallback)');
+          userId: to.id,
+        });
       } catch (error) {
-        this.logger.error({
-          err: error.message,
+        this.logger.error('mailer.send.failed', {
           template: template.constructor.name,
-          to: to.email,
-        }, 'Failed to send email directly');
+          userId: to.id,
+        }, error);
 
         throw error;
       }

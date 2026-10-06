@@ -78,7 +78,7 @@ export default class StripeWebhookController extends BaseController {
    * @returns {string} 200 - Public key
    */
   public async getStripePublicKey(req: Request, res: Response): Promise<void> {
-    this.logger.trace('Get Stripe public key by IP', req.ip);
+    this.logger.trace('stripe.get_public_key', { ip: req.ip });
     const config = Config.get();
 
     const response: StripePublicKeyResponse = {
@@ -99,7 +99,7 @@ export default class StripeWebhookController extends BaseController {
    * @return 400 - Event invalid error
    */
   public async handleWebhookEvent(req: RequestWithRawBody, res: Response): Promise<void> {
-    this.logger.trace('Receive Stripe webhook event with body', req.body);
+    this.logger.trace('stripe_webhook.receive', { id: req.body?.id, type: req.body?.type });
     const config = Config.get();
     const { rawBody } = req;
     const signature = req.headers['stripe-signature'];
@@ -113,13 +113,15 @@ export default class StripeWebhookController extends BaseController {
     }
 
     if (!webhookEvent.type.includes('payment_intent')) {
-      this.logger.trace(`Event ignored, because it is type "${webhookEvent.type}"`);
+      this.logger.trace('stripe_webhook.event_ignored', { id: webhookEvent.id, type: webhookEvent.type, reason: 'not_payment_intent' });
       res.status(204).send();
       return;
     }
 
     if ((webhookEvent.data.object as any)?.metadata?.service !== config.app.name) {
-      this.logger.trace(`Event ignored, because it is not for service "${config.app.name}"`);
+      this.logger.trace('stripe_webhook.event_ignored', {
+        id: webhookEvent.id, type: webhookEvent.type, reason: 'other_service', service: config.app.name,
+      });
       res.status(204).send();
       return;
     }
@@ -128,7 +130,7 @@ export default class StripeWebhookController extends BaseController {
     const { id } = (webhookEvent.data.object as Stripe.PaymentIntent);
     const paymentIntent = await service.getPaymentIntent(id);
     if (!paymentIntent) {
-      this.logger.warn(`PaymentIntent with ID "${id}" not found.`);
+      this.logger.warn('stripe_webhook.payment_intent_not_found', { eventId: webhookEvent.id, stripeId: id });
       res.status(400).json(`PaymentIntent with ID "${id}" not found.`);
       return;
     }
@@ -143,7 +145,7 @@ export default class StripeWebhookController extends BaseController {
       // about a state that later rolls back would lose a sale.
       await this.emitTerminalPaymentUpdate(paymentIntent.id);
     }).catch((error) => {
-      this.logger.error(error);
+      this.logger.error('stripe_webhook.handle.failed', { eventId: webhookEvent.id, type: webhookEvent.type }, error);
     });
 
     res.status(204).send();
@@ -168,7 +170,7 @@ export default class StripeWebhookController extends BaseController {
       const response = await TerminalPaymentService.asTerminalPaymentResponse(terminalPayment);
       await WebSocketService.emitTerminalPaymentUpdated(response);
     } catch (error) {
-      this.logger.error('Could not emit terminal payment update for payment intent', paymentIntentId, error);
+      this.logger.error('stripe_webhook.emit_terminal_payment_update.failed', { paymentIntentId }, error);
     }
   }
 }

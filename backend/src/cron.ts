@@ -63,7 +63,7 @@ class CronApplication {
       await this.redisConnection.quit();
     }
     await this.connection.destroy();
-    this.logger.info('Application stopped.');
+    this.logger.info('cron.stopped');
   }
 }
 
@@ -73,7 +73,7 @@ async function createCronTasks(): Promise<void> {
   application.connection = await Database.initialize();
   application.logger = log4js.getLogger('Application');
   applyConfiguredLogLevel(application.logger);
-  application.logger.info('Starting cron tasks...');
+  application.logger.info('cron.starting');
 
   const logger = getAppLogger('Console (cron)');
   applyConfiguredLogLevel(logger);
@@ -99,56 +99,56 @@ async function createCronTasks(): Promise<void> {
 
   await new BalanceService().updateBalances({});
   const syncBalances = cron.schedule('41 1 * * *', () => {
-    logger.debug('Syncing balances.');
+    logger.debug('cron.sync_balances.started');
     new BalanceService().updateBalances({}).then(() => {
-      logger.debug('Synced balances.');
+      logger.debug('cron.sync_balances.finished');
     }).catch((error => {
-      logger.error('Could not sync balances.', error);
+      logger.error('cron.sync_balances.failed', error);
     }));
   });
   await new WrappedService().updateWrapped();
   const syncWrapped = cron.schedule('45 1 * 12 *', () => {
-    logger.debug('Syncing wrapped.');
+    logger.debug('cron.sync_wrapped.started');
     new WrappedService().updateWrapped().then(() => {
-      logger.debug('Synced wrapped.');
+      logger.debug('cron.sync_wrapped.finished');
     }).catch((error => {
-      logger.error('Could not sync wrapped.', error);
+      logger.error('cron.sync_wrapped.failed', error);
     }));
   });
   const syncEventShiftAnswers = cron.schedule('39 2 * * *', () => {
-    logger.debug('Syncing event shift answers.');
+    logger.debug('cron.sync_event_shift_answers.started');
     EventService.syncAllEventShiftAnswers()
-      .then(() => logger.debug('Synced event shift answers.'))
-      .catch((error) => logger.error('Could not sync event shift answers.', error));
+      .then(() => logger.debug('cron.sync_event_shift_answers.finished'))
+      .catch((error) => logger.error('cron.sync_event_shift_answers.failed', error));
   });
   const sendEventPlanningReminders = cron.schedule('39 13 * * *', () => {
-    logger.debug('Send event planning reminder emails.');
+    logger.debug('cron.send_event_planning_reminders.started');
     EventService.sendEventPlanningReminders()
-      .then(() => logger.debug('Sent event planning reminder emails.'))
-      .catch((error) => logger.error('Could not send event planning reminder emails.', error));
+      .then(() => logger.debug('cron.send_event_planning_reminders.finished'))
+      .catch((error) => logger.error('cron.send_event_planning_reminders.failed', error));
   });
   const syncUserNotificationPreferences = cron.schedule('0 1 * * *', () => {
-    logger.debug('Syncing user notification preferences.');
+    logger.debug('cron.sync_notification_preferences.started');
     new UserNotificationPreferenceService().syncAllUserNotificationPreferences().then(() => {
-      logger.debug('User notification preferences.');
+      logger.debug('cron.sync_notification_preferences.finished');
     }).catch((error) => {
-      logger.error('Could not sync user notification preferences.', error);
+      logger.error('cron.sync_notification_preferences.failed', error);
     });
   });
   const deactivateExpiredUsers = cron.schedule('45 2 * * *', () => {
-    logger.debug('Deactivating expired users.');
+    logger.debug('cron.deactivate_expired_users.started');
     new UserExpiryService().deactivateExpiredUsers().then(() => {
-      logger.debug('Deactivated expired users.');
+      logger.debug('cron.deactivate_expired_users.finished');
     }).catch((error) => {
-      logger.error('Could not deactivate expired users.', error);
+      logger.error('cron.deactivate_expired_users.failed', error);
     });
   });
   const notifyNearExpirationUsers = cron.schedule('45 3 * * *', () => {
-    logger.debug('Notifying near-expiration users.');
+    logger.debug('cron.notify_near_expiration_users.started');
     new UserExpiryService().notifyNearExpirationUsers().then(() => {
-      logger.debug('Notified near-expiration users.');
+      logger.debug('cron.notify_near_expiration_users.finished');
     }).catch((error) => {
-      logger.error('Could not notify near-expiration users.', error);
+      logger.error('cron.notify_near_expiration_users.failed', error);
     });
   });
 
@@ -162,26 +162,30 @@ async function createCronTasks(): Promise<void> {
   });
 
   if (syncServices.length !== 0) {
-    application.logger.info('Registering user sync tasks', syncServices.map(s => s.constructor.name));
+    application.logger.info('cron.user_sync.registering', { services: syncServices.map(s => s.constructor.name) });
     const syncManager = new UserSyncManager(syncServices);
 
     const userSyncer = cron.schedule('41 1 * * *', async () => {
-      logger.debug('Syncing users.');
+      logger.debug('cron.user_sync.started');
       const results = await syncManager.run();
-      logger.debug(`Sync completed: ${results.passed.length} passed, ${results.failed.length} failed, ${results.skipped.length} skipped`);
+      logger.debug('cron.user_sync.finished', {
+        passed: results.passed.length,
+        failed: results.failed.length,
+        skipped: results.skipped.length,
+      });
     });
     application.tasks.push(userSyncer);
 
     const userFetcher = cron.schedule('*/15 * * * *', async () => {
-      logger.debug('Fetching users.');
+      logger.debug('cron.user_fetch.started');
       await syncManager.fetch();
     });
     application.tasks.push(userFetcher);
   } else {
-    application.logger.warn('Skipping user syncing');
+    application.logger.warn('cron.user_sync.skipped');
   }
 
-  application.logger.info('Tasks registered');
+  application.logger.info('cron.tasks_registered');
 }
 
 if (require.main === module) {
@@ -189,6 +193,6 @@ if (require.main === module) {
   createCronTasks().catch((e) => {
     const logger = log4js.getLogger('cron');
     logger.level = process.env.LOG_LEVEL ?? 'info';
-    logger.fatal(e);
+    logger.fatal('cron.start_failed', e);
   });
 }

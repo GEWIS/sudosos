@@ -229,9 +229,7 @@ export default class Config {
       if (missingKeys.length > 0) {
         const logger = log4js.getLogger('Config');
         logger.level = getOptionalString('LOG_LEVEL') ?? 'info';
-        logger.warn(
-          `ENABLE_LDAP is true but the following LDAP_* environment variables are missing: ${missingKeys.join(', ')}. LDAP sync will fail at runtime.`,
-        );
+        logger.warn('config.ldap_variables_missing', { missingKeys });
       }
     }
 

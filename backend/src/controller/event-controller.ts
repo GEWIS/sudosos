@@ -136,7 +136,7 @@ export default class EventController extends BaseController {
    * @deprecated Events are out of scope for SudoSOS. Delete from 01/11/2026.
    */
   public async getAllEvents(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all events by user', req.token.user);
+    this.logger.trace('event.list');
 
     let take;
     let skip;
@@ -162,7 +162,7 @@ export default class EventController extends BaseController {
       const [events, count] = await EventService.getEvents(filters, { take, skip });
       res.json(toResponse(events.map((e) => EventService.asBaseEventResponse(e)), count, { take, skip }));
     } catch (e) {
-      this.logger.error('Could not return all events:', e);
+      this.logger.error('event.list.failed', e);
       res.status(500).json('Internal server error.');
     }
   }
@@ -181,7 +181,7 @@ export default class EventController extends BaseController {
    */
   public async getSingleEvent(req: RequestWithToken, res: Response) {
     const { id } = req.params;
-    this.logger.trace('Get single event with ID', id, 'by', req.token.user);
+    this.logger.trace('event.get', { id });
 
     try {
       const parsedId = Number.parseInt(id, 10);
@@ -192,7 +192,7 @@ export default class EventController extends BaseController {
       }
       res.json(EventService.asEventResponse(event));
     } catch (error) {
-      this.logger.error('Could not return single event:', error);
+      this.logger.error('event.get.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -211,7 +211,7 @@ export default class EventController extends BaseController {
    */
   public async createEvent(req: RequestWithToken, res: Response) {
     const body = req.body as EventRequest;
-    this.logger.trace('Create event', body, 'by user', req.token.user);
+    this.logger.trace('event.create', { request: body });
 
     let params: CreateEventParams;
     try {
@@ -229,7 +229,7 @@ export default class EventController extends BaseController {
       const event = await EventService.createEvent(params);
       res.json(EventService.asEventResponse(event));
     } catch (error) {
-      this.logger.error('Could not create event:', error);
+      this.logger.error('event.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -250,7 +250,7 @@ export default class EventController extends BaseController {
   public async updateEvent(req: RequestWithToken, res: Response) {
     const { id } = req.params;
     const body = req.body as EventRequest;
-    this.logger.trace('Update event', id, 'with body', body, 'by user', req.token.user);
+    this.logger.trace('event.update', { id, request: body });
 
     let parsedId = Number.parseInt(id, 10);
     try {
@@ -260,7 +260,7 @@ export default class EventController extends BaseController {
         return;
       }
     } catch (error) {
-      this.logger.error('Could not update event:', error);
+      this.logger.error('event.update.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
 
@@ -279,7 +279,7 @@ export default class EventController extends BaseController {
       const event = await EventService.updateEvent(parsedId, params);
       res.json(EventService.asEventResponse(event));
     } catch (error) {
-      this.logger.error('Could not update event:', error);
+      this.logger.error('event.update.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -298,7 +298,7 @@ export default class EventController extends BaseController {
    */
   public async deleteEvent(req: RequestWithToken, res: Response) {
     const { id } = req.params;
-    this.logger.trace('Get single event with ID', id, 'by', req.token.user);
+    this.logger.trace('event.delete', { id });
 
     try {
       const parsedId = Number.parseInt(id, 10);
@@ -311,7 +311,7 @@ export default class EventController extends BaseController {
       await EventService.deleteEvent(parsedId);
       res.status(204).send();
     } catch (error) {
-      this.logger.error('Could not delete event:', error);
+      this.logger.error('event.delete.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -331,7 +331,7 @@ export default class EventController extends BaseController {
    */
   public async syncEventShiftAnswers(req: RequestWithToken, res: Response) {
     const { id } = req.params;
-    this.logger.trace('Synchronise single event with ID', id, 'by', req.token.user);
+    this.logger.trace('event.sync_answers', { id });
 
     try {
       const parsedId = Number.parseInt(id, 10);
@@ -348,7 +348,7 @@ export default class EventController extends BaseController {
       const updatedEvent = await EventService.getSingleEvent(parsedId);
       res.status(200).json(EventService.asEventResponse(updatedEvent));
     } catch (error) {
-      this.logger.error('Could not synchronize event answers:', error);
+      this.logger.error('event.sync_answers.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -371,7 +371,7 @@ export default class EventController extends BaseController {
   public async assignEventShift(req: RequestWithToken, res: Response) {
     const { eventId: rawEventId, shiftId: rawShiftId, userId: rawUserId } = req.params;
     const body = req.body as EventAnswerAssignmentRequest;
-    this.logger.trace('Update event shift selection for event', rawEventId, 'for shift', rawShiftId, 'for user', rawUserId, 'by', req.token.user);
+    this.logger.trace('event.assign_shift', { eventId: rawEventId, shiftId: rawShiftId, userId: rawUserId });
 
     let eventId = Number.parseInt(rawEventId, 10);
     let shiftId = Number.parseInt(rawShiftId, 10);
@@ -389,7 +389,7 @@ export default class EventController extends BaseController {
         return;
       }
     } catch (error) {
-      this.logger.error('Could not update event:', error);
+      this.logger.error('event.assign_shift.failed', { eventId: rawEventId, shiftId: rawShiftId, userId: rawUserId }, error);
       res.status(500).json('Internal server error.');
       return;
     }
@@ -403,7 +403,7 @@ export default class EventController extends BaseController {
       const answer = await EventService.updateEventShiftAnswer(eventId, shiftId, userId, params);
       res.json(answer);
     } catch (error) {
-      this.logger.error('Could not update event:', error);
+      this.logger.error('event.assign_shift.failed', { eventId: rawEventId, shiftId: rawShiftId, userId: rawUserId }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -426,7 +426,7 @@ export default class EventController extends BaseController {
   public async updateShiftAvailability(req: RequestWithToken, res: Response) {
     const { userId: rawUserId, shiftId: rawShiftId, eventId: rawEventId } = req.params;
     const body = req.body as EventAnswerAvailabilityRequest;
-    this.logger.trace('Update event shift availability for user', rawUserId, 'for shift', rawShiftId, 'for event', rawEventId, 'by', req.token.user);
+    this.logger.trace('event.update_shift_availability', { eventId: rawEventId, shiftId: rawShiftId, userId: rawUserId });
 
     let userId = Number.parseInt(rawUserId, 10);
     let shiftId = Number.parseInt(rawShiftId, 10);
@@ -444,7 +444,7 @@ export default class EventController extends BaseController {
         return;
       }
     } catch (error) {
-      this.logger.error('Could not update event:', error);
+      this.logger.error('event.update_shift_availability.failed', { eventId: rawEventId, shiftId: rawShiftId, userId: rawUserId }, error);
       res.status(500).json('Internal server error.');
       return;
     }
@@ -464,7 +464,7 @@ export default class EventController extends BaseController {
       const answer = await EventService.updateEventShiftAnswer(eventId, shiftId, userId, params);
       res.json(answer);
     } catch (error) {
-      this.logger.error('Could not update event:', error);
+      this.logger.error('event.update_shift_availability.failed', { eventId: rawEventId, shiftId: rawShiftId, userId: rawUserId }, error);
       res.status(500).json('Internal server error.');
     }
   }
