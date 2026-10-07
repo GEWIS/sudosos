@@ -42,6 +42,7 @@ describe('TokenMiddleware', (): void => {
     tokenString: string,
     middleware: TokenMiddleware,
     req: RequestWithToken,
+    deletedUserIds: Set<number>,
   };
 
   beforeAll(async () => {
@@ -67,6 +68,7 @@ describe('TokenMiddleware', (): void => {
       tokenString: undefined,
       middleware: undefined,
       req: undefined,
+      deletedUserIds: new Set(),
     };
     ctx.token = {
       user: ctx.user,
@@ -75,6 +77,7 @@ describe('TokenMiddleware', (): void => {
     ctx.middleware = new TokenMiddleware({
       tokenHandler: ctx.handler,
       refreshFactor: 0.5,
+      isUserDeleted: async (userId) => ctx.deletedUserIds.has(userId),
     });
     ctx.tokenString = await ctx.handler.signToken(ctx.token, '1');
 
@@ -119,6 +122,41 @@ describe('TokenMiddleware', (): void => {
         .set('Authorization', `Bearer ${tokenString}`);
 
       expect(res.status).to.equal(403);
+    });
+    it('should give an HTTP 403 and not refresh when the token user is deleted', async () => {
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      ctx.middleware['options']['refreshFactor'] = 0;
+      ctx.deletedUserIds.add(ctx.user.id);
+      try {
+        const res = await request(ctx.app)
+          .get('/')
+          .set('Authorization', `Bearer ${ctx.tokenString}`);
+
+        expect(res.status).to.equal(403);
+        expect(res.header['set-authorization']).to.not.exist;
+        expect(ctx.req).to.be.undefined;
+      } finally {
+        ctx.deletedUserIds.clear();
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        ctx.middleware['options']['refreshFactor'] = 0.5;
+      }
+    });
+    it('should give an HTTP 500 when the deleted check fails', async () => {
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      const original = ctx.middleware['options']['isUserDeleted'];
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      ctx.middleware['options']['isUserDeleted'] = async () => { throw new Error('Database down'); };
+      try {
+        const res = await request(ctx.app)
+          .get('/')
+          .set('Authorization', `Bearer ${ctx.tokenString}`);
+
+        expect(res.status).to.equal(500);
+        expect(ctx.req).to.be.undefined;
+      } finally {
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        ctx.middleware['options']['isUserDeleted'] = original;
+      }
     });
     it('should not refresh token before refreshFactor expiry', async () => {
       const res = await request(ctx.app)

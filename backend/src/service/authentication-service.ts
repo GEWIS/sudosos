@@ -51,6 +51,7 @@ import { ISettings } from '../entity/server-setting';
 import Config from '../config';
 import { applyConfiguredLogLevel } from '../helpers/logging';
 import TermsOfServiceService from './terms-of-service-service';
+import { DeletedUserError } from '../errors';
 
 export interface AuthenticationContext {
   tokenHandler: TokenHandler,
@@ -320,6 +321,8 @@ export default class AuthenticationService extends WithManager {
   public async HashAuthentication<T extends HashBasedAuthenticationMethod>(pass: string,
     authenticator: T, context: AuthenticationContext, posId?: number)
     : Promise<AuthenticationResult | undefined> {
+    if (authenticator.user.deleted) return undefined;
+
     const valid = await this.compareHash(pass, authenticator.hash);
     if (!valid) return undefined;
 
@@ -401,7 +404,7 @@ export default class AuthenticationService extends WithManager {
     });
 
     // If there is no user associated with the GUID we create the user and bind it.
-    if (authenticator) return authenticator.user;
+    if (authenticator) return authenticator.user.deleted ? undefined : authenticator.user;
     return onNewUser(ADUser);
   }
 
@@ -534,6 +537,7 @@ export default class AuthenticationService extends WithManager {
    * @param params.salt - Optional salt for token generation. If not provided, a new salt will be generated.
    * @param params.expiry - Custom expiry time (in seconds). If not set, the default tokenHandler expiry will be used
    * @param params.posId - Optional POS identifier. If provided, creates a lesser token (restricted access).
+   * @throws DeletedUserError if the user is soft-deleted.
    */
   public async getSaltedToken(params: {
     user: User;
@@ -543,6 +547,9 @@ export default class AuthenticationService extends WithManager {
     posId?: number;
   }): Promise<AuthenticationResult> {
     const { user, context, salt, expiry, posId } = params;
+
+    // Safety net: login paths already reject deleted users as invalid credentials
+    if (user.deleted) throw new DeletedUserError();
 
     // Update lastSeen locally
     user.lastSeen = new Date();

@@ -1008,7 +1008,7 @@ export default class UserController extends BaseController {
 
     try {
       const nfcCode = String(parameters.nfcCode);
-      const nfc = await NfcAuthenticator.findOne({ where: { nfcCode } });
+      const nfc = await NfcAuthenticator.findOne({ where: { nfcCode, user: { deleted: false } } });
 
       if (nfc === null) {
         res.status(404).json('Unknown nfc code');

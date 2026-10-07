@@ -25,11 +25,14 @@
  */
 
 import { v4 as uuid4 } from 'uuid';
+import log4js from 'log4js';
 import { RequestHandler, Response } from 'express';
 import TokenHandler from '../authentication/token-handler';
 import JsonWebToken from '../authentication/json-web-token';
 import { RequestWithRawBody } from '../helpers/raw-body';
 import { setRequestActor } from '../helpers/request-context';
+import User from '../entity/user/user';
+import { applyConfiguredLogLevel } from '../helpers/logging';
 
 /**
  * The configuration options for the token middleware.
@@ -45,6 +48,12 @@ export interface MiddlewareOptions {
    * refeshing, as tokens will expire before a possible refresh.
    */
   refreshFactor: number;
+  /**
+   * Checks whether the user with the given id has been soft-deleted. Tokens of deleted users
+   * are rejected, so deleting a user also revokes their existing tokens.
+   * Defaults to a database lookup.
+   */
+  isUserDeleted?: (userId: number) => Promise<boolean>;
 }
 
 /**
@@ -62,6 +71,7 @@ export interface RequestWithToken extends RequestWithRawBody {
  * This class is responsible for:
  * - parsing JWT tokens in the request Authorization header.
  * - validating parsed JWT tokens.
+ * - rejecting tokens of deleted users.
  * - refreshing the JWT tokens in the request header allowing sliding expiration.
  */
 export default class TokenMiddleware {
@@ -70,12 +80,18 @@ export default class TokenMiddleware {
    */
   private readonly options: MiddlewareOptions;
 
+  private readonly logger = log4js.getLogger('TokenMiddleware');
+
   /**
    * Creates a new token middleware instance.
    * @param options - the options to be used by this middleware.
    */
   public constructor(options: MiddlewareOptions) {
-    this.options = options;
+    this.options = {
+      ...options,
+      isUserDeleted: options.isUserDeleted ?? ((userId) => User.exists({ where: { id: userId, deleted: true } })),
+    };
+    applyConfiguredLogLevel(this.logger);
   }
 
   /**
@@ -97,6 +113,18 @@ export default class TokenMiddleware {
       tokenString = tokenString.substr('Bearer '.length);
       req.token = await this.options.tokenHandler.verifyToken(tokenString);
     } catch {
+      res.status(403).end('Invalid token supplied.');
+      return;
+    }
+    let deleted: boolean;
+    try {
+      deleted = await this.options.isUserDeleted(req.token.user.id);
+    } catch (error) {
+      this.logger.error('token.check_deleted.failed', { userId: req.token.user.id }, error);
+      res.status(500).end('Internal server error.');
+      return;
+    }
+    if (deleted) {
       res.status(403).end('Invalid token supplied.');
       return;
     }
