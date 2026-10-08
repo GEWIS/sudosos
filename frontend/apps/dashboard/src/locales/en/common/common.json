@@ -89,6 +89,10 @@
         "scanStarted": "NFC Scan started, please hold your NFC card to your phone!",
         "notFound": "Not found"
       },
+      "warning": {
+        "warning": "Warning",
+        "productNotAddedToContainer": "Product was created, but could not be added to the container."
+      },
       "success": {
         "success": "Success",
         "userUpdated": "Successfully updated user.",
