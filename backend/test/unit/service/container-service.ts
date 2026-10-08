@@ -297,6 +297,66 @@ describe('ContainerService', async (): Promise<void> => {
       const revision = await ContainerService.updateContainer(update);
       entityAsUpdate(update, revision);
     });
+    it('should propagate to points of sale when a second update bumps the revision before the first propagates', async () => {
+      const posRevisions = await PointOfSaleRevision.find({
+        relations: { containers: true },
+        withDeleted: true,
+      });
+      const isCurrentContainer = (c: ContainerRevision) => c.container.deletedAt == null
+        && c.revision === c.container.currentRevision;
+      const posRevision = posRevisions.find((p) => p.pointOfSale.deletedAt == null
+        && p.revision === p.pointOfSale.currentRevision
+        && p.containers.some(isCurrentContainer));
+      expect(posRevision).to.not.be.undefined;
+      const container = posRevision.containers.find(isCurrentContainer);
+      const oldPosRevisionNumber = posRevision.revision;
+
+      const original = ContainerService.propagateContainerUpdate.bind(ContainerService);
+      let releaseA: () => void;
+      const gate = new Promise<void>((r) => { releaseA = r; });
+      let signalReached: () => void;
+      const reached = new Promise<void>((r) => { signalReached = r; });
+
+      // Pause the first propagation until the second update has fully completed.
+      const stub = sinon.stub(ContainerService, 'propagateContainerUpdate');
+      stub.callThrough();
+      stub.onFirstCall().callsFake(async (id: number) => {
+        signalReached();
+        await gate;
+        return original(id);
+      });
+
+      try {
+        const updateA = ContainerService.updateContainer({
+          id: container.containerId, name: container.name, public: true, products: [2, 1],
+        });
+        await reached;
+        await ContainerService.updateContainer({
+          id: container.containerId, name: container.name, public: true, products: [3, 2, 1],
+        });
+        releaseA();
+        await updateA;
+      } finally {
+        stub.restore();
+      }
+
+      const base = await Container.findOne({ where: { id: container.containerId } });
+      const posBase = await PointOfSale.findOne({ where: { id: posRevision.pointOfSaleId } });
+      const currentPos = await PointOfSaleRevision.findOne({
+        where: { pointOfSaleId: posRevision.pointOfSaleId, revision: posBase.currentRevision },
+        relations: { containers: { products: true } },
+      });
+      const containerInPos = currentPos.containers.find((c) => c.containerId === container.containerId);
+      expect(containerInPos.revision).to.eq(base.currentRevision);
+      expect(containerInPos.products.map((p) => p.productId)).to.deep.equalInAnyOrder([1, 2, 3]);
+      // We update here by only 1 revision as we immediatly get both product updates
+      expect(currentPos.revision).to.eq(oldPosRevisionNumber + 1);
+      expect(currentPos.containers.map((c) => c.containerId))
+        .to.deep.equalInAnyOrder(posRevision.containers
+          .filter((c) => c.container.deletedAt == null)
+          .map((c) => c.containerId));
+
+    });
   });
 
   describe('createContainer function', () => {
@@ -399,9 +459,9 @@ describe('ContainerService', async (): Promise<void> => {
       expect(deletedContainers.length).to.equal(ctx.deletedContainers.length + 1);
 
       // Propagated update
-      const revision = ctx.containerRevisions.find((c) => c.containerId === container.id && c.revision == container.currentRevision);
-      const pointOfSaleRevisions = ctx.pointOfSaleRevisions.filter((p) => p.containers
-        .some((c) => c.revision === revision.revision && c.containerId === revision.containerId && c.container.deletedAt == null))
+      // Read from the database, as earlier tests may have updated this container after seeding
+      const pointOfSaleRevisions = (await PointOfSaleRevision.find({ relations: { containers: true }, withDeleted: true }))
+        .filter((p) => p.containers.some((c) => c.containerId === container.id && c.revision === dbContainer.currentRevision))
         .filter((p) => p.pointOfSale.deletedAt == null)
         .filter((p) => p.revision === p.pointOfSale.currentRevision);
       expect(stub.callCount).to.be.greaterThan(0);
