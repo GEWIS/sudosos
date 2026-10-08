@@ -19,7 +19,27 @@
  */
 
 /**
- * This is the module page of the voucher-group.
+ * A `VoucherGroup` is a batch of pre-paid accounts, for example for guests at an event. Each
+ * voucher is a {@link users!User | User} of type {@link users!UserType.VOUCHER | VOUCHER} with the
+ * same starting balance.
+ *
+ * ### Creating
+ * `POST /vouchergroups` takes a `name`, an active period, a `balance` per voucher and the number of
+ * vouchers (`amount`). {@link VoucherGroupService.createVoucherGroup | createVoucherGroup} creates
+ * the users `<name>_0`, `<name>_1`, and so on, links them with {@link UserVoucherGroup}, and credits
+ * each with a {@link transfers!Transfer | Transfer}.
+ *
+ * ### Updating
+ * `PATCH /vouchergroups/{id}` is only allowed before the start date and cannot lower `amount`. A
+ * new `balance` is applied to every voucher with a transfer for the difference. When `amount` grows,
+ * the extra vouchers are created.
+ *
+ * ### Spending
+ * A voucher buys like any other `Buyer`, but cannot go into debt. Only active vouchers can buy.
+ * Vouchers are activated when the group is created or updated after its start date, or one by one
+ * by an admin.
+ *
+ * For API interactions, refer to the [Swagger Documentation](https://sudosos.gewis.nl/api/api-docs/#/vouchergroups).
  *
  * @module vouchers
  * @mergeTarget

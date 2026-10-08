@@ -19,7 +19,31 @@
  */
 
 /**
- * This is the module page of the wrapped entity.
+ * `Wrapped` is a yearly overview of a user's purchases. A {@link Wrapped} row holds precomputed
+ * statistics, so the dashboard does not have to query all transactions.
+ *
+ * Only active, non-deleted users with `extensiveDataProcessing` get one. The year is `WRAPPED_YEAR`
+ * from the configuration, or the current year.
+ *
+ * ### Statistics
+ * {@link service/wrapped-service!WrappedService.updateWrapped | WrappedService.updateWrapped}
+ * computes:
+ * - `transactionCount`: the number of transactions.
+ * - `transactionHeatmap`: the number of transactions per day of the year.
+ * - `transactionMaxDate` and `transactionMaxAmount`: the busiest day and its number of transactions.
+ * - `transactionPercentile` and `spentPercentile`: the user's rank by transactions and by money
+ *   spent. 10 means the top 10%.
+ * - `syncedFrom` and `syncedTo`: the start of the year and the time of the last update.
+ *
+ * A {@link WrappedOrganMember} row ranks the user among the sellers of an organ they are a member
+ * of, by transactions and by turnover. 0 is first place.
+ *
+ * ### Updates
+ * `src/cron.ts` updates all rows at startup, and every night at 01:45 in December.
+ * `POST /users/{id}/wrapped` updates one user. The {@link internal/server-settings | server setting}
+ * `wrappedEnabled` only controls whether the frontends show Wrapped.
+ *
+ * For API interactions, refer to the [Swagger Documentation](https://sudosos.gewis.nl/api/api-docs/#/users).
  *
  * @module entity/wrapped
  * @mergeTarget
