@@ -19,7 +19,31 @@
  */
 
 /**
+ * An organ is a shared account for a committee, fraternity or board: a {@link users!User | User}
+ * with type {@link users!UserType.ORGAN | ORGAN}. It owns products, containers and points of sale,
+ * and receives their revenue.
+ *
+ * ### Membership
+ * An {@link OrganMembership} links a user (`userId`) to an organ (`organId`). The LDAP sync sets
+ * the members of each organ with
+ * {@link internal/services!AuthenticationService.setMemberAuthenticator | setMemberAuthenticator}.
+ * No endpoint edits memberships.
+ *
+ * Each member has an `index` within the organ. Existing members keep theirs; new members get the
+ * lowest free one. `GET /pointsofsale/{id}/associates` uses it to list members in a stable order.
+ *
+ * ### Permissions
+ * - Members of any organ get the `Seller` role. See {@link rbac}.
+ * - A user's organs are stored in the `organs` claim of their JWT. `userTokenInOrgan()` checks
+ *   whether the token's user is a member of a given organ, which gives the `organ` relation on
+ *   that organ's resources. For products and containers, the organ must also have
+ *   `productSelfService` enabled.
+ * - `UserService.areInSameOrgan()` checks whether two users share at least one organ.
+ *
+ * `GET /users/{id}/members` lists the members of an organ.
+ *
  * @module organ
+ * @mergeTarget
  */
 
 import {
