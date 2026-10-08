@@ -89,6 +89,10 @@
         "scanStarted": "NFC Scan gestart, houd je NFC kaart tegen je telefoon!",
         "notFound": "Niet gevonden"
       },
+      "warning": {
+        "warning": "Waarschuwing",
+        "productNotAddedToContainer": "Product is aangemaakt, maar kon niet aan de container worden toegevoegd."
+      },
       "success": {
         "success": "Succes",
         "userUpdated": "Gebruiker succesvol bijgewerkt.",

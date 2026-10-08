@@ -78,6 +78,7 @@ import { useUserStore } from '@sudosos/sudosos-frontend-common';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'openvue/usetoast';
 import { useConfirm } from 'openvue/useconfirm';
+import type { AxiosError } from 'axios';
 import { schemaToForm, setSubmit } from '@/utils/formUtils';
 import { createProductSchema } from '@/utils/validation-schema';
 import FormDialog from '@/components/FormDialog.vue';
@@ -206,12 +207,84 @@ watch(selectExistingProduct, () => {
 // We don't allow editing of dropdown products
 const isProductEditable = computed(() => props.isUpdateAllowed && selectExistingProduct.value == null);
 
-setSubmit(
-  form,
-  form.context.handleSubmit((values) => {
-    // Create a new product
-    if ((state.value.createProduct || state.value.addToContainer) && selectExistingProduct.value == undefined) {
-      const createProductRequest: CreateProductRequest = {
+const onSubmit = form.context.handleSubmit(async (values) => {
+  // Create a new product
+  if ((state.value.createProduct || state.value.addToContainer) && selectExistingProduct.value == undefined) {
+    const createProductRequest: CreateProductRequest = {
+      name: values.name,
+      priceInclVat: {
+        amount: Math.round(values.priceInclVat * 100),
+        currency: 'EUR',
+        precision: 2,
+      },
+      vat: values.vat.id,
+      category: values.category.id,
+      alcoholPercentage: values.alcoholPercentage || 0,
+      ownerId: values.owner.id,
+      featured: values.featured,
+      preferred: values.preferred,
+      priceList: values.priceList,
+    };
+
+    let createdProduct: ProductResponse;
+    try {
+      createdProduct = await productStore.createProduct(createProductRequest, productImage.value);
+      toast.add({
+        severity: 'success',
+        summary: t('common.toast.success.success'),
+        detail: t('common.toast.success.productCreated'),
+        life: 3000,
+      });
+    } catch (err) {
+      // Nothing was created yet, so keep the dialog open to allow a retry
+      handleError(err as AxiosError, toast);
+      return;
+    }
+
+    // Add product to container
+    if (state.value.addToContainer) {
+      try {
+        await containerStore.addProductToContainer(props.container!, createdProduct);
+        toast.add({
+          severity: 'success',
+          summary: t('common.toast.success.success'),
+          detail: t('common.toast.success.containerUpdated'),
+          life: 3000,
+        });
+      } catch {
+        // The product already exists, so close the dialog to prevent creating it twice on a retry
+        toast.add({
+          severity: 'warn',
+          summary: t('common.toast.warning.warning'),
+          detail: t('common.toast.warning.productNotAddedToContainer'),
+          life: 5000,
+        });
+      }
+    }
+  }
+
+  // Add product to container
+  if (state.value.addToContainer && !inContainer.value) {
+    if (selectExistingProduct.value) {
+      try {
+        await containerStore.addProductToContainer(props.container!, selectExistingProduct.value);
+        toast.add({
+          severity: 'success',
+          summary: t('common.toast.success.success'),
+          detail: t('common.toast.success.containerUpdated'),
+          life: 3000,
+        });
+      } catch (err) {
+        handleError(err as AxiosError, toast);
+        return;
+      }
+    }
+  }
+
+  // Update product
+  if (state.value.displayProduct) {
+    if (form.context.meta.value.dirty) {
+      const updateProductRequest: UpdateProductRequest = {
         name: values.name,
         priceInclVat: {
           amount: Math.round(values.priceInclVat * 100),
@@ -221,77 +294,40 @@ setSubmit(
         vat: values.vat.id,
         category: values.category.id,
         alcoholPercentage: values.alcoholPercentage || 0,
-        ownerId: values.owner.id,
         featured: values.featured,
         preferred: values.preferred,
         priceList: values.priceList,
       };
 
-      productStore
-        .createProduct(createProductRequest, productImage.value)
-        .then((createdProduct) => {
-          toast.add({
-            severity: 'success',
-            summary: t('common.toast.success.success'),
-            detail: t('common.toast.success.productCreated'),
-            life: 3000,
-          });
-
-          // Add product to container
-          if (state.value.addToContainer) {
-            void containerStore.addProductToContainer(props.container!, createdProduct);
-          }
-        })
-        .catch((err) => handleError(err, toast));
-    }
-
-    // Add product to container
-    if (state.value.addToContainer && !inContainer.value) {
-      if (selectExistingProduct.value) {
-        void containerStore.addProductToContainer(props.container!, selectExistingProduct.value);
+      try {
+        await productStore.updateProduct(props.product!.id, updateProductRequest);
+        toast.add({
+          severity: 'success',
+          summary: t('common.toast.success.success'),
+          detail: t('common.toast.success.productUpdated'),
+          life: 3000,
+        });
+      } catch (err) {
+        handleError(err as AxiosError, toast);
+        return;
       }
     }
-
-    // Update product
-    if (state.value.displayProduct) {
-      if (form.context.meta.value.dirty) {
-        const updateProductRequest: UpdateProductRequest = {
-          name: values.name,
-          priceInclVat: {
-            amount: Math.round(values.priceInclVat * 100),
-            currency: 'EUR',
-            precision: 2,
-          },
-          vat: values.vat.id,
-          category: values.category.id,
-          alcoholPercentage: values.alcoholPercentage || 0,
-          featured: values.featured,
-          preferred: values.preferred,
-          priceList: values.priceList,
-        };
-
-        productStore
-          .updateProduct(props.product!.id, updateProductRequest)
-          .then(() => {
-            toast.add({
-              severity: 'success',
-              summary: t('common.toast.success.success'),
-              detail: t('common.toast.success.productUpdated'),
-              life: 3000,
-            });
-          })
-          .catch((err) => handleError(err, toast));
-      }
-      if (productImage.value) {
-        void productStore
-          .updateProductImage(props.product!.id, productImage.value)
-          .catch((err) => handleError(err, toast));
+    if (productImage.value) {
+      try {
+        await productStore.updateProductImage(props.product!.id, productImage.value);
+      } catch (err) {
+        handleError(err as AxiosError, toast);
+        return;
       }
     }
-    visible.value = false;
-    closeDialog();
-  }),
-);
+  }
+  visible.value = false;
+  closeDialog();
+});
+
+setSubmit(form, async () => {
+  await onSubmit();
+});
 
 // Deleting a product from container or in general
 const deleteLabel = computed(() => {

@@ -89,6 +89,10 @@
         "scanStarted": "Rozpoczęto skanowanie NFC, przytrzymaj kartę NFC przy telefonie!",
         "notFound": "Nie znaleziono"
       },
+      "warning": {
+        "warning": "Ostrzeżenie",
+        "productNotAddedToContainer": "Produkt został utworzony, ale nie udało się dodać go do kontenera."
+      },
       "success": {
         "success": "Sukces",
         "userUpdated": "Pomyślnie zaktualizowano użytkownika.",
