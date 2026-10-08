@@ -19,9 +19,39 @@
  */
 
 /**
- * This is the module page of the user-setting.
+ * A `UserSetting` is one preference of one {@link users!User | User}, stored as a
+ * key-value pair. The frontends read and write these settings; the backend only stores
+ * them.
+ *
+ * ### Keys
+ * {@link IUserSettings} lists every key and its type. The default values live in
+ * `src/user-settings/user-settings-defaults.ts`.
+ * - `betaEnabled` -- whether the user opted in to beta features of the dashboard.
+ *   Defaults to `false`.
+ * - `dashboardTheme` -- the organ whose theme the dashboard shows, as a
+ *   {@link DashboardTheme}. Defaults to `null`, the standard theme.
+ * - `language` -- the preferred interface language, one of {@link SUPPORTED_LANGUAGES}.
+ *   Defaults to `undefined`, so the frontend picks one.
+ *
+ * ### Storage
+ * There is one row per user and key; the pair `[userId, key]` is unique and indexed. The
+ * value is stored as JSON in a text column. The foreign key to the user has
+ * `onDelete: 'CASCADE'`, but users are only soft-deleted, so the rows of a deleted user stay.
+ * `GET /users/{id}/settings` still returns them.
+ *
+ * A user only has rows for settings they changed. {@link UserSettingsStore} fills in the
+ * default for every key without a row, or whose value is `null`.
+ *
+ * ### Reading and writing
+ * `GET /users/{id}/settings` returns all settings with defaults filled in.
+ * `PATCH /users/{id}/settings` updates the given keys and ignores keys whose value is
+ * `undefined`. Both endpoints need the `get` or `update` permission on the `settings`
+ * attribute of `User`, so users can manage their own settings.
+ *
+ * For API interactions, refer to the [Swagger Documentation](https://sudosos.gewis.nl/api/api-docs/#/users).
  *
  * @module internal/user-settings
+ * @mergeTarget
  */
 
 import { Column, Entity, Index, JoinColumn, ManyToOne, Unique } from 'typeorm';
