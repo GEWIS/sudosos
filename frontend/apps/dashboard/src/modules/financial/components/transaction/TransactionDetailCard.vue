@@ -78,8 +78,12 @@
       </div>
     </CardComponent>
 
+    <Message v-if="editable && transaction?.paidByTerminal" :closable="false" icon="pi pi-info-circle" severity="info">
+      {{ t('modules.admin.transactions.paidByTerminal') }}
+    </Message>
+
     <!-- Edit Cards (only show when editable and transaction exists) -->
-    <div v-if="editable && transaction" class="flex flex-col lg:flex-row gap-5 lg:items-stretch">
+    <div v-else-if="editable && transaction" class="flex flex-col lg:flex-row gap-5 lg:items-stretch">
       <div class="flex-1">
         <TransactionEditCard :transaction-id="transaction.id" />
       </div>

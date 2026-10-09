@@ -18,11 +18,19 @@
       <Skeleton class="h-2rem my-1 surface-300 w-11" />
     </div>
 
-    <TransactionDetailModal
-      v-else-if="detailType === 'transaction' && transaction && products"
-      :products-info="products"
-      :transaction-info="transaction"
-    />
+    <template v-else-if="detailType === 'transaction' && transaction && products">
+      <TransactionDetailModal :products-info="products" :transaction-info="transaction" />
+      <Message
+        v-if="showTerminalNotice"
+        class="mt-3"
+        :closable="false"
+        icon="pi pi-info-circle"
+        severity="info"
+        size="small"
+      >
+        {{ t('modules.admin.transactions.paidByTerminal') }}
+      </Message>
+    </template>
     <template v-else-if="transfer">
       <InvoiceDetailModal v-if="isType('invoice').value" :invoice-info="transfer" />
       <DepositDetailModal v-else-if="isType('deposit').value" :deposit-info="transfer" />
@@ -82,8 +90,12 @@ const { isLoading, transaction, transfer, products, canDelete } = useMutationDet
 
 const { t } = useI18n();
 
-// Check if user can edit transactions
-const canEdit = computed(() => isTransaction(props.type) && isAllowed('update', ['all'], 'Transaction', ['any']));
+const canUpdateTransaction = computed(
+  () => isTransaction(props.type) && isAllowed('update', ['all'], 'Transaction', ['any']),
+);
+
+const canEdit = computed(() => canUpdateTransaction.value && !transaction.value?.paidByTerminal);
+const showTerminalNotice = computed(() => canUpdateTransaction.value && !!transaction.value?.paidByTerminal);
 
 const visible = ref<boolean>(false);
 const dialog = ref();

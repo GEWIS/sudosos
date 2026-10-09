@@ -152,7 +152,8 @@
         "addProduct": "Add Product",
         "selectProduct": "Select a product to add",
         "newProductsAdded": "New Products Added",
-        "newProduct": "NEW"
+        "newProduct": "NEW",
+        "paidByTerminal": "This transaction cannot be edited."
       },
       "rbac": {
         "title": "RBAC Management",
