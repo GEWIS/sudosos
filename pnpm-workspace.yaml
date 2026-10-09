@@ -27,15 +27,15 @@ catalog:
   vue: ^3.5.43
   pinia: ^3.0.4
   typescript: ~5.9.3
-  vite: ^8.3.1
-  vue-tsc: ^3.3.11
+  vite: ^8.3.3
+  vue-tsc: ^3.3.12
   eslint: ^9.39.1
   '@vitejs/plugin-vue': ^6.0.9
   vite-plugin-dts: ^4.5.4
   '@vue/tsconfig': ^0.9.1
   '@typescript-eslint/parser': ^8.49.0
   vue-eslint-parser: ^10.2.0
-  sass: ^1.103.1
+  sass: ^1.105.1
   tailwindcss: ^4.3.3
   '@tailwindcss/vite': ^4.3.3
   tailwindcss-primeui: ^0.6.1

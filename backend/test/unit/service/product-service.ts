@@ -428,6 +428,81 @@ describe('ProductService', async (): Promise<void> => {
       await ProductRevision.delete({ productId: product.id });
       await Product.delete({ id: product.id });
     });
+    it('should propagate to containers when a second update bumps the revision before the first propagates', async () => {
+      const containerRevisions = await ContainerRevision.find({
+        relations: { products: true },
+        withDeleted: true,
+      });
+      const isCurrentProduct = (p: ProductRevision) => p.product.deletedAt == null
+        && p.revision === p.product.currentRevision;
+      const containerRevision = containerRevisions.find((c) => c.container.deletedAt == null
+        && c.revision === c.container.currentRevision
+        && c.products.some(isCurrentProduct));
+      expect(containerRevision).to.not.be.undefined;
+      const product = containerRevision.products.find(isCurrentProduct);
+      const oldContainerRevisionNumber = containerRevision.revision;
+
+      const productWithRelations = await ProductRevision.findOne({
+        where: { productId: product.productId, revision: product.revision },
+        relations: { vat: true, category: true },
+      });
+      const update = (name: string): UpdateProductParams => ({
+        id: product.productId,
+        name,
+        alcoholPercentage: Number(productWithRelations.alcoholPercentage),
+        category: productWithRelations.category.id,
+        vat: productWithRelations.vat.id,
+        featured: productWithRelations.featured,
+        preferred: productWithRelations.preferred,
+        priceList: productWithRelations.priceList,
+        priceInclVat: {
+          amount: productWithRelations.priceInclVat.getAmount(),
+          currency: 'EUR',
+          precision: 2,
+        },
+      });
+
+      const original = ProductService.propagateProductUpdate.bind(ProductService);
+      let releaseA: () => void;
+      const gate = new Promise<void>((r) => { releaseA = r; });
+      let signalReached: () => void;
+      const reached = new Promise<void>((r) => { signalReached = r; });
+
+      // Pause the first propagation until the second update has fully completed.
+      const stub = sinon.stub(ProductService, 'propagateProductUpdate');
+      stub.callThrough();
+      stub.onFirstCall().callsFake(async (id: number) => {
+        signalReached();
+        await gate;
+        return original(id);
+      });
+
+      try {
+        const updateA = ProductService.updateProduct(update('Interleaved Product A'));
+        await reached;
+        await ProductService.updateProduct(update('Interleaved Product B'));
+        releaseA();
+        await updateA;
+      } finally {
+        stub.restore();
+      }
+
+      const base = await Product.findOne({ where: { id: product.productId } });
+      const containerBase = await Container.findOne({ where: { id: containerRevision.containerId } });
+      const currentContainer = await ContainerRevision.findOne({
+        where: { containerId: containerRevision.containerId, revision: containerBase.currentRevision },
+        relations: { products: true },
+      });
+      const productInContainer = currentContainer.products.find((p) => p.productId === product.productId);
+      expect(productInContainer.revision).to.eq(base.currentRevision);
+      expect(productInContainer.name).to.eq('Interleaved Product B');
+      // We update here by only 1 revision as we immediately get both product updates
+      expect(currentContainer.revision).to.eq(oldContainerRevisionNumber + 1);
+      expect(currentContainer.products.map((p) => p.productId))
+        .to.deep.equalInAnyOrder(containerRevision.products
+          .filter((p) => p.product.deletedAt == null)
+          .map((p) => p.productId));
+    });
   });
 
   describe('propagateProductUpdate function', () => {
@@ -610,9 +685,9 @@ describe('ProductService', async (): Promise<void> => {
       expect(deletedProducts.length).to.equal(ctx.deletedProducts.length + 1);
 
       // Propagated update
-      const revision = ctx.productRevisions.find((p) => p.productId === product.id && p.revision === product.currentRevision);
-      const containerRevisions = ctx.containerRevisions.filter((c) => c.products
-        .some((p) => p.revision === revision.revision && p.productId === revision.productId && p.product.deletedAt == null))
+      // Read from the database, as earlier tests may have updated this product after seeding
+      const containerRevisions = (await ContainerRevision.find({ relations: { products: true }, withDeleted: true }))
+        .filter((c) => c.products.some((p) => p.productId === product.id && p.revision === dbProduct.currentRevision))
         .filter((c) => c.container.deletedAt == null)
         .filter((c) => c.revision === c.container.currentRevision);
       expect(stub.callCount).to.be.greaterThan(0);

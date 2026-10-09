@@ -25,7 +25,7 @@
         <template v-if="debtorStore.isFineHandoutEventsLoading" #body>
           <Skeleton class="h-1rem my-1 surface-300 w-7" />
         </template>
-        <template v-else #body="slotProps">{{ formatDateTime(new Date(slotProps.data.createdAt)) }}</template>
+        <template v-else #body="slotProps">{{ formatDateAndTime(slotProps.data.createdAt) }}</template>
       </Column>
       <Column
         id="referenceDate"
@@ -35,7 +35,7 @@
         <template v-if="debtorStore.isFineHandoutEventsLoading" #body>
           <Skeleton class="h-1rem my-1 surface-300 w-4" />
         </template>
-        <template v-else #body="slotProps">{{ formatDateTime(new Date(slotProps.data.referenceDate)) }}</template>
+        <template v-else #body="slotProps">{{ formatDateAndTime(slotProps.data.referenceDate) }}</template>
       </Column>
       <Column id="count" field="count" :header="t('common.users')">
         <template v-if="debtorStore.isFineHandoutEventsLoading" #body>
@@ -53,7 +53,7 @@ import Skeleton from 'openvue/skeleton';
 import DataTable from 'openvue/datatable';
 import { onMounted, ref, watch } from 'vue';
 import CardComponent from '@/components/CardComponent.vue';
-import { formatDateTime } from '@/utils/formatterUtils';
+import { formatDateAndTime } from '@/utils/formatterUtils';
 import { useDebtorStore } from '@/stores/debtor.store';
 import AppLink from '@/components/AppLink.vue';
 

@@ -47,7 +47,6 @@
     "signOut": "Sign out",
     "createdAt": "Created at",
     "updatedAt": "Updated at",
-    "selected": "Selected",
     "users": "Users",
     "count": "Count",
     "confirm": "Confirm",
@@ -90,6 +89,10 @@
         "scanStarted": "NFC Scan started, please hold your NFC card to your phone!",
         "notFound": "Not found"
       },
+      "warning": {
+        "warning": "Warning",
+        "productNotAddedToContainer": "Product was created, but could not be added to the container."
+      },
       "success": {
         "success": "Success",
         "userUpdated": "Successfully updated user.",
@@ -104,9 +107,7 @@
         "nfcCodeUpdated": "Successfully updated NFC code.",
         "nfcCodeDeleted": "Successfully deleted NFC code.",
         "pinUpdated": "Successfully updated PIN.",
-        "finesNotified": "Successfully notified users.",
-        "finesHandedOut": "Successfully handed out fines.",
-        "finesCannotGoIntoDebt": "Successfully disabled the ability to go into debt.",
+        "fineRoundCompleted": "Fine round completed.",
         "payoutCreated": "Successfully created payout.",
         "invoiceDeleted": "Successfully deleted invoice.",
         "invoiceCreated": "Successfully created invoice.",
@@ -131,7 +132,8 @@
           "verify": "Verification Success",
           "details": "Payout is verified."
         },
-        "writeOffCreated": "Successfully created write-off."
+        "writeOffCreated": "Successfully created write-off.",
+        "debtNotificationsSent": "Successfully sent the negative balance emails."
       },
       "error": {
         "error": "Error",

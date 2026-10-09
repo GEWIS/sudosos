@@ -6,17 +6,20 @@ import type {
   UserResponse,
   UserToFineResponse,
 } from '@gewis/sudosos-client';
+import { UserType } from '@gewis/sudosos-client';
 // eslint-disable-next-line import/no-named-as-default
 import Dinero from 'dinero.js';
 import { fetchAllPages } from '@sudosos/sudosos-frontend-common';
 import ApiService from '@/services/ApiService';
+
+// Only these user types can be fined; ORGAN, VOUCHER, LOCAL_ADMIN, INVOICE and AUTOMATIC_INVOICE cannot
+export const FINEABLE_USER_TYPES: UserType[] = [UserType.Member, UserType.LocalUser];
 
 export enum SortField {
   NAME = 'name',
   FINE = 'fine',
   FINE_SINCE = 'fineSince',
   REFERENCE_BALANCE = 'referenceBalance',
-  CONTROL_BALANCE = 'controlBalance',
 }
 
 export enum SortDirection {
@@ -55,7 +58,6 @@ interface DebtorState {
   isDeleteLoading: boolean;
   isNotifyLoading: boolean;
   isHandoutLoading: boolean;
-  isLockLoading: boolean;
   fineHandoutEvents: BaseFineHandoutEventResponse[];
   totalFineHandoutEvents: number;
   summary: FinancialSummary;
@@ -77,7 +79,6 @@ export const useDebtorStore = defineStore('debtor', {
     isDeleteLoading: false,
     isNotifyLoading: false,
     isHandoutLoading: false,
-    isLockLoading: false,
     fineHandoutEvents: [],
     totalFineHandoutEvents: 10,
     summary: {
@@ -128,14 +129,6 @@ export const useDebtorStore = defineStore('debtor', {
           });
           break;
         }
-        case SortField.CONTROL_BALANCE: {
-          debtors.sort((a, b) => {
-            return (
-              (a.fine.balances[1].amount.amount - b.fine.balances[1].amount.amount) * (state.sort.direction || 1) * -1
-            );
-          });
-          break;
-        }
       }
 
       return debtors;
@@ -174,9 +167,8 @@ export const useDebtorStore = defineStore('debtor', {
         dates.push(secondaryDate.toISOString());
       }
 
-      // Don't calculate fines for ORGAN, VOUCHER, LOCAL_ADMIN, INVOICE, AUTOMATIC_INVOICE
       this.userToFineResponse = (
-        await ApiService.debtor.calculateFines({ referenceDates: dates, userTypes: ['MEMBER', 'LOCAL_USER'] })
+        await ApiService.debtor.calculateFines({ referenceDates: dates, userTypes: FINEABLE_USER_TYPES })
       ).data;
 
       await this.fetchDebtors(userIds);
@@ -188,24 +180,13 @@ export const useDebtorStore = defineStore('debtor', {
      * @param userIds Only fetch these userIds
      */
     async fetchDebtors(userIds?: number[]) {
-      const users = await Promise.all(
-        this.userToFineResponse
-          .filter((user) => (userIds ? userIds.includes(user.id) : true))
-          .map((user) => {
-            return ApiService.user.getIndividualUser({ id: user.id });
-          }),
-      );
+      const fines = this.userToFineResponse.filter((user) => (userIds ? userIds.includes(user.id) : true));
+      const users = await Promise.all(fines.map((fine) => ApiService.user.getIndividualUser({ id: fine.id })));
 
-      const allDebtors: Debtor[] = [];
-
-      users.forEach((user, i) => {
-        allDebtors.push({
-          user: user.data,
-          fine: this.userToFineResponse[i],
-        });
-      });
-
-      this.allDebtors = allDebtors;
+      this.allDebtors = users.map((user, i) => ({
+        user: user.data,
+        fine: fines[i],
+      }));
     },
     /**
      * Fetch the financial summary of SudoSOS
@@ -215,7 +196,7 @@ export const useDebtorStore = defineStore('debtor', {
 
       const allBalances = await fetchAllPages<BalanceResponse>(async (take, skip) => {
         return ApiService.balance.getAllBalance({
-          userTypes: ['MEMBER', 'LOCAL_USER'],
+          userTypes: FINEABLE_USER_TYPES,
           take,
           skip,
         });
@@ -243,6 +224,15 @@ export const useDebtorStore = defineStore('debtor', {
       this.summary.totalPositive = totalPositive.toObject();
       this.summary.total = totalNegative.add(totalPositive).toObject();
     },
+    /**
+     * Fetch the balances of all fineable users in debt. Fetches every page, since the debtor overview
+     * filters and sorts in the browser.
+     */
+    async fetchDebtorBalances(): Promise<BalanceResponse[]> {
+      return fetchAllPages<BalanceResponse>((take, skip) =>
+        ApiService.balance.getAllBalance({ maxBalance: -1, userTypes: FINEABLE_USER_TYPES, take, skip }),
+      );
+    },
     async fetchFineHandoutEvents(take: number, skip: number) {
       this.isFineHandoutEventsLoading = true;
       const handoutEvents = await ApiService.debtor.returnAllFineHandoutEvents({ take, skip });
@@ -250,6 +240,15 @@ export const useDebtorStore = defineStore('debtor', {
       this.fineHandoutEvents = handoutEvents.data.records;
       this.totalFineHandoutEvents = handoutEvents.data._pagination.count;
       this.isFineHandoutEventsLoading = false;
+    },
+    /**
+     * Fetch the moment of the most recent fine handout, or undefined if there never was one
+     */
+    async fetchLastHandoutDate(): Promise<Date | undefined> {
+      // The backend returns handout events newest first
+      const events = await ApiService.debtor.returnAllFineHandoutEvents({ take: 1, skip: 0 });
+      const last = events.data.records[0];
+      return last && new Date(last.createdAt ?? last.referenceDate);
     },
     async fetchSingleHandoutEvent(id: number): Promise<FineHandoutEventResponse | undefined> {
       return (await ApiService.debtor.returnSingleFineHandoutEvent({ id })).data;
@@ -264,39 +263,29 @@ export const useDebtorStore = defineStore('debtor', {
     },
     async notifyFines(userIds: number[], referenceDate: Date) {
       this.isNotifyLoading = true;
-      await ApiService.debtor.notifyAboutFutureFines({
-        handoutFinesRequest: {
-          userIds: userIds,
-          referenceDate: referenceDate.toISOString(),
-        },
-      });
-      this.isNotifyLoading = false;
+      try {
+        await ApiService.debtor.notifyAboutFutureFines({
+          handoutFinesRequest: {
+            userIds: userIds,
+            referenceDate: referenceDate.toISOString(),
+          },
+        });
+      } finally {
+        this.isNotifyLoading = false;
+      }
     },
     async handoutFines(userIds: number[], referenceDate: Date) {
       this.isHandoutLoading = true;
-      await ApiService.debtor.handoutFines({
-        handoutFinesRequest: {
-          userIds: userIds,
-          referenceDate: referenceDate.toISOString(),
-        },
-      });
-      this.isHandoutLoading = false;
-    },
-    async cannotGoIntoDebt(userIds: number[]) {
-      this.isLockLoading = true;
-
-      const requests = userIds.map((id) => {
-        return ApiService.user.updateUser({
-          id,
-          updateUserRequest: {
-            canGoIntoDebt: false,
+      try {
+        await ApiService.debtor.handoutFines({
+          handoutFinesRequest: {
+            userIds: userIds,
+            referenceDate: referenceDate.toISOString(),
           },
         });
-      });
-
-      await Promise.all(requests);
-
-      this.isLockLoading = false;
+      } finally {
+        this.isHandoutLoading = false;
+      }
     },
   },
 });

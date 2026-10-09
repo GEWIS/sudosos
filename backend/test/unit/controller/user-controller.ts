@@ -461,6 +461,21 @@ describe('UserController', (): void => {
       ).valid).to.be.true;
       expect(res.body.id).to.equal(user.id);
     });
+    it('should return an HTTP 404 if the nfc code belongs to a deleted user', async () => {
+      const nfc = await NfcAuthenticator.save({
+        userId: ctx.deletedUser.id,
+        nfcCode: 'deleted-user-nfc',
+      });
+      try {
+        const res = await request(ctx.app)
+          .get(`/users/nfc/${nfc.nfcCode}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`);
+        expect(res.status).to.equal(404);
+        expect(res.body).to.equal('Unknown nfc code');
+      } finally {
+        await NfcAuthenticator.delete({ userId: ctx.deletedUser.id });
+      }
+    });
   });
 
   describe('GET /users/usertype/:userType', () => {
@@ -620,6 +635,15 @@ describe('UserController', (): void => {
         .get(`/users/${ctx.deletedUser.id}`)
         .set('Authorization', `Bearer ${ctx.adminToken}`);
       expect(res.status).to.equal(404);
+    });
+    it('should give an HTTP 403 when the token belongs to a deleted user', async () => {
+      // Exercises the default database check of TokenMiddleware
+      const deletedUserToken = await signTokenFor(ctx.deletedUser, ctx.tokenHandler);
+      const res = await request(ctx.app)
+        .get(`/users/${ctx.deletedUser.id}`)
+        .set('Authorization', `Bearer ${deletedUserToken}`);
+      expect(res.status).to.equal(403);
+      expect(res.text).to.equal('Invalid token supplied.');
     });
     it('should include email when admin requests a user (all relation)', async () => {
       const res = await request(ctx.app)

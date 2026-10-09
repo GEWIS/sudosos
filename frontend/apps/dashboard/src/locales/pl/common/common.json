@@ -47,7 +47,6 @@
     "signOut": "Wyloguj",
     "createdAt": "Utworzono",
     "updatedAt": "Zaktualizowano",
-    "selected": "Wybrano",
     "users": "Użytkownicy",
     "count": "Liczba",
     "confirm": "Potwierdź",
@@ -90,6 +89,10 @@
         "scanStarted": "Rozpoczęto skanowanie NFC, przytrzymaj kartę NFC przy telefonie!",
         "notFound": "Nie znaleziono"
       },
+      "warning": {
+        "warning": "Ostrzeżenie",
+        "productNotAddedToContainer": "Produkt został utworzony, ale nie udało się dodać go do kontenera."
+      },
       "success": {
         "success": "Sukces",
         "userUpdated": "Pomyślnie zaktualizowano użytkownika.",
@@ -104,9 +107,7 @@
         "nfcCodeUpdated": "Pomyślnie zaktualizowano kod NFC.",
         "nfcCodeDeleted": "Pomyślnie usunięto kod NFC.",
         "pinUpdated": "Pomyślnie zaktualizowano PIN.",
-        "finesNotified": "Pomyślnie powiadomiono użytkowników.",
-        "finesHandedOut": "Pomyślnie nałożono kary.",
-        "finesCannotGoIntoDebt": "Pomyślnie wyłączono możliwość zadłużenia.",
+        "fineRoundCompleted": "Runda kar zakończona.",
         "payoutCreated": "Pomyślnie utworzono wypłatę.",
         "invoiceDeleted": "Pomyślnie usunięto fakturę.",
         "invoiceCreated": "Pomyślnie utworzono fakturę.",
@@ -131,7 +132,8 @@
           "verify": "Weryfikacja zakończona sukcesem",
           "details": "Wypłata została zweryfikowana."
         },
-        "writeOffCreated": "Pomyślnie utworzono umorzenie."
+        "writeOffCreated": "Pomyślnie utworzono umorzenie.",
+        "debtNotificationsSent": "Pomyślnie wysłano e-maile o ujemnym saldzie."
       },
       "error": {
         "error": "Błąd",
