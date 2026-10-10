@@ -575,6 +575,22 @@ describe('TerminalPaymentController', async (): Promise<void> => {
       expect(readersProcessIntentStub).to.not.be.called;
     });
 
+    it('should return HTTP 422 if the TerminalPayment has failed', async () => {
+      const terminalPayment = ctx.terminalPayments.find(
+        (t) => t.getState() === TerminalPaymentState.FAILED,
+      );
+      expect(terminalPayment).to.not.be.undefined;
+
+      const res = await request(ctx.app)
+        .post(`/terminal-payments/${terminalPayment!.id}/process`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ stripeTerminalId: FAKE_UNAVAILABLE_READER_ID });
+
+      expect(res.status).to.equal(422);
+      expect(res.text).to.equal('TerminalPayment has failed.');
+      expect(readersProcessIntentStub).to.not.be.called;
+    });
+
     it('should return HTTP 422 if the Stripe terminal is unavailable', async () => {
       const terminalPayment = ctx.terminalPayments.find(
         (t) => t.getState() === TerminalPaymentState.CREATED,

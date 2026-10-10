@@ -45,7 +45,7 @@ export enum StripePaymentIntentState {
  * @property {number} state.required
  */
 @Entity()
-@Index(['stripePaymentIntentId', 'state'], { unique: true })
+@Index('IDX_stripe_payment_intent_status_stripePaymentIntentId_state', ['stripePaymentIntentId', 'state'], { unique: true })
 export default class StripePaymentIntentStatus extends BaseEntity {
   @Column({ nullable: false })
   public stripePaymentIntentId: number;
