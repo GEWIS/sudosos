@@ -19,7 +19,44 @@
  */
 
 /**
- * This is the module page of the voucher-group.
+ * A `VoucherGroup` is a batch of pre-paid accounts, for example for guests at an event.
+ * Each voucher in the group is a {@link users!User | User} of type
+ * {@link users!UserType.VOUCHER | VOUCHER} that starts with the same balance.
+ *
+ * ### Creating a group
+ * `POST /vouchergroups` takes a `name`, an active period (`activeStartDate`,
+ * `activeEndDate`), a `balance` per voucher and the number of vouchers (`amount`). The
+ * start date is rounded down to 00:00 and the end date up to 23:59:59. The end date may not
+ * be in the past, and the balance must be positive.
+ * {@link VoucherGroupService.createVoucherGroup | createVoucherGroup} then:
+ * - creates `amount` users named `<name>_0`, `<name>_1`, and so on, that are active only if
+ *   the start date has passed;
+ * - saves the {@link VoucherGroup} and a {@link UserVoucherGroup} row for each user;
+ * - credits each user with a {@link transfers!Transfer | Transfer} of `balance` with
+ *   `from = null`.
+ *
+ * ### Updating a group
+ * `PATCH /vouchergroups/{id}` is only allowed before the group's stored start date. After
+ * that, `VoucherGroupController.updateVoucherGroup` answers `403`. It also refuses with
+ * `400` a request that lowers `amount`. An allowed update replaces the group's fields and
+ * brings the vouchers in line:
+ * - every voucher gets a transfer for the difference between the new and the old
+ *   `balance`. This also happens when the balance is unchanged, which writes a zero-amount
+ *   transfer per voucher;
+ * - if `amount` grows, the missing vouchers are created and credited;
+ * - if the new start date has passed, all vouchers are activated. Moving the start date
+ *   to today or earlier is therefore the only way to activate them through the API.
+ *
+ * ### Spending
+ * The backend has no checkout logic specific to vouchers. A voucher buys like any other
+ * user with the `Buyer` role, and cannot go into debt because `canGoIntoDebt` is `false`.
+ *
+ * `TransactionService` refuses purchases by inactive users. No process watches the active
+ * period. Vouchers of a group created before its start date stay inactive when that date
+ * arrives, unless the start date is moved as described above. Nothing deactivates them
+ * when `activeEndDate` passes.
+ *
+ * For API interactions, refer to the [Swagger Documentation](https://sudosos.gewis.nl/api/api-docs/#/vouchergroups).
  *
  * @module vouchers
  * @mergeTarget
