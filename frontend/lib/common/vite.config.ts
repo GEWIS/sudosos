@@ -26,9 +26,10 @@ export default defineConfig({
       },
     },
     watch: process.env.WATCH ? {} : undefined,
+    emptyOutDir: !process.env.WATCH,
   },
   server: {
     port: 5175,
   },
-  plugins: [dts(), vue()],
+  plugins: [process.env.WATCH ? null : dts(), vue()],
 });

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "SudoSOS OpenVue themes",
   "scripts": {
-    "dev": "WATCH=true vite build",
+    "dev": "WATCH=true NODE_OPTIONS=--max-old-space-size=1024 vite build",
     "themes:dev": "yarn dev",
     "test": "echo \"No tests specified\" && exit 0",
     "build": "vite build",
