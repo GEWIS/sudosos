@@ -231,6 +231,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { InvoiceStatusResponseStateEnum } from '@gewis/sudosos-client';
 import type {
@@ -254,9 +255,9 @@ import { usePayoutStore } from '@/stores/payout.store';
 import { useInvoiceStore } from '@/stores/invoice.store';
 import { useDebtorStore } from '@/stores/debtor.store';
 import apiService from '@/services/ApiService';
-import router from '@/router';
 
 const { t } = useI18n();
+const router = useRouter();
 
 const authStore = useAuthStore();
 const payoutStore = usePayoutStore();
