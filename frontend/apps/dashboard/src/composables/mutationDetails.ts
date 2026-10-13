@@ -51,7 +51,8 @@ export function useMutationDetails(type: Ref<FinancialMutationType>, id: Ref<num
         (r.name as UserRole) === UserRole.BAC_PM || (r.name as UserRole) === UserRole.BOARD,
     );
 
-    const isDeletable = deletable.includes(type.value);
+    const isTerminalPaid = type.value === FinancialMutationType.TRANSACTION && !!transaction.value?.paidByTerminal;
+    const isDeletable = deletable.includes(type.value) && !isTerminalPaid;
 
     return isLoaded && hasPermission && isDeletable;
   });
