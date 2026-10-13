@@ -69,7 +69,7 @@
     "node-cron": "3.0.3",
     "nodemailer": "6.10.1",
     "reflect-metadata": "0.2.2",
-    "sharp": "0.34.5",
+    "sharp": "0.35.0",
     "socket.io": "4.8.4",
     "socket.io-client": "4.8.4",
     "stripe": "22.6.2",
