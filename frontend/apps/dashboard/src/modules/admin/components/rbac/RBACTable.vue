@@ -242,8 +242,8 @@
 import { type PropType, ref } from 'vue';
 import * as yup from 'yup';
 import { useI18n } from 'vue-i18n';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
+import DataTable from 'openvue/datatable';
+import Column from 'openvue/column';
 import type { ActionResponse, UserResponse } from '@gewis/sudosos-client';
 import { rbacSchema } from '@/utils/validation-schema';
 import { type Form } from '@/utils/formUtils';

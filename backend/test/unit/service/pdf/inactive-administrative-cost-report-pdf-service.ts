@@ -60,41 +60,23 @@ describe('InactiveAdministrativeCostReportPdfService', () => {
       expect(params.vatPercentage).to.equal(21);
       expect(params.count).to.equal(7);
     });
-
-    it('uses the configured FINANCIAL_RESPONSIBLE for the service email', async () => {
-      process.env.FINANCIAL_RESPONSIBLE = 'treasurer@example.test';
-      try {
-        const service = new InactiveAdministrativeCostReportPdfService();
-        const params = await service.getParameters(makeReport());
-        expect(params.serviceEmail).to.equal('treasurer@example.test');
-      } finally {
-        delete process.env.FINANCIAL_RESPONSIBLE;
-      }
-    });
-
-    it('falls back to an empty service email when no financial responsible is configured', async () => {
-      delete process.env.FINANCIAL_RESPONSIBLE;
-      const service = new InactiveAdministrativeCostReportPdfService();
-      const params = await service.getParameters(makeReport());
-      expect(params.serviceEmail).to.equal('');
-    });
   });
 
-  describe('htmlGenerator', () => {
+  describe('render', () => {
     it('produces a HTML string from the parameters', async () => {
       const service = new InactiveAdministrativeCostReportPdfService();
       const params = await service.getParameters(makeReport());
-      const html = service.htmlGenerator(params);
+      const html = service.render(params);
       expect(html).to.be.a('string');
       expect(html).to.include(params.totalAmountInclVat);
       expect(html).to.include(`${params.vatPercentage}%`);
     });
   });
 
-  describe('createRaw', () => {
+  describe('html', () => {
     it('returns a Buffer with HTML bytes for the supplied entity', async () => {
       const service = new InactiveAdministrativeCostReportPdfService();
-      const buffer = await service.createRaw(makeReport());
+      const buffer = await service.html(makeReport());
       expect(buffer).to.be.instanceOf(Buffer);
       const text = buffer.toString('utf-8');
       expect(text).to.include(totalAmountInclVat.toFormat());

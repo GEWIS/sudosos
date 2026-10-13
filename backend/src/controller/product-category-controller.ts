@@ -93,7 +93,7 @@ export default class ProductCategoryController extends BaseController {
    */
   public async returnAllProductCategories(req: RequestWithToken, res: Response): Promise<void> {
     const { body } = req;
-    this.logger.trace('Get all productcategories', body, 'by user', req.token.user);
+    this.logger.trace('product_category.list', { filters: body });
 
     let take;
     let skip;
@@ -119,7 +119,7 @@ export default class ProductCategoryController extends BaseController {
         { take, skip },
       ));
     } catch (error) {
-      this.logger.error('Could not return all product-categories:', error);
+      this.logger.error('product_category.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -138,7 +138,7 @@ export default class ProductCategoryController extends BaseController {
    */
   public async postProductCategory(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as ProductCategoryRequest;
-    this.logger.trace('Create productcategory', body, 'by user', req.token.user);
+    this.logger.trace('product_category.create', { request: body });
     try {
       if (await ProductCategoryService.verifyProductCategory(body)) {
         const category = await ProductCategoryService.postProductCategory(body);
@@ -147,7 +147,7 @@ export default class ProductCategoryController extends BaseController {
         res.status(400).json('Invalid productcategory.');
       }
     } catch (error) {
-      this.logger.error('Could not create productcategory:', error);
+      this.logger.error('product_category.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -165,7 +165,7 @@ export default class ProductCategoryController extends BaseController {
    */
   public async returnSingleProductCategory(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get single productcategory', id, 'by user', req.token.user);
+    this.logger.trace('product_category.get', { id });
 
     // handle request
     try {
@@ -178,7 +178,7 @@ export default class ProductCategoryController extends BaseController {
         res.status(404).json('Productcategory not found.');
       }
     } catch (error) {
-      this.logger.error('Could not return productcategory:', error);
+      this.logger.error('product_category.get.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -200,7 +200,7 @@ export default class ProductCategoryController extends BaseController {
   public async updateProductCategory(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as ProductCategoryRequest;
     const { id } = req.params;
-    this.logger.trace('Update productcategory', id, 'with', body, 'by user', req.token.user);
+    this.logger.trace('product_category.update', { id, request: body });
 
     // handle request
     try {
@@ -216,7 +216,7 @@ export default class ProductCategoryController extends BaseController {
         res.status(400).json('Invalid productcategory.');
       }
     } catch (error) {
-      this.logger.error('Could not update productcategory:', error);
+      this.logger.error('product_category.update.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }

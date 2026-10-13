@@ -31,7 +31,6 @@ export interface IFineReportPdf {
   vatAmount: string;
   vatPercentage: number;
   totalInclVat: string;
-  serviceEmail: string;
 }
 
 export function createFineReportPdf(options: IFineReportPdf): string {
@@ -124,6 +123,5 @@ export function createFineReportPdf(options: IFineReportPdf): string {
     headerRightSub: `${options.fromDate} - ${options.toDate}`,
     meta,
     details,
-    serviceEmail: options.serviceEmail,
   });
 }

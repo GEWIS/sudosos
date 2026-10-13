@@ -25,7 +25,7 @@ import type { UserResponse } from '@gewis/sudosos-client';
 import { computed, ref, watch } from 'vue';
 import { useUserStore, isAllowed } from '@sudosos/sudosos-frontend-common';
 import { useRouter } from 'vue-router';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { schemaToForm } from '@/utils/formUtils';
 import { USER_TYPES, userUpsertSchema } from '@/utils/validation-schema';
 import UserUpsertForm from '@/modules/admin/components/users/forms/UserUpsertForm.vue';

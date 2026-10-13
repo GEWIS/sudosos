@@ -99,7 +99,8 @@ export default class TransactionSubscriber implements EntitySubscriberInterface 
       }
     }
 
-    const transaction = await new TransactionService().asTransactionResponse(entity);
+    // A terminal payment links its final transaction only after insert, so it cannot be paid by terminal yet.
+    const transaction = await new TransactionService().asTransactionResponse(entity, undefined, undefined, false);
     if (transaction) {
       await this.sendReceipt(user, transaction, currentBalance);
     }

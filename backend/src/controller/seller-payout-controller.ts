@@ -34,6 +34,8 @@ import User from '../entity/user/user';
 import ReportService, { SalesReportService } from '../service/report-service';
 import { PdfError } from '../errors';
 import { PdfUrlResponse } from './response/simple-file-response';
+import SellerPayoutPdfService from '../service/pdf/seller-payout-pdf-service';
+import { asBoolean } from '../helpers/validators';
 
 /**
  * Controller for the `/seller-payouts` endpoints in the
@@ -43,7 +45,7 @@ import { PdfUrlResponse } from './response/simple-file-response';
  * `PATCH /seller-payouts/<id>` is the lever for reconciling once drift is found.
  */
 export default class SellerPayoutController extends BaseController {
-  private logger: Logger = log4js.getLogger(' SellerPayoutController');
+  private logger: Logger = log4js.getLogger('SellerPayoutController');
 
   public constructor(options: BaseControllerOptions) {
     super(options);
@@ -108,7 +110,7 @@ export default class SellerPayoutController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnAllSellerPayouts(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all seller payouts by', req.token.user);
+    this.logger.trace('seller_payout.list');
 
     let take;
     let skip;
@@ -128,7 +130,7 @@ export default class SellerPayoutController extends BaseController {
 
       res.json(toResponse(records.map(SellerPayoutService.asSellerPayoutResponse), count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all seller payouts:', error);
+      this.logger.error('seller_payout.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -145,7 +147,7 @@ export default class SellerPayoutController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnSingleSellerPayout(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get single seller payout with ID', req.params.id, 'by user', req.token.user);
+    this.logger.trace('seller_payout.get', { id: req.params.id });
 
     try {
       const id = Number(req.params.id);
@@ -158,7 +160,7 @@ export default class SellerPayoutController extends BaseController {
 
       res.json(SellerPayoutService.asSellerPayoutResponse(sellerPayout));
     } catch (error) {
-      this.logger.error('Could not return single seller payout:', error);
+      this.logger.error('seller_payout.get.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -176,7 +178,7 @@ export default class SellerPayoutController extends BaseController {
    */
   public async getSellerPayoutReport(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get sales report for Seller Payout', id, 'by user', req.token.user);
+    this.logger.trace('seller_payout.get_report', { id });
 
     try {
       const sellerPayoutId = Number(req.params.id);
@@ -194,7 +196,7 @@ export default class SellerPayoutController extends BaseController {
       });
       res.json(ReportService.reportToResponse(report));
     } catch (error) {
-      this.logger.error('Could not get sales report for seller payout:', error);
+      this.logger.error('seller_payout.get_report.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -213,11 +215,11 @@ export default class SellerPayoutController extends BaseController {
    */
   public async getSellerPayoutReportPdf(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get sales report PDF for Seller Payout', id, 'by user', req.token.user);
+    this.logger.trace('seller_payout.get_report_pdf', { id });
 
     try {
       const sellerPayoutId = Number(req.params.id);
-      const force = req.query.force === 'true';
+      const force = !!asBoolean(req.query.force);
       const service = new SellerPayoutService();
       const [[sellerPayout]] = await service.getSellerPayouts({ sellerPayoutId });
       if (!sellerPayout) {
@@ -225,10 +227,10 @@ export default class SellerPayoutController extends BaseController {
         return;
       }
 
-      const pdf = await sellerPayout.getOrCreatePdf(force);
+      const pdf = await new SellerPayoutPdfService().getOrCreate(sellerPayout, force);
       res.status(200).json({ pdf: pdf.downloadName } as PdfUrlResponse);
     } catch (error) {
-      this.logger.error('Could not get sales report for seller payout:', error);
+      this.logger.error('seller_payout.get_report_pdf.failed', error);
       if (error instanceof PdfError) {
         res.status(502).json('PDF Generator service failed.');
         return;
@@ -250,7 +252,7 @@ export default class SellerPayoutController extends BaseController {
    */
   public async createSellerPayout(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as CreateSellerPayoutRequest;
-    this.logger.trace('Create new seller payout by', req.token.user);
+    this.logger.trace('seller_payout.create', { request: body });
 
     try {
       const requestedBy = await User.findOne({ where: { id: body.requestedById, deleted: false } });
@@ -300,7 +302,7 @@ export default class SellerPayoutController extends BaseController {
 
       res.json(SellerPayoutService.asSellerPayoutResponse(payout));
     } catch (error) {
-      this.logger.error('Could not create seller payout:', error);
+      this.logger.error('seller_payout.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -321,7 +323,7 @@ export default class SellerPayoutController extends BaseController {
   public async updateSellerPayout(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as UpdateSellerPayoutRequest;
     const { id } = req.params;
-    this.logger.trace('Update seller payout', id, 'by user', req.token.user);
+    this.logger.trace('seller_payout.update', { id, request: body });
 
     try {
       const sellerPayoutId = Number(req.params.id);
@@ -335,7 +337,7 @@ export default class SellerPayoutController extends BaseController {
       sellerPayout = await service.updateSellerPayout(sellerPayoutId, body);
       res.json(SellerPayoutService.asSellerPayoutResponse(sellerPayout));
     } catch (error) {
-      this.logger.error('Could not update seller payout:', error);
+      this.logger.error('seller_payout.update.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -353,7 +355,7 @@ export default class SellerPayoutController extends BaseController {
    */
   public async deleteSellerPayout(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Delete seller payout', id, 'by user', req.token.user);
+    this.logger.trace('seller_payout.delete', { id });
 
     try {
       const sellerPayoutId = Number(req.params.id);
@@ -367,7 +369,7 @@ export default class SellerPayoutController extends BaseController {
       await service.deleteSellerPayout(sellerPayoutId);
       res.status(204).json(null);
     } catch (error) {
-      this.logger.error('Could not delete seller payout:', error);
+      this.logger.error('seller_payout.delete.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

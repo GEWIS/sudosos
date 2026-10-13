@@ -135,7 +135,7 @@ export default class ProductController extends BaseController {
    */
   public async getAllProducts(req: RequestWithToken, res: Response): Promise<void> {
     const { body } = req;
-    this.logger.trace('Get all products', body, 'by user', req.token.user);
+    this.logger.trace('product.list', { filters: body });
 
     let take;
     let skip;
@@ -154,7 +154,7 @@ export default class ProductController extends BaseController {
       const records = revisions.map((r) => ProductService.revisionToResponse(r));
       res.status(200).json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all products:', error);
+      this.logger.error('product.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -172,7 +172,7 @@ export default class ProductController extends BaseController {
    */
   public async createProduct(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as CreateProductRequest;
-    this.logger.trace('Create product', body, 'by user', req.token.user);
+    this.logger.trace('product.create', { request: body });
 
     // handle request
     try {
@@ -188,7 +188,7 @@ export default class ProductController extends BaseController {
       }
       res.json(ProductService.revisionToResponse(revision));
     } catch (error) {
-      this.logger.error('Could not create product:', error);
+      this.logger.error('product.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -210,7 +210,7 @@ export default class ProductController extends BaseController {
     const body = req.body as UpdateProductRequest;
     const { id } = req.params;
     const productId = Number.parseInt(id, 10);
-    this.logger.trace('Update product', id, 'with', body, 'by user', req.token.user);
+    this.logger.trace('product.update', { id, request: body });
 
     // handle request
     try {
@@ -232,7 +232,7 @@ export default class ProductController extends BaseController {
       }
       res.json(ProductService.revisionToResponse(revision));
     } catch (error) {
-      this.logger.error('Could not update product:', error);
+      this.logger.error('product.update.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -250,7 +250,7 @@ export default class ProductController extends BaseController {
    */
   public async getSingleProduct(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get single product', id, 'by user', req.token.user);
+    this.logger.trace('product.get', { id });
 
     // handle request
     try {
@@ -263,7 +263,7 @@ export default class ProductController extends BaseController {
         res.status(404).json('Product not found.');
       }
     } catch (error) {
-      this.logger.error('Could not return product:', error);
+      this.logger.error('product.get.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -284,7 +284,7 @@ export default class ProductController extends BaseController {
   public async updateProductImage(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const { files } = req;
-    this.logger.trace('Update product', id, 'image by user', req.token.user);
+    this.logger.trace('product.update_image', { id });
 
     if (!req.files || Object.keys(files).length !== 1) {
       res.status(400).send('No file or too many files were uploaded');
@@ -326,7 +326,7 @@ export default class ProductController extends BaseController {
         return;
       }
     } catch (error) {
-      this.logger.error('Could not upload image:', error);
+      this.logger.error('product.update_image.failed', error);
       res.status(500).json('Internal server error');
     }
   }
@@ -344,7 +344,7 @@ export default class ProductController extends BaseController {
    */
   public async deleteProduct(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Delete product', id, 'by user', req.token.user);
+    this.logger.trace('product.delete', { id });
 
     try {
       const productId = parseInt(id, 10);
@@ -360,7 +360,7 @@ export default class ProductController extends BaseController {
       res.status(204).send();
       return;
     } catch (error) {
-      this.logger.error('Could not delete product', error);
+      this.logger.error('product.delete.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

@@ -55,7 +55,7 @@
  * container owner). See {@link balance | Balance} for how these movements roll up.
  *
  * ### PDF receipts
- * `Transaction` is `PdfAble`. `GET /transactions/{id}/pdf` returns a PDF receipt via
+ * `GET /transactions/{id}/pdf` returns a PDF receipt via
  * `TransactionPdfService`.
  *
  * @module transactions
@@ -70,8 +70,6 @@ import SubTransaction from './sub-transaction';
 import User from '../user/user';
 import BaseEntity from '../base-entity';
 import PointOfSaleRevision from '../point-of-sale/point-of-sale-revision';
-import { UnstoredPdfAble } from '../file/pdf-able';
-import TransactionPdfService from '../../service/pdf/transaction-pdf-service';
 
 /**
  * TypeORM entity for the `transaction` table. Holds the buyer-side record of one purchase at
@@ -88,7 +86,7 @@ import TransactionPdfService from '../../service/pdf/transaction-pdf-service';
  * products in the transaction are bought.
  */
 @Entity()
-export default class Transaction extends UnstoredPdfAble(BaseEntity) {
+export default class Transaction extends BaseEntity {
   @ManyToOne(() => User, { nullable: false })
   public from: User;
 
@@ -102,6 +100,4 @@ export default class Transaction extends UnstoredPdfAble(BaseEntity) {
 
   @ManyToOne(() => PointOfSaleRevision)
   public pointOfSale: PointOfSaleRevision;
-
-  pdfService = new TransactionPdfService();
 }

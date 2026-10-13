@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import Dialog from 'primevue/dialog';
+import Dialog from 'openvue/dialog';
 import { computed, ref } from 'vue';
 import { marked } from 'marked';
 import { useI18n } from 'vue-i18n';

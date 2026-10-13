@@ -114,14 +114,14 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import ColumnGroup from 'primevue/columngroup';
-import Row from 'primevue/row';
+import DataTable from 'openvue/datatable';
+import Column from 'openvue/column';
+import ColumnGroup from 'openvue/columngroup';
+import Row from 'openvue/row';
 import { useI18n } from 'vue-i18n';
 import type { UserResponse } from '@gewis/sudosos-client';
 import type { AxiosError } from 'axios';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import ApiService from '@/services/ApiService';
 import { useFiscalYear } from '@/composables/fiscalYear';
 import { formatDateFromString } from '@/utils/formatterUtils';

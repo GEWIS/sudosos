@@ -1,5 +1,5 @@
 import { ref, computed, onMounted } from 'vue';
-import type { DataTablePageEvent } from 'primevue/datatable';
+import type { DataTablePageEvent } from 'openvue/datatable';
 import { debounce } from '@/utils/debounceUtil';
 import { useAdministrativeCostsStore } from '@/stores/administrativeCosts.store';
 

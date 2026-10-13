@@ -31,7 +31,7 @@ import { Dinero } from 'dinero.js';
 import DineroTransformer from '../entity/transformer/dinero-transformer';
 import { Availability } from '../entity/event/event-shift-answer';
 import { EventType } from '../entity/event/event';
-import { ReturnFileType } from 'pdf-generator-client';
+import { ReturnFileType } from './pdf';
 
 /**
  * Returns whether the given object is a number
@@ -245,14 +245,18 @@ export function asFromAndTillDate(fromDate: any, tillDate: any): { fromDate: Dat
 }
 
 /**
- * Converts the input to a ReturnFileType
- * @param input
+ * Converts the input to a ReturnFileType. Defaults to PDF when no input is
+ * given.
+ * @param input - The input which should be converted.
+ * @returns The parsed ReturnFileType.
+ * @throws TypeError - If the input is not a valid ReturnFileType
  */
 export function asReturnFileType(input: any): ReturnFileType {
-  if (!input) return undefined;
-  input = input.toUpperCase();
-  if (typeof input === 'string' && Object.values(ReturnFileType).includes(input as ReturnFileType)) {
-    return input as ReturnFileType;
+  if (input === undefined || input === null || input === '') return ReturnFileType.PDF;
+  if (typeof input !== 'string') throw new TypeError(`Input '${input}' is not a valid ReturnFileType.`);
+  const upper = input.toUpperCase();
+  if (Object.values(ReturnFileType).includes(upper as ReturnFileType)) {
+    return upper as ReturnFileType;
   }
   throw new TypeError(`Input '${input}' is not a valid ReturnFileType.`);
 }

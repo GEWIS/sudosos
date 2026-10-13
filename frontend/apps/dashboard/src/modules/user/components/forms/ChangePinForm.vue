@@ -34,7 +34,7 @@ import { useI18n } from 'vue-i18n';
 import * as yup from 'yup';
 import type { PropType } from 'vue';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import type { editPinSchema } from '@/utils/validation-schema';
 import { type Form, setSubmit } from '@/utils/formUtils';
 import InputSpan from '@/components/InputSpan.vue';

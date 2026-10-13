@@ -82,8 +82,8 @@ import TransactionService from '../../../src/service/transaction-service';
 import { TransactionRequest } from '../../../src/controller/request/transaction-request';
 import { toMySQLString } from '../../../src/helpers/timestamps';
 import sinon from 'sinon';
-import { Client } from 'pdf-generator-client';
-import { BasePdfService } from '../../../src/service/pdf/pdf-service';
+import { PdfCompiler } from '../../../src/service/pdf/pdf-service';
+import { PdfError } from '../../../src/errors';
 import { ensureProductionRoles, signTokenFor } from '../../helpers/user-factory';
 import Dinero from 'dinero.js';
 import NfcAuthenticator from '../../../src/entity/authenticator/nfc-authenticator';
@@ -461,6 +461,21 @@ describe('UserController', (): void => {
       ).valid).to.be.true;
       expect(res.body.id).to.equal(user.id);
     });
+    it('should return an HTTP 404 if the nfc code belongs to a deleted user', async () => {
+      const nfc = await NfcAuthenticator.save({
+        userId: ctx.deletedUser.id,
+        nfcCode: 'deleted-user-nfc',
+      });
+      try {
+        const res = await request(ctx.app)
+          .get(`/users/nfc/${nfc.nfcCode}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`);
+        expect(res.status).to.equal(404);
+        expect(res.body).to.equal('Unknown nfc code');
+      } finally {
+        await NfcAuthenticator.delete({ userId: ctx.deletedUser.id });
+      }
+    });
   });
 
   describe('GET /users/usertype/:userType', () => {
@@ -620,6 +635,15 @@ describe('UserController', (): void => {
         .get(`/users/${ctx.deletedUser.id}`)
         .set('Authorization', `Bearer ${ctx.adminToken}`);
       expect(res.status).to.equal(404);
+    });
+    it('should give an HTTP 403 when the token belongs to a deleted user', async () => {
+      // Exercises the default database check of TokenMiddleware
+      const deletedUserToken = await signTokenFor(ctx.deletedUser, ctx.tokenHandler);
+      const res = await request(ctx.app)
+        .get(`/users/${ctx.deletedUser.id}`)
+        .set('Authorization', `Bearer ${deletedUserToken}`);
+      expect(res.status).to.equal(403);
+      expect(res.text).to.equal('Invalid token supplied.');
     });
     it('should include email when admin requests a user (all relation)', async () => {
       const res = await request(ctx.app)
@@ -2526,18 +2550,10 @@ describe('UserController', (): void => {
     });
   });
   describe('GET pdf', () => {
-    let clientStub: sinon.SinonStubbedInstance<Client>;
-
-    function resolveSuccessful() {
-      clientStub.generateUserReport.resolves({
-        data: new Blob(),
-        status: 200,
-      });
-    }
+    let compileStub: sinon.SinonStub;
 
     beforeEach(() => {
-      clientStub = sinon.createStubInstance(Client);
-      sinon.stub(BasePdfService, 'getClient').returns(clientStub);
+      compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
     });
 
     afterEach(() => {
@@ -2546,7 +2562,6 @@ describe('UserController', (): void => {
 
     describe('GET /users/{id}/transactions/sales/report/pdf', () => {
       it('should return 200 if admin', async () => {
-        resolveSuccessful();
         const id = 1;
         const parameters = { fromDate: '2021-01-01', tillDate: '2021-12-31' };
         const user = await User.findOne({ where: { id } });
@@ -2558,9 +2573,9 @@ describe('UserController', (): void => {
         expect(res.status).to.equal(200);
       });
       it('should return 502 if pdf generation fails', async () => {
-        clientStub.generateUserReport.rejects(new Error('Failed to generate PDF'));
+        compileStub.rejects(new PdfError('Failed to generate PDF'));
         const id = 1;
-        const parameters = { fromDate: '2021-01-01', tillDate: '2021-12-31' };
+        const parameters = { fromDate: '2021-01-01', tillDate: '2021-12-31', fileType: 'PDF' };
         const user = await User.findOne({ where: { id } });
         expect(user).to.not.be.null;
         const res = await request(ctx.app)
@@ -2639,7 +2654,6 @@ describe('UserController', (): void => {
     });
     describe('GET /users/{id}/transactions/purchases/report/pdf', () => {
       it('should return 200 if admin', async () => {
-        resolveSuccessful();
         const id = 1;
         const parameters = { fromDate: '2021-01-01', tillDate: '2021-12-31' };
         const user = await User.findOne({ where: { id } });
@@ -2651,9 +2665,9 @@ describe('UserController', (): void => {
         expect(res.status).to.equal(200);
       });
       it('should return 502 if pdf generation fails', async () => {
-        clientStub.generateUserReport.rejects(new Error('Failed to generate PDF'));
+        compileStub.rejects(new PdfError('Failed to generate PDF'));
         const id = 1;
-        const parameters = { fromDate: '2021-01-01', tillDate: '2021-12-31' };
+        const parameters = { fromDate: '2021-01-01', tillDate: '2021-12-31', fileType: 'PDF' };
         const user = await User.findOne({ where: { id } });
         expect(user).to.not.be.null;
         const res = await request(ctx.app)

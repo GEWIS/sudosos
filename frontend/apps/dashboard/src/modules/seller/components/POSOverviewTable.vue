@@ -43,11 +43,11 @@
   <POSCreateModal v-model:is-visible="isCreateModalVisible" />
 </template>
 <script setup lang="ts">
-import DataTable, { type DataTablePageEvent } from 'primevue/datatable';
-import Column from 'primevue/column';
+import DataTable, { type DataTablePageEvent } from 'openvue/datatable';
+import Column from 'openvue/column';
 import { onMounted, type Ref, ref } from 'vue';
 import type { PaginatedPointOfSaleResponse, PointOfSaleResponse } from '@gewis/sudosos-client';
-import Skeleton from 'primevue/skeleton';
+import Skeleton from 'openvue/skeleton';
 import { useI18n } from 'vue-i18n';
 import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import AppLink from '@/components/AppLink.vue';

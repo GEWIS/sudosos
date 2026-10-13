@@ -24,56 +24,34 @@
  * @module internal/pdf/user-report-pdf-service
  */
 
-import { BuyerReport, ReportProductEntry, SalesReport } from '../../entity/report/report';
-import {
-  FileResponse,
-  Product,
-  UserReportParameters,
-  UserReportParametersType,
-  UserRouteParams,
-} from 'pdf-generator-client';
-import { UnstoredPdfService } from './pdf-service';
-import { entryToProduct, getPDFTotalsFromReport, userToIdentity } from '../../helpers/pdf';
+import { BuyerReport, SalesReport } from '../../entity/report/report';
+import { PdfService } from './pdf-service';
+import { reportToDocumentLines, UserReportType } from '../../helpers/pdf';
+import { createUserReportPdf, IUserReportPdf } from '../../html/user-report.html';
 import User from '../../entity/user/user';
-import { EntityManager } from 'typeorm';
 
-export default class UserReportPdfService<T extends SalesReport | BuyerReport> extends UnstoredPdfService<T, UserRouteParams> {
+export default class UserReportPdfService<T extends SalesReport | BuyerReport> extends PdfService<T, IUserReportPdf> {
 
-  routeConstructor = UserRouteParams;
+  render = createUserReportPdf;
 
-  private readonly type: UserReportParametersType;
-
-  constructor(type: UserReportParametersType, manager?: EntityManager) {
-    super(manager);
-    this.type = type;
+  static kind(report: SalesReport | BuyerReport): UserReportType {
+    return report instanceof SalesReport ? UserReportType.Sales : UserReportType.Purchases;
   }
 
-  generator(routeParams: UserRouteParams): Promise<FileResponse> {
-    return this.client.generateUserReport(routeParams);
-  }
-
-  async getParameters(entity: T): Promise<UserReportParameters> {
-    const sales: Product[] = [];
-
+  async getParameters(entity: T): Promise<IUserReportPdf> {
     if (!entity.data.products) throw new Error('No products found in report');
-    entity.data.products.forEach((s: ReportProductEntry) => sales.push(entryToProduct(s)));
 
     const user = await this.manager.findOne(User, { where: { id: entity.forId } });
+    if (!user) throw new Error('User not found');
 
-    let data: any = {
-      account: userToIdentity(user),
-      startDate: entity.fromDate,
-      endDate: entity.tillDate,
-      entries: sales,
-      type: this.type,
-      total: getPDFTotalsFromReport(entity),
+    return {
+      kind: UserReportPdfService.kind(entity),
+      account: [user.firstName, user.lastName].filter(Boolean).join(' '),
+      customerNumber: String(user.id),
+      startDate: entity.fromDate.toLocaleDateString('nl-NL'),
+      endDate: entity.tillDate.toLocaleDateString('nl-NL'),
+      description: entity instanceof SalesReport ? (entity.description ?? '') : '',
+      ...reportToDocumentLines(entity),
     };
-
-    if (entity instanceof SalesReport) {
-      data.description = entity.description;
-    }
-
-    return new UserReportParameters(data);
   }
-
 }

@@ -41,6 +41,7 @@ import TransferService from '../../../src/service/transfer-service';
 import { FineSeeder, TransactionSeeder, TransferSeeder, UserSeeder } from '../../seed';
 import { rootStubs } from '../../root-hooks';
 import Notifier from '../../../src/notifications';
+import { NotificationTypes } from '../../../src/notifications/notification-types';
 
 describe('DebtorService', (): void => {
   let ctx: {
@@ -230,6 +231,33 @@ describe('DebtorService', (): void => {
       await new DebtorService().sendFineWarnings({ referenceDate, userIds });
 
       expect(sendNotifyFake.callCount).to.equal(usersWithDebt.length);
+    });
+  });
+
+  describe('sendDebtNotifications', () => {
+    it('should only remind given users that are in debt', async () => {
+      const balances = ctx.users
+        .map((u) => calculateBalance(u, ctx.transactions, ctx.subTransactions, ctx.transfersInclFines));
+      const debtors = balances.filter((b) => b.amount.getAmount() < 0);
+      const nonDebtors = balances.filter((b) => b.amount.getAmount() >= 0);
+      expect(debtors.length).to.be.at.least(1);
+      expect(nonDebtors.length).to.be.at.least(1);
+
+      const userIds = [...debtors, ...nonDebtors].map((b) => b.user.id);
+      await new DebtorService().sendDebtNotifications({ userIds });
+
+      expect(sendNotifyFake.callCount).to.equal(debtors.length);
+      const notifiedIds = sendNotifyFake.getCalls().map((c) => c.args[0].userId);
+      expect(notifiedIds).to.have.members(debtors.map((b) => b.user.id));
+      sendNotifyFake.getCalls().forEach((c) => {
+        expect(c.args[0].type).to.equal(NotificationTypes.UserDebtReminder);
+        const debtor = debtors.find((b) => b.user.id === c.args[0].userId);
+        expect(c.args[0].params.balance.getAmount()).to.equal(debtor.amount.getAmount());
+      });
+    });
+    it('should not notify anyone if no user ids are given', async () => {
+      await new DebtorService().sendDebtNotifications({ userIds: [] });
+      expect(sendNotifyFake.callCount).to.equal(0);
     });
   });
 
@@ -891,12 +919,22 @@ describe('DebtorService', (): void => {
       const user = ctx.users[0];
       expect(user).to.not.be.undefined;
 
+      const referenceDate = new Date();
+      const balance = await new BalanceService().getBalance(user.id, referenceDate);
+      const dbUser = await User.findOne({ where: { id: user.id }, relations: { currentFines: { fines: true } } });
+      const previousFines = dbUser.currentFines?.fines.reduce((sum, f) => sum + f.amount.getAmount(), 0) ?? 0;
+
       const fineHandoutEvent = await new DebtorService().handOutFines({
         userIds: [user.id],
-        referenceDate: new Date(),
+        referenceDate,
       }, ctx.actor);
 
       expect(sendNotifyFake).to.be.calledOnce;
+      const { params } = sendNotifyFake.firstCall.args[0];
+      const fineAmount = fineHandoutEvent.fines[0].amount.getAmount();
+      expect(params.fine.getAmount()).to.equal(fineAmount);
+      expect(params.balance.getAmount()).to.equal(balance.amount.amount);
+      expect(params.totalFine.getAmount()).to.equal(previousFines + fineAmount);
 
       // Cleanup
       await deleteFineHandoutEvent(fineHandoutEvent.id);

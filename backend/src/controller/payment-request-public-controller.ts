@@ -89,7 +89,7 @@ export default class PaymentRequestPublicController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnSinglePaymentRequest(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Public get payment request', req.params.id);
+    this.logger.trace('payment_request.public_get', { id: req.params.id, ip: req.ip });
 
     try {
       const service = new PaymentRequestService();
@@ -100,7 +100,7 @@ export default class PaymentRequestPublicController extends BaseController {
       }
       res.status(200).json(PaymentRequestService.asPublicPaymentRequestResponse(request));
     } catch (e) {
-      this.logger.error('Could not get payment request (public):', e);
+      this.logger.error('payment_request.public_get.failed', e);
       res.status(500).send('Internal server error.');
     }
   }
@@ -119,7 +119,7 @@ export default class PaymentRequestPublicController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async startPaymentPublic(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Public start payment', req.params.id);
+    this.logger.trace('payment_request.public_start_payment', { id: req.params.id, ip: req.ip });
 
     try {
       const service = new PaymentRequestService();
@@ -145,7 +145,7 @@ export default class PaymentRequestPublicController extends BaseController {
         res.status(400).send(e.message);
         return;
       }
-      this.logger.error('Could not start public payment:', e);
+      this.logger.error('payment_request.public_start_payment.failed', e);
       res.status(500).send('Internal server error.');
     }
   }

@@ -18,7 +18,7 @@ frontend/
 │   └── point-of-sale/        # POS kiosk app (same structure)
 └── lib/
     ├── common/               # Shared utilities, types, Pinia stores, API client
-    └── themes/               # Shared PrimeVue themes
+    └── themes/               # Shared OpenVue themes
 ```
 
 No `.editorconfig` or `.prettierrc` under `frontend/`. Prettier config is the root `.prettierrc.js`, which extends `@gewis/prettier-config`. Line endings are enforced through Prettier's own `lf` default, not a `.editorconfig`.
@@ -56,9 +56,9 @@ tsc --noEmit
 
 ## Key Rules
 
-### PrimeVue Components Are Global
+### OpenVue Components Are Global
 
-All PrimeVue components (`DataTable`, `Column`, `Button`, `ConfirmDialog`, etc.) are globally registered in `main.ts`. **Never import them locally** — it works but is redundant and will draw a review comment.
+All OpenVue components (`DataTable`, `Column`, `Button`, `ConfirmDialog`, etc.) are globally registered in `main.ts`. **Never import them locally** — it works but is redundant and will draw a review comment.
 
 ### `ConfirmDialog` Placement
 
@@ -151,8 +151,8 @@ GitHub doesn't expose a public REST API for user-attachments uploads (the `https
      http://localhost:5174/
    ```
 
-   - `--headless=new` — the legacy `--headless` mode mis-measures heights inside PrimeVue `Message`/`Dialog` and clips text. Always use `--headless=new`.
-   - `--virtual-time-budget=5000` — gives Vue/PrimeVue's mount + transition animations time to settle before the snapshot.
+   - `--headless=new` — the legacy `--headless` mode mis-measures heights inside OpenVue `Message`/`Dialog` and clips text. Always use `--headless=new`.
+   - `--virtual-time-budget=5000` — gives Vue/OpenVue's mount + transition animations time to settle before the snapshot.
    - Tune `--window-size` if the dialog gets clipped. POS dialogs usually fit in 1280x1024; cross-check against `preview_screenshot` (the MCP tool's inline image) to confirm the headless render matches the real browser.
 
 4. **Revert preview-only patches** and verify with `vue-tsc` + `pnpm frontend:lint`.
@@ -205,12 +205,12 @@ GitHub doesn't expose a public REST API for user-attachments uploads (the `https
 
 ## Do / Don't
 
-| ✅ Do                                            | ❌ Don't                                           |
-| ------------------------------------------------ | -------------------------------------------------- |
-| Use PrimeVue components from global registration | Import PrimeVue locally in components              |
-| Reload from server after API mutations           | Read stale form/vee-validate state after mutations |
-| Use `getToken` callback for socket.io auth       | Capture auth token statically (stale on reconnect) |
-| Run `pnpm format` to verify CI compliance        | Run `pnpm format:fix` to verify (always exits 0)   |
-| Search locale files before adding i18n keys      | Invent new keys without checking existing ones     |
-| Type-check with `vue-tsc -p tsconfig.app.json`   | Run `tsc --noEmit` on the monorepo root            |
-| Let Prettier's `lf` default apply                | Save files with `crlf` (breaks CI on Linux)        |
+| ✅ Do                                           | ❌ Don't                                           |
+| ----------------------------------------------- | -------------------------------------------------- |
+| Use OpenVue components from global registration | Import OpenVue locally in components               |
+| Reload from server after API mutations          | Read stale form/vee-validate state after mutations |
+| Use `getToken` callback for socket.io auth      | Capture auth token statically (stale on reconnect) |
+| Run `pnpm format` to verify CI compliance       | Run `pnpm format:fix` to verify (always exits 0)   |
+| Search locale files before adding i18n keys     | Invent new keys without checking existing ones     |
+| Type-check with `vue-tsc -p tsconfig.app.json`  | Run `tsc --noEmit` on the monorepo root            |
+| Let Prettier's `lf` default apply               | Save files with `crlf` (breaks CI on Linux)        |

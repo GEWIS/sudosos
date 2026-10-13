@@ -113,7 +113,7 @@ export default class TerminalPaymentController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async createTerminalPayment(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Create new terminal payment by user', req.token.user);
+    this.logger.trace('terminal_payment.create');
     const request = req.body as CreateTerminalPaymentRequest;
 
     try {
@@ -141,7 +141,7 @@ export default class TerminalPaymentController extends BaseController {
 
       res.status(200).json(result);
     } catch (error) {
-      this.logger.error('Could not create Terminal Payment:', error);
+      this.logger.error('terminal_payment.create.failed', error);
       res.status(500).send('Internal server error.');
     }
   }
@@ -158,7 +158,7 @@ export default class TerminalPaymentController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async getSingleTerminalPayment(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get terminal payment with id', req.params.id, 'by user', req.token.user);
+    this.logger.trace('terminal_payment.get', { id: req.params.id });
     const rawId = req.params.id;
 
     try {
@@ -175,7 +175,7 @@ export default class TerminalPaymentController extends BaseController {
       const result = await TerminalPaymentService.asTerminalPaymentResponse(terminalPayment);
       res.status(200).json(result);
     } catch (error) {
-      this.logger.error('Could not get terminalPayment:', error);
+      this.logger.error('terminal_payment.get.failed', error);
       res.status(500).send('Internal server error.');
     }
   }
@@ -197,7 +197,7 @@ export default class TerminalPaymentController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async startTerminalPayment(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Start terminal payment by user', req.token.user);
+    this.logger.trace('terminal_payment.start', { id: req.params.id });
     const rawId = req.params.id;
     const request = req.body as ProcessTerminalPaymentRequest;
 
@@ -244,7 +244,7 @@ export default class TerminalPaymentController extends BaseController {
       void this.emitStateChange(id);
       res.status(204).send();
     } catch (error) {
-      this.logger.error('Could not start terminalPayment:', error);
+      this.logger.error('terminal_payment.start.failed', error);
       res.status(500).send('Internal server error.');
     }
   }
@@ -262,7 +262,7 @@ export default class TerminalPaymentController extends BaseController {
   * @return {string} 500 - Internal server error
    */
   public async cancelTerminalPayment(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Start terminal payment by user', req.token.user);
+    this.logger.trace('terminal_payment.cancel', { id: req.params.id });
     const rawId = req.params.id;
 
     try {
@@ -289,7 +289,7 @@ export default class TerminalPaymentController extends BaseController {
       void this.emitStateChange(id);
       res.status(200).json(response);
     } catch (error) {
-      this.logger.error('Could not cancel terminalPayment:', error);
+      this.logger.error('terminal_payment.cancel.failed', error);
       res.status(500).send('Internal server error.');
     }
   }
@@ -304,7 +304,7 @@ export default class TerminalPaymentController extends BaseController {
   * @return {string} 500 - Internal server error
   */
   public async getStripeTerminals(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all Stripe terminals by user', req.token.user);
+    this.logger.trace('terminal_payment.list_terminals');
 
     try {
       const service = new StripeService();
@@ -313,7 +313,7 @@ export default class TerminalPaymentController extends BaseController {
 
       res.status(200).json(response);
     } catch (error) {
-      this.logger.error('Could not get all Stripe terminals:', error);
+      this.logger.error('terminal_payment.list_terminals.failed', error);
       res.status(500).send('Internal server error.');
     }
   }
@@ -353,7 +353,7 @@ export default class TerminalPaymentController extends BaseController {
       const response = await TerminalPaymentService.asTerminalPaymentResponse(terminalPayment);
       await WebSocketService.emitTerminalPaymentUpdated(response);
     } catch (error) {
-      this.logger.error('Could not emit terminal payment update for id', id, error);
+      this.logger.error('terminal_payment.emit_update.failed', { id }, error);
     }
   }
 

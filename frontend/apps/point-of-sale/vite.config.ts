@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => {
   const PROXY_URL = getProxyUrl();
   const isLocal = env === 'local';
 
-  // TODO: Fix nginx dev proxy setup instead of hack
+  // TODO: Fix dev proxy setup instead of hack
 
   return {
     base: './',

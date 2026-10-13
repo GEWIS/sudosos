@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { useI18n } from 'vue-i18n';
 import type { SellerPayoutResponse } from '@gewis/sudosos-client';
 import { formatPrice } from '@/utils/formatterUtils';

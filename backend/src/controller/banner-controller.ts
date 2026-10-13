@@ -121,7 +121,7 @@ export default class BannerController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnAllBanners(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all banners by', req.token.user);
+    this.logger.trace('banner.list');
 
     let take;
     let skip;
@@ -160,7 +160,7 @@ export default class BannerController extends BaseController {
       const [banners, count] = await BannerService.getBanners(filters, { take, skip });
       res.json(toResponse(banners.map(BannerService.asBannerResponse), count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all banners:', error);
+      this.logger.error('banner.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -178,14 +178,14 @@ export default class BannerController extends BaseController {
    */
   public async createBanner(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as BannerRequest;
-    this.logger.trace('Create banner', body, 'by user', req.token.user);
+    this.logger.trace('banner.create', { request: body });
 
     // handle request
     try {
       const banner = await BannerService.createBanner(body);
       res.json(BannerService.asBannerResponse(banner));
     } catch (error) {
-      this.logger.error('Could not create banner:', error);
+      this.logger.error('banner.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -205,7 +205,7 @@ export default class BannerController extends BaseController {
   public async uploadBannerImage(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const { files } = req;
-    this.logger.trace('Upload banner image for banner', id, 'by user', req.token.user);
+    this.logger.trace('banner.update_image', { id });
 
     if (!req.files || Object.keys(files).length !== 1) {
       res.status(400).send('No file or too many files were uploaded');
@@ -246,7 +246,7 @@ export default class BannerController extends BaseController {
       res.status(404).json('Banner not found');
       return;
     } catch (error) {
-      this.logger.error('Could not upload image:', error);
+      this.logger.error('banner.update_image.failed', { id }, error);
       res.status(500).json('Internal server error');
     }
   }
@@ -264,7 +264,7 @@ export default class BannerController extends BaseController {
    */
   public async returnSingleBanner(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get single banner', id, 'by user', req.token.user);
+    this.logger.trace('banner.get', { id });
 
     // handle request
     try {
@@ -276,7 +276,7 @@ export default class BannerController extends BaseController {
         res.status(404).json('Banner not found.');
       }
     } catch (error) {
-      this.logger.error('Could not return banner:', error);
+      this.logger.error('banner.get.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -297,7 +297,7 @@ export default class BannerController extends BaseController {
   public async updateBanner(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as BannerRequest;
     const { id } = req.params;
-    this.logger.trace('Update banner', id, 'by user', req.token.user);
+    this.logger.trace('banner.update', { id });
 
     // handle request
     try {
@@ -308,7 +308,7 @@ export default class BannerController extends BaseController {
         res.status(404).json('Banner not found.');
       }
     } catch (error) {
-      this.logger.error('Could not update banner:', error);
+      this.logger.error('banner.update.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -325,7 +325,7 @@ export default class BannerController extends BaseController {
    */
   public async removeBanner(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Remove ban ner', id, 'by user', req.token.user);
+    this.logger.trace('banner.delete', { id });
 
     // handle request
     try {
@@ -337,7 +337,7 @@ export default class BannerController extends BaseController {
         res.status(404).json('Banner not found.');
       }
     } catch (error) {
-      this.logger.error('Could not remove banner:', error);
+      this.logger.error('banner.delete.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -355,7 +355,7 @@ export default class BannerController extends BaseController {
    */
   public async returnActiveBanners(req: RequestWithToken, res: Response): Promise<void> {
     const { body } = req;
-    this.logger.trace('Get active banners', body, 'by user', req.token.user);
+    this.logger.trace('banner.list_active', { filters: body });
 
     const { take, skip } = parseRequestPagination(req);
 
@@ -364,7 +364,7 @@ export default class BannerController extends BaseController {
       const [banners, count] = await BannerService.getBanners({ active: true }, { take, skip });
       res.json(toResponse(banners.map(BannerService.asBannerResponse), count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return active banners:', error);
+      this.logger.error('banner.list_active.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

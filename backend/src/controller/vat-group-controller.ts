@@ -113,7 +113,7 @@ export default class VatGroupController extends BaseController {
    * @return {PaginatedVatGroupResponse} 200 - A list of all VAT groups
    */
   public async getAllVatGroups(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all VAT groups by user', req.token.user);
+    this.logger.trace('vat_group.list');
 
     // Parse the filters given in the query parameters. If there are any issues,
     // the parse method will throw an exception. We will then return a 400 error.
@@ -135,7 +135,7 @@ export default class VatGroupController extends BaseController {
       res.status(200).json(toResponse(vatGroups.map((v) => VatGroupService.toResponse(v)), count, { take, skip }));
     } catch (e) {
       res.status(500).send('Internal server error.');
-      this.logger.error(e);
+      this.logger.error('vat_group.list.failed', e);
     }
   }
 
@@ -152,7 +152,7 @@ export default class VatGroupController extends BaseController {
    */
   public async getSingleVatGroup(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get single VAT group', id, ' by user', req.token.user);
+    this.logger.trace('vat_group.get', { id });
 
     try {
       const [vatGroups] = await VatGroupService.getVatGroups({
@@ -164,7 +164,7 @@ export default class VatGroupController extends BaseController {
         res.status(404).json('VAT group not found.');
       }
     } catch (error) {
-      this.logger.error('Could not return VAT group:', error);
+      this.logger.error('vat_group.get.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -182,7 +182,7 @@ export default class VatGroupController extends BaseController {
    */
   public async createVatGroup(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as VatGroupRequest;
-    this.logger.trace('Create VAT group', body, 'by user', req.token.user);
+    this.logger.trace('vat_group.create', { request: body });
 
     const validBody = verifyVatGroup(body);
     if (!validBody) {
@@ -200,7 +200,7 @@ export default class VatGroupController extends BaseController {
       res.json(VatGroupService.toResponse(vatGroup));
     } catch (e) {
       res.status(500).send('Internal server error.');
-      this.logger.error(e);
+      this.logger.error('vat_group.create.failed', e);
     }
   }
 
@@ -220,7 +220,7 @@ export default class VatGroupController extends BaseController {
   public async updateVatGroup(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as UpdateVatGroupRequest;
     const id = Number.parseInt(req.params.id, 10);
-    this.logger.trace('Update VAT group', id, 'by user', req.token.user);
+    this.logger.trace('vat_group.update', { id });
 
     const validBody = verifyUpdateVatGroup(body);
     if (!validBody) {
@@ -246,7 +246,7 @@ export default class VatGroupController extends BaseController {
       const vatGroup = await VatGroupService.updateVatGroup(id, body);
       res.status(200).json(VatGroupService.toResponse(vatGroup));
     } catch (error) {
-      this.logger.error('Could not update VAT group:', error);
+      this.logger.error('vat_group.update.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -280,7 +280,7 @@ export default class VatGroupController extends BaseController {
       res.status(200).json(vatGroups);
     } catch (e) {
       res.status(500).send('Internal server error.');
-      this.logger.error(e);
+      this.logger.error('vat_group.get_declaration.failed', e);
     }
   }
 }

@@ -47,6 +47,9 @@ import { finishTestDB } from '../../helpers/test-helpers';
 import dinero from 'dinero.js';
 import { ensureProductionRoles, signTokenFor } from '../../helpers/user-factory';
 import { PdfError } from '../../../src/errors';
+import StripePaymentIntent from '../../../src/entity/stripe/stripe-payment-intent';
+import TerminalPayment from '../../../src/entity/transactions/terminal/terminal-payment';
+import TransactionPdfService from '../../../src/service/pdf/transaction-pdf-service';
 
 const { expect, request } = chai;
 
@@ -164,6 +167,31 @@ describe('TransactionController', (): void => {
   afterAll(async () => {
     await finishTestDB(ctx.connection);
   });
+
+  /**
+   * Creates a new transaction and marks it as paid by a card terminal.
+   */
+  async function createTerminalPaidTransaction(): Promise<number> {
+    const createRes = await request(ctx.app)
+      .post('/transactions')
+      .set('Authorization', `Bearer ${ctx.adminToken}`)
+      .send(ctx.validTransReq);
+    expect(createRes.status).to.equal(200);
+    const transaction = await Transaction.findOne({ where: { id: createRes.body.id } });
+
+    const stripePaymentIntent = await StripePaymentIntent.save({
+      stripeId: `FakeTerminalPaymentIntent_transaction_${transaction.id}`,
+      amount: dinero(ctx.validTransReq.totalPriceInclVat as any),
+      paymentIntentStatuses: [],
+    } as StripePaymentIntent);
+    await TerminalPayment.save({
+      stripePaymentIntent,
+      finalTransaction: transaction,
+      createdBy: ctx.users[6],
+    } as TerminalPayment);
+
+    return transaction.id;
+  }
 
   describe('GET /transactions', () => {
     it('should return correct model', async () => {
@@ -670,6 +698,26 @@ describe('TransactionController', (): void => {
         true);
       expect(valid.valid).to.be.true;
       expect(res.body.id).to.equal(trans.id);
+      expect(res.body.paidByTerminal).to.be.false;
+    });
+    it('should return paidByTerminal true for a transaction paid by card terminal', async () => {
+      const id = await createTerminalPaidTransaction();
+      const res = await request(ctx.app)
+        .get(`/transactions/${id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(200);
+      expect(res.body.paidByTerminal).to.be.true;
+    });
+    it('should return paidByTerminal in the transaction list', async () => {
+      const id = await createTerminalPaidTransaction();
+      const res = await request(ctx.app)
+        .get('/transactions')
+        .query({ fromId: ctx.validTransReq.from, take: maxPagination() })
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(200);
+      const records = res.body.records as BaseTransactionResponse[];
+      expect(records.find((t) => t.id === id).paidByTerminal).to.be.true;
+      expect(records.filter((t) => t.id !== id).some((t) => t.paidByTerminal === false)).to.be.true;
     });
     it('should return HTTP 200 for own transaction', async () => {
       const trans = await Transaction.findOne({ relations: {
@@ -978,6 +1026,24 @@ describe('TransactionController', (): void => {
         .set('Authorization', `Bearer ${ctx.adminToken}`);
       expect(res.body).to.eql(toUpdate);
     });
+    it('should return an HTTP 409 if the transaction was paid by card terminal', async () => {
+      const id = await createTerminalPaidTransaction();
+      const before = await request(ctx.app)
+        .get(`/transactions/${id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+
+      const res = await request(ctx.app)
+        .patch(`/transactions/${id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ ...ctx.validTransReq, from: ctx.users[0].id });
+      expect(res.status).to.equal(409);
+      expect(res.body).to.equal('Transaction was paid by card terminal and cannot be modified.');
+
+      const after = await request(ctx.app)
+        .get(`/transactions/${id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(after.body).to.eql(before.body);
+    });
     it('should return an HTTP 404 if the transaction does not exist', async () => {
       // update a nonexistent transaction in the database
       const res = await request(ctx.app)
@@ -1024,6 +1090,15 @@ describe('TransactionController', (): void => {
   });
 
   describe('DELETE /transactions', () => {
+    it('should return an HTTP 409 if the transaction was paid by card terminal', async () => {
+      const id = await createTerminalPaidTransaction();
+      const res = await request(ctx.app)
+        .delete(`/transactions/${id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(409);
+      expect(res.body).to.equal('Transaction was paid by card terminal and cannot be modified.');
+      expect(await Transaction.findOne({ where: { id } })).to.not.be.null;
+    });
     it('should return an HTTP 204 if the transaction exists and user is admin', async () => {
       let res = await request(ctx.app)
         .get('/transactions/1')
@@ -1185,7 +1260,7 @@ describe('TransactionController', (): void => {
     });
 
     beforeEach(() => {
-      createPdfStub = sinon.stub(Transaction.prototype, 'createPdf').resolves(Buffer.from('PDF content'));
+      createPdfStub = sinon.stub(TransactionPdfService.prototype, 'pdf').resolves(Buffer.from('PDF content'));
     });
 
     afterEach(() => {
@@ -1218,7 +1293,7 @@ describe('TransactionController', (): void => {
 
     it('should return HTTP 400 if PDF generation fails with PdfError', async () => {
       createPdfStub.restore();
-      createPdfStub = sinon.stub(Transaction.prototype, 'createPdf').rejects(new PdfError('Transaction missing required relations'));
+      createPdfStub = sinon.stub(TransactionPdfService.prototype, 'pdf').rejects(new PdfError('Transaction missing required relations'));
 
       expect(testTransaction).to.not.be.null;
 
@@ -1232,7 +1307,7 @@ describe('TransactionController', (): void => {
 
     it('should return HTTP 500 if PDF generation fails with other error', async () => {
       createPdfStub.restore();
-      createPdfStub = sinon.stub(Transaction.prototype, 'createPdf').rejects(new Error('PDF generation failed'));
+      createPdfStub = sinon.stub(TransactionPdfService.prototype, 'pdf').rejects(new Error('PDF generation failed'));
 
       expect(testTransaction).to.not.be.null;
 

@@ -121,7 +121,7 @@ export default class ContainerController extends BaseController {
    */
   public async getAllContainers(req: RequestWithToken, res: Response): Promise<void> {
     const { body } = req;
-    this.logger.trace('Get all containers', body, 'by user', req.token.user);
+    this.logger.trace('container.list', { filters: body });
 
     const { take, skip } = parseRequestPagination(req);
 
@@ -133,7 +133,7 @@ export default class ContainerController extends BaseController {
       const records = revisions.map((r) => ContainerService.revisionToResponse(r));
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all containers:', error);
+      this.logger.error('container.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -152,7 +152,7 @@ export default class ContainerController extends BaseController {
    */
   public async getSingleContainer(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get single container', id, 'by user', req.token.user);
+    this.logger.trace('container.get', { id });
 
     const containerId = parseInt(id, 10);
 
@@ -166,7 +166,7 @@ export default class ContainerController extends BaseController {
       }
       res.json(ContainerService.revisionToResponse(revisions[0]));
     } catch (error) {
-      this.logger.error('Could not return single container:', error);
+      this.logger.error('container.get.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -186,7 +186,7 @@ export default class ContainerController extends BaseController {
     const { id } = req.params;
     const containerId = parseInt(id, 10);
 
-    this.logger.trace('Get all products in container', containerId, 'by user', req.token.user);
+    this.logger.trace('container.get_products', { id: containerId });
 
     try {
       // Check if we should return a 404.
@@ -201,7 +201,7 @@ export default class ContainerController extends BaseController {
       const products = response && 'products' in response ? response.products : [];
       res.json(products);
     } catch (error) {
-      this.logger.error('Could not return all products in container:', error);
+      this.logger.error('container.get_products.failed', { id: containerId }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -220,7 +220,7 @@ export default class ContainerController extends BaseController {
    */
   public async createContainer(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as CreateContainerRequest;
-    this.logger.trace('Create container', body, 'by user', req.token.user);
+    this.logger.trace('container.create', { request: body });
 
     // handle request
     try {
@@ -232,7 +232,7 @@ export default class ContainerController extends BaseController {
       const revision = await ContainerService.createContainer(request);
       res.json(ContainerService.revisionToResponse(revision));
     } catch (error) {
-      this.logger.error('Could not create container:', error);
+      this.logger.error('container.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -250,7 +250,7 @@ export default class ContainerController extends BaseController {
    */
   public async getPublicContainers(req: RequestWithToken, res: Response): Promise<void> {
     const { body } = req;
-    this.logger.trace('Get all public containers', body, 'by user', req.token.user);
+    this.logger.trace('container.list_public', { filters: body });
 
     const { take, skip } = parseRequestPagination(req);
 
@@ -262,7 +262,7 @@ export default class ContainerController extends BaseController {
       const records = revisions.map((r) => ContainerService.revisionToResponse(r));
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all public containers:', error);
+      this.logger.error('container.list_public.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -285,7 +285,7 @@ export default class ContainerController extends BaseController {
     const body = req.body as UpdateContainerRequest;
     const { id } = req.params;
     const containerId = Number.parseInt(id, 10);
-    this.logger.trace('Update container', id, 'with', body, 'by user', req.token.user);
+    this.logger.trace('container.update', { id, request: body });
 
     // handle request
     try {
@@ -303,7 +303,7 @@ export default class ContainerController extends BaseController {
       const revision = await ContainerService.updateContainer(request);
       res.json(ContainerService.revisionToResponse(revision));
     } catch (error) {
-      this.logger.error('Could not update container:', error);
+      this.logger.error('container.update.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -321,7 +321,7 @@ export default class ContainerController extends BaseController {
    */
   public async deleteContainer(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Delete container', id, 'by user', req.token.user);
+    this.logger.trace('container.delete', { id });
 
     try {
       const containerId = parseInt(id, 10);
@@ -337,7 +337,7 @@ export default class ContainerController extends BaseController {
       res.status(204).send();
       return;
     } catch (error) {
-      this.logger.error('Could not delete container', error);
+      this.logger.error('container.delete.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }

@@ -127,7 +127,7 @@ if (!roleManager.can(req.token.roles, 'get', 'relation', 'User', ['email'])) {
 pnpm test
 
 # Single file — vitest, not mocha (env vars are critical — without them, tests hit stale local.sqlite)
-TYPEORM_CONNECTION=sqlite TYPEORM_DATABASE=':memory:' TYPEORM_SYNCHRONIZE=true \
+TYPEORM_CONNECTION=better-sqlite3 TYPEORM_DATABASE=':memory:' TYPEORM_SYNCHRONIZE=true \
   pnpm exec vitest run 'test/unit/controller/foo.ts'
 ```
 

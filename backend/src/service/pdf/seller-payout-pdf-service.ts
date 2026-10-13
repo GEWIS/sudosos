@@ -28,51 +28,29 @@ import SellerPayout from '../../entity/transactions/payout/seller-payout';
 import SellerPayoutPdf from '../../entity/file/seller-payout-pdf';
 import { createSellerPayoutPdf, ISellerPayoutPdf } from '../../html/seller-payout.html';
 import { SalesReportService } from '../report-service';
-import { HtmlPdfService } from './pdf-service';
+import { StoredPdfService } from './pdf-service';
+import User from '../../entity/user/user';
+import { SELLER_PAYOUT_PDF_LOCATION } from '../../files/storage';
+import { reportToDocumentLines } from '../../helpers/pdf';
 
-export default class SellerPayoutPdfService extends HtmlPdfService<SellerPayoutPdf, SellerPayout, ISellerPayoutPdf> {
-  pdfConstructor = SellerPayoutPdf;
+export default class SellerPayoutPdfService extends StoredPdfService<SellerPayout, SellerPayoutPdf, ISellerPayoutPdf> {
+  readonly location = SELLER_PAYOUT_PDF_LOCATION;
 
-  htmlGenerator = createSellerPayoutPdf;
+  readonly pdfConstructor = SellerPayoutPdf;
+
+  render = createSellerPayoutPdf;
+
+  getOwner(entity: SellerPayout): User {
+    return entity.requestedBy;
+  }
 
   async getParameters(entity: SellerPayout): Promise<ISellerPayoutPdf> {
     const { startDate, endDate, reference, requestedBy } = entity;
-    const report = await new SalesReportService().getReport({
+    const report = await new SalesReportService(this.manager).getReport({
       fromDate: startDate,
       tillDate: endDate,
       forId: requestedBy.id,
     });
-
-    const lineItems = (report.data.products ?? [])
-      .map((p) => {
-        const excl = p.totalExclVat.getAmount();
-        const incl = p.totalInclVat.getAmount();
-        return {
-          description: p.product.name,
-          qty: p.count,
-          rate: p.product.vat.percentage,
-          excl: excl / 100,
-          vat: (incl - excl) / 100,
-          incl: incl / 100,
-        };
-      })
-      .sort((a, b) => a.description.localeCompare(b.description));
-
-    const vatBreakdown = (report.data.vat ?? [])
-      .map((v) => {
-        const excl = v.totalExclVat.getAmount();
-        const incl = v.totalInclVat.getAmount();
-        return {
-          rate: v.vat.percentage,
-          excl: excl / 100,
-          vat: (incl - excl) / 100,
-          incl: incl / 100,
-        };
-      })
-      .sort((a, b) => a.rate - b.rate);
-
-    const exclCents = report.totalExclVat.getAmount();
-    const inclCents = report.totalInclVat.getAmount();
 
     return {
       reference: `SDS-SP-${String(entity.id).padStart(4, '0')}`,
@@ -82,11 +60,7 @@ export default class SellerPayoutPdfService extends HtmlPdfService<SellerPayoutP
       customerNumber: String(requestedBy.id),
       startDate: startDate.toLocaleDateString('nl-NL'),
       endDate: endDate.toLocaleDateString('nl-NL'),
-      vatBreakdown,
-      lineItems,
-      totalIncl: inclCents / 100,
-      subtotalExcl: exclCents / 100,
-      totalVat: (inclCents - exclCents) / 100,
+      ...reportToDocumentLines(report),
     };
   }
 }

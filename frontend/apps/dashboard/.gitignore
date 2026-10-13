@@ -12,6 +12,7 @@ node_modules
 dist
 dist-ssr
 coverage
+storybook-static
 *.local
 
 /cypress/videos/
@@ -28,3 +29,5 @@ coverage
 *.sw?
 
 .env
+*storybook.log
+storybook-static

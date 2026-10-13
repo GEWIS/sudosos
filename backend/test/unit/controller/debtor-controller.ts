@@ -48,7 +48,7 @@ import Mailer from '../../../src/mailer';
 import sinon, { SinonSandbox, SinonSpy } from 'sinon';
 import { truncateAllTables } from '../../helpers/database-helpers';
 import { finishTestDB } from '../../helpers/test-helpers';
-import FineReportPdfService from '../../../src/service/pdf/fine-report-pdf-service';
+import { PdfCompiler } from '../../../src/service/pdf/pdf-service';
 import { PdfError } from '../../../src/errors';
 import { FineSeeder, TransactionSeeder, TransferSeeder, UserSeeder } from '../../seed';
 import { ensureProductionRoles, signTokenFor } from '../../helpers/user-factory';
@@ -561,6 +561,39 @@ describe('DebtorController', () => {
     });
   });
 
+  describe('POST /fines/notify/debt', () => {
+    it('should remind users with given ID', async () => {
+      const res = await request(ctx.app)
+        .post('/fines/notify/debt')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ userIds: ctx.users.map((u) => u.id) });
+      expect(res.status).to.equal(204);
+      expect(res.body).to.be.empty;
+      expect(sendNotifyFake.callCount).to.be.at.least(1);
+    });
+    it('should return 403 if user is not admin', async () => {
+      const res = await request(ctx.app)
+        .post('/fines/notify/debt')
+        .set('Authorization', `Bearer ${ctx.userToken}`)
+        .send({ userIds: ctx.users.map((u) => u.id) });
+      expect(res.status).to.equal(403);
+    });
+    it('should return 400 if userIds is not a list', async () => {
+      const res = await request(ctx.app)
+        .post('/fines/notify/debt')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ userIds: '39Vooo' });
+      expect(res.status).to.equal(400);
+    });
+    it('should return 400 if list of userIds is invalid', async () => {
+      const res = await request(ctx.app)
+        .post('/fines/notify/debt')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ userIds: ['WieDitLeestTrektBak'] });
+      expect(res.status).to.equal(400);
+    });
+  });
+
   describe('GET /fines/report', () => {
     it('should return report', async () => {
       const fromDate = new Date('2021-01-01');
@@ -634,16 +667,16 @@ describe('DebtorController', () => {
   });
 
   describe('GET /fines/report/pdf', () => {
-    let compileHtmlStub: sinon.SinonStub;
+    let compileStub: sinon.SinonStub;
 
     afterEach(() => {
-      if (compileHtmlStub) compileHtmlStub.restore();
+      if (compileStub) compileStub.restore();
       sinon.restore();
     });
 
 
     it('should return 200 if admin', async () => {
-      compileHtmlStub = sinon.stub(FineReportPdfService.prototype, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
+      compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
       const fromDate = new Date();
       const toDate = new Date(fromDate.getTime() + 1000 * 60 * 60 * 24);
       const res = await request(ctx.app)
@@ -651,9 +684,35 @@ describe('DebtorController', () => {
         .set('Authorization', `Bearer ${ctx.adminToken}`)
         .query({ fromDate, toDate, fileType: 'PDF' });
       expect(res.status).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/pdf');
+      expect(res.headers['content-disposition']).to.match(/\.pdf"$/);
+    });
+    it('should return raw HTML without compiling when fileType is HTML', async () => {
+      compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
+      const fromDate = new Date();
+      const toDate = new Date(fromDate.getTime() + 1000 * 60 * 60 * 24);
+      const res = await request(ctx.app)
+        .get('/fines/report/pdf')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .query({ fromDate, toDate, fileType: 'HTML' });
+      expect(res.status).to.equal(200);
+      expect(res.headers['content-type']).to.match(/^text\/html/);
+      expect(res.headers['content-disposition']).to.match(/\.html"$/);
+      expect(compileStub).to.not.have.been.called;
+    });
+    it('should default to PDF if fileType is omitted', async () => {
+      compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
+      const fromDate = new Date();
+      const toDate = new Date(fromDate.getTime() + 1000 * 60 * 60 * 24);
+      const res = await request(ctx.app)
+        .get('/fines/report/pdf')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .query({ fromDate, toDate });
+      expect(res.status).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/pdf');
     });
     it('should return 502 if pdf generation fails', async () => {
-      compileHtmlStub = sinon.stub(FineReportPdfService.prototype, 'compileHtml' as any).rejects(new PdfError('Failed to generate PDF'));
+      compileStub = sinon.stub(PdfCompiler, 'compile').rejects(new PdfError('Failed to generate PDF'));
       const fromDate = new Date();
       const toDate = new Date(fromDate.getTime() + 1000 * 60 * 60 * 24);
       const res = await request(ctx.app)

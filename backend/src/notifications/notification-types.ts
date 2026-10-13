@@ -53,6 +53,7 @@ export enum NotificationTypes {
   MembershipExpiryNotification = 'MembershipExpiryNotification',
   PasswordReset = 'PasswordReset',
   UserDebtNotification = 'UserDebtNotification',
+  UserDebtReminder = 'UserDebtReminder',
   UserGotFined = 'UserGotFined',
   UserGotInactiveAdministrativeCost = 'UserGotInactiveAdministrativeCost',
   UserWillGetFined = 'UserWillGetFined',

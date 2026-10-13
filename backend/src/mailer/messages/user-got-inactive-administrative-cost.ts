@@ -34,30 +34,53 @@ const formatBalance = (b: Dinero) => {
   return `<span style="font-weight: bold;">${b.toFormat()}</span>`;
 };
 
+// If the deduction emptied the balance, the opening refers to the money in the past tense
+// and the closing line about avoiding further costs is left out.
+const hasMoneyLeft = (context: UserGotInactiveAdministrativeCostOptions) => context.currentUserBalance.getAmount() > 0;
+
 const userGotInactiveAdministrativeCostDutch = new MailContentBuilder<UserGotInactiveAdministrativeCostOptions>({
   getHTML: (context) => `
-  <p> Je hebt al 3 jaar geen overdrachten binnen SudoSOS gedaan. Dit betekent dat je administratie kosten gaat betalen.<br>
-  Er wordt ${formatBalance(context.amount)} van je account worden afgehaald ter betaling voor administratie kosten.
-  
+  <p>${hasMoneyLeft(context) ? 'Je hebt nog geld op je SudoSOS-account staan.' : 'Je had nog geld op je SudoSOS-account staan.'}</p>
+
+  <p>Je hebt de afgelopen 3 jaar geen transacties of opwaarderingen gedaan binnen SudoSOS. Daarom zijn er administratiekosten in rekening gebracht.</p>
+
+  <p>Er is ${formatBalance(context.amount)} aan administratiekosten van je SudoSOS-saldo afgeschreven. Je saldo is nu ${formatBalance(context.currentUserBalance)}.</p>
+
+  ${hasMoneyLeft(context) ? '<p>Wil je verdere administratiekosten voorkomen? Doe dan een transactie of waardeer je saldo op in SudoSOS.</p>' : ''}
   `,
-  getSubject: () => 'Administratie kosten SudoSOS',
-  getTitle: 'Administratie kosten',
+  getSubject: () => 'Administratiekosten SudoSOS afgeschreven',
+  getTitle: 'Administratiekosten afgeschreven',
   getText: (context) => `
-  Je hebt al 3 jaar geen overdrachten binnen SudoSOS gedaan. Dit betekent dat je administratie kosten gaat betalen.
-  Er wordt ${formatBalance(context.amount)} van je account worden afgehaald ter betaling voor administratie kosten.
+  ${hasMoneyLeft(context) ? 'Je hebt nog geld op je SudoSOS-account staan.' : 'Je had nog geld op je SudoSOS-account staan.'}
+
+  Je hebt de afgelopen 3 jaar geen transacties of opwaarderingen gedaan binnen SudoSOS. Daarom zijn er administratiekosten in rekening gebracht.
+
+  Er is ${context.amount.toFormat()} aan administratiekosten van je SudoSOS-saldo afgeschreven. Je saldo is nu ${context.currentUserBalance.toFormat()}.
+
+  ${hasMoneyLeft(context) ? 'Wil je verdere administratiekosten voorkomen? Doe dan een transactie of waardeer je saldo op in SudoSOS.' : ''}
   `,
 });
 
 const userGotInactiveAdministrativeCostEnglish = new MailContentBuilder<UserGotInactiveAdministrativeCostOptions>({
   getHTML: (context) => `
-  <p> You haven't made any transfers on SudoSOS for the last 3 years. This means that you will pay an administration fee.<br>
-  This means that ${formatBalance(context.amount)} will be deducted from your account. 
+  <p>${hasMoneyLeft(context) ? 'You still have money left in your SudoSOS account.' : 'You still had money in your SudoSOS account.'}</p>
+
+  <p>You have not made any transactions or top-ups in SudoSOS in the past 3 years. As a result, administrative costs have been charged.</p>
+
+  <p>${formatBalance(context.amount)} in administrative costs has been deducted from your SudoSOS balance. Your balance is now ${formatBalance(context.currentUserBalance)}.</p>
+
+  ${hasMoneyLeft(context) ? '<p>Want to avoid further administrative costs? Make a transaction or top up your balance in SudoSOS.</p>' : ''}
   `,
-  getSubject: () => 'Administration costs SudoSOS',
-  getTitle: 'Administration costs',
+  getSubject: () => 'Administrative costs deducted SudoSOS',
+  getTitle: 'Administrative costs deducted',
   getText: (context) => `
-  You haven't made any transfers on SudoSOS for the last 3 years. This means that you will pay an administration fee.
-  This means that ${formatBalance(context.amount)} will be deducted from your account.
+  ${hasMoneyLeft(context) ? 'You still have money left in your SudoSOS account.' : 'You still had money in your SudoSOS account.'}
+
+  You have not made any transactions or top-ups in SudoSOS in the past 3 years. As a result, administrative costs have been charged.
+
+  ${context.amount.toFormat()} in administrative costs has been deducted from your SudoSOS balance. Your balance is now ${context.currentUserBalance.toFormat()}.
+
+  ${hasMoneyLeft(context) ? 'Want to avoid further administrative costs? Make a transaction or top up your balance in SudoSOS.' : ''}
   `,
 });
 

@@ -48,6 +48,7 @@ import PayoutRequest from '../../../src/entity/transactions/payout/payout-reques
 import Fine from '../../../src/entity/fine/fine';
 import FineHandoutEvent from '../../../src/entity/fine/fineHandoutEvent';
 import UserFineGroup from '../../../src/entity/fine/userFineGroup';
+import { PdfCompiler } from '../../../src/service/pdf/pdf-service';
 import TransferPdfService from '../../../src/service/pdf/transfer-pdf-service';
 
 const { expect, request } = chai;
@@ -569,11 +570,11 @@ describe('TransferController', async (): Promise<void> => {
 
   describe('GET /transfers/{id}/pdf', () => {
     let createPdfStub: sinon.SinonStub;
-    let compileHtmlStub: sinon.SinonStub;
+    let compileStub: sinon.SinonStub;
 
     beforeEach(() => {
-      // Stub the createPdf method on Transfer instances for tests that don't need real validation
-      createPdfStub = sinon.stub(Transfer.prototype, 'createPdf').resolves(Buffer.from('PDF content'));
+      // Stub TransferPdfService.pdf for tests that don't need real validation
+      createPdfStub = sinon.stub(TransferPdfService.prototype, 'pdf').resolves(Buffer.from('PDF content'));
     });
 
     afterEach(() => {
@@ -611,10 +612,10 @@ describe('TransferController', async (): Promise<void> => {
     });
 
     it('should return HTTP 400 if transfer has invoice', async () => {
-      // Restore the stub so the real createPdf method runs and validation can occur
+      // Restore the stub so the real pdf method runs and validation can occur
       createPdfStub.restore();
-      // Stub the compileHtml method instead to avoid actual PDF generation
-      compileHtmlStub = sinon.stub(TransferPdfService.prototype, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
+      // Stub PdfCompiler.compile to avoid actual PDF generation
+      compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
       
       const transfer = await Transfer.save({
         fromId: ctx.users[0].id,
@@ -646,15 +647,15 @@ describe('TransferController', async (): Promise<void> => {
       expect(res.status).to.equal(400);
       expect(res.body).to.equal('Transfer is not a base transfer and cannot be used to generate a PDF directly.');
       
-      // Restore the compileHtml stub
-      if (compileHtmlStub) compileHtmlStub.restore();
-      // Re-stub createPdf for other tests
-      createPdfStub = sinon.stub(Transfer.prototype, 'createPdf').resolves(Buffer.from('PDF content'));
+      // Restore the compile stub
+      if (compileStub) compileStub.restore();
+      // Re-stub pdf for other tests
+      createPdfStub = sinon.stub(TransferPdfService.prototype, 'pdf').resolves(Buffer.from('PDF content'));
     });
 
     it('should return HTTP 400 if transfer has writeOff', async () => {
       createPdfStub.restore();
-      compileHtmlStub = sinon.stub(TransferPdfService.prototype, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
+      compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
       const transfer = await Transfer.save({
         fromId: null,
         toId: ctx.users[0].id,
@@ -680,13 +681,13 @@ describe('TransferController', async (): Promise<void> => {
       expect(res.status).to.equal(400);
       expect(res.body).to.equal('Transfer is not a base transfer and cannot be used to generate a PDF directly.');
       
-      if (compileHtmlStub) compileHtmlStub.restore();
-      createPdfStub = sinon.stub(Transfer.prototype, 'createPdf').resolves(Buffer.from('PDF content'));
+      if (compileStub) compileStub.restore();
+      createPdfStub = sinon.stub(TransferPdfService.prototype, 'pdf').resolves(Buffer.from('PDF content'));
     });
 
     it('should return HTTP 400 if transfer has deposit', async () => {
       createPdfStub.restore();
-      compileHtmlStub = sinon.stub(TransferPdfService.prototype, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
+      compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
       const transfer = await Transfer.save({
         fromId: null,
         toId: ctx.users[0].id,
@@ -719,13 +720,13 @@ describe('TransferController', async (): Promise<void> => {
       expect(res.status).to.equal(400);
       expect(res.body).to.equal('Transfer is not a base transfer and cannot be used to generate a PDF directly.');
       
-      if (compileHtmlStub) compileHtmlStub.restore();
-      createPdfStub = sinon.stub(Transfer.prototype, 'createPdf').resolves(Buffer.from('PDF content'));
+      if (compileStub) compileStub.restore();
+      createPdfStub = sinon.stub(TransferPdfService.prototype, 'pdf').resolves(Buffer.from('PDF content'));
     });
 
     it('should return HTTP 400 if transfer has payoutRequest', async () => {
       createPdfStub.restore();
-      compileHtmlStub = sinon.stub(TransferPdfService.prototype, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
+      compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
       const transfer = await Transfer.save({
         fromId: ctx.users[0].id,
         toId: null,
@@ -753,13 +754,13 @@ describe('TransferController', async (): Promise<void> => {
       expect(res.status).to.equal(400);
       expect(res.body).to.equal('Transfer is not a base transfer and cannot be used to generate a PDF directly.');
       
-      if (compileHtmlStub) compileHtmlStub.restore();
-      createPdfStub = sinon.stub(Transfer.prototype, 'createPdf').resolves(Buffer.from('PDF content'));
+      if (compileStub) compileStub.restore();
+      createPdfStub = sinon.stub(TransferPdfService.prototype, 'pdf').resolves(Buffer.from('PDF content'));
     });
 
     it('should return HTTP 400 if transfer has fine', async () => {
       createPdfStub.restore();
-      compileHtmlStub = sinon.stub(TransferPdfService.prototype, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
+      compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
       const transfer = await Transfer.save({
         fromId: ctx.users[0].id,
         toId: null,
@@ -798,8 +799,8 @@ describe('TransferController', async (): Promise<void> => {
       expect(res.status).to.equal(400);
       expect(res.body).to.equal('Transfer is not a base transfer and cannot be used to generate a PDF directly.');
       
-      if (compileHtmlStub) compileHtmlStub.restore();
-      createPdfStub = sinon.stub(Transfer.prototype, 'createPdf').resolves(Buffer.from('PDF content'));
+      if (compileStub) compileStub.restore();
+      createPdfStub = sinon.stub(TransferPdfService.prototype, 'pdf').resolves(Buffer.from('PDF content'));
     });
 
     it('should return HTTP 403 if not authorized', async () => {
@@ -822,7 +823,7 @@ describe('TransferController', async (): Promise<void> => {
 
     it('should return HTTP 500 if PDF generation fails', async () => {
       createPdfStub.restore();
-      createPdfStub = sinon.stub(Transfer.prototype, 'createPdf').rejects(new Error('PDF generation failed'));
+      createPdfStub = sinon.stub(TransferPdfService.prototype, 'pdf').rejects(new Error('PDF generation failed'));
 
       const transfer = await Transfer.save({
         fromId: ctx.users[0].id,

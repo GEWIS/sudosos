@@ -241,11 +241,11 @@ import type {
   TotalBalanceResponse,
   UserTypeTotalBalanceResponse,
 } from '@gewis/sudosos-client';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Skeleton from 'primevue/skeleton';
-import Badge from 'primevue/badge';
-import Divider from 'primevue/divider';
+import DataTable from 'openvue/datatable';
+import Column from 'openvue/column';
+import Skeleton from 'openvue/skeleton';
+import Badge from 'openvue/badge';
+import Divider from 'openvue/divider';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import PageContainer from '@/layout/PageContainer.vue';
 import CardComponent from '@/components/CardComponent.vue';

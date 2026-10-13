@@ -1,4 +1,4 @@
-import { usePreset } from '@primeuix/themes';
+import { usePreset } from '@openvue/themes';
 import {
   AthenaPinkBlue,
   BetaBlue,

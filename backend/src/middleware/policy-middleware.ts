@@ -67,7 +67,7 @@ export default class PolicyMiddleware {
       res.status(403).end('You have insufficient permissions for the requested action.');
       return;
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error('policy.evaluate.failed', e);
       res.status(500).json('Internal server error.');
     }
   }

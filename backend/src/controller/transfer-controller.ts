@@ -35,6 +35,7 @@ import Transfer from '../entity/transactions/transfer';
 import { parseRequestPagination, toResponse } from '../helpers/pagination';
 import userTokenInOrgan from '../helpers/token-helper';
 import { PdfError } from '../errors';
+import TransferPdfService from '../service/pdf/transfer-pdf-service';
 
 /**
  * Controller for the `transfers` module. Exposes CRUD over transfers, aggregate and per-category
@@ -140,7 +141,7 @@ export default class TransferController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnTransferAggregate(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get transfer aggregate by user', req.token.user);
+    this.logger.trace('transfer.get_aggregate');
 
     let filters;
     try {
@@ -154,7 +155,7 @@ export default class TransferController extends BaseController {
       const { total, count } = await new TransferService().getTransferAggregate(filters);
       res.json({ total: total.toObject(), count });
     } catch (error) {
-      this.logger.error('Could not return transfer aggregate:', error);
+      this.logger.error('transfer.get_aggregate.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -174,7 +175,7 @@ export default class TransferController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnTransferSummary(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get transfer summary by user', req.token.user);
+    this.logger.trace('transfer.get_summary');
 
     let filters;
     try {
@@ -201,7 +202,7 @@ export default class TransferController extends BaseController {
         manualDeletions: { total: summary.manualDeletions.total.toObject(), count: summary.manualDeletions.count },
       });
     } catch (error) {
-      this.logger.error('Could not return transfer summary:', error);
+      this.logger.error('transfer.get_summary.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -225,7 +226,7 @@ export default class TransferController extends BaseController {
    */
   public async returnAllTransfers(req: RequestWithToken, res: Response): Promise<void> {
     const { body } = req;
-    this.logger.trace('Get all transfers by user', body, 'by user', req.token.user);
+    this.logger.trace('transfer.list', { filters: body });
 
     let filters;
     let take;
@@ -245,7 +246,7 @@ export default class TransferController extends BaseController {
       const records = transfers.map((t) => TransferService.asTransferResponse(t));
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all transfers:', error);
+      this.logger.error('transfer.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -263,7 +264,7 @@ export default class TransferController extends BaseController {
    */
   public async returnTransfer(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get single transfer', id, 'by user', req.token.user);
+    this.logger.trace('transfer.get', { id });
     try {
       const parsedId = parseInt(id, 10);
       const [transfers] = await new TransferService().getTransfers({ id: parsedId }, {});
@@ -273,7 +274,7 @@ export default class TransferController extends BaseController {
         res.status(404).json('Transfer not found.');
       }
     } catch (error) {
-      this.logger.error('Could not return transfer:', error);
+      this.logger.error('transfer.get.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -292,7 +293,7 @@ export default class TransferController extends BaseController {
    */
   public async postTransfer(req: RequestWithToken, res: Response) : Promise<void> {
     const request = req.body as TransferRequest;
-    this.logger.trace('Post transfer', request, 'by user', req.token.user);
+    this.logger.trace('transfer.create', { request });
 
     const transferService = new TransferService();
 
@@ -305,7 +306,7 @@ export default class TransferController extends BaseController {
       const transfer = await transferService.postTransfer(request);
       res.json(TransferService.asTransferResponse(transfer));
     } catch (error) {
-      this.logger.error('Could not create transfer:', error);
+      this.logger.error('transfer.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -323,7 +324,7 @@ export default class TransferController extends BaseController {
      */
   public async deleteTransfer(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Delete transfer', id, 'by user', req.token.user);
+    this.logger.trace('transfer.delete', { id });
 
     try {
       await new TransferService().deleteTransfer(parseInt(id));
@@ -334,7 +335,7 @@ export default class TransferController extends BaseController {
       } else if (error.message === 'Cannot delete transfer because it is referenced by another entity') {
         res.status(400).json('Cannot delete transfer because it is referenced by another entity.');
       } else {
-        this.logger.error('Could not delete transfer:', error);
+        this.logger.error('transfer.delete.failed', error);
         res.status(500).json('Internal server error.');
       }
     }
@@ -355,7 +356,7 @@ export default class TransferController extends BaseController {
   public async getTransferPdf(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const transferId = parseInt(id, 10);
-    this.logger.trace('Get transfer PDF', id, 'by user', req.token.user);
+    this.logger.trace('transfer.get_pdf', { id });
 
     try {
       const transfer = await Transfer.findOne({
@@ -366,7 +367,7 @@ export default class TransferController extends BaseController {
         return;
       }
 
-      const pdf = await transfer.createPdf();
+      const pdf = await new TransferPdfService().pdf(transfer);
       const fileName = `transfer-${transfer.id}.pdf`;
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
@@ -376,7 +377,7 @@ export default class TransferController extends BaseController {
         res.status(400).json(error.message);
         return;
       }
-      this.logger.error('Could not return transfer PDF:', error);
+      this.logger.error('transfer.get_pdf.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

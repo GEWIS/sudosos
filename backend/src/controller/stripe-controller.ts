@@ -77,7 +77,7 @@ export default class StripeController extends BaseController {
    * @security JWT
    */
   public async createStripeDeposit(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Create a new stripe deposit by user', req.token.user);
+    this.logger.trace('stripe.create_deposit');
     const request = req.body as StripeRequest;
 
     try {
@@ -105,7 +105,7 @@ export default class StripeController extends BaseController {
         clientSecret,
       });
     } catch (error) {
-      this.logger.error('Could not create Stripe payment intent:', error);
+      this.logger.error('stripe.create_deposit.failed', error);
       res.status(500).send('Internal server error.');
     }
   }

@@ -30,7 +30,7 @@ export default class UserSyncManager extends SyncManager<User, UserSyncService> 
 
   async getTargets(): Promise<User[]> {
     const userTypes = this.services.flatMap((s) => s.targets);
-    this.logger.trace('Syncing users of types', userTypes);
+    this.logger.trace('user_sync.get_targets', { userTypes });
     return this.manager.find(User, { where: { type: In(userTypes), deleted: false } });
   }
 }

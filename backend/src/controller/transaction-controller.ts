@@ -31,6 +31,7 @@ import Policy from './policy';
 import { RequestWithToken } from '../middleware/token-middleware';
 import TransactionService, {
   parseGetTransactionsFilters,
+  TerminalPaidTransactionError,
 } from '../service/transaction-service';
 import { parseRequestPagination, toResponse } from '../helpers/pagination';
 import { TransactionRequest } from './request/transaction-request';
@@ -41,6 +42,7 @@ import UserService from '../service/user-service';
 import InvoiceService from '../service/invoice-service';
 import POSTokenVerifier from '../helpers/pos-token-verifier';
 import { PdfError } from '../errors';
+import TransactionPdfService from '../service/pdf/transaction-pdf-service';
 
 /**
  * Controller for the `transactions` module. Exposes the buyer-facing CRUD for transactions,
@@ -135,7 +137,7 @@ export default class TransactionController extends BaseController {
    * @return {PaginatedBaseTransactionResponse} 200 - A list of all transactions
    */
   public async getAllTransactions(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all transactions by user', req.token.user);
+    this.logger.trace('transaction.list');
 
     // Parse the filters given in the query parameters. If there are any issues,
     // the parse method will throw an exception. We will then return a 400 error.
@@ -157,7 +159,7 @@ export default class TransactionController extends BaseController {
       res.status(200).json(toResponse(records, count, { take, skip }));
     } catch (e) {
       res.status(500).send();
-      this.logger.error(e);
+      this.logger.error('transaction.list.failed', e);
     }
   }
 
@@ -176,7 +178,7 @@ export default class TransactionController extends BaseController {
    */
   public async createTransaction(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as TransactionRequest;
-    this.logger.trace('Create transaction', body, 'by user', req.token.user);
+    this.logger.trace('transaction.create', { request: body });
 
     // handle request
     try {
@@ -210,9 +212,9 @@ export default class TransactionController extends BaseController {
       // create the transaction using context
       const transaction = await transactionService.createTransaction(body, context);
 
-      res.json(await transactionService.asTransactionResponse(transaction));
+      res.json(await transactionService.asTransactionResponse(transaction, undefined, undefined, false));
     } catch (error) {
-      this.logger.error('Could not create transaction:', error);
+      this.logger.error('transaction.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -229,7 +231,7 @@ export default class TransactionController extends BaseController {
    */
   public async getTransaction(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
-    this.logger.trace('Get single transaction', parameters, 'by user', req.token.user);
+    this.logger.trace('transaction.get', { id: parameters.id });
 
     let transaction;
     try {
@@ -245,7 +247,7 @@ export default class TransactionController extends BaseController {
       res.status(200).json(await transactionService.asTransactionResponse(transaction));
     } catch (e) {
       res.status(500).send();
-      this.logger.error(e);
+      this.logger.error('transaction.get.failed', e);
     }
   }
 
@@ -262,12 +264,13 @@ export default class TransactionController extends BaseController {
    * @return {string} 400 - Validation error
    * @return {string} 403 - Lesser tokens cannot update transactions
    * @return {string} 404 - Not found error
+   * @return {string} 409 - Transaction was paid by card terminal
    * @return {string} 500 - Internal server error
    */
   public async updateTransaction(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as TransactionRequest;
     const { id } = req.params;
-    this.logger.trace('Update Transaction', id, 'by user', req.token.user);
+    this.logger.trace('transaction.update', { id, request: body });
 
     // handle request
     try {
@@ -285,12 +288,16 @@ export default class TransactionController extends BaseController {
           res.status(400).json('Could not update transaction.');
           return;
         }
-        res.status(200).json(await transactionService.asTransactionResponse(transaction));
+        res.status(200).json(await transactionService.asTransactionResponse(transaction, undefined, undefined, false));
       } else {
         res.status(404).json('Transaction not found.');
       }
     } catch (error) {
-      this.logger.error('Could not update transaction:', error);
+      if (error instanceof TerminalPaidTransactionError) {
+        res.status(409).json('Transaction was paid by card terminal and cannot be modified.');
+        return;
+      }
+      this.logger.error('transaction.update.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -304,11 +311,12 @@ export default class TransactionController extends BaseController {
    * @security JWT
    * @return 204 - No content
    * @return {string} 404 - Nonexistent transaction id
+   * @return {string} 409 - Transaction was paid by card terminal
    */
   // eslint-disable-next-line class-methods-use-this
   public async deleteTransaction(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Delete transaction', id, 'by user', req.token.user);
+    this.logger.trace('transaction.delete', { id });
 
     // handle request
     try {
@@ -319,7 +327,11 @@ export default class TransactionController extends BaseController {
         res.status(404).json('Transaction not found.');
       }
     } catch (error) {
-      this.logger.error('Could not delete transaction:', error);
+      if (error instanceof TerminalPaidTransactionError) {
+        res.status(409).json('Transaction was paid by card terminal and cannot be modified.');
+        return;
+      }
+      this.logger.error('transaction.delete.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -338,7 +350,7 @@ export default class TransactionController extends BaseController {
   public async getTransactionInvoices(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const transactionId = parseInt(id, 10);
-    this.logger.trace('Get transaction invoices', id, 'by user', req.token.user);
+    this.logger.trace('transaction.list_invoices', { id });
 
     try {
       const transaction = await Transaction.findOne({ where: { id: transactionId } });
@@ -350,7 +362,7 @@ export default class TransactionController extends BaseController {
       const invoices = await new InvoiceService().getTransactionInvoices(transactionId);
       res.status(200).json(InvoiceService.toArrayWithoutEntriesResponse(invoices));
     } catch (error) {
-      this.logger.error('Could not return transaction invoices:', error);
+      this.logger.error('transaction.list_invoices.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -370,7 +382,7 @@ export default class TransactionController extends BaseController {
    */
   public async validateTransaction(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as TransactionRequest;
-    this.logger.trace('Validate transaction', body, 'by user', req.token.user);
+    this.logger.trace('transaction.validate', { request: body });
 
     try {
       // Verify POS token for lesser tokens
@@ -388,7 +400,7 @@ export default class TransactionController extends BaseController {
       }
       res.status(200).json(true);
     } catch (error) {
-      this.logger.error('Could not validate transaction:', error);
+      this.logger.error('transaction.validate.failed', error);
       res.status(500).json('Internal server error');
     }
   }
@@ -408,7 +420,7 @@ export default class TransactionController extends BaseController {
   public async getTransactionPdf(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const transactionId = parseInt(id, 10);
-    this.logger.trace('Get transaction PDF', id, 'by user', req.token.user);
+    this.logger.trace('transaction.get_pdf', { id });
 
     try {
       const transaction = await Transaction.findOne({ where: { id: transactionId }, relations: {
@@ -420,7 +432,7 @@ export default class TransactionController extends BaseController {
         return;
       }
 
-      const pdf = await transaction.createPdf();
+      const pdf = await new TransactionPdfService().pdf(transaction);
       const fileName = `transaction-${transaction.id}.pdf`;
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
@@ -430,7 +442,7 @@ export default class TransactionController extends BaseController {
         res.status(400).json(error.message);
         return;
       }
-      this.logger.error('Could not return transaction PDF:', error);
+      this.logger.error('transaction.get_pdf.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

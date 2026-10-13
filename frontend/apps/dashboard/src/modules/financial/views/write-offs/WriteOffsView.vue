@@ -104,7 +104,7 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WriteOffResponse } from '@gewis/sudosos-client';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
 import { useWriteOffStore } from '@/stores/writeoff.store';
 import { useEntityTable } from '@/composables/useEntityTable';

@@ -71,7 +71,7 @@ export default class Notifier {
     const notifyType = NotificationTypeRegistry.get<P>(payload.type);
 
     if (!notifyType) {
-      this.logger.error(`Could not get notify type: ${payload.type}`);
+      this.logger.error('notifier.unknown_type', { type: payload.type });
       return;
     }
 
@@ -129,7 +129,7 @@ export default class Notifier {
   ) {
     const template = channel.getTemplate(notifyType.type);
     if (!template) {
-      this.logger.error(`Channel ${channel.constructor.name} has not implemented ${notifyType.type}.`);
+      this.logger.error('notifier.channel_not_implemented', { channel: channel.constructor.name, type: notifyType.type });
       return;
     }
 

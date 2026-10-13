@@ -37,7 +37,6 @@ export interface ITransactionPdf {
   createdByUserLastName: string;
   date: string;
   items: ITransactionItem[];
-  serviceEmail: string;
 }
 
 function roundCents(n: number) {
@@ -165,7 +164,6 @@ export function createTransactionPdf(options: ITransactionPdf): string {
     headerRightSub: options.transactionId,
     meta,
     details,
-    serviceEmail: options.serviceEmail,
   });
 }
 

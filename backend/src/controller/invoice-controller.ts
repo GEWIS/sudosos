@@ -41,6 +41,8 @@ import { createInvoiceRequestSpec, updateInvoiceRequestSpec } from './request/va
 import { globalAsyncValidatorRegistry } from '../middleware/async-validator-registry';
 import { asBoolean, asDate, asInvoiceState, asNumber } from '../helpers/validators';
 import Invoice from '../entity/invoices/invoice';
+import { InvoiceState } from '../entity/invoices/invoice-status';
+import { INVOICE_IS_DELETED } from './request/validators/validation-errors';
 import User, { UserType } from '../entity/user/user';
 import { UpdateInvoiceUserRequest } from './request/user-request';
 import InvoiceUser from '../entity/user/invoice-user';
@@ -48,6 +50,7 @@ import { parseInvoiceUserToResponse } from '../helpers/revision-to-response';
 import { AppDataSource } from '../database/database';
 import { NotImplementedError, PdfError } from '../errors';
 import { PdfUrlResponse } from './response/simple-file-response';
+import InvoicePdfService from '../service/pdf/invoice-pdf-service';
 
 /**
  * The Invoice controller.
@@ -119,7 +122,9 @@ export default class InvoiceController extends BaseController {
       },
       '/:id(\\d+)/pdf': {
         GET: {
-          policy: async (req) => this.roleManager.can(req.token.roles, 'get', await InvoiceController.getRelation(req), 'Invoice', ['*']),
+          // Forcing re-renders a frozen PDF, so only those who can see all invoices may do it.
+          policy: async (req) => this.roleManager.can(req.token.roles, 'get',
+            asBoolean(req.query.force) ? 'all' : await InvoiceController.getRelation(req), 'Invoice', ['*']),
           handler: this.getInvoicePDF.bind(this),
         },
       },
@@ -158,7 +163,7 @@ export default class InvoiceController extends BaseController {
    */
   public async getAllInvoices(req: RequestWithToken, res: Response): Promise<void> {
     const { body } = req;
-    this.logger.trace('Get all invoices', body, 'by user', req.token.user);
+    this.logger.trace('invoice.list', { filters: body });
 
     let take;
     let skip;
@@ -185,7 +190,7 @@ export default class InvoiceController extends BaseController {
 
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all invoices:', error);
+      this.logger.error('invoice.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -206,7 +211,7 @@ export default class InvoiceController extends BaseController {
   public async getSingleInvoice(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const invoiceId = parseInt(id, 10);
-    this.logger.trace('Get invoice', invoiceId, 'by user', req.token.user);
+    this.logger.trace('invoice.get', { id });
 
     // Handle request
     try {
@@ -227,7 +232,7 @@ export default class InvoiceController extends BaseController {
 
       res.json(response);
     } catch (error) {
-      this.logger.error('Could not return invoice:', error);
+      this.logger.error('invoice.get.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -246,7 +251,7 @@ export default class InvoiceController extends BaseController {
    */
   public async createInvoice(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as CreateInvoiceRequest;
-    this.logger.trace('Create Invoice', body, 'by user', req.token.user);
+    this.logger.trace('invoice.create', { request: body });
 
     // handle request
     try {
@@ -269,7 +274,7 @@ export default class InvoiceController extends BaseController {
         res.status(501).json(error.message);
         return;
       }
-      this.logger.error('Could not create invoice:', error);
+      this.logger.error('invoice.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -291,7 +296,7 @@ export default class InvoiceController extends BaseController {
     const body = req.body as UpdateInvoiceRequest;
     const { id } = req.params;
     const invoiceId = parseInt(id, 10);
-    this.logger.trace('Update Invoice', body, 'by user', req.token.user);
+    this.logger.trace('invoice.update', { id, request: body });
 
     try {
       // Default byId to token user id.
@@ -307,7 +312,7 @@ export default class InvoiceController extends BaseController {
 
       res.json(InvoiceService.asBaseInvoiceResponse(invoice));
     } catch (error) {
-      this.logger.error('Could not update invoice:', error);
+      this.logger.error('invoice.update.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -320,16 +325,26 @@ export default class InvoiceController extends BaseController {
    * @security JWT
    * @param {integer} id.path.required - The id of the invoice which should be deleted
    * @return {string} 404 - Invoice not found
+   * @return {ValidationResponse} 400 - Validation error
    * @return 204 - Deletion success
    * @return {string} 500 - Internal server error
    */
-  // TODO Deleting of invoices that are not of state CREATED?
   public async deleteInvoice(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const invoiceId = parseInt(id, 10);
-    this.logger.trace('Delete Invoice', id, 'by user', req.token.user);
+    this.logger.trace('invoice.delete', { id });
 
     try {
+      const existing = await Invoice.findOne(InvoiceService.getOptions({ invoiceId }));
+      if (!existing) {
+        res.status(404).json('Invoice not found.');
+        return;
+      }
+      if (InvoiceService.isState(existing, InvoiceState.DELETED)) {
+        res.status(400).json({ valid: false, errors: [INVOICE_IS_DELETED().value] });
+        return;
+      }
+
       const invoice = await AppDataSource.manager.transaction(async (manager) =>
         new InvoiceService(manager).deleteInvoice(invoiceId, req.token.user.id));
       if (!invoice) {
@@ -338,7 +353,7 @@ export default class InvoiceController extends BaseController {
       }
       res.status(204).send();
     } catch (error) {
-      this.logger.error('Could not delete invoice:', error);
+      this.logger.error('invoice.delete.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -358,7 +373,7 @@ export default class InvoiceController extends BaseController {
   public async getInvoicePDF(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const invoiceId = parseInt(id, 10);
-    this.logger.trace('Get Invoice PDF', id, 'by user', req.token.user);
+    this.logger.trace('invoice.get_pdf', { id });
 
     try {
       const invoice = await Invoice.findOne(InvoiceService.getOptions({ invoiceId, returnInvoiceEntries: true }) );
@@ -367,11 +382,11 @@ export default class InvoiceController extends BaseController {
         return;
       }
 
-      const pdf = await invoice.getOrCreatePdf(req.query.force === 'true');
+      const pdf = await new InvoicePdfService().getOrCreate(invoice, !!asBoolean(req.query.force));
 
       res.status(200).json({ pdf: pdf.downloadName } as PdfUrlResponse);
     } catch (error) {
-      this.logger.error('Could get invoice PDF:', error);
+      this.logger.error('invoice.get_pdf.failed', error);
       if (error instanceof PdfError) {
         res.status(502).json('PDF Generator service failed.');
         return;
@@ -394,7 +409,7 @@ export default class InvoiceController extends BaseController {
   public async deleteInvoiceUser(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const userId = parseInt(id, 10);
-    this.logger.trace('Delete Invoice User', id, 'by user', req.token.user);
+    this.logger.trace('invoice_user.delete', { id });
 
     try {
       const invoiceUser = await InvoiceUser.findOne({ where: { userId } });
@@ -406,7 +421,7 @@ export default class InvoiceController extends BaseController {
       await InvoiceUser.delete(userId);
       res.status(204).json();
     } catch (error) {
-      this.logger.error('Could not get invoice user:', error);
+      this.logger.error('invoice_user.delete.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -427,7 +442,7 @@ export default class InvoiceController extends BaseController {
   public async getSingleInvoiceUser(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const userId = parseInt(id, 10);
-    this.logger.trace('Get Invoice User', id, 'by user', req.token.user);
+    this.logger.trace('invoice_user.get', { id });
 
     try {
       const user = await User.findOne({ where: { id: userId, deleted: false } });
@@ -451,7 +466,7 @@ export default class InvoiceController extends BaseController {
 
       res.status(200).json(parseInvoiceUserToResponse(invoiceUser));
     } catch (error) {
-      this.logger.error('Could not get invoice user:', error);
+      this.logger.error('invoice_user.get.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -473,7 +488,7 @@ export default class InvoiceController extends BaseController {
     const { id } = req.params;
     const body = req.body as UpdateInvoiceUserRequest;
     const userId = parseInt(id, 10);
-    this.logger.trace('Update Invoice User', id, 'by user', req.token.user);
+    this.logger.trace('invoice_user.update', { id, request: body });
 
     try {
       const user = await User.findOne({ where: { id: userId, deleted: false } });
@@ -496,7 +511,7 @@ export default class InvoiceController extends BaseController {
 
       res.status(200).json(parseInvoiceUserToResponse(invoiceUser));
     } catch (error) {
-      this.logger.error('Could not update invoice user:', error);
+      this.logger.error('invoice_user.update.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -514,7 +529,7 @@ export default class InvoiceController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async getEligibleTransactions(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get eligible transactions for invoice creation', req.query, 'by user', req.token.user);
+    this.logger.trace('invoice.list_eligible_transactions', { query: req.query });
 
     let fromDate, tillDate;
     let forId;
@@ -535,7 +550,7 @@ export default class InvoiceController extends BaseController {
       });
       res.json(transactions);
     } catch (error) {
-      this.logger.error('Could not get eligible transactions:', error);
+      this.logger.error('invoice.list_eligible_transactions.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -551,12 +566,12 @@ export default class InvoiceController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async getDriftedInvoices(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get drifted invoices by user', req.token.user);
+    this.logger.trace('invoice.list_drifted');
     try {
       const results = await new InvoiceService().findDriftedInvoices();
       res.json(results.map(InvoiceService.asInvoiceDriftResponse));
     } catch (error) {
-      this.logger.error('Could not return drifted invoices:', error);
+      this.logger.error('invoice.list_drifted.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

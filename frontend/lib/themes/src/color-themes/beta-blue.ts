@@ -1,4 +1,4 @@
-import { definePreset } from '@primeuix/themes';
+import { definePreset } from '@openvue/themes';
 import { SudososPreset } from '../sudosos';
 
 export const BetaBlue = definePreset(SudososPreset, {

@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, nextTick, watch } from 'vue';
-import Button from 'primevue/button';
+import Button from 'openvue/button';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { PointOfSaleResponse } from '@gewis/sudosos-client';
 import { useRouter } from 'vue-router';

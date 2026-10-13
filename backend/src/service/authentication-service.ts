@@ -51,6 +51,7 @@ import { ISettings } from '../entity/server-setting';
 import Config from '../config';
 import { applyConfiguredLogLevel } from '../helpers/logging';
 import TermsOfServiceService from './terms-of-service-service';
+import { DeletedUserError } from '../errors';
 
 export interface AuthenticationContext {
   tokenHandler: TokenHandler,
@@ -154,7 +155,7 @@ export default class AuthenticationService extends WithManager {
     } catch (error) {
       // Log error but don't throw
       const logger = log4js.getLogger('AuthenticationService');
-      logger.warn('Failed to migrate PIN authenticator:', error);
+      logger.warn('authentication.migrate_pin.failed', error);
     }
   }
 
@@ -320,6 +321,8 @@ export default class AuthenticationService extends WithManager {
   public async HashAuthentication<T extends HashBasedAuthenticationMethod>(pass: string,
     authenticator: T, context: AuthenticationContext, posId?: number)
     : Promise<AuthenticationResult | undefined> {
+    if (authenticator.user.deleted) return undefined;
+
     const valid = await this.compareHash(pass, authenticator.hash);
     if (!valid) return undefined;
 
@@ -369,18 +372,18 @@ export default class AuthenticationService extends WithManager {
       if (searchEntries[0]) {
         ADUser = userFromLDAP(searchEntries[0] as any as LDAPResult);
       } else {
-        logger.trace(`User ${uid} not found in DB`);
+        logger.trace('authentication.ldap_user_not_found');
         return undefined;
       }
     } catch (error) {
-      logger.error(`Could not get user data during: ${String(error)}`);
+      logger.error('authentication.ldap_search.failed', error);
       await client.unbind();
       return undefined;
     }
 
     // EXTRACT ROLES FROM GROUPS
     if (ADUser.mail === '' || ADUser.dn === '' || !ADUser) {
-      logger.trace(`User ${ADUser.dn} is invalid`);
+      logger.trace('authentication.ldap_user_invalid');
       return undefined;
     }
 
@@ -388,7 +391,7 @@ export default class AuthenticationService extends WithManager {
     try {
       await client.bind(ADUser.dn, password);
     } catch (ex) {
-      logger.trace(`Could not bind User: ${uid} err: ${String(ex)}`);
+      logger.trace('authentication.ldap_bind.failed', ex);
       return undefined;
     } finally {
       await client.unbind();
@@ -401,7 +404,7 @@ export default class AuthenticationService extends WithManager {
     });
 
     // If there is no user associated with the GUID we create the user and bind it.
-    if (authenticator) return authenticator.user;
+    if (authenticator) return authenticator.user.deleted ? undefined : authenticator.user;
     return onNewUser(ADUser);
   }
 
@@ -534,6 +537,7 @@ export default class AuthenticationService extends WithManager {
    * @param params.salt - Optional salt for token generation. If not provided, a new salt will be generated.
    * @param params.expiry - Custom expiry time (in seconds). If not set, the default tokenHandler expiry will be used
    * @param params.posId - Optional POS identifier. If provided, creates a lesser token (restricted access).
+   * @throws DeletedUserError if the user is soft-deleted.
    */
   public async getSaltedToken(params: {
     user: User;
@@ -544,6 +548,9 @@ export default class AuthenticationService extends WithManager {
   }): Promise<AuthenticationResult> {
     const { user, context, salt, expiry, posId } = params;
 
+    // Safety net: login paths already reject deleted users as invalid credentials
+    if (user.deleted) throw new DeletedUserError();
+
     // Update lastSeen locally
     user.lastSeen = new Date();
 
@@ -551,7 +558,7 @@ export default class AuthenticationService extends WithManager {
     this.manager.save(User, user).catch((error) => {
       // Log error but don't block
       const logger: Logger = log4js.getLogger('AuthenticationService');
-      logger.error('Failed to save lastSeen timestamp:', error);
+      logger.error('authentication.save_last_seen.failed', error);
     });
 
     const [froles, organs] = await Promise.all([

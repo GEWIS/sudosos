@@ -1340,6 +1340,12 @@ export interface BaseTransactionResponse {
      * @memberof BaseTransactionResponse
      */
     'value': Dinero;
+    /**
+     * Whether this transaction was paid with a card terminal. Such transactions cannot be edited or deleted.
+     * @type {boolean}
+     * @memberof BaseTransactionResponse
+     */
+    'paidByTerminal': boolean;
 }
 /**
  * 
@@ -3357,6 +3363,19 @@ export interface MessageResponse {
      * @memberof MessageResponse
      */
     'message': string;
+}
+/**
+ * 
+ * @export
+ * @interface NotifyDebtRequest
+ */
+export interface NotifyDebtRequest {
+    /**
+     * Users to remind of their negative balance. Users who are no longer in debt are skipped.
+     * @type {Array<number>}
+     * @memberof NotifyDebtRequest
+     */
+    'userIds': Array<number>;
 }
 /**
  * 
@@ -5848,6 +5867,12 @@ export interface TransactionResponse {
      * @memberof TransactionResponse
      */
     'totalPriceInclVat': DineroObjectResponse;
+    /**
+     * Whether this transaction was paid with a card terminal. Such transactions cannot be edited or deleted.
+     * @type {boolean}
+     * @memberof TransactionResponse
+     */
+    'paidByTerminal': boolean;
 }
 /**
  * 
@@ -11431,17 +11456,15 @@ export const DebtorsApiAxiosParamCreator = function (configuration?: Configurati
          * @summary Get a report of all fines in pdf format
          * @param {string} fromDate The start date of the report, inclusive
          * @param {string} toDate The end date of the report, exclusive
-         * @param {GetFineReportPdfFileTypeEnum} fileType The file type of the report
+         * @param {GetFineReportPdfFileTypeEnum} [fileType] The file type of the report (default PDF)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFineReportPdf: async (fromDate: string, toDate: string, fileType: GetFineReportPdfFileTypeEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getFineReportPdf: async (fromDate: string, toDate: string, fileType?: GetFineReportPdfFileTypeEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fromDate' is not null or undefined
             assertParamExists('getFineReportPdf', 'fromDate', fromDate)
             // verify required parameter 'toDate' is not null or undefined
             assertParamExists('getFineReportPdf', 'toDate', toDate)
-            // verify required parameter 'fileType' is not null or undefined
-            assertParamExists('getFineReportPdf', 'fileType', fileType)
             const localVarPath = `/fines/report/pdf`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11515,6 +11538,46 @@ export const DebtorsApiAxiosParamCreator = function (configuration?: Configurati
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(handoutFinesRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Send an email to all given users that their balance is negative, without mentioning fines.
+         * @param {NotifyDebtRequest} notifyDebtRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        notifyAboutDebt: async (notifyDebtRequest: NotifyDebtRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'notifyDebtRequest' is not null or undefined
+            assertParamExists('notifyAboutDebt', 'notifyDebtRequest', notifyDebtRequest)
+            const localVarPath = `/fines/notify/debt`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(notifyDebtRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11712,11 +11775,11 @@ export const DebtorsApiFp = function(configuration?: Configuration) {
          * @summary Get a report of all fines in pdf format
          * @param {string} fromDate The start date of the report, inclusive
          * @param {string} toDate The end date of the report, exclusive
-         * @param {GetFineReportPdfFileTypeEnum} fileType The file type of the report
+         * @param {GetFineReportPdfFileTypeEnum} [fileType] The file type of the report (default PDF)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getFineReportPdf(fromDate: string, toDate: string, fileType: GetFineReportPdfFileTypeEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+        async getFineReportPdf(fromDate: string, toDate: string, fileType?: GetFineReportPdfFileTypeEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getFineReportPdf(fromDate, toDate, fileType, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['DebtorsApi.getFineReportPdf']?.[index]?.url;
@@ -11733,6 +11796,19 @@ export const DebtorsApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.handoutFines(handoutFinesRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['DebtorsApi.handoutFines']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Send an email to all given users that their balance is negative, without mentioning fines.
+         * @param {NotifyDebtRequest} notifyDebtRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async notifyAboutDebt(notifyDebtRequest: NotifyDebtRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.notifyAboutDebt(notifyDebtRequest, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['DebtorsApi.notifyAboutDebt']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
@@ -11844,6 +11920,16 @@ export const DebtorsApiFactory = function (configuration?: Configuration, basePa
          */
         handoutFines(requestParameters: DebtorsApiHandoutFinesRequest, options?: RawAxiosRequestConfig): AxiosPromise<FineHandoutEventResponse> {
             return localVarFp.handoutFines(requestParameters.handoutFinesRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Send an email to all given users that their balance is negative, without mentioning fines.
+         * @param {DebtorsApiNotifyAboutDebtRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        notifyAboutDebt(requestParameters: DebtorsApiNotifyAboutDebtRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.notifyAboutDebt(requestParameters.notifyDebtRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -11969,11 +12055,11 @@ export interface DebtorsApiGetFineReportPdfRequest {
     readonly toDate: string
 
     /**
-     * The file type of the report
-     * @type {'PDF' | 'TEX'}
+     * The file type of the report (default PDF)
+     * @type {'PDF' | 'HTML'}
      * @memberof DebtorsApiGetFineReportPdf
      */
-    readonly fileType: GetFineReportPdfFileTypeEnum
+    readonly fileType?: GetFineReportPdfFileTypeEnum
 }
 
 /**
@@ -11988,6 +12074,20 @@ export interface DebtorsApiHandoutFinesRequest {
      * @memberof DebtorsApiHandoutFines
      */
     readonly handoutFinesRequest: HandoutFinesRequest
+}
+
+/**
+ * Request parameters for notifyAboutDebt operation in DebtorsApi.
+ * @export
+ * @interface DebtorsApiNotifyAboutDebtRequest
+ */
+export interface DebtorsApiNotifyAboutDebtRequest {
+    /**
+     * 
+     * @type {NotifyDebtRequest}
+     * @memberof DebtorsApiNotifyAboutDebt
+     */
+    readonly notifyDebtRequest: NotifyDebtRequest
 }
 
 /**
@@ -12120,6 +12220,18 @@ export class DebtorsApi extends BaseAPI {
 
     /**
      * 
+     * @summary Send an email to all given users that their balance is negative, without mentioning fines.
+     * @param {DebtorsApiNotifyAboutDebtRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DebtorsApi
+     */
+    public notifyAboutDebt(requestParameters: DebtorsApiNotifyAboutDebtRequest, options?: RawAxiosRequestConfig) {
+        return DebtorsApiFp(this.configuration).notifyAboutDebt(requestParameters.notifyDebtRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Send an email to all given users about their possible future fine.
      * @param {DebtorsApiNotifyAboutFutureFinesRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -12160,7 +12272,7 @@ export class DebtorsApi extends BaseAPI {
  */
 export const GetFineReportPdfFileTypeEnum = {
     Pdf: 'PDF',
-    Tex: 'TEX'
+    Html: 'HTML'
 } as const;
 export type GetFineReportPdfFileTypeEnum = typeof GetFineReportPdfFileTypeEnum[keyof typeof GetFineReportPdfFileTypeEnum];
 
@@ -25665,7 +25777,7 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
          * @param {number} id The id of the user to get the purchase report for
          * @param {string} fromDate Start date for selected purchases (inclusive)
          * @param {string} tillDate End date for selected purchases (exclusive)
-         * @param {GetUsersPurchaseReportPdfFileTypeEnum} [fileType] The file type of the report
+         * @param {GetUsersPurchaseReportPdfFileTypeEnum} [fileType] The file type of the report (default PDF)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -25827,7 +25939,7 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
          * @param {string} fromDate Start date for selected sales (inclusive)
          * @param {string} tillDate End date for selected sales (exclusive)
          * @param {string} [description] Description of the report
-         * @param {GetUsersSalesReportPdfFileTypeEnum} [fileType] The file type of the report
+         * @param {GetUsersSalesReportPdfFileTypeEnum} [fileType] The file type of the report (default PDF)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -26842,7 +26954,7 @@ export const UsersApiFp = function(configuration?: Configuration) {
          * @param {number} id The id of the user to get the purchase report for
          * @param {string} fromDate Start date for selected purchases (inclusive)
          * @param {string} tillDate End date for selected purchases (exclusive)
-         * @param {GetUsersPurchaseReportPdfFileTypeEnum} [fileType] The file type of the report
+         * @param {GetUsersPurchaseReportPdfFileTypeEnum} [fileType] The file type of the report (default PDF)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -26889,7 +27001,7 @@ export const UsersApiFp = function(configuration?: Configuration) {
          * @param {string} fromDate Start date for selected sales (inclusive)
          * @param {string} tillDate End date for selected sales (exclusive)
          * @param {string} [description] Description of the report
-         * @param {GetUsersSalesReportPdfFileTypeEnum} [fileType] The file type of the report
+         * @param {GetUsersSalesReportPdfFileTypeEnum} [fileType] The file type of the report (default PDF)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -28031,8 +28143,8 @@ export interface UsersApiGetUsersPurchaseReportPdfRequest {
     readonly tillDate: string
 
     /**
-     * The file type of the report
-     * @type {'PDF' | 'TEX'}
+     * The file type of the report (default PDF)
+     * @type {'PDF' | 'HTML'}
      * @memberof UsersApiGetUsersPurchaseReportPdf
      */
     readonly fileType?: GetUsersPurchaseReportPdfFileTypeEnum
@@ -28129,8 +28241,8 @@ export interface UsersApiGetUsersSalesReportPdfRequest {
     readonly description?: string
 
     /**
-     * The file type of the report
-     * @type {'PDF' | 'TEX'}
+     * The file type of the report (default PDF)
+     * @type {'PDF' | 'HTML'}
      * @memberof UsersApiGetUsersSalesReportPdf
      */
     readonly fileType?: GetUsersSalesReportPdfFileTypeEnum
@@ -29005,7 +29117,7 @@ export type GetUsersPaymentRequestsStatusEnum = typeof GetUsersPaymentRequestsSt
  */
 export const GetUsersPurchaseReportPdfFileTypeEnum = {
     Pdf: 'PDF',
-    Tex: 'TEX'
+    Html: 'HTML'
 } as const;
 export type GetUsersPurchaseReportPdfFileTypeEnum = typeof GetUsersPurchaseReportPdfFileTypeEnum[keyof typeof GetUsersPurchaseReportPdfFileTypeEnum];
 /**
@@ -29013,7 +29125,7 @@ export type GetUsersPurchaseReportPdfFileTypeEnum = typeof GetUsersPurchaseRepor
  */
 export const GetUsersSalesReportPdfFileTypeEnum = {
     Pdf: 'PDF',
-    Tex: 'TEX'
+    Html: 'HTML'
 } as const;
 export type GetUsersSalesReportPdfFileTypeEnum = typeof GetUsersSalesReportPdfFileTypeEnum[keyof typeof GetUsersSalesReportPdfFileTypeEnum];
 

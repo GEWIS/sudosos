@@ -24,7 +24,7 @@
 import type { PropType } from 'vue';
 import * as yup from 'yup';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { type Form, setSubmit } from '@/utils/formUtils';
 import { authRequestSchema } from '@/utils/validation-schema';
 import InputSpan from '@/components/InputSpan.vue';

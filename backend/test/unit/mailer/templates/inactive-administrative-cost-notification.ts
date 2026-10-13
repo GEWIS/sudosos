@@ -28,7 +28,8 @@ import User from '../../../../src/entity/user/user';
 describe('InactiveAdministrativeCostNotificationTemplate', () => {
   const user = { firstName: 'Samuel', email: 'samuel@example.test' } as User;
   const administrativeCostValue = dinero({ amount: 1000 });
-  const opts = new InactiveAdministrativeCostNotificationOptions(administrativeCostValue);
+  const currentUserBalance = dinero({ amount: 2500 });
+  const opts = new InactiveAdministrativeCostNotificationOptions(administrativeCostValue, currentUserBalance);
 
   it('builds an English email with the formatted amount exactly once and no misleading currency word', () => {
     const options = new InactiveAdministrativeCostNotification(opts).getOptions(user, Language.ENGLISH);

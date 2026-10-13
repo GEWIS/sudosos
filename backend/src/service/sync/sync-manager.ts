@@ -28,6 +28,13 @@ export interface SyncResults<T> {
   skipped: T[];
 }
 
+/**
+ * The id of a sync target, so log lines carry the id instead of the whole entity.
+ */
+function entityId(entity: unknown): unknown {
+  return (entity as { id?: unknown } | undefined)?.id;
+}
+
 export default abstract class SyncManager<T, S extends SyncService<T>> extends WithManager {
 
   protected readonly services: S[];
@@ -43,7 +50,7 @@ export default abstract class SyncManager<T, S extends SyncService<T>> extends W
   abstract getTargets(): Promise<T[]>;
 
   async run(isDryRun: boolean = false): Promise<SyncResults<T>> {
-    this.logger.trace(isDryRun ? 'Start dry-run sync job' : 'Start sync job');
+    this.logger.trace('sync.run.started', { isDryRun });
     const entities = await this.getTargets();
     const result: SyncResults<T> = {
       passed: [],
@@ -54,7 +61,7 @@ export default abstract class SyncManager<T, S extends SyncService<T>> extends W
     try {
       await this.pre();
     } catch (error) {
-      this.logger.error('Aborting sync due to error', error);
+      this.logger.error('sync.run.failed', error);
       return result;
     }
 
@@ -63,22 +70,22 @@ export default abstract class SyncManager<T, S extends SyncService<T>> extends W
         const syncResult = await this.sync(entity, isDryRun);
 
         if (syncResult.skipped) {
-          this.logger.trace('Syncing skipped for', entity);
+          this.logger.trace('sync.entity_skipped', { id: entityId(entity) });
           result.skipped.push(entity);
           continue;
         }
 
         if (syncResult.result === false) {
-          this.logger.warn('Sync result: false for', entity);
+          this.logger.warn('sync.entity_failed', { id: entityId(entity) });
           result.failed.push(entity);
           await this.down(entity, isDryRun);
         } else {
-          this.logger.trace('Sync result: true for', entity);
+          this.logger.trace('sync.entity_passed', { id: entityId(entity) });
           result.passed.push(entity);
         }
 
       } catch (error) {
-        this.logger.error('Syncing error for', entity, error);
+        this.logger.error('sync.entity.failed', { id: entityId(entity) }, error);
         result.failed.push(entity);
       }
     }
@@ -109,7 +116,7 @@ export default abstract class SyncManager<T, S extends SyncService<T>> extends W
       try {
         await service.down(entity, isDryRun);
       } catch (error) {
-        this.logger.error('Could not down', entity, error);
+        this.logger.error('sync.down.failed', { id: entityId(entity) }, error);
       }
     }
   }
@@ -120,7 +127,7 @@ export default abstract class SyncManager<T, S extends SyncService<T>> extends W
         await service.pre();
         await service.fetch();
       } catch (error) {
-        this.logger.error('Syncing fetch error for', service, error);
+        this.logger.error('sync.fetch.failed', { service: service.constructor.name }, error);
       }
       await service.post();
     }

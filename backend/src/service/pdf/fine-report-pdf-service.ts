@@ -24,16 +24,15 @@
  * @module internal/pdf/fine-report-pdf-service
  */
 
-import { HtmlUnstoredPdfService } from './pdf-service';
+import { PdfService } from './pdf-service';
 import { FineReport } from '../../entity/report/fine-report';
 import { createFineReportPdf, IFineReportPdf } from '../../html/fine-report.html';
 import { PDF_VAT_HIGH } from '../../helpers/pdf';
-import Config from '../../config';
 import DineroTransformer from '../../entity/transformer/dinero-transformer';
 
-export default class FineReportPdfService extends HtmlUnstoredPdfService<FineReport, IFineReportPdf> {
+export default class FineReportPdfService extends PdfService<FineReport, IFineReportPdf> {
 
-  htmlGenerator = createFineReportPdf;
+  render = createFineReportPdf;
 
   async getParameters(entity: FineReport): Promise<IFineReportPdf> {
     const inclVat = entity.handedOut.getAmount() - entity.waivedAmount.getAmount();
@@ -51,7 +50,6 @@ export default class FineReportPdfService extends HtmlUnstoredPdfService<FineRep
       vatAmount: DineroTransformer.Instance.from(vat).toFormat(),
       vatPercentage: PDF_VAT_HIGH,
       totalInclVat: DineroTransformer.Instance.from(inclVat).toFormat(),
-      serviceEmail: Config.get().mail.financialResponsible || '',
     };
   }
 }

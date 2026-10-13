@@ -323,6 +323,28 @@ describe('PointOfSaleController', async () => {
       expect(res.status).to.equal(403);
       expect(res.body).to.be.empty;
     });
+    it('should return an HTTP 200 if the point of sale has no containers', async () => {
+      const create = await request(ctx.app)
+        .post('/pointsofsale')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send(ctx.validPOSRequest);
+      expect(create.status).to.equal(200);
+      const { id } = create.body as PointOfSaleResponse;
+
+      const update = await request(ctx.app)
+        .patch(`/pointsofsale/${id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({
+          id, containers: [], name: ctx.validPOSRequest.name, useAuthentication: true,
+        } as UpdatePointOfSaleRequest);
+      expect(update.status).to.equal(200);
+
+      const res = await request(ctx.app)
+        .get(`/pointsofsale/${id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(200);
+      expect((res.body as PointOfSaleWithContainersResponse).containers).to.be.empty;
+    });
   });
   describe('GET /pointsofsale/:id/:revision', () => {
     it('should return correct model', async () => {

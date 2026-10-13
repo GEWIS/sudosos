@@ -24,14 +24,13 @@
  * @module internal/pdf/inactive-administrative-cost-report-pdf-service
  */
 
-import { HtmlUnstoredPdfService } from './pdf-service';
+import { PdfService } from './pdf-service';
 import { InactiveAdministrativeCostReport } from '../../entity/report/inactive-administrative-cost-report';
 import { createInactiveAdministrativeCostReportPdf, IInactiveAdministrativeCostReportPdf } from '../../html/inactive-administrative-cost-report.html';
-import Config from '../../config';
 
-export default class InactiveAdministrativeCostReportPdfService extends HtmlUnstoredPdfService<InactiveAdministrativeCostReport, IInactiveAdministrativeCostReportPdf> {
+export default class InactiveAdministrativeCostReportPdfService extends PdfService<InactiveAdministrativeCostReport, IInactiveAdministrativeCostReportPdf> {
 
-  htmlGenerator = createInactiveAdministrativeCostReportPdf;
+  render = createInactiveAdministrativeCostReportPdf;
 
   async getParameters(entity: InactiveAdministrativeCostReport): Promise<IInactiveAdministrativeCostReportPdf> {
     return {
@@ -42,7 +41,6 @@ export default class InactiveAdministrativeCostReportPdfService extends HtmlUnst
       vatAmount: entity.vatAmount.toFormat(),
       vatPercentage: entity.vatPercentage,
       count: entity.count,
-      serviceEmail: Config.get().mail.financialResponsible || '',
     };
   }
 }

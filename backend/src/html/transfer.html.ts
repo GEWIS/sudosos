@@ -18,7 +18,8 @@
  *  @license
  */
 
-import { createBasePdf } from './base.html';
+import { balanceNoticeHtml, createBasePdf, singleAmountHtml } from './base.html';
+import { escapeHtml } from './escape';
 
 export interface ITransferPdf {
   transferId: string;
@@ -31,73 +32,37 @@ export interface ITransferPdf {
   date: string;
   description: string;
   amount: string;
-  serviceEmail: string;
 }
 
 export function createTransferPdf(options: ITransferPdf): string {
   const meta = `
     <div class="card">
       <h3>From</h3>
-      <p>${options.fromUserFirstName} ${options.fromUserLastName}</p>
-      <div class="small">Account: ${options.fromAccount}</div>
+      <p>${escapeHtml(options.fromUserFirstName)} ${escapeHtml(options.fromUserLastName)}</p>
+      <div class="small">Account: ${escapeHtml(options.fromAccount)}</div>
     </div>
     <div class="card">
       <h3>To</h3>
-      <p>${options.toUserFirstName} ${options.toUserLastName}</p>
-      <div class="small">Account: ${options.toAccount}</div>
+      <p>${escapeHtml(options.toUserFirstName)} ${escapeHtml(options.toUserLastName)}</p>
+      <div class="small">Account: ${escapeHtml(options.toAccount)}</div>
     </div>
     <div class="card">
       <h3>Date</h3>
-      <p>${options.date}</p>
+      <p>${escapeHtml(options.date)}</p>
     </div>
   `;
 
-  const details = `
-    <div style="margin-bottom: 1.5em; padding: 1em; background: #F9F9F9; border-left: 4px solid var(--primary); border-radius: 4px;">
-      <h3 style="margin: 0 0 0.5em 0; font-size: 16px; color: var(--ink);">Balance Transfer</h3>
-      <p style="margin: 0; font-size: 13px; line-height: 1.6; color: var(--muted);">
-        This document records a balance movement within SudoSOS, showing the transferred amount and the originating and/or receiving account.
-        Balances in SudoSOS qualify as Multi Purpose Vouchers (MPV) under
-        <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016L1065" target="_blank" rel="noopener noreferrer">
-          Directive (EU) 2016/1065
-        </a>.
-        No VAT is due on balance top-ups, payouts, or transfers between accounts.
-        VAT only becomes applicable when a balance is used to purchase goods or services.
-      </p>
-    </div>
-
-    <table class="items" role="table">
-      <thead>
-        <tr>
-          <td>Description</td>
-          <td class="total">Amount</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>${options.description}</td>
-          <td class="total">${options.amount}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="totals">
-      <table>
-        <tr>
-          <td class="label grand">Total</td>
-          <td class="amt grand">${options.amount}</td>
-        </tr>
-      </table>
-    </div>
-  `;
+  const details = balanceNoticeHtml(
+    'Balance Transfer',
+    'This document records a balance movement within SudoSOS, showing the transferred amount and the originating and/or receiving account.',
+  ) + singleAmountHtml(options.description, options.amount);
 
   return createBasePdf({
     pageTitle: 'Transfer PDF',
     headerTitle: 'Transfer Info',
     headerRightTitle: 'Transfer ID',
-    headerRightSub: options.transferId,
+    headerRightSub: escapeHtml(options.transferId),
     meta,
     details,
-    serviceEmail: options.serviceEmail,
   });
 }

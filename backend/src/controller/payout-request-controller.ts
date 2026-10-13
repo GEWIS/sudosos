@@ -38,6 +38,7 @@ import BalanceService from '../service/balance-service';
 import { PdfUrlResponse } from './response/simple-file-response';
 import { PdfError } from '../errors';
 import { asBoolean } from '../helpers/validators';
+import PayoutRequestPdfService from '../service/pdf/payout-request-pdf-service';
 
 /**
  * Controller for the `/payoutrequests` endpoints in the
@@ -75,7 +76,9 @@ export default class PayoutRequestController extends BaseController {
       },
       '/:id(\\d+)/pdf': {
         GET: {
-          policy: async (req) => this.roleManager.can(req.token.roles, 'get', await PayoutRequestController.getRelation(req), 'PayoutRequest', ['*']),
+          // Forcing re-renders a frozen PDF, so only those who can see all payout requests may do it.
+          policy: async (req) => this.roleManager.can(req.token.roles, 'get',
+            asBoolean(req.query.force) ? 'all' : await PayoutRequestController.getRelation(req), 'PayoutRequest', ['*']),
           handler: this.getPayoutRequestPdf.bind(this),
         },
       },
@@ -124,7 +127,7 @@ export default class PayoutRequestController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnAllPayoutRequests(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all payout requests by user', req.token.user);
+    this.logger.trace('payout_request.list');
 
     let filters;
     let pagination;
@@ -142,7 +145,7 @@ export default class PayoutRequestController extends BaseController {
       res.status(200).json(toResponse(records, count, pagination));
     } catch (e) {
       res.status(500).send('Internal server error.');
-      this.logger.error(e);
+      this.logger.error('payout_request.list.failed', e);
     }
   }
 
@@ -158,7 +161,7 @@ export default class PayoutRequestController extends BaseController {
    */
   public async returnSinglePayoutRequest(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
-    this.logger.trace('Get single payout request', parameters, 'by user', req.token.user);
+    this.logger.trace('payout_request.get', { id: parameters.id });
 
     let payoutRequest;
     try {
@@ -166,7 +169,7 @@ export default class PayoutRequestController extends BaseController {
         .getSinglePayoutRequest(parseInt(parameters.id, 10));
     } catch (e) {
       res.status(500).send();
-      this.logger.error(e);
+      this.logger.error('payout_request.get.failed', e);
       return;
     }
 
@@ -191,7 +194,7 @@ export default class PayoutRequestController extends BaseController {
    */
   public async createPayoutRequest(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as PayoutRequestRequest;
-    this.logger.trace('Create payout request by user', req.token.user);
+    this.logger.trace('payout_request.create', { request: body });
 
     try {
       const user = await User.findOne({ where: { id: body.forId } });
@@ -210,7 +213,7 @@ export default class PayoutRequestController extends BaseController {
       res.status(200).json(PayoutRequestService.asPayoutRequestResponse(payoutRequest));
     } catch (e) {
       res.status(500).send();
-      this.logger.error(e);
+      this.logger.error('payout_request.create.failed', e);
     }
   }
 
@@ -229,7 +232,7 @@ export default class PayoutRequestController extends BaseController {
   public async updatePayoutRequestStatus(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
     const body = req.body as PayoutRequestStatusRequest;
-    this.logger.trace('Update single payout request status', parameters, 'by user', req.token.user);
+    this.logger.trace('payout_request.update_status', { id: parameters.id, request: body });
 
     const id = parseInt(parameters.id, 10);
 
@@ -239,7 +242,7 @@ export default class PayoutRequestController extends BaseController {
       payoutRequest = await PayoutRequestService.getSinglePayoutRequest(id);
     } catch (e) {
       res.status(500).send();
-      this.logger.error(e);
+      this.logger.error('payout_request.update_status.failed', e);
       return;
     }
 
@@ -281,7 +284,7 @@ export default class PayoutRequestController extends BaseController {
       res.status(200).json(PayoutRequestService.asPayoutRequestResponse(updatedPayoutRequest));
     } catch (e) {
       res.status(500).send();
-      this.logger.error(e);
+      this.logger.error('payout_request.update_status.failed', e);
     }
   }
 
@@ -302,7 +305,7 @@ export default class PayoutRequestController extends BaseController {
   public async getPayoutRequestPdf(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const payoutRequestId = parseInt(id, 10);
-    this.logger.trace('Get payout request pdf', id, 'by user', req.token.user);
+    this.logger.trace('payout_request.get_pdf', { id });
 
     try {
       const force = !!asBoolean(req.query.force);
@@ -316,11 +319,11 @@ export default class PayoutRequestController extends BaseController {
         return;
       }
 
-      const pdf = await payoutRequest.getOrCreatePdf(force);
+      const pdf = await new PayoutRequestPdfService().getOrCreate(payoutRequest, force);
 
       res.status(200).json({ pdf: pdf.downloadName } as PdfUrlResponse);
     } catch (error) {
-      this.logger.error('Could get payout request PDF:', error);
+      this.logger.error('payout_request.get_pdf.failed', error);
       if (error instanceof PdfError) {
         res.status(502).json('PDF Generator service failed.');
         return;

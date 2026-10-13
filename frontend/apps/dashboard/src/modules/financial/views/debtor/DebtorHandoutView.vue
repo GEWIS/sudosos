@@ -1,5 +1,6 @@
 <template>
   <PageContainer class="max-w-[100rem]">
+    <ConfirmDialog />
     <div class="flex flex-col gap-5">
       <DebtorTable v-if="handout" :handout-event="handout" />
     </div>
@@ -18,9 +19,9 @@
 import { onMounted, ref } from 'vue';
 import type { FineHandoutEventResponse } from '@gewis/sudosos-client';
 import { useRoute } from 'vue-router';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { useI18n } from 'vue-i18n';
-import { useConfirm } from 'primevue/useconfirm';
+import { useConfirm } from 'openvue/useconfirm';
 import DebtorTable from '@/modules/financial/components/debtor/DebtorTable.vue';
 import { useDebtorStore } from '@/stores/debtor.store';
 import { handleError } from '@/utils/errorUtils';
@@ -59,7 +60,7 @@ function startDelete() {
       debtorStore
         .deleteFineHandoutEvent(handout.value!.id)
         .then(() => {
-          void router.replace('/debtor');
+          void router.replace({ name: 'Debtors' });
 
           toast.add({
             summary: t('common.toast.success.success'),

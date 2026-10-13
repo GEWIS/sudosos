@@ -36,10 +36,10 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref, watchEffect, type Ref } from 'vue';
 import type { InvoiceResponse } from '@gewis/sudosos-client';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
-import Skeleton from 'primevue/skeleton';
+import Skeleton from 'openvue/skeleton';
 import { handleError } from '@/utils/errorUtils';
 import { useInvoiceStore } from '@/stores/invoice.store';
 import 'vue3-pdf-app/dist/icons/main.css';

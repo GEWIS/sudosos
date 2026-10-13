@@ -12,7 +12,7 @@ export default defineConfig({
       name: 'sudosos-frontend-common',
       fileName: 'sudosos-frontend-common',
     },
-    rollupOptions: {
+    rolldownOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
       external: ['vue', 'pinia'],

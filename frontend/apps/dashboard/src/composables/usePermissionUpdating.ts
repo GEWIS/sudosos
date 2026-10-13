@@ -1,8 +1,8 @@
 import { computed, type Ref } from 'vue';
 import type { ActionResponse, CreatePermissionParams, PermissionResponse } from '@gewis/sudosos-client';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import * as yup from 'yup';
-import type { DataTableRowClickEvent } from 'primevue/datatable';
+import type { DataTableRowClickEvent } from 'openvue/datatable';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
 import { type Form, getProperty } from '@/utils/formUtils';

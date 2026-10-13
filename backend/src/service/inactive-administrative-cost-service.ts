@@ -31,7 +31,7 @@ import {
   HandoutInactiveAdministrativeCostsRequest,
 } from '../controller/request/inactive-administrative-cost-request';
 import TransferRequest from '../controller/request/transfer-request';
-import dinero from 'dinero.js';
+import dinero, { Dinero } from 'dinero.js';
 import { DineroObjectRequest } from '../controller/request/dinero-request';
 import Transfer from '../entity/transactions/transfer';
 import Transaction from '../entity/transactions/transaction';
@@ -54,6 +54,8 @@ import {
 import { InactiveAdministrativeCostReport } from '../entity/report/inactive-administrative-cost-report';
 import VatGroup from '../entity/vat-group';
 
+const ADMINISTRATIVE_COST_NOTIFY_YEARS = 2;
+const ADMINISTRATIVE_COST_HANDOUT_YEARS = 3;
 
 export interface InactiveAdministrativeCostFilterParameters {
   /**
@@ -82,12 +84,16 @@ export function parseInactiveAdministrativeCostFilterParameters(req: RequestWith
 
 export default class InactiveAdministrativeCostService extends WithManager {
 
-  // Calculate the year difference between 2 dates.
-  private static yearDifference(date: Date) : number {
-    const dateDiff = (new Date().getTime() - date.getTime());
-    const ageDate = new Date(dateDiff);
+  // Number of whole calendar years between the given date and now.
+  private static yearDifference(date: Date): number {
+    const now = new Date();
+    let years = now.getFullYear() - date.getFullYear();
 
-    return Math.abs(ageDate.getUTCFullYear() - 1970);
+    const anniversary = new Date(date);
+    anniversary.setFullYear(date.getFullYear() + years);
+    if (anniversary > now) years -= 1;
+
+    return years;
   }
 
   private static getAdministrativeCostValue(): number {
@@ -98,14 +104,14 @@ export default class InactiveAdministrativeCostService extends WithManager {
    * Determines the amount that would actually be deducted from the given user for an
    * inactive administrative cost: the configured administrative cost value, capped to the
    * user's balance, and never negative.
-   * @param userId
+   * @param currentBalance - The user's current balance.
    */
-  private async getDeductionAmount(userId: number): Promise<number> {
-    const userBalance = await new BalanceService(this.manager).getBalance(userId);
+  private getDeductionAmount(currentBalance: Dinero): number {
     const administrativeCostValue = InactiveAdministrativeCostService.getAdministrativeCostValue();
+    const balanceAmount = currentBalance.getAmount();
 
-    return userBalance.amount.amount > 0
-      ? Math.min(userBalance.amount.amount, administrativeCostValue)
+    return balanceAmount > 0
+      ? Math.min(balanceAmount, administrativeCostValue)
       : 0;
   }
 
@@ -134,13 +140,50 @@ export default class InactiveAdministrativeCostService extends WithManager {
   }
 
   /**
+   * Years since the user's most recent transfer or transaction. Inactive administrative
+   * cost transfers do not count as activity. Returns null if the user has no activity.
+   * @param userId
+   */
+  private async yearsSinceLastActivity(userId: number): Promise<number | null> {
+    const [lastTransfer, lastTransaction] = await Promise.all([
+      this.lastTransferQuery(userId),
+      this.lastTransactionQuery(userId),
+    ]);
+
+    const activityYears = [lastTransfer, lastTransaction]
+      .filter((activity) => activity != null)
+      .map((activity) => InactiveAdministrativeCostService.yearDifference(activity.createdAt));
+
+    return activityYears.length > 0 ? Math.min(...activityYears) : null;
+  }
+
+  /**
+   * Whether the user should be notified of upcoming administrative costs: inactive for at
+   * least ADMINISTRATIVE_COST_NOTIFY_YEARS, but not yet long enough for a handout.
+   * @param userId
+   */
+  private async isEligibleForNotification(userId: number): Promise<boolean> {
+    const years = await this.yearsSinceLastActivity(userId);
+    return years != null && years >= ADMINISTRATIVE_COST_NOTIFY_YEARS && years < ADMINISTRATIVE_COST_HANDOUT_YEARS;
+  }
+
+  /**
+   * Whether administrative costs should be handed out to the user: inactive for at least
+   * ADMINISTRATIVE_COST_HANDOUT_YEARS.
+   * @param userId
+   */
+  private async isEligibleForHandout(userId: number): Promise<boolean> {
+    const years = await this.yearsSinceLastActivity(userId);
+    return years != null && years >= ADMINISTRATIVE_COST_HANDOUT_YEARS;
+  }
+
+  /**
    * Checks which users are eligible for either a notification or a fine.
    * @param params
    */
   public async checkInactiveUsers(params: InactiveAdministrativeCostFilterParameters)
     : Promise<UserToInactiveAdministrativeCostResponse[]> {
     const { notification } = params;
-    const differenceDate = notification ? 2 : 3;
 
     const users = await User.find({
       where: { type: In(EligibleInactiveUsers), deleted: false },
@@ -151,19 +194,11 @@ export default class InactiveAdministrativeCostService extends WithManager {
     for (const user of users) {
       if (notification && user.inactiveNotificationSend) continue;
 
-      let isNotEligible = false;
+      const isEligible = notification
+        ? await this.isEligibleForNotification(user.id)
+        : await this.isEligibleForHandout(user.id);
 
-      const lastTransfer = await this.lastTransferQuery(user.id);
-      const lastTransaction = await this.lastTransactionQuery(user.id);
-
-      if (lastTransfer && InactiveAdministrativeCostService.yearDifference(lastTransfer.createdAt) < differenceDate) {
-        isNotEligible = true;
-      }
-      if (lastTransaction && InactiveAdministrativeCostService.yearDifference(lastTransaction.createdAt) < differenceDate) {
-        isNotEligible = true;
-      }
-
-      if (!isNotEligible) {
+      if (isEligible) {
         eligibleUserIds.push(user.id);
       }
     }
@@ -218,7 +253,8 @@ export default class InactiveAdministrativeCostService extends WithManager {
 
     // Calculate reduction amount
     const user = await this.manager.findOne(User, { where: { id: forId } });
-    const monetaryAmount = await this.getDeductionAmount(forId);
+    const userBalanceResponse = await new BalanceService(this.manager).getBalance(user.id);
+    const monetaryAmount = this.getDeductionAmount(dinero(userBalanceResponse.amount));
 
     const amount: DineroObjectRequest = {
       amount: monetaryAmount,
@@ -265,12 +301,15 @@ export default class InactiveAdministrativeCostService extends WithManager {
       const inactiveAdministrativeCost = await this.createInactiveAdministrativeCost(req);
 
       const user = await this.manager.findOne(User, { where: { id: u } });
+      const balance = await new BalanceService(this.manager).getBalance(user.id);
+      const currentUserBalance = dinero({ amount: balance.amount.amount });
 
       await Notifier.getInstance().notify({
         type: NotificationTypes.UserGotInactiveAdministrativeCost,
         userId: user.id,
         params: new UserGotInactiveAdministrativeCostOptions(
           inactiveAdministrativeCost.amount,
+          currentUserBalance,
         ),
       });
 
@@ -289,16 +328,20 @@ export default class InactiveAdministrativeCostService extends WithManager {
     await Promise.all(users.userIds.map(async (u) => {
       const user = await this.manager.findOne(User, { where: { id: u } });
 
-      const monetaryAmount = await this.getDeductionAmount(u);
+      const userBalanceResponse = await new BalanceService(this.manager).getBalance(user.id);
+      const monetaryAmount = this.getDeductionAmount(dinero(userBalanceResponse.amount));
 
       user.inactiveNotificationSend = true;
       await user.save();
+
+      const currentUserBalance = dinero({ amount: userBalanceResponse.amount.amount });
 
       return Notifier.getInstance().notify({
         type: NotificationTypes.InactiveAdministrativeCostNotification,
         userId: user.id,
         params: new InactiveAdministrativeCostNotificationOptions(
           dinero({ amount: monetaryAmount }),
+          currentUserBalance,
         ),
       });
     }),

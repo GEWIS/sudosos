@@ -157,7 +157,7 @@ export default class WebSocketService {
   private setupAdapter(redisConnection: Redis): void {
     const subClient = redisConnection.duplicate();
     this.io.adapter(createAdapter(redisConnection, subClient));
-    this.logger.info('Socket.IO Redis adapter initialized.');
+    this.logger.info('websocket.redis_adapter_initialized');
   }
 
   /**
@@ -296,7 +296,7 @@ export default class WebSocketService {
     // Validate pattern can be parsed (for patterns with {id}, this ensures they're valid)
     const parsedPattern = parseRoom(registration.pattern);
     if (!parsedPattern && registration.pattern !== 'system') {
-      this.logger.warn(`Failed to parse room pattern: ${registration.pattern}`);
+      this.logger.warn('websocket.register_room.invalid_pattern', { pattern: registration.pattern });
       return;
     }
 
@@ -312,7 +312,7 @@ export default class WebSocketService {
     const config = Config.get();
     // Prevent multiple initializations
     if (this.connectionHandlerRegistered) {
-      this.logger.trace('WebSocket connection handler already registered, skipping initialization');
+      this.logger.trace('websocket.connection_handler_already_registered');
       return;
     }
 
@@ -328,18 +328,18 @@ export default class WebSocketService {
     // Only start listening if not already listening
     if (!this.server.listening) {
       this.server.listen(port, () => {
-        this.logger.info(`WebSocket opened on port ${port}.`);
+        this.logger.info('websocket.listening', { port });
       });
       // Handle EADDRINUSE error gracefully (e.g., in tests where port might already be in use)
       this.server.on('error', (error: NodeJS.ErrnoException) => {
         if (error.code === 'EADDRINUSE') {
-          this.logger.warn(`Port ${port} is already in use. WebSocket server may already be running.`);
+          this.logger.warn('websocket.port_in_use', { port });
         } else {
-          this.logger.error('WebSocket server error:', error);
+          this.logger.error('websocket.server.failed', error);
         }
       });
     } else {
-      this.logger.trace(`WebSocket server already listening on port ${port}, skipping listen call`);
+      this.logger.trace('websocket.already_listening', { port });
     }
 
     // Authenticate before allowing any socket events to race it.
@@ -374,12 +374,12 @@ export default class WebSocketService {
     const tokenString = tokenFromAuth ?? tokenFromQuery;
     
     if (!tokenString) {
-      this.logger.trace(`Client ${client.id} connected without authentication`);
+      this.logger.trace('websocket.client_connected', { clientId: client.id, authenticated: false });
       return;
     }
 
     if (!tokenFromAuth && tokenFromQuery) {
-      this.logger.debug('WebSocket token passed via query is deprecated; use handshake.auth.token instead.');
+      this.logger.debug('websocket.query_token_deprecated');
     }
 
     try {
@@ -389,12 +389,12 @@ export default class WebSocketService {
       if (user) {
         client.data.user = user;
         client.data.token = token;
-        this.logger.trace(`Client ${client.id} connected and authenticated as user ${user.id}`);
+        this.logger.trace('websocket.client_connected', { clientId: client.id, authenticated: true, userId: user.id });
       } else {
-        this.logger.warn(`Client ${client.id} authenticated with invalid user ID: ${token.user.id}`);
+        this.logger.warn('websocket.client_authentication_invalid_user', { clientId: client.id, userId: token.user.id });
       }
     } catch (error) {
-      this.logger.trace(`Client ${client.id} provided token but authentication failed: ${error}`);
+      this.logger.trace('websocket.client_authentication_failed', { clientId: client.id }, error);
     }
   }
 
@@ -428,7 +428,7 @@ export default class WebSocketService {
   private async handleSubscribe(client: Socket, room: string): Promise<void> {
     // Public rooms don't require authentication
     if (room === SYSTEM_ROOM) {
-      this.logger.trace(`Client ${client.id} is joining room ${room}`);
+      this.logger.trace('websocket.room_join', { clientId: client.id, room });
       await client.join(room);
       await this.handleSystemRoomSubscription();
       return;
@@ -438,7 +438,7 @@ export default class WebSocketService {
     const registration = this.roomPolicyRegistry.findRegistration(room);
     
     if (!registration) {
-      this.logger.warn(`Client ${client.id} attempted to subscribe to unregistered room: ${room}`);
+      this.logger.warn('websocket.room_subscription_rejected', { clientId: client.id, room, reason: 'unregistered' });
       client.emit('error', { message: 'Room not found or not registered.' });
       return;
     }
@@ -448,7 +448,7 @@ export default class WebSocketService {
     // Check if authentication is required (room has a policy)
     if (registration.policy) {
       if (!socketData.user || !socketData.token) {
-        this.logger.warn(`Client ${client.id} attempted to subscribe to authenticated room ${room} without authentication`);
+        this.logger.warn('websocket.room_subscription_rejected', { clientId: client.id, room, reason: 'unauthenticated' });
         client.emit('error', { message: 'Authentication required for this room.' });
         return;
       }
@@ -465,13 +465,15 @@ export default class WebSocketService {
       // Check policy
       const authorized = await registration.policy(context);
       if (!authorized) {
-        this.logger.warn(`Client ${client.id} (user ${socketData.user.id}) failed policy check for room ${room}`);
+        this.logger.warn('websocket.room_subscription_rejected', {
+          clientId: client.id, userId: socketData.user.id, room, reason: 'policy',
+        });
         client.emit('error', { message: 'Unauthorized to subscribe to this room.' });
         return;
       }
     }
 
-    this.logger.trace(`Client ${client.id} is joining room ${room}`);
+    this.logger.trace('websocket.room_join', { clientId: client.id, room });
     void client.join(room);
   }
 
@@ -483,7 +485,7 @@ export default class WebSocketService {
       const maintenanceMode = await ServerSettingsStore.getInstance().getSettingFromDatabase('maintenanceMode') as boolean;
       this.emitMaintenanceMode(maintenanceMode);
     } catch (error) {
-      this.logger.error(`Failed to retrieve maintenance mode setting: ${error}`);
+      this.logger.error('websocket.get_maintenance_mode.failed', error);
     }
   }
 
@@ -493,7 +495,7 @@ export default class WebSocketService {
    * @param room - The room name to unsubscribe from.
    */
   private handleUnsubscribe(client: Socket, room: string): void {
-    this.logger.trace(`Client ${client.id} is leaving room ${room}`);
+    this.logger.trace('websocket.room_leave', { clientId: client.id, room });
     void client.leave(room);
   }
 
@@ -503,7 +505,7 @@ export default class WebSocketService {
    * @param sessionId - The QR session ID to subscribe to.
    */
   private handleQRSessionSubscribe(client: Socket, sessionId: string): void {
-    this.logger.trace(`Client ${client.id} is subscribing to QR session ${sessionId}`);
+    this.logger.trace('websocket.qr_session_subscribe', { clientId: client.id });
     void client.join(`qr-session-${sessionId}`);
   }
 
@@ -513,7 +515,7 @@ export default class WebSocketService {
    * @param sessionId - The QR session ID to unsubscribe from.
    */
   private handleQRSessionUnsubscribe(client: Socket, sessionId: string): void {
-    this.logger.trace(`Client ${client.id} is unsubscribing from QR session ${sessionId}`);
+    this.logger.trace('websocket.qr_session_unsubscribe', { clientId: client.id });
     void client.leave(`qr-session-${sessionId}`);
   }
 
@@ -523,7 +525,7 @@ export default class WebSocketService {
    * @param token - The authentication response token to send.
    */
   public emitQRConfirmed(qr: QRAuthenticator, token: AuthenticationResponse): void {
-    this.logger.info(`Emitting QR confirmed for session ${qr.sessionId}, userId: ${token.user.id ?? 'unknown'}`);
+    this.logger.info('websocket.emit_qr_confirmed', { userId: token.user.id ?? 'unknown' });
     this.io.to(`qr-session-${qr.sessionId}`).emit('qr-confirmed', {
       sessionId: qr.sessionId,
       token,
@@ -535,7 +537,7 @@ export default class WebSocketService {
    * @param enabled - Whether maintenance mode is enabled.
    */
   public emitMaintenanceMode(enabled: boolean): void {
-    this.logger.info(`Sent maintenance mode ${enabled} to ${SYSTEM_ROOM}`);
+    this.logger.info('websocket.emit_maintenance_mode', { enabled, room: SYSTEM_ROOM });
     this.io.sockets.in(SYSTEM_ROOM).emit('maintenance-mode', enabled);
   }
 
@@ -547,7 +549,7 @@ export default class WebSocketService {
   public async emit<T>(eventType: string, eventData: T): Promise<void> {
     const handler = this.eventRegistry.getHandler(eventType);
     if (!handler) {
-      this.logger.warn(`No handler registered for event type: ${eventType}`);
+      this.logger.warn('websocket.emit.no_handler', { eventType });
       return;
     }
 
@@ -557,7 +559,7 @@ export default class WebSocketService {
     for (const resolvedRoom of resolvedRooms) {
       const parsedRoom = parseRoom(resolvedRoom.roomName);
       if (!parsedRoom) {
-        this.logger.warn(`Failed to parse room: ${resolvedRoom.roomName}`);
+        this.logger.warn('websocket.emit.invalid_room', { eventType, room: resolvedRoom.roomName });
         continue;
       }
 
@@ -566,7 +568,7 @@ export default class WebSocketService {
       }
     }
 
-    this.logger.trace(`Emitting ${eventType} to rooms: ${Array.from(roomsToEmit).join(', ')}`);
+    this.logger.trace('websocket.emit', { eventType, rooms: Array.from(roomsToEmit) });
     roomsToEmit.forEach(room => {
       this.io.to(room).emit(eventType, eventData);
     });
@@ -647,18 +649,18 @@ export default class WebSocketService {
             if (err) {
               const nodeErr = err as NodeJS.ErrnoException;
               if (nodeErr.code !== 'ERR_SERVER_NOT_RUNNING') {
-                this.logger.error('Error closing WebSocket server:', err);
+                this.logger.error('websocket.close.failed', err);
               } else {
-                this.logger.info('WebSocket server closed');
+                this.logger.info('websocket.closed');
               }
             } else {
-              this.logger.info('WebSocket server closed');
+              this.logger.info('websocket.closed');
             }
             resolve();
           });
         } else {
           // Server was already closed by io.close()
-          this.logger.info('WebSocket server closed');
+          this.logger.info('websocket.closed');
           resolve();
         }
       });

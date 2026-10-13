@@ -78,9 +78,11 @@ export class HelloWorldOptions extends TemplateOptions {
 export class InactiveAdministrativeCostNotificationOptions extends TemplateOptions {
   /**
      * @param administrativeCostValue - The configured administrative cost value.
+     * @param currentUserBalance - The user's current balance.
      */
   constructor(
     public administrativeCostValue: Dinero,
+    public currentUserBalance: Dinero,
   ) {
     super();
   }
@@ -170,6 +172,22 @@ export class UserDebtNotificationOptions extends TemplateOptions {
   }
 }
 
+/**
+ * Reminder that a user's balance is negative, without any mention of fines.
+ */
+export class UserDebtReminderOptions extends TemplateOptions {
+  /**
+     * @param url - URL to top up the balance.
+     * @param balance - The current (negative) balance.
+     */
+  constructor(
+    public url: string,
+    public balance: Dinero,
+  ) {
+    super();
+  }
+}
+
 
 /**
  * Options for notifying a user that they have received a fine.
@@ -179,7 +197,7 @@ export class UserGotFinedOptions extends TemplateOptions {
      * @param referenceDate - The date the fine is based on.
      * @param fine - The fine amount.
      * @param totalFine - Total accumulated fine amount.
-     * @param balance - The user's current balance after fines.
+     * @param balance - The user's balance on the reference date.
      */
   constructor(
     public referenceDate: Date,
@@ -198,9 +216,11 @@ export class UserGotFinedOptions extends TemplateOptions {
 export class UserGotInactiveAdministrativeCostOptions extends TemplateOptions {
   /**
      * @param amount - The administrative cost amount.
+     * @param currentUserBalance - The user's current balance.
      */
   constructor(
     public amount: Dinero,
+    public currentUserBalance: Dinero,
   ) {
     super();
   }

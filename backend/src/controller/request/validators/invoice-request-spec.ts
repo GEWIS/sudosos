@@ -35,17 +35,19 @@ import {
   ValidationError,
 } from '../../../helpers/specification-validation';
 import Transaction from '../../../entity/transactions/transaction';
-import stringSpec from './string-spec';
+import stringSpec, { maxLength } from './string-spec';
+import { validOrUndefinedDate } from './duration-spec';
 import { userMustExist } from './general-validators';
 import {
   INVALID_INVOICE_ID,
   INVALID_TRANSACTION_IDS,
   INVALID_TRANSACTION_OWNER,
-  INVOICE_IS_DELETED, INVOICE_IS_PAID, NO_TRANSACTION_IDS,
+  INVOICE_IS_DELETED, INVOICE_IS_PAID, NO_TRANSACTION_IDS, NULL_VALUE,
   SAME_INVOICE_STATE, SUBTRANSACTION_ALREADY_INVOICED,
 } from './validation-errors';
 import { InvoiceState } from '../../../entity/invoices/invoice-status';
 import Invoice from '../../../entity/invoices/invoice';
+import InvoiceService from '../../../service/invoice-service';
 
 /**
  * Checks whether all the transactions exists and are credited to the debtor or sold in case of credit Invoice.
@@ -82,38 +84,25 @@ async function validTransactionIds<T extends BaseInvoice>(p: T) {
 }
 
 /**
- * Validates that Invoice exists and is not of state DELETED.
+ * Validates that the Invoice exists, that the update changes its state (if it sets one),
+ * and that the Invoice is not PAID or DELETED.
  * @param p
  */
-async function existsAndNotPaidOrDeleted<T extends UpdateInvoiceParams>(p: T) {
+async function existsAndUpdatable<T extends UpdateInvoiceParams>(p: T) {
   const base: Invoice = await Invoice.findOne({ where: { id: p.invoiceId }, relations: {
     invoiceStatus: true,
   } });
 
   if (!base) return toFail(INVALID_INVOICE_ID());
-  const current = base.invoiceStatus.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[base.invoiceStatus.length - 1].state;
+  const { state: current } = InvoiceService.getLatestInvoiceStatus(base.invoiceStatus);
+  if (p.state && current === p.state) {
+    return toFail(SAME_INVOICE_STATE());
+  }
   if (current === InvoiceState.DELETED) {
     return toFail(INVOICE_IS_DELETED());
   }
   if (current === InvoiceState.PAID) {
     return toFail(INVOICE_IS_PAID());
-  }
-
-  return toPass(p);
-}
-
-/**
- * Validates that the state of the update request is different than the current state.
- * @param p
- */
-async function differentState<T extends UpdateInvoiceParams>(p: T) {
-  if (!p.state) return toPass(p);
-
-  const base: Invoice = await Invoice.findOne({ where: { id: p.invoiceId }, relations: {
-    invoiceStatus: true,
-  } });
-  if (base.invoiceStatus[base.invoiceStatus.length - 1].state === p.state) {
-    return toFail(SAME_INVOICE_STATE());
   }
 
   return toPass(p);
@@ -127,6 +116,18 @@ const userMustExistIfProvided = async (p: number | undefined) => {
   if (p === undefined || p === null) return toPass(p);
   return userMustExist(p);
 };
+
+const notNull = (p: string) => {
+  if (p === null) return toFail(NULL_VALUE());
+  return toPass(p);
+};
+
+/**
+ * Specification for an optional update of a NOT NULL varchar(255) column.
+ */
+function requiredColumnSpec(): Specification<string, ValidationError> {
+  return [notNull, maxLength(255)] as Specification<string, ValidationError>;
+}
 
 /**
  * Specification for an InvoiceRequest
@@ -146,9 +147,17 @@ function baseInvoiceRequestSpec<T extends BaseInvoice>(): Specification<T, Valid
  */
 export function updateInvoiceRequestSpec(): Specification<UpdateInvoiceParams, ValidationError> {
   return [
-    [stringSpec(), 'description', new ValidationError('description:')],
-    differentState,
-    existsAndNotPaidOrDeleted,
+    [[userMustExistIfProvided], 'byId', new ValidationError('byId:')],
+    [requiredColumnSpec(), 'addressee', new ValidationError('addressee:')],
+    [requiredColumnSpec(), 'street', new ValidationError('street:')],
+    [requiredColumnSpec(), 'postalCode', new ValidationError('postalCode:')],
+    [requiredColumnSpec(), 'city', new ValidationError('city:')],
+    [requiredColumnSpec(), 'country', new ValidationError('country:')],
+    [requiredColumnSpec(), 'reference', new ValidationError('reference:')],
+    [[maxLength(255)], 'attention', new ValidationError('attention:')],
+    [[...stringSpec(), maxLength(255)], 'description', new ValidationError('description:')],
+    [[validOrUndefinedDate], 'date', new ValidationError('date:')],
+    existsAndUpdatable,
   ];
 }
 

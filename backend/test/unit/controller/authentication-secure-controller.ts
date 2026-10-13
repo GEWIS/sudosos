@@ -863,6 +863,23 @@ describe('AuthenticationSecureController', () => {
       expect(res.status).to.equal(403);
       expect(res.body.message).to.equal('Invalid credentials.');
     });
+
+    it('should return HTTP 403 when the NFC user is soft-deleted', async () => {
+      const pos = ctx.pointsOfSale.find((p) => p.user.id === ctx.pointOfSaleUsers[0].id);
+      await User.update(memberUserWithNfc.id, { deleted: true });
+
+      try {
+        const res = await request(ctx.app)
+          .post('/authentication/nfc')
+          .set('Authorization', `Bearer ${posUserToken}`)
+          .send({ ...validNfcRequest, posId: pos.id });
+
+        expect(res.status).to.equal(403);
+        expect(res.body.message).to.equal('Invalid credentials.');
+      } finally {
+        await User.update(memberUserWithNfc.id, { deleted: false });
+      }
+    });
   });
 
   describe('POST /authentication/ean', () => {
@@ -962,6 +979,23 @@ describe('AuthenticationSecureController', () => {
 
       expect(res.status).to.equal(403);
       expect(res.body.message).to.equal('Invalid credentials.');
+    });
+
+    it('should return HTTP 403 when the EAN user is soft-deleted', async () => {
+      const pos = ctx.pointsOfSale.find((p) => p.user.id === ctx.pointOfSaleUsers[0].id);
+      await User.update(memberUserWithEan.id, { deleted: true });
+
+      try {
+        const res = await request(ctx.app)
+          .post('/authentication/ean')
+          .set('Authorization', `Bearer ${posUserToken}`)
+          .send({ ...validEanRequest, posId: pos.id });
+
+        expect(res.status).to.equal(403);
+        expect(res.body.message).to.equal('Invalid credentials.');
+      } finally {
+        await User.update(memberUserWithEan.id, { deleted: false });
+      }
     });
   });
 });

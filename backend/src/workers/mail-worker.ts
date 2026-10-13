@@ -44,17 +44,14 @@ export const processMailJob = async (
   job: Job<Mail.Options>,
   mailTransporter: Pick<Mail, 'sendMail'> = getDefaultTransporter(),
 ): Promise<unknown> => {
-  logger.info(`Processing job ${job.id} for ${job.data.to}`);
+  logger.info('mail_worker.process_job', { jobId: job.id });
 
   try {
     const info = await mailTransporter.sendMail(job.data);
 
     return info;
   } catch (error) {
-    logger.error(
-      { jobId: job.id, to: job.data.to, error: error.message },
-      'Failed to send email via transporter',
-    );
+    logger.error('mail_worker.process_job.failed', { jobId: job.id }, error);
 
     throw error;
   }
@@ -64,7 +61,7 @@ export const processMailJob = async (
  * Event handler invoked when a mail job completes.
  */
 export const handleJobCompleted = (job: Job<Mail.Options>): void => {
-  logger.info(`Job ${job.id} completed successfully`);
+  logger.info('mail_worker.job_completed', { jobId: job.id });
 };
 
 /**
@@ -74,7 +71,7 @@ export const handleJobFailed = (
   job: Job<Mail.Options> | undefined,
   err: Error,
 ): void => {
-  logger.error(`Job ${job?.id} failed: ${err.message}`);
+  logger.error('mail_worker.job_failed', { jobId: job?.id }, err);
 };
 
 export const startMailWorker = (redisConnection: Redis) => {
@@ -90,7 +87,7 @@ export const startMailWorker = (redisConnection: Redis) => {
   worker.on('completed', handleJobCompleted);
   worker.on('failed', handleJobFailed);
 
-  logger.info('Mail Worker is running and listening for jobs...');
+  logger.info('mail_worker.started');
 
   return worker;
 };

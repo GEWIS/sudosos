@@ -94,8 +94,8 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { TransactionResponse } from '@gewis/sudosos-client';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
+import DataTable from 'openvue/datatable';
+import Column from 'openvue/column';
 import TransactionEditCard from './TransactionEditCard.vue';
 import TransactionAmountsEditCard from './TransactionAmountsEditCard.vue';
 import CardComponent from '@/components/CardComponent.vue';

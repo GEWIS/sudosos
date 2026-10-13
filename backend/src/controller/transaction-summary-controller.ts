@@ -68,7 +68,7 @@ export default class TransactionSummaryController extends BaseController {
    */
   public async getSingleContainerSummary(req: RequestWithToken, res: Response): Promise<void> {
     const { id: rawId } = req.params;
-    this.logger.trace('Get single container summary of container', rawId, ', by user', req.token.user);
+    this.logger.trace('transaction_summary.get_container', { containerId: rawId });
 
     try {
       const id = Number(rawId);
@@ -91,7 +91,7 @@ export default class TransactionSummaryController extends BaseController {
       res.status(200).json(response);
     } catch (e) {
       res.status(500).send('Internal server error.');
-      this.logger.error(e);
+      this.logger.error('transaction_summary.get_container.failed', e);
     }
   }
 }

@@ -88,7 +88,7 @@ export default class RootController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnAllBanners(req: Request, res: Response): Promise<void> {
-    this.logger.trace('Get all banners by', req.ip);
+    this.logger.trace('banner.list_public', { ip: req.ip });
 
     let take;
     let skip;
@@ -110,7 +110,7 @@ export default class RootController extends BaseController {
         { take, skip },
       ));
     } catch (error) {
-      this.logger.error('Could not return all banners:', error);
+      this.logger.error('banner.list_public.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -124,7 +124,7 @@ export default class RootController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async ping(req: Request, res: Response): Promise<void> {
-    this.logger.trace('Ping by', req.ip);
+    this.logger.trace('root.ping', { ip: req.ip });
 
     try {
       const store = ServerSettingsStore.getInstance();
@@ -150,7 +150,7 @@ export default class RootController extends BaseController {
       const tos = await TermsOfServiceService.getLatestTermsOfService();
       res.json(TermsOfServiceService.asTermsOfServiceResponse(tos));
     } catch (error) {
-      this.logger.error('Could not get latest Terms of Service', error);
+      this.logger.error('terms_of_service.get_latest.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

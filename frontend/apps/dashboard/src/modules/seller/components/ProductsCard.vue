@@ -100,15 +100,15 @@
 </template>
 
 <script setup lang="ts">
-import IconField from 'primevue/iconfield';
-import InputIcon from 'primevue/inputicon';
-import Column from 'primevue/column';
-import Skeleton from 'primevue/skeleton';
-import DataTable from 'primevue/datatable';
-import InputText from 'primevue/inputtext';
+import IconField from 'openvue/iconfield';
+import InputIcon from 'openvue/inputicon';
+import Column from 'openvue/column';
+import Skeleton from 'openvue/skeleton';
+import DataTable from 'openvue/datatable';
+import InputText from 'openvue/inputtext';
 import { computed, onBeforeMount, type Ref, ref } from 'vue';
 import type { ProductResponse } from '@gewis/sudosos-client';
-import { FilterMatchMode } from '@primevue/core/api';
+import { FilterMatchMode } from '@openvue/core/api';
 import { useI18n } from 'vue-i18n';
 import { isAllowed } from '@sudosos/sudosos-frontend-common';
 import { useProductStore } from '@/stores/product.store';

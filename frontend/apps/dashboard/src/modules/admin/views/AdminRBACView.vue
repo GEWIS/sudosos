@@ -19,8 +19,8 @@
 </template>
 
 <script setup lang="ts">
-import TabPanel from 'primevue/tabpanel';
-import TabView from 'primevue/tabview';
+import TabPanel from 'openvue/tabpanel';
+import TabView from 'openvue/tabview';
 import SelectRolesCard from '@/modules/admin/components/rbac/SelectRolesCard.vue';
 import PermissionPerRoleCard from '@/modules/admin/components/rbac/PermissionPerRoleCard.vue';
 import { schemaToForm } from '@/utils/formUtils';

@@ -52,7 +52,7 @@ class MaintenanceApplication {
 
   public async stop(): Promise<void> {
     await this.connection.destroy();
-    this.logger.info('Maintenance completed.');
+    this.logger.info('maintenance.stopped');
   }
 }
 
@@ -62,12 +62,12 @@ class MaintenanceApplication {
 function validateDevelopmentEnvironment(logger: Logger): void {
   const config = Config.get();
   if (!config.app.isDevelopment) {
-    logger.error('This script is only meant for development environments.');
-    logger.error(`Current NODE_ENV: ${config.app.nodeEnv || 'undefined'}`);
-    logger.error('Please set NODE_ENV=development to run this script.');
+    logger.error('maintenance.environment_invalid');
+    logger.error('maintenance.environment_invalid.current', { nodeEnv: config.app.nodeEnv || 'undefined' });
+    logger.error('maintenance.environment_invalid.expected', { nodeEnv: 'development' });
     process.exit(1);
   }
-  logger.info('Development environment validated');
+  logger.info('maintenance.environment_validated');
 }
 
 /**
@@ -78,76 +78,76 @@ async function performMaintenanceTasks(application: MaintenanceApplication): Pro
   // Set up monetary value configuration
   dinero.defaultCurrency = config.currency.code as Currency;
   dinero.defaultPrecision = config.currency.precision;
-  application.logger.info('Monetary configuration set up');
+  application.logger.info('maintenance.monetary_configured');
 
   // Initialize database-stored settings
   const store = ServerSettingsStore.getInstance();
   if (!store.initialized) {
     await store.initialize();
-    application.logger.info('Server settings initialized');
+    application.logger.info('maintenance.server_settings_initialized');
   }
 
   // Setup RBAC
   application.roleManager = await new RoleManager().initialize();
-  application.logger.info('Role manager initialized');
+  application.logger.info('maintenance.role_manager_initialized');
 
   // Synchronize SudoSOS system roles
-  application.logger.info('Synchronizing default roles...');
+  application.logger.info('maintenance.sync_default_roles.started');
   await DefaultRoles.synchronize();
-  application.logger.info('Default roles synchronized');
+  application.logger.info('maintenance.sync_default_roles.finished');
 
   // Update balances
-  application.logger.info('Updating balances...');
+  application.logger.info('maintenance.update_balances.started');
   await new BalanceService().updateBalances({});
-  application.logger.info('Balances updated');
+  application.logger.info('maintenance.update_balances.finished');
 
   // Sync user notification preferences
-  application.logger.info('Syncing user notification preferences...');
+  application.logger.info('maintenance.sync_notification_preferences.started');
   await new UserNotificationPreferenceService().syncAllUserNotificationPreferences();
-  application.logger.info('User notification preferences synced');
+  application.logger.info('maintenance.sync_notification_preferences.finished');
   // Update wrapped
-  application.logger.info('Updating wrapped...');
+  application.logger.info('maintenance.update_wrapped.started');
   await new WrappedService().updateWrapped({});
-  application.logger.info('Wrapped updated');
+  application.logger.info('maintenance.update_wrapped.finished');
 
   // Setup user synchronization services based on environment variables
   const syncServices: UserSyncService[] = [];
 
   if (config.ldap.enabled) {
-    application.logger.info('Setting up LDAP sync service...');
+    application.logger.info('maintenance.ldap_sync.configuring');
     const ldapSyncService = new LdapSyncService(application.roleManager);
     syncServices.push(ldapSyncService);
-    application.logger.info('LDAP sync service configured');
+    application.logger.info('maintenance.ldap_sync.configured');
   } else {
-    application.logger.info('LDAP sync disabled (ENABLE_LDAP not set to true)');
+    application.logger.info('maintenance.ldap_sync.disabled', { reason: 'ENABLE_LDAP not set to true' });
   }
 
   if (config.gewis.gewisdbApiKey && config.gewis.gewisdbApiUrl) {
-    application.logger.info('Setting up GEWIS DB sync service...');
+    application.logger.info('maintenance.gewisdb_sync.configuring');
     const gewisDBSyncService = new GewisDBSyncService();
     syncServices.push(gewisDBSyncService);
-    application.logger.info('GEWIS DB sync service configured');
+    application.logger.info('maintenance.gewisdb_sync.configured');
   } else {
-    application.logger.info('GEWIS DB sync disabled (missing API key or URL)');
+    application.logger.info('maintenance.gewisdb_sync.disabled', { reason: 'missing API key or URL' });
   }
 
   // Run user synchronization if services are configured
   if (syncServices.length > 0) {
-    application.logger.info('Running user synchronization...');
+    application.logger.info('maintenance.user_sync.started');
     const syncManager = new UserSyncManager(syncServices);
     
     // Fetch users first
     await syncManager.fetch();
-    application.logger.info('User data fetched');
+    application.logger.info('maintenance.user_sync.fetched');
     
     // Then sync users
     await syncManager.run();
-    application.logger.info('User synchronization completed');
+    application.logger.info('maintenance.user_sync.finished');
   } else {
-    application.logger.info('No user sync services configured');
+    application.logger.info('maintenance.user_sync.skipped');
   }
 
-  application.logger.info('All maintenance tasks completed successfully');
+  application.logger.info('maintenance.tasks_finished');
 }
 
 /**
@@ -160,7 +160,7 @@ async function runMaintenance(): Promise<void> {
     application.connection = await Database.initialize();
     application.logger = log4js.getLogger('Maintenance');
     applyConfiguredLogLevel(application.logger);
-    application.logger.info('Starting maintenance tasks...');
+    application.logger.info('maintenance.started');
 
     console.log = (message: any, ...additional: any[]) => application.logger.debug(message, ...additional);
 
@@ -170,14 +170,14 @@ async function runMaintenance(): Promise<void> {
     // Perform maintenance tasks
     await performMaintenanceTasks(application);
     
-    application.logger.info('SudoSOS development maintenance completed successfully!');
+    application.logger.info('maintenance.finished');
     
     await application.stop();
     
   } catch (error) {
     const logger = log4js.getLogger('Maintenance');
     logger.level = process.env.LOG_LEVEL ?? 'info';
-    logger.fatal('Maintenance failed:', error);
+    logger.fatal('maintenance.failed', error);
     process.exit(1);
   }
 }

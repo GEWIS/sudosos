@@ -156,14 +156,14 @@ export default class PointOfSaleController extends BaseController {
    */
   public async createPointOfSale(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as CreatePointOfSaleRequest;
-    this.logger.trace('Create point of sale', body, 'by user', req.token.user);
+    this.logger.trace('point_of_sale.create', { request: body });
 
     // handle request
     try {
       const revision = await PointOfSaleService.createPointOfSale(body);
       res.json(PointOfSaleService.revisionToResponse(revision));
     } catch (error) {
-      this.logger.error('Could not create point of sale:', error);
+      this.logger.error('point_of_sale.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -181,7 +181,7 @@ export default class PointOfSaleController extends BaseController {
    */
   public async returnAllPointsOfSale(req: RequestWithToken, res: Response): Promise<void> {
     const { body } = req;
-    this.logger.trace('Get all point of sales', body, 'by user', req.token.user);
+    this.logger.trace('point_of_sale.list', { filters: body });
 
     let take;
     let skip;
@@ -200,7 +200,7 @@ export default class PointOfSaleController extends BaseController {
       const records = revisions.map((r) => PointOfSaleService.revisionToResponse(r));
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all point of sales:', error);
+      this.logger.error('point_of_sale.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -218,7 +218,7 @@ export default class PointOfSaleController extends BaseController {
    */
   public async returnSinglePointOfSale(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get single point of sale', id, 'by user', req.token.user);
+    this.logger.trace('point_of_sale.get', { id });
 
     // handle request
     try {
@@ -235,7 +235,7 @@ export default class PointOfSaleController extends BaseController {
         res.json(PointOfSaleService.revisionToResponse(revisions[0]));
       }
     } catch (error) {
-      this.logger.error('Could not return point of sale:', error);
+      this.logger.error('point_of_sale.get.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -254,7 +254,7 @@ export default class PointOfSaleController extends BaseController {
    */
   public async returnSinglePointOfSaleRevision(req: RequestWithToken, res: Response): Promise<void> {
     const { id, revision } = req.params;
-    this.logger.trace('Get single point of sale revision', id, revision, 'by user', req.token.user);
+    this.logger.trace('point_of_sale.get_revision', { id, revision });
 
     try {
       const pointOfSaleId = parseInt(id, 10);
@@ -280,7 +280,7 @@ export default class PointOfSaleController extends BaseController {
 
       res.json(PointOfSaleService.revisionToResponse(revisions[0]));
     } catch (error) {
-      this.logger.error('Could not return point of sale revision:', error);
+      this.logger.error('point_of_sale.get_revision.failed', { id, revision }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -303,7 +303,7 @@ export default class PointOfSaleController extends BaseController {
     const body = req.body as UpdatePointOfSaleRequest;
     const { id } = req.params;
     const pointOfSaleId = Number.parseInt(id, 10);
-    this.logger.trace('Update Point of Sale', id, 'with', body, 'by user', req.token.user);
+    this.logger.trace('point_of_sale.update', { id, request: body });
 
     // handle request
     try {
@@ -321,7 +321,7 @@ export default class PointOfSaleController extends BaseController {
       const revision = await PointOfSaleService.updatePointOfSale(params);
       res.json(PointOfSaleService.revisionToResponse(revision));
     } catch (error) {
-      this.logger.error('Could not update Point of Sale:', error);
+      this.logger.error('point_of_sale.update.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -340,7 +340,7 @@ export default class PointOfSaleController extends BaseController {
    */
   public async returnAllPointOfSaleContainers(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get all point of sale containers', id, 'by user', req.token.user);
+    this.logger.trace('point_of_sale.get_containers', { id });
 
     const { take, skip } = parseRequestPagination(req);
 
@@ -352,7 +352,7 @@ export default class PointOfSaleController extends BaseController {
       const records = revisions.map((r) => ContainerService.revisionToResponse(r));
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all point of sale containers:', error);
+      this.logger.error('point_of_sale.get_containers.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -369,7 +369,7 @@ export default class PointOfSaleController extends BaseController {
    */
   public async returnAllPointOfSaleProducts(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get all point of sale products', id, 'by user', req.token.user);
+    this.logger.trace('point_of_sale.get_products', { id });
 
     // Handle request
     try {
@@ -381,7 +381,7 @@ export default class PointOfSaleController extends BaseController {
         .flatMap((c) => c.products);
       res.json(products);
     } catch (error) {
-      this.logger.error('Could not return all point of sale products:', error);
+      this.logger.error('point_of_sale.get_products.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -402,7 +402,7 @@ export default class PointOfSaleController extends BaseController {
   public async returnPointOfSaleTransactions(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const pointOfSaleId = parseInt(id, 10);
-    this.logger.trace('Get Point of Sale transactions', id, 'by user', req.token.user);
+    this.logger.trace('point_of_sale.get_transactions', { id });
 
     let take;
     let skip;
@@ -428,7 +428,7 @@ export default class PointOfSaleController extends BaseController {
       );
       res.status(200).json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return point of sale transactions:', error);
+      this.logger.error('point_of_sale.get_transactions.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -447,7 +447,7 @@ export default class PointOfSaleController extends BaseController {
   public async returnPointOfSaleAssociates(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const pointOfSaleId = parseInt(id, 10);
-    this.logger.trace('Get Point of Sale associate users', id, 'by user', req.token.user);
+    this.logger.trace('point_of_sale.get_associates', { id });
 
     try {
       // Point of sale does not exist.
@@ -497,7 +497,7 @@ export default class PointOfSaleController extends BaseController {
       };
       res.json(response);
     } catch (error) {
-      this.logger.error('Could not return point of sale associate users:', error);
+      this.logger.error('point_of_sale.get_associates.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -515,7 +515,7 @@ export default class PointOfSaleController extends BaseController {
    */
   public async deletePointOfSale(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Delete point of sale', id, 'by user', req.token.user);
+    this.logger.trace('point_of_sale.delete', { id });
 
     try {
       const pointOfSaleId = parseInt(id, 10);
@@ -531,7 +531,7 @@ export default class PointOfSaleController extends BaseController {
       res.status(204).send();
       return;
     } catch (error) {
-      this.logger.error('Could not delete point of sale', error);
+      this.logger.error('point_of_sale.delete.failed', { id }, error);
       res.status(500).json('Internal server error.');
     }
   }

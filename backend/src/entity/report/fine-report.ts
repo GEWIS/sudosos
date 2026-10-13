@@ -25,8 +25,6 @@
  */
 
 import { Dinero } from 'dinero.js';
-import { UnstoredPdfAble } from '../file/pdf-able';
-import FineReportPdfService from '../../service/pdf/fine-report-pdf-service';
 import { FineReportResponse } from '../../controller/response/debtor-response';
 
 class IFineReport {
@@ -47,8 +45,7 @@ class IFineReport {
   }
 }
 
-export class FineReport extends UnstoredPdfAble(IFineReport) {
-  pdfService = new FineReportPdfService();
+export class FineReport extends IFineReport {
 
   toResponse(): FineReportResponse {
     return {

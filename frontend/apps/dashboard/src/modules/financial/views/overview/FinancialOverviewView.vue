@@ -24,7 +24,7 @@ import { useI18n } from 'vue-i18n';
 import { onMounted, ref, type Ref } from 'vue';
 import type { UserResponse } from '@gewis/sudosos-client';
 import { useUserStore } from '@sudosos/sudosos-frontend-common';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import type { AxiosError } from 'axios';
 import FinancialOverviewTable from '@/modules/financial/views/overview/FinancialOverviewTable.vue';
 import CardComponent from '@/components/CardComponent.vue';

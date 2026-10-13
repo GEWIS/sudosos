@@ -24,10 +24,10 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import IconField from 'primevue/iconfield';
-import InputIcon from 'primevue/inputicon';
-import InputNumber from 'primevue/inputnumber';
-import Button from 'primevue/button';
+import IconField from 'openvue/iconfield';
+import InputIcon from 'openvue/inputicon';
+import InputNumber from 'openvue/inputnumber';
+import Button from 'openvue/button';
 import { useI18n } from 'vue-i18n';
 
 interface Props {

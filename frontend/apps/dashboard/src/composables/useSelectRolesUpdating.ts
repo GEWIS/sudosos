@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 import { ref } from 'vue';
 import type { PermissionResponse, RoleResponse, UserResponse } from '@gewis/sudosos-client';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import type { Form } from '@/utils/formUtils';
 import { rbacSchema } from '@/utils/validation-schema';
 import apiService from '@/services/ApiService';

@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import * as yup from 'yup';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import type { PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
 import { addContainerObject } from '@/utils/validation-schema';
 import { type Form, setSubmit } from '@/utils/formUtils';

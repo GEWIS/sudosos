@@ -265,11 +265,18 @@ export default class PayoutRequestService {
     return PayoutRequestService.getSinglePayoutRequest(payoutRequest.id);
   }
 
+  /**
+   * The id of the latest status of a payout request, since createdAt alone
+   * can tie (MariaDB stores it with second precision).
+   */
   public static stateSubQuery(): string {
     return PayoutRequestStatus.getRepository()
-      .createQueryBuilder('payoutRequestStatus')
-      .select('MAX(createdAt) as createdAt')
-      .where('payoutRequestStatus.payoutRequestId = `PayoutRequest`.`id`')
+      .createQueryBuilder('latestStatus')
+      .select('latestStatus.id')
+      .where('latestStatus.payoutRequestId = `PayoutRequest`.`id`')
+      .orderBy('latestStatus.createdAt', 'DESC')
+      .addOrderBy('latestStatus.id', 'DESC')
+      .limit(1)
       .getSql();
   }
 
@@ -293,7 +300,7 @@ export default class PayoutRequestService {
     if (params.status) {
       stateFilter.payoutRequestStatus = {
         // Get the latest status
-        createdAt: Raw((raw) => `${raw} = (${this.stateSubQuery()})`),
+        id: Raw((raw) => `${raw} = (${this.stateSubQuery()})`),
         state: Raw((raw) => `${raw} IN (${params.status.map((s) => `'${s}'`)})`),
       };
     }

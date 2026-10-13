@@ -125,13 +125,13 @@ export default class StripeWebhookService extends WithManager {
         await new PaymentRequestService(this.manager).settlePaidStripeIntent(paymentIntent);
       } catch (error) {
         this.logger.error(
-          'Failed to fully settle a succeeded Stripe payment intent for a PaymentRequest.',
+          'stripe_webhook.settle_payment_request.failed',
           {
             paymentIntentId: paymentIntent.id,
             stripeId: paymentIntent.stripeId,
             paymentRequestId: paymentIntent.paymentRequestAttempt.paymentRequest.id,
-            error,
           },
+          error,
         );
       }
     }
@@ -185,12 +185,14 @@ export default class StripeWebhookService extends WithManager {
           await this.createNewPaymentIntentStatus(paymentIntent.id, StripePaymentIntentState.CANCELLED);
           break;
         default:
-          this.logger.warn('Tried to process event', event.type, 'but processing method is not defined');
+          this.logger.warn('stripe_webhook.event_unhandled', { eventId: event.id, type: event.type });
       }
 
-      this.logger.trace(`Successfully processed event "${event.type}" for payment intent "${eventPaymentIntent.id}" (ID: ${paymentIntent.id})`);
+      this.logger.trace('stripe_webhook.event_processed', {
+        eventId: event.id, type: event.type, stripeId: eventPaymentIntent.id, paymentIntentId: paymentIntent.id,
+      });
     } catch (error) {
-      this.logger.error('Could not process Stripe webhook event with ID', event.id, error);
+      this.logger.error('stripe_webhook.event_processed.failed', { eventId: event.id, type: event.type }, error);
     }
   }
 }

@@ -25,6 +25,7 @@ import {
   MembershipExpiryNotificationOptions,
   TransactionNotificationOptions,
   UserDebtNotificationOptions,
+  UserDebtReminderOptions,
   UserGotFinedOptions,
   UserGotInactiveAdministrativeCostOptions,
   UserNearExpirationOptions,
@@ -43,6 +44,7 @@ import HelloWorld from '../../mailer/messages/hello-world';
 import MembershipExpiryNotification from '../../mailer/messages/membership-expiry-notification';
 import WelcomeWithReset from '../../mailer/messages/welcome-with-reset';
 import UserDebtNotification from '../../mailer/messages/user-debt-notification';
+import UserDebtReminder from '../../mailer/messages/user-debt-reminder';
 import UserGotInactiveAdministrativeCost from '../../mailer/messages/user-got-inactive-administrative-cost';
 import WelcomeToSudosos from '../../mailer/messages/welcome-to-sudosos';
 import InactiveAdministrativeCostNotification from '../../mailer/messages/inactive-administrative-cost-notification';
@@ -79,6 +81,10 @@ export const PasswordResetTemplate = new EmailTemplate(
 
 export const UserDebtNotificationTemplate = new EmailTemplate(
   (params: UserDebtNotificationOptions) => new UserDebtNotification(params),
+);
+
+export const UserDebtReminderTemplate = new EmailTemplate(
+  (params: UserDebtReminderOptions) => new UserDebtReminder(params),
 );
 
 export const UserGotFinedTemplate = new EmailTemplate(

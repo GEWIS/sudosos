@@ -52,9 +52,9 @@ import { rootStubs } from '../../root-hooks';
 import Mailer from '../../../src/mailer';
 import ServerSettingsStore from '../../../src/server-settings/server-settings-store';
 import VatGroup from '../../../src/entity/vat-group';
-import { InactiveAdministrativeCostReport } from '../../../src/entity/report/inactive-administrative-cost-report';
 import { PdfError } from '../../../src/errors';
 import Redis from 'ioredis';
+import InactiveAdministrativeCostReportPdfService from '../../../src/service/pdf/inactive-administrative-cost-report-pdf-service';
 
 const { expect, request } = chai;
 
@@ -613,7 +613,7 @@ describe('InactiveAdministrativeCostController', async () => {
     let createPdfStub: sinon.SinonStub;
 
     beforeEach(() => {
-      createPdfStub = sinon.stub(InactiveAdministrativeCostReport.prototype, 'createPdf').resolves(Buffer.from('PDF content'));
+      createPdfStub = sinon.stub(InactiveAdministrativeCostReportPdfService.prototype, 'pdf').resolves(Buffer.from('PDF content'));
     });
 
     afterEach(() => {
@@ -636,7 +636,7 @@ describe('InactiveAdministrativeCostController', async () => {
 
     it('should return 502 if pdf generation fails with PdfError', async () => {
       createPdfStub.restore();
-      createPdfStub = sinon.stub(InactiveAdministrativeCostReport.prototype, 'createPdf').rejects(new PdfError('PDF generation failed'));
+      createPdfStub = sinon.stub(InactiveAdministrativeCostReportPdfService.prototype, 'pdf').rejects(new PdfError('PDF generation failed'));
 
       const fromDate = new Date();
       const toDate = new Date(fromDate.getTime() + 1000 * 60 * 60 * 24);
@@ -651,7 +651,7 @@ describe('InactiveAdministrativeCostController', async () => {
 
     it('should return 500 if pdf generation fails with other error', async () => {
       createPdfStub.restore();
-      createPdfStub = sinon.stub(InactiveAdministrativeCostReport.prototype, 'createPdf').rejects(new Error('PDF generation failed'));
+      createPdfStub = sinon.stub(InactiveAdministrativeCostReportPdfService.prototype, 'pdf').rejects(new Error('PDF generation failed'));
 
       const fromDate = new Date();
       const toDate = new Date(fromDate.getTime() + 1000 * 60 * 60 * 24);

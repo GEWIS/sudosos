@@ -321,17 +321,25 @@ export default class ProductService {
    * @param productId - The product to propagate
    */
   public static async propagateProductUpdate(productId: number) {
-    let options = await this.getOptions({ productId, returnContainers: true });
-    // Get previous revision of container.
-    (options.where as FindOptionsWhere<ContainerRevision>).revision = Raw(alias => `${alias}  = (${this.revisionSubQuery()}) - 1`);
-    const productRevision = await ProductRevision.findOne(options);
+    const product = await Product.findOne({ where: { id: productId } });
+    if (!product) return;
 
-    if (productRevision == null) return;
+    // Retrieve all outdated containers with this product where any of those product revisions are lower than
+    // the current product revision
+    const outdated = await ContainerRevision.createQueryBuilder('containerRevision')
+      .innerJoin('containerRevision.container', 'container',
+        'container.currentRevision = containerRevision.revision AND container.deletedAt IS NULL')
+      .innerJoin('containerRevision.products', 'productRevision',
+        'productRevision.productId = :productId AND productRevision.revision < :revision',
+        { productId, revision: product.currentRevision })
+      .getMany();
+    if (outdated.length === 0) return;
 
-    const containers = productRevision.containers
-      .filter((c) => c.container.deletedAt == null && c.revision === c.container.currentRevision)
-      .filter((c, index, self) => (
-        index === self.findIndex((c2) => c.container.id === c2.container.id)));
+    const containers = await ContainerRevision.find({
+      where: outdated.map((c) => ({ containerId: c.containerId, revision: c.revision })),
+      relations: { products: true },
+      withDeleted: true,
+    });
 
     return this.executePropagation(containers);
   }

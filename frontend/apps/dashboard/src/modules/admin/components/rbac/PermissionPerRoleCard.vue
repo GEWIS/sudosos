@@ -58,8 +58,8 @@
 import { useI18n } from 'vue-i18n';
 import { type PropType, ref } from 'vue';
 import * as yup from 'yup';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
+import DataTable from 'openvue/datatable';
+import Column from 'openvue/column';
 import { type Form } from '@/utils/formUtils';
 import { rbacSchema } from '@/utils/validation-schema';
 import CardComponent from '@/components/CardComponent.vue';

@@ -164,10 +164,10 @@ export default class RoleManager {
   public async setRoleUsers(users: User[], roleName: string) {
     const role = await Role.findOne({ where: { name: roleName } });
     if (!role) {
-      this.logger.warn(`Role ${roleName} not found`);
+      this.logger.warn('rbac.set_role_users.role_not_found', { roleName });
       return undefined;
     }
-    this.logger.trace(`Setting role ${roleName} with ${users.length} users`);
+    this.logger.trace('rbac.set_role_users', { roleName, count: users.length });
 
     // Typeorm doesnt like empty deletes.
     const drop: AssignedRole[] = await AssignedRole.find({ where: { role: { id: role.id } } });

@@ -60,8 +60,11 @@
  * when computing a user's running total.
  *
  * ### PDF
- * `Transfer` is `PdfAble`. Some kinds (payouts, invoice settlements) produce a PDF receipt
- * via `GET /transfers/{id}/pdf` using `TransferPdfService`.
+ * `GET /transfers/{id}/pdf` renders a generic receipt using `TransferPdfService`. It rejects
+ * transfers that are the `transfer` of an invoice, payout request, deposit, fine, write-off
+ * or inactive administrative cost, and waived-fine transfers; those have their own documents.
+ * Other linked transfers, such as seller payouts and invoice credit transfers, still get the
+ * generic receipt.
  *
  * @module transfers
  * @mergeTarget
@@ -83,8 +86,6 @@ import UserFineGroup from '../fine/userFineGroup';
 import VatGroup from '../vat-group';
 import WriteOff from './write-off';
 import InactiveAdministrativeCost from './inactive-administrative-cost';
-import { UnstoredPdfAble } from '../file/pdf-able';
-import TransferPdfService from '../../service/pdf/transfer-pdf-service';
 
 /**
  * TypeORM entity for the `transfer` table. A single money movement on or off SudoSOS; one of
@@ -103,7 +104,7 @@ import TransferPdfService from '../../service/pdf/transfer-pdf-service';
  * description of the transfer.
  */
 @Entity()
-export default class Transfer extends UnstoredPdfAble(BaseEntity) {
+export default class Transfer extends BaseEntity {
   // These IDs are required, because TypeORM findOptions will convert the relations from LEFT JOIN
   // to INNER JOIN when having a where clause on a relational entity.
   @Column({ nullable: true })
@@ -162,6 +163,4 @@ export default class Transfer extends UnstoredPdfAble(BaseEntity) {
 
   @OneToOne(() => SellerPayout, (s) => s.transfer, { nullable: true })
   public sellerPayout: SellerPayout | null;
-
-  pdfService = new TransferPdfService();
 }

@@ -45,7 +45,6 @@ import { toMySQLString } from '../helpers/timestamps';
 import WriteOffService from './write-off-service';
 import SellerPayoutService from './seller-payout-service';
 import WithManager from '../database/with-manager';
-import UserService from './user-service';
 import BalanceService from './balance-service';
 
 export interface TransferFilterParameters {
@@ -168,13 +167,32 @@ export default class TransferService extends WithManager {
     };
   }
 
-  public async createTransfer(request: TransferRequest) : Promise<Transfer> {
+  /**
+   * A transfer counts as activity, so a user that was warned about inactive administrative
+   * costs should be warned again the next time they become inactive.
+   * @param user
+   */
+  private async resetInactiveNotification(user?: User): Promise<void> {
+    if (!user?.inactiveNotificationSend) return;
+    user.inactiveNotificationSend = false;
+    await this.manager.update(User, user.id, { inactiveNotificationSend: false });
+  }
+
+  public async createTransfer(request: TransferRequest): Promise<Transfer> {
+    const fromUser = request.fromId ? await this.manager.findOne(User, { where: { id: request.fromId } }) : undefined;
+    const toUser = request.toId ? await this.manager.findOne(User, { where: { id: request.toId } }) : undefined;
+
+    // The handout transfer itself also resets the flag. That's fine: handout transfers don't count as activity,
+    // so the user stays in the 3y+ window and never falls back into the notification window.
+    await this.resetInactiveNotification(fromUser);
+    await this.resetInactiveNotification(toUser);
+
     return this.manager.getRepository(Transfer).save({
       createdAt: request.createdAt ? new Date(request.createdAt) : undefined,
       description: request.description,
       amountInclVat: dinero(request.amount),
-      from: request.fromId ? await this.manager.findOne(User, { where: { id: request.fromId } }) : undefined,
-      to: request.toId ? await this.manager.findOne(User, { where: { id: request.toId } }) : undefined,
+      from: fromUser,
+      to: toUser,
       vat: request.vatId ? await this.manager.findOne(VatGroup, { where: { id: request.vatId } }) : undefined,
     });
   }
@@ -312,9 +330,6 @@ export default class TransferService extends WithManager {
 
   public async postTransfer(request: TransferRequest) : Promise<Transfer> {
     const transfer = await this.createTransfer(request);
-    if (transfer.from != undefined && transfer.from.inactiveNotificationSend == true) {
-      await UserService.updateUser(transfer.fromId, { inactiveNotificationSend: false });
-    }
     return transfer;
   }
 

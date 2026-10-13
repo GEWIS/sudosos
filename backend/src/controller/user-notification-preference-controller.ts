@@ -98,7 +98,7 @@ export default class UserNotificationController extends BaseController {
      */
   public async getAllUserNotificationPreferences(req: RequestWithToken, res: Response): Promise<void> {
     const { body } = req;
-    this.logger.trace('Get all user notification preferences', body, 'by user', req.token.user);
+    this.logger.trace('user_notification_preference.list', { filters: body });
 
     let take;
     let skip;
@@ -120,7 +120,7 @@ export default class UserNotificationController extends BaseController {
       );
       res.json(userNotificationPreferences);
     } catch (e) {
-      this.logger.error('Could not return all user notification preferences', e);
+      this.logger.error('user_notification_preference.list.failed', e);
       res.status(500).json('Internal server error');
     }
   }
@@ -139,7 +139,7 @@ export default class UserNotificationController extends BaseController {
   public async getSingleUserNotificationPreference(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const userNotificationPreferenceId = parseInt(id, 10);
-    this.logger.trace('Get user notification preferences', userNotificationPreferenceId, 'by user', req.token.user);
+    this.logger.trace('user_notification_preference.get', { id: userNotificationPreferenceId });
 
     try {
       const userNotificationPreferences: UserNotificationPreference[] = await new UserNotificationPreferenceService().getUserNotificationPreferences(
@@ -156,7 +156,7 @@ export default class UserNotificationController extends BaseController {
 
       res.json(response);
     } catch (e) {
-      this.logger.error('Could not return user notification preferences', e);
+      this.logger.error('user_notification_preference.get.failed', { id: userNotificationPreferenceId }, e);
       res.status(500).json('Internal server error');
     }
   }
@@ -178,7 +178,7 @@ export default class UserNotificationController extends BaseController {
     const body  = req.body as UserNotificationPreferenceUpdateRequest;
     const { id } = req.params;
     const userNotificationPreferenceId = parseInt(id, 10);
-    this.logger.trace('Update user notification preferences', userNotificationPreferenceId, 'by user', req.token.user);
+    this.logger.trace('user_notification_preference.update', { id: userNotificationPreferenceId });
 
     try {
       const params: UserNotificationPreferenceUpdateParams = {
@@ -199,7 +199,7 @@ export default class UserNotificationController extends BaseController {
 
       res.json(response);
     } catch (e) {
-      this.logger.error('Could not update user notification preferences', e);
+      this.logger.error('user_notification_preference.update.failed', { id: userNotificationPreferenceId }, e);
       res.status(500).json('Internal server error');
     }
   }

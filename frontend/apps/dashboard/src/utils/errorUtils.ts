@@ -1,5 +1,5 @@
 import type { AxiosError } from 'axios';
-import type { ToastServiceMethods } from 'primevue/toastservice';
+import type { ToastServiceMethods } from 'openvue/toastservice';
 
 interface ErrorResponse {
   message: string;

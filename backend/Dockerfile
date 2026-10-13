@@ -2,7 +2,7 @@
 FROM node:22-alpine AS build
 
 RUN apk add --no-cache python3 make g++ py3-setuptools
-RUN npm install -g pnpm@10.33.0
+RUN npm install -g pnpm@12.8.1
 
 WORKDIR /repo
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./

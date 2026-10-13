@@ -266,19 +266,25 @@ export default class ContainerService {
    * @param containerId - The container to propagate
    */
   public static async propagateContainerUpdate(containerId: number) {
-    let options = await this.getOptions({ containerId: containerId, returnProducts: true, returnPointsOfSale: true });
-    // Get previous revision of container.
-    (options.where as FindOptionsWhere<ContainerRevision>).revision = Raw(alias => `${alias}  = (${this.revisionSubQuery()}) - 1`);
-    const containerRevision = await ContainerRevision.findOne(options);
+    const container = await Container.findOne({ where: { id: containerId } });
+    if (!container) return;
 
-    // Container is new, no need to propagate.
-    if (!containerRevision) return;
+    // Retrieve all oudated POS with this container where any of those container revisions are lower than
+    // the current container revision
+    const outdated = await PointOfSaleRevision.createQueryBuilder('posRevision')
+      .innerJoin('posRevision.pointOfSale', 'pos',
+        'pos.currentRevision = posRevision.revision and pos.deletedAt IS null')
+      .innerJoin('posRevision.containers', 'containerRevision',
+        'containerRevision.containerID = :containerId AND containerRevision.revision < :revision',
+        { containerId, revision: container.currentRevision })
+      .getMany();
+    if (outdated.length === 0) return;
 
-    // Only update POS that contain previous container but are current version themselves.
-    const pos = containerRevision.pointsOfSale
-      .filter((p) => p.pointOfSale.deletedAt == null && p.revision === p.pointOfSale.currentRevision)
-      .filter((p, index, self) => (
-        index === self.findIndex((p2) => p.pointOfSale.id === p2.pointOfSale.id)));
+    const pos = await PointOfSaleRevision.find({
+      where: outdated.map((p) => ({ pointOfSaleId: p.pointOfSaleId, revision: p.revision })),
+      relations: { pointOfSale: true, containers: true },
+      withDeleted: true,
+    });
 
     return this.executePropagation(pos);
   }

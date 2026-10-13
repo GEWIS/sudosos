@@ -182,7 +182,7 @@ export default class PaymentRequestController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnAllPaymentRequests(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all payment requests by user', req.token.user);
+    this.logger.trace('payment_request.list', { query: req.query });
 
     let filters;
     let pagination;
@@ -200,7 +200,7 @@ export default class PaymentRequestController extends BaseController {
       const records = rows.map((r) => PaymentRequestService.asBasePaymentRequestResponse(r));
       res.status(200).json(toResponse(records, count, pagination));
     } catch (e) {
-      this.logger.error('Could not list payment requests:', e);
+      this.logger.error('payment_request.list.failed', e);
       res.status(500).send('Internal server error.');
     }
   }
@@ -217,7 +217,7 @@ export default class PaymentRequestController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnSinglePaymentRequest(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get single payment request by user', req.token.user, 'id', req.params.id);
+    this.logger.trace('payment_request.get', { id: req.params.id });
 
     try {
       const request = await PaymentRequestController.loadPaymentRequest(
@@ -229,7 +229,7 @@ export default class PaymentRequestController extends BaseController {
       }
       res.status(200).json(PaymentRequestService.asBasePaymentRequestResponse(request));
     } catch (e) {
-      this.logger.error('Could not get payment request:', e);
+      this.logger.error('payment_request.get.failed', e);
       res.status(500).send('Internal server error.');
     }
   }
@@ -247,7 +247,7 @@ export default class PaymentRequestController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async createPaymentRequest(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Create payment request by user', req.token.user, 'body', req.body);
+    this.logger.trace('payment_request.create', { request: req.body });
     const body = req.body as CreatePaymentRequestRequest;
 
     const forUser = await User.findOne({ where: { id: body.forId, deleted: false } });
@@ -280,7 +280,7 @@ export default class PaymentRequestController extends BaseController {
         res.status(400).send(e.message);
         return;
       }
-      this.logger.error('Could not create payment request:', e);
+      this.logger.error('payment_request.create.failed', e);
       res.status(500).send('Internal server error.');
     }
   }
@@ -298,7 +298,7 @@ export default class PaymentRequestController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async cancelPaymentRequest(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Cancel payment request by user', req.token.user, 'id', req.params.id);
+    this.logger.trace('payment_request.cancel', { id: req.params.id });
 
     try {
       const request = await PaymentRequestController.loadPaymentRequest(
@@ -316,7 +316,7 @@ export default class PaymentRequestController extends BaseController {
         res.status(409).send(e.message);
         return;
       }
-      this.logger.error('Could not cancel payment request:', e);
+      this.logger.error('payment_request.cancel.failed', e);
       res.status(500).send('Internal server error.');
     }
   }
@@ -335,7 +335,7 @@ export default class PaymentRequestController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async startPaymentAuthenticated(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Start payment (authenticated) by user', req.token.user, 'id', req.params.id);
+    this.logger.trace('payment_request.start_payment', { id: req.params.id });
 
     try {
       const request = await PaymentRequestController.loadPaymentRequest(
@@ -362,7 +362,7 @@ export default class PaymentRequestController extends BaseController {
         res.status(400).send(e.message);
         return;
       }
-      this.logger.error('Could not start payment for payment request:', e);
+      this.logger.error('payment_request.start_payment.failed', e);
       res.status(500).send('Internal server error.');
     }
   }
@@ -383,7 +383,7 @@ export default class PaymentRequestController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async markFulfilledExternally(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Mark fulfilled externally by user', req.token.user, 'id', req.params.id);
+    this.logger.trace('payment_request.mark_fulfilled_externally', { id: req.params.id });
     const body = req.body as MarkFulfilledExternallyRequest;
 
     if (!body?.reason || body.reason.trim().length === 0) {
@@ -407,7 +407,7 @@ export default class PaymentRequestController extends BaseController {
         res.status(409).send(e.message);
         return;
       }
-      this.logger.error('Could not mark payment request fulfilled:', e);
+      this.logger.error('payment_request.mark_fulfilled_externally.failed', e);
       res.status(500).send('Internal server error.');
     }
   }

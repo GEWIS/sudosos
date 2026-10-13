@@ -99,7 +99,7 @@ export default class BalanceController extends BaseController {
     try {
       res.json(await new BalanceService().getBalance(req.token.user.id));
     } catch (error) {
-      this.logger.error(`Could not get balance of user with id ${req.token.user.id}`, error);
+      this.logger.error('balance.get_own.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -128,7 +128,7 @@ export default class BalanceController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   private async getAllBalances(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all balances by', req.token.user);
+    this.logger.trace('balance.list');
 
     let params: GetBalanceParameters;
     let take;
@@ -159,7 +159,7 @@ export default class BalanceController extends BaseController {
       const [records, count] = await new BalanceService().getBalances(params, { take, skip });
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not get balances', error);
+      this.logger.error('balance.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -186,7 +186,7 @@ export default class BalanceController extends BaseController {
       }
     } catch (error) {
       const id = req?.params?.id ?? req.token.user.id;
-      this.logger.error(`Could not get balance of user with id ${id}`, error);
+      this.logger.error('balance.get.failed', { userId: id }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -211,7 +211,7 @@ export default class BalanceController extends BaseController {
       const balances = await new BalanceService().calculateTotalBalances(date, allowDeleted);
       res.json(balances);
     } catch (error) {
-      this.logger.error('Could not calculate the total balances', error);
+      this.logger.error('balance.calculate_total.failed', error);
       res.status(500).json('Internal server error.');
     }
   }

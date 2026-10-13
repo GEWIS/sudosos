@@ -42,12 +42,15 @@ import { PaginationResult } from '../../helpers/pagination';
  * @property {BasePointOfSaleResponse} pointOfSale.required - The POS at which this transaction
  * has been created
  * @property {Dinero} value.required - Total sum of subtransactions
+ * @property {boolean} paidByTerminal.required - Whether this transaction was paid with a
+ * card terminal. Such transactions cannot be edited or deleted.
  */
 export interface BaseTransactionResponse extends BaseResponse {
   from: BaseUserResponse,
   createdBy?: BaseUserResponse,
   pointOfSale: BasePointOfSaleResponse,
   value: DineroObject,
+  paidByTerminal: boolean,
 }
 
 /**
@@ -62,6 +65,8 @@ export interface BaseTransactionResponse extends BaseResponse {
  * has been created
  * @property {DineroObjectResponse} totalPriceInclVat.required - The total cost of the
  * transaction
+ * @property {boolean} paidByTerminal.required - Whether this transaction was paid with a
+ * card terminal. Such transactions cannot be edited or deleted.
  */
 export interface TransactionResponse extends BaseResponse {
   from: BaseUserResponse,
@@ -69,6 +74,7 @@ export interface TransactionResponse extends BaseResponse {
   subTransactions: SubTransactionResponse[],
   pointOfSale: BasePointOfSaleResponse,
   totalPriceInclVat: DineroObjectResponse,
+  paidByTerminal: boolean,
 }
 
 /**

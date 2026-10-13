@@ -45,11 +45,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useConfirm } from 'primevue/useconfirm';
-import { useToast } from 'primevue/usetoast';
-import ConfirmDialog from 'primevue/confirmdialog';
+import { useConfirm } from 'openvue/useconfirm';
+import { useToast } from 'openvue/usetoast';
+import ConfirmDialog from 'openvue/confirmdialog';
 import { AxiosError } from 'axios';
-import Button from 'primevue/button';
+import Button from 'openvue/button';
 import CardComponent from '@/components/CardComponent.vue';
 import PageContainer from '@/layout/PageContainer.vue';
 import AdministrativeCostsTable from '@/modules/financial/components/administrative/AdministrativeCostsTable.vue';

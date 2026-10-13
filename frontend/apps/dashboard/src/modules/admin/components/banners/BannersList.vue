@@ -45,8 +45,8 @@
   <BannerDialog v-model:visible="dialogVisible" :banner="banner" />
 </template>
 <script setup lang="ts">
-import DataView from 'primevue/dataview';
-import SelectButton from 'primevue/selectbutton';
+import DataView from 'openvue/dataview';
+import SelectButton from 'openvue/selectbutton';
 import type { BannerResponse } from '@gewis/sudosos-client';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';

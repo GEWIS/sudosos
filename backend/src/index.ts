@@ -41,6 +41,7 @@ import Database from './database/database';
 import Swagger from './start/swagger';
 import TokenHandler from './authentication/token-handler';
 import TokenMiddleware from './middleware/token-middleware';
+import RequestContextMiddleware from './middleware/request-context-middleware';
 import AuthenticationController from './controller/authentication-controller';
 import RoleManager from './rbac/role-manager';
 import BannerController from './controller/banner-controller';
@@ -118,7 +119,7 @@ export class Application {
   redisConnection: Redis | undefined;
 
   public async stop(): Promise<void> {
-    this.logger.info('Stopping application instance...');
+    this.logger.info('application.stopping');
     await util.promisify(this.server.close).bind(this.server)();
     if (this.webSocketService) {
       await this.webSocketService.close();
@@ -129,7 +130,7 @@ export class Application {
       await this.redisConnection.quit();
     }
     await this.connection.destroy();
-    this.logger.info('Application stopped.');
+    this.logger.info('application.stopped');
   }
 }
 
@@ -202,7 +203,7 @@ export default async function createApp(): Promise<Application> {
   const config = Config.get();
   const application = new Application();
   application.logger = getAppLogger();
-  application.logger.info('Starting application instance...');
+  application.logger.info('application.starting');
 
   // Create folders for disk storage
   initializeDiskStorage();
@@ -225,6 +226,8 @@ export default async function createApp(): Promise<Application> {
 
   // Create express application.
   application.app = express();
+  // Registered first, so that requests rejected by later middleware are correlatable too.
+  application.app.use(new RequestContextMiddleware().getMiddleware());
   application.specification = await Swagger.initialize(application.app);
   application.app.use(json({
     verify: extractRawBody,
@@ -246,6 +249,9 @@ export default async function createApp(): Promise<Application> {
     application.app.use('/static/products', express.static('data/products'));
     application.app.use('/static/banners', express.static('data/banners'));
     application.app.use('/static/invoices', express.static('data/invoices'));
+    application.app.use('/static/payouts', express.static('data/payout_requests'));
+    application.app.use('/static/sellerPayouts', express.static('data/seller_payouts'));
+    application.app.use('/static/writeOffs', express.static('data/write_offs'));
   }
 
   application.roleManager = await new RoleManager().initialize();
@@ -268,9 +274,9 @@ export default async function createApp(): Promise<Application> {
   try {
     const existingInstance = WebSocketService.getInstance();
     if (existingInstance.server.listening) {
-      application.logger.info('Closing existing WebSocket server before creating new instance');
+      application.logger.info('application.websocket_server_closing');
       existingInstance.server.close(() => {
-        application.logger.info('Existing WebSocket server closed');
+        application.logger.info('application.websocket_server_closed');
       });
     }
   } catch {
@@ -336,9 +342,9 @@ export default async function createApp(): Promise<Application> {
     : [];
 
   // Start express application.
-  logger.info(`Server listening on port ${config.app.httpPort}.`);
+  logger.info('application.listening', { port: config.app.httpPort });
   application.server = application.app.listen(config.app.httpPort);
-  application.logger.info('Application started.');
+  application.logger.info('application.started');
   return application;
 }
 
@@ -347,6 +353,6 @@ if (require.main === module) {
   createApp().catch((e) => {
     const logger = log4js.getLogger('index');
     logger.level = process.env.LOG_LEVEL ?? 'info';
-    logger.fatal(e);
+    logger.fatal('application.start_failed', e);
   });
 }

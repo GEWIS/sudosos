@@ -76,14 +76,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, type Ref } from 'vue';
+import { computed, onMounted, ref, type Ref, watch } from 'vue';
 import type { BalanceResponse } from '@gewis/sudosos-client';
-import DataTable, { type DataTablePageEvent, type DataTableSortEvent } from 'primevue/datatable';
-import Column from 'primevue/column';
-import Skeleton from 'primevue/skeleton';
+import DataTable, { type DataTablePageEvent, type DataTableSortEvent } from 'openvue/datatable';
+import Column from 'openvue/column';
+import Skeleton from 'openvue/skeleton';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
-import Button from 'primevue/button';
+import { useToast } from 'openvue/usetoast';
+import Button from 'openvue/button';
 import { formatDateFromString, formatPrice } from '@/utils/formatterUtils';
 import { handleError } from '@/utils/errorUtils';
 import { useWriteOffStore } from '@/stores/writeoff.store';
@@ -136,6 +136,8 @@ const loadUsers = async (): Promise<void> => {
     .catch((err) => handleError(err, toast));
   isLoading.value = false;
 };
+
+watch(() => writeOffStore.getUpdatedAt, loadUsers);
 
 onMounted(async () => {
   if (writeOffStore.getShouldRefresh) {

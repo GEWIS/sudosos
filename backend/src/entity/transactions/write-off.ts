@@ -47,9 +47,9 @@
  *
  * ### Listing and PDFs
  * `GET /writeoffs` and `GET /writeoffs/{id}` page through past write-offs for treasurer
- * reconciliation. `GET /writeoffs/{id}/pdf` renders the receipt; `WriteOff` extends
- * `PdfAble` and the PDF is regenerated on demand and cached as a {@link WriteOffPdf}
- * relation.
+ * reconciliation. `GET /writeoffs/{id}/pdf` renders the receipt via
+ * `WriteOffPdfService`. It is stored once as a {@link WriteOffPdf} relation and only
+ * re-rendered with `?force=true`.
  *
  * @module write-offs
  * @mergeTarget
@@ -64,13 +64,10 @@ import User from '../user/user';
 import DineroTransformer from '../transformer/dinero-transformer';
 // eslint-disable-next-line import/no-cycle
 import Transfer from '../transactions/transfer';
-import { PdfAble } from '../file/pdf-able';
-import { WRITE_OFF_PDF_LOCATION } from '../../files/storage';
-import WriteOffPdfService from '../../service/pdf/write-off-pdf-service';
 import WriteOffPdf from '../file/write-off-pdf';
 
 @Entity()
-export default class WriteOff extends PdfAble(BaseEntity) {
+export default class WriteOff extends BaseEntity {
   @ManyToOne(() => User, { nullable: false, eager: true })
   @JoinColumn()
   public to: User;
@@ -92,9 +89,4 @@ export default class WriteOff extends PdfAble(BaseEntity) {
   @JoinColumn()
   public pdf?: WriteOffPdf;
   
-  pdfService = new WriteOffPdfService(WRITE_OFF_PDF_LOCATION);
-
-  async getOwner(): Promise<User> {
-    return this.to;
-  }
 }

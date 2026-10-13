@@ -83,8 +83,8 @@
   </CardComponent>
 </template>
 <script setup lang="ts">
-import Accordion, { type AccordionTabOpenEvent } from 'primevue/accordion';
-import { useToast } from 'primevue/usetoast';
+import Accordion, { type AccordionTabOpenEvent } from 'openvue/accordion';
+import { useToast } from 'openvue/usetoast';
 import { computed, type Ref, ref } from 'vue';
 import type { AxiosError } from 'axios';
 import type { ContainerWithProductsResponse, PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';

@@ -1,0 +1,6 @@
+# Serves the built point of sale app: SPA fallback to index.html for client-side routing.
+:80 {
+	root * /srv
+	try_files {path} {path}/ /index.html
+	file_server
+}

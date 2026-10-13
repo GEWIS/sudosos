@@ -97,9 +97,9 @@ export default class TerminalPaymentService extends WithManager {
       version: tp.version,
       amount: tp.stripePaymentIntent.amount.toObject(),
       transaction: tp.temporaryTransaction
-        ? await transactionService.asTransactionResponse(tp.temporaryTransaction, totalCost, context)
+        ? await transactionService.asTransactionResponse(tp.temporaryTransaction, totalCost, context, false)
         : (tp.finalTransaction
-          ? await transactionService.asTransactionResponse(tp.finalTransaction, totalCost, context)
+          ? await transactionService.asTransactionResponse(tp.finalTransaction, totalCost, context, true)
           : undefined ),
       transfer: tp.transfer ? TransferService.asTransferResponse(tp.transfer) : undefined,
       createdBy: parseUserToBaseResponse(tp.createdBy, false),

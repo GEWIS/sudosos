@@ -45,7 +45,7 @@
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "pinia": "catalog:",
-    "socket.io-client": "^4.8.1",
+    "socket.io-client": "^4.8.4",
     "vue": "catalog:"
   },
   "devDependencies": {

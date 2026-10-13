@@ -48,10 +48,10 @@
 import { ref, computed } from 'vue';
 import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
-import Dialog from 'primevue/dialog';
-import Button from 'primevue/button';
-import DatePicker from 'primevue/datepicker';
+import { useToast } from 'openvue/usetoast';
+import Dialog from 'openvue/dialog';
+import Button from 'openvue/button';
+import DatePicker from 'openvue/datepicker';
 import { AxiosError } from 'axios';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';

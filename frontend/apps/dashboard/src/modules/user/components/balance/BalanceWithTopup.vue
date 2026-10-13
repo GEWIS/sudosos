@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import { computed, watch } from 'vue';
-import Divider from 'primevue/divider';
+import Divider from 'openvue/divider';
 // eslint-disable-next-line import/no-named-as-default
 import Dinero from 'dinero.js';
 import { useI18n } from 'vue-i18n';

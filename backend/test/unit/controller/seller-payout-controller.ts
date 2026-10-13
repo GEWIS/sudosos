@@ -41,7 +41,7 @@ import {
 import { ReportResponse } from '../../../src/controller/response/report-response';
 import dinero from 'dinero.js';
 import sinon from 'sinon';
-import SellerPayoutPdfService from '../../../src/service/pdf/seller-payout-pdf-service';
+import { PdfCompiler } from '../../../src/service/pdf/pdf-service';
 import { PdfError } from '../../../src/errors';
 import {
   SellerPayoutSeeder, TransactionSeeder, TransferSeeder,
@@ -277,16 +277,16 @@ describe('SellerPayoutController', () => {
   });
 
   describe('GET /seller-payouts/{id}/report/pdf', () => {
-    let compileHtmlStub: sinon.SinonStub;
+    let compileStub: sinon.SinonStub;
 
     afterEach(() => {
-      if (compileHtmlStub) compileHtmlStub.restore();
+      if (compileStub) compileStub.restore();
       sinon.restore();
     });
 
     it('should return HTTP 200 with the sales report PDF belonging to the seller payout', async () => {
       fs.mkdirSync(SELLER_PAYOUT_PDF_LOCATION, { recursive: true });
-      compileHtmlStub = sinon.stub(SellerPayoutPdfService.prototype, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
+      compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
       const sellerPayout = ctx.sellerPayouts[0];
       const res = await request(ctx.app)
         .get(`/seller-payouts/${sellerPayout.id}/report/pdf`)
@@ -310,7 +310,7 @@ describe('SellerPayoutController', () => {
       expect(res.status).to.equal(403);
     });
     it('should return HTTP 502 if pdf generation fails', async () => {
-      compileHtmlStub = sinon.stub(SellerPayoutPdfService.prototype, 'compileHtml' as any).rejects(new PdfError('Failed to generate PDF'));
+      compileStub = sinon.stub(PdfCompiler, 'compile').rejects(new PdfError('Failed to generate PDF'));
       const sellerPayout = await SellerPayout.findOne({ where: { id: 1 }, relations: {
         requestedBy: true,
       } });

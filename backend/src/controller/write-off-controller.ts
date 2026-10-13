@@ -36,6 +36,7 @@ import BalanceService from '../service/balance-service';
 import { PdfError } from '../errors';
 import { PdfUrlResponse } from './response/simple-file-response';
 import { asBoolean } from '../helpers/validators';
+import WriteOffPdfService from '../service/pdf/write-off-pdf-service';
 
 /**
  * Controller for the `/writeoffs` endpoints in the {@link write-offs | write-offs}
@@ -44,7 +45,7 @@ import { asBoolean } from '../helpers/validators';
  * the PDF receipt.
  */
 export default class WriteOffController extends BaseController {
-  private logger: Logger = log4js.getLogger(' WriteOffController');
+  private logger: Logger = log4js.getLogger('WriteOffController');
 
   public constructor(options: BaseControllerOptions) {
     super(options);
@@ -97,7 +98,7 @@ export default class WriteOffController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnAllWriteOffs(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all write offs by ', req.token.user);
+    this.logger.trace('write_off.list');
 
     let take;
     let skip;
@@ -117,7 +118,7 @@ export default class WriteOffController extends BaseController {
       );
       res.json(toResponse(writeOffs.map(WriteOffService.asWriteOffResponse), count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all write offs:', error);
+      this.logger.error('write_off.list.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -134,7 +135,7 @@ export default class WriteOffController extends BaseController {
    */
   public async getSingleWriteOff(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get single write off', id, 'by user', req.token.user);
+    this.logger.trace('write_off.get', { id });
 
     try {
       const writeOffId = parseInt(id, 10);
@@ -147,7 +148,7 @@ export default class WriteOffController extends BaseController {
 
       res.status(200).json(WriteOffService.asWriteOffResponse(writeOff));
     } catch (error) {
-      this.logger.error('Could not return single write off:', error);
+      this.logger.error('write_off.get.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -165,7 +166,7 @@ export default class WriteOffController extends BaseController {
    */
   public async createWriteOff(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as WriteOffRequest;
-    this.logger.trace('Create write off by user', req.token.user);
+    this.logger.trace('write_off.create', { request: body });
 
     try {
       const user = await User.findOne({ where: { id: body.toId, deleted: false } });
@@ -183,7 +184,7 @@ export default class WriteOffController extends BaseController {
       const writeOff = await new WriteOffService().createWriteOffAndCloseUser(user);
       res.status(200).json(WriteOffService.asWriteOffResponse(writeOff));
     } catch (error) {
-      this.logger.error('Could not create write off:', error);
+      this.logger.error('write_off.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -204,7 +205,7 @@ export default class WriteOffController extends BaseController {
   public async getWriteOffPdf(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
     const writeOffId = parseInt(id, 10);
-    this.logger.trace('Get write off pdf', id, 'by user', req.token.user);
+    this.logger.trace('write_off.get_pdf', { id });
 
     try {
       const force = !!asBoolean(req.query.force);
@@ -216,11 +217,11 @@ export default class WriteOffController extends BaseController {
         return;
       }
 
-      const pdf = await writeOff.getOrCreatePdf(force);
+      const pdf = await new WriteOffPdfService().getOrCreate(writeOff, force);
 
       res.status(200).json({ pdf: pdf.downloadName } as PdfUrlResponse);
     } catch (error) {
-      this.logger.error('Could get write off PDF:', error);
+      this.logger.error('write_off.get_pdf.failed', error);
       if (error instanceof PdfError) {
         res.status(502).json('PDF Generator service failed.');
         return;

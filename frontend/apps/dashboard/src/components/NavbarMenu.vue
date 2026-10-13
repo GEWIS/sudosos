@@ -50,8 +50,8 @@
 </template>
 
 <script setup lang="ts">
-import Menubar from 'primevue/menubar';
-import Badge from 'primevue/badge';
+import Menubar from 'openvue/menubar';
+import Badge from 'openvue/badge';
 
 type Item = {
   label?: string;

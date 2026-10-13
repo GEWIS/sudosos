@@ -41,7 +41,7 @@ import {
   type BaseTransactionResponse,
   type TransactionResponse,
 } from '@gewis/sudosos-client';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { type Form, getProperty } from '@/utils/formUtils';
 import type { createInvoiceObject } from '@/utils/validation-schema';
 import apiService from '@/services/ApiService';

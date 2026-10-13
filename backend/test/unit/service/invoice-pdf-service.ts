@@ -18,6 +18,7 @@
  *  @license
  */
 
+import fs from 'fs';
 import chai, { expect } from 'chai';
 import sinon, { SinonStub } from 'sinon';
 import { DataSource, IsNull } from 'typeorm';
@@ -28,14 +29,15 @@ import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 
 import Database, { AppDataSource } from '../../../src/database/database';
 import Swagger from '../../../src/start/swagger';
-import InvoiceHtmlPdfService from '../../../src/service/pdf/invoice-html-pdf-service';
+import InvoicePdfService from '../../../src/service/pdf/invoice-pdf-service';
+import { PdfCompiler } from '../../../src/service/pdf/pdf-service';
 import Invoice from '../../../src/entity/invoices/invoice';
 import InvoicePdf from '../../../src/entity/file/invoice-pdf';
 import User from '../../../src/entity/user/user';
 import FileService from '../../../src/service/file-service';
 import { truncateAllTables } from '../../helpers/database-helpers';
 import { finishTestDB } from '../../helpers/test-helpers';
-import { INVOICE_PDF_LOCATION } from '../../../src/files/storage';
+import { hashJSON } from '../../../src/helpers/hash';
 import { InvoiceSeeder, TransactionSeeder, UserSeeder } from '../../seed';
 import InvoiceService from '../../../src/service/invoice-service';
 import { createInvoiceWithTransfers } from '../../helpers/invoice-helpers';
@@ -45,7 +47,7 @@ import { BAC } from '../../../src/files/templates/bac-letterhead';
 
 chai.use(deepEqualInAnyOrder);
 
-describe('InvoiceHtmlPdfService', async (): Promise<void> => {
+describe('InvoicePdfService', async (): Promise<void> => {
   let ctx: {
     connection: DataSource;
     app: Application;
@@ -56,9 +58,13 @@ describe('InvoiceHtmlPdfService', async (): Promise<void> => {
     fileService: FileService;
   };
 
+  // Built after Database.initialize, which replaces AppDataSource and so its manager.
+  let pdfService: InvoicePdfService;
+
   beforeAll(async function test(): Promise<void> {
     const connection = await Database.initialize();
     await truncateAllTables(connection);
+    pdfService = new InvoicePdfService();
 
     const users = await new UserSeeder().seed();
     const { transactions } = await new TransactionSeeder().seed(users);
@@ -92,117 +98,46 @@ describe('InvoiceHtmlPdfService', async (): Promise<void> => {
     await finishTestDB(ctx.connection);
   });
 
-  let compileHtmlStub: SinonStub;
+  let compileStub: SinonStub;
   let uploadPdfStub: SinonStub;
-  let createFileStub: SinonStub;
 
-  let pdfService = new InvoiceHtmlPdfService(INVOICE_PDF_LOCATION);
 
   beforeEach(function () {
-    compileHtmlStub = sinon.stub(pdfService, 'compileHtml' as any).resolves(Buffer.from('PDF content'));
-    uploadPdfStub = sinon.stub(pdfService.fileService, 'uploadPdf');
-    createFileStub = sinon.stub(pdfService.fileService, 'createFile');
+    compileStub = sinon.stub(PdfCompiler, 'compile').resolves(Buffer.from('PDF content'));
+    uploadPdfStub = sinon.stub(FileService.prototype, 'uploadPdf');
   });
 
   afterEach(function () {
-    compileHtmlStub.restore();
+    compileStub.restore();
     uploadPdfStub.restore();
-    createFileStub.restore();
   });
 
-  describe('Invoice: validatePdfHash', () => {
-    it('should return true if the PDF hash matches the expected hash', async () => {
-      const invoice = ctx.invoices[0];
-      const pdf = new InvoicePdf();
-      pdf.hash = await invoice.getPdfParamHash();
+  describe('getOrCreate', () => {
+    it('should return the stored PDF even if the invoice changed', async () => {
+      const invoice = ctx.invoices.find((i) => InvoiceService.isState(i, InvoiceState.PAID));
+      const pdf = Object.assign(new InvoicePdf(), ctx.pdfParams);
       invoice.pdf = pdf;
 
-      const result = await invoice.validatePdfHash();
-
-      expect(result).to.be.true;
+      expect(await pdfService.getOrCreate(invoice)).to.eq(pdf);
+      expect(compileStub).to.not.have.been.called;
+      expect(uploadPdfStub).to.not.have.been.called;
     });
-    it('should return false if the PDF hash does not match the expected hash', async () => {
-      const invoice = ctx.invoices[0];
-      const pdf = new InvoicePdf();
-      pdf.hash = 'false';
-      invoice.pdf = pdf;
+    it('should regenerate the stored PDF if it was marked stale', async () => {
+      const invoice = ctx.invoices.find((i) => InvoiceService.isState(i, InvoiceState.CREATED));
+      invoice.pdf = Object.assign(new InvoicePdf(), ctx.pdfParams, { hash: '' });
 
-      const result = await invoice.validatePdfHash();
+      await pdfService.getOrCreate(invoice);
 
-      expect(result).to.be.false;
-    });
-    it('should return false if the invoice has no associated PDF', async () => {
-      const invoice = ctx.invoices[0];
-      const result = await invoice.validatePdfHash();
-
-      expect(result).to.be.false;
-    });
-  });
-
-  describe('Invoice: getOrCreatePdf', () => {
-    it('should return an existing PDF if the hash matches and force is false', async () => {
-      const invoice = ctx.invoices[0];
-
-      const pdf = Object.assign(new InvoicePdf(), {
-        ...ctx.pdfParams,
-      });
-
-      pdf.hash = await invoice.getPdfParamHash();
-      await InvoicePdf.save(pdf);
-
-      invoice.pdf = pdf;
-      await Invoice.save(invoice);
-
-      const file = await invoice.getOrCreatePdf();
-      expect(file.downloadName).to.eq(pdf.downloadName);
-    });
-    it('should regenerate and return a new PDF if the hash does not match', async () => {
-      const invoice = ctx.invoices[0];
-
-      const pdf = Object.assign(new InvoicePdf(), {
-        ...ctx.pdfParams,
-      });
-      await InvoicePdf.save(pdf);
-
-      invoice.pdf = pdf;
-      await Invoice.save(invoice);
-
-      const newPdf = Object.assign(new InvoicePdf(), {
-        ...ctx.pdfParams,
-        hash: await invoice.getPdfParamHash(),
-      });
-      uploadPdfStub.resolves(newPdf);
-      invoice.pdfService = pdfService;
-
-      await invoice.getOrCreatePdf();
+      expect(compileStub).to.have.been.calledOnce;
       expect(uploadPdfStub).to.have.been.calledOnce;
     });
-    it('should always regenerate and return a new PDF if force is true, even if the hash matches', async () => {
+    it('should regenerate the stored PDF if force is true', async () => {
       const invoice = ctx.invoices[0];
+      invoice.pdf = Object.assign(new InvoicePdf(), ctx.pdfParams);
 
-      const pdf = Object.assign(new InvoicePdf(), {
-        ...ctx.pdfParams,
-      });
+      await pdfService.getOrCreate(invoice, true);
 
-      pdf.hash = await invoice.getPdfParamHash();
-      await InvoicePdf.save(pdf);
-
-      invoice.pdf = pdf;
-      await Invoice.save(invoice);
-
-      // Hash is valid
-      expect(await invoice.validatePdfHash()).to.be.true;
-
-      const newPdf = Object.assign(new InvoicePdf(), {
-        ...ctx.pdfParams,
-        hash: await invoice.getPdfParamHash(),
-      });
-      uploadPdfStub.resolves(newPdf);
-      invoice.pdfService = pdfService;
-
-      await invoice.getOrCreatePdf(true);
-
-      // Upload was still called.
+      expect(compileStub).to.have.been.calledOnce;
       expect(uploadPdfStub).to.have.been.calledOnce;
     });
   });
@@ -257,30 +192,80 @@ describe('InvoiceHtmlPdfService', async (): Promise<void> => {
     });
   });
 
-  describe('createPdf', () => {
-    it('should generate and upload a new PDF for the given invoice', async () => {
+  describe('getOrCreate without a stored PDF', () => {
+    it('should generate and upload a new PDF with the parameter hash', async () => {
       const options = InvoiceService.getOptions({ returnInvoiceEntries: true });
       const invoice = await Invoice.findOne({ ...options, where: { pdf: IsNull() } });
 
       uploadPdfStub.restore();
-      createFileStub.resolves({
-        downloadName: 'test',
-        location: 'test',
-        createdBy: invoice.to.id,
-        id: 41,
-      });
-      invoice.pdfService = pdfService;
-      const invoicePdf = await invoice.createPdf();
+      const invoicePdf = await pdfService.getOrCreate(invoice);
 
-      expect(invoicePdf).to.not.be.undefined;
-      expect(invoicePdf.hash).to.eq(await invoice.getPdfParamHash());
+      try {
+        expect(invoicePdf).to.not.be.undefined;
+        expect(invoicePdf.hash).to.eq(hashJSON(await pdfService.getParameters(invoice)));
+        expect((await Invoice.findOne({ where: { id: invoice.id } })).pdfId).to.eq(invoicePdf.id);
+      } finally {
+        fs.rmSync(invoicePdf.location, { force: true });
+      }
     });
     it('should throw an error if PDF generation fails', async () => {
-      compileHtmlStub.rejects(new Error('Failed to generate PDF'));
+      compileStub.rejects(new Error('Failed to generate PDF'));
       const options = InvoiceService.getOptions({ returnInvoiceEntries: true });
       const invoice = await Invoice.findOne({ ...options, where: { pdf: IsNull() } });
-      invoice.pdfService = pdfService;
-      await expect(invoice.createPdf()).to.be.rejectedWith();
+      await expect(pdfService.getOrCreate(invoice)).to.be.rejectedWith();
+    });
+  });
+
+  describe('getOrCreate with force and a stored PDF', () => {
+    it('should replace the stored file and update the hash', async () => {
+      uploadPdfStub.restore();
+      const options = InvoiceService.getOptions({ returnInvoiceEntries: true });
+      const invoice = await Invoice.findOne({ ...options, where: { pdf: IsNull() } });
+
+      compileStub.resolves(Buffer.from('first'));
+      const first = await pdfService.getOrCreate(invoice);
+      const firstLocation = first.location;
+
+      invoice.reference = 'Changed reference';
+      compileStub.resolves(Buffer.from('second'));
+      const second = await pdfService.getOrCreate(invoice, true);
+
+      try {
+        expect(second.id).to.eq(first.id);
+        expect(second.location).to.not.eq(firstLocation);
+        expect(fs.existsSync(firstLocation)).to.be.false;
+        expect(fs.readFileSync(second.location).toString()).to.eq('second');
+
+        const expectedHash = hashJSON(await pdfService.getParameters(invoice));
+        expect(second.hash).to.eq(expectedHash);
+        expect((await InvoicePdf.findOne({ where: { id: second.id } })).hash).to.eq(expectedHash);
+      } finally {
+        fs.rmSync(second.location, { force: true });
+      }
+    });
+  });
+
+  describe('getOrCreate with a failing save', () => {
+    it('should keep the stored PDF and its file', async () => {
+      uploadPdfStub.restore();
+      const options = InvoiceService.getOptions({ returnInvoiceEntries: true });
+      const invoice = await Invoice.findOne({ ...options, where: { pdf: IsNull() } });
+
+      compileStub.resolves(Buffer.from('first'));
+      const first = await pdfService.getOrCreate(invoice);
+      const firstLocation = first.location;
+
+      const saveStub = sinon.stub(AppDataSource.manager, 'transaction').rejects(new Error('save failed'));
+      compileStub.resolves(Buffer.from('second'));
+      try {
+        await expect(pdfService.getOrCreate(invoice, true)).to.be.rejectedWith('save failed');
+        expect(invoice.pdf.location).to.eq(firstLocation);
+        expect(fs.readFileSync(firstLocation).toString()).to.eq('first');
+        expect((await InvoicePdf.findOne({ where: { id: first.id } })).location).to.eq(firstLocation);
+      } finally {
+        saveStub.restore();
+        fs.rmSync(firstLocation, { force: true });
+      }
     });
   });
 
@@ -288,8 +273,7 @@ describe('InvoiceHtmlPdfService', async (): Promise<void> => {
     it('should produce the same parameters and hash before and after deletion', async () => {
       await inUserContext((await UserFactory()).clone(2), async (debtor: User, creditor: User) => {
         const invoice = await createInvoiceWithTransfers(debtor.id, creditor.id, 1);
-        const hash = await invoice.getPdfParamHash();
-        const params = await invoice.pdfService.getParameters(invoice);
+        const params = await pdfService.getParameters(invoice);
 
         const updatedInvoice = await AppDataSource.manager.transaction(async (manager) => {
           return new InvoiceService(manager).updateInvoice({
@@ -299,9 +283,8 @@ describe('InvoiceHtmlPdfService', async (): Promise<void> => {
           });
         });
 
-        const newHash = await updatedInvoice.getPdfParamHash();
-        const newParams = await updatedInvoice.pdfService.getParameters(updatedInvoice);
-        expect(newHash).to.deep.equal(hash);
+        const newParams = await pdfService.getParameters(updatedInvoice);
+        expect(hashJSON(newParams)).to.equal(hashJSON(params));
         expect(newParams).to.deep.equal(params);
       });
     });
@@ -309,11 +292,10 @@ describe('InvoiceHtmlPdfService', async (): Promise<void> => {
 
   describe('HTML content', () => {
     it('should embed key anchor strings for the F6c template', async () => {
-      compileHtmlStub.restore();
+      compileStub.restore();
 
       const invoice = ctx.invoices[0];
-      invoice.pdfService = pdfService;
-      const html = (await pdfService.createRaw(invoice)).toString('utf-8');
+      const html = (await pdfService.html(invoice)).toString('utf-8');
 
       expect(html).to.contain('Total including VAT');
       expect(html).to.contain(BAC.iban);
@@ -321,21 +303,19 @@ describe('InvoiceHtmlPdfService', async (): Promise<void> => {
     });
 
     it('should render an Attn. line when attention is set', async () => {
-      compileHtmlStub.restore();
+      compileStub.restore();
 
       const invoice = Object.assign(ctx.invoices[0], { attention: 'Jan Janssen' });
-      invoice.pdfService = pdfService;
-      const html = (await pdfService.createRaw(invoice)).toString('utf-8');
+      const html = (await pdfService.html(invoice)).toString('utf-8');
 
       expect(html).to.contain('Attn. Jan Janssen');
     });
 
     it('should omit the Attn. line when attention is empty', async () => {
-      compileHtmlStub.restore();
+      compileStub.restore();
 
       const invoice = Object.assign(ctx.invoices[0], { attention: '' });
-      invoice.pdfService = pdfService;
-      const html = (await pdfService.createRaw(invoice)).toString('utf-8');
+      const html = (await pdfService.html(invoice)).toString('utf-8');
 
       expect(html).to.not.contain('Attn.');
     });

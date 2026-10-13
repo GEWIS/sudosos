@@ -27,3 +27,10 @@ body:
     attributes:
       label: Other information
       placeholder: Any other details?
+  - type: checkboxes
+    id: ai-policy
+    attributes:
+      label: AI Contribution Policy
+      options:
+        - label: This issue is written in my own words and follows the [AI contribution policy](https://github.com/GEWIS/sudosos/blob/develop/AI_POLICY.md).
+          required: true

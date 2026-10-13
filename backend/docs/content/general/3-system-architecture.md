@@ -25,17 +25,39 @@ flowchart LR
 
 Most endpoints follow the same shape:
 
-1. **Middleware** authenticates the request and attaches a token.
-2. `RequestValidatorMiddleware` validates the request body structure against the Swagger spec.
-3. `PolicyMiddleware` checks RBAC and `RestrictionMiddleware` applies row-level restrictions.
-4. `AsyncValidatorMiddleware` runs registered business-rule specs (which may include async/DB checks). Runs after authorization so unauthorized requests never trigger DB-hitting validation.
-5. **Controller handler** translates HTTP to typed input/output.
-6. **Service** orchestrates domain logic across multiple entities.
-7. **Entities** persist data via TypeORM.
+1. `RequestContextMiddleware` assigns a request id, which every log line of the request carries.
+2. `TokenMiddleware` authenticates the request and attaches a token. It rejects tokens of deleted users.
+3. `RequestValidatorMiddleware` validates the request body structure against the Swagger spec.
+4. `PolicyMiddleware` checks RBAC and `RestrictionMiddleware` applies row-level restrictions.
+5. `AsyncValidatorMiddleware` runs registered business-rule specs (which may include async/DB checks). Runs after authorization so unauthorized requests never trigger DB-hitting validation.
+6. **Controller handler** translates HTTP to typed input/output.
+7. **Service** orchestrates domain logic across multiple entities.
+8. **Entities** persist data via TypeORM.
 
 Both `RequestValidatorMiddleware` and `AsyncValidatorMiddleware` return `{ valid: false, errors: string[] }` on failure so callers see a consistent 400 shape.
 
 The practical rule: **controllers should stay thin**. Structural validation belongs in the middleware layers; deeper domain rules belong in a service or, when they need to run before the handler, in a spec registered with `AsyncValidatorRegistry`.
+
+## Logging
+
+Log calls pass a constant message first and their variable parts in an object after
+it, for example `logger.trace('invoice.delete', { id })`. A constant message can be
+grouped and counted across requests; a message with values interpolated into it
+cannot. Never log a whole entity: log the id. Never log the caller either: the
+`actorId` is added for you.
+
+Messages are event names of the form `<domain>.<action>`, such as `user.update_pin`
+or `cron.sync_balances.started`. A failure uses the event of the operation with
+`.failed` appended and passes the error as its own argument, for example
+`logger.error('invoice.delete.failed', { id }, error)`. Wrapping it as `{ error }`
+loses the message and stack.
+
+`LOG_FORMAT` picks the output format. `json` emits one object per line and is the
+default in production; `pretty` emits readable lines and is the default everywhere
+else. Both formats annotate every line with the `requestId` of the request that
+produced it, and with the `actorId` once the token middleware has accepted a token.
+Code that runs outside a request, such as a cron task, has no such context, so
+anything it needs to record it must pass explicitly.
 
 ## Where correctness is enforced
 

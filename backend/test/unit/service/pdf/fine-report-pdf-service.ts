@@ -80,27 +80,27 @@ describe('FineReportPdfService', () => {
       const params = await service.getParameters(report);
       expect(params.waivedCount).to.equal(0);
 
-      const html = await service.createRaw(report);
+      const html = await service.html(report);
       expect(html.toString('utf-8')).to.not.include('Waived');
     });
   });
 
-  describe('htmlGenerator', () => {
+  describe('render', () => {
     it('produces a HTML string from the parameters', async () => {
       const service = new FineReportPdfService();
       const params = await service.getParameters(makeReport());
-      const html = service.htmlGenerator(params);
+      const html = service.render(params);
       expect(html).to.be.a('string');
       expect(html).to.include(params.totalInclVat);
       expect(html).to.include(`${params.vatPercentage}%`);
     });
   });
 
-  describe('createRaw', () => {
+  describe('html', () => {
     it('returns a Buffer with HTML bytes for the supplied entity', async () => {
       const report = makeReport();
       const service = new FineReportPdfService();
-      const buffer = await service.createRaw(report);
+      const buffer = await service.html(report);
       expect(buffer).to.be.instanceOf(Buffer);
       const text = buffer.toString('utf-8');
       expect(text).to.include(report.handedOut.toFormat());

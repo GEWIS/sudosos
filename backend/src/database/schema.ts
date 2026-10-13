@@ -36,7 +36,7 @@ export default async function createApp() {
   const application = new Application();
   application.logger = log4js.getLogger('Seeder');
   applyConfiguredLogLevel(application.logger);
-  application.logger.info('Starting Schema Synchronizer');
+  application.logger.info('database.schema_sync.starting');
 
   application.connection = await Database.initialize();
 
@@ -51,10 +51,10 @@ export default async function createApp() {
 
   try {
     await application.connection.synchronize();
-    application.logger.info('Schema synchronized successfully');
+    application.logger.info('database.schema_sync.finished');
     await application.connection.destroy();
   } catch (e) {
-    application.logger.error('Error synchronizing schema', e);
+    application.logger.error('database.schema_sync.failed', e);
   }
 }
 

@@ -25,15 +25,14 @@
  * @module internal/pdf/transaction-pdf-service
  */
 
-import { HtmlUnstoredPdfService } from './pdf-service';
+import { PdfService } from './pdf-service';
 import Transaction from '../../entity/transactions/transaction';
 import { createTransactionPdf, ITransactionPdf } from '../../html/transaction.html';
 import { PdfError } from '../../errors';
-import Config from '../../config';
 
-export default class TransactionPdfService extends HtmlUnstoredPdfService<Transaction, ITransactionPdf> {
+export default class TransactionPdfService extends PdfService<Transaction, ITransactionPdf> {
 
-  htmlGenerator = createTransactionPdf;
+  render = createTransactionPdf;
 
   async getParameters(entity: Transaction): Promise<ITransactionPdf> {
     const transaction = await this.manager.findOne(Transaction, {
@@ -85,7 +84,6 @@ export default class TransactionPdfService extends HtmlUnstoredPdfService<Transa
       createdByUserLastName: transaction.createdBy.lastName,
       date: transaction.createdAt.toLocaleDateString('nl-NL'),
       items,
-      serviceEmail: Config.get().mail.financialResponsible || '',
     };
   }
 }

@@ -19,6 +19,7 @@
  */
 
 import { expect } from 'chai';
+import { BAC } from '../../../src/files/templates/bac-letterhead';
 import {
   createSellerPayoutPdf,
   ISellerPayoutPdf,
@@ -88,5 +89,11 @@ describe('createSellerPayoutPdf', () => {
     const html = createSellerPayoutPdf(empty);
     expect(html).to.be.a('string');
     expect(html).to.include('Total');
+  });
+
+  it('renders the BAC letterhead footer', () => {
+    const html = createSellerPayoutPdf(params);
+    expect(html).to.include(BAC.iban);
+    expect(html).to.include(BAC.kvk);
   });
 });

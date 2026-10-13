@@ -102,7 +102,7 @@ export default class EventShiftController extends BaseController {
    * @deprecated Events are out of scope for SudoSOS. Delete from 01/11/2026.
    */
   public async getAllShifts(req: RequestWithToken, res: Response) {
-    this.logger.trace('Get all shifts by user', req.token.user);
+    this.logger.trace('event_shift.list');
 
     let take;
     let skip;
@@ -119,7 +119,7 @@ export default class EventShiftController extends BaseController {
       const [shifts, count] = await EventService.getEventShifts({ take, skip });
       res.json(toResponse(shifts.map((s) => EventService.asEventShiftResponse(s)), count, { take, skip }));
     } catch (e) {
-      this.logger.error('Could not return all shifts:', e);
+      this.logger.error('event_shift.list.failed', e);
       res.status(500).json('Internal server error.');
     }
   }
@@ -138,7 +138,7 @@ export default class EventShiftController extends BaseController {
    */
   public async createShift(req: RequestWithToken, res: Response) {
     const body = req.body as EventShiftRequest;
-    this.logger.trace('Create shift', body, 'by user', req.token.user);
+    this.logger.trace('event_shift.create', { request: body });
 
     let params: EventShiftRequest;
     try {
@@ -159,7 +159,7 @@ export default class EventShiftController extends BaseController {
     try {
       res.json(await EventService.createEventShift(params));
     } catch (error) {
-      this.logger.error('Could not create event shift:', error);
+      this.logger.error('event_shift.create.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -180,7 +180,7 @@ export default class EventShiftController extends BaseController {
   public async updateShift(req: RequestWithToken, res: Response) {
     const { id: rawId } = req.params;
     const body = req.body as EventShiftRequest;
-    this.logger.trace('Update shift', rawId, 'with body', body, 'by user', req.token.user);
+    this.logger.trace('event_shift.update', { id: rawId, request: body });
 
     let id = Number.parseInt(rawId, 10);
     try {
@@ -190,7 +190,7 @@ export default class EventShiftController extends BaseController {
         return;
       }
     } catch (error) {
-      this.logger.error('Could not update event:', error);
+      this.logger.error('event_shift.update.failed', { id: rawId }, error);
       res.status(500).json('Internal server error.');
     }
 
@@ -213,7 +213,7 @@ export default class EventShiftController extends BaseController {
     try {
       res.json(await EventService.updateEventShift(id, param));
     } catch (error) {
-      this.logger.error('Could not update event shift:', error);
+      this.logger.error('event_shift.update.failed', { id: rawId }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -232,7 +232,7 @@ export default class EventShiftController extends BaseController {
    */
   public async deleteShift(req: RequestWithToken, res: Response) {
     const { id: rawId } = req.params;
-    this.logger.trace('Delete shift with ID', rawId, 'by user', req.token.user);
+    this.logger.trace('event_shift.delete', { id: rawId });
 
     try {
       const id = Number.parseInt(rawId, 10);
@@ -245,7 +245,7 @@ export default class EventShiftController extends BaseController {
       await EventService.deleteEventShift(id);
       res.status(204).send();
     } catch (error) {
-      this.logger.error('Could not delete event shift:', error);
+      this.logger.error('event_shift.delete.failed', { id: rawId }, error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -267,7 +267,7 @@ export default class EventShiftController extends BaseController {
    */
   public async getShiftSelectedCount(req: RequestWithToken, res: Response) {
     const { id: rawId } = req.params;
-    this.logger.trace('Delete shift with ID', rawId, 'by user', req.token.user);
+    this.logger.trace('event_shift.get_counts', { id: rawId });
 
     try {
       const id = Number.parseInt(rawId, 10);
@@ -292,7 +292,7 @@ export default class EventShiftController extends BaseController {
       const counts = await EventService.getShiftSelectedCount(id, params);
       res.json(counts);
     } catch (error) {
-      this.logger.error('Could not get event shift counts:', error);
+      this.logger.error('event_shift.get_counts.failed', { id: rawId }, error);
       res.status(500).json('Internal server error.');
     }
   }

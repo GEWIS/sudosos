@@ -92,18 +92,18 @@ export default class GewisDBSyncService extends UserSyncService {
     const expired = new Date() > expirationDate;
 
     if (expired) {
-      this.logger.log(`User ${memberUser.memberId} has expired.`);
+      this.logger.log('gewisdb_sync.member_expired', { memberId: memberUser.memberId });
       return false;
     }
 
     if (dbMember.deleted) {
-      this.logger.log(`User ${memberUser.memberId} is deleted.`);
+      this.logger.log('gewisdb_sync.member_deleted', { memberId: memberUser.memberId });
       return false;
     }
 
     const update = webResponseToUpdate(dbMember);
     if (GewisDBSyncService.isUpdateNeeded(memberUser, update)) {
-      this.logger.log(`Updating user m${memberUser.memberId} (id ${memberUser.userId}) with `, update);
+      this.logger.log('gewisdb_sync.update_user', { memberId: memberUser.memberId, id: memberUser.userId });
       const user = memberUser.user;
       user.firstName = update.firstName;
       user.lastName = update.lastName;
@@ -137,7 +137,7 @@ export default class GewisDBSyncService extends UserSyncService {
     const shouldDelete = currentBalance.amount.amount === 0;
 
     try {
-      this.logger.trace(`Down user ${entity.id}, with balance ${currentBalance.amount.amount} (should delete: ${shouldDelete})`);
+      this.logger.trace('gewisdb_sync.down', { id: entity.id, balance: currentBalance.amount.amount, shouldDelete });
       
       if (!isDryRun) {
         const oldActive = entity.active;
@@ -148,7 +148,7 @@ export default class GewisDBSyncService extends UserSyncService {
 
         // Send notification to user
         if (!shouldDelete && isFallingEdge) {
-          this.logger.trace(`User ${u.id} closed`);
+          this.logger.trace('gewisdb_sync.user_closed', { id: u.id });
           await Notifier.getInstance().notify({
             type: NotificationTypes.MembershipExpiryNotification,
             userId: entity.id,
@@ -159,7 +159,7 @@ export default class GewisDBSyncService extends UserSyncService {
         }
       }
     } catch (e) {
-      this.logger.error(`Down user ${entity.id} failed with error ${e}`);
+      this.logger.error('gewisdb_sync.down.failed', { id: entity.id }, e);
     }
   }
 

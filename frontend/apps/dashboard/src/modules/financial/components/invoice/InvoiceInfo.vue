@@ -50,8 +50,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import Dialog from 'primevue/dialog';
-import { useToast } from 'primevue/usetoast';
+import Dialog from 'openvue/dialog';
+import { useToast } from 'openvue/usetoast';
 import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
 import InfoSpan from '@/components/InfoSpan.vue';
 import CardComponent from '@/components/CardComponent.vue';

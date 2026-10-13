@@ -32,11 +32,13 @@ import DebtorService from '../service/debtor-service';
 import User from '../entity/user/user';
 import { asArrayOfDates, asArrayOfUserTypes, asDate, asFromAndTillDate, asReturnFileType } from '../helpers/validators';
 import { In } from 'typeorm';
-import { HandoutFinesRequest } from './request/debtor-request';
+import { HandoutFinesRequest, NotifyDebtRequest } from './request/debtor-request';
 import Fine from '../entity/fine/fine';
-import { ReturnFileType } from 'pdf-generator-client';
+import { ReturnFileType } from '../helpers/pdf';
+import { sendPdfOrHtml } from '../helpers/express-pdf';
 import { PdfError } from '../errors';
 import FineHandoutEvent from '../entity/fine/fineHandoutEvent';
+import FineReportPdfService from '../service/pdf/fine-report-pdf-service';
 
 /**
  * Controller for the `/fines` endpoints in the {@link debtors | debtors} module. Covers
@@ -45,7 +47,7 @@ import FineHandoutEvent from '../entity/fine/fineHandoutEvent';
  * {@link users!UserController.waiveUserFines | waiveUserFines} (`POST /users/<id>/fines/waive`).
  */
 export default class DebtorController extends BaseController {
-  private logger: Logger = log4js.getLogger(' DebtorController');
+  private logger: Logger = log4js.getLogger('DebtorController');
 
   public constructor(options: BaseControllerOptions) {
     super(options);
@@ -98,6 +100,13 @@ export default class DebtorController extends BaseController {
           body: { modelName: 'HandoutFinesRequest' },
         },
       },
+      '/notify/debt': {
+        POST: {
+          policy: async (req) => this.roleManager.can(req.token.roles, 'notify', 'all', 'Fine', ['*']),
+          handler: this.notifyAboutDebt.bind(this),
+          body: { modelName: 'NotifyDebtRequest' },
+        },
+      },
       '/report': {
         GET: {
           policy: async (req) => this.roleManager.can(req.token.roles, 'get', 'all', 'Fine', ['*']),
@@ -126,7 +135,7 @@ export default class DebtorController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async returnAllFineHandoutEvents(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all fine handout events by ', req.token.user);
+    this.logger.trace('fine.list_handout_events');
 
     let take;
     let skip;
@@ -144,7 +153,7 @@ export default class DebtorController extends BaseController {
       const records = events.map((e) => DebtorService.asBaseFineHandoutEventResponse(e));
       res.json(toResponse(records, count, { take, skip }));
     } catch (error) {
-      this.logger.error('Could not return all fine handout event:', error);
+      this.logger.error('fine.list_handout_events.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -162,7 +171,7 @@ export default class DebtorController extends BaseController {
    */
   public async returnSingleFineHandoutEvent(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Get fine handout event', id, 'by', req.token.user);
+    this.logger.trace('fine.get_handout_event', { id });
 
     try {
       const event = await new DebtorService().getSingleFineHandoutEvent(Number.parseInt(id, 10));
@@ -172,7 +181,7 @@ export default class DebtorController extends BaseController {
       }
       res.json(DebtorService.asFineHandoutEventResponse(event));
     } catch (error) {
-      this.logger.error('Could not return fine handout event:', error);
+      this.logger.error('fine.get_handout_event.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -190,7 +199,7 @@ export default class DebtorController extends BaseController {
    */
   public async deleteFine(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Delete fine', id, 'by', req.token.user);
+    this.logger.trace('fine.delete', { id });
 
     try {
       const parsedId = Number.parseInt(id, 10);
@@ -203,7 +212,7 @@ export default class DebtorController extends BaseController {
       await new DebtorService().deleteFine(parsedId);
       res.status(204).send();
     } catch (error) {
-      this.logger.error('Could not return fine handout event:', error);
+      this.logger.error('fine.delete.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -223,7 +232,7 @@ export default class DebtorController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async calculateFines(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get all possible fines by ', req.token.user);
+    this.logger.trace('fine.calculate');
 
     let params;
     try {
@@ -243,7 +252,7 @@ export default class DebtorController extends BaseController {
     try {
       res.json(await new DebtorService().calculateFinesOnDate(params));
     } catch (error) {
-      this.logger.error('Could not calculate fines:', error);
+      this.logger.error('fine.calculate.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -261,7 +270,7 @@ export default class DebtorController extends BaseController {
    */
   public async handoutFines(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as HandoutFinesRequest;
-    this.logger.trace('Handout fines', body, 'by user', req.token.user);
+    this.logger.trace('fine.handout', { request: body });
 
     let referenceDate: Date;
     try {
@@ -282,7 +291,7 @@ export default class DebtorController extends BaseController {
       const event = await new DebtorService().handOutFines({ referenceDate, userIds: body.userIds }, req.token.user);
       res.json(DebtorService.asFineHandoutEventResponse(event));
     } catch (error) {
-      this.logger.error('Could not handout fines:', error);
+      this.logger.error('fine.handout.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -301,7 +310,7 @@ export default class DebtorController extends BaseController {
    */
   public async deleteFineHandout(req: RequestWithToken, res: Response): Promise<void> {
     const { id } = req.params;
-    this.logger.trace('Delete fine handout', id, 'by', req.token.user);
+    this.logger.trace('fine.delete_handout', { id });
 
     try {
       const parsedId = Number.parseInt(id, 10);
@@ -316,7 +325,7 @@ export default class DebtorController extends BaseController {
       await new DebtorService().deleteFineHandout(event);
       res.status(204).send();
     } catch (error) {
-      this.logger.error('Could not delete fine handout:', error);
+      this.logger.error('fine.delete_handout.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -334,7 +343,7 @@ export default class DebtorController extends BaseController {
    */
   public async notifyAboutFutureFines(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as HandoutFinesRequest;
-    this.logger.trace('Send future fine notification emails', body, 'by user', req.token.user);
+    this.logger.trace('fine.notify_future', { request: body });
 
     let referenceDate: Date;
     try {
@@ -355,7 +364,40 @@ export default class DebtorController extends BaseController {
       await new DebtorService().sendFineWarnings({ referenceDate, userIds: body.userIds });
       res.status(204).send();
     } catch (error) {
-      this.logger.error('Could not send future fine notification emails:', error);
+      this.logger.error('fine.notify_future.failed', error);
+      res.status(500).json('Internal server error.');
+    }
+  }
+
+  /**
+   * POST /fines/notify/debt
+   * @summary Send an email to all given users that their balance is negative, without mentioning fines.
+   * @tags debtors - Operations of the debtor controller
+   * @operationId notifyAboutDebt
+   * @security JWT
+   * @param {NotifyDebtRequest} request.body.required
+   * @return 204 - Success
+   * @return {string} 400 - Validation error
+   * @return {string} 500 - Internal server error
+   */
+  public async notifyAboutDebt(req: RequestWithToken, res: Response): Promise<void> {
+    const body = req.body as NotifyDebtRequest;
+    this.logger.trace('fine.notify_debt', { request: body });
+
+    try {
+      if (!Array.isArray(body.userIds)) throw new Error('userIds is not an array');
+      const users = await User.find({ where: { id: In(body.userIds) } });
+      if (users.length !== body.userIds.length) throw new Error('userIds is not a valid array of user IDs');
+    } catch (e) {
+      res.status(400).json(e.message);
+      return;
+    }
+
+    try {
+      await new DebtorService().sendDebtNotifications({ userIds: body.userIds });
+      res.status(204).send();
+    } catch (error) {
+      this.logger.error('Could not send debt notification emails:', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -373,7 +415,7 @@ export default class DebtorController extends BaseController {
    * @return {string} 500 - Internal server error
    */
   public async getFineReport(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get fine report by ', req.token.user);
+    this.logger.trace('fine.get_report');
 
     let fromDate, toDate;
     try {
@@ -389,7 +431,7 @@ export default class DebtorController extends BaseController {
       const report = await new DebtorService().getFineReport(fromDate, toDate);
       res.json(report.toResponse());
     } catch (error) {
-      this.logger.error('Could not get fine report:', error);
+      this.logger.error('fine.get_report.failed', error);
       res.status(500).json('Internal server error.');
     }
   }
@@ -402,13 +444,13 @@ export default class DebtorController extends BaseController {
    * @security JWT
    * @param {string} fromDate.query.required - The start date of the report, inclusive
    * @param {string} toDate.query.required - The end date of the report, exclusive
-   * @param {string} fileType.query.required - enum:PDF,TEX - The file type of the report
+   * @param {string} fileType.query - enum:PDF,HTML - The file type of the report (default PDF)
    * @returns {string} 200 - The requested report - application/pdf
    * @return {string} 400 - Validation error
    * @return {string} 500 - Internal server error
    */
   public async getFineReportPdf(req: RequestWithToken, res: Response): Promise<void> {
-    this.logger.trace('Get fine report by ', req.token.user);
+    this.logger.trace('fine.get_report_pdf');
 
     let fromDate, toDate;
     let fileType: ReturnFileType;
@@ -425,16 +467,12 @@ export default class DebtorController extends BaseController {
     try {
       const report = await new DebtorService().getFineReport(fromDate, toDate);
 
-      const buffer = fileType === 'PDF' ? await report.createPdf() : await report.createRaw();
+      const buffer = await new FineReportPdfService().output(report, fileType);
       const from = `${fromDate.getFullYear()}${fromDate.getMonth() + 1}${fromDate.getDate()}`;
       const to = `${toDate.getFullYear()}${toDate.getMonth() + 1}${toDate.getDate()}`;
-      const fileName = `fine-report-${from}-${to}.${fileType}`;
-
-      res.setHeader('Content-Type', 'application/pdf+tex');
-      res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
-      res.send(buffer);
+      sendPdfOrHtml(res, buffer, `fine-report-${from}-${to}`, fileType);
     } catch (error) {
-      this.logger.error('Could not get fine report pdf:', error);
+      this.logger.error('fine.get_report_pdf.failed', error);
       if (error instanceof PdfError) {
         res.status(502).json('PDF Generator service failed.');
         return;

@@ -28,6 +28,7 @@ import {
   MembershipExpiryNotificationOptions,
   TransactionNotificationOptions,
   UserDebtNotificationOptions,
+  UserDebtReminderOptions,
   UserGotFinedOptions,
   UserGotInactiveAdministrativeCostOptions,
   UserTypeUpdatedOptions,
@@ -78,6 +79,12 @@ NotificationTypeRegistry.register<WelcomeWithResetOptions>({
 NotificationTypeRegistry.register<UserDebtNotificationOptions>({
   type: NotificationTypes.UserDebtNotification,
   paramClass: UserDebtNotificationOptions,
+  isMandatory: true,
+});
+
+NotificationTypeRegistry.register<UserDebtReminderOptions>({
+  type: NotificationTypes.UserDebtReminder,
+  paramClass: UserDebtReminderOptions,
   isMandatory: true,
 });
 

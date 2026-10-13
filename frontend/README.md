@@ -13,8 +13,7 @@ have a bootstrapped monorepo checkout; see the [root README](../README.md) if yo
 | `apps/dashboard`     | `sudosos-dashboard`                | Admin/seller dashboard, Vue 3                          |
 | `apps/point-of-sale` | `@sudosos/point-of-sale`           | POS kiosk app, Vue 3                                   |
 | `lib/common`         | `@sudosos/sudosos-frontend-common` | Shared components, composables, services, Pinia stores |
-| `lib/themes`         | `@sudosos/themes`                  | PrimeVue theme shared by both apps                     |
-| `lib/nginx`          | (not a workspace package)          | Nginx config + Dockerfile for serving the built apps   |
+| `lib/themes`         | `@sudosos/themes`                  | OpenVue theme shared by both apps                      |
 
 ## Running the apps
 
@@ -24,7 +23,7 @@ pnpm dev:pos     # point-of-sale :5174 (run alongside pnpm dev)
 ```
 
 Dashboard at `localhost:5173`, point of sale at `localhost:5174`. See the root
-[command reference](../README.md#command-reference) for the full list (`pnpm frontend:lint`,
+[command reference](../README.md#-command-reference) for the full list (`pnpm frontend:lint`,
 `pnpm frontend:build`, `pnpm format` / `pnpm format:fix`, ...).
 
 > [!TIP]
@@ -44,4 +43,4 @@ Dashboard at `localhost:5173`, point of sale at `localhost:5174`. See the root
 ---
 
 Contributing conventions and the license are the same for the whole monorepo -- see the
-[root README](../README.md#contributing).
+[root README](../README.md#-contributing).

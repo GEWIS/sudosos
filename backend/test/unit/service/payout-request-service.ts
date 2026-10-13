@@ -23,9 +23,9 @@ import { expect } from 'chai';
 import User from '../../../src/entity/user/user';
 import PayoutRequest from '../../../src/entity/transactions/payout/payout-request';
 import DineroTransformer from '../../../src/entity/transformer/dinero-transformer';
-import Database from '../../../src/database/database';
+import Database, { AppDataSource } from '../../../src/database/database';
 import PayoutRequestService from '../../../src/service/payout-request-service';
-import { PayoutRequestState } from '../../../src/entity/transactions/payout/payout-request-status';
+import PayoutRequestStatus, { PayoutRequestState } from '../../../src/entity/transactions/payout/payout-request-status';
 import PayoutRequestRequest from '../../../src/controller/request/payout-request-request';
 import { truncateAllTables } from '../../helpers/database-helpers';
 import { finishTestDB } from '../../helpers/test-helpers';
@@ -170,6 +170,24 @@ describe('PayoutRequestService', () => {
 
     it('should return all payout requests with APPROVED or DENIED status', async () => {
       await testPayoutRequestsWithState([PayoutRequestState.APPROVED, PayoutRequestState.DENIED]);
+    });
+
+    it('should filter on one latest status when two statuses share a timestamp', async () => {
+      const request = await PayoutRequestService.createPayoutRequest(
+        { ...ctx.validPayoutRequestRequest, forId: ctx.users[1].id }, ctx.users[1]);
+      await PayoutRequestStatus.save(Object.assign(new PayoutRequestStatus(), {
+        payoutRequest: request, state: PayoutRequestState.CANCELLED,
+      }));
+      // Give both statuses the same timestamp, as MariaDB's second precision can. Raw SQL,
+      // since TypeORM skips createdAt on update and formats it differently on insert.
+      const [{ createdAt }] = await AppDataSource.query(
+        'SELECT MIN(createdAt) AS createdAt FROM payout_request_status WHERE payoutRequestId = ?', [request.id]);
+      await AppDataSource.query('UPDATE payout_request_status SET createdAt = ? WHERE payoutRequestId = ?', [createdAt, request.id]);
+
+      const ids = async (status: PayoutRequestState) => (await PayoutRequestService
+        .getPayoutRequests({ id: request.id, status: [status] }))[0].map((r) => r.id);
+      expect(await ids(PayoutRequestState.CANCELLED)).to.deep.equal([request.id]);
+      expect(await ids(PayoutRequestState.CREATED)).to.deep.equal([]);
     });
   });
 

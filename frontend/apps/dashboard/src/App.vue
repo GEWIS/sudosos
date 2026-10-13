@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
-import Toast from 'primevue/toast';
+import Toast from 'openvue/toast';
 import { useDarkMode } from '@/composables/darkMode';
 import { useBetaSync } from '@/composables/useBetaSync';
 import BetaSyncOverlay from '@/components/BetaSyncOverlay.vue';

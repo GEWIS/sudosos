@@ -41,6 +41,7 @@ import {
 } from '../../../src/controller/request/invoice-request';
 import Transaction from '../../../src/entity/transactions/transaction';
 import {
+  INVALID_INVOICE_ID,
   INVALID_TRANSACTION_OWNER,
   INVALID_USER_ID, INVOICE_IS_DELETED,
   INVOICE_IS_PAID, NO_TRANSACTION_IDS,
@@ -56,8 +57,9 @@ import InvoiceService from '../../../src/service/invoice-service';
 import InvoiceUser from '../../../src/entity/user/invoice-user';
 import { UpdateInvoiceUserRequest } from '../../../src/controller/request/user-request';
 import InvoicePdf from '../../../src/entity/file/invoice-pdf';
-import sinon from 'sinon';
 import { truncateAllTables } from '../../helpers/database-helpers';
+import { createInvoiceWithTransfers } from '../../helpers/invoice-helpers';
+import Transfer from '../../../src/entity/transactions/transfer';
 import { finishTestDB } from '../../helpers/test-helpers';
 import { createTransactionRequest, requestToTransaction } from '../../helpers/transaction-factory';
 import { InvoiceSeeder, TransactionSeeder, UserSeeder } from '../../seed';
@@ -557,6 +559,70 @@ describe('InvoiceController', async () => {
       expect(body.addressee).to.equal(updateRequest.addressee);
       expect(body.currentState.state).to.equal(updateRequest.state);
     });
+    it('should return an HTTP 400 if an addressing field exceeds 255 characters', async () => {
+      const invoice = ctx.invoices.find((i) => InvoiceService.isState(i, InvoiceState.CREATED));
+      expect(invoice).to.not.be.undefined;
+      const fields: (keyof UpdateInvoiceRequest)[] = ['addressee', 'street', 'postalCode', 'city', 'country', 'attention', 'reference'];
+
+      for (const field of fields) {
+        const res = await request(ctx.app)
+          .patch(`/invoices/${invoice.id}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`)
+          .send({ [field]: 'x'.repeat(256) });
+
+        expect(res.status, field).to.equal(400);
+      }
+    });
+    it('should return an HTTP 400 if a required addressing field is null', async () => {
+      const invoice = ctx.invoices.find((i) => InvoiceService.isState(i, InvoiceState.CREATED));
+      expect(invoice).to.not.be.undefined;
+      const fields: (keyof UpdateInvoiceRequest)[] = ['addressee', 'street', 'postalCode', 'city', 'country', 'reference'];
+
+      for (const field of fields) {
+        const res = await request(ctx.app)
+          .patch(`/invoices/${invoice.id}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`)
+          .send({ [field]: null });
+
+        expect(res.status, field).to.equal(400);
+      }
+    });
+    it('should return an HTTP 400 if the date is invalid', async () => {
+      const invoice = ctx.invoices.find((i) => InvoiceService.isState(i, InvoiceState.CREATED));
+      expect(invoice).to.not.be.undefined;
+
+      for (const date of ['garbage', '2026-13-45']) {
+        const res = await request(ctx.app)
+          .patch(`/invoices/${invoice.id}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`)
+          .send({ date });
+
+        expect(res.status, date).to.equal(400);
+      }
+    });
+    it('should return an HTTP 400 if byId does not exist', async () => {
+      const invoice = ctx.invoices.find((i) => InvoiceService.isState(i, InvoiceState.CREATED));
+      expect(invoice).to.not.be.undefined;
+      const byId = (await User.count()) + 1;
+
+      const res = await request(ctx.app)
+        .patch(`/invoices/${invoice.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ state: 'SENT', byId });
+
+      expect(res.status).to.equal(400);
+    });
+    it('should return an HTTP 400 if invoice does not exist and state is given', async () => {
+      const id = (await Invoice.count()) + 1;
+
+      const res = await request(ctx.app)
+        .patch(`/invoices/${id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ state: 'SENT' });
+
+      expect(res.status).to.equal(400);
+      expect(res.body.errors[0]).to.include(INVALID_INVOICE_ID().value);
+    });
     it('should return an HTTP 403 if not admin', async () => {
       const invoice = (await Invoice.find())[0];
       const updateRequest: UpdateInvoiceRequest = {
@@ -649,6 +715,29 @@ describe('InvoiceController', async () => {
 
       expect(res.status).to.equal(403);
     });
+    it('should return an HTTP 400 and not create a second credit transfer if invoice is already deleted', async () => {
+      await inUserContext(await (await UserFactory()).clone(2), async (debtor: User, creditor: User) => {
+        const invoice = await createInvoiceWithTransfers(debtor.id, creditor.id, 1);
+
+        const first = await request(ctx.app)
+          .delete(`/invoices/${invoice.id}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`);
+        expect(first.status).to.equal(204);
+        const transferCount = await Transfer.count();
+        const balance = await new BalanceService().getBalance(debtor.id);
+
+        const second = await request(ctx.app)
+          .delete(`/invoices/${invoice.id}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`);
+
+        expect(second.status).to.eq(400);
+        expect(second.body.valid).to.be.false;
+        expect(second.body.errors).to.be.an('array').with.length.greaterThan(0);
+        expect(second.body.errors[0]).to.include(INVOICE_IS_DELETED().value);
+        expect(await Transfer.count()).to.equal(transferCount);
+        expect((await new BalanceService().getBalance(debtor.id)).amount.amount).to.equal(balance.amount.amount);
+      });
+    });
     it('should return an HTTP 404 if invoice does not exist', async () => {
       const count = await Invoice.count();
       const invoice = await Invoice.findOne({ where: { id: count + 1 } });
@@ -665,13 +754,11 @@ describe('InvoiceController', async () => {
     it('should return the file name of the pdf', async () => {
       let invoice = (await Invoice.find())[0];
 
-      const stub = sinon.stub(Invoice.prototype, 'validatePdfHash').resolves(true);
-
       const pdf = Object.assign(new InvoicePdf(), {
         downloadName: 'test-file.pdf',
         createdBy: ctx.adminUser,
         location: '/etc/test-file.pdf',
-        hash: 'fake_hash',
+        hash: 'issued',
       });
 
       await InvoicePdf.save(pdf);
@@ -684,7 +771,31 @@ describe('InvoiceController', async () => {
 
       expect(res.status).to.equal(200);
       expect(res.body.pdf).to.equal('test-file.pdf');
-      stub.restore();
+    });
+    it('should not let the invoice owner force a re-render', async () => {
+      const invoice = await Invoice.findOne({ where: { to: { id: ctx.invoiceUser.id } } });
+      expect(invoice).to.not.be.null;
+
+      const pdf = Object.assign(new InvoicePdf(), {
+        downloadName: 'owner-file.pdf',
+        createdBy: ctx.adminUser,
+        location: '/etc/owner-file.pdf',
+        hash: 'issued',
+      });
+      await InvoicePdf.save(pdf);
+      invoice.pdf = pdf;
+      await Invoice.save(invoice);
+
+      const res = await request(ctx.app)
+        .get(`/invoices/${invoice.id}/pdf`)
+        .set('Authorization', `Bearer ${ctx.invoiceToken}`);
+      expect(res.status).to.equal(200);
+
+      const forced = await request(ctx.app)
+        .get(`/invoices/${invoice.id}/pdf`)
+        .query({ force: true })
+        .set('Authorization', `Bearer ${ctx.invoiceToken}`);
+      expect(forced.status).to.equal(403);
     });
     it('should return an HTTP 404 if invoice does not exist', async () => {
       const res = await request(ctx.app)

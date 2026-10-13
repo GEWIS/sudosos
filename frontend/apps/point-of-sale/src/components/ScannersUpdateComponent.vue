@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import { PropType, Ref, ref, watch } from 'vue';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
 
 const toast = useToast();

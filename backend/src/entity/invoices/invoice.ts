@@ -46,13 +46,10 @@ import Transfer from '../transactions/transfer';
 import InvoiceStatus from './invoice-status';
 import InvoicePdf from '../file/invoice-pdf';
 import SubTransactionRow from '../transactions/sub-transaction-row';
-import { INVOICE_PDF_LOCATION } from '../../files/storage';
-import { PdfAble } from '../file/pdf-able';
-import InvoiceHtmlPdfService from '../../service/pdf/invoice-html-pdf-service';
 
 
 @Entity()
-export default class Invoice extends PdfAble(BaseEntity) {
+export default class Invoice extends BaseEntity {
 
   /**
    * The ID of the account for whom the invoice is
@@ -173,10 +170,4 @@ export default class Invoice extends PdfAble(BaseEntity) {
   @ManyToMany(() => SubTransactionRow, { cascade: false })
   @JoinTable({ name: 'inv_sub_tra_row_del_inv_sub_tra_row' })
   public subTransactionRowsDeletedInvoice: SubTransactionRow[];
-
-  pdfService = new InvoiceHtmlPdfService(INVOICE_PDF_LOCATION);
-
-  async getOwner(): Promise<User> {
-    return this.to;
-  }
 }

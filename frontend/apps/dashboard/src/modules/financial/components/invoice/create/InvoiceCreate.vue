@@ -8,7 +8,7 @@
         <ActionButton
           :disabled="disabled"
           :label="t('common.create')"
-          :result="form.success?.value != null"
+          :result="form.success?.value"
           :submitting="form.context.isSubmitting.value"
           type="submit"
           @click="form.submit"
@@ -24,7 +24,7 @@ import * as yup from 'yup';
 import { useI18n } from 'vue-i18n';
 import type { CreateInvoiceRequest, InvoiceResponse } from '@gewis/sudosos-client';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import type { AxiosResponse } from 'axios';
 import { useRouter } from 'vue-router';
 import { useInvoiceStore } from '@/stores/invoice.store';

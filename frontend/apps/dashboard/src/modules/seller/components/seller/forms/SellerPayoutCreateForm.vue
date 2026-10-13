@@ -76,11 +76,11 @@
 </template>
 
 <script setup lang="ts">
-import InputNumber from 'primevue/inputnumber';
+import InputNumber from 'openvue/inputnumber';
 import { computed, type PropType, type Ref, ref, watch } from 'vue';
 import type { CreateSellerPayoutRequest, UserResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import * as yup from 'yup';
 import InputSpan from '@/components/InputSpan.vue';
 import { createSellerPayoutObject } from '@/utils/validation-schema';

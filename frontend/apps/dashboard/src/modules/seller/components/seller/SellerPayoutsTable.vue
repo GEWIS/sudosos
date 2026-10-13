@@ -89,7 +89,7 @@
 import { ref, type PropType, type Ref } from 'vue';
 import { type UserResponse, type SellerPayoutResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'openvue/usetoast';
 import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
 import { formatPrice, formatDateFromString } from '@/utils/formatterUtils';
 import ApiService from '@/services/ApiService';

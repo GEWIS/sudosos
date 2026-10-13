@@ -89,11 +89,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { BaseInactiveAdministrativeCostResponse } from '@gewis/sudosos-client';
-import type { DataTablePageEvent } from 'primevue/datatable';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Button from 'primevue/button';
-import Skeleton from 'primevue/skeleton';
+import type { DataTablePageEvent } from 'openvue/datatable';
+import DataTable from 'openvue/datatable';
+import Column from 'openvue/column';
+import Button from 'openvue/button';
+import Skeleton from 'openvue/skeleton';
 import { useI18n } from 'vue-i18n';
 import { formatDateFromString, formatDineroObject } from '@/utils/formatterUtils';
 import UserLink from '@/components/UserLink.vue';

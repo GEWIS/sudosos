@@ -36,5 +36,6 @@ export { HelloWorldOptions } from './notification-options';
 export { MembershipExpiryNotificationOptions } from './notification-options';
 export { WelcomeWithResetOptions } from './notification-options';
 export { UserDebtNotificationOptions } from './notification-options';
+export { UserDebtReminderOptions } from './notification-options';
 export { UserGotFinedOptions } from './notification-options';
 export { WelcomeToSudososOptions } from './notification-options';
