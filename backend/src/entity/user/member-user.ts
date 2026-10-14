@@ -21,7 +21,7 @@
 /**
  * This is the module page of the member-user.
  *
- * @module entity/user
+ * @module users
  */
 
 import {
