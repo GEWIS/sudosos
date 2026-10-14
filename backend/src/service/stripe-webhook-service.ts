@@ -70,9 +70,14 @@ export default class StripeWebhookService extends WithManager {
    * PaymentRequest as paid) or finalises the terminal payment; on `CANCELLED`
    * it propagates a Stripe-initiated cancellation to a linked terminal payment.
    *
+   * `FAILED` only records a declined attempt. It is not final at Stripe: the
+   * same intent can still succeed (after a PIN prompt, or with another card)
+   * or be cancelled. A declined terminal payment is ended by
+   * {@link handleReaderActionFailed} instead.
+   *
    * Rejects when the intent does not exist, when the status already exists, or
-   * when it would conflict with a mutually exclusive terminal state already
-   * present (SUCCEEDED/FAILED/CANCELLED).
+   * when it would conflict with a final state already present
+   * (SUCCEEDED/CANCELLED).
    * @param paymentIntentId The local (database) ID of the payment intent.
    * @param state The new state to record.
    * @returns The persisted {@link StripePaymentIntentStatus}.
@@ -89,7 +94,6 @@ export default class StripeWebhookService extends WithManager {
     const states = paymentIntent.paymentIntentStatuses?.map((status) => status.state) ?? [];
     const mutuallyExclusiveStates = [
       StripePaymentIntentState.SUCCEEDED,
-      StripePaymentIntentState.FAILED,
       StripePaymentIntentState.CANCELLED,
     ];
     if (states.includes(state)) throw new Error(`Status ${state} already exists.`);
@@ -140,11 +144,134 @@ export default class StripeWebhookService extends WithManager {
     }
 
     // If payment is cancelled, propagate this to appropriate entity if cancellation is done by Stripe (and not SudoSOS)
-    if (state === StripePaymentIntentState.CANCELLED && !!paymentIntent.terminalPayment && paymentIntent.terminalPayment.getState() !== TerminalPaymentState.CANCELLED) {
+    if (state === StripePaymentIntentState.CANCELLED && StripeWebhookService.terminalPaymentIsOpen(paymentIntent)) {
       await new TerminalPaymentService(this.manager).cancelTerminalPayment(paymentIntent.terminalPayment.id, false);
     }
 
     return paymentIntentStatus;
+  }
+
+  /**
+   * Failure codes of a reader action that end its terminal payment as failed.
+   * The reader has stopped, so even a retryable `processing_error` needs a new
+   * payment. See https://docs.stripe.com/terminal/references/testing.
+   */
+  private static readonly DECLINE_FAILURE_CODES = ['card_declined', 'expired_card', 'processing_error'];
+
+  /**
+   * End the terminal payment of a reader action that failed.
+   *
+   * This, and not `payment_intent.payment_failed`, ends a terminal payment.
+   * The intent fails on every declined attempt, including a soft decline that
+   * asks for a PIN, after which the reader carries on with the same payment.
+   * The reader action only fails once the reader has stopped.
+   *
+   * - `customer_canceled`: the customer pressed cancel, so the payment is
+   *   cancelled, and so is its intent at Stripe.
+   * - `connection_error`: the reader lost its connection, but the payment may
+   *   still have been authorised, so the payment stays open. A succeeded
+   *   webhook settles it, or the cashier cancels it.
+   * - A decline ({@link DECLINE_FAILURE_CODES}): the payment fails.
+   * - Anything else: the payment stays open, as the money might have been
+   *   taken. The cashier cancels it, which also cancels the intent at Stripe.
+   * @param paymentIntent The payment intent the reader was processing, with its
+   * statuses and terminal payment.
+   * @param reader The reader from the `terminal.reader.action_failed` event.
+   */
+  private async handleReaderActionFailed(paymentIntent: StripePaymentIntent, reader: Stripe.Terminal.Reader): Promise<void> {
+    // Webhooks for intents SudoSOS ended itself, or that are not terminal payments
+    if (!StripeWebhookService.terminalPaymentIsOpen(paymentIntent)) return;
+
+    const terminalPaymentId = paymentIntent.terminalPayment.id;
+
+    // The payment can be restarted on another reader, so the old reader's action
+    // may still fail afterwards. Only the reader processing the payment can end it.
+    if (reader.id !== paymentIntent.terminalPayment.processedByTerminal) {
+      this.logger.warn('stripe_webhook.reader_action_failed.ignored', {
+        readerId: reader.id,
+        terminalPaymentId,
+        processedByTerminal: paymentIntent.terminalPayment.processedByTerminal,
+        reason: 'other_reader',
+      });
+      return;
+    }
+
+    const failureCode = reader.action?.failure_code;
+    const service = new TerminalPaymentService(this.manager);
+
+    if (failureCode === 'connection_error') {
+      this.logger.warn('stripe_webhook.reader_action_failed.connection_error', { readerId: reader.id, terminalPaymentId });
+      return;
+    }
+
+    if (failureCode === 'customer_canceled') {
+      // The reader has stopped, but the intent is still open at Stripe. Cancel
+      // it there too, which also marks the payment as cancelled rather than
+      // declined if the card had a soft decline first.
+      const terminalPayment = await service.cancelTerminalPayment(terminalPaymentId, false);
+      await new StripeService(this.manager).cancelPaymentIntent(terminalPayment.stripePaymentIntent);
+      return;
+    }
+
+    if (!StripeWebhookService.DECLINE_FAILURE_CODES.includes(failureCode)) {
+      this.logger.error('stripe_webhook.reader_action_failed.unknown_failure_code', {
+        readerId: reader.id, terminalPaymentId, failureCode,
+      });
+      return;
+    }
+
+    // The FAILED status marks the terminal payment as failed rather than
+    // cancelled. Its own webhook may arrive after this one, so record it now.
+    await this.recordDecline(paymentIntent.id);
+    await service.failTerminalPayment(terminalPaymentId);
+  }
+
+  /**
+   * Record a FAILED status for the payment intent, unless it already has one.
+   *
+   * A decline sends both `payment_intent.payment_failed` and
+   * `terminal.reader.action_failed`, often at the same moment. Each is handled
+   * in its own database transaction, so neither sees the status the other is
+   * inserting. The insert is ignored rather than rejected by the unique index,
+   * so the handler that loses this race still ends the terminal payment.
+   * @param paymentIntentId The local (database) ID of the payment intent.
+   */
+  private async recordDecline(paymentIntentId: number): Promise<void> {
+    await this.manager.createQueryBuilder()
+      .insert()
+      .into(StripePaymentIntentStatus)
+      .values({ stripePaymentIntentId: paymentIntentId, state: StripePaymentIntentState.FAILED })
+      .orIgnore()
+      .execute();
+  }
+
+  /**
+   * Whether the payment intent belongs to a terminal payment that can still be
+   * paid. Only such a payment can still be cancelled or failed; this also skips
+   * the webhooks caused by SudoSOS ending a payment itself.
+   * @param paymentIntent The payment intent, with its terminal payment.
+   */
+  private static terminalPaymentIsOpen(paymentIntent: StripePaymentIntent): boolean {
+    return !!paymentIntent.terminalPayment
+      && [TerminalPaymentState.CREATED, TerminalPaymentState.PROCESSING].includes(paymentIntent.terminalPayment.getState());
+  }
+
+  /**
+   * Get the Stripe ID of the payment intent a webhook event is about. For a
+   * `terminal.reader.action_failed` event, this is the intent the reader was
+   * processing.
+   * @param event Event received from the Stripe webhook.
+   * @returns The Stripe ID, or `undefined` if the event is not about a payment intent.
+   */
+  public static getPaymentIntentStripeId(event: Stripe.Event): string | undefined {
+    if (event.type.startsWith('payment_intent.')) {
+      return (event.data.object as Stripe.PaymentIntent).id;
+    }
+    if (event.type === 'terminal.reader.action_failed') {
+      const intent = event.data.object.action?.process_payment_intent?.payment_intent;
+      return typeof intent === 'string' ? intent : intent?.id;
+    }
+    return undefined;
   }
 
   /**
@@ -153,9 +280,9 @@ export default class StripeWebhookService extends WithManager {
    */
   public async handleWebhookEvent(event: Stripe.Event) {
     try {
-      const eventPaymentIntent = event.data.object as Stripe.PaymentIntent;
+      const stripeId = StripeWebhookService.getPaymentIntentStripeId(event);
       const paymentIntent = await StripePaymentIntent.findOne({
-        where: { stripeId: eventPaymentIntent.id },
+        where: { stripeId },
         relations: {
           deposit: { transfer: true },
           paymentIntentStatuses: true,
@@ -165,7 +292,7 @@ export default class StripeWebhookService extends WithManager {
       });
 
       if (!paymentIntent) {
-        throw new Error(`Could not find payment intent with ID "${eventPaymentIntent.id}"`);
+        throw new Error(`Could not find payment intent with ID "${stripeId}"`);
       }
 
       switch (event.type) {
@@ -179,17 +306,22 @@ export default class StripeWebhookService extends WithManager {
           await this.createNewPaymentIntentStatus(paymentIntent.id, StripePaymentIntentState.SUCCEEDED);
           break;
         case 'payment_intent.payment_failed':
-          await this.createNewPaymentIntentStatus(paymentIntent.id, StripePaymentIntentState.FAILED);
+          // Sent for every declined attempt, and a failed reader action may
+          // already have recorded the decline. Record it once.
+          await this.recordDecline(paymentIntent.id);
           break;
         case 'payment_intent.canceled':
           await this.createNewPaymentIntentStatus(paymentIntent.id, StripePaymentIntentState.CANCELLED);
+          break;
+        case 'terminal.reader.action_failed':
+          await this.handleReaderActionFailed(paymentIntent, event.data.object);
           break;
         default:
           this.logger.warn('stripe_webhook.event_unhandled', { eventId: event.id, type: event.type });
       }
 
       this.logger.trace('stripe_webhook.event_processed', {
-        eventId: event.id, type: event.type, stripeId: eventPaymentIntent.id, paymentIntentId: paymentIntent.id,
+        eventId: event.id, type: event.type, stripeId, paymentIntentId: paymentIntent.id,
       });
     } catch (error) {
       this.logger.error('stripe_webhook.event_processed.failed', { eventId: event.id, type: event.type }, error);

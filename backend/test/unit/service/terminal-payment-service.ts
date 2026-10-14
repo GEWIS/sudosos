@@ -42,6 +42,7 @@ import Transaction from '../../../src/entity/transactions/transaction';
 import TmpTransaction from '../../../src/entity/transactions/terminal/tmp-transaction';
 import Transfer from '../../../src/entity/transactions/transfer';
 import StripePaymentIntent from '../../../src/entity/stripe/stripe-payment-intent';
+import StripePaymentIntentStatus, { StripePaymentIntentState } from '../../../src/entity/stripe/stripe-payment-intent-status';
 
 const FAKE_PAYMENT_INTENT = 'fake_payment_intent_for_testing_do_not_use';
 const FAKE_READER_ID = 'fake_reader_id_do_not_use';
@@ -252,6 +253,28 @@ describe('TerminalPaymentService', () => {
       // The transfer should be mapped
       expect(response.transfer).to.not.be.undefined;
       expect(response.transfer!.id).to.equal(tp!.transfer!.id);
+    });
+
+    it('should map a FAILED terminal payment without a transaction or transfer', async () => {
+      const ctxTerminalPayment = ctx.terminalPayments.find(
+        (t) => t.getState() === TerminalPaymentState.FAILED,
+      );
+      // Sanity check
+      expect(
+        ctxTerminalPayment,
+        'Precondition failed: could not find terminal payment with state "FAILED"',
+      ).to.not.be.undefined;
+
+      const service = new TerminalPaymentService();
+      const tp = await service.getTerminalPayment(ctxTerminalPayment!.id);
+      expect(tp).to.not.be.null;
+
+      const response = await TerminalPaymentService.asTerminalPaymentResponse(tp!);
+
+      expect(response.id).to.equal(tp!.id);
+      expect(response.state).to.equal(TerminalPaymentState.FAILED);
+      expect(response.transaction).to.be.undefined;
+      expect(response.transfer).to.be.undefined;
     });
 
     it('should map a CANCELLED terminal payment without a transaction or transfer', async () => {
@@ -781,6 +804,81 @@ describe('TerminalPaymentService', () => {
     });
   });
 
+  describe('#failTerminalPayment', () => {
+    /**
+     * Record a FAILED status on the payment's intent, as the webhook does
+     * before failing the payment. Returns a cleanup that undoes both.
+     */
+    const failAndRestore = async (ctxTerminalPayment: TerminalPayment) => {
+      const status = await ctx.connection.getRepository(StripePaymentIntentStatus).save({
+        stripePaymentIntent: ctxTerminalPayment.stripePaymentIntent,
+        state: StripePaymentIntentState.FAILED,
+      });
+      const result = await new TerminalPaymentService().failTerminalPayment(ctxTerminalPayment.id);
+
+      const restore = async () => {
+        await ctx.connection.getRepository(StripePaymentIntentStatus).remove(status);
+        await ctx.connection
+          .getRepository(TmpTransaction)
+          .save(ctxTerminalPayment.temporaryTransaction!);
+        await ctx.connection
+          .getRepository(TerminalPayment)
+          .save(ctxTerminalPayment);
+      };
+      return { result, restore };
+    };
+
+    it('should fail a terminal payment without calling Stripe', async () => {
+      const ctxTerminalPayment = ctx.terminalPayments.find(
+        (t) => t.getState() === TerminalPaymentState.PROCESSING,
+      );
+      // Sanity check
+      expect(
+        ctxTerminalPayment,
+        'Precondition failed: could not find terminal payment with state "PROCESSING"',
+      ).to.not.be.undefined;
+      const tmpTransactionId = ctxTerminalPayment!.temporaryTransaction!.id;
+
+      const { result, restore } = await failAndRestore(ctxTerminalPayment!);
+
+      // The reader action already ended, and the intent is kept
+      expect(readersCancelActionStub).to.not.be.called;
+      expect(paymentIntentsCancelStub).to.not.be.called;
+      expect(result.temporaryTransaction).to.be.null;
+
+      const dbTerminalPayment = await new TerminalPaymentService().getTerminalPayment(ctxTerminalPayment!.id);
+      expect(dbTerminalPayment!.getState()).to.equal(TerminalPaymentState.FAILED);
+      const removedTmp = await ctx.connection
+        .getRepository(TmpTransaction)
+        .findOne({ where: { id: tmpTransactionId } });
+      expect(removedTmp).to.be.null;
+
+      await restore();
+    });
+    it('should throw when terminal payment is already settled', async () => {
+      const ctxTerminalPayment = ctx.terminalPayments.find(
+        (t) => t.getState() === TerminalPaymentState.PAID,
+      );
+      // Sanity check
+      expect(
+        ctxTerminalPayment,
+        'Precondition failed: could not find terminal payment with state "PAID"',
+      ).to.not.be.undefined;
+
+      const promise = new TerminalPaymentService().failTerminalPayment(ctxTerminalPayment!.id);
+
+      await expect(promise).to.eventually.be.rejectedWith('TerminalPayment has state "paid", but expected state "created" or "processing"');
+      expect(paymentIntentsCancelStub).to.not.have.been.called;
+    });
+    it('should throw when terminal payment does not exist', async () => {
+      const id = ctx.terminalPayments.length + 100;
+
+      const promise = new TerminalPaymentService().failTerminalPayment(id);
+
+      await expect(promise).to.eventually.be.rejectedWith(`TerminalPayment with ID "${id}" not found`);
+    });
+  });
+
   describe('#cancelTerminalPayment', () => {
     it('should correctly cancel a terminal payment', async () => {
       const ctxTerminalPayment = ctx.terminalPayments.find(
@@ -838,6 +936,42 @@ describe('TerminalPaymentService', () => {
       // Cleanup: restore the temporary transaction and re-attach it, and reset
       // the payment intent's cancelledWithAPI flag, so the seeded CREATED
       // terminal payment is left intact for other tests.
+      ctxTerminalPayment!.stripePaymentIntent.cancelledWithAPI = false;
+      await ctx.connection
+        .getRepository(StripePaymentIntent)
+        .save(ctxTerminalPayment!.stripePaymentIntent);
+      await ctx.connection
+        .getRepository(TmpTransaction)
+        .save(ctxTerminalPayment!.temporaryTransaction!);
+      await ctx.connection
+        .getRepository(TerminalPayment)
+        .save(ctxTerminalPayment!);
+    });
+    it('should report a cancel after a soft decline as cancelled', async () => {
+      const ctxTerminalPayment = ctx.terminalPayments.find(
+        (t) => t.getState() === TerminalPaymentState.PROCESSING,
+      );
+      // Sanity check
+      expect(
+        ctxTerminalPayment,
+        'Precondition failed: could not find terminal payment with state "PROCESSING"',
+      ).to.not.be.undefined;
+      // The card was declined, after which the reader asked for a PIN
+      const status = await ctx.connection.getRepository(StripePaymentIntentStatus).save({
+        stripePaymentIntent: ctxTerminalPayment!.stripePaymentIntent,
+        state: StripePaymentIntentState.FAILED,
+      });
+
+      const service = new TerminalPaymentService();
+      const result = await service.cancelTerminalPayment(ctxTerminalPayment!.id);
+
+      // Before Stripe confirms the cancellation with a webhook
+      expect(result.getState()).to.equal(TerminalPaymentState.CANCELLED);
+      const dbTerminalPayment = await service.getTerminalPayment(ctxTerminalPayment!.id);
+      expect(dbTerminalPayment!.getState()).to.equal(TerminalPaymentState.CANCELLED);
+
+      // Cleanup, as in the test above
+      await ctx.connection.getRepository(StripePaymentIntentStatus).remove(status);
       ctxTerminalPayment!.stripePaymentIntent.cancelledWithAPI = false;
       await ctx.connection
         .getRepository(StripePaymentIntent)
