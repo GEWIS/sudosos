@@ -174,7 +174,7 @@ export class ApiService {
     return this._rootApi;
   }
 
-  get borrelkaart(): VouchergroupsApi {
+  get voucherGroup(): VouchergroupsApi {
     return this._voucherGroupApi;
   }
 
