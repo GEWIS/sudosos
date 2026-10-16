@@ -8,8 +8,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "watch": "nodemon --watch \"src/**\" --ext \"ts,json\" --exec \"ts-node src/index.ts\"",
-    "cron": "nodemon --watch \"src/**\" --ext \"ts,json\" --exec \"ts-node src/cron.ts\"",
+    "watch": "NODE_OPTIONS=--max-old-space-size=1024 nodemon --watch \"src/**\" --ext \"ts,json\" --exec \"ts-node -T src/index.ts\"",
+    "cron": "NODE_OPTIONS=--max-old-space-size=1024 nodemon --watch \"src/**\" --ext \"ts,json\" --exec \"ts-node -T src/cron.ts\"",
     "serve": "node out/src/index.js",
     "schema": "ts-node src/database/schema.ts",
     "seed": "ts-node cli/seed.ts",
