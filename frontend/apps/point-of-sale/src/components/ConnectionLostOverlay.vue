@@ -9,7 +9,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import ProgressSpinner from 'openvue/progressspinner';
 import { useAuthStore, useWebSocketConnectionWatcher } from '@sudosos/sudosos-frontend-common';
 import { logoutService } from '@/services/logoutService';
 import apiService from '@/services/ApiService';

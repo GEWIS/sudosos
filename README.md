@@ -123,6 +123,10 @@ short version:
 - **Before opening a PR**, run the linter and the relevant test suite for the area you touched (see the
   [Command reference](#-command-reference) above). CI runs the same checks and will block merging
   otherwise.
+- **Don't import OpenVue components locally.** They're registered globally in each frontend app's
+  `src/main.ts`, so use `<Button>`, `<DataTable>`, ... directly; ESLint rejects `import X from 'openvue/x'`
+  in `.vue` files. Need one that isn't registered yet? Add it to `src/main.ts` (and, for the dashboard,
+  `.storybook/registerOpenVue.ts`). Composables like `useToast` and `import type { ... }` are fine.
 - Every PR needs at least one approval before it can merge into `develop` (branch protection enforces
   this), and the required CI checks above need to be green.
 - **AI tools are welcome; your voice is required.** Use AI to write code or explore ideas, but write

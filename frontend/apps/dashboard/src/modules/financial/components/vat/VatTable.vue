@@ -35,9 +35,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import type { VatGroupResponse } from '@gewis/sudosos-client';
-import DataTable, { type DataTablePageEvent } from 'openvue/datatable';
-import Column from 'openvue/column';
-import Skeleton from 'openvue/skeleton';
+import type { DataTablePageEvent } from 'openvue/datatable';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'openvue/usetoast';
 import { AxiosError } from 'axios';

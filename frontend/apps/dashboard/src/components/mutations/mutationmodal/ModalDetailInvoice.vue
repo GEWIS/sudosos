@@ -25,8 +25,6 @@
   </div>
 </template>
 <script setup lang="ts">
-import DataTable from 'openvue/datatable';
-import Column from 'openvue/column';
 import { computed } from 'vue';
 import type { TransferResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';

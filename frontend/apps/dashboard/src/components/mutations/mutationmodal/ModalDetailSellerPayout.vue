@@ -20,8 +20,6 @@
 
 <script setup lang="ts">
 import type { TransferResponse } from '@gewis/sudosos-client';
-import DataTable from 'openvue/datatable';
-import Column from 'openvue/column';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { formatPrice } from '@/utils/formatterUtils';

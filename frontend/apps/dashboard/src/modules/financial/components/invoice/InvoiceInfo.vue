@@ -50,7 +50,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import Dialog from 'openvue/dialog';
 import { useToast } from 'openvue/usetoast';
 import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
 import InfoSpan from '@/components/InfoSpan.vue';
