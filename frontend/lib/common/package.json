@@ -53,7 +53,7 @@
     "@gewis/eslint-config-vue": "catalog:",
     "@gewis/prettier-config": "catalog:",
     "@tsconfig/node-lts": "^24.0.1",
-    "@types/lodash": "^4.17.21",
+    "@types/lodash": "^4.17.26",
     "@typescript-eslint/parser": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vue/tsconfig": "catalog:",
