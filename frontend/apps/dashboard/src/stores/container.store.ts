@@ -133,12 +133,20 @@ export const useContainerStore = defineStore('container', {
         public: container.public || false,
       };
 
+      const alreadyInContainer = container.products.some((e) => e.id === product.id);
       container.products.push(product);
       return ApiService.container
         .updateContainer({ id: container.id, updateContainerRequest: updateContainerReq })
         .then((resp) => {
           this.containers[container.id] = resp.data;
           return resp.data;
+        })
+        .catch((err) => {
+          // Undo the optimistic add, unless a newer server response already replaced this container
+          if (!alreadyInContainer && this.containers[container.id] === container) {
+            container.products = container.products.filter((e) => e.id !== product.id);
+          }
+          throw err;
         });
     },
     /**
@@ -168,6 +176,13 @@ export const useContainerStore = defineStore('container', {
         .then((resp) => {
           this.containers[container.id] = resp.data;
           return resp.data;
+        })
+        .catch((err) => {
+          // Undo the optimistic removal, unless a newer server response already replaced this container
+          if (this.containers[container.id] === container && !container.products.some((e) => e.id === product.id)) {
+            container.products.push(product);
+          }
+          throw err;
         });
     },
     /**

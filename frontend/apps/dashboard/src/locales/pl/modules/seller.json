@@ -27,6 +27,7 @@
         },
         "products": {
           "header": "Produkty",
+          "imageRequirements": "PNG, JPEG, WebP lub GIF. W przybliżeniu kwadratowy (1:1), co najmniej 64x64 px.",
           "promo": "Promocja",
           "addExisting": "Dodaj istniejący produkt",
           "category": "Kategoria",

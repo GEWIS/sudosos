@@ -13,6 +13,7 @@
     <div class="flex flex-row gap-2 justify-between mt-6 w-full">
       <Button
         v-if="isEditable && deletable"
+        :disabled="isSubmitting"
         icon="pi pi-trash"
         :label="deleteLabel || t('common.delete')"
         outlined
@@ -22,6 +23,7 @@
       <div class="flex flex-1 flex-row gap-2 justify-end">
         <Button
           v-if="isEditable"
+          :disabled="isSubmitting"
           icon="pi pi-times"
           :label="t('common.close')"
           outlined
@@ -34,7 +36,7 @@
         <ConfirmButton
           v-if="isEditable && confirm"
           :confirm-label="t('common.confirm')"
-          :disabled="!props.form.context.meta.value.valid"
+          :disabled="!props.form.context.meta.value.valid || isSubmitting"
           icon="pi pi-check"
           :initial-label="t('common.save')"
           type="submit"
@@ -42,7 +44,7 @@
         />
         <Button
           v-if="isEditable && !confirm"
-          :disabled="!props.form.context.meta.value.valid"
+          :disabled="!props.form.context.meta.value.valid || isSubmitting"
           icon="pi pi-check"
           :label="t('common.save')"
           type="submit"
@@ -84,11 +86,14 @@ const props = withDefaults(
 const emits = defineEmits(['update:modelValue', 'show', 'close', 'delete']);
 
 const dialog = ref();
+const isSubmitting = computed(() => props.form.context.isSubmitting.value);
 const visible = computed({
   get() {
     return props.modelValue;
   },
   set(value) {
+    // Keep the dialog open until the submit has finished, so no new request can be started in the meantime
+    if (!value && isSubmitting.value) return;
     if (!value) props.form.context.resetForm();
     emits('update:modelValue', value);
   },
