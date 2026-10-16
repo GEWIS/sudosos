@@ -99,11 +99,6 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import type { UserToInactiveAdministrativeCostResponse } from '@gewis/sudosos-client';
 import type { DataTablePageEvent } from 'openvue/datatable';
-import DataTable from 'openvue/datatable';
-import Column from 'openvue/column';
-import Button from 'openvue/button';
-import Skeleton from 'openvue/skeleton';
-import Message from 'openvue/message';
 import { useI18n } from 'vue-i18n';
 import { useConfirm } from 'openvue/useconfirm';
 import { useToast } from 'openvue/usetoast';

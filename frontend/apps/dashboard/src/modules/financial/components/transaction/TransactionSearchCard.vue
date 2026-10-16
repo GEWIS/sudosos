@@ -18,9 +18,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import InputNumber from 'openvue/inputnumber';
-import IconField from 'openvue/iconfield';
-import InputIcon from 'openvue/inputicon';
 import CardComponent from '@/components/CardComponent.vue';
 
 const { t } = useI18n();

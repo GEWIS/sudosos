@@ -90,10 +90,6 @@
 import { ref } from 'vue';
 import type { BaseInactiveAdministrativeCostResponse } from '@gewis/sudosos-client';
 import type { DataTablePageEvent } from 'openvue/datatable';
-import DataTable from 'openvue/datatable';
-import Column from 'openvue/column';
-import Button from 'openvue/button';
-import Skeleton from 'openvue/skeleton';
 import { useI18n } from 'vue-i18n';
 import { formatDateFromString, formatDineroObject } from '@/utils/formatterUtils';
 import UserLink from '@/components/UserLink.vue';

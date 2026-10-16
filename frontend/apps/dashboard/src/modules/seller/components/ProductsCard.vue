@@ -100,12 +100,6 @@
 </template>
 
 <script setup lang="ts">
-import IconField from 'openvue/iconfield';
-import InputIcon from 'openvue/inputicon';
-import Column from 'openvue/column';
-import Skeleton from 'openvue/skeleton';
-import DataTable from 'openvue/datatable';
-import InputText from 'openvue/inputtext';
 import { computed, onBeforeMount, type Ref, ref } from 'vue';
 import type { ProductResponse } from '@gewis/sudosos-client';
 import { FilterMatchMode } from '@openvue/core/api';

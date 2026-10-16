@@ -83,7 +83,7 @@
   </CardComponent>
 </template>
 <script setup lang="ts">
-import Accordion, { type AccordionTabOpenEvent } from 'openvue/accordion';
+import type { AccordionTabOpenEvent } from 'openvue/accordion';
 import { useToast } from 'openvue/usetoast';
 import { computed, type Ref, ref } from 'vue';
 import type { AxiosError } from 'axios';

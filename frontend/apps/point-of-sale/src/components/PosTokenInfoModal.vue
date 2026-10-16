@@ -44,7 +44,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { jwtDecode } from 'jwt-decode';
-import Dialog from 'openvue/dialog';
 import { addListenerOnDialogueOverlay } from '@sudosos/sudosos-frontend-common';
 import { BasePointOfSaleInfoResponse } from '@gewis/sudosos-client';
 import { usePosToken } from '@/composables/usePosToken';

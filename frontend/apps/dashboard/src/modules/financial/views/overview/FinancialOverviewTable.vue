@@ -114,10 +114,6 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import DataTable from 'openvue/datatable';
-import Column from 'openvue/column';
-import ColumnGroup from 'openvue/columngroup';
-import Row from 'openvue/row';
 import { useI18n } from 'vue-i18n';
 import type { UserResponse } from '@gewis/sudosos-client';
 import type { AxiosError } from 'axios';

@@ -76,7 +76,6 @@
 </template>
 
 <script setup lang="ts">
-import InputNumber from 'openvue/inputnumber';
 import { computed, type PropType, type Ref, ref, watch } from 'vue';
 import type { CreateSellerPayoutRequest, UserResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';

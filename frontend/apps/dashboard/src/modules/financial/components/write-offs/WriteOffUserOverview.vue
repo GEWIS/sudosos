@@ -78,12 +78,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, type Ref, watch } from 'vue';
 import type { BalanceResponse } from '@gewis/sudosos-client';
-import DataTable, { type DataTablePageEvent, type DataTableSortEvent } from 'openvue/datatable';
-import Column from 'openvue/column';
-import Skeleton from 'openvue/skeleton';
+import type { DataTablePageEvent, DataTableSortEvent } from 'openvue/datatable';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'openvue/usetoast';
-import Button from 'openvue/button';
 import { formatDateFromString, formatPrice } from '@/utils/formatterUtils';
 import { handleError } from '@/utils/errorUtils';
 import { useWriteOffStore } from '@/stores/writeoff.store';

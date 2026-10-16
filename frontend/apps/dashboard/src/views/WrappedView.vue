@@ -97,8 +97,6 @@ import type { ReportResponse, WrappedResponse, UserResponse, ReportProductEntryR
 // eslint-disable-next-line import/no-named-as-default
 import Dinero from 'dinero.js';
 import { useI18n } from 'vue-i18n';
-import Dialog from 'openvue/dialog';
-import Button from 'openvue/button';
 import { useToast } from 'openvue/usetoast';
 import { useRouter } from 'vue-router';
 import type { AxiosError } from 'axios';

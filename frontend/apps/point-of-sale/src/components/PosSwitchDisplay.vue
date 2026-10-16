@@ -42,8 +42,6 @@
 
 <script setup lang="ts">
 import { PointOfSaleResponse } from '@gewis/sudosos-client';
-import Button from 'openvue/button';
-import ProgressSpinner from 'openvue/progressspinner';
 import { ref } from 'vue';
 import PosTokenInfoModal from '@/components/PosTokenInfoModal.vue';
 
