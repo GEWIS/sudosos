@@ -50,9 +50,6 @@
 </template>
 
 <script setup lang="ts">
-import Menubar from 'openvue/menubar';
-import Badge from 'openvue/badge';
-
 type Item = {
   label?: string;
   route?: string;

@@ -7,11 +7,16 @@
           <PermissionPerRoleCard :form="form" />
         </div>
         <div class="flex flex-col gap-3 flex-grow">
-          <TabView>
-            <TabPanel v-for="state in states" :key="state" :header="state" :value="state">
-              <RBACTable :form="form" :state="state" />
-            </TabPanel>
-          </TabView>
+          <Tabs :value="states[0]">
+            <TabList>
+              <Tab v-for="state in states" :key="state" :value="state">{{ state }}</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel v-for="state in states" :key="state" :value="state">
+                <RBACTable :form="form" :state="state" />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </div>
       </div>
     </div>
@@ -19,8 +24,6 @@
 </template>
 
 <script setup lang="ts">
-import TabPanel from 'openvue/tabpanel';
-import TabView from 'openvue/tabview';
 import SelectRolesCard from '@/modules/admin/components/rbac/SelectRolesCard.vue';
 import PermissionPerRoleCard from '@/modules/admin/components/rbac/PermissionPerRoleCard.vue';
 import { schemaToForm } from '@/utils/formUtils';

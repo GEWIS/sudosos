@@ -48,9 +48,6 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import Column from 'openvue/column';
-import Skeleton from 'openvue/skeleton';
-import DataTable from 'openvue/datatable';
 import { onMounted, ref, watch } from 'vue';
 import CardComponent from '@/components/CardComponent.vue';
 import { formatDateAndTime } from '@/utils/formatterUtils';

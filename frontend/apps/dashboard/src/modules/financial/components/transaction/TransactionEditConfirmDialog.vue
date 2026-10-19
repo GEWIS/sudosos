@@ -36,8 +36,6 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import Dialog from 'openvue/dialog';
-import Button from 'openvue/button';
 import type { UserResponse } from '@gewis/sudosos-client';
 import UserLink from '@/components/UserLink.vue';
 

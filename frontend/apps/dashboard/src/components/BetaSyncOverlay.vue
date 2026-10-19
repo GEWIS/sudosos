@@ -13,7 +13,6 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import ProgressSpinner from 'openvue/progressspinner';
 
 defineProps<{
   visible: boolean;

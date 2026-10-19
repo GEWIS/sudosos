@@ -73,8 +73,6 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import Dialog from 'openvue/dialog';
-import Button from 'openvue/button';
 import { useI18n } from 'vue-i18n';
 import type { TransactionResponse, ProductResponse } from '@gewis/sudosos-client';
 import { formatPrice } from '@/utils/formatterUtils';

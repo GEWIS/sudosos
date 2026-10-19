@@ -30,8 +30,6 @@
 
 <script setup lang="ts">
 import { onMounted, type Ref, ref, computed } from 'vue';
-import Column from 'openvue/column';
-import DataTable from 'openvue/datatable';
 import type { DineroObjectResponse, TransferResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import router from '@/router';

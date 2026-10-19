@@ -58,7 +58,9 @@ tsc --noEmit
 
 ### OpenVue Components Are Global
 
-All OpenVue components (`DataTable`, `Column`, `Button`, `ConfirmDialog`, etc.) are globally registered in `main.ts`. **Never import them locally** — it works but is redundant and will draw a review comment.
+All OpenVue components (`DataTable`, `Column`, `Button`, `ConfirmDialog`, etc.) are globally registered in each app's `src/main.ts`. **Never import them locally** — ESLint (`no-restricted-syntax` in `apps/*/eslint.config.js`) rejects default imports from `openvue/*` in `.vue` files. Composables (`useToast`, `useConfirm`) and `import type { ... }` are fine.
+
+Need a component that isn't registered yet? Register it in `src/main.ts`, and for the dashboard also in `.storybook/registerOpenVue.ts`.
 
 ### `ConfirmDialog` Placement
 

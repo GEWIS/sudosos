@@ -72,8 +72,6 @@
 <script setup lang="ts">
 import type { SubTransactionRowResponse, TransactionResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
-import DataTable from 'openvue/datatable';
-import Column from 'openvue/column';
 import { sendEmail } from '@/utils/mailUtil';
 import { formatPrice } from '@/utils/formatterUtils';
 import UserLink from '@/components/UserLink.vue';

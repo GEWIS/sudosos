@@ -68,9 +68,6 @@
 <script setup lang="ts">
 import { computed, ref, type PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
-import InputNumber from 'openvue/inputnumber';
-import Select from 'openvue/select';
-import Button from 'openvue/button';
 import type {
   BaseProductResponse,
   ProductResponse,

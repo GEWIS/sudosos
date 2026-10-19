@@ -56,8 +56,6 @@ import { computed, ref, toRef } from 'vue';
 import { addListenerOnDialogueOverlay, isAllowed } from '@sudosos/sudosos-frontend-common';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'openvue/usetoast';
-import Skeleton from 'openvue/skeleton';
-import Button from 'openvue/button';
 import apiService from '@/services/ApiService';
 import TransactionDetailModal from '@/components/mutations/mutationmodal/ModalDetailTransaction.vue';
 import PayoutRequestDetailModal from '@/components/mutations/mutationmodal/ModalDetailPayoutRequest.vue';
