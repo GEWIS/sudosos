@@ -19,7 +19,45 @@
  */
 
 /**
- * This is the module page of the report.
+ * A `report` sums up money over a date range. Reports are computed on request and are not
+ * stored: the classes in this module are plain objects, not TypeORM entities.
+ *
+ * ### Sales and purchase reports
+ * A {@link SalesReport} covers what a user sold, a {@link BuyerReport} what a user bought.
+ * Both are built by {@link internal/reports!ReportService | ReportService} from the
+ * {@link transactions/sub-transactions!SubTransactionRow | SubTransactionRows} of
+ * transactions created in `[fromDate, tillDate)`:
+ * - {@link internal/reports!SalesReportService | SalesReportService} selects rows whose
+ *   sub-transaction pays the user (`subTransaction.to`), so it is used for organs and
+ *   other container owners.
+ * - {@link internal/reports!BuyerReportService | BuyerReportService} selects rows of
+ *   transactions bought by the user (`transaction.from`).
+ *
+ * A report holds the totals including and excluding VAT, the number of transactions, and
+ * a {@link ReportData} breakdown of the same rows by product, category, VAT group, point
+ * of sale and container. Each breakdown entry has its own totals. Product entries are per
+ * product revision, so a report shows prices as they were at the time of sale. Point of
+ * sale and container entries are per point of sale and per container: all revisions are
+ * summed into one entry, which is labelled with whichever revision the database returns.
+ *
+ * The endpoints are `GET /users/{id}/transactions/sales/report` and
+ * `GET /users/{id}/transactions/purchases/report`. Their `/pdf` variants render the same
+ * report with
+ * {@link internal/pdf/user-report-pdf-service!UserReportPdfService | UserReportPdfService},
+ * as PDF or HTML. These PDFs are not stored.
+ *
+ * {@link seller-payouts | Seller payouts} use the sales report to compute the amount that
+ * is paid out to an organ.
+ *
+ * ### Other reports
+ * Two reports in this module have their own shape and service:
+ * - {@link FineReport} -- the fines handed out and waived in a period, built by
+ *   {@link debtors!DebtorService.getFineReport | DebtorService.getFineReport}
+ *   (`GET /fines/report`).
+ * - {@link InactiveAdministrativeCostReport} -- the administrative costs charged to
+ *   inactive users in a period (`GET /inactive-administrative-costs/report`).
+ *
+ * Both have a `/pdf` variant as well.
  *
  * @module reports
  * @mergeTarget

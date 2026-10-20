@@ -19,7 +19,51 @@
  */
 
 /**
- * This is the module page of the wrapped entity.
+ * `Wrapped` is a yearly overview of a user's purchases, in the style of Spotify Wrapped.
+ * A {@link Wrapped} row holds precomputed statistics for one user, so the dashboard can
+ * show them without querying all transactions.
+ *
+ * ### Who gets a Wrapped
+ * Only users that are active, not deleted, and have `extensiveDataProcessing` set get a
+ * row or an update. The year is `WRAPPED_YEAR` from the configuration, or the current year
+ * if it is not set.
+ *
+ * Rows are never deleted. A user who later becomes inactive, is deleted, or turns off
+ * `extensiveDataProcessing` keeps their last row, and `GET /users/{id}/wrapped` still
+ * returns it.
+ *
+ * ### Statistics
+ * {@link service/wrapped-service!WrappedService.updateWrapped | WrappedService.updateWrapped} computes, over the
+ * transactions bought by the user in that year:
+ * - `transactionCount` -- the number of transactions.
+ * - `transactionHeatmap` -- a JSON array of 365 counts, one per day, starting at 1 January.
+ * - `transactionMaxDate` and `transactionMaxAmount` -- the busiest day and the number of
+ *   transactions on that day. `transactionMaxAmount` is a count, not money.
+ * - `transactionPercentile` -- the user's rank among all eligible users by number of
+ *   transactions. A value of 10 means the user is in the top 10%.
+ * - `spentPercentile` -- the same rank by money spent. It counts transactions of all years,
+ *   and its population also includes every other user who ever bought something, including
+ *   inactive, deleted and opted-out users.
+ * - `syncedFrom` and `syncedTo` -- the start of the year and the time of the last update.
+ *
+ * ### Organs
+ * A {@link WrappedOrganMember} row ranks the user among the people who made sales at one
+ * organ's points of sale. The user gets a row for an organ only if they are a member of it,
+ * the organ is active, and they created at least one transaction at its points of sale that
+ * year. `ordinalTransactionCreated` ranks by the number of sub-transaction rows (product
+ * lines) in the transactions they created, not by the number of transactions, so one
+ * transaction with five lines outranks three with one line each. `ordinalTurnoverCreated`
+ * ranks by turnover. Both start at 0 for the first place.
+ *
+ * ### When it is computed
+ * `src/cron.ts` updates all rows when it starts, and every night at 01:45 during December.
+ * `POST /users/{id}/wrapped` updates one user on request, and `GET /users/{id}/wrapped`
+ * returns the stored row.
+ *
+ * The {@link internal/server-settings | server setting} `wrappedEnabled` only tells the
+ * frontends whether to show Wrapped. The backend computes and returns it either way.
+ *
+ * For API interactions, refer to the [Swagger Documentation](https://sudosos.gewis.nl/api/api-docs/#/users).
  *
  * @module entity/wrapped
  * @mergeTarget
