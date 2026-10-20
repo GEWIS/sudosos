@@ -112,13 +112,17 @@ export default class StripeWebhookController extends BaseController {
       return;
     }
 
-    if (!webhookEvent.type.includes('payment_intent')) {
+    const id = StripeWebhookService.getPaymentIntentStripeId(webhookEvent);
+    if (!id) {
       this.logger.trace('stripe_webhook.event_ignored', { id: webhookEvent.id, type: webhookEvent.type, reason: 'not_payment_intent' });
       res.status(204).send();
       return;
     }
 
-    if ((webhookEvent.data.object as any)?.metadata?.service !== config.app.name) {
+    // A reader carries no metadata of this service. Whether its event is for
+    // this service follows from whether the intent it processed is known.
+    const isReaderEvent = webhookEvent.type.startsWith('terminal.reader.');
+    if (!isReaderEvent && (webhookEvent.data.object as any)?.metadata?.service !== config.app.name) {
       this.logger.trace('stripe_webhook.event_ignored', {
         id: webhookEvent.id, type: webhookEvent.type, reason: 'other_service', service: config.app.name,
       });
@@ -127,8 +131,14 @@ export default class StripeWebhookController extends BaseController {
     }
 
     const service = new StripeService();
-    const { id } = (webhookEvent.data.object as Stripe.PaymentIntent);
     const paymentIntent = await service.getPaymentIntent(id);
+    if (!paymentIntent && isReaderEvent) {
+      this.logger.trace('stripe_webhook.event_ignored', {
+        id: webhookEvent.id, type: webhookEvent.type, reason: 'unknown_payment_intent', stripeId: id,
+      });
+      res.status(204).send();
+      return;
+    }
     if (!paymentIntent) {
       this.logger.warn('stripe_webhook.payment_intent_not_found', { eventId: webhookEvent.id, stripeId: id });
       res.status(400).json(`PaymentIntent with ID "${id}" not found.`);

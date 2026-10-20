@@ -193,7 +193,7 @@ export default class TerminalPaymentController extends BaseController {
    * @return {string} 400 - Validation failure
    * @return {string} 404 - Terminal Payment or terminal not found
    * @return {string} 422 - Terminal unavailable
-   * @return {string} 422 - TerminalPayment already paid
+   * @return {string} 422 - TerminalPayment already paid, cancelled or failed
    * @return {string} 500 - Internal server error
    */
   public async startTerminalPayment(req: RequestWithToken, res: Response): Promise<void> {
@@ -219,6 +219,11 @@ export default class TerminalPaymentController extends BaseController {
 
       if (terminalPayment.getState() === TerminalPaymentState.CANCELLED) {
         res.status(422).send('TerminalPayment is cancelled.');
+        return;
+      }
+
+      if (terminalPayment.getState() === TerminalPaymentState.FAILED) {
+        res.status(422).send('TerminalPayment has failed.');
         return;
       }
 

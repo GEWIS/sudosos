@@ -5459,7 +5459,7 @@ export interface TerminalPaymentResponse {
      */
     'createdBy': BaseUserResponse;
     /**
-     * The state of the terminal payment. One of \'created\', \'processing\', \'paid\' or \'cancelled\'.
+     * The state of the terminal payment. One of \'created\', \'processing\', \'paid\', \'cancelled\' or \'failed\'.
      * @type {string}
      * @memberof TerminalPaymentResponse
      */
