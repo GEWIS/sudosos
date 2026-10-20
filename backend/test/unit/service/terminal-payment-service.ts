@@ -110,7 +110,7 @@ describe('TerminalPaymentService', () => {
       },
       subTransactions: [
         {
-          to: organUser.id,
+          to: containers.alcoholic.owner.id,
           container: {
             id: containers.alcoholic.id,
             revision: containers.alcoholicRevision.revision,
