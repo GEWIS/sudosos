@@ -160,7 +160,7 @@ describe('TerminalPaymentController', async (): Promise<void> => {
       },
       subTransactions: [
         {
-          to: adminUser.id,
+          to: containers.alcoholic.owner.id,
           container: {
             id: containers.alcoholic.id,
             revision: containers.alcoholicRevision.revision,
