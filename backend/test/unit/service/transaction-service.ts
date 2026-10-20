@@ -20,7 +20,7 @@
 
 import express, { Application } from 'express';
 import chai, { expect } from 'chai';
-import { DataSource } from 'typeorm';
+import { DataSource, Not } from 'typeorm';
 import { SwaggerSpecification } from 'swagger-model-validator';
 import log4js, { Logger } from 'log4js';
 import dinero from 'dinero.js';
@@ -52,6 +52,7 @@ import ProductRevision from '../../../src/entity/product/product-revision';
 import { calculateBalance } from '../../helpers/balance';
 import { ContainerSeeder, PointOfSaleSeeder, ProductSeeder, TransactionSeeder, UserSeeder } from '../../seed';
 import { BaseTransactionResponse } from '../../../src/controller/response/transaction-response';
+import Container from '../../../src/entity/container/container';
 
 chai.use(deepEqualInAnyOrder);
 
@@ -410,6 +411,26 @@ describe('TransactionService', (): void => {
       };
       // eslint-disable-next-line @typescript-eslint/dot-notation
       expect(await transactionService['verifySubTransaction'](badPriceReq, ctx.pointsOfSale[0], context), 'incorrect accepted').to.be.false;
+    });
+    it('should reject if "to" user is not the container owner', async () => {
+      const transactionService = new TransactionService();
+      const verification = await transactionService.verifyTransaction(ctx.validTransReq);
+      if (!verification.valid || !verification.context) {
+        throw new Error('Invalid transaction in test');
+      }
+
+      const container = await Container.findOne({ where: { id: ctx.validTransReq.subTransactions[0].container.id } });
+      const nonContainerOwner = await User.findOne({ where: { id: Not(container?.owner.id) } });
+
+      // incorrect "to" user
+      const badReq: TransactionRequest = {
+        ...ctx.validTransReq,
+        subTransactions: [
+          { ...ctx.validTransReq.subTransactions[0], to: nonContainerOwner.id },
+          ...ctx.validTransReq.subTransactions.slice(1),
+        ],
+      };
+      expect((await transactionService.verifyTransaction(badReq)).valid, 'incorrect accepted').to.be.false;
     });
   });
 
