@@ -63,7 +63,7 @@
  */
 
 import {
-  Entity, ManyToOne, OneToMany,
+  Entity, Index, ManyToOne, OneToMany,
 } from 'typeorm';
 // eslint-disable-next-line import/no-cycle
 import SubTransaction from './sub-transaction';
@@ -86,6 +86,7 @@ import PointOfSaleRevision from '../point-of-sale/point-of-sale-revision';
  * products in the transaction are bought.
  */
 @Entity()
+@Index(['from', 'createdAt'])
 export default class Transaction extends BaseEntity {
   @ManyToOne(() => User, { nullable: false })
   public from: User;

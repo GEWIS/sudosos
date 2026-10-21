@@ -25,20 +25,43 @@
  *
  * ### Computed, not authoritative
  * The source of truth is {@link transactions!Transaction | Transaction} and
- * {@link transfers!Transfer | Transfer} history. The `Balance` table is a cache, so reading
- * one user's balance does not have to re-sum every
- * {@link transactions/sub-transactions!SubTransactionRow | SubTransactionRow} since their
+ * {@link transfers!Transfer | Transfer} history. Balances are computed from it on every read.
+ * {@link BalancePeriod} rows summarise closed history, so a read does not have to re-sum every
+ * {@link transactions/sub-transactions!SubTransactionRow | SubTransactionRow} since a user's
  * first deposit.
  *
- * ### Cache structure
- * Each row stores the cached `amount` plus a `lastTransactionId` / `lastTransferId` cursor.
- * {@link BalanceService.getBalances | getBalances} returns `cachedAmount + delta`, where the
- * delta sums every sub-transaction row and transfer that happened *after* the cursor. If the
- * cache is out of date the read still returns the correct value; it just costs more SQL.
+ * ### Balance periods
+ * `balance_period` holds one row per user per closed calendar period: a row per day, and a row
+ * per fully closed month that is the sum of its days. A period contains the events with
+ * `periodStart <= createdAt < periodEnd`, so an event exactly on a boundary belongs to the
+ * period that starts there and events with the same timestamp always share a period. A
+ * transaction row counts at its parent transaction's `createdAt`. {@link BalancePeriodState}
+ * records `closedUntil`, the day boundary up to which every event is in the table.
  *
- * {@link BalanceService.updateBalances | updateBalances} writes a fresh total back to the
- * cache. {@link BalanceService.clearBalanceCache | clearBalanceCache} drops cache rows --
- * useful after bulk-rewriting history.
+ * {@link BalanceService.getBalances | getBalances} at time T sums
+ * - month rows of the months before T's month,
+ * - day rows of T's month before T's day,
+ * - the ledger from the start of T's day up to and including T.
+ *
+ * For dates after `closedUntil`, the ledger scan starts at `closedUntil`. Days close one hour
+ * after they end.
+ *
+ * ### Keeping periods exact
+ * Every read first closes the days that have ended and checks for backdated inserts: rows or
+ * transfers with an id above the watermark of the last build, but dated before `closedUntil`.
+ * The periods of the users they touch are rebuilt from that day on. Inserts therefore need no
+ * extra call, whatever path writes them.
+ *
+ * Deletes and updates cannot be detected that way. The services call
+ * {@link BalanceService.clearBalanceCache | clearBalanceCache(ids, at)} with the `createdAt`
+ * of the changed transaction or transfer, which rebuilds the day and month containing it.
+ * Without `at` it rebuilds the users' whole history; without ids it rebuilds everything.
+ * {@link BalanceService.rebuildPeriods | rebuildPeriods} rebuilds a date range after closed
+ * history was changed with raw SQL. The nightly cron runs
+ * {@link BalanceService.updateBalances | updateBalances}, so the first read of a day rarely has
+ * to close the previous day.
+ *
+ * The `balance` table that the `Balance` entity maps is not used to compute balances.
  *
  * ### What moves a balance
  * Sub-transaction rows debit the
@@ -87,10 +110,9 @@ import DineroTransformer from '../transformer/dinero-transformer';
 import BaseEntityWithoutId from '../base-entity-without-id';
 
 /**
- * TypeORM entity for the `balance` table. This is a cache row -- the authoritative balance is
- * recomputed from {@link Transaction} and {@link Transfer} history. `lastTransaction` and
- * `lastTransfer` mark the cursor up to which `amount` is accurate; anything newer is summed
- * on read by `BalanceService`.
+ * TypeORM entity for the `balance` table. `BalanceService` does not read or write it; balances
+ * are computed from {@link Transaction} and {@link Transfer} history and {@link BalancePeriod}
+ * rows.
  * @typedef {BaseEntityWithoutId} Balance
  * @property {User.model} user.required - The account which has this balance
  * @property {Dinero.model} amount.required - The amount of balance a user has.

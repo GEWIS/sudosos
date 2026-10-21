@@ -783,7 +783,8 @@ export default class TransactionService extends WithManager {
 
 
   /**
-   * Invalidates user balance cache
+   * Invalidates the balances of the buyer and sellers of a deleted or changed transaction.
+   * Only the balance periods containing the transaction's `createdAt` are rebuilt.
    * @param {TransactionResponse.model} transaction - transaction holding users to invalidate
    */
   public static async invalidateBalanceCache(transaction: Transaction):
@@ -793,7 +794,7 @@ export default class TransactionService extends WithManager {
     if (!userIds.includes(transaction.from.id)) {
       userIds.push(transaction.from.id);
     }
-    await new BalanceService().clearBalanceCache(userIds);
+    await new BalanceService().clearBalanceCache(userIds, transaction.createdAt);
   }
 
   private buildGetTransactionsQueryBase(

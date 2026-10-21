@@ -447,7 +447,7 @@ export default class TransferService extends WithManager {
     }
 
     if (userIds.length > 0) {
-      await new BalanceService().clearBalanceCache(userIds);
+      await new BalanceService().clearBalanceCache(userIds, transfer.createdAt);
     }
   }
 }

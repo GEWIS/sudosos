@@ -436,56 +436,31 @@ describe('BalanceService', (): void => {
   });
 
   describe('updateBalances', async () => {
-    it('should be able to get balance without cache being created', async () => {
-      await new BalanceService().clearBalanceCache();
-      await Promise.all(ctx.users.map(
-        async (user) => {
-          const cachedBalance = await Balance.findOne({ where: { userId: user.id } });
-          expect(cachedBalance).to.be.null;
-          const balance = await new BalanceService().getBalance(user.id);
-          expect(balance).to.not.be.NaN;
-        },
-      ));
-    });
-    it('should have equal balances when cache is created', async () => {
-      await new BalanceService().updateBalances({});
+    it('should be able to get balance without balance periods being built', async () => {
+      await ctx.connection.query('DELETE FROM balance_period');
+      await ctx.connection.query('DELETE FROM balance_period_state');
       for (let i = 0; i < ctx.users.length; i += 1) {
         const user = ctx.users[i];
         const actualBalance = calculateBalance(user, ctx.transactions, ctx.subTransactions, ctx.transfers);
-
-        // eslint-disable-next-line no-await-in-loop
-        const cachedBalance = await Balance.findOne({ where: { userId: user.id }, relations: {
-          user: true,
-          lastTransaction: true,
-          lastTransfer: true,
-        } });
-        expect(cachedBalance).to.not.be.undefined;
         // eslint-disable-next-line no-await-in-loop
         const balance = await new BalanceService().getBalance(user.id);
-
-        if (cachedBalance.lastTransaction) {
-          expect(cachedBalance.lastTransaction.id).to.equal(actualBalance.lastTransaction.id);
-        } else {
-          expect(actualBalance.lastTransaction).to.be.undefined;
-        }
-        if (cachedBalance.lastTransfer) {
-          expect(cachedBalance.lastTransfer.id).to.equal(actualBalance.lastTransfer.id);
-        } else {
-          expect(actualBalance.lastTransfer).to.be.undefined;
-        }
-
-        expect(actualBalance.amount.getAmount()).to.equal(balance.amount.amount);
-        expect(cachedBalance.amount.getAmount()).to.equal(balance.amount.amount);
+        expect(balance.amount.amount).to.equal(actualBalance.amount.getAmount());
+      }
+    });
+    it('should have equal balances when periods are updated', async () => {
+      await new BalanceService().updateBalances({});
+      const [period] = await ctx.connection.query('SELECT COUNT(*) AS c FROM balance_period');
+      expect(Number(period.c)).to.be.greaterThan(0);
+      for (let i = 0; i < ctx.users.length; i += 1) {
+        const user = ctx.users[i];
+        const actualBalance = calculateBalance(user, ctx.transactions, ctx.subTransactions, ctx.transfers);
+        // eslint-disable-next-line no-await-in-loop
+        const balance = await new BalanceService().getBalance(user.id);
+        expect(balance.amount.amount).to.equal(actualBalance.amount.getAmount());
       }
     });
     it('should be able to clear balance for specific users', async () => {
       await new BalanceService().clearBalanceCache([ctx.users[0].id, ctx.users[1].id]);
-
-      let cachedBalance = await Balance.findOne({ where: { userId: ctx.users[0].id } });
-      expect(cachedBalance).to.be.null;
-
-      cachedBalance = await Balance.findOne({ where: { userId: ctx.users[1].id } });
-      expect(cachedBalance).to.be.null;
 
       const actualBalance = calculateBalance(ctx.users[0], ctx.transactions, ctx.subTransactions, ctx.transfers);
       const balance = await new BalanceService().getBalance(ctx.users[0].id);
@@ -495,14 +470,8 @@ describe('BalanceService', (): void => {
       const balance2 = await new BalanceService().getBalance(ctx.users[1].id);
       expect(balance2.amount.amount).to.equal(actualBalance2.amount.getAmount());
     });
-    it('should be able to cache the balance of certain users', async () => {
+    it('should be able to rebuild the balance of certain users', async () => {
       await new BalanceService().updateBalances({ ids: [ctx.users[0].id, ctx.users[1].id] });
-
-      let cachedBalance = await Balance.findOne({ where: { userId: ctx.users[0].id } });
-      expect(cachedBalance).to.not.be.undefined;
-
-      cachedBalance = await Balance.findOne({ where: { userId: ctx.users[1].id } });
-      expect(cachedBalance).to.not.be.undefined;
 
       const actualBalance = calculateBalance(ctx.users[0], ctx.transactions, ctx.subTransactions, ctx.transfers);
       const balance = await new BalanceService().getBalance(ctx.users[0].id);
@@ -513,21 +482,10 @@ describe('BalanceService', (): void => {
       expect(balance2.amount.amount).to.equal(actualBalance2.amount.getAmount());
     });
     it('should be able to alter balance after adding transaction', async () => {
-      // Sanity action to make sure we always start in a completely cached state
       await new BalanceService().updateBalances({});
 
       const user = ctx.users[0];
       const oldBalance = await new BalanceService().getBalance(user.id);
-      const oldBalanceCache = await Balance.findOne({
-        where: { userId: user.id },
-        relations: {
-          user: true,
-          lastTransaction: true,
-          lastTransfer: true,
-        },
-      });
-      // Sanity check
-      expect(oldBalanceCache).to.not.be.undefined;
 
       const { transaction, amount } = await addTransaction(user, ctx.pointOfSaleRevisions, false);
       // Sanity check
@@ -535,34 +493,14 @@ describe('BalanceService', (): void => {
       expect(dbTransaction).to.not.be.undefined;
 
       const newBalance = await new BalanceService().getBalance(user.id);
-      let newBalanceCache = await Balance.findOne({
-        where: { userId: user.id },
-        relations: {
-          user: true,
-          lastTransaction: true,
-          lastTransfer: true,
-        },
-      });
-
       expect(newBalance.id).to.equal(user.id);
       expect(newBalance.amount.amount).to.equal(oldBalance.amount.amount - amount.amount);
-      expect(newBalance.amount.amount).to
-        .equal(oldBalanceCache!.amount.getAmount() - amount.amount);
-      expect(newBalanceCache!.amount.getAmount()).to.equal(oldBalanceCache!.amount.getAmount());
-      expect(newBalanceCache!.lastTransaction.id).to.equal(oldBalanceCache!.lastTransaction.id);
+      expect(newBalance.lastTransactionId).to.equal(transaction.id);
 
       await new BalanceService().updateBalances({});
-      newBalanceCache = await Balance.findOne({
-        where: { userId: user.id },
-        relations: {
-          user: true,
-          lastTransaction: true,
-          lastTransfer: true,
-        },
-      });
-      expect(newBalanceCache.lastTransaction.id).to.equal(transaction.id);
-      expect(newBalanceCache.amount.getAmount()).to.equal(newBalance.amount.amount);
-      expect(newBalanceCache.amount.getAmount()).to.not.equal(oldBalanceCache.amount.getAmount());
+      const updatedBalance = await new BalanceService().getBalance(user.id);
+      expect(updatedBalance.amount.amount).to.equal(newBalance.amount.amount);
+      expect(updatedBalance.lastTransactionId).to.equal(transaction.id);
     });
   });
 

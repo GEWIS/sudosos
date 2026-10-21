@@ -51,6 +51,8 @@ import ContainerRevision from '../entity/container/container-revision';
 import PointOfSaleRevision from '../entity/point-of-sale/point-of-sale-revision';
 import ProductOrdering from '../entity/point-of-sale/product-ordering';
 import Balance from '../entity/transactions/balance';
+import BalancePeriod from '../entity/transactions/balance-period';
+import BalancePeriodState from '../entity/transactions/balance-period-state';
 import InvoiceUser from '../entity/user/invoice-user';
 import Invoice from '../entity/invoices/invoice';
 import InvoiceStatus from '../entity/invoices/invoice-status';
@@ -130,6 +132,7 @@ import { PaymentRequestAttempt1784877357000 } from '../migrations/1784877357000-
 import {
   AddProductSelfServiceToUser1785401380818,
 } from '../migrations/1785401380818-add-product-self-service-to-user';
+import { BalancePeriods1792569600000 } from '../migrations/1792569600000-balance-periods';
 
 function getDataSourceOptions(): DataSourceOptions {
   const config = Config.get();
@@ -185,6 +188,7 @@ function getDataSourceOptions(): DataSourceOptions {
       TerminalPayment1782294145719,
       PaymentRequestAttempt1784877357000,
       AddProductSelfServiceToUser1785401380818,
+      BalancePeriods1792569600000,
     ],
     extra: {
       authPlugins: {
@@ -237,6 +241,8 @@ function getDataSourceOptions(): DataSourceOptions {
       Banner,
       ProductOrdering,
       Balance,
+      BalancePeriod,
+      BalancePeriodState,
       InvoiceUser,
       Invoice,
       InvoiceStatus,

@@ -24,7 +24,6 @@
  * @module balance
  */
 
-import Balance from '../entity/transactions/balance';
 import BalanceResponse, {
   TotalBalanceResponse,
   UserTypeTotalBalanceResponse,
@@ -38,6 +37,9 @@ import { UserType } from '../entity/user/user';
 import WithManager from '../database/with-manager';
 import { DineroObjectResponse } from '../controller/response/dinero-response';
 import Config from '../config';
+import BalancePeriodService, {
+  dialect, floorNaive, GRAIN_CODE, GRAINS, inList, ledgerSql, minStr, NEVER,
+} from './balance-period-service';
 
 export enum BalanceOrderColumn {
   ID = 'id',
@@ -97,9 +99,6 @@ export default class BalanceService extends WithManager {
   }
 
   private static asBalanceResponse(rawBalance: any, date: Date): BalanceResponse {
-    let fineSince = this.sqlTimeToISOTime(rawBalance.fineSince);
-    let lastTransactionDate = this.sqlTimeToISOTime(rawBalance.lastTransactionDate);
-
     return {
       id: rawBalance.id,
       firstName: rawBalance.firstName,
@@ -107,12 +106,12 @@ export default class BalanceService extends WithManager {
       nickname: rawBalance.nickname,
       type: rawBalance.type,
       date: date.toISOString(),
-      amount: DineroTransformer.Instance.from(rawBalance.amount).toObject(),
-      lastTransactionId: rawBalance.lastTransactionId,
-      lastTransactionDate,
-      lastTransferId: rawBalance.lastTransferId,
+      amount: DineroTransformer.Instance.from(Number(rawBalance.amount)).toObject(),
+      lastTransactionId: Number(rawBalance.lastTransactionId),
+      lastTransactionDate: this.sqlTimeToISOTime(rawBalance.lastTransactionDate),
+      lastTransferId: Number(rawBalance.lastTransferId),
       fine: rawBalance.fine ? DineroTransformer.Instance.from(rawBalance.fine).toObject() : null,
-      fineSince,
+      fineSince: this.sqlTimeToISOTime(rawBalance.fineSince),
       fineWaived: rawBalance.fine && rawBalance.fineWaived
         ? DineroTransformer.Instance.from(rawBalance.fineWaived).toObject() : null,
       nrFines: Number(rawBalance.nrFines) ?? 0,
@@ -120,89 +119,85 @@ export default class BalanceService extends WithManager {
     };
   }
 
-  private static addWhereClauseForIds(
-    query: string, parameters: any[], column: string, ids?: number[],
-  ) {
-    if (ids !== undefined) {
-      // eslint-disable-next-line no-param-reassign
-      query += `AND ${column} IN ( ${(new Array(ids.length)).fill('?').toString()} ) `;
-      parameters.push(...ids);
-    }
-    return query;
-  }
-
-  private static addWhereClauseForDate(
-    query: string, parameters: any[], column: string, date?: string,
-  ) {
-    if (date !== undefined) {
-      // eslint-disable-next-line no-param-reassign
-      query += `AND ${column} <= ? `;
-      parameters.push(date);
-    }
-    return query;
+  private periods(): BalancePeriodService {
+    return new BalancePeriodService(this.manager);
   }
 
   /**
-   * Update the balance cache with active values
-   * Insafe Query! Safety leveraged by type safety
+   * Bring the balance periods up to date: close the days that have ended and rebuild the
+   * periods of users with backdated inserts. With `ids`, also rebuild the whole history of
+   * those users. The nightly cron calls this, so the first read of the day does not have to.
    */
-  public async updateBalances(params: UpdateBalanceParameters) {
-    const isSqlite = Config.get().database.isSqlite;
-    const entityManager = this.manager;
-
-    const parameters: any[] = [];
-
-    // eslint-disable-next-line prefer-template
-    let query = 'REPLACE INTO balance '
-      + 'select '
-      + (isSqlite ? "datetime('now'), " : 'NOW(), ')
-      + (isSqlite ? "datetime('now'), " : 'NOW(), ')
-      + '1, '
-      + 'moneys2.id, '
-      + 'max(moneys2.amount), '
-      + 'max(t1.id), '
-      + 'max(t2.id) from ('
-        + 'select id, sum(amount) as `amount`, max(createdAt1) as `createdAt1`, max(createdAt2) as `createdAt2` from ( '
-        + 'select t1.fromId as `id`, str.amount * pr.priceInclVat * -1 as `amount`, t1.createdAt as `createdAt1`, null as `createdAt2` from `transaction` as `t1` '
-          + 'left join `sub_transaction` st on t1.id=st.transactionId '
-          + 'left join `sub_transaction_row` str on st.id=str.subTransactionId '
-          + 'left join `product_revision` pr on str.productRevision=pr.revision and str.productProductId=pr.productId '
-          + 'where 1 ';
-    query = BalanceService.addWhereClauseForIds(query, parameters, 't1.fromId', params.ids);
-    query += 'UNION ALL '
-        + 'select st2.toId as `id`, str2.amount * pr2.priceInclVat as `amount`, t1.createdAt as `createdAt1`, null as `createdAt2` from sub_transaction st2 '
-          + 'inner join `transaction` t1 on t1.id=st2.transactionId '
-          + 'left join `sub_transaction_row` str2 on st2.id=str2.subTransactionId '
-          + 'left join `product_revision` pr2 on str2.productRevision=pr2.revision and str2.productProductId=pr2.productId '
-          + 'where 1 ';
-    query =  BalanceService.addWhereClauseForIds(query, parameters, 'st2.toId', params.ids);
-    query += 'UNION ALL '
-        + 'select t2.fromId as `id`, amountInclVat*-1 as `amount`, null as `createdAt1`, t2.createdAt as `createdAt2` from `transfer` t2 where t2.fromId is not null ';
-    query =  BalanceService.addWhereClauseForIds(query, parameters, 'fromId', params.ids);
-    query += 'UNION ALL '
-        + 'select t2.toId as `id`, amountInclVat as `amount`, null as `createdAt1`, t2.createdAt as `createdAt2` from `transfer` t2 where t2.toId is not null ';
-    query =  BalanceService.addWhereClauseForIds(query, parameters, 'toId', params.ids);
-    query += ') as moneys '
-        + 'group by moneys.id '
-      + ') as moneys2 '
-      + 'left join ( '
-      + 'select t.id, t.fromId, t.createdAt, st.toId from `transaction` t left join `sub_transaction` st on t.id = st.transactionId '
-      + ') as t1 on (t1.createdAt = moneys2.createdAt1 and (t1.fromId = moneys2.id OR t1.toId = moneys2.id)) '
-      + 'left join `transfer` t2 on (t2.createdAt = moneys2.createdAt2 and (t2.fromId = moneys2.id OR t2.toId = moneys2.id)) '
-      + 'group by moneys2.id ';
-    await entityManager.query(query, parameters);
+  public async updateBalances(params: UpdateBalanceParameters): Promise<void> {
+    await this.periods().ensureFresh();
+    if (params.ids?.length) await this.periods().rebuild(NEVER, params.ids);
   }
 
   /**
-   * Clear balance cache
+   * Rebuild balance periods after transactions or transfers were deleted or changed. Inserts
+   * are picked up on read and need no call.
+   *
+   * - With `ids` and `at` (the `createdAt` of the deleted or changed event): rebuild only the
+   *   day and month containing `at`, for those users.
+   * - With `ids` only: rebuild the whole history of those users.
+   * - Without `ids`: rebuild everything.
+   * @param ids - the users whose balance changed.
+   * @param at - the `createdAt` of the transaction or transfer that changed.
    */
-  public async clearBalanceCache(ids?: number | number[]) {
-    if (ids) {
-      await Balance.delete(ids);
-    } else {
-      const entityManager = this.manager;
-      await entityManager.query('DELETE from balance where 1=1;');
+  public async clearBalanceCache(ids?: number | number[], at?: Date): Promise<void> {
+    if (ids === undefined) {
+      await this.periods().rebuildAll();
+      return;
     }
+    const list = Array.isArray(ids) ? ids : [ids];
+    if (list.length === 0) return;
+    await this.periods().ensureFresh();
+    await this.periods().rebuild(at ? toMySQLString(at) : NEVER, list, at ? toMySQLString(at) : undefined);
+  }
+
+  /**
+   * Rebuild the closed balance periods overlapping [from, until] (until omitted: everything
+   * closed), for all users or only `ids`, in one DB transaction. Use this after changing closed
+   * history outside the services, for example with raw SQL.
+   * @param from - start of the range to rebuild (inclusive).
+   * @param ids - the users to rebuild; all users when omitted.
+   * @param until - end of the range to rebuild (inclusive).
+   */
+  public async rebuildPeriods(from: Date, ids?: number[], until?: Date): Promise<void> {
+    await this.periods().rebuild(toMySQLString(from), ids, until ? toMySQLString(until) : undefined);
+  }
+
+  /**
+   * The per-user balance subquery (userId, amount, lastTransactionId, lastTransferId) at naive
+   * time `t` (undefined = now, no upper bound), given closedUntil. It sums
+   *   - month rows with periodStart < cut(month),
+   *   - day rows with cut(month) <= periodStart < cut(day),
+   *   - a live ledger scan of events with cut(day) <= createdAt [<= t],
+   * where cut(g) = min(floor_g(t), floor_g(closedUntil)).
+   */
+  private static balanceSql(params: any[], closedUntil: string, t: string | undefined, ids?: number[]): string {
+    const d = dialect();
+    const branches: string[] = [];
+    const idFilter = (col: string) => {
+      if (!ids) return '';
+      params.push(...ids);
+      return ` AND ${col} IN (${inList(ids)})`;
+    };
+    let lo = NEVER;
+    GRAINS.forEach((g) => {
+      const cut = t === undefined ? floorNaive(g, closedUntil) : minStr(floorNaive(g, t), floorNaive(g, closedUntil));
+      if (lo < cut) {
+        params.push(GRAIN_CODE[g], lo, cut);
+        branches.push('SELECT userId, net, lastTransactionId AS txId, lastTransferId AS tfId FROM balance_period '
+          + `WHERE grain = ? AND periodStart >= ? AND periodStart < ?${idFilter('userId')}`);
+      }
+      lo = cut > lo ? cut : lo;
+    });
+    branches.push(ledgerSql(d, params, lo, t, true, ids));
+    return 'SELECT x.userId AS userId, SUM(x.net) AS amount, MAX(x.txId) AS lastTransactionId, '
+      + `MAX(x.tfId) AS lastTransferId FROM (${
+        branches.map((b, i) => `SELECT userId, net, txId, tfId FROM (${b}) b${i}`).join(' UNION ALL ')
+      }) x GROUP BY x.userId`;
   }
 
   /**
@@ -223,151 +218,52 @@ export default class BalanceService extends WithManager {
       return [[], 0];
     }
 
-    const connection = this.manager.connection;
+    const closedUntil = await this.periods().ensureFresh();
+    const t = date ? toMySQLString(date) : undefined;
 
-    const parameters: any[] = [];
-    const d = date ? toMySQLString(date) : undefined;
-
-    const balanceSubquery = () => {
-      let result = '( '
-      + 'SELECT b.userId as userId, b.amount as amount, t1.createdAt as lastTransactionDate, t2.createdAt as lastTransferDate '
-      + 'from balance b '
-      + 'left join `transaction` t1 on b.lastTransactionId=t1.id '
-      + 'left join `transfer` t2 on b.lastTransferId=t2.id ';
-      if (d !== undefined) {
-        result += 'where t1.createdAt <= ? AND t2.createdAt <= ? ';
-        parameters.push(...[d, d]);
-      }
-      result += ') ';
-      return result;
-    };
-
-    const greatest = Config.get().database.isSqlite ? 'max' : 'greatest';
-
-    let query = 'SELECT userBalance.id as id, '
-      + 'userBalance.firstName as firstName, '
-      + 'userBalance.lastName as lastName, '
-      + 'userBalance.nickname as nickname, '
-      + 'userBalance.type as type, '
-      + 'userBalance.amount as amount, '
-      + 'userBalance.count as count, '
-      + 'userBalance.lastTransactionId as lastTransactionId, '
-      + 'userBalance.lastTransferId as lastTransferId, '
-      + 'userBalance.cachedAmount as cachedAmount, '
-      + 'lt.createdAt as lastTransactionDate, '
-      + 'f.fine as fine, '
-      + 'f.fineSince as fineSince, '
-      + 'f.fineWaived as fineWaived, '
-      + 'f.nrFines as nrFines, '
-      + 'mu.memberId as memberId '
-      + 'from ( '
-        + 'SELECT moneys2.id as id, '
-        + 'moneys2.firstName as firstName, '
-        + 'moneys2.lastName as lastName, '
-        + 'moneys2.nickname as nickname, '
-        + 'moneys2.type as type, '
-        + 'moneys2.totalValue + COALESCE(b5.amount, 0) as amount, '
-        + 'moneys2.count as count, '
-        + `${greatest}(coalesce(b5.lasttransactionid, -1), coalesce(moneys2.lastTransactionId, -1)) as lastTransactionId, `
-        + `${greatest}(coalesce(b5.lasttransferid, -1), coalesce(moneys2.lastTransferId, -1)) as lastTransferId, `
-        + 'b5.amount as cachedAmount '
-        + 'from ( '
-        + 'SELECT user.id as id, '
-        + 'user.firstName as firstName, '
-        + 'user.lastName as lastName, '
-        + 'user.nickname as nickname, '
-        + 'user.type as type, '
-        + 'COALESCE(sum(moneys.totalValue), 0) as totalValue, '
-        + 'count(moneys.totalValue) as count, '
-        + 'max(moneys.transactionId) as lastTransactionId, '
-        + 'max(moneys.transferId) as lastTransferId '
-        + 'from user '
-        + 'left join ( '
-        + 'select t.fromId as `id`, str.amount * pr.priceInclVat * -1 as `totalValue`, t.id as `transactionId`, null as `transferId` '
-        + 'from `transaction` as `t` '
-        + `left join ${balanceSubquery()} as b on t.fromId=b.userId `
-        + 'inner join sub_transaction st on t.id=st.transactionId '
-        + 'inner join sub_transaction_row str on st.id=str.subTransactionId '
-        + 'inner join product_revision pr on str.productRevision=pr.revision and str.productProductId=pr.productId '
-        + 'where t.createdAt > COALESCE(b.lastTransactionDate, 0) ';
-    query = BalanceService.addWhereClauseForIds(query, parameters, 't.fromId', ids);
-    query = BalanceService.addWhereClauseForDate(query, parameters, 't.createdAt', d);
-    query += 'UNION ALL '
-        + 'select st2.toId as `id`, str2.amount * pr2.priceInclVat as `totalValue`, t.id as `transactionId`, null as `transferId` from sub_transaction st2 '
-        + `left join ${balanceSubquery()} b on st2.toId=b.userId `
-        + 'inner join `transaction` t on t.id=st2.transactionId '
-        + 'inner join sub_transaction_row str2 on st2.id=str2.subTransactionId '
-        + 'inner join product_revision pr2 on str2.productRevision=pr2.revision and str2.productProductId=pr2.productId '
-        + 'where t.createdAt > COALESCE(b.lastTransactionDate, 0) ';
-    query = BalanceService.addWhereClauseForIds(query, parameters, 'st2.toId', ids);
-    query = BalanceService.addWhereClauseForDate(query, parameters, 't.createdAt', d);
-    query += 'UNION ALL '
-        + 'select t2.fromId as `id`, t2.amountInclVat*-1 as `totalValue`, null as `transactionId`, t2.id as `transferId` from transfer t2 '
-        + `left join ${balanceSubquery()} b on t2.fromId=b.userId `
-        + 'where t2.createdAt > COALESCE(b.lastTransferDate, 0) ';
-    query = BalanceService.addWhereClauseForIds(query, parameters, 't2.fromId', ids);
-    query = BalanceService.addWhereClauseForDate(query, parameters, 't2.createdAt', d);
-    query += 'UNION ALL '
-        + 'select t3.toId as `id`, t3.amountInclVat as `totalValue`, null as `transactionId`, t3.id as `transferId` from transfer t3 '
-        + `left join ${balanceSubquery()} b on t3.toId=b.userId `
-        + 'where t3.createdAt > COALESCE(b.lastTransferDate, 0) ';
-    query = BalanceService.addWhereClauseForIds(query, parameters, 't3.toId', ids);
-    query = BalanceService.addWhereClauseForDate(query, parameters, 't3.createdAt', d);
-    query += ') as moneys on moneys.id=user.id '
-        + 'where 1 ';
-    query = BalanceService.addWhereClauseForIds(query, parameters, 'user.id', ids);
-    query += 'group by user.id '
-        + ') as moneys2 '
-        + 'left join ( '
-        + 'select b.userId, b.amount, b.lastTransactionId, b.lastTransferId '
-        + 'from balance b '
-        + 'left join `transaction` t1 on b.lastTransactionId = t1.id '
-        + 'left join `transfer` t2 on b.lastTransferId = t2.id ';
-    if (date !== undefined) {
-      query += 'where t1.createdAt <= ? AND t2.createdAt <= ? ';
-      parameters.push(...[d, d]);
+    const params: any[] = [];
+    let inner = 'SELECT u.id AS id, u.firstName AS firstName, u.lastName AS lastName, u.nickname AS nickname, '
+      + 'u.type AS type, COALESCE(b.amount, 0) AS amount, COALESCE(b.lastTransactionId, -1) AS lastTransactionId, '
+      + 'COALESCE(b.lastTransferId, -1) AS lastTransferId, lt.createdAt AS lastTransactionDate, '
+      + 'f.fine AS fine, f.fineSince AS fineSince, f.fineWaived AS fineWaived, f.nrFines AS nrFines, '
+      + 'mu.memberId AS memberId '
+      + `FROM \`user\` u LEFT JOIN (${BalanceService.balanceSql(params, closedUntil, t, ids)}) b ON b.userId = u.id `
+      + 'LEFT JOIN `transaction` lt ON lt.id = b.lastTransactionId '
+      + 'LEFT JOIN (SELECT SUM(fine.amount) AS fine, MAX(user_fine_group.createdAt) AS fineSince, '
+      + 'MAX(transfer.amountInclVat) AS fineWaived, COUNT(fine.id) AS nrFines, `user`.id AS id FROM fine '
+      + 'INNER JOIN user_fine_group ON fine.userFineGroupId = user_fine_group.id '
+      + 'INNER JOIN `user` ON user_fine_group.userId = `user`.id '
+      + 'LEFT JOIN transfer ON user_fine_group.waivedTransferId = transfer.id '
+      + 'WHERE `user`.currentFinesId = user_fine_group.id GROUP BY `user`.id) f ON f.id = u.id '
+      + 'LEFT JOIN member_user mu ON mu.userId = u.id '
+      + `WHERE u.type NOT IN ('${UserType.POINT_OF_SALE}') `;
+    if (ids) {
+      inner += `AND u.id IN (${inList(ids)}) `;
+      params.push(...ids);
     }
-    query += ') AS b5 ON b5.userId=moneys2.id '
-      + ') as userBalance '
-      + 'inner join `user` as u on u.id = userBalance.id '
-      + 'left join `transaction` as lt on lt.id = userBalance.lastTransactionId '
-      + 'left join ( '
-        + 'select sum(fine.amount) as fine, max(user_fine_group.createdAt) as fineSince, max(transfer.amountInclVat) as fineWaived, count(fine.id) as nrFines, user.id as id '
-        + 'from fine '
-        + 'inner join `user_fine_group` on fine.userFineGroupId = user_fine_group.id '
-        + 'inner join `user` on user_fine_group.userId = user.id '
-        + 'left join `transfer` on user_fine_group.waivedTransferId = transfer.id '
-        + 'where user.currentFinesId = user_fine_group.id '
-        + 'group by user.id '
-      + ') as f on f.id = userBalance.id '
-      + 'left join `member_user` mu on mu.userId = userBalance.id '
-      + `where u.type not in ('${UserType.POINT_OF_SALE}') `;
+    if (userTypes !== undefined) inner += `AND u.type IN (${userTypes.map((ut) => `'${ut}'`).join(',')}) `;
+    if (!allowDeleted) inner += 'AND u.deleted = 0 ';
+    if (inactive) inner += 'AND u.active = 0 ';
 
-    if (minBalance !== undefined) query += `and userBalance.amount >= ${minBalance.getAmount()} `;
-    if (maxBalance !== undefined) query += `and userBalance.amount <= ${maxBalance.getAmount()} `;
-    if (hasFine === false) query += 'and f.fine is null ';
-    if (hasFine === true) query += 'and f.fine is not null ';
-    if (minFine !== undefined) query += `and f.fine >= ${minFine.getAmount()} `;
-    if (maxFine !== undefined) query += `and f.fine <= ${maxFine.getAmount()} `;
-    if (userTypes !== undefined) query += `and u.type in (${userTypes.map((t) => `'${t}'`).join(',')}) `;
-    if (!allowDeleted) query += 'and u.deleted = 0 ';
-    if (inactive) query += 'and u.active = 0 ';
-
-    if (orderBy !== undefined) query += `order by ${orderBy} ${orderDirection ?? ''} `;
+    let query = `SELECT * FROM (${inner}) q WHERE 1 = 1 `;
+    if (minBalance !== undefined) query += `AND q.amount >= ${minBalance.getAmount()} `;
+    if (maxBalance !== undefined) query += `AND q.amount <= ${maxBalance.getAmount()} `;
+    if (hasFine === false) query += 'AND q.fine IS NULL ';
+    if (hasFine === true) query += 'AND q.fine IS NOT NULL ';
+    if (minFine !== undefined) query += `AND q.fine >= ${minFine.getAmount()} `;
+    if (maxFine !== undefined) query += `AND q.fine <= ${maxFine.getAmount()} `;
+    if (orderBy !== undefined) query += `ORDER BY q.${orderBy} ${orderDirection ?? ''} `;
 
     const take = pagination.skip || pagination.take ? pagination.take || defaultPagination() : pagination.take;
     const skip = pagination.skip;
 
-    let recordsQuery = `${query}`;
-    if (take) recordsQuery += `limit ${take} `;
-    if (skip) recordsQuery += `offset ${skip} `;
+    let recordsQuery = query;
+    if (take) recordsQuery += `LIMIT ${take} `;
+    if (skip) recordsQuery += `OFFSET ${skip} `;
 
-    const balances = await connection.query(recordsQuery, parameters);
-    if (balances.length > 0 && balances[0].amount === undefined) {
-      throw new Error('No balance returned');
-    }
-    const count = take || skip ?
-      (await connection.query(query, parameters)).length
+    const balances = await this.manager.query(recordsQuery, params);
+    const count = take || skip
+      ? Number((await this.manager.query(`SELECT COUNT(*) AS c FROM (${query}) cq`, params))[0].c)
       : balances.length;
 
     return [

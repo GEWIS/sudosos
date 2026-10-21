@@ -71,7 +71,7 @@
  */
 
 import {
-  Column, Entity, JoinColumn, ManyToOne, OneToOne,
+  Column, Entity, Index, JoinColumn, ManyToOne, OneToOne,
 } from 'typeorm';
 import { Dinero } from 'dinero.js';
 import BaseEntity from '../base-entity';
@@ -104,6 +104,8 @@ import InactiveAdministrativeCost from './inactive-administrative-cost';
  * description of the transfer.
  */
 @Entity()
+@Index(['fromId', 'createdAt'])
+@Index(['toId', 'createdAt'])
 export default class Transfer extends BaseEntity {
   // These IDs are required, because TypeORM findOptions will convert the relations from LEFT JOIN
   // to INNER JOIN when having a where clause on a relational entity.
