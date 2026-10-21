@@ -17,7 +17,7 @@ This chapter shows how SudoSOS behaves in practice. It does not try to document 
 **Entities touched**
 - `Transaction`, `SubTransaction`, `SubTransactionRow`
 - product/container/POS revisions referenced by rows and sub-transactions
-- `Balance` cache (updated from transaction rows and transfers)
+- balances (computed from transaction rows and transfers; `balance_period` picks up new rows on the next read)
 
 **Critical checks**
 - product revisions exist and match the request
@@ -37,7 +37,6 @@ flowchart TD
   Client[Frontend] -->|POST_/transactions| Controller[TransactionController]
   Controller --> Service[TransactionService]
   Service -->|DB_transaction| Persist[Create_entities]
-  Persist --> Cache[Balance_cache_updated]
   Persist --> Response[Transaction_response]
   Response --> Client
 ```
@@ -80,7 +79,7 @@ flowchart TD
 **Entities touched**
 - Stripe payment intent records (backend-owned representation)
 - a top-up transfer (void → user) that credits the user when the payment succeeds
-- balance cache (derived from transfers)
+- the user's balance (computed from transfers)
 
 **Critical checks**
 - webhook event authenticity (signature verification)

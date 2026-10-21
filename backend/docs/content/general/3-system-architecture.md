@@ -65,7 +65,7 @@ Money is not “best effort”. SudoSOS relies on a few hard guarantees:
 
 - **Database transactions**: money-changing operations are executed atomically. If part of the operation fails, none of it is committed.
 - **Historical truth via revisions**: products, containers, and points of sale are revisioned. Past purchases must keep referencing the revisions that were current at the time.
-- **Balance cache**: balances are stored in the `balance` table and updated from transactions and transfers. Treat it as a cache; the event tables are the real history.
+- **Balances are derived**: balances are computed from transactions and transfers. The `balance_period` table summarises closed days and months so reads stay fast; it is rebuilt from the event tables, which are the real history.
 - **Soft deletion**: most entities are not hard-deleted, because financial history must remain auditable.
 
 ## Authorisation (RBAC)

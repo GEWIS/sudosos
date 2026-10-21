@@ -60,17 +60,20 @@ In day-to-day language we usually call:
 
 If you need to move money without a product row, you will almost always end up in the transfer model.
 
-## Balance (cached snapshot)
+## Balance (computed from the ledger)
 
-SudoSOS stores a `Balance` record per user in the `balance` table. It is a **cache** derived from:
+A user's balance is never stored as a single number. `BalanceService` computes it from:
 - transaction rows (purchases and sales)
 - transfers (topups/payout money movement)
 
-The cache is updated by the backend (see `BalanceService.updateBalances`). The audit trail lives in the event tables (`transaction`, `sub_transaction_row`, `transfer`), and the balance is the fast “current total” view.
+To keep reads fast, the `balance_period` table summarises closed history: one row per user per closed day, and one per fully closed month. A balance at time T is the month rows before T's month, plus the day rows of T's month before T's day, plus the ledger from the start of T's day up to T. The audit trail lives in the event tables (`transaction`, `sub_transaction_row`, `transfer`); `balance_period` is derived from them and can be rebuilt at any time.
+
+Inserts, including backdated ones, are picked up on the next read. Deletes and updates are not: the services call `BalanceService.clearBalanceCache(userIds, createdAt)`, which rebuilds the day and month that changed.
 
 Practical implications:
 - do not add a “balance” column to `User`
-- money-changing features must update the event tables correctly; the balance cache follows from that
+- money-changing features must update the event tables correctly; balances follow from that
+- a feature that hard-deletes or edits a transaction or transfer must call `clearBalanceCache` with the event's `createdAt`
 
 ## Revisions (historical truth)
 

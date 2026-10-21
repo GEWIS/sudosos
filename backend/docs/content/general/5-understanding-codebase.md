@@ -25,7 +25,7 @@ src/
 When money moves, you will most often end up in:
 - `src/service/transaction-service.ts` (purchases)
 - `src/service/invoice-service.ts` (invoicing)
-- `src/service/balance-service.ts` (balance cache and reporting)
+- `src/service/balance-service.ts` (balances and reporting; `balance-period-service.ts` maintains the `balance_period` table)
 - `src/service/stripe-service.ts` (deposit flow and webhook handling)
 - `src/service/payout-request-service.ts` (payout requests)
 
