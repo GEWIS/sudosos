@@ -78,7 +78,9 @@ export interface MethodPolicy {
    */
   handler: RequestHandler,
   /**
-   * Extra restrictions for this endpoint put upon the token.
+   * Extra restrictions for this endpoint put upon the token. Note that lesser
+   * tokens (with a posId) are rejected unless the endpoint opts in via
+   * `restrictions: { lesser: true }`.
    */
   restrictions?: Partial<TokenRestrictions>,
 }

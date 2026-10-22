@@ -183,12 +183,16 @@ export default class UserController extends BaseController {
             req.token.roles, 'update', UserController.getRelation(req), 'Authenticator', ['nfcCode'],
           ),
           handler: this.updateUserNfc.bind(this),
+          // Members can link their NFC card at the POS, where they only hold a
+          // lesser (posId) token for their own account.
+          restrictions: { lesser: true },
         },
         DELETE: {
           policy: async (req) => this.roleManager.can(
             req.token.roles, 'delete', UserController.getRelation(req), 'Authenticator', [],
           ),
           handler: this.deleteUserNfc.bind(this),
+          restrictions: { lesser: true },
         },
       },
 
@@ -305,6 +309,9 @@ export default class UserController extends BaseController {
             req.token.roles, 'get', UserController.getRelation(req), 'Transaction', ['*'],
           ),
           handler: this.getUsersTransactions.bind(this),
+          // The POS shows the logged-in buyer's recent purchases, fetched with
+          // that buyer's lesser (posId) token for their own account.
+          restrictions: { lesser: true },
         },
       },
       '/:id(\\d+)/transactions/sales/report': {
