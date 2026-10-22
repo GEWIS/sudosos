@@ -4531,6 +4531,12 @@ export interface QRCodeResponse {
      * @memberof QRCodeResponse
      */
     'expiresAt': string;
+    /**
+     * Secret used to subscribe to the session\'s WebSocket room, only known to the caller of /generate
+     * @type {string}
+     * @memberof QRCodeResponse
+     */
+    'subscriberSecret': string;
 }
 /**
  * 

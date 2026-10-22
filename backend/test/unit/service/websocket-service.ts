@@ -20,6 +20,7 @@
 
 import { expect } from 'chai';
 import sinon from 'sinon';
+import { createHash } from 'crypto';
 import { io } from 'socket.io-client';
 import WebSocketService from '../../../src/service/websocket-service';
 import Config from '../../../src/config';
@@ -28,6 +29,9 @@ import TokenHandler from '../../../src/authentication/token-handler';
 import RoleManager from '../../../src/rbac/role-manager';
 import User from '../../../src/entity/user/user';
 import type { Redis } from 'ioredis';
+import QRService from '../../../src/service/qr-service';
+import QRAuthenticator, { QRAuthenticatorStatus } from '../../../src/entity/authenticator/qr-authenticator';
+import AuthenticationResponse from '../../../src/controller/response/authentication-response';
 
 // Bridges socket.io's callback-style flow (e.g. `clientSocket.on('event', () => done())`)
 // into Promises. Vitest hooks/tests must return a Promise — it doesn't support
@@ -47,6 +51,24 @@ describe('WebSocketService', () => {
   let webSocketService: WebSocketService;
   let verifyTokenStub: sinon.SinonStub;
   let roleCanStub: sinon.SinonStub;
+  let qrGetStub: sinon.SinonStub | undefined;
+
+  const SUBSCRIBE_SECRET = 'valid-subscribe-secret';
+
+  /**
+   * Stubs the QR session lookup used by subscribe handling with a session that
+   * carries the hash of SUBSCRIBE_SECRET and the given status.
+   */
+  const stubQrSession = (
+    sessionId: string,
+    status: QRAuthenticatorStatus = QRAuthenticatorStatus.PENDING,
+  ): void => {
+    qrGetStub = sinon.stub(QRService.prototype, 'get').resolves({
+      sessionId,
+      subscribeSecretHash: createHash('sha256').update(SUBSCRIBE_SECRET).digest('hex'),
+      status,
+    } as unknown as QRAuthenticator); // stub only needs the fields read by handleQRSessionSubscribe
+  };
 
   const getPort = (): number => {
     const server = WebSocketService.server;
@@ -137,6 +159,10 @@ describe('WebSocketService', () => {
     // Disconnect client after each test
     if (clientSocket.connected) {
       clientSocket.disconnect();
+    }
+    if (qrGetStub) {
+      qrGetStub.restore();
+      qrGetStub = undefined;
     }
   });
 
@@ -501,19 +527,23 @@ describe('WebSocketService', () => {
   });
 
   describe('QR session handling', () => {
-    it('should emit QR confirmed event to subscribed clients', asPromise((done) => {
-      const mockQR = { sessionId: 'test-session-123' } as any;
-      const mockToken = { user: { id: 1 } } as any;
+    it('should emit QR confirmed event to subscribed clients presenting the session secret', asPromise((done) => {
+      stubQrSession('test-session-123');
+      const mockQR = { sessionId: 'test-session-123' } as unknown as QRAuthenticator; // emitQRConfirmed only reads sessionId
+      const mockToken = { user: { id: 1 } } as unknown as AuthenticationResponse; // emitQRConfirmed only reads user.id
 
       // Set up listener before subscribing
-      clientSocket.once('qr-confirmed', (data: any) => {
+      clientSocket.once('qr-confirmed', (data: { sessionId: string; token: { user: { id: number } } }) => {
         expect(data.sessionId).to.equal('test-session-123');
         expect(data.token.user.id).to.equal(1);
         done();
       });
 
-      // Subscribe to QR session
-      clientSocket.emit('subscribe-qr-session', 'test-session-123');
+      // Subscribe to QR session with the secret from /generate
+      clientSocket.emit('subscribe-qr-session', {
+        sessionId: 'test-session-123',
+        secret: SUBSCRIBE_SECRET,
+      });
 
       // Wait for subscription, then emit
       setTimeout(() => {
@@ -522,13 +552,17 @@ describe('WebSocketService', () => {
     }));
 
     it('should not emit QR confirmed to unsubscribed clients', asPromise((done) => {
-      const mockQR = { sessionId: 'test-session-456' } as any;
-      const mockToken = { user: { id: 1 } } as any;
+      stubQrSession('test-session-123');
+      const mockQR = { sessionId: 'test-session-456' } as unknown as QRAuthenticator; // emitQRConfirmed only reads sessionId
+      const mockToken = { user: { id: 1 } } as unknown as AuthenticationResponse; // emitQRConfirmed only reads user.id
 
       let eventReceived = false;
 
       // Subscribe to different session
-      clientSocket.emit('subscribe-qr-session', 'test-session-123');
+      clientSocket.emit('subscribe-qr-session', {
+        sessionId: 'test-session-123',
+        secret: SUBSCRIBE_SECRET,
+      });
 
       // Listen for QR confirmed event
       clientSocket.on('qr-confirmed', () => {
@@ -538,12 +572,94 @@ describe('WebSocketService', () => {
       setTimeout(() => {
         // Emit to different session
         webSocketService.emitQRConfirmed(mockQR, mockToken);
-        
+
         setTimeout(() => {
           expect(eventReceived).to.be.false;
           done();
         }, 100);
       }, 100);
+    }));
+
+    it('should reject subscription when the subscribe secret is wrong', asPromise((done) => {
+      stubQrSession('test-session-123');
+
+      let rejectedMessage = '';
+      let confirmed = false;
+
+      clientSocket.on('qr-confirmed', () => {
+        confirmed = true;
+      });
+      clientSocket.on('error', (error: { message: string }) => {
+        rejectedMessage = error.message;
+      });
+
+      clientSocket.emit('subscribe-qr-session', {
+        sessionId: 'test-session-123',
+        secret: 'wrong-secret',
+      });
+
+      setTimeout(() => {
+        try {
+          expect(rejectedMessage).to.equal('QR session not found or invalid secret.');
+          expect(confirmed).to.be.false;
+          done();
+        } catch (e) {
+          done(e);
+        }
+      }, 300);
+    }));
+
+    it('should reject subscription for a session that is no longer pending', asPromise((done) => {
+      stubQrSession('test-session-123', QRAuthenticatorStatus.CONFIRMED);
+
+      let rejectedMessage = '';
+      let confirmed = false;
+
+      clientSocket.on('qr-confirmed', () => {
+        confirmed = true;
+      });
+      clientSocket.on('error', (error: { message: string }) => {
+        rejectedMessage = error.message;
+      });
+
+      clientSocket.emit('subscribe-qr-session', {
+        sessionId: 'test-session-123',
+        secret: SUBSCRIBE_SECRET,
+      });
+
+      setTimeout(() => {
+        try {
+          expect(rejectedMessage).to.equal('QR session not found or invalid secret.');
+          expect(confirmed).to.be.false;
+          done();
+        } catch (e) {
+          done(e);
+        }
+      }, 300);
+    }));
+
+    it('should reject subscription payloads without a secret', asPromise((done) => {
+      let rejectedMessage = '';
+      let confirmed = false;
+
+      clientSocket.on('qr-confirmed', () => {
+        confirmed = true;
+      });
+      clientSocket.on('error', (error: { message: string }) => {
+        rejectedMessage = error.message;
+      });
+
+      clientSocket.emit('subscribe-qr-session', 'test-session-123');
+
+      setTimeout(() => {
+        try {
+          expect(rejectedMessage).to.equal('QR session subscription requires a sessionId and secret.');
+          expect(confirmed).to.be.false;
+          done();
+        } catch (e) {
+          done(e);
+        }
+      }, 300);
     }));
   });
 
@@ -851,12 +967,17 @@ describe('WebSocketService', () => {
         setTimeout(() => {
           done();
         }, 100);
-      }, 100);
+      }, 200);
     }));
 
     it('should handle unsubscribe from QR session', asPromise((done) => {
+      stubQrSession('test-session-123');
+
       // Subscribe first
-      clientSocket.emit('subscribe-qr-session', 'test-session-123');
+      clientSocket.emit('subscribe-qr-session', {
+        sessionId: 'test-session-123',
+        secret: SUBSCRIBE_SECRET,
+      });
 
       setTimeout(() => {
         // Then unsubscribe
@@ -866,7 +987,7 @@ describe('WebSocketService', () => {
         setTimeout(() => {
           done();
         }, 100);
-      }, 100);
+      }, 200);
     }));
   });
 
