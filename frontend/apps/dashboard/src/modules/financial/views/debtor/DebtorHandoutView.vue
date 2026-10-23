@@ -1,5 +1,6 @@
 <template>
   <PageContainer class="max-w-[100rem]">
+    <ConfirmDialog />
     <div class="flex flex-col gap-5">
       <DebtorTable v-if="handout" :handout-event="handout" />
     </div>
@@ -59,7 +60,7 @@ function startDelete() {
       debtorStore
         .deleteFineHandoutEvent(handout.value!.id)
         .then(() => {
-          void router.replace('/debtor');
+          void router.replace({ name: 'Debtors' });
 
           toast.add({
             summary: t('common.toast.success.success'),

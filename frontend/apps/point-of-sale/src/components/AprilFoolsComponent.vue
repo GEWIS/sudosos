@@ -42,7 +42,6 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import Button from 'openvue/button';
 import { useToast } from 'openvue/usetoast';
 
 const toast = useToast();

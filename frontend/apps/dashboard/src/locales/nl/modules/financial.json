@@ -7,25 +7,12 @@
           "header": "Debiteuren",
           "currentBalance": "Huidig saldo",
           "balanceOn": "Saldo op {date}",
-          "target": "doel",
-          "control": "controle",
-          "explanation": "De tabel hieronder selecteert alle gebruikers waarbij de gebruiker op beide data maximaal -€5 heeft. Boetes die uitgedeeld moeten worden, worden berekend op het saldo van de doeldatum.",
           "apply": "Toepassen",
-          "notify": "Waarschuwen",
-          "handout": "Uitdelen",
           "toBeFined": "Te beboeten",
           "wasFined": "Is beboet",
-          "cannotDebt": "Schakel schuld mogelijkheid uit",
-          "ofWhichFine": "Waarvan boete",
-          "fineSince": "Boete sinds",
-          "sumCurrentBalance": "Totaal van saldi",
-          "sumToBeFined": "Totaal van \"Te beboeten\"",
-          "sumWasFined": "Totaal van \"Is beboet\"",
-          "confirm": {
-            "handoutMessage": "Wilt u boetes uitdelen aan {count} gebruikers?",
-            "notifyMessage": "Wilt u een boetewaarschuwing sturen naar {count} gebruikers?",
-            "cannotGoInDebt": "Wilt u het niet meer mogelijk maken voor {count} gebruikers om verder de schulden in te gaan?"
-          }
+          "unpaidFines": "Openstaande boetes",
+          "finedSince": "Beboet sinds",
+          "userCount": "{count} gebruiker | {count} gebruikers"
         },
         "handoutEvents": {
           "title": "Boete uitdeel moment",
@@ -41,6 +28,42 @@
             "deleteMessage": "Weet u zeker dat u dit boete uitdeel moment wilt verwijderen? Dit zal ook alle bijbehorende boetes verwijderen.",
             "delete": "Verwijderen"
           }
+        },
+        "fineRound": {
+          "title": "Boeteronde",
+          "steps": {
+            "dates": "Datums",
+            "fines": "Boetes",
+            "warnings": "Waarschuwingen",
+            "confirm": "Bevestigen"
+          },
+          "start": "Boeteronde starten",
+          "explanation": "Gebruikers met een saldo van -€5,00 of lager op beide datums krijgen een boete, gebaseerd op hun saldo op de meetdatum. Gebruikers met een saldo van -€5,00 of lager op alleen de meetdatum krijgen in plaats daarvan een waarschuwing.",
+          "measurementDate": "Meetdatum",
+          "previousMeasurementDate": "Vorige meetdatum",
+          "invalidDates": "De vorige meetdatum moet vóór de meetdatum liggen.",
+          "next": "Volgende",
+          "finesInfo": "Deze gebruikers hadden op beide datums schuld en krijgen een boete. Ze ontvangen één e-mail die ook waarschuwt voor het volgende meetmoment.",
+          "deselectedNote": "Gedeselecteerde gebruikers worden volledig overgeslagen: ze krijgen geen boete en geen waarschuwing.",
+          "selectedFines": "{count} gebruiker geselecteerd, {amount} aan boetes | {count} gebruikers geselecteerd, {amount} aan boetes",
+          "warningsInfo": "Deze gebruikers hebben nu schuld, maar hadden dat niet bij het vorige meetmoment. Ze krijgen alleen een waarschuwing.",
+          "futureFine": "Boete bij blijvende schuld",
+          "selectedWarnings": "{count} gebruiker geselecteerd, {amount} aan schuld | {count} gebruikers geselecteerd, {amount} aan schuld",
+          "summaryFines": "{count} gebruiker krijgt in totaal {amount} aan boetes. | {count} gebruikers krijgen in totaal {amount} aan boetes.",
+          "summaryWarnings": "{count} gebruiker krijgt een waarschuwing. | {count} gebruikers krijgen een waarschuwing.",
+          "outcome": "Uitkomst",
+          "outcomeFine": "Boete van {amount}",
+          "outcomeWarning": "Waarschuwing",
+          "run": "Boeteronde uitvoeren"
+        },
+        "overview": {
+          "title": "Gebruikers met schuld",
+          "hideSmallDebts": "Verberg saldi tussen -€5,00 en -€0,01",
+          "warnHeader": "Gebruikers met schuld waarschuwen",
+          "warn": "Waarschuw {count} gebruiker | Waarschuw {count} gebruikers",
+          "confirmWarn": "Wil je {count} gebruiker mailen dat diens saldo negatief is? De mail noemt geen boetes. | Wil je {count} gebruikers mailen dat hun saldo negatief is? De mail noemt geen boetes.",
+          "empty": "Er zijn geen gebruikers met schuld.",
+          "total": "{count} gebruiker, {amount} in totaal | {count} gebruikers, {amount} in totaal"
         }
       },
       "invoice": {

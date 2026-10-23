@@ -39,7 +39,6 @@ import type { InvoiceResponse } from '@gewis/sudosos-client';
 import { useToast } from 'openvue/usetoast';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
-import Skeleton from 'openvue/skeleton';
 import { handleError } from '@/utils/errorUtils';
 import { useInvoiceStore } from '@/stores/invoice.store';
 import 'vue3-pdf-app/dist/icons/main.css';

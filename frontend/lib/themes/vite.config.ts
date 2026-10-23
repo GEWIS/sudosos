@@ -13,9 +13,10 @@ export default defineConfig({
       fileName: 'sudosos-frontend-themes',
     },
     watch: process.env.WATCH ? {} : undefined,
+    emptyOutDir: !process.env.WATCH,
   },
   server: {
     port: 5176,
   },
-  plugins: [dts(), vue()],
+  plugins: [process.env.WATCH ? null : dts(), vue()],
 });

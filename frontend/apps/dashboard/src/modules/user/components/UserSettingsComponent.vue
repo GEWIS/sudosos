@@ -58,7 +58,6 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { UserResponse } from '@gewis/sudosos-client';
-import Divider from 'openvue/divider';
 import { useConfirm } from 'openvue/useconfirm';
 import { useToast } from 'openvue/usetoast';
 import { useUserStore, useUserSettingsStore } from '@sudosos/sudosos-frontend-common';

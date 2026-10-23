@@ -20,7 +20,7 @@
 
 import express, { Application } from 'express';
 import chai, { expect } from 'chai';
-import { DataSource } from 'typeorm';
+import { DataSource, Not } from 'typeorm';
 import { SwaggerSpecification } from 'swagger-model-validator';
 import log4js, { Logger } from 'log4js';
 import dinero from 'dinero.js';
@@ -52,6 +52,7 @@ import ProductRevision from '../../../src/entity/product/product-revision';
 import { calculateBalance } from '../../helpers/balance';
 import { ContainerSeeder, PointOfSaleSeeder, ProductSeeder, TransactionSeeder, UserSeeder } from '../../seed';
 import { BaseTransactionResponse } from '../../../src/controller/response/transaction-response';
+import Container from '../../../src/entity/container/container';
 
 chai.use(deepEqualInAnyOrder);
 
@@ -410,6 +411,26 @@ describe('TransactionService', (): void => {
       };
       // eslint-disable-next-line @typescript-eslint/dot-notation
       expect(await transactionService['verifySubTransaction'](badPriceReq, ctx.pointsOfSale[0], context), 'incorrect accepted').to.be.false;
+    });
+    it('should reject if "to" user is not the container owner', async () => {
+      const transactionService = new TransactionService();
+      const verification = await transactionService.verifyTransaction(ctx.validTransReq);
+      if (!verification.valid || !verification.context) {
+        throw new Error('Invalid transaction in test');
+      }
+
+      const container = await Container.findOne({ where: { id: ctx.validTransReq.subTransactions[0].container.id } });
+      const nonContainerOwner = await User.findOne({ where: { id: Not(container?.owner.id) } });
+
+      // incorrect "to" user
+      const badReq: TransactionRequest = {
+        ...ctx.validTransReq,
+        subTransactions: [
+          { ...ctx.validTransReq.subTransactions[0], to: nonContainerOwner.id },
+          ...ctx.validTransReq.subTransactions.slice(1),
+        ],
+      };
+      expect((await transactionService.verifyTransaction(badReq)).valid, 'incorrect accepted').to.be.false;
     });
   });
 
@@ -1023,7 +1044,7 @@ describe('TransactionService', (): void => {
     });
 
     it('should return users charged via authenticated POS', async () => {
-      await inUserContext((await UserFactory()).clone(4), async (cashier: User, buyer1: User, buyer2: User, seller: User) => {
+      await inUserContext((await UserFactory()).clone(3), async (cashier: User, buyer1: User, buyer2: User) => {
         await generateBalance(1000, buyer1.id);
         await generateBalance(1000, buyer2.id);
 
@@ -1037,10 +1058,11 @@ describe('TransactionService', (): void => {
         });
         expect(authPos).to.not.be.null;
         const posResponse = await getPOSResponse(authPos);
+        const containerOwner = posResponse.containers[0].owner.id;
 
-        const req1 = await createValidTransactionRequestPOS(buyer1.id, seller.id, 1, posResponse);
+        const req1 = await createValidTransactionRequestPOS(buyer1.id, containerOwner, 1, posResponse);
         req1.createdBy = cashier.id;
-        const req2 = await createValidTransactionRequestPOS(buyer2.id, seller.id, 1, posResponse);
+        const req2 = await createValidTransactionRequestPOS(buyer2.id, containerOwner, 1, posResponse);
         req2.createdBy = cashier.id;
         await requestToTransaction([req1, req2]);
 
@@ -1051,7 +1073,7 @@ describe('TransactionService', (): void => {
     });
 
     it('should not include users from non-authenticated POS transactions', async () => {
-      await inUserContext((await UserFactory()).clone(3), async (cashier: User, buyer: User, seller: User) => {
+      await inUserContext((await UserFactory()).clone(2), async (cashier: User, buyer: User) => {
         await generateBalance(1000, buyer.id);
 
         const nonAuthPos = await PointOfSaleRevision.findOne({
@@ -1064,8 +1086,9 @@ describe('TransactionService', (): void => {
         });
         expect(nonAuthPos).to.not.be.null;
         const posResponse = await getPOSResponse(nonAuthPos);
+        const containerOwner = posResponse.containers[0].owner.id;
 
-        const req = await createValidTransactionRequestPOS(buyer.id, seller.id, 1, posResponse);
+        const req = await createValidTransactionRequestPOS(buyer.id, containerOwner, 1, posResponse);
         req.createdBy = cashier.id;
         await requestToTransaction([req]);
 
@@ -1076,7 +1099,7 @@ describe('TransactionService', (): void => {
     });
 
     it('should order by most recent transaction first', async () => {
-      await inUserContext((await UserFactory()).clone(4), async (cashier: User, buyer1: User, buyer2: User, seller: User) => {
+      await inUserContext((await UserFactory()).clone(3), async (cashier: User, buyer1: User, buyer2: User) => {
         await generateBalance(1000, buyer1.id);
         await generateBalance(1000, buyer2.id);
 
@@ -1089,8 +1112,9 @@ describe('TransactionService', (): void => {
           },
         });
         const posResponse = await getPOSResponse(authPos);
+        const containerOwner = posResponse.containers[0].owner.id;
 
-        const req1 = await createValidTransactionRequestPOS(buyer1.id, seller.id, 1, posResponse);
+        const req1 = await createValidTransactionRequestPOS(buyer1.id, containerOwner, 1, posResponse);
         req1.createdBy = cashier.id;
         const { transactions: [{ tId }] } = await requestToTransaction([req1]);
 
@@ -1098,7 +1122,7 @@ describe('TransactionService', (): void => {
         const past = new Date('2020-01-01T00:00:00.000Z');
         await AppDataSource.query(`UPDATE \`transaction\` SET createdAt = '${toMySQLString(past)}' WHERE id = ${tId}`);
 
-        const req2 = await createValidTransactionRequestPOS(buyer2.id, seller.id, 1, posResponse);
+        const req2 = await createValidTransactionRequestPOS(buyer2.id, containerOwner, 1, posResponse);
         req2.createdBy = cashier.id;
         await requestToTransaction([req2]);
 
@@ -1109,7 +1133,7 @@ describe('TransactionService', (): void => {
     });
 
     it('should respect the take limit', async () => {
-      await inUserContext((await UserFactory()).clone(5), async (cashier: User, b1: User, b2: User, b3: User, seller: User) => {
+      await inUserContext((await UserFactory()).clone(4), async (cashier: User, b1: User, b2: User, b3: User) => {
         await generateBalance(1000, b1.id);
         await generateBalance(1000, b2.id);
         await generateBalance(1000, b3.id);
@@ -1123,9 +1147,10 @@ describe('TransactionService', (): void => {
           },
         });
         const posResponse = await getPOSResponse(authPos);
+        const containerOwner = posResponse.containers[0].owner.id;
 
         for (const buyer of [b1, b2, b3]) {
-          const req = await createValidTransactionRequestPOS(buyer.id, seller.id, 1, posResponse);
+          const req = await createValidTransactionRequestPOS(buyer.id, containerOwner, 1, posResponse);
           req.createdBy = cashier.id;
           await requestToTransaction([req]);
         }

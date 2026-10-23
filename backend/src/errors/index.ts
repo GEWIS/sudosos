@@ -24,5 +24,6 @@
  * @module internal/errors
  */
 
+export { DeletedUserError } from './deleted-user-error';
 export { NotImplementedError } from './not-implemented-error';
 export { PdfError } from './pdf-error';

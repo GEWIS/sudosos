@@ -37,6 +37,10 @@ import Transaction from '../../src/entity/transactions/transaction';
 import { In } from 'typeorm';
 import { AppDataSource } from '../../src/database/database';
 import { toMySQLString } from '../../src/helpers/timestamps';
+import ProductService from '../../src/service/product-service';
+import ContainerService from '../../src/service/container-service';
+import VatGroup from '../../src/entity/vat-group';
+import ProductCategory from '../../src/entity/product/product-category';
 
 function wrapGet<T>(array: T[], index: number): T {
   return array[index % array.length];
@@ -105,6 +109,61 @@ Promise<PointOfSaleWithContainersResponse> {
   return PointOfSaleService.revisionToResponse(revisions[0]) as PointOfSaleWithContainersResponse;
 }
 
+async function getPOSOwnedBy(ownerId: number): Promise<PointOfSaleWithContainersResponse> {
+  const [revisions] = await PointOfSaleService.getPointsOfSale(
+    {
+      ownerId,
+      returnContainers: true,
+      returnProducts: true,
+    },
+  );
+  // The transaction factory uses the first container, so it must be owned by the seller and sell something.
+  const owned = revisions.find((r) => r.containers.length > 0
+    && r.containers[0].container.owner.id === ownerId
+    && r.containers[0].products.length > 0);
+  if (owned) {
+    return PointOfSaleService.revisionToResponse(owned) as PointOfSaleWithContainersResponse;
+  }
+
+  const vatGroup = await VatGroup.findOne({ where: { deleted: false } });
+  const category = await ProductCategory.findOne({ where: {} });
+  if (!vatGroup || !category) {
+    throw new Error('Cannot create a POS for the seller: seed VAT groups and product categories first');
+  }
+
+  const product = await ProductService.createProduct({
+    ownerId,
+    name: `Product of ${ownerId}`,
+    priceInclVat: { amount: 100, currency: dinero.defaultCurrency, precision: dinero.defaultPrecision },
+    vat: vatGroup.id,
+    category: category.id,
+    alcoholPercentage: 0,
+  });
+  if (!product) throw new Error(`Cannot create a product for user ${ownerId}`);
+
+  const container = await ContainerService.createContainer({
+    ownerId,
+    name: `Container of ${ownerId}`,
+    public: true,
+    products: [product.productId],
+  });
+  const pos = await PointOfSaleService.createPointOfSale({
+    ownerId,
+    name: `POS of ${ownerId}`,
+    containers: [container.containerId],
+    useAuthentication: false,
+  });
+  if (!pos) throw new Error(`Cannot create a point of sale for user ${ownerId}`);
+
+  // Reload so the response includes the containers and their products.
+  const [created] = await PointOfSaleService.getPointsOfSale({
+    pointOfSaleId: pos.pointOfSaleId,
+    returnContainers: true,
+    returnProducts: true,
+  });
+  return PointOfSaleService.revisionToResponse(created[0]) as PointOfSaleWithContainersResponse;
+}
+
 /**
  * Function that generates a valid Transaction.
  * @param byId - User who created the Transaction.
@@ -135,7 +194,7 @@ export async function createValidTransactionRequestPOS(
 }
 
 export async function createValidTransactionRequest(byId: number, toId: number) {
-  const pos = await getAPOSWithProducts();
+  const pos = await getPOSOwnedBy(toId);
   const request = (await createValidTransactionRequestPOS(
     byId, toId, 3, pos,
   ));

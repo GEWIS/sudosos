@@ -339,6 +339,11 @@ export default class TransactionService extends WithManager {
       return false;
     }
 
+    // check whether the to user is the container owner
+    if (container.container.owner.id !== req.to) {
+      return false;
+    }
+
     // verify subtransaction rows using context
     const verification = await Promise.all(req.subTransactionRows.map(
       async (row) => this.verifySubTransactionRow(row, container, context),

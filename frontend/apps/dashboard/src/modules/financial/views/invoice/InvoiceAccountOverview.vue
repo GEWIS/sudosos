@@ -63,9 +63,7 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, onMounted, ref, type Ref } from 'vue';
 import type { BalanceResponse } from '@gewis/sudosos-client';
-import DataTable, { type DataTableSortEvent } from 'openvue/datatable';
-import Column from 'openvue/column';
-import Skeleton from 'openvue/skeleton';
+import type { DataTableSortEvent } from 'openvue/datatable';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'openvue/usetoast';
 import { USER_TYPES, userUpsertSchema } from '@/utils/validation-schema';

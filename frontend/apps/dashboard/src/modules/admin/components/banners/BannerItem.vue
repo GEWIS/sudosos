@@ -55,9 +55,6 @@
   </div>
 </template>
 <script setup lang="ts">
-import Image from 'openvue/image';
-import Tag from 'openvue/tag';
-
 import type { BannerResponse } from '@gewis/sudosos-client';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';

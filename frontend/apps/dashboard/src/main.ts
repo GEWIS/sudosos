@@ -44,10 +44,16 @@ import TabPanel from 'openvue/tabpanel';
 import Stepper from 'openvue/stepper';
 import Step from 'openvue/step';
 import StepList from 'openvue/steplist';
+import StepPanels from 'openvue/steppanels';
+import StepPanel from 'openvue/steppanel';
 import Card from 'openvue/card';
 import Badge from 'openvue/badge';
 import VirtualScroller from 'openvue/virtualscroller';
 import MultiSelect from 'openvue/multiselect';
+import ColumnGroup from 'openvue/columngroup';
+import Row from 'openvue/row';
+import Tag from 'openvue/tag';
+import Textarea from 'openvue/textarea';
 
 import { SudososRed } from '@sudosos/themes';
 
@@ -123,10 +129,17 @@ app.component('TabPanel', TabPanel);
 app.component('Stepper', Stepper);
 app.component('StepList', StepList);
 app.component('Step', Step);
+app.component('StepPanels', StepPanels);
+app.component('StepPanel', StepPanel);
 app.component('Card', Card);
 app.component('Badge', Badge);
 app.component('VirtualScroller', VirtualScroller);
 app.component('MultiSelect', MultiSelect);
+app.component('ColumnGroup', ColumnGroup);
+app.component('Row', Row);
+app.component('Tag', Tag);
+// eslint-disable-next-line vue/no-reserved-component-names
+app.component('Textarea', Textarea);
 
 void beforeLoad().then(() => {
   app.use(router);

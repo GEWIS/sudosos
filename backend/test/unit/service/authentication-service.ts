@@ -29,6 +29,7 @@ import Database from '../../../src/database/database';
 import seedDatabase from '../../seed/all';
 import Swagger from '../../../src/start/swagger';
 import AuthenticationService from '../../../src/service/authentication-service';
+import { DeletedUserError } from '../../../src/errors';
 import { inUserContext, UserFactory } from '../../helpers/user-factory';
 import PinAuthenticator from '../../../src/entity/authenticator/pin-authenticator';
 import userIsAsExpected from '../../helpers/authentication-helpers';
@@ -772,6 +773,36 @@ describe('AuthenticationService', (): void => {
         const dbUser = await User.findOne({ where: { id: user.id } });
         expect(dbUser?.lastSeen).to.not.be.null;
         expect(dbUser?.lastSeen!.getTime()).to.be.greaterThan(firstLastSeen!.getTime());
+      });
+    });
+  });
+
+  describe('getSaltedToken', () => {
+    it('should throw a DeletedUserError for a deleted user', async () => {
+      await inUserContext(await (await UserFactory()).clone(1), async (user: User) => {
+        user.deleted = true;
+
+        await expect(new AuthenticationService().getSaltedToken({
+          user,
+          context: { roleManager: ctx.roleManager, tokenHandler: ctx.tokenHandler },
+        })).to.eventually.be.rejectedWith(DeletedUserError);
+        expect(user.lastSeen).to.be.null;
+      });
+    });
+  });
+
+  describe('HashAuthentication', () => {
+    it('should return undefined for a deleted user', async () => {
+      await inUserContext(await (await UserFactory()).clone(1), async (user: User) => {
+        await new AuthenticationService().setUserAuthenticationHash(user, '2000', PinAuthenticator);
+        const auth = await PinAuthenticator.findOne({ where: { user: { id: user.id } } });
+        auth.user.deleted = true;
+
+        const result = await new AuthenticationService().HashAuthentication('2000', auth, {
+          roleManager: ctx.roleManager,
+          tokenHandler: ctx.tokenHandler,
+        });
+        expect(result).to.be.undefined;
       });
     });
   });

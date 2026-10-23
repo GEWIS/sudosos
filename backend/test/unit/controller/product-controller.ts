@@ -51,6 +51,8 @@ import { truncateAllTables } from '../../helpers/database-helpers';
 import { finishTestDB } from '../../helpers/test-helpers';
 import ProductRevision from '../../../src/entity/product/product-revision';
 import { ProductSeeder, VatGroupSeeder } from '../../seed';
+import sharp from 'sharp';
+import { IMAGE_REQUIREMENTS, ALLOWED_IMAGE_FORMATS } from '../../../src/helpers/image-validation';
 import { ensureProductionRoles, signTokenFor } from '../../helpers/user-factory';
 
 const { expect, request } = chai;
@@ -584,8 +586,10 @@ describe('ProductController', async (): Promise<void> => {
   });
 
   describe('POST /products/:id/image', () => {
+    let saveFileStub: sinon.SinonStub;
+
     beforeEach(() => {
-      const saveFileStub = sinon.stub(DiskStorage.prototype, 'saveFile').resolves('fileLocation');
+      saveFileStub = sinon.stub(DiskStorage.prototype, 'saveFile').resolves('fileLocation');
       stubs.push(saveFileStub);
     });
 
@@ -621,6 +625,37 @@ describe('ProductController', async (): Promise<void> => {
         image: true,
       } })).image.id).to.not.equal(image);
     });
+    it('should store the product image with the extension of its detected format', async () => {
+      const stub = sinon.stub(DiskStorage.prototype, 'validateFileLocation');
+      stubs.push(stub);
+
+      const { id } = ctx.products.filter((product) => product.image === undefined)[0];
+
+      const res = await request(ctx.app)
+        .post(`/products/${id}/image`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .attach('file', fs.readFileSync(path.join(__dirname, '../../static/product.png')), 'product-image.html');
+
+      expect(res.status).to.equal(204);
+      expect(saveFileStub).to.have.been.calledOnceWith('product.png');
+    });
+    it('should store a replacement product image with the extension of its detected format', async () => {
+      const stub = sinon.stub(DiskStorage.prototype, 'validateFileLocation');
+      stubs.push(stub);
+
+      const { id } = ctx.products.filter((product) => product.image !== undefined)[0];
+      const jpeg = await sharp({
+        create: { width: 128, height: 128, channels: 3, background: '#ffffff' },
+      }).jpeg().toBuffer();
+
+      const res = await request(ctx.app)
+        .post(`/products/${id}/image`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .attach('file', jpeg, 'product-image.png');
+
+      expect(res.status).to.equal(204);
+      expect(saveFileStub).to.have.been.calledOnceWith('product.jpg');
+    });
     it('should return 403 if not admin', async () => {
       const { id } = ctx.products.filter((product) => product.image === undefined)[1];
 
@@ -647,7 +682,6 @@ describe('ProductController', async (): Promise<void> => {
         .post(`/products/${id}/image`)
         .set('Authorization', `Bearer ${ctx.adminToken}`)
         .attach('wrongField', fs.readFileSync(path.join(__dirname, '../../static/product.png')), 'product-image.png');
-
       expect(res.status).to.equal(400);
     });
     it('should return 400 if two files are given', async () => {
@@ -661,6 +695,52 @@ describe('ProductController', async (): Promise<void> => {
 
       expect(res.status).to.equal(400);
     });
+
+    it('should return 400 if product image has invalid resolution', async () => {
+      const { id } = ctx.products.filter((product) => product.image === undefined)[0];
+
+      const res = await request(ctx.app)
+        .post(`/products/${id}/image`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .attach('file', fs.readFileSync(path.join(__dirname, '../../static/image.png')), 'product-image.png');
+
+      expect(res.status).to.equal(400);
+      expect(res.body).to.equal(`Image file is not valid: Image resolution must be at least ${IMAGE_REQUIREMENTS.product.minWidth}x${IMAGE_REQUIREMENTS.product.minHeight}px (received 32x32px).`);
+    });
+    it('should return 400 if product image has invalid aspect ratio', async () => {
+      const { id } = ctx.products.filter((product) => product.image === undefined)[0];
+
+      const res = await request(ctx.app)
+        .post(`/products/${id}/image`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .attach('file', fs.readFileSync(path.join(__dirname, '../../static/banner.png')), 'banner-image.png');
+
+      expect(res.status).to.equal(400);
+      expect(res.body).to.equal(`Image file is not valid: Image aspect ratio must be ${IMAGE_REQUIREMENTS.product.aspectRatioLabel} (+/- ${Math.round(IMAGE_REQUIREMENTS.product.aspectRatioTolerance * 100)}%).`);
+    });
+    it('should return 400 if product image is not a valid image file', async () => {
+      const { id } = ctx.products.filter((product) => product.image === undefined)[0];
+
+      const res = await request(ctx.app)
+        .post(`/products/${id}/image`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .attach('file', fs.readFileSync(path.join(__dirname, '../../static/not-image.txt')), 'not-image.txt');
+
+      expect(res.status).to.equal(400);
+      expect(res.body).to.equal('Image file is not valid: File is not a valid or supported image.');
+    });
+    it('should return 400 if product image is not in a valid format', async () => {
+      const { id } = ctx.products.filter((product) => product.image === undefined)[0];
+
+      const res = await request(ctx.app)
+        .post(`/products/${id}/image`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .attach('file', fs.readFileSync(path.join(__dirname, '../../static/product.avif')), 'product-image.avif');
+
+      expect(res.status).to.equal(400);
+      expect(res.body).to.equal(`Image file is not valid: Unsupported image format (heif). Allowed formats: ${ALLOWED_IMAGE_FORMATS.join(', ')}.`);
+    });
+
     it('should return 400 if no file data is given', async () => {
       const { id } = ctx.products.filter((product) => product.image === undefined)[1];
 

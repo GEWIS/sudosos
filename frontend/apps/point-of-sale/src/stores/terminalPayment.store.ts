@@ -8,15 +8,15 @@ import { posApiService } from '@/services/ApiService';
  * Mirror of the backend's TerminalPaymentState. The generated client types
  * `state` as a bare string, so the union lives here.
  */
-export type TerminalPaymentState = 'created' | 'processing' | 'paid' | 'cancelled';
+export type TerminalPaymentState = 'created' | 'processing' | 'paid' | 'cancelled' | 'failed';
 
 /**
  * What the cashier is currently looking at: `preparing` while we resolve the
  * reader and register the payment, `waiting` once the reader is asking for a
  * card and we're polling for the result, then `paid` or `cancelled` once
- * Stripe or the cashier settles it.
+ * Stripe or the cashier settles it, or `declined` when the card is refused.
  */
-export type TerminalPaymentPhase = 'idle' | 'preparing' | 'waiting' | 'paid' | 'cancelled' | 'error';
+export type TerminalPaymentPhase = 'idle' | 'preparing' | 'waiting' | 'paid' | 'cancelled' | 'declined' | 'error';
 
 /**
  * Thrown when we cannot decide which reader to send a payment to. A POS is
@@ -42,7 +42,12 @@ const TERMINAL_PAYMENT_EVENT = 'terminal_payment:updated';
  */
 const roomFor = (id: number): string => `terminal_payment:${id}:updates`;
 
-const isSettled = (state: string): boolean => state === 'paid' || state === 'cancelled';
+/** Phase to show once the backend reports a payment state it will not leave again. */
+const SETTLED_PHASE: Partial<Record<string, TerminalPaymentPhase>> = {
+  paid: 'paid',
+  cancelled: 'cancelled',
+  failed: 'declined',
+};
 
 const statusOf = (error: unknown): number | undefined =>
   (error as { response?: { status?: number } })?.response?.status;
@@ -184,8 +189,9 @@ export const useTerminalPaymentStore = defineStore('terminalPayment', {
       if (this.phase !== 'waiting' || payment.id !== this.payment?.id) return;
 
       this.payment = payment;
-      if (isSettled(payment.state)) {
-        this.phase = payment.state === 'paid' ? 'paid' : 'cancelled';
+      const settledPhase = SETTLED_PHASE[payment.state];
+      if (settledPhase) {
+        this.phase = settledPhase;
         this.stopListening();
       }
     },

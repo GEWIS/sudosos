@@ -3,3 +3,5 @@ node_modules/
 *.local
 .env
 .claude/settings.local.json
+
+**/.zed**

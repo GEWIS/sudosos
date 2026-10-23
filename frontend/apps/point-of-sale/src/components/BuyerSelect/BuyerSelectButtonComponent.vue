@@ -17,8 +17,6 @@
 </template>
 
 <script setup lang="ts">
-import Button from 'openvue/button';
-import ProgressSpinner from 'openvue/progressspinner';
 import { useCartStore } from '@/stores/cart.store';
 import { PointOfSaleAssociate } from '@/stores/pos.store';
 

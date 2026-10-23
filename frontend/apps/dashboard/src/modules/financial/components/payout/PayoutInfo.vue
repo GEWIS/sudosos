@@ -84,8 +84,6 @@ import type { BalanceResponse, PayoutRequestResponse } from '@gewis/sudosos-clie
 import { PayoutRequestStatusRequestStateEnum } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'openvue/usetoast';
-import Skeleton from 'openvue/skeleton';
-import Button from 'openvue/button';
 import { handleError } from '@/utils/errorUtils';
 import { getPayoutPdfSrc } from '@/utils/urlUtils';
 import { formatDateFromString, formatPrice } from 'sudosos-dashboard/src/utils/formatterUtils';
