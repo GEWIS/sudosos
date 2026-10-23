@@ -20,7 +20,7 @@
     "axios": "catalog:"
   },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "2.41.0",
+    "@openapitools/openapi-generator-cli": "2.42.0",
     "typescript": "catalog:"
   },
   "repository": {
