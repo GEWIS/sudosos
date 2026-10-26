@@ -1,5 +1,5 @@
 # Build in a different image to keep the target image clean
-FROM node:22-alpine AS build
+FROM node:22.23.4-alpine AS build
 
 RUN apk add --no-cache python3 make g++ py3-setuptools
 RUN npm install -g pnpm@12.8.1
@@ -15,7 +15,7 @@ RUN pnpm --filter sudosos-backend build \
 RUN HUSKY=0 pnpm deploy --filter sudosos-backend --prod /deploy
 
 # The target image that will be run
-FROM node:22-alpine AS target
+FROM node:22.23.4-alpine AS target
 
 WORKDIR /app
 RUN mkdir -p /app/config && chown node /app/config
