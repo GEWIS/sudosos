@@ -24,8 +24,5 @@ jobs:
     with:
       projects: '["."]'
       docker-paths: '["${{ vars.DOCKER_DOCS_TAG }}"]'
-      docker-registry: ${{ vars.DOCKER_REGISTRY }}
+      github-registry: 'true'
       dockerfile: './backend/Dockerfile-docs'
-    secrets:
-      REGISTRY_USERNAME: ${{ secrets.SVC_GH_SUDOSOS_USERNAME }}
-      REGISTRY_PASSWORD: ${{ secrets.SVC_GH_SUDOSOS_PWD }}
