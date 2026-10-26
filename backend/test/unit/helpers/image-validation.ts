@@ -20,7 +20,7 @@
 
 import { expect } from 'chai';
 import { UploadedFile } from 'express-fileupload';
-import sharp from 'sharp';
+import sharp, { type FormatEnum, type Sharp } from 'sharp';
 import { IMAGE_REQUIREMENTS, validateImageUpload } from '../../../src/helpers/image-validation';
 import { isFail, isPass } from '../../../src/helpers/specification-validation';
 
@@ -39,13 +39,13 @@ function toUpload(data: Buffer, name: string): UploadedFile {
   };
 }
 
-function blankImage(width: number, height: number): sharp.Sharp {
+function blankImage(width: number, height: number): Sharp {
   return sharp({ create: { width, height, channels: 3, background: '#ffffff' } });
 }
 
 describe('image-validation', () => {
   describe('validateImageUpload', () => {
-    const formats: [keyof sharp.FormatEnum, string][] = [
+    const formats: [keyof FormatEnum, string][] = [
       ['png', '.png'],
       ['jpeg', '.jpg'],
       ['webp', '.webp'],
