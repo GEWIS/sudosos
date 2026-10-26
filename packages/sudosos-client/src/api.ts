@@ -5636,143 +5636,6 @@ export interface TransactionFilterParameters {
 /**
  * 
  * @export
- * @interface TransactionReportCategoryEntryResponse
- */
-export interface TransactionReportCategoryEntryResponse {
-    /**
-     * 
-     * @type {ProductCategoryResponse}
-     * @memberof TransactionReportCategoryEntryResponse
-     */
-    'category': ProductCategoryResponse;
-    /**
-     * 
-     * @type {DineroObjectResponse}
-     * @memberof TransactionReportCategoryEntryResponse
-     */
-    'totalInclVat': DineroObjectResponse;
-    /**
-     * 
-     * @type {DineroObjectResponse}
-     * @memberof TransactionReportCategoryEntryResponse
-     */
-    'totalExclVat': DineroObjectResponse;
-}
-/**
- * 
- * @export
- * @interface TransactionReportDataResponse
- */
-export interface TransactionReportDataResponse {
-    /**
-     * The entries grouped by product
-     * @type {Array<TransactionReportEntryResponse>}
-     * @memberof TransactionReportDataResponse
-     */
-    'entries': Array<TransactionReportEntryResponse>;
-    /**
-     * The entries grouped by category
-     * @type {Array<TransactionReportCategoryEntryResponse>}
-     * @memberof TransactionReportDataResponse
-     */
-    'categories': Array<TransactionReportCategoryEntryResponse>;
-    /**
-     * The entries grouped by vat
-     * @type {Array<TransactionReportVatEntryResponse>}
-     * @memberof TransactionReportDataResponse
-     */
-    'vat': Array<TransactionReportVatEntryResponse>;
-}
-/**
- * 
- * @export
- * @interface TransactionReportEntryResponse
- */
-export interface TransactionReportEntryResponse {
-    /**
-     * The amount of times this product is in the report
-     * @type {number}
-     * @memberof TransactionReportEntryResponse
-     */
-    'count': number;
-    /**
-     * 
-     * @type {BaseProductResponse}
-     * @memberof TransactionReportEntryResponse
-     */
-    'product': BaseProductResponse;
-    /**
-     * 
-     * @type {DineroObjectResponse}
-     * @memberof TransactionReportEntryResponse
-     */
-    'totalInclVat': DineroObjectResponse;
-    /**
-     * 
-     * @type {DineroObjectResponse}
-     * @memberof TransactionReportEntryResponse
-     */
-    'totalExclVat': DineroObjectResponse;
-}
-/**
- * 
- * @export
- * @interface TransactionReportResponse
- */
-export interface TransactionReportResponse {
-    /**
-     * 
-     * @type {TransactionFilterParameters}
-     * @memberof TransactionReportResponse
-     */
-    'parameters': TransactionFilterParameters;
-    /**
-     * 
-     * @type {TransactionReportDataResponse}
-     * @memberof TransactionReportResponse
-     */
-    'data': TransactionReportDataResponse;
-    /**
-     * 
-     * @type {DineroObjectResponse}
-     * @memberof TransactionReportResponse
-     */
-    'totalExclVat': DineroObjectResponse;
-    /**
-     * 
-     * @type {DineroObjectResponse}
-     * @memberof TransactionReportResponse
-     */
-    'totalInclVat': DineroObjectResponse;
-}
-/**
- * 
- * @export
- * @interface TransactionReportVatEntryResponse
- */
-export interface TransactionReportVatEntryResponse {
-    /**
-     * 
-     * @type {BaseVatGroupResponse}
-     * @memberof TransactionReportVatEntryResponse
-     */
-    'vat': BaseVatGroupResponse;
-    /**
-     * 
-     * @type {DineroObjectResponse}
-     * @memberof TransactionReportVatEntryResponse
-     */
-    'totalInclVat': DineroObjectResponse;
-    /**
-     * 
-     * @type {DineroObjectResponse}
-     * @memberof TransactionReportVatEntryResponse
-     */
-    'totalExclVat': DineroObjectResponse;
-}
-/**
- * 
- * @export
  * @interface TransactionRequest
  */
 export interface TransactionRequest {
@@ -26079,70 +25942,6 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
         },
         /**
          * 
-         * @summary Get transaction report for the given user
-         * @param {number} id The id of the user to get the transaction report from
-         * @param {string} [fromDate] Start date for selected transactions (inclusive)
-         * @param {string} [tillDate] End date for selected transactions (exclusive)
-         * @param {number} [fromId] From-user for selected transactions
-         * @param {number} [toId] To-user for selected transactions
-         * @param {boolean} [exclusiveToId] If all sub-transactions should be to the toId user, default true
-         * @param {*} [options] Override http request option.
-         * @deprecated
-         * @throws {RequiredError}
-         */
-        getUsersTransactionsReport: async (id: number, fromDate?: string, tillDate?: string, fromId?: number, toId?: number, exclusiveToId?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('getUsersTransactionsReport', 'id', id)
-            const localVarPath = `/users/{id}/transactions/report`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication JWT required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-            if (fromDate !== undefined) {
-                localVarQueryParameter['fromDate'] = fromDate;
-            }
-
-            if (tillDate !== undefined) {
-                localVarQueryParameter['tillDate'] = tillDate;
-            }
-
-            if (fromId !== undefined) {
-                localVarQueryParameter['fromId'] = fromId;
-            }
-
-            if (toId !== undefined) {
-                localVarQueryParameter['toId'] = toId;
-            }
-
-            if (exclusiveToId !== undefined) {
-                localVarQueryParameter['exclusiveToId'] = exclusiveToId;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
          * @summary Get transfers to or from an user.
          * @param {number} id The id of the user that should be involved in all returned transfers
          * @param {number} [take] How many transfers the endpoint should return
@@ -27035,25 +26834,6 @@ export const UsersApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary Get transaction report for the given user
-         * @param {number} id The id of the user to get the transaction report from
-         * @param {string} [fromDate] Start date for selected transactions (inclusive)
-         * @param {string} [tillDate] End date for selected transactions (exclusive)
-         * @param {number} [fromId] From-user for selected transactions
-         * @param {number} [toId] To-user for selected transactions
-         * @param {boolean} [exclusiveToId] If all sub-transactions should be to the toId user, default true
-         * @param {*} [options] Override http request option.
-         * @deprecated
-         * @throws {RequiredError}
-         */
-        async getUsersTransactionsReport(id: number, fromDate?: string, tillDate?: string, fromId?: number, toId?: number, exclusiveToId?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TransactionReportResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getUsersTransactionsReport(id, fromDate, tillDate, fromId, toId, exclusiveToId, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['UsersApi.getUsersTransactionsReport']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
-         * 
          * @summary Get transfers to or from an user.
          * @param {number} id The id of the user that should be involved in all returned transfers
          * @param {number} [take] How many transfers the endpoint should return
@@ -27486,17 +27266,6 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
          */
         getUsersTransactions(requestParameters: UsersApiGetUsersTransactionsRequest, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedBaseTransactionResponse> {
             return localVarFp.getUsersTransactions(requestParameters.id, requestParameters.fromId, requestParameters.createdById, requestParameters.toId, requestParameters.productId, requestParameters.productRevision, requestParameters.fromDate, requestParameters.tillDate, requestParameters.take, requestParameters.skip, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @summary Get transaction report for the given user
-         * @param {UsersApiGetUsersTransactionsReportRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @deprecated
-         * @throws {RequiredError}
-         */
-        getUsersTransactionsReport(requestParameters: UsersApiGetUsersTransactionsReportRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<TransactionReportResponse>> {
-            return localVarFp.getUsersTransactionsReport(requestParameters.id, requestParameters.fromDate, requestParameters.tillDate, requestParameters.fromId, requestParameters.toId, requestParameters.exclusiveToId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -28326,55 +28095,6 @@ export interface UsersApiGetUsersTransactionsRequest {
 }
 
 /**
- * Request parameters for getUsersTransactionsReport operation in UsersApi.
- * @export
- * @interface UsersApiGetUsersTransactionsReportRequest
- */
-export interface UsersApiGetUsersTransactionsReportRequest {
-    /**
-     * The id of the user to get the transaction report from
-     * @type {number}
-     * @memberof UsersApiGetUsersTransactionsReport
-     */
-    readonly id: number
-
-    /**
-     * Start date for selected transactions (inclusive)
-     * @type {string}
-     * @memberof UsersApiGetUsersTransactionsReport
-     */
-    readonly fromDate?: string
-
-    /**
-     * End date for selected transactions (exclusive)
-     * @type {string}
-     * @memberof UsersApiGetUsersTransactionsReport
-     */
-    readonly tillDate?: string
-
-    /**
-     * From-user for selected transactions
-     * @type {number}
-     * @memberof UsersApiGetUsersTransactionsReport
-     */
-    readonly fromId?: number
-
-    /**
-     * To-user for selected transactions
-     * @type {number}
-     * @memberof UsersApiGetUsersTransactionsReport
-     */
-    readonly toId?: number
-
-    /**
-     * If all sub-transactions should be to the toId user, default true
-     * @type {boolean}
-     * @memberof UsersApiGetUsersTransactionsReport
-     */
-    readonly exclusiveToId?: boolean
-}
-
-/**
  * Request parameters for getUsersTransfers operation in UsersApi.
  * @export
  * @interface UsersApiGetUsersTransfersRequest
@@ -28941,19 +28661,6 @@ export class UsersApi extends BaseAPI {
      */
     public getUsersTransactions(requestParameters: UsersApiGetUsersTransactionsRequest, options?: RawAxiosRequestConfig) {
         return UsersApiFp(this.configuration).getUsersTransactions(requestParameters.id, requestParameters.fromId, requestParameters.createdById, requestParameters.toId, requestParameters.productId, requestParameters.productRevision, requestParameters.fromDate, requestParameters.tillDate, requestParameters.take, requestParameters.skip, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @summary Get transaction report for the given user
-     * @param {UsersApiGetUsersTransactionsReportRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @deprecated
-     * @throws {RequiredError}
-     * @memberof UsersApi
-     */
-    public getUsersTransactionsReport(requestParameters: UsersApiGetUsersTransactionsReportRequest, options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).getUsersTransactionsReport(requestParameters.id, requestParameters.fromDate, requestParameters.tillDate, requestParameters.fromId, requestParameters.toId, requestParameters.exclusiveToId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
