@@ -24,7 +24,7 @@ overrides:
   '@swc/core': 1.16.2
 
 catalog:
-  axios: 1.20.0
+  axios: 1.21.0
   vue: ^3.5.44
   pinia: ^3.0.4
   typescript: ~5.9.3
