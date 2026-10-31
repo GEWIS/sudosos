@@ -27,6 +27,7 @@
 import MailMessage, { Language, MailLanguageMap } from '../mail-message';
 import MailContentBuilder from './mail-content-builder';
 import { WelcomeWithResetOptions } from '../../notifications';
+import Config from '../../config';
 
 const welcomeWithResetDutch = new MailContentBuilder<WelcomeWithResetOptions>({
   getHTML: (context) => `
@@ -73,7 +74,7 @@ export default class WelcomeWithReset extends MailMessage<WelcomeWithResetOption
       ...options,
     };
     if (!options.url) {
-      opt.url = process.env.url;
+      opt.url = Config.get().app.frontendUrl;
     }
     super(opt, mailContents);
   }

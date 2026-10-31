@@ -27,6 +27,7 @@
 import MailMessage, { Language, MailLanguageMap } from '../mail-message';
 import MailContentBuilder from './mail-content-builder';
 import { WelcomeWithResetOptions } from '../../notifications';
+import Config from '../../config';
 
 const passwordResetDutch = new MailContentBuilder<WelcomeWithResetOptions>({
   getHTML: (context) => {
@@ -91,7 +92,7 @@ export default class PasswordReset extends MailMessage<WelcomeWithResetOptions> 
       ...options,
     };
     if (!options.url) {
-      opt.url = process.env.url;
+      opt.url = Config.get().app.frontendUrl;
     }
     super(opt, mailContents);
   }

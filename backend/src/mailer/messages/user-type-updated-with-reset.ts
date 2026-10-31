@@ -23,6 +23,7 @@ import {
 } from '../../notifications/notification-options';
 import MailContentBuilder from './mail-content-builder';
 import MailMessage, { Language, MailLanguageMap } from '../mail-message';
+import Config from '../../config';
 
 /**
  * This is the module page of the user-type-updated.
@@ -87,7 +88,7 @@ export default class UserTypeUpdatedWithReset extends MailMessage<UserTypeUpdate
       ...options,
     };
     if (!options.url) {
-      opt.url = process.env.url;
+      opt.url = Config.get().app.frontendUrl;
     }
     super(opt, mailContents);
   }
