@@ -68,11 +68,8 @@
       },
       "invoice": {
         "vat": {
-          "title": "VAT",
           "percentage": "VAT %",
-          "baseExclVat": "Base (Excl. VAT)",
-          "inclVat": "Incl. VAT",
-          "vat": "VAT Amount"
+          "over": "{percentage}% VAT over {base}"
         },
         "header": "Invoices",
         "invoice": "Invoice",
