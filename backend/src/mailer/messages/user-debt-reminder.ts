@@ -27,6 +27,7 @@
 import MailContentBuilder from './mail-content-builder';
 import MailMessage, { Language, MailLanguageMap } from '../mail-message';
 import { UserDebtReminderOptions } from '../../notifications';
+import Config from '../../config';
 
 const userDebtReminderDutch = new MailContentBuilder<UserDebtReminderOptions>({
   getHTML: (context) => `
@@ -73,7 +74,7 @@ export default class UserDebtReminder extends MailMessage<UserDebtReminderOption
   public constructor(options: UserDebtReminderOptions) {
     const opt: UserDebtReminderOptions = { ...options };
     if (!options.url) {
-      opt.url = process.env.url;
+      opt.url = Config.get().app.frontendUrl;
     }
     super(opt, mailContents);
   }
