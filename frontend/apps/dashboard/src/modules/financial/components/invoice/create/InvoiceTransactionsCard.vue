@@ -1,5 +1,5 @@
 <template>
-  <FormCard :create="true" :header="t('modules.financial.invoice.transfer')" @cancel="form.context.resetForm">
+  <FormCard :create="true" :header="t('modules.financial.invoice.create.period')" @cancel="form.context.resetForm">
     <div class="flex flex-col gap-2 justify-between">
       <InvoiceTransactionsForm :form="form" />
     </div>

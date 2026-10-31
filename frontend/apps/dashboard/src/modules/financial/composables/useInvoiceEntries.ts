@@ -1,6 +1,5 @@
 import { computed, type Ref } from 'vue';
-import type { DineroObjectResponse, InvoiceEntryResponse, InvoiceResponse } from '@gewis/sudosos-client';
-import { isDirty } from '@/utils/invoiceUtil';
+import type { DineroObjectResponse, InvoiceEntryResponse, TransferResponse } from '@gewis/sudosos-client';
 import i18n from '@/utils/i18nUtils';
 
 export interface VatEntry {
@@ -20,10 +19,14 @@ export type RowEntry = InvoiceEntryResponse & {
 };
 
 const t = i18n.global.t;
-export function useInvoiceEntries(invoice: Ref<InvoiceResponse>) {
+/**
+ * Rows and totals for a list of invoice entries.
+ * `transfer` is the invoice's transfer; an invoice that is not created yet has none.
+ */
+export function useInvoiceEntries(entries: Ref<InvoiceEntryResponse[]>, transfer: Ref<TransferResponse | undefined>) {
   // Build product entries
   const productEntries = computed<RowEntry[]>(() =>
-    invoice.value.invoiceEntries.map((entry) => ({
+    entries.value.map((entry) => ({
       ...entry,
       custom: false,
       class: {},
@@ -33,7 +36,7 @@ export function useInvoiceEntries(invoice: Ref<InvoiceResponse>) {
   // VAT entries (for VAT card)
   const vatEntries = computed<VatEntry[]>(() => {
     const map = new Map<number, VatEntry>();
-    invoice.value.invoiceEntries.forEach((entry) => {
+    entries.value.forEach((entry) => {
       const totalInclVat = entry.priceInclVat.amount * entry.amount;
       const base = Math.round(entry.priceInclVat.amount / (1 + entry.vatPercentage / 100)) * entry.amount;
       const vatAmt = totalInclVat - base;
@@ -86,13 +89,13 @@ export function useInvoiceEntries(invoice: Ref<InvoiceResponse>) {
       },
     ];
 
-    // Add transfer warning row if needed
-    if (invoice.value.transfer && isDirty(invoice.value)) {
+    // Add a warning row if the entries do not add up to the transfer (see isDirty)
+    if (transfer.value && inclVat.value.amount !== transfer.value.amountInclVat.amount) {
       rows.push({
         description: t('modules.financial.invoice.transfer'),
         amount: 1,
         vatPercentage: 0,
-        priceInclVat: invoice.value.transfer.amountInclVat,
+        priceInclVat: transfer.value.amountInclVat,
         custom: false,
         class: { 'text-red-500': true },
       });
