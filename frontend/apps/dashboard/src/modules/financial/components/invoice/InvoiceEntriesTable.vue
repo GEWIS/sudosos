@@ -31,14 +31,14 @@
         <span v-if="entry.index < totalRowCutoff">
           {{ entry.data.vatPercentage + '%' }}
         </span>
-        <span v-else class="font-bold" :class="{ ...entry.data.class }">
+        <span v-else :class="{ 'font-bold': !entry.data.muted, ...entry.data.class }">
           {{ entry.data.description }}
         </span>
       </template>
     </Column>
     <Column class="p-1" field="totalPriceInclVat" :header="t('common.amount')">
       <template #body="entry">
-        <span :class="{ 'font-bold': entry.index >= totalRowCutoff, ...entry.data.class }">
+        <span :class="{ 'font-bold': entry.index >= totalRowCutoff && !entry.data.muted, ...entry.data.class }">
           {{ formatPrice(rowTotal(entry.data)) }}
         </span>
       </template>

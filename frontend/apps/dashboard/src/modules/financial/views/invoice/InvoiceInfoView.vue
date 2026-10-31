@@ -22,7 +22,6 @@
           <InvoiceInfo :invoice-id="invoice.id" />
         </div>
         <div class="flex flex-col gap-5">
-          <InvoiceVatCard v-if="invoice" :invoice-id="invoice.id" />
           <InvoicePdf v-if="invoice" :invoice-id="invoice.id" />
         </div>
       </div>
@@ -51,7 +50,6 @@ import InvoiceInfo from '@/modules/financial/components/invoice/InvoiceInfo.vue'
 import InvoiceAmountCard from '@/modules/financial/components/invoice/InvoiceAmountCard.vue';
 import { isDirty } from '@/utils/invoiceUtil';
 import PageContainer from '@/layout/PageContainer.vue';
-import InvoiceVatCard from '@/modules/financial/components/invoice/InvoiceVatCard.vue';
 
 const { t } = useI18n();
 const toast = useToast();

@@ -1,6 +1,7 @@
 import { computed, type Ref } from 'vue';
 import type { DineroObjectResponse, InvoiceEntryResponse, TransferResponse } from '@gewis/sudosos-client';
 import i18n from '@/utils/i18nUtils';
+import { formatPrice } from '@/utils/formatterUtils';
 
 export interface VatEntry {
   vatPercentage: number;
@@ -16,6 +17,7 @@ export type RowEntry = InvoiceEntryResponse & {
   priceInclVat: DineroObjectResponse;
   vatPercentage: number;
   custom?: boolean;
+  muted?: boolean;
 };
 
 const t = i18n.global.t;
@@ -53,7 +55,7 @@ export function useInvoiceEntries(entries: Ref<InvoiceEntryResponse[]>, transfer
       vatEntry.amountInclVat.amount += totalInclVat;
       vatEntry.vatAmount.amount += vatAmt;
     });
-    return Array.from(map.values());
+    return Array.from(map.values()).sort((a, b) => a.vatPercentage - b.vatPercentage);
   });
 
   // Total calculation
@@ -79,6 +81,19 @@ export function useInvoiceEntries(entries: Ref<InvoiceEntryResponse[]>, transfer
         custom: false,
         class: {},
       },
+      // One row per VAT rate, like the VAT summary on the invoice PDF.
+      ...vatEntries.value.map((vat) => ({
+        description: t('modules.financial.invoice.vat.over', {
+          percentage: vat.vatPercentage,
+          base: formatPrice(vat.baseAmount),
+        }),
+        amount: 1,
+        vatPercentage: vat.vatPercentage,
+        priceInclVat: vat.vatAmount,
+        custom: false,
+        muted: true,
+        class: {},
+      })),
       {
         description: t('common.incl'),
         amount: 1,
