@@ -1,5 +1,5 @@
 <template>
-  <CardComponent header="User Selection">
+  <CardComponent :header="t('modules.financial.invoice.create.account')">
     <!-- TODO: Improve two way binding such that resetting the form will also reset the user selection -->
     <InputUserSpan
       v-model:value="selectedUser"

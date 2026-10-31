@@ -49,15 +49,17 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { InvoiceResponse } from '@gewis/sudosos-client';
+import type { InvoiceEntryResponse, TransferResponse } from '@gewis/sudosos-client';
 import { useInvoiceEntries } from '@/modules/financial/composables/useInvoiceEntries';
 import { formatPrice } from 'sudosos-dashboard/src/utils/formatterUtils';
 
 const { t } = useI18n();
-const props = defineProps<{ invoice: InvoiceResponse }>();
-const invoiceRef = computed(() => props.invoice);
+const props = defineProps<{ entries: InvoiceEntryResponse[]; transfer?: TransferResponse }>();
 
-const { allRows, totalRowCutoff, rowTotal } = useInvoiceEntries(invoiceRef);
+const { allRows, totalRowCutoff, rowTotal } = useInvoiceEntries(
+  computed(() => props.entries),
+  computed(() => props.transfer),
+);
 </script>
 
 <style scoped lang="scss"></style>

@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useInvoiceEntries } from '@/modules/financial/composables/useInvoiceEntries';
 import CardComponent from '@/components/CardComponent.vue';
@@ -32,7 +33,10 @@ const { t } = useI18n();
 const props = defineProps<{ invoiceId: number }>();
 
 const { invoice } = useInvoiceCard(props.invoiceId);
-const { vatEntries } = useInvoiceEntries(invoice);
+const { vatEntries } = useInvoiceEntries(
+  computed(() => invoice.value.invoiceEntries),
+  computed(() => invoice.value.transfer),
+);
 </script>
 
 <style scoped lang="scss"></style>

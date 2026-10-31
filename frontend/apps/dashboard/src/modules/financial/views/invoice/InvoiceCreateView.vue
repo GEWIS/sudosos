@@ -6,12 +6,9 @@
           <InvoiceCreateUserCard class="flex-grow" :form="form" />
           <InvoiceTransactionsCard class="flex-grow" :form="form" />
         </div>
-        <div class="flex flex-col gap-3 flex-grow">
-          <InvoiceCreateAddressingCard class="flex-grow" :form="form" />
-          <InvoiceCreateSettingsCard class="flex-grow" :form="form" />
-          <InvoiceCreate class="flex-grow" :form="form" />
-        </div>
+        <InvoiceCreateDetailsCard class="flex-grow" :form="form" />
       </div>
+      <InvoiceCreateEntriesCard class="w-full" :form="form" />
     </div>
   </PageContainer>
 </template>
@@ -21,9 +18,8 @@ import InvoiceTransactionsCard from '@/modules/financial/components/invoice/crea
 import { schemaToForm } from '@/utils/formUtils';
 import { createInvoiceObject } from '@/utils/validation-schema';
 import InvoiceCreateUserCard from '@/modules/financial/components/invoice/create/InvoiceCreateUserCard.vue';
-import InvoiceCreateAddressingCard from '@/modules/financial/components/invoice/create/InvoiceCreateAddressingCard.vue';
-import InvoiceCreateSettingsCard from '@/modules/financial/components/invoice/create/InvoiceCreateSettingsCard.vue';
-import InvoiceCreate from '@/modules/financial/components/invoice/create/InvoiceCreate.vue';
+import InvoiceCreateDetailsCard from '@/modules/financial/components/invoice/create/InvoiceCreateDetailsCard.vue';
+import InvoiceCreateEntriesCard from '@/modules/financial/components/invoice/create/InvoiceCreateEntriesCard.vue';
 import PageContainer from '@/layout/PageContainer.vue';
 
 const form = schemaToForm(createInvoiceObject);

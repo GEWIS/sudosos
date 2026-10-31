@@ -21,9 +21,6 @@
       @clear-click="handleClear"
       @month-change="monthChange($event)"
     />
-
-    {{ t('modules.financial.invoice.create.pos') }}
-    <span class="font-bold">{{ includedPOSString }}</span>
   </div>
 </template>
 
@@ -33,21 +30,14 @@
  * Days with transactions are highlighted, based on the forId in the form context.
  */
 
-import { useI18n } from 'vue-i18n';
 import { computed, type ComputedRef, type PropType, type Ref, ref, watch } from 'vue';
 import * as yup from 'yup';
-import {
-  type BasePointOfSaleResponse,
-  type BaseTransactionResponse,
-  type TransactionResponse,
-} from '@gewis/sudosos-client';
+import { type BaseTransactionResponse } from '@gewis/sudosos-client';
 import { useToast } from 'openvue/usetoast';
 import { type Form, getProperty } from '@/utils/formUtils';
 import type { createInvoiceObject } from '@/utils/validation-schema';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
-
-const { t } = useI18n();
 
 const props = defineProps({
   form: {
@@ -58,7 +48,6 @@ const props = defineProps({
 
 const dates = ref<(Date | null)[]>([]);
 const transactionCalendar = ref(0);
-const includedPOS: Ref<{ [key: number]: BasePointOfSaleResponse }> = ref({});
 const selectedUser: ComputedRef<number | undefined> = computed(() => getProperty(props.form, 'forId'));
 const isLoading: Ref<boolean> = ref(false);
 
@@ -81,7 +70,6 @@ const getTransactions = () => {
   fromDate.setHours(0, 0, 0, 0);
   toDate.setHours(23, 59, 59, 999);
 
-  props.form.context.resetField('transactionTotal');
   apiService.invoices
     .getEligibleTransactions({
       forId: selectedUser.value,
@@ -90,17 +78,14 @@ const getTransactions = () => {
     })
     .then((res) => {
       const t = res.data;
+      const amount = t.reduce((sum, transaction) => sum + transaction.totalPriceInclVat.amount, 0);
 
-      includedPOS.value = {};
-
-      const transactionsIds: number[] = [];
-      t.forEach((transaction: TransactionResponse) => {
-        // eslint-disable-next-line vue/no-mutating-props
-        props.form.model.transactionTotal.value.value.amount += transaction.totalPriceInclVat.amount;
-        includedPOS.value[transaction.pointOfSale.id] = transaction.pointOfSale;
-        transactionsIds.push(transaction.id);
-      });
-      props.form.context.setFieldValue('transactionIDs', transactionsIds);
+      props.form.context.setFieldValue(
+        'transactionIDs',
+        t.map((transaction) => transaction.id),
+      );
+      props.form.context.setFieldValue('transactions', t);
+      props.form.context.setFieldValue('transactionTotal', { precision: 2, currency: 'EUR', amount });
     })
     .catch((err) => {
       handleError(err, useToast());
@@ -113,6 +98,7 @@ const getTransactions = () => {
 function handleClear() {
   dates.value = [];
   props.form.context.resetField('transactionIDs');
+  props.form.context.resetField('transactions');
   props.form.context.resetField('transactionTotal');
 }
 
@@ -198,15 +184,6 @@ const monthChange = (event: { month: number; year: number }) => {
 const clearHeatmap = () => {
   transactionsPerDay.value = {};
 };
-
-/**
- * Get a string of all included POS.
- */
-const includedPOSString = computed(() => {
-  return Object.values(includedPOS.value)
-    .map((p: BasePointOfSaleResponse) => `${p.name} (id ${p.id})`)
-    .join(', ');
-});
 </script>
 
 <style lang="scss">

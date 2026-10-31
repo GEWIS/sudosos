@@ -95,8 +95,9 @@
           "userBalance": "Selected users' balance",
           "invocieAmount": "Proposed invoice amount",
           "balanceAfter": "Balance after invoice",
-          "pos": "Points of sale included in the invoice:",
-          "warning": "Make sure to check the invoice before creating it."
+          "period": "Invoice period",
+          "account": "Invoice account",
+          "entries": "Invoice lines"
         },
         "account": {
           "lastTransaction": "Last transaction",
@@ -127,6 +128,7 @@
         "invoice": {
           "reference": "Reference",
           "settings": "Settings",
+          "details": "Invoice details",
           "addressing": "Addressing",
           "addressee": "Addressee",
           "attention": "Attention",

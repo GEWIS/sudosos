@@ -95,8 +95,9 @@
           "userBalance": "Saldo wybranych użytkowników",
           "invocieAmount": "Proponowana kwota faktury",
           "balanceAfter": "Saldo po wystawieniu faktury",
-          "pos": "Punkty sprzedaży uwzględnione na fakturze:",
-          "warning": "Przed utworzeniem faktury upewnij się, że jest poprawna."
+          "period": "Okres faktury",
+          "account": "Konto faktury",
+          "entries": "Pozycje faktury"
         },
         "account": {
           "lastTransaction": "Ostatnia transakcja",
@@ -127,6 +128,7 @@
         "invoice": {
           "reference": "Tytuł",
           "settings": "Ustawienia",
+          "details": "Szczegóły faktury",
           "addressing": "Adresowanie",
           "addressee": "Adresat",
           "attention": "Uwaga",
