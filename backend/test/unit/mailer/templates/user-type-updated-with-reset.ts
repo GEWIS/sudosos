@@ -38,9 +38,9 @@ describe('UserTypeUpdatedWithResetTemplate', () => {
     expect(options.subject).to.equal('Account Type Changed - Set Password');
     expect(options.to).to.equal(user.email);
     expect(options.html).to.include('changed from MEMBER to LOCAL_USER');
-    expect(options.html).to.include('https://sudosos.test/passwordreset?email=samuel@example.test');
+    expect(options.html).to.include('https://sudosos.test/passwordreset?email=samuel%40example.test');
     expect(options.text).to.include('changed from MEMBER to LOCAL_USER');
-    expect(options.text).to.include('https://sudosos.test/passwordreset?email=samuel@example.test');
+    expect(options.text).to.include('https://sudosos.test/passwordreset?email=samuel%40example.test');
   });
 
   it('builds a Dutch email with the from/to user types and the reset link', () => {
@@ -53,7 +53,7 @@ describe('UserTypeUpdatedWithResetTemplate', () => {
     const options = new UserTypeUpdatedWithReset(opts).getOptions(user, Language.DUTCH);
     expect(options.subject).to.equal('Account type gewijzigd - Wachtwoord instellen');
     expect(options.html).to.include('gewijzigd van MEMBER naar LOCAL_USER');
-    expect(options.html).to.include('https://sudosos.test/passwordreset?email=samuel@example.test');
+    expect(options.html).to.include('https://sudosos.test/passwordreset?email=samuel%40example.test');
     expect(options.text).to.include('gewijzigd van MEMBER naar LOCAL_USER');
   });
 
@@ -67,7 +67,7 @@ describe('UserTypeUpdatedWithResetTemplate', () => {
         'LOCAL_USER',
       );
       const options = new UserTypeUpdatedWithReset(opts).getOptions(user, Language.ENGLISH);
-      expect(options.html).to.include('https://from-env.test/passwordreset?email=samuel@example.test');
+      expect(options.html).to.include('https://from-env.test/passwordreset?email=samuel%40example.test');
     } finally {
       if (originalUrl === undefined) delete process.env.URL;
       else process.env.URL = originalUrl;

@@ -24,6 +24,7 @@ import {
 import MailContentBuilder from './mail-content-builder';
 import MailMessage, { Language, MailLanguageMap } from '../mail-message';
 import Config from '../../config';
+import passwordResetLink from '../password-reset-link';
 
 /**
  * This is the module page of the user-type-updated.
@@ -33,7 +34,7 @@ import Config from '../../config';
 
 const userTypeUpdatedWithResetDutch = new MailContentBuilder<UserTypeUpdatedWithResetOptions>({
   getHTML: (context) => {
-    const link = context.url + '/passwordreset?email=' + context.email;
+    const link = passwordResetLink(context.url, context.email);
     return `
 <p>Het type van je account is gewijzigd van ${context.fromType} naar ${context.toType}.</p>
 
@@ -50,13 +51,13 @@ Het type van je account is gewijzigd van ${context.fromType} naar ${context.toTy
 
 Om het proces te voltooien moet je een wachtwoord instellen.
 
-${context.url + '/passwordreset?email=' + context.email}
+${passwordResetLink(context.url, context.email)}
 `,
 });
 
 const userTypeUpdatedWithResetEnglish = new MailContentBuilder<UserTypeUpdatedWithResetOptions>({
   getHTML: (context) => {
-    const link = context.url + '/passwordreset?email=' + context.email;
+    const link = passwordResetLink(context.url, context.email);
     return `
 <p>The type of your account has been changed from ${context.fromType} to ${context.toType}.</p>
 
@@ -73,7 +74,7 @@ The type of your account has been changed from ${context.fromType} to ${context.
 
 To complete the process, you need to set a password.
 
-${context.url + '/passwordreset?email=' + context.email}
+${passwordResetLink(context.url, context.email)}
 `,
 });
 
