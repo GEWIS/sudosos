@@ -78,11 +78,18 @@ export const useInvoiceStore = defineStore('invoice', {
     async fetchInvoices(
       take: number,
       skip: number,
-      q: { state?: InvoiceStatusResponseStateEnum; fromDate?: string; tillDate?: string },
+      q: { state?: InvoiceStatusResponseStateEnum; fromDate?: string; tillDate?: string; description?: string },
     ): Promise<PaginatedInvoiceResponse> {
-      const { state, fromDate, tillDate } = q;
+      const { state, fromDate, tillDate, description } = q;
       return await ApiService.invoices
-        .getAllInvoices({ currentState: state ? [state] : undefined, fromDate, tillDate, take, skip })
+        .getAllInvoices({
+          currentState: state ? [state] : undefined,
+          fromDate,
+          tillDate,
+          description: description || undefined,
+          take,
+          skip,
+        })
         .then((res) => {
           const invoices = res.data.records;
           invoices.forEach((invoice: InvoiceResponseTypes) => {

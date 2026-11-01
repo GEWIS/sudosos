@@ -27,7 +27,7 @@ import { debounce } from '@/utils/debounceUtil';
  * ## Query param names per table
  * | Table       | `year`             | `id`           | filter keys |
  * | ----------- | ------------------ | -------------- | ----------- |
- * | Invoices    | fiscal year number | invoice ID     | `state`     |
+ * | Invoices    | fiscal year number | — (`description` search) | `state` |
  * | Write-offs  | fiscal year number | write-off ID   | —           |
  * | Payouts     | fiscal year number | payout ID      | `state`     |
  */
@@ -79,7 +79,8 @@ export function useEntityTable<T, F extends Record<string, unknown>>(
     queryParamSync: syncOpts
       ? {
           yearKey: 'year',
-          searchKey: 'id',
+          // In filter-search mode the URL param is named after the filter, e.g. ?description=...
+          searchKey: options?.searchKey ? String(options.searchKey) : 'id',
           serializeFilters: filterSync?.serializeFilters,
           deserializeFilters: filterSync?.deserializeFilters,
         }
@@ -90,6 +91,8 @@ export function useEntityTable<T, F extends Record<string, unknown>>(
 
   // Filter-based search: debounced, triggers on every keystroke
   if (searchKey) {
+    // A search restored from the URL applies before the first load.
+    if (table.search.value) table.filters.value[searchKey] = table.search.value as F[typeof searchKey];
     const debouncedSearch = debounce(() => {
       return Promise.resolve(table.setFilter(searchKey, table.search.value as F[typeof searchKey]));
     }, 250);
