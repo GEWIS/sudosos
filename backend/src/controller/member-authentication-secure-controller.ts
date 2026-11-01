@@ -72,7 +72,6 @@ export default class MemberAuthenticationSecureController extends BaseController
         POST: {
           policy: async () => Promise.resolve(true),
           handler: this.memberPINLogin.bind(this),
-          restrictions: { lesser: false },
         },
       },
     };
