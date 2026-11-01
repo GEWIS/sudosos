@@ -332,8 +332,8 @@ importers:
         specifier: 3.0.3
         version: 3.0.3
       nodemailer:
-        specifier: 6.10.1
-        version: 6.10.1
+        specifier: 10.3.1
+        version: 10.3.1
       reflect-metadata:
         specifier: 0.2.2
         version: 0.2.2
@@ -419,9 +419,6 @@ importers:
       '@types/node-cron':
         specifier: 3.0.11
         version: 3.0.11
-      '@types/nodemailer':
-        specifier: 6.4.17
-        version: 6.4.17
       '@types/sinon':
         specifier: 17.0.3
         version: 17.0.3
@@ -3431,9 +3428,6 @@ packages:
 
   '@types/node@24.13.3':
     resolution: {integrity: sha512-Dh8vAsV36ig5wa9OX4pXvMc9D3Veibfw2wix0CUwYODLD8nkj9UsLjASr49nPg+2eKzxhBV+v7L8pXvT4e639Q==}
-
-  '@types/nodemailer@6.4.17':
-    resolution: {integrity: sha512-I9CCaIp6DTldEg7vyUTZi8+9Vo0hi1/T8gv3C89yk1rSAAzoKQ8H8ki/jBYJSFoH/BisgLP8tkZMlQ91CIquww==}
 
   '@types/qrcode@1.5.6':
     resolution: {integrity: sha512-te7NQcV2BOvdj2b1hCAHzAoMNuj65kNBMz0KBaxM6c3VGBOhU0dURQKOtH8CFNI/dsKkwlv32p26qYQTWoB5bw==}
@@ -7014,9 +7008,9 @@ packages:
     deprecated: 'Please upgrade to @mapbox/node-pre-gyp: the non-scoped node-pre-gyp package is deprecated and only the @mapbox scoped package will recieve updates in the future'
     hasBin: true
 
-  nodemailer@6.10.1:
-    resolution: {integrity: sha512-Z+iLaBGVaSjbIzQ4pX6XV41HrooLsQ10ZWPUehGmuantvzWoDVBnmsdUcOIDM1t+yPor5pDhVlDESgOMEGxhHA==}
-    engines: {node: '>=6.0.0'}
+  nodemailer@10.3.1:
+    resolution: {integrity: sha512-uF0AFsJC07Y1vdW7p580DKAnh7rAO+4UPSSB3mDCPNDufoiaOebV6JmrzpxB14OjEEEiBsNdYoM2Y+fN8M7BBA==}
+    engines: {node: '>=20.0.0'}
 
   nodemon@3.1.14:
     resolution: {integrity: sha512-jakjZi93UtB3jHMWsXL68FXSAosbLfY0In5gtKq3niLSkrWznrVBzXFNOEMJUfc9+Ke7SHWoAZsiMkNP3vq6Jw==}
@@ -11405,10 +11399,6 @@ snapshots:
     dependencies:
       undici-types: 7.18.2
 
-  '@types/nodemailer@6.4.17':
-    dependencies:
-      '@types/node': 24.13.3
-
   '@types/qrcode@1.5.6':
     dependencies:
       '@types/node': 24.13.3
@@ -15609,7 +15599,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  nodemailer@6.10.1: {}
+  nodemailer@10.3.1: {}
 
   nodemon@3.1.14:
     dependencies:
