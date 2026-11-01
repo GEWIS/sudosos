@@ -17,8 +17,7 @@
         <div class="flex flex-col gap-5">
           <InvoiceAmountCard v-if="dirty" :invoice-id="invoice.id" />
           <InvoiceStepsCard v-else :invoice-id="invoice.id" />
-          <InvoiceSettingsCard :invoice-id="invoice.id" />
-          <InvoiceAddressingCard :invoice-id="invoice.id" />
+          <InvoiceDetailsCard :invoice-id="invoice.id" />
           <InvoiceInfo :invoice-id="invoice.id" />
         </div>
         <div class="flex flex-col gap-5">
@@ -42,8 +41,7 @@ import { handleError } from '@/utils/errorUtils';
 import { useInvoiceStore } from '@/stores/invoice.store';
 import 'vue3-pdf-app/dist/icons/main.css';
 import router from '@/router';
-import InvoiceSettingsCard from '@/modules/financial/components/invoice/InvoiceSettingsCard.vue';
-import InvoiceAddressingCard from '@/modules/financial/components/invoice/InvoiceAddressingCard.vue';
+import InvoiceDetailsCard from '@/modules/financial/components/invoice/InvoiceDetailsCard.vue';
 import InvoiceStepsCard from '@/modules/financial/components/invoice/InvoiceStepsCard.vue';
 import InvoicePdf from '@/modules/financial/components/invoice/InvoicePdf.vue';
 import InvoiceInfo from '@/modules/financial/components/invoice/InvoiceInfo.vue';
