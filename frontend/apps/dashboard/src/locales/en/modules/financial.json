@@ -94,7 +94,13 @@
           "balanceAfter": "Balance after invoice",
           "period": "Invoice period",
           "account": "Invoice account",
-          "entries": "Invoice lines"
+          "entries": "Invoice lines",
+          "next": "Next",
+          "steps": {
+            "account": "Account & period",
+            "details": "Details",
+            "summary": "Summary"
+          }
         },
         "account": {
           "lastTransaction": "Last transaction",

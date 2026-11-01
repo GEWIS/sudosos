@@ -94,7 +94,13 @@
           "balanceAfter": "Saldo po wystawieniu faktury",
           "period": "Okres faktury",
           "account": "Konto faktury",
-          "entries": "Pozycje faktury"
+          "entries": "Pozycje faktury",
+          "next": "Dalej",
+          "steps": {
+            "account": "Konto i okres",
+            "details": "Szczegóły",
+            "summary": "Podsumowanie"
+          }
         },
         "account": {
           "lastTransaction": "Ostatnia transakcja",

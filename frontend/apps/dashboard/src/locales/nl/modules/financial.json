@@ -94,7 +94,13 @@
           "balanceAfter": "Saldo na factuur",
           "period": "Factuurperiode",
           "account": "Factuuraccount",
-          "entries": "Factuurregels"
+          "entries": "Factuurregels",
+          "next": "Volgende",
+          "steps": {
+            "account": "Account & periode",
+            "details": "Gegevens",
+            "summary": "Overzicht"
+          }
         },
         "account": {
           "lastTransaction": "Laatste transactie",

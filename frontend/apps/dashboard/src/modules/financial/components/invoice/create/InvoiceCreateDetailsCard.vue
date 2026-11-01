@@ -1,13 +1,17 @@
 <template>
   <FormCard :enable-edit="false" :header="t('modules.financial.forms.invoice.details')">
-    <div class="flex flex-col gap-2">
-      <h4 class="font-semibold m-0">{{ t('modules.financial.forms.invoice.settings') }}</h4>
-      <InvoiceBaseSettingsForm :edit="edit" :form="form" />
-
-      <Divider />
-
-      <h4 class="font-semibold m-0">{{ t('modules.financial.forms.invoice.addressing') }}</h4>
-      <InvoiceBaseAddressingForm :edit="edit" :form="form" />
+    <!-- Container query: side by side when the card is wide, stacked when it shares the row (summary step). -->
+    <div class="@container">
+      <div class="flex flex-col @2xl:flex-row gap-8">
+        <div class="flex flex-col gap-2 flex-1">
+          <h4 class="font-semibold m-0">{{ t('modules.financial.forms.invoice.settings') }}</h4>
+          <InvoiceBaseSettingsForm :edit="edit" :form="form" />
+        </div>
+        <div class="flex flex-col gap-2 flex-1">
+          <h4 class="font-semibold m-0">{{ t('modules.financial.forms.invoice.addressing') }}</h4>
+          <InvoiceBaseAddressingForm :edit="edit" :form="form" />
+        </div>
+      </div>
     </div>
   </FormCard>
 </template>
@@ -15,7 +19,8 @@
 <script setup lang="ts">
 /**
  * Combined settings (reference, date, description) and addressing fields for a new invoice.
- * Fields stay disabled until a user is selected, since selecting one fills in the address.
+ * Fields stay disabled until a user is selected, since selecting one fills in the address,
+ * and on the summary step (`disabled`).
  */
 
 import { computed, type PropType } from 'vue';
@@ -34,9 +39,14 @@ const props = defineProps({
     type: Object as PropType<Form<yup.InferType<typeof createInvoiceObject>>>,
     required: true,
   },
+  disabled: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
-const edit = computed(() => getProperty(props.form, 'forId') !== undefined);
+const edit = computed(() => !props.disabled && getProperty(props.form, 'forId') !== undefined);
 </script>
 
 <style scoped lang="scss"></style>
