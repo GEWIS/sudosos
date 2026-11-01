@@ -1,18 +1,6 @@
 <template>
   <FormCard :enable-edit="false" :header="t('modules.financial.forms.invoice.details')">
-    <!-- Container query: side by side when the card is wide, stacked when it shares the row (summary step). -->
-    <div class="@container">
-      <div class="flex flex-col @2xl:flex-row gap-8">
-        <div class="flex flex-col gap-2 flex-1">
-          <h4 class="font-semibold m-0">{{ t('modules.financial.forms.invoice.settings') }}</h4>
-          <InvoiceBaseSettingsForm :edit="edit" :form="form" />
-        </div>
-        <div class="flex flex-col gap-2 flex-1">
-          <h4 class="font-semibold m-0">{{ t('modules.financial.forms.invoice.addressing') }}</h4>
-          <InvoiceBaseAddressingForm :edit="edit" :form="form" />
-        </div>
-      </div>
-    </div>
+    <InvoiceBaseDetailsForm :edit="edit" :form="form" />
   </FormCard>
 </template>
 
@@ -29,8 +17,7 @@ import * as yup from 'yup';
 import FormCard from '@/components/FormCard.vue';
 import { createInvoiceObject } from '@/utils/validation-schema';
 import { type Form, getProperty } from '@/utils/formUtils';
-import InvoiceBaseSettingsForm from '@/modules/financial/components/invoice/forms/InvoiceBaseSettingsForm.vue';
-import InvoiceBaseAddressingForm from '@/modules/financial/components/invoice/forms/InvoiceBaseAddressingForm.vue';
+import InvoiceBaseDetailsForm from '@/modules/financial/components/invoice/forms/InvoiceBaseDetailsForm.vue';
 
 const { t } = useI18n();
 
