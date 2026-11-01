@@ -86,7 +86,7 @@
         "deleted": "Factuur is verwijderd.",
         "dirty": "De factuurbedrag komt niet overeen met de overboeking.",
         "total": "Het huidige totaal op de factuur is {total}",
-        "for": "Invoice for",
+        "for": "Factuur voor",
         "create": {
           "create": "Factuur aanmaken",
           "userBalance": "Geselecteerde gebruikers saldo",
