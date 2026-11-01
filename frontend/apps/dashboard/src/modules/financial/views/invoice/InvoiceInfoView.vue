@@ -3,9 +3,9 @@
     <div>
       <div class="flex flex-row text-4xl mb-4">
         <div class="flex flex-col">
-          <span>{{ t('modules.financial.invoice.invoice') }}</span>
+          <span>{{ t('modules.financial.invoice.invoice') }} {{ invoice.reference }}</span>
           <small class="text-base">
-            {{ invoice.reference + ': ' }} <i>{{ invoice.description }}</i>
+            <i>{{ invoice.description }}</i>
           </small>
           <span v-if="dirty" class="text-red-500">
             <i class="pi pi-exclamation-triangle text-4xl"></i>
@@ -14,15 +14,13 @@
         </div>
       </div>
       <div class="flex flex-grow flex-row flex-wrap gap-5 justify-center">
-        <div class="flex flex-col gap-5">
+        <div class="flex flex-col gap-5 w-[24rem] max-w-full">
           <InvoiceAmountCard v-if="dirty" :invoice-id="invoice.id" />
           <InvoiceStepsCard v-else :invoice-id="invoice.id" />
-          <InvoiceSettingsCard :invoice-id="invoice.id" />
-          <InvoiceAddressingCard :invoice-id="invoice.id" />
+          <InvoiceDetailsCard :invoice-id="invoice.id" />
           <InvoiceInfo :invoice-id="invoice.id" />
         </div>
         <div class="flex flex-col gap-5">
-          <InvoiceVatCard v-if="invoice" :invoice-id="invoice.id" />
           <InvoicePdf v-if="invoice" :invoice-id="invoice.id" />
         </div>
       </div>
@@ -43,15 +41,13 @@ import { handleError } from '@/utils/errorUtils';
 import { useInvoiceStore } from '@/stores/invoice.store';
 import 'vue3-pdf-app/dist/icons/main.css';
 import router from '@/router';
-import InvoiceSettingsCard from '@/modules/financial/components/invoice/InvoiceSettingsCard.vue';
-import InvoiceAddressingCard from '@/modules/financial/components/invoice/InvoiceAddressingCard.vue';
+import InvoiceDetailsCard from '@/modules/financial/components/invoice/InvoiceDetailsCard.vue';
 import InvoiceStepsCard from '@/modules/financial/components/invoice/InvoiceStepsCard.vue';
 import InvoicePdf from '@/modules/financial/components/invoice/InvoicePdf.vue';
 import InvoiceInfo from '@/modules/financial/components/invoice/InvoiceInfo.vue';
 import InvoiceAmountCard from '@/modules/financial/components/invoice/InvoiceAmountCard.vue';
 import { isDirty } from '@/utils/invoiceUtil';
 import PageContainer from '@/layout/PageContainer.vue';
-import InvoiceVatCard from '@/modules/financial/components/invoice/InvoiceVatCard.vue';
 
 const { t } = useI18n();
 const toast = useToast();

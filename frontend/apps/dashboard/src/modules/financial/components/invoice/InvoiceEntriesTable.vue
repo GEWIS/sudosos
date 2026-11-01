@@ -1,63 +1,71 @@
 <template>
   <DataTable
-    :pt="{
-      tfoot: 'font-bold',
-    }"
-    :value="allRows"
+    :scroll-height="scrollable ? 'flex' : undefined"
+    :scrollable="scrollable"
+    table-style="table-layout: fixed"
+    :value="entries"
   >
-    <Column class="p-1" field="amount" header="#">
-      <template #body="entry">
-        <span v-if="entry.index < totalRowCutoff">
-          {{ entry.data.amount }}
-        </span>
-      </template>
-    </Column>
-    <Column class="p-1" field="description" :header="t('common.description')">
-      <template #body="entry">
-        <span v-if="entry.index < totalRowCutoff">
-          {{ entry.data.description }}
-        </span>
-      </template>
-    </Column>
+    <Column class="p-1" field="amount" header="#" header-style="width: 2.5rem" />
+    <Column class="p-1" field="description" :header="t('common.description')" />
     <Column class="p-1" field="priceInclVat" :header="t('common.price')">
-      <template #body="entry">
-        <span v-if="entry.index < totalRowCutoff">
-          {{ formatPrice(entry.data.priceInclVat) }}
-        </span>
+      <template #body="{ data }">
+        {{ formatPrice(data.priceInclVat) }}
       </template>
     </Column>
     <Column class="p-1" field="vatPercentage" :header="t('common.vat')">
-      <template #body="entry">
-        <span v-if="entry.index < totalRowCutoff">
-          {{ entry.data.vatPercentage + '%' }}
-        </span>
-        <span v-else class="font-bold" :class="{ ...entry.data.class }">
-          {{ entry.data.description }}
-        </span>
+      <template #body="{ data }">
+        {{ data.vatPercentage + '%' }}
       </template>
     </Column>
     <Column class="p-1" field="totalPriceInclVat" :header="t('common.amount')">
-      <template #body="entry">
-        <span :class="{ 'font-bold': entry.index >= totalRowCutoff, ...entry.data.class }">
-          {{ formatPrice(rowTotal(entry.data)) }}
-        </span>
+      <template #body="{ data }">
+        {{ formatPrice(rowTotal(data)) }}
       </template>
     </Column>
+
+    <ColumnGroup type="footer">
+      <Row v-for="(row, index) in totalRows" :key="index">
+        <Column class="p-1" :colspan="2" />
+        <Column class="p-1" :colspan="2">
+          <template #footer>
+            <span :class="{ 'font-bold': !row.muted, 'font-normal': row.muted, ...row.class }">
+              {{ row.description }}
+            </span>
+          </template>
+        </Column>
+        <Column class="p-1">
+          <template #footer>
+            <span :class="{ 'font-bold': !row.muted, 'font-normal': row.muted, ...row.class }">
+              {{ formatPrice(rowTotal(row)) }}
+            </span>
+          </template>
+        </Column>
+      </Row>
+    </ColumnGroup>
   </DataTable>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { InvoiceResponse } from '@gewis/sudosos-client';
+import type { InvoiceEntryResponse, TransferResponse } from '@gewis/sudosos-client';
 import { useInvoiceEntries } from '@/modules/financial/composables/useInvoiceEntries';
-import { formatPrice } from 'sudosos-dashboard/src/utils/formatterUtils';
+import { formatPrice } from '@/utils/formatterUtils';
 
 const { t } = useI18n();
-const props = defineProps<{ invoice: InvoiceResponse }>();
-const invoiceRef = computed(() => props.invoice);
+const props = withDefaults(
+  defineProps<{ entries: InvoiceEntryResponse[]; transfer?: TransferResponse; scrollable?: boolean }>(),
+  { transfer: undefined, scrollable: false },
+);
 
-const { allRows, totalRowCutoff, rowTotal } = useInvoiceEntries(invoiceRef);
+const { totalRows, rowTotal } = useInvoiceEntries(
+  computed(() => props.entries),
+  computed(() => props.transfer),
+);
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+:deep(.p-datatable-tfoot > tr:first-child > td) {
+  border-top: 1px solid var(--p-datatable-body-cell-border-color);
+}
+</style>

@@ -68,11 +68,8 @@
       },
       "invoice": {
         "vat": {
-          "title": "VAT",
           "percentage": "VAT %",
-          "baseExclVat": "Podstawa (bez VAT)",
-          "inclVat": "Z VAT",
-          "vat": "Kwota VAT"
+          "over": "{percentage}% VAT od {base}"
         },
         "header": "Faktury",
         "invoice": "Faktura",
@@ -95,8 +92,15 @@
           "userBalance": "Saldo wybranych użytkowników",
           "invocieAmount": "Proponowana kwota faktury",
           "balanceAfter": "Saldo po wystawieniu faktury",
-          "pos": "Punkty sprzedaży uwzględnione na fakturze:",
-          "warning": "Przed utworzeniem faktury upewnij się, że jest poprawna."
+          "period": "Okres faktury",
+          "account": "Konto faktury",
+          "entries": "Pozycje faktury",
+          "next": "Dalej",
+          "steps": {
+            "account": "Konto i okres",
+            "details": "Szczegóły",
+            "summary": "Podsumowanie"
+          }
         },
         "account": {
           "lastTransaction": "Ostatnia transakcja",
@@ -127,6 +131,7 @@
         "invoice": {
           "reference": "Tytuł",
           "settings": "Ustawienia",
+          "details": "Szczegóły faktury",
           "addressing": "Adresowanie",
           "addressee": "Adresat",
           "attention": "Uwaga",

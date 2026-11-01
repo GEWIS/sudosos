@@ -9,6 +9,7 @@ import type {
   UserResponse,
   ActionResponse,
   RoleResponse,
+  TransactionResponse,
 } from '@gewis/sudosos-client';
 import type { DineroObject } from 'dinero.js';
 import i18n from './i18nUtils';
@@ -71,6 +72,8 @@ export const updateInvoiceAddressingObject = yup.object({
   city: yup.string().required(),
   country: yup.string().required(),
 });
+
+export const updateInvoiceDetailsObject = updateInvoiceSettingsObject.concat(updateInvoiceAddressingObject);
 
 export const updateInvoiceAmountObject = yup.object({
   amount: yup.number().required().default(0),
@@ -226,6 +229,7 @@ export const createInvoiceObject = yup.object({
   description: yup.string().required(),
   reference: yup.string().required(),
   transactionIDs: yup.array().of(yup.number().required()).required(),
+  transactions: yup.array().of(yup.mixed<TransactionResponse>().required()).default([]),
   transactionTotal: yup.mixed<DineroObject>().default({ precision: 2, currency: 'EUR', amount: 0 }).required(),
   street: yup.string().required(),
   postalCode: yup.string().required(),
