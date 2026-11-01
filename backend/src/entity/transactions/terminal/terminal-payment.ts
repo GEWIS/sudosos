@@ -57,7 +57,10 @@
  * - `CREATED` - The payment is created, but is yet to be paid.
  * - `PROCESSING` - The payment is currently being handled by a reader.
  * - `PAID` - The payment is done.
- * - `CANCELLED` - The payment has been aborted.
+ * - `CANCELLED` - The payment has been aborted, even if the card had a soft
+ *   decline first.
+ * - `FAILED` - The card was declined on the reader. This ends the payment;
+ *   a retry needs a new `TerminalPayment`.
  * Status is *derived*, not stored - see {@link TerminalPayment.getState}.
  *
  * ### Terminal Reader behaviour
@@ -72,6 +75,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import BaseEntity from '../../base-entity';
 import StripePaymentIntent from '../../stripe/stripe-payment-intent';
+import { StripePaymentIntentState } from '../../stripe/stripe-payment-intent-status';
 import Transfer from '../transfer';
 import Transaction from '../transaction';
 import TmpTransaction from './tmp-transaction';
@@ -97,6 +101,11 @@ export enum TerminalPaymentState {
    * Transaction has been aborted
    */
   CANCELLED = 'cancelled',
+
+  /**
+   * Payment was declined by the card reader, so the transaction was aborted
+   */
+  FAILED = 'failed',
 }
 
 /**
@@ -174,8 +183,17 @@ export default class TerminalPayment extends BaseEntity {
   public getState(): TerminalPaymentState {
     if (this.finalTransaction) return TerminalPaymentState.PAID;
 
-    // No transaction attached to this TerminalPayment.
-    if (!this.temporaryTransaction) return TerminalPaymentState.CANCELLED;
+    // No transaction attached to this TerminalPayment. Either the card was
+    // declined, or the payment was aborted. An aborted payment may have had a
+    // soft decline first, so a cancellation takes precedence over a decline.
+    if (!this.temporaryTransaction) {
+      const intent = this.stripePaymentIntent;
+      const cancelled = intent?.cancelledWithAPI
+        || intent?.paymentIntentStatuses?.some((s) => s.state === StripePaymentIntentState.CANCELLED);
+      const declined = intent?.paymentIntentStatuses
+        ?.some((s) => s.state === StripePaymentIntentState.FAILED);
+      return declined && !cancelled ? TerminalPaymentState.FAILED : TerminalPaymentState.CANCELLED;
+    }
 
     // Terminal assigned, so processing
     if (this.processedByTerminal) return TerminalPaymentState.PROCESSING;

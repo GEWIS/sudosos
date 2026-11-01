@@ -64,7 +64,7 @@ const TERMINAL_PAYMENT_RELATIONS: FindOptionsRelations<TerminalPayment> = {
     },
   },
   transfer: true,
-  stripePaymentIntent: true,
+  stripePaymentIntent: { paymentIntentStatuses: true },
   createdBy: true,
 };
 
@@ -231,10 +231,7 @@ export default class TerminalPaymentService extends WithManager {
       throw new Error(`TerminalPayment has state "${tp.getState()}", but expected state "${TerminalPaymentState.CREATED}" or "${TerminalPaymentState.PROCESSING}"`);
     }
 
-    const transaction = tp.temporaryTransaction;
-    tp.temporaryTransaction = null;
-    await this.manager.save(tp);
-    await this.manager.getRepository(TmpTransaction).remove(transaction);
+    await this.detachTemporaryTransaction(tp);
 
     if (sendStripeCancellation && tp.processedByTerminal) {
       await this.stripeService.cancelTerminalAction(tp.processedByTerminal);
@@ -245,6 +242,41 @@ export default class TerminalPaymentService extends WithManager {
     }
 
     return tp;
+  }
+
+  /**
+   * End a CREATED or PROCESSING terminal payment whose card was declined on
+   * the reader. Removes the temporary transaction, so the payment's state
+   * becomes FAILED (given the FAILED intent status has been recorded).
+   *
+   * Nothing is cancelled at Stripe: the reader action has already ended, and
+   * Stripe advises keeping a declined PaymentIntent rather than cancelling it.
+   * SudoSOS will not process it again, as a retry needs a new TerminalPayment.
+   * @param id ID of the TerminalPayment
+   * @returns The failed TerminalPayment.
+   */
+  public async failTerminalPayment(id: number): Promise<TerminalPayment> {
+    const tp = await this.getTerminalPayment(id);
+    if (!tp) throw new Error(`TerminalPayment with ID "${id}" not found`);
+
+    if (tp.getState() !== TerminalPaymentState.CREATED && tp.getState() !== TerminalPaymentState.PROCESSING) {
+      throw new Error(`TerminalPayment has state "${tp.getState()}", but expected state "${TerminalPaymentState.CREATED}" or "${TerminalPaymentState.PROCESSING}"`);
+    }
+
+    await this.detachTemporaryTransaction(tp);
+    return tp;
+  }
+
+  /**
+   * Remove the temporary transaction from the given terminal payment, so it
+   * can no longer be paid.
+   * @param tp TerminalPayment that still has a temporary transaction.
+   */
+  private async detachTemporaryTransaction(tp: TerminalPayment): Promise<void> {
+    const transaction = tp.temporaryTransaction;
+    tp.temporaryTransaction = null;
+    await this.manager.save(tp);
+    await this.manager.getRepository(TmpTransaction).remove(transaction);
   }
 
   /**

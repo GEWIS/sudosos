@@ -173,9 +173,10 @@ export default class TerminalPaymentSeeder extends WithManager {
    * these entries cannot be used for real Stripe API calls.
    *
    * For every user a TerminalPayment in the CREATED state (with a valid
-   * TmpTransaction) is created, as well as a CANCELLED TerminalPayment that has no
+   * TmpTransaction) is created, as well as a TerminalPayment that has no
    * temporary or final transaction and whose Stripe PaymentIntent ends in the
-   * FAILED state. When transactions are supplied (or seeded internally), every
+   * CANCELLED state, and a FAILED TerminalPayment like it whose PaymentIntent
+   * ends in the FAILED state. When transactions are supplied (or seeded internally), every
    * transaction is additionally converted into a PAID TerminalPayment: the
    * TmpTransaction is replaced by a finalTransaction and a Transfer whose amount
    * equals the total value of the transaction's sub-transaction rows.
@@ -263,12 +264,14 @@ export default class TerminalPaymentSeeder extends WithManager {
       terminalPayments.push(terminalPayment);
     }
 
-    // For every user, additionally create a CANCELLED TerminalPayment: a payment
-    // whose temporary transaction was removed before it could be paid, so neither
-    // a temporary nor a final transaction is attached. Its Stripe PaymentIntent
-    // ends in the FAILED state, mirroring a 'payment_intent.canceled' webhook event.
-    for (let i = 0; i < users.length; i += 1) {
-      const user = users[i];
+    // For every user, additionally create two TerminalPayments whose temporary
+    // transaction was removed before it could be paid, so neither a temporary nor
+    // a final transaction is attached: a CANCELLED payment (mirroring a
+    // 'payment_intent.canceled' webhook event) and a FAILED payment (mirroring a
+    // 'payment_intent.payment_failed' webhook event).
+    for (let i = 0; i < users.length * 2; i += 1) {
+      const user = users[Math.floor(i / 2)];
+      const declined = i % 2 === 1;
       const posRevision = usablePosRevisions[i % usablePosRevisions.length];
 
       // Build (but do not persist) a temporary transaction solely to derive the
@@ -278,15 +281,16 @@ export default class TerminalPaymentSeeder extends WithManager {
 
       // eslint-disable-next-line no-await-in-loop
       const stripePaymentIntent = await this.manager.save(StripePaymentIntent, {
-        stripeId: `FakeTerminalPaymentIntentCancelledDoNotUse_${i + 1}`,
+        stripeId: `FakeTerminalPaymentIntent${declined ? 'Failed' : 'Cancelled'}DoNotUse_${i + 1}`,
         amount,
-        cancelledWithAPI: true,
+        // A declined intent is kept at Stripe, not cancelled
+        cancelledWithAPI: !declined,
         paymentIntentStatuses: [],
       });
 
       const intentStates = [
         StripePaymentIntentState.CREATED,
-        StripePaymentIntentState.FAILED,
+        declined ? StripePaymentIntentState.FAILED : StripePaymentIntentState.CANCELLED,
       ];
       for (const state of intentStates) {
         // eslint-disable-next-line no-await-in-loop
