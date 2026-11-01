@@ -3,9 +3,9 @@
     <div>
       <div class="flex flex-row text-4xl mb-4">
         <div class="flex flex-col">
-          <span>{{ t('modules.financial.invoice.invoice') }}</span>
+          <span>{{ t('modules.financial.invoice.invoice') }} {{ invoice.reference }}</span>
           <small class="text-base">
-            {{ invoice.reference + ': ' }} <i>{{ invoice.description }}</i>
+            <i>{{ invoice.description }}</i>
           </small>
           <span v-if="dirty" class="text-red-500">
             <i class="pi pi-exclamation-triangle text-4xl"></i>
@@ -14,7 +14,7 @@
         </div>
       </div>
       <div class="flex flex-grow flex-row flex-wrap gap-5 justify-center">
-        <div class="flex flex-col gap-5">
+        <div class="flex flex-col gap-5 w-[24rem] max-w-full">
           <InvoiceAmountCard v-if="dirty" :invoice-id="invoice.id" />
           <InvoiceStepsCard v-else :invoice-id="invoice.id" />
           <InvoiceDetailsCard :invoice-id="invoice.id" />
