@@ -27,12 +27,14 @@
 import MailMessage, { Language, MailLanguageMap } from '../mail-message';
 import MailContentBuilder from './mail-content-builder';
 import { WelcomeWithResetOptions } from '../../notifications';
+import Config from '../../config';
+import passwordResetLink from '../password-reset-link';
 
 const welcomeWithResetDutch = new MailContentBuilder<WelcomeWithResetOptions>({
   getHTML: (context) => `
 <p>Er is zojuist een account voor je aangemaakt in SudoSOS. Welkom!</p>
 
-<p>Voordat je SudoSOS écht kunt gebruiken, dien je een wachtwoord te kiezen door te gaan naar ${context.url + '/passwordreset?token=' + context.resetTokenInfo.password + '&email=' + context.email}</p>
+<p>Voordat je SudoSOS écht kunt gebruiken, dien je een wachtwoord te kiezen door te gaan naar ${passwordResetLink(context.url, context.email, context.resetTokenInfo.password)}</p>
 
 <p>Tot op de borrel!</p>`,
   getSubject: 'Welkom bij SudoSOS!',
@@ -40,7 +42,7 @@ const welcomeWithResetDutch = new MailContentBuilder<WelcomeWithResetOptions>({
   getText: (context) => `
 Er is zojuist een account voor je aangemaakt in SudoSOS. Welkom!
 
-Voordat je SudoSOS écht kunt gebruiken, dien je een wachtwoord te kiezen door te gaan naar ${context.url + '/passwordreset?token=' + context.resetTokenInfo.password + '&email=' + context.email}
+Voordat je SudoSOS écht kunt gebruiken, dien je een wachtwoord te kiezen door te gaan naar ${passwordResetLink(context.url, context.email, context.resetTokenInfo.password)}
 
 Tot op de borrel!`,
 });
@@ -49,7 +51,7 @@ const welcomeWithResetEnglish = new MailContentBuilder<WelcomeWithResetOptions>(
   getHTML: (context) => `
 <p>An account for SudoSOS has just been created for you. Welcome!</p>
 
-<p>Before you can actually use SudoSOS, you have to set a password by going to ${context.url + '/passwordreset?token=' + context.resetTokenInfo.password + '&email=' + context.email}</p>
+<p>Before you can actually use SudoSOS, you have to set a password by going to ${passwordResetLink(context.url, context.email, context.resetTokenInfo.password)}</p>
 
 <p>See you on the borrel!</p>`,
   getSubject: 'Welcome to SudoSOS!',
@@ -57,7 +59,7 @@ const welcomeWithResetEnglish = new MailContentBuilder<WelcomeWithResetOptions>(
   getText: (context) => `
 An account for SudoSOS has just been created for you. Welcome!
 
-Before you can actually use SudoSOS, you have to set a password by going to ${context.url + '/passwordreset?token=' + context.resetTokenInfo.password + '&email=' + context.email}
+Before you can actually use SudoSOS, you have to set a password by going to ${passwordResetLink(context.url, context.email, context.resetTokenInfo.password)}
 
 See you on the borrel!`,
 });
@@ -73,7 +75,7 @@ export default class WelcomeWithReset extends MailMessage<WelcomeWithResetOption
       ...options,
     };
     if (!options.url) {
-      opt.url = process.env.url;
+      opt.url = Config.get().app.frontendUrl;
     }
     super(opt, mailContents);
   }

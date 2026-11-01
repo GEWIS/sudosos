@@ -27,6 +27,7 @@
 import MailMessage, { Language, MailLanguageMap } from '../mail-message';
 import MailContentBuilder from './mail-content-builder';
 import { WelcomeToSudososOptions } from '../../notifications';
+import Config from '../../config';
 
 const welcomeToSudososDutch = new MailContentBuilder<WelcomeToSudososOptions>({
   getHTML: (context) => `
@@ -73,7 +74,7 @@ export default class WelcomeToSudosos extends MailMessage<WelcomeToSudososOption
       ...options,
     };
     if (!options.url) {
-      opt.url = process.env.url;
+      opt.url = Config.get().app.frontendUrl;
     }
     super(opt, mailContents);
   }

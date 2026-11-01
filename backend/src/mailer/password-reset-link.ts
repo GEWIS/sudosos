@@ -19,34 +19,20 @@
  */
 
 /**
- * This is the module page of event-shift.
+ * This is the module page of the password-reset-link.
  *
- * @module events
- * @deprecated Events are out of scope for SudoSOS. Delete from 01/11/2026.
+ * @module internal/mailer
  */
-
-import {
-  Column, DeleteDateColumn, Entity, JoinTable, ManyToMany,
-} from 'typeorm';
-import BaseEntity from '../base-entity';
-import Role from '../rbac/role';
 
 /**
- * @typedef {BaseEntity} EventShift
- * @property {string} name - Name of the shift.
- * @property {boolean} default - Indicator whether the shift is a regular shift.
- * @deprecated Events are out of scope for SudoSOS. Delete from 01/11/2026.
+ * Builds the dashboard link where a user sets a new password.
+ * Query values are url-encoded, so addresses like `a+b@example.com` survive.
+ * @param baseUrl - The frontend base URL
+ * @param email - The email of the user
+ * @param token - The reset token passcode, if the link should carry one
  */
-
-@Entity()
-export default class EventShift extends BaseEntity {
-  @DeleteDateColumn()
-  public deletedAt?: Date | null;
-
-  @Column()
-  public name: string;
-
-  @ManyToMany(() => Role, { eager: true, onUpdate: 'CASCADE' })
-  @JoinTable()
-  public roles: Role[];
+export default function passwordResetLink(baseUrl: string, email: string, token?: string): string {
+  const params = new URLSearchParams({ email });
+  if (token) params.set('token', token);
+  return `${baseUrl}/passwordreset?${params.toString()}`;
 }

@@ -189,8 +189,8 @@ catalogs:
       specifier: ^0.9.1
       version: 0.9.1
     axios:
-      specifier: 1.20.0
-      version: 1.20.0
+      specifier: 1.21.0
+      version: 1.21.0
     eslint:
       specifier: ^9.39.1
       version: 9.39.5
@@ -204,8 +204,8 @@ catalogs:
       specifier: ^7.0.0
       version: 7.0.0
     sass:
-      specifier: ^1.105.2
-      version: 1.105.2
+      specifier: ^1.106.1
+      version: 1.106.1
     tailwindcss:
       specifier: ^4.3.3
       version: 4.3.3
@@ -332,8 +332,8 @@ importers:
         specifier: 3.0.3
         version: 3.0.3
       nodemailer:
-        specifier: 6.10.1
-        version: 6.10.1
+        specifier: 10.3.1
+        version: 10.3.1
       reflect-metadata:
         specifier: 0.2.2
         version: 0.2.2
@@ -359,8 +359,8 @@ importers:
         specifier: 1.1.2
         version: 1.1.2(better-sqlite3@12.11.1)(ioredis@5.11.1(supports-color@5.5.0))(mysql2@3.24.6(@types/node@20.19.43))(supports-color@5.5.0)(ts-node@10.9.2(@swc/core@1.16.2(@swc/helpers@0.5.23))(@types/node@20.19.43)(typescript@5.9.3))
       uuid:
-        specifier: 10.0.0
-        version: 10.0.0
+        specifier: 11.1.1
+        version: 11.1.1
       validator:
         specifier: 13.15.35
         version: 13.15.35
@@ -419,9 +419,6 @@ importers:
       '@types/node-cron':
         specifier: 3.0.11
         version: 3.0.11
-      '@types/nodemailer':
-        specifier: 6.4.17
-        version: 6.4.17
       '@types/sinon':
         specifier: 17.0.3
         version: 17.0.3
@@ -431,9 +428,6 @@ importers:
       '@types/swagger-ui-express':
         specifier: 4.1.8
         version: 4.1.8
-      '@types/uuid':
-        specifier: 10.0.0
-        version: 10.0.0
       '@types/validator':
         specifier: 13.15.10
         version: 13.15.10
@@ -577,7 +571,7 @@ importers:
         version: link:../../lib/themes
       '@tailwindcss/vite':
         specifier: 'catalog:'
-        version: 4.3.3(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))
+        version: 4.3.3(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))
       '@vee-validate/rules':
         specifier: ^4.15.1
         version: 4.15.1(vue@3.5.44(typescript@5.9.3))
@@ -586,7 +580,7 @@ importers:
         version: 4.15.1(vue@3.5.44(typescript@5.9.3))(yup@1.7.1)
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
+        version: 1.21.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
       dinero.js:
         specifier: ^1.9.1
         version: 1.9.1
@@ -610,7 +604,7 @@ importers:
         version: 7.0.0
       sass:
         specifier: 'catalog:'
-        version: 1.105.2
+        version: 1.106.1
       tailwindcss:
         specifier: 'catalog:'
         version: 4.3.3
@@ -659,7 +653,7 @@ importers:
         version: 10.6.2(@vitest/browser-playwright@5.0.4)(@vitest/browser@5.0.2)(react@19.3.0)(storybook@10.6.2(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.0))(vitest@5.0.2)
       '@storybook/vue3-vite':
         specifier: ^10.6.2
-        version: 10.6.2(storybook@10.6.2(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.0))(typescript@5.9.3)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))(vue@3.5.44(typescript@5.9.3))
+        version: 10.6.2(storybook@10.6.2(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.0))(typescript@5.9.3)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))(vue@3.5.44(typescript@5.9.3))
       '@tailwindcss/typography':
         specifier: ^0.5.19
         version: 0.5.20(tailwindcss@4.3.3)
@@ -680,10 +674,10 @@ importers:
         version: 8.67.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3)
       '@vitejs/plugin-vue':
         specifier: 'catalog:'
-        version: 6.0.10(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))(vue@3.5.44(typescript@5.9.3))
+        version: 6.0.10(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))(vue@3.5.44(typescript@5.9.3))
       '@vitest/browser-playwright':
         specifier: ^5.0.4
-        version: 5.0.4(playwright@1.64.0)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))(vitest@5.0.2)
+        version: 5.0.4(playwright@1.64.0)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))(vitest@5.0.2)
       '@vitest/coverage-v8':
         specifier: ^5.0.1
         version: 5.0.2(@vitest/browser@5.0.2)(vitest@5.0.2)
@@ -713,10 +707,10 @@ importers:
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0)
+        version: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0)
       vitest:
         specifier: ^5.0.1
-        version: 5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))
+        version: 5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))
       vue-eslint-parser:
         specifier: 'catalog:'
         version: 10.4.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
@@ -746,10 +740,10 @@ importers:
         version: link:../../lib/themes
       '@tailwindcss/vite':
         specifier: 'catalog:'
-        version: 4.3.3(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))
+        version: 4.3.3(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
+        version: 1.21.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
       fuse.js:
         specifier: ^7.1.0
         version: 7.5.0
@@ -773,7 +767,7 @@ importers:
         version: 1.5.4
       sass:
         specifier: 'catalog:'
-        version: 1.105.2
+        version: 1.106.1
       socket.io-client:
         specifier: ^4.8.4
         version: 4.8.4(supports-color@10.2.2)
@@ -813,7 +807,7 @@ importers:
         version: 8.67.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3)
       '@vitejs/plugin-vue':
         specifier: 'catalog:'
-        version: 6.0.10(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))(vue@3.5.44(typescript@5.9.3))
+        version: 6.0.10(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))(vue@3.5.44(typescript@5.9.3))
       '@vue/tsconfig':
         specifier: 'catalog:'
         version: 0.9.1(typescript@5.9.3)(vue@3.5.44(typescript@5.9.3))
@@ -831,7 +825,7 @@ importers:
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0)
+        version: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0)
       vue-eslint-parser:
         specifier: 'catalog:'
         version: 10.4.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
@@ -846,7 +840,7 @@ importers:
         version: link:../../../packages/sudosos-client
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
+        version: 1.21.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
       jose:
         specifier: ^6.2.13
         version: 6.2.13
@@ -916,7 +910,7 @@ importers:
         version: 1.0.0(vue@3.5.44(typescript@5.9.3))
       sass:
         specifier: 'catalog:'
-        version: 1.105.2
+        version: 1.106.1
       tailwindcss:
         specifier: 'catalog:'
         version: 4.3.3
@@ -938,7 +932,7 @@ importers:
         version: 8.67.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3)
       '@vitejs/plugin-vue':
         specifier: 'catalog:'
-        version: 6.0.10(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))(vue@3.5.44(typescript@5.9.3))
+        version: 6.0.10(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))(vue@3.5.44(typescript@5.9.3))
       '@vue/tsconfig':
         specifier: 'catalog:'
         version: 0.9.1(typescript@5.9.3)(vue@3.5.44(typescript@5.9.3))
@@ -950,10 +944,10 @@ importers:
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0)
+        version: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0)
       vite-plugin-dts:
         specifier: 'catalog:'
-        version: 4.5.4(@types/node@24.13.3)(rollup@4.62.4)(supports-color@10.2.2)(typescript@5.9.3)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))
+        version: 4.5.4(@types/node@24.13.3)(rollup@4.62.4)(supports-color@10.2.2)(typescript@5.9.3)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))
       vue-tsc:
         specifier: 'catalog:'
         version: 3.3.13(typescript@5.9.3)
@@ -962,7 +956,7 @@ importers:
     dependencies:
       axios:
         specifier: 'catalog:'
-        version: 1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
+        version: 1.21.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
     devDependencies:
       '@openapitools/openapi-generator-cli':
         specifier: 2.41.0
@@ -3432,9 +3426,6 @@ packages:
   '@types/node@24.13.3':
     resolution: {integrity: sha512-Dh8vAsV36ig5wa9OX4pXvMc9D3Veibfw2wix0CUwYODLD8nkj9UsLjASr49nPg+2eKzxhBV+v7L8pXvT4e639Q==}
 
-  '@types/nodemailer@6.4.17':
-    resolution: {integrity: sha512-I9CCaIp6DTldEg7vyUTZi8+9Vo0hi1/T8gv3C89yk1rSAAzoKQ8H8ki/jBYJSFoH/BisgLP8tkZMlQ91CIquww==}
-
   '@types/qrcode@1.5.6':
     resolution: {integrity: sha512-te7NQcV2BOvdj2b1hCAHzAoMNuj65kNBMz0KBaxM6c3VGBOhU0dURQKOtH8CFNI/dsKkwlv32p26qYQTWoB5bw==}
 
@@ -3479,9 +3470,6 @@ packages:
 
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
-
-  '@types/uuid@10.0.0':
-    resolution: {integrity: sha512-7gqG38EyHgyP1S+7+xomFtL+ZNHcKv6DwNaCZmJmo1vgMugyF3TCnXVg4t1uk89mLNwnLtnY3TpOpCOyp1/xHQ==}
 
   '@types/validator@13.15.10':
     resolution: {integrity: sha512-T8L6i7wCuyoK8A/ZeLYt1+q0ty3Zb9+qbSSvrIVitzT3YjZqkTZ40IbRsPanlB4h1QB3JVL1SYCdR6ngtFYcuA==}
@@ -4361,6 +4349,9 @@ packages:
 
   axios@1.20.0:
     resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
+
+  axios@1.21.0:
+    resolution: {integrity: sha512-YCzXMB53Q9PZBsh7yN7wtapit4WepwcHS2fP8QhGsBxSz5YtgYobV7GGlWlAJi+RxfU77GQTQi2DSLUma42EYA==}
 
   babel-walk@3.0.0-canary-5:
     resolution: {integrity: sha512-GAwkz0AihzY5bkwIY5QDR+LvsRQgB/B+1foMPvi0FZPMl5fjD7ICiznUiBdLYMH1QYe6vqu4gWYytZOccLouFw==}
@@ -7011,9 +7002,9 @@ packages:
     deprecated: 'Please upgrade to @mapbox/node-pre-gyp: the non-scoped node-pre-gyp package is deprecated and only the @mapbox scoped package will recieve updates in the future'
     hasBin: true
 
-  nodemailer@6.10.1:
-    resolution: {integrity: sha512-Z+iLaBGVaSjbIzQ4pX6XV41HrooLsQ10ZWPUehGmuantvzWoDVBnmsdUcOIDM1t+yPor5pDhVlDESgOMEGxhHA==}
-    engines: {node: '>=6.0.0'}
+  nodemailer@10.3.1:
+    resolution: {integrity: sha512-uF0AFsJC07Y1vdW7p580DKAnh7rAO+4UPSSB3mDCPNDufoiaOebV6JmrzpxB14OjEEEiBsNdYoM2Y+fN8M7BBA==}
+    engines: {node: '>=20.0.0'}
 
   nodemon@3.1.14:
     resolution: {integrity: sha512-jakjZi93UtB3jHMWsXL68FXSAosbLfY0In5gtKq3niLSkrWznrVBzXFNOEMJUfc9+Ke7SHWoAZsiMkNP3vq6Jw==}
@@ -7746,8 +7737,8 @@ packages:
     engines: {node: '>=20.19.0'}
     hasBin: true
 
-  sass@1.105.2:
-    resolution: {integrity: sha512-KxW6ZKZiBKWK3ziQ4YZ3cpqo8/1TlHXE8t9nBNvGDZFoBFbk2MD7RacxYFs8zy8hzeFwpFYkVyAhboi47uYPEQ==}
+  sass@1.106.1:
+    resolution: {integrity: sha512-kD+Gi66vycZcbJt+42NC4z4PXNMcCajVrJPhqoKKXy5cOBMmJQt052CxIBcRjwYXeImHYOpu/ydWWGZQIenl7A==}
     engines: {node: '>=20.19.0'}
     hasBin: true
 
@@ -8663,13 +8654,12 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
-  uuid@10.0.0:
-    resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
-    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
-    hasBin: true
-
   uuid@11.1.0:
     resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
+    hasBin: true
+
+  uuid@11.1.1:
+    resolution: {integrity: sha512-vIYxrBCC/N/K+Js3qSN88go7kIfNPssr/hHCesKCQNAjmgvYS2oqr69kIufEG+O4+PfezOH4EbIeHCfFov8ZgQ==}
     hasBin: true
 
   uuid@14.0.2:
@@ -10246,10 +10236,10 @@ snapshots:
       '@tybys/wasm-util': 0.10.3
     optional: true
 
-  '@nestjs/axios@4.0.1(@nestjs/common@11.2.1(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(axios@1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(rxjs@7.8.2)':
+  '@nestjs/axios@4.0.1(@nestjs/common@11.2.1(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(axios@1.21.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(rxjs@7.8.2)':
     dependencies:
       '@nestjs/common': 11.2.1(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
-      axios: 1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
+      axios: 1.21.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
       rxjs: 7.8.2
 
   '@nestjs/common@11.2.1(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)':
@@ -10316,11 +10306,11 @@ snapshots:
   '@openapitools/openapi-generator-cli@2.41.0(debug@4.4.3(supports-color@10.2.2))(encoding@0.1.13)(supports-color@10.2.2)':
     dependencies:
       '@inquirer/select': 1.3.3
-      '@nestjs/axios': 4.0.1(@nestjs/common@11.2.1(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(axios@1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(rxjs@7.8.2)
+      '@nestjs/axios': 4.0.1(@nestjs/common@11.2.1(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(axios@1.21.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(rxjs@7.8.2)
       '@nestjs/common': 11.2.1(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       '@nestjs/core': 11.2.1(@nestjs/common@11.2.1(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nuxtjs/opencollective': 0.3.2(encoding@0.1.13)
-      axios: 1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
+      axios: 1.21.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
       chalk: 4.1.2
       commander: 8.3.0
       compare-versions: 6.1.1
@@ -10915,17 +10905,17 @@ snapshots:
       '@storybook/icons': 2.1.0(react@19.3.0)
       storybook: 10.6.2(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.0)
     optionalDependencies:
-      '@vitest/browser': 5.0.2(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))(vitest@5.0.2)
-      '@vitest/browser-playwright': 5.0.4(playwright@1.64.0)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))(vitest@5.0.2)
-      vitest: 5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))
+      '@vitest/browser': 5.0.2(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))(vitest@5.0.2)
+      '@vitest/browser-playwright': 5.0.4(playwright@1.64.0)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))(vitest@5.0.2)
+      vitest: 5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))
     transitivePeerDependencies:
       - react
 
-  '@storybook/builder-vite@10.6.2(storybook@10.6.2(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.0))(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))':
+  '@storybook/builder-vite@10.6.2(storybook@10.6.2(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.0))(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))':
     dependencies:
       storybook: 10.6.2(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.0)
       ts-dedent: 2.3.0
-      vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0)
+      vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0)
 
   '@storybook/global@5.0.0': {}
 
@@ -10941,13 +10931,13 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.3.0
 
-  '@storybook/vue3-vite@10.6.2(storybook@10.6.2(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.0))(typescript@5.9.3)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))(vue@3.5.44(typescript@5.9.3))':
+  '@storybook/vue3-vite@10.6.2(storybook@10.6.2(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.0))(typescript@5.9.3)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))(vue@3.5.44(typescript@5.9.3))':
     dependencies:
-      '@storybook/builder-vite': 10.6.2(storybook@10.6.2(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.0))(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))
+      '@storybook/builder-vite': 10.6.2(storybook@10.6.2(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.0))(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))
       '@storybook/vue3': 10.6.2(storybook@10.6.2(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.0))(typescript@5.9.3)(vue@3.5.44(typescript@5.9.3))
       magic-string: 1.4.2
       storybook: 10.6.2(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.0)
-      vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0)
+      vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0)
     optionalDependencies:
       typescript: 5.9.3
     transitivePeerDependencies:
@@ -11101,12 +11091,12 @@ snapshots:
       postcss-selector-parser: 6.0.10
       tailwindcss: 4.3.3
 
-  '@tailwindcss/vite@4.3.3(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))':
+  '@tailwindcss/vite@4.3.3(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))':
     dependencies:
       '@tailwindcss/node': 4.3.3
       '@tailwindcss/oxide': 4.3.3
       tailwindcss: 4.3.3
-      vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0)
+      vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0)
 
   '@testing-library/dom@10.4.2':
     dependencies:
@@ -11402,10 +11392,6 @@ snapshots:
     dependencies:
       undici-types: 7.18.2
 
-  '@types/nodemailer@6.4.17':
-    dependencies:
-      '@types/node': 24.13.3
-
   '@types/qrcode@1.5.6':
     dependencies:
       '@types/node': 24.13.3
@@ -11456,8 +11442,6 @@ snapshots:
     optional: true
 
   '@types/unist@3.0.3': {}
-
-  '@types/uuid@10.0.0': {}
 
   '@types/validator@13.15.10': {}
 
@@ -11743,36 +11727,36 @@ snapshots:
       vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.0)
       vue: 3.5.44(typescript@5.9.3)
 
-  '@vitejs/plugin-vue@6.0.10(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))(vue@3.5.44(typescript@5.9.3))':
+  '@vitejs/plugin-vue@6.0.10(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))(vue@3.5.44(typescript@5.9.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
-      vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0)
+      vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0)
       vue: 3.5.44(typescript@5.9.3)
 
-  '@vitest/browser-playwright@5.0.4(playwright@1.64.0)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))(vitest@5.0.2)':
+  '@vitest/browser-playwright@5.0.4(playwright@1.64.0)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))(vitest@5.0.2)':
     dependencies:
-      '@vitest/browser': 5.0.4(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))(vitest@5.0.2)
-      '@vitest/mocker': 5.0.4(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))
+      '@vitest/browser': 5.0.4(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))(vitest@5.0.2)
+      '@vitest/mocker': 5.0.4(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))
       playwright: 1.64.0
       tinyrainbow: 3.2.0
-      vitest: 5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))
+      vitest: 5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))
     transitivePeerDependencies:
       - bufferutil
       - msw
       - utf-8-validate
       - vite
 
-  '@vitest/browser@5.0.2(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))(vitest@5.0.2)':
+  '@vitest/browser@5.0.2(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))(vitest@5.0.2)':
     dependencies:
       '@blazediff/core': 1.10.0
-      '@vitest/mocker': 5.0.2(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))
+      '@vitest/mocker': 5.0.2(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))
       '@vitest/ui': 5.0.2(vitest@5.0.2)
       '@vitest/utils': 5.0.2
       magic-string: 1.4.3
       pngjs: 7.0.0
       sirv: 3.0.2
       tinyrainbow: 3.2.0
-      vitest: 5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))
+      vitest: 5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))
       ws: 8.22.0
     transitivePeerDependencies:
       - bufferutil
@@ -11781,17 +11765,17 @@ snapshots:
       - vite
     optional: true
 
-  '@vitest/browser@5.0.4(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))(vitest@5.0.2)':
+  '@vitest/browser@5.0.4(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))(vitest@5.0.2)':
     dependencies:
       '@blazediff/core': 1.10.0
-      '@vitest/mocker': 5.0.4(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))
+      '@vitest/mocker': 5.0.4(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))
       '@vitest/ui': 5.0.4(vitest@5.0.2)
       '@vitest/utils': 5.0.4
       magic-string: 1.4.3
       pngjs: 7.0.0
       sirv: 3.0.2
       tinyrainbow: 3.2.0
-      vitest: 5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))
+      vitest: 5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))
       ws: 8.22.0
     transitivePeerDependencies:
       - bufferutil
@@ -11827,9 +11811,9 @@ snapshots:
       obug: 2.2.1
       std-env: 4.2.0
       tinyrainbow: 3.1.1
-      vitest: 5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))
+      vitest: 5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))
     optionalDependencies:
-      '@vitest/browser': 5.0.2(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))(vitest@5.0.2)
+      '@vitest/browser': 5.0.2(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))(vitest@5.0.2)
 
   '@vitest/expect@2.1.9':
     dependencies:
@@ -11860,23 +11844,23 @@ snapshots:
     optionalDependencies:
       vite: 5.4.21(@types/node@20.19.43)(lightningcss@1.32.0)(sass@1.104.1)
 
-  '@vitest/mocker@5.0.2(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))':
+  '@vitest/mocker@5.0.2(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       '@vitest/spy': 5.0.2
       estree-walker: 3.0.3
       magic-string: 1.4.3
     optionalDependencies:
-      vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0)
+      vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0)
 
-  '@vitest/mocker@5.0.4(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))':
+  '@vitest/mocker@5.0.4(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       '@vitest/spy': 5.0.4
       estree-walker: 3.0.3
       magic-string: 1.4.3
     optionalDependencies:
-      vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0)
+      vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0)
 
   '@vitest/pretty-format@2.1.9':
     dependencies:
@@ -11926,7 +11910,7 @@ snapshots:
       pathe: 2.0.3
       sirv: 3.0.2
       tinyrainbow: 3.2.0
-      vitest: 5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))
+      vitest: 5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))
     optional: true
 
   '@vitest/ui@5.0.4(vitest@5.0.2)':
@@ -11937,7 +11921,7 @@ snapshots:
       pathe: 2.0.3
       sirv: 3.0.2
       tinyrainbow: 3.2.0
-      vitest: 5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))
+      vitest: 5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))
 
   '@vitest/utils@2.1.9':
     dependencies:
@@ -12561,16 +12545,6 @@ snapshots:
       - debug
       - supports-color
 
-  axios@1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2):
-    dependencies:
-      follow-redirects: 1.16.0(debug@4.4.3(supports-color@10.2.2))
-      form-data: 4.0.6
-      https-proxy-agent: 5.0.1(supports-color@10.2.2)
-      proxy-from-env: 2.1.0
-    transitivePeerDependencies:
-      - debug
-      - supports-color
-
   axios@1.20.0(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0):
     dependencies:
       follow-redirects: 1.16.0(debug@4.4.3(supports-color@5.5.0))
@@ -12581,6 +12555,16 @@ snapshots:
       - debug
       - supports-color
     optional: true
+
+  axios@1.21.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2):
+    dependencies:
+      follow-redirects: 1.16.0(debug@4.4.3(supports-color@10.2.2))
+      form-data: 4.0.6
+      https-proxy-agent: 5.0.1(supports-color@10.2.2)
+      proxy-from-env: 2.1.0
+    transitivePeerDependencies:
+      - debug
+      - supports-color
 
   babel-walk@3.0.0-canary-5:
     dependencies:
@@ -15606,7 +15590,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  nodemailer@6.10.1: {}
+  nodemailer@10.3.1: {}
 
   nodemon@3.1.14:
     dependencies:
@@ -16506,11 +16490,11 @@ snapshots:
       '@parcel/watcher': 2.6.0
     optional: true
 
-  sass@1.105.2:
+  sass@1.106.1:
     dependencies:
       chokidar: 5.0.0
       immutable: 5.1.9
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
     optionalDependencies:
       '@parcel/watcher': 2.6.0
 
@@ -17546,9 +17530,9 @@ snapshots:
 
   utils-merge@1.0.1: {}
 
-  uuid@10.0.0: {}
-
   uuid@11.1.0: {}
+
+  uuid@11.1.1: {}
 
   uuid@14.0.2: {}
 
@@ -17618,7 +17602,7 @@ snapshots:
       - rollup
       - supports-color
 
-  vite-plugin-dts@4.5.4(@types/node@24.13.3)(rollup@4.62.4)(supports-color@10.2.2)(typescript@5.9.3)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0)):
+  vite-plugin-dts@4.5.4(@types/node@24.13.3)(rollup@4.62.4)(supports-color@10.2.2)(typescript@5.9.3)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0)):
     dependencies:
       '@microsoft/api-extractor': 7.58.12(@types/node@24.13.3)
       '@rollup/pluginutils': 5.4.0(rollup@4.62.4)
@@ -17631,7 +17615,7 @@ snapshots:
       magic-string: 0.30.21
       typescript: 5.9.3
     optionalDependencies:
-      vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0)
+      vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0)
     transitivePeerDependencies:
       - '@types/node'
       - rollup
@@ -17663,7 +17647,7 @@ snapshots:
       sass: 1.104.1
       yaml: 2.9.0
 
-  vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0):
+  vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0):
     dependencies:
       lightningcss: 1.33.0
       picomatch: 4.0.7
@@ -17675,7 +17659,7 @@ snapshots:
       esbuild: 0.28.2
       fsevents: 2.3.3
       jiti: 2.7.0
-      sass: 1.105.2
+      sass: 1.106.1
       yaml: 2.9.0
 
   vitepress-plugin-mermaid@2.0.17(mermaid@11.16.1)(vitepress@1.6.4(@algolia/client-search@5.56.0)(@types/node@20.19.43)(axios@1.20.0(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0))(fuse.js@7.5.0)(jwt-decode@4.0.0)(lightningcss@1.32.0)(postcss@8.5.28)(qrcode@1.5.4)(sass@1.104.1)(search-insights@2.17.3)(typescript@5.9.3)):
@@ -17770,10 +17754,10 @@ snapshots:
       - supports-color
       - terser
 
-  vitest@5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0)):
+  vitest@5.0.2(@types/node@24.13.3)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0)):
     dependencies:
       '@types/chai': 5.2.3
-      '@vitest/mocker': 5.0.2(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))
+      '@vitest/mocker': 5.0.2(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))
       chai: 6.2.2
       es-module-lexer: 2.3.2
       expect-type: 1.4.0
@@ -17784,11 +17768,11 @@ snapshots:
       tinybench: 6.2.0
       tinyexec: 1.3.1
       tinyglobby: 0.2.17
-      vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0)
+      vite: 8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0)
       why-is-node-running: 3.2.2
     optionalDependencies:
       '@types/node': 24.13.3
-      '@vitest/browser-playwright': 5.0.4(playwright@1.64.0)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.2)(yaml@2.9.0))(vitest@5.0.2)
+      '@vitest/browser-playwright': 5.0.4(playwright@1.64.0)(vite@8.3.4(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.0))(vitest@5.0.2)
       '@vitest/coverage-v8': 5.0.2(@vitest/browser@5.0.2)(vitest@5.0.2)
       '@vitest/ui': 5.0.2(vitest@5.0.2)
     transitivePeerDependencies:
