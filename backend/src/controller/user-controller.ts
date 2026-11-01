@@ -340,14 +340,6 @@ export default class UserController extends BaseController {
           handler: this.getUsersPurchaseReportPdf.bind(this),
         },
       },
-      '/:id(\\d+)/transactions/report': {
-        GET: {
-          policy: async (req) => this.roleManager.can(
-            req.token.roles, 'get', UserController.getRelation(req), 'Transaction', ['*'],
-          ),
-          handler: this.getUsersTransactionsReport.bind(this),
-        },
-      },
       '/:id(\\d+)/transfers': {
         GET: {
           policy: async (req) => this.roleManager.can(
@@ -1717,56 +1709,6 @@ export default class UserController extends BaseController {
     } catch (error) {
       this.logger.error('user.get_processing_deposits.failed', error);
       res.status(500).json('Internal server error.');
-    }
-  }
-
-  /**
-   * GET /users/{id}/transactions/report
-   * @summary Get transaction report for the given user
-   * @operationId getUsersTransactionsReport
-   * @tags users - Operations of user controller
-   * @param {integer} id.path.required - The id of the user to get the transaction report from
-   * @security JWT
-   * @return {Array.<TransactionReportResponse>} 200 - The transaction report of the user
-   * @param {string} fromDate.query - Start date for selected transactions (inclusive)
-   * @param {string} tillDate.query - End date for selected transactions (exclusive)
-   * @param {integer} fromId.query - From-user for selected transactions
-   * @param {integer} toId.query - To-user for selected transactions
-   * @param {boolean} exclusiveToId.query - If all sub-transactions should be to the toId user, default true
-   * @deprecated - Use /users/{id}/transactions/sales/report or /users/{id}/transactions/purchases/report instead
-   * @return {string} 404 - User not found error.
-   */
-  public async getUsersTransactionsReport(req: RequestWithToken, res: Response): Promise<void> {
-    const parameters = req.params;
-    this.logger.trace('user.get_transactions_report', { id: parameters.id });
-
-    let filters;
-    try {
-      filters = parseGetTransactionsFilters(req);
-    } catch (e) {
-      res.status(400).json(e.message);
-      return;
-    }
-
-    try {
-      if ((filters.toId !== undefined && filters.fromId !== undefined) || (filters.toId === undefined && filters.fromId === undefined)) {
-        res.status(400).json('Need to provide either a toId or a fromId.');
-        return;
-      }
-
-      const id = parseInt(parameters.id, 10);
-
-      const user = await User.findOne({ where: { id } });
-      if (user == null) {
-        res.status(404).json('Unknown user ID.');
-        return;
-      }
-
-      const report = await (new TransactionService()).getTransactionReportResponse(filters);
-      res.status(200).json(report);
-    } catch (e) {
-      res.status(500).send();
-      this.logger.error('user.get_transactions_report.failed', e);
     }
   }
 
