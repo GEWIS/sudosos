@@ -21,7 +21,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { Job } from 'bullmq';
-import Mail from 'nodemailer/lib/mailer';
+import type { SendMailOptions } from 'nodemailer';
 import {
   handleJobCompleted,
   handleJobFailed,
@@ -30,11 +30,11 @@ import {
 
 describe('mail-worker', () => {
   describe('processMailJob', () => {
-    const makeJob = (overrides: Partial<Job<Mail.Options>> = {}): Job<Mail.Options> => ({
+    const makeJob = (overrides: Partial<Job<SendMailOptions>> = {}): Job<SendMailOptions> => ({
       id: 'job-1',
       data: { to: 'user@example.test', subject: 'Hi', text: 'hello' },
       ...overrides,
-    }) as Job<Mail.Options>;
+    }) as Job<SendMailOptions>;
 
     it('forwards the job payload to the transporter and returns the response', async () => {
       const sendMail = sinon.stub().resolves({ messageId: 'msg-1' });
@@ -66,13 +66,13 @@ describe('mail-worker', () => {
 
   describe('handleJobCompleted', () => {
     it('does not throw when invoked with a job', () => {
-      expect(() => handleJobCompleted({ id: 'job-1' } as Job<Mail.Options>)).to.not.throw();
+      expect(() => handleJobCompleted({ id: 'job-1' } as Job<SendMailOptions>)).to.not.throw();
     });
   });
 
   describe('handleJobFailed', () => {
     it('does not throw when invoked with a job and an error', () => {
-      expect(() => handleJobFailed({ id: 'job-1' } as Job<Mail.Options>, new Error('boom'))).to.not.throw();
+      expect(() => handleJobFailed({ id: 'job-1' } as Job<SendMailOptions>, new Error('boom'))).to.not.throw();
     });
 
     it('does not throw when invoked with an undefined job', () => {

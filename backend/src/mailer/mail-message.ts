@@ -24,7 +24,7 @@
  * @module internal/mailer
  */
 
-import Mail from 'nodemailer/lib/mailer';
+import type { SendMailOptions } from 'nodemailer';
 import MailContentBuilder from './messages/mail-content-builder';
 import MailBodyGenerator from './mail-body-generator';
 import User from '../entity/user/user';
@@ -40,7 +40,7 @@ export type MailLanguageMap<T> = {
 };
 
 export default class MailMessage<T> {
-  protected baseMailOptions: Mail.Options = {
+  protected baseMailOptions: SendMailOptions = {
     from: Config.get().smtp.from,
   };
 
@@ -56,7 +56,7 @@ export default class MailMessage<T> {
   /**
    * Get the base options
    */
-  getOptions(to: User, language: Language): Mail.Options {
+  getOptions(to: User, language: Language): SendMailOptions {
     if (this.mailContents[language] === undefined) throw new Error(`Unknown language: ${language}`);
 
     const { text, html, subject } = new MailBodyGenerator(language)
