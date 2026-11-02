@@ -1,28 +1,19 @@
 <template>
-  <CardComponent header="Create Invoice">
-    <div class="flex flex-col gap-2 justify-between">
-      <span class="p-error">
-        <i class="pi pi-exclamation-circle" />{{ ' ' + t('modules.financial.invoice.create.warning') }}</span
-      >
-      <div class="flex flex-row justify-end">
-        <ActionButton
-          :disabled="disabled"
-          :label="t('common.create')"
-          :result="form.success?.value"
-          :submitting="form.context.isSubmitting.value"
-          type="submit"
-          @click="form.submit"
-        />
-      </div>
-    </div>
-  </CardComponent>
+  <ActionButton
+    :disabled="disabled"
+    :label="t('common.create')"
+    :result="form.success?.value"
+    :submitting="form.context.isSubmitting.value"
+    type="submit"
+    @click="form.submit"
+  />
 </template>
 
 <script setup lang="ts">
 import { computed, type PropType } from 'vue';
 import * as yup from 'yup';
 import { useI18n } from 'vue-i18n';
-import type { CreateInvoiceRequest, InvoiceResponse } from '@gewis/sudosos-client';
+import type { InvoiceResponse } from '@gewis/sudosos-client';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import { useToast } from 'openvue/usetoast';
 import type { AxiosResponse } from 'axios';
@@ -33,7 +24,7 @@ import apiService from '@/services/ApiService';
 import ActionButton from '@/components/ActionButton.vue';
 import { createInvoiceObject } from '@/utils/validation-schema';
 import { type Form, getProperty, setSubmit, setSuccess } from '@/utils/formUtils';
-import CardComponent from '@/components/CardComponent.vue';
+import { toCreateInvoiceRequest } from '@/utils/invoiceUtil';
 
 const { t } = useI18n();
 const toast = useToast();
@@ -61,24 +52,8 @@ setSubmit(
       return;
     }
 
-    const request: CreateInvoiceRequest = {
-      forId: values.forId,
-      byId,
-      addressee: values.addressee,
-      description: values.description,
-      reference: values.reference,
-      transactionIDs: values.transactionIDs,
-      street: values.street,
-      postalCode: values.postalCode,
-      city: values.city,
-      country: values.country,
-      date: values.date,
-      attention: values.attention,
-      amount: values.transactionTotal,
-    };
-
     apiService.invoices
-      .createInvoice({ createInvoiceRequest: request })
+      .createInvoice({ createInvoiceRequest: toCreateInvoiceRequest(values, byId) })
       .then(async (invoiceResult: AxiosResponse<InvoiceResponse>) => {
         toast.add({
           severity: 'success',
