@@ -147,7 +147,7 @@ pnpm generate:client       # regenerate @gewis/sudosos-client from the current b
 pnpm --filter <pkg> <script>   # anything narrower than the above
 ```
 
-The shell auto-loads nvm; `.nvmrc` pins Node 22. If a command ever fails with "not found": `source ~/.zshrc`.
+The shell auto-loads nvm; `.nvmrc` pins Node 24. If a command ever fails with "not found": `source ~/.zshrc`.
 
 ---
 
