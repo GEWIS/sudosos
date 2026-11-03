@@ -16,7 +16,7 @@ jobs:
       issues: write
     uses: GEWIS/actions/.github/workflows/versioning.yml@v1
     with:
-      node-version: '22.x'
+      node-version: '24.x'
 
   publish-client:
     runs-on: ubuntu-latest
@@ -27,7 +27,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
           cache: pnpm
       - uses: actions/setup-java@v4

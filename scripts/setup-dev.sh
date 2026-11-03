@@ -3,7 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 echo "==> Checking toolchain"
-node -e 'const v=process.versions.node.split(".")[0]; if (v<22) { console.error("Node >=22 required, found "+process.version+" (use nvm install 22)"); process.exit(1); }'
+node -e 'const v=process.versions.node.split(".")[0]; if (v<24) { console.error("Node >=24 required, found "+process.version+" (use nvm install 24)"); process.exit(1); }'
 command -v pnpm >/dev/null || corepack enable
 
 echo "==> Installing workspace"
