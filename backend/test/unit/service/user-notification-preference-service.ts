@@ -259,6 +259,20 @@ describe('UserNotificationPreferenceService', async (): Promise<void> => {
       }
     });
 
+    it('should remove preferences for notification types that no longer exist', async () => {
+      const user = ctx.users[0];
+      const removedType = 'ForgotEventPlanning' as NotificationTypes;
+      await UserNotificationPreference.insert({
+        userId: user.id,
+        type: removedType,
+        channel: NotificationChannels.EMAIL,
+        enabled: false,
+      });
 
+      await new UserNotificationPreferenceService().syncAllUserNotificationPreferences();
+
+      const stale = await UserNotificationPreference.find({ where: { type: removedType } });
+      expect(stale.length).to.eq(0);
+    });
   });
 });

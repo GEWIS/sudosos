@@ -22,7 +22,7 @@
 import WithManager from '../database/with-manager';
 import { asNumber } from '../helpers/validators';
 import { RequestWithToken } from '../middleware/token-middleware';
-import { FindManyOptions, FindOptionsRelations, In } from 'typeorm';
+import { FindManyOptions, FindOptionsRelations, In, Not } from 'typeorm';
 import UserNotificationPreference, { NotificationChannels } from '../entity/notifications/user-notification-preference';
 import QueryFilter from '../helpers/query-filter';
 import User from '../entity/user/user';
@@ -204,7 +204,8 @@ export default class UserNotificationPreferenceService extends WithManager {
   }
 
   /**
-   * Sync all users with all types of notification and channels
+   * Sync all users with all types of notification and channels.
+   * Preferences for notification types that no longer exist are removed.
    */
   public async syncAllUserNotificationPreferences(): Promise<void> {
     const allCombinations: { type: NotificationTypes; channel: NotificationChannels }[]  = [];
@@ -213,6 +214,10 @@ export default class UserNotificationPreferenceService extends WithManager {
         allCombinations.push({ type, channel });
       }
     }
+
+    await this.manager.delete(UserNotificationPreference, {
+      type: Not(In(Object.values(NotificationTypes))),
+    });
 
     const users = await this.manager.find(User);
     for (const user of users) {
