@@ -29,7 +29,7 @@
     "@gewis/splash": "^2.4.0",
     "@gewis/sudosos-client": "workspace:*",
     "@openvue/themes": "catalog:",
-    "@openvue/core": "1.0.0",
+    "@openvue/core": "1.1.0",
     "@stripe/stripe-js": "^8.5.3",
     "@sudosos/sudosos-frontend-common": "workspace:^",
     "@sudosos/themes": "workspace:^",
