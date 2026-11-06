@@ -37,8 +37,8 @@ catalog:
   '@typescript-eslint/parser': ^8.49.0
   vue-eslint-parser: ^10.2.0
   sass: ^1.106.1
-  tailwindcss: ^4.3.3
-  '@tailwindcss/vite': ^4.3.3
+  tailwindcss: ^4.3.4
+  '@tailwindcss/vite': ^4.3.4
   tailwindcss-primeui: ^0.6.1
   openvue: 1.0.0
   primeicons: ^7.0.0
