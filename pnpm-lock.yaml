@@ -174,8 +174,8 @@ catalogs:
       specifier: ^2.2.2
       version: 2.2.2
     '@openvue/themes':
-      specifier: 1.0.0
-      version: 1.0.0
+      specifier: 1.1.0
+      version: 1.1.0
     '@tailwindcss/vite':
       specifier: ^4.3.3
       version: 4.3.3
@@ -559,7 +559,7 @@ importers:
         version: 1.0.0(vue@3.5.44(typescript@5.9.3))
       '@openvue/themes':
         specifier: 'catalog:'
-        version: 1.0.0
+        version: 1.1.0
       '@stripe/stripe-js':
         specifier: ^8.5.3
         version: 8.11.0
@@ -731,7 +731,7 @@ importers:
         version: link:../../../packages/sudosos-client
       '@openvue/themes':
         specifier: 'catalog:'
-        version: 1.0.0
+        version: 1.1.0
       '@sudosos/sudosos-frontend-common':
         specifier: workspace:^
         version: link:../../lib/common
@@ -904,7 +904,7 @@ importers:
     dependencies:
       '@openvue/themes':
         specifier: 'catalog:'
-        version: 1.0.0
+        version: 1.1.0
       openvue:
         specifier: 'catalog:'
         version: 1.0.0(vue@3.5.44(typescript@5.9.3))
@@ -2082,8 +2082,8 @@ packages:
   '@openuxkit/styles@1.1.0':
     resolution: {integrity: sha512-DohE7jvtnTeapfFjqL0RmX63JmKfv1YbL4V2LFTruNXkdK+GfhtvkyUM/1pCrcmjWyflGfZhW5z8LJzUkzwLDQ==}
 
-  '@openuxkit/themes@1.1.0':
-    resolution: {integrity: sha512-0OuDQLFuhUGKWujAs8ejbhrRac9u0h03T349JqKyuGTQWCVaRyNJiShX9OcqCsVi9tbvFHuMkCxppCL/w1Hslw==}
+  '@openuxkit/themes@1.2.0':
+    resolution: {integrity: sha512-fZ+5dfhnxc42fC5JANXxW/lHpdG9g9vGpPhWXmz8cAy9b8FQ7S/W3acBiDj6bdQIY+Af6jQZIlOlC1I86OFOvg==}
 
   '@openuxkit/utils@1.0.0':
     resolution: {integrity: sha512-JCLEEFMJK7JVxlMpzC/szjzxem8XkehY3vknHjrs/mjyWcEIoDd8Gk4ySM+HGILuYbMymlzPqkELYnYQq44E4w==}
@@ -2099,8 +2099,8 @@ packages:
     resolution: {integrity: sha512-xCBcHvs0SjEqrDkL54cwcSKUYkjbAPPbfISfygoxjkE/yibUGk3STyutVsGTAEeV5BIYmK/Hd4eUMN/FOTcsfw==}
     engines: {node: '>=12.11.0'}
 
-  '@openvue/themes@1.0.0':
-    resolution: {integrity: sha512-YiLHzoa+0ic5yz/+vljDaH3UWNofgu5JLENq2FPMY+rPJD9L2F+/QumvUj7vUHvPIFexnb35FwM6fpetw6BfiA==}
+  '@openvue/themes@1.1.0':
+    resolution: {integrity: sha512-ZV6WgIjQC51sMY8NbIx7OZZymEpmYuPyU8IuKAj7lFTwsZ38DXhtxo0iaCMGHN6hKaHpCpZTBMq0ICrcFTwJXA==}
     engines: {node: '>=12.11.0'}
 
   '@oxc-parser/binding-android-arm-eabi@0.127.0':
@@ -3408,9 +3408,6 @@ packages:
 
   '@types/node@20.19.43':
     resolution: {integrity: sha512-6oYBAi5ikg4Pl+kGsoYtawUMBT2zZMCvPNF7pVLnHZfd1zf38DRiWn/gT01RYCdUqkv7Fhr+C9ot4/tb+2sVvA==}
-
-  '@types/node@22.20.5':
-    resolution: {integrity: sha512-U2+DNr+wSjpsTS/wZGYHq7GcwfuSmKiKvoPvK22zwTlRhU91yOniN4qRR5KhIjvif7ysw/dz/hKmfDH0Ris4aA==}
 
   '@types/node@24.13.3':
     resolution: {integrity: sha512-Dh8vAsV36ig5wa9OX4pXvMc9D3Veibfw2wix0CUwYODLD8nkj9UsLjASr49nPg+2eKzxhBV+v7L8pXvT4e639Q==}
@@ -4720,10 +4717,6 @@ packages:
     resolution: {integrity: sha512-ki1/VuRIHFCzxWNrsshHYPs6L7TvLu3DL+TyIGEsRcvVERmxokbf5Gdk7mFxZnTdiGtnA4cfSmjZJMviqSuZrQ==}
     peerDependencies:
       cytoscape: ^3.2.0
-
-  cytoscape@3.34.3:
-    resolution: {integrity: sha512-yfYGhRcGAntq6YBD583j4n0Eg3jIxvWmZtz/5uz9UYkeIStSlMxuUja+ec5j3iBD8nv1rwaOAYMW09tBdkSeaQ==}
-    engines: {node: '>=0.10'}
 
   cytoscape@3.34.4:
     resolution: {integrity: sha512-msY99tMY8iWTg+sIPGfSqDcPNOt4xcj+v/K/7qUFaCUxxlqnMkUYLBjRUzn9W5CU/R2hrmtJa5+UtovrEM2ctg==}
@@ -9937,9 +9930,9 @@ snapshots:
   '@mermaid-js/mermaid-mindmap@9.3.0':
     dependencies:
       '@braintree/sanitize-url': 6.0.4
-      cytoscape: 3.34.3
-      cytoscape-cose-bilkent: 4.1.0(cytoscape@3.34.3)
-      cytoscape-fcose: 2.2.0(cytoscape@3.34.3)
+      cytoscape: 3.34.4
+      cytoscape-cose-bilkent: 4.1.0(cytoscape@3.34.4)
+      cytoscape-fcose: 2.2.0(cytoscape@3.34.4)
       d3: 7.9.0
       khroma: 2.1.0
       non-layered-tidy-tree-layout: 2.0.2
@@ -10131,7 +10124,7 @@ snapshots:
     dependencies:
       '@openuxkit/styled': 1.0.0
 
-  '@openuxkit/themes@1.1.0':
+  '@openuxkit/themes@1.2.0':
     dependencies:
       '@openuxkit/styled': 1.0.0
 
@@ -10151,10 +10144,10 @@ snapshots:
     transitivePeerDependencies:
       - vue
 
-  '@openvue/themes@1.0.0':
+  '@openvue/themes@1.1.0':
     dependencies:
       '@openuxkit/styled': 1.0.0
-      '@openuxkit/themes': 1.1.0
+      '@openuxkit/themes': 1.2.0
 
   '@oxc-parser/binding-android-arm-eabi@0.127.0':
     optional: true
@@ -10980,7 +10973,7 @@ snapshots:
 
   '@types/cors@2.8.19':
     dependencies:
-      '@types/node': 22.20.5
+      '@types/node': 24.13.3
 
   '@types/d3-array@3.2.2': {}
 
@@ -11178,10 +11171,6 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
-  '@types/node@22.20.5':
-    dependencies:
-      undici-types: 6.21.0
-
   '@types/node@24.13.3':
     dependencies:
       undici-types: 7.18.2
@@ -11245,7 +11234,7 @@ snapshots:
 
   '@types/ws@8.18.2':
     dependencies:
-      '@types/node': 22.20.5
+      '@types/node': 24.13.3
 
   '@typescript-eslint/eslint-plugin@7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.0(supports-color@5.5.0))(supports-color@5.5.0)(typescript@5.9.3))(eslint@8.57.0(supports-color@5.5.0))(supports-color@5.5.0)(typescript@5.9.3)':
     dependencies:
@@ -12727,30 +12716,15 @@ snapshots:
 
   csstype@3.2.3: {}
 
-  cytoscape-cose-bilkent@4.1.0(cytoscape@3.34.3):
-    dependencies:
-      cose-base: 1.0.3
-      cytoscape: 3.34.3
-    optional: true
-
   cytoscape-cose-bilkent@4.1.0(cytoscape@3.34.4):
     dependencies:
       cose-base: 1.0.3
       cytoscape: 3.34.4
 
-  cytoscape-fcose@2.2.0(cytoscape@3.34.3):
-    dependencies:
-      cose-base: 2.2.0
-      cytoscape: 3.34.3
-    optional: true
-
   cytoscape-fcose@2.2.0(cytoscape@3.34.4):
     dependencies:
       cose-base: 2.2.0
       cytoscape: 3.34.4
-
-  cytoscape@3.34.3:
-    optional: true
 
   cytoscape@3.34.4: {}
 
@@ -13186,7 +13160,7 @@ snapshots:
   engine.io@6.6.9(supports-color@5.5.0):
     dependencies:
       '@types/cors': 2.8.19
-      '@types/node': 22.20.5
+      '@types/node': 24.13.3
       '@types/ws': 8.18.2
       accepts: 1.3.8
       base64id: 2.0.0
