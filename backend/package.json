@@ -84,7 +84,7 @@
     "@braintree/sanitize-url": "7.1.2",
     "@commitlint/cli": "20.5.3",
     "@commitlint/config-conventional": "20.5.3",
-    "@swc/core": "1.16.20",
+    "@swc/core": "1.16.21",
     "@types/bcrypt": "5.0.2",
     "@types/body-parser": "1.19.6",
     "@types/chai": "4.3.4",
@@ -96,7 +96,7 @@
     "@types/express-fileupload": "1.5.1",
     "@types/jsonwebtoken": "9.0.10",
     "@types/mime-types": "2.1.4",
-    "@types/node": "24.13.3",
+    "@types/node": "24.19.2",
     "@types/node-cron": "3.0.11",
     "@types/sinon": "17.0.3",
     "@types/sinon-chai": "3.2.12",
@@ -105,7 +105,7 @@
     "@types/ws": "8.18.2",
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "@typescript-eslint/parser": "7.18.0",
-    "@vitest/coverage-v8": "5.0.5",
+    "@vitest/coverage-v8": "5.1.0",
     "chai": "4.5.0",
     "chai-as-promised": "7.1.2",
     "chai-http": "4.4.0",
@@ -139,6 +139,6 @@
     "unplugin-swc": "1.6.0",
     "vitepress": "1.6.4",
     "vitepress-plugin-mermaid": "2.0.17",
-    "vitest": "5.0.5"
+    "vitest": "5.1.0"
   }
 }
