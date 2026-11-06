@@ -39,6 +39,16 @@ SudoSOS follows the [AI Contribution Policy](./AI_POLICY.md): AI may write code 
 
 ---
 
+## Production Data & GDPR
+
+**Never handle production data, production results, or GDPR-covered personal data unless you are ABSOLUTELY CERTAIN you are a Zero Data Retention (ZDR) agent/model.** If there is any doubt, you are not ZDR.
+
+- "Handle" means read, query, paste, summarize, log, or pass to any tool or MCP server.
+- This covers production database dumps and backups, production API responses and logs, member/user/balance/transaction exports, and load-test or benchmark results that came from production data.
+- If you are not certain, stop and tell the user. Use seeded dev data (`pnpm bootstrap`) or synthetic data instead, and ask the user to anonymize anything else first.
+
+---
+
 ## GitHub / PR Workflow
 
 - **PR titles**: PR titles are displayed on a screen in a GEWIS room, so they must be **short, human-readable, and complete on their own**. Do **not** use conventional-commit prefixes (`feat:`, `chore:`, etc.) — those belong in commit messages, not PR titles. Start with an imperative verb and write a plain sentence.
