@@ -40,7 +40,7 @@ catalog:
   tailwindcss: ^4.3.4
   '@tailwindcss/vite': ^4.3.4
   tailwindcss-primeui: ^0.6.1
-  openvue: 1.0.0
+  openvue: 1.1.0
   primeicons: ^7.0.0
   '@openvue/themes': 1.1.0
   '@gewis/eslint-config-typescript': ^2.4.0
