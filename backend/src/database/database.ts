@@ -71,9 +71,6 @@ import KeyAuthenticator from '../entity/authenticator/key-authenticator';
 import Fine from '../entity/fine/fine';
 import FineHandoutEvent from '../entity/fine/fineHandoutEvent';
 import UserFineGroup from '../entity/fine/userFineGroup';
-import Event from '../entity/event/event';
-import EventShiftAnswer from '../entity/event/event-shift-answer';
-import EventShift from '../entity/event/event-shift';
 import { TransactionSubscriber, TransferSubscriber } from '../subscriber';
 import InvoicePdf from '../entity/file/invoice-pdf';
 import PayoutRequestPdf from '../entity/file/payout-request-pdf';
@@ -130,6 +127,7 @@ import { PaymentRequestAttempt1784877357000 } from '../migrations/1784877357000-
 import {
   AddProductSelfServiceToUser1785401380818,
 } from '../migrations/1785401380818-add-product-self-service-to-user';
+import { RemoveEvents1793530550381 } from '../migrations/1793530550381-remove-events';
 
 function getDataSourceOptions(): DataSourceOptions {
   const config = Config.get();
@@ -185,6 +183,7 @@ function getDataSourceOptions(): DataSourceOptions {
       TerminalPayment1782294145719,
       PaymentRequestAttempt1784877357000,
       AddProductSelfServiceToUser1785401380818,
+      RemoveEvents1793530550381,
     ],
     extra: {
       authPlugins: {
@@ -249,9 +248,6 @@ function getDataSourceOptions(): DataSourceOptions {
       Permission,
       AssignedRole,
       ResetToken,
-      Event,
-      EventShift,
-      EventShiftAnswer,
       Wrapped,
       WrappedOrganMember,
       WriteOff,

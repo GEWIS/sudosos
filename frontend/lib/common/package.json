@@ -41,7 +41,7 @@
   "dependencies": {
     "@gewis/sudosos-client": "workspace:*",
     "axios": "catalog:",
-    "jose": "^6.2.13",
+    "jose": "^6.2.15",
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "pinia": "catalog:",
@@ -53,7 +53,7 @@
     "@gewis/eslint-config-vue": "catalog:",
     "@gewis/prettier-config": "catalog:",
     "@tsconfig/node-lts": "^24.0.1",
-    "@types/lodash": "^4.17.26",
+    "@types/lodash": "^4.17.27",
     "@typescript-eslint/parser": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vue/tsconfig": "catalog:",

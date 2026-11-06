@@ -107,7 +107,6 @@ describe('Database', async (): Promise<void> => {
           tableName.includes('_roles_role') ||
           tableName.includes('_products_product') ||
           tableName.includes('_containers_container') ||
-          tableName.includes('_shifts_') ||
           tableName.includes('_del_') ||
           tableName.includes('_closure')
         )) {

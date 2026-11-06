@@ -28,6 +28,7 @@ import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import UserController from '../../../src/controller/user-controller';
 import TransactionController from '../../../src/controller/transaction-controller';
 import User, { TermsOfServiceStatus, UserType } from '../../../src/entity/user/user';
+import BalanceService from '../../../src/service/balance-service';
 import Product from '../../../src/entity/product/product';
 import Transaction from '../../../src/entity/transactions/transaction';
 import TokenHandler from '../../../src/authentication/token-handler';
@@ -1017,6 +1018,13 @@ describe('UserController', (): void => {
   });
 
   describe('DELETE /users/:id', () => {
+    const createUserWithoutBalance = () => User.save(Object.assign(new User(), {
+      firstName: 'Zero',
+      lastName: 'Balance',
+      type: UserType.LOCAL_USER,
+      active: true,
+    } as User));
+
     it('should give HTTP 403 when user is not an admin', async () => {
       const res = await request(ctx.app)
         .delete('/users/24')
@@ -1025,16 +1033,32 @@ describe('UserController', (): void => {
     });
 
     it('should correctly delete user if requester is admin', async () => {
+      const user = await createUserWithoutBalance();
       let res = await request(ctx.app)
-        .delete('/users/24')
+        .delete(`/users/${user.id}`)
         .set('Authorization', `Bearer ${ctx.adminToken}`);
       expect(res.status).to.equal(204);
 
       // User does not exist anymore
       res = await request(ctx.app)
-        .get('/users/24')
+        .get(`/users/${user.id}`)
         .set('Authorization', `Bearer ${ctx.adminToken}`);
       expect(res.status).to.equal(404);
+    });
+
+    it('should give HTTP 400 if user has a non-zero balance', async () => {
+      const userId = 24;
+      const balance = await new BalanceService().getBalance(userId);
+      expect(balance.amount.amount).to.not.equal(0);
+
+      const res = await request(ctx.app)
+        .delete(`/users/${userId}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(400);
+      expect(res.body).to.equal('Cannot delete user with non-zero balance.');
+
+      const user = await User.findOne({ where: { id: userId } });
+      expect(user.deleted).to.be.false;
     });
 
     it('should give HTTP 404 if admin and user does not exist', async () => {
@@ -1052,13 +1076,14 @@ describe('UserController', (): void => {
     });
 
     it('should give HTTP 404 if trying to delete user twice', async () => {
+      const user = await createUserWithoutBalance();
       const res = await request(ctx.app)
-        .delete('/users/4')
+        .delete(`/users/${user.id}`)
         .set('Authorization', `Bearer ${ctx.adminToken}`);
       expect(res.status).to.equal(204);
 
       const res2 = await request(ctx.app)
-        .delete('/users/4')
+        .delete(`/users/${user.id}`)
         .set('Authorization', `Bearer ${ctx.adminToken}`);
       expect(res2.status).to.equal(404);
     });

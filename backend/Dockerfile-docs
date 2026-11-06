@@ -1,4 +1,4 @@
-FROM node:22-alpine AS typedoc-builder
+FROM node:24-alpine AS typedoc-builder
 
 RUN apk add --no-cache python3 make g++
 RUN npm install -g pnpm@12.8.1
@@ -12,7 +12,7 @@ COPY backend/ backend/
 
 RUN pnpm --filter sudosos-backend typedoc
 
-FROM node:22-alpine AS vitepress-builder
+FROM node:24-alpine AS vitepress-builder
 
 RUN apk add --no-cache python3 make g++
 RUN npm install -g pnpm@12.8.1

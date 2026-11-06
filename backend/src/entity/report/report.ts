@@ -19,7 +19,31 @@
  */
 
 /**
- * This is the module page of the report.
+ * A report sums up money over a date range. Reports are computed on request and not stored.
+ *
+ * ### Sales and purchase reports
+ * {@link internal/reports!ReportService | ReportService} builds both from the
+ * {@link transactions/sub-transactions!SubTransactionRow | SubTransactionRows} of transactions in
+ * `[fromDate, tillDate)`:
+ * - {@link SalesReport}: what the user sold, for example an organ. Built by
+ *   {@link internal/reports!SalesReportService | SalesReportService}.
+ * - {@link BuyerReport}: what the user bought. Built by
+ *   {@link internal/reports!BuyerReportService | BuyerReportService}.
+ *
+ * A report holds totals with and without VAT, the number of transactions, and a {@link ReportData}
+ * breakdown by product revision, category, VAT group, point of sale and container.
+ *
+ * The endpoints are `GET /users/{id}/transactions/sales/report` and
+ * `GET /users/{id}/transactions/purchases/report`. Their `/pdf` variants are rendered by
+ * {@link internal/pdf/user-report-pdf-service!UserReportPdfService | UserReportPdfService}.
+ * {@link seller-payouts | Seller payouts} use the sales report.
+ *
+ * ### Other reports
+ * - {@link FineReport}: fines handed out and waived (`GET /fines/report`).
+ * - {@link InactiveAdministrativeCostReport}: administrative costs charged to inactive users
+ *   (`GET /inactive-administrative-costs/report`).
+ *
+ * Both have a `/pdf` variant.
  *
  * @module reports
  * @mergeTarget
