@@ -36,7 +36,7 @@ catalog:
   '@vue/tsconfig': ^0.9.1
   '@typescript-eslint/parser': ^8.49.0
   vue-eslint-parser: ^10.2.0
-  sass: ^1.106.1
+  sass: ^1.107.1
   tailwindcss: ^4.3.4
   '@tailwindcss/vite': ^4.3.4
   tailwindcss-primeui: ^0.6.1
