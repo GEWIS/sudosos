@@ -217,20 +217,21 @@ describe('RestrictionMiddleware', (): void => {
         .set('Authorization', `Bearer ${token}`);
       expect(res.status).to.equal(200);
     });
-    it('should allow both lesser and non-lesser tokens by default', async () => {
-      // Sanity check
+    it('should reject lesser tokens and allow full tokens when the endpoint does not opt in', async () => {
+      // No explicit restriction: lesser tokens are rejected by default
       ctx.lesser = undefined;
-      let token = await ctx.tokenHandler.signToken({ user: ctx.userAccepted, roles: [] }, '39');
-      let res = await request(ctx.app)
+      const fullToken = await ctx.tokenHandler.signToken({ user: ctx.userAccepted, roles: [] }, '39');
+      const fullRes = await request(ctx.app)
         .get('/')
-        .set('Authorization', `Bearer ${token}`);
-      expect(res.status).to.equal(200);
+        .set('Authorization', `Bearer ${fullToken}`);
+      expect(fullRes.status).to.equal(200);
 
-      token = await ctx.tokenHandler.signToken({ user: ctx.userAccepted, roles: [], posId: 123 }, '39');
-      res = await request(ctx.app)
+      const lesserToken = await ctx.tokenHandler.signToken({ user: ctx.userAccepted, roles: [], posId: 123 }, '39');
+      const lesserRes = await request(ctx.app)
         .get('/')
-        .set('Authorization', `Bearer ${token}`);
-      expect(res.status).to.equal(200);
+        .set('Authorization', `Bearer ${lesserToken}`);
+      expect(lesserRes.status).to.equal(403);
+      expect(lesserRes.text).to.equal('You have a lesser token, but this endpoint only accepts full-rights tokens.');
     });
   });
 

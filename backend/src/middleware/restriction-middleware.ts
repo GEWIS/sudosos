@@ -33,8 +33,10 @@ import log4js from 'log4js';
 
 export interface TokenRestrictions {
   /**
-   * Whether the token has "less" rights compared to a full access token. True by default.
-   * A token is considered "lesser" if it has a posId property set.
+   * Whether lesser tokens are accepted on this endpoint. A token is considered
+   * "lesser" if it has a posId property set (PIN/NFC/EAN or QR login at a point
+   * of sale). Endpoints must explicitly opt in with `lesser: true`; the default
+   * is to reject lesser tokens.
    */
   lesser: boolean;
 
@@ -86,7 +88,11 @@ export default class RestrictionMiddleware {
       return;
     }
 
-    if ((lesser !== undefined && !lesser) && req.token.posId) {
+    // Default-deny: a token that carries a posId ("lesser" token, minted by PIN/NFC/EAN
+    // or QR login at a point of sale) is only accepted on endpoints that explicitly opt
+    // in via `restrictions: { lesser: true }`. Endpoints without a lesser opt-in reject
+    // such tokens so a PIN-derived token can never be used as a full member identity.
+    if (!lesser && req.token.posId) {
       res.status(403).end('You have a lesser token, but this endpoint only accepts full-rights tokens.');
       return;
     }
