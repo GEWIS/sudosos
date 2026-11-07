@@ -31,11 +31,13 @@ import { QRAuthenticatorStatus } from '../../entity/authenticator/qr-authenticat
  * @property {string} sessionId.required - The session ID
  * @property {string} qrCodeUrl.required - The QR code URL
  * @property {string} expiresAt.required - The expiry date of the QR code
+ * @property {string} subscriberSecret.required - Secret used to subscribe to the session's WebSocket room, only known to the caller of /generate
  */
 export interface QRCodeResponse {
   sessionId: string;
   qrCodeUrl: string;
   expiresAt: string;
+  subscriberSecret: string;
 }
 
 /**

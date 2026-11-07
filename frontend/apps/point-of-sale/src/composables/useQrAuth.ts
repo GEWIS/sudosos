@@ -37,7 +37,13 @@ export function useQrAuth() {
     session.value = res;
     setExpirationTimeout(res.expiresAt);
 
-    webSocketStore.getSocket?.emit('subscribe-qr-session', res.sessionId);
+    // The secret is only returned to the caller of /generate: anyone who merely
+    // photographs the displayed QR code knows the sessionId but not the secret,
+    // and can therefore not subscribe to the token delivery room.
+    webSocketStore.getSocket?.emit('subscribe-qr-session', {
+      sessionId: res.sessionId,
+      secret: res.subscriberSecret,
+    });
     await generateQrCodeImage();
   };
 
