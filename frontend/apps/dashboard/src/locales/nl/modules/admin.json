@@ -153,7 +153,8 @@
         "addProduct": "Product toevoegen",
         "selectProduct": "Selecteer een product om toe te voegen",
         "newProductsAdded": "Nieuwe producten toegevoegd",
-        "newProduct": "NIEUW"
+        "newProduct": "NIEUW",
+        "paidByTerminal": "Deze transactie kan niet worden bewerkt of verwijderd."
       },
       "rbac": {
         "title": "RBAC Beheer",
