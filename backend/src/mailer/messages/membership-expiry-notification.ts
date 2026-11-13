@@ -28,7 +28,7 @@ import { Dinero } from 'dinero.js';
 import MailContentBuilder from './mail-content-builder';
 import MailMessage, { Language, MailLanguageMap } from '../mail-message';
 import { MembershipExpiryNotificationOptions } from '../../notifications';
-import Mail from 'nodemailer/lib/mailer';
+import type { SendMailOptions } from 'nodemailer';
 import User from '../../entity/user/user';
 import Config from '../../config';
 
@@ -86,7 +86,7 @@ export default class MembershipExpiryNotification extends MailMessage<Membership
     super(opt, mailContents);
   }
 
-  public override getOptions(to: User, language: Language): Mail.Options {
+  public override getOptions(to: User, language: Language): SendMailOptions {
     const options = super.getOptions(to, language);
 
     return {

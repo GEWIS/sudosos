@@ -19,7 +19,47 @@
  */
 
 /**
- * This is the module page of the user.
+ * A `User` is any account with a {@link balance!Balance | Balance}: people, organs, vouchers,
+ * invoice accounts and points of sale. The `type` column says which kind.
+ *
+ * ### User types
+ * {@link UserType} decides the default roles of an account. Admins can create any type with
+ * `POST /users`.
+ * - `MEMBER`: a GEWIS member. Created on first GEWIS or LDAP login, or by the LDAP sync. A
+ *   {@link MemberUser} stores the member number. Kept up to date by the GEWISDB and LDAP sync.
+ * - `LOCAL_USER` and `LOCAL_ADMIN`: accounts managed in SudoSOS, with a local password and an
+ *   `expiryDate`. See {@link LocalUserTypes}.
+ * - `ORGAN`: a shared account for a committee, fraternity or board, created by the LDAP sync. See
+ *   {@link organ!OrganMembership | OrganMembership}.
+ * - `VOUCHER`: a pre-paid account from a {@link vouchers!VoucherGroup | VoucherGroup}.
+ * - `INVOICE`: an account that pays by invoice. See {@link invoicing!InvoiceUser | InvoiceUser}.
+ * - `POINT_OF_SALE`: the account a {@link catalogue/point-of-sale!PointOfSale | PointOfSale} logs
+ *   in as. Hidden from user lists.
+ * - `INTEGRATION`: a service account for an external system, created by the LDAP sync.
+ *
+ * ### Authentication
+ * The {@link authentication} module holds the authenticators: LDAP, local password, PIN, NFC, EAN,
+ * API key and QR code. PIN, NFC, API key and local password are managed under
+ * `/users/{id}/authenticator`.
+ *
+ * ### Roles
+ * `RoleManager.getRoles` combines the roles of the user's `type`
+ * ({@link rbac!RoleUserType | RoleUserType}), roles assigned directly
+ * ({@link rbac!AssignedRole | AssignedRole}), and `Seller` for organ members. See {@link rbac}.
+ *
+ * ### Closing an account
+ * Users are never removed, so past transactions keep their buyer.
+ * - `DELETE /users/{id}` soft-deletes the user.
+ * - `UserService.closeUser` clears `active` and `canGoIntoDebt`, and soft-deletes the user if the
+ *   balance is zero. The GEWISDB sync and write-offs use it.
+ * - The LDAP sync deactivates and soft-deletes organs and other AD-only accounts, such as
+ *   integration accounts, once they are removed from AD.
+ *
+ * ### Terms of service
+ * Users of a type in {@link TOSRequired} must accept the terms of service
+ * (`POST /users/acceptTos`) before they can use most endpoints.
+ *
+ * For API interactions, refer to the [Swagger Documentation](https://sudosos.gewis.nl/api/api-docs/#/users).
  *
  * @module users
  * @mergeTarget

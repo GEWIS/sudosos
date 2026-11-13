@@ -27,10 +27,12 @@
 import MailMessage, { Language, MailLanguageMap } from '../mail-message';
 import MailContentBuilder from './mail-content-builder';
 import { WelcomeWithResetOptions } from '../../notifications';
+import Config from '../../config';
+import passwordResetLink from '../password-reset-link';
 
 const passwordResetDutch = new MailContentBuilder<WelcomeWithResetOptions>({
   getHTML: (context) => {
-    const link = context.url + '/passwordreset?token=' + context.resetTokenInfo.password + '&email=' + context.email;
+    const link = passwordResetLink(context.url, context.email, context.resetTokenInfo.password);
     return `
 <p>Een wachtwoord reset voor dit email adres is aangevraagd. Om het proces te voltooien, gebruik de volgende link elk moment binnen de komende 60 minuten: </p>
 
@@ -47,7 +49,7 @@ const passwordResetDutch = new MailContentBuilder<WelcomeWithResetOptions>({
   getText: (context) => `
 Een wachtwoord reset voor dit email adres is aangevraagd. Om het proces te voltooien, gebruik de volgende link elk moment binnen de komende 60 minuten: 
 
-${context.url + '/passwordreset?token=' + context.resetTokenInfo.password + '&email=' + context.email}
+${passwordResetLink(context.url, context.email, context.resetTokenInfo.password)}
 
 Als u geen wachtwoord reset heeft aangevraagd, kunt u deze e-mail veilig negeren en uw huidige inloggegevens gebruiken.
 
@@ -56,7 +58,7 @@ Tot op de borrel!`,
 
 const passwordResetEnglish = new MailContentBuilder<WelcomeWithResetOptions>({
   getHTML: (context) => {
-    const link = context.url + '/passwordreset?token=' + context.resetTokenInfo.password + '&email=' + context.email;
+    const link = passwordResetLink(context.url, context.email, context.resetTokenInfo.password);
     return `
 <p>A password reset for this email address has been requested. To complete the process, use the following link any time within the next 60 minutes: </p>
 
@@ -73,7 +75,7 @@ const passwordResetEnglish = new MailContentBuilder<WelcomeWithResetOptions>({
   getText: (context) => `
 A password reset for this email address has been requested. To complete the process, use the following link any time within the next 60 minutes: 
 
-${context.url + '/passwordreset?token=' + context.resetTokenInfo.password + '&email=' + context.email}
+${passwordResetLink(context.url, context.email, context.resetTokenInfo.password)}
 
 If you have not requested a password reset, you can safely ignore this email and use your current login information.
 
@@ -91,7 +93,7 @@ export default class PasswordReset extends MailMessage<WelcomeWithResetOptions> 
       ...options,
     };
     if (!options.url) {
-      opt.url = process.env.url;
+      opt.url = Config.get().app.frontendUrl;
     }
     super(opt, mailContents);
   }

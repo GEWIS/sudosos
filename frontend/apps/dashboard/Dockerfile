@@ -1,5 +1,5 @@
 # Build in a different image to keep the target image clean
-FROM node:22 AS build
+FROM node:24 AS build
 RUN npm install -g pnpm@12.8.1
 WORKDIR /repo
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc .prettierrc.js ./
