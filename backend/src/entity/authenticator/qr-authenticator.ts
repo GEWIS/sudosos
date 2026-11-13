@@ -25,6 +25,7 @@
 import {
   Column, Entity, JoinColumn, ManyToOne, PrimaryColumn,
 } from 'typeorm';
+import { createHash } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import BaseEntityWithoutId from '../base-entity-without-id';
 import User from '../user/user';
@@ -66,7 +67,11 @@ export enum QRAuthenticatorStatus {
  * - Sessions have a configurable expiration time (default: 5 minutes)
  * - Each session has a unique UUID that cannot be guessed
  * - Sessions can be cancelled to prevent unauthorized access
- * - JWT tokens are only delivered via WebSocket, making them difficult to intercept
+ * - The JWT token is delivered via WebSocket only to clients that present the
+ *   per-session subscribe secret returned to the caller of `/generate`, so a
+ *   party that merely observes the displayed QR code (which contains only the
+ *   sessionId) cannot receive the token
+ * - The subscribe secret is stored hashed and compared in constant time
  *
  *
  * @typedef {BaseEntityWithoutId} QRAuthenticator
@@ -76,6 +81,7 @@ export enum QRAuthenticatorStatus {
  * @property {string} expiresAt.required - When the session expires
  * @property {string} createdAt.required - When the session was created
  * @property {string} confirmedAt - When the session was confirmed
+ * @property {string} subscribeSecretHash.required - SHA-256 hash of the per-session WebSocket subscribe secret
  *
  * @promote
  */
@@ -98,6 +104,13 @@ export default class QRAuthenticator extends BaseEntityWithoutId {
   public cancelled: boolean;
 
   @Column({
+    type: 'varchar',
+    length: 64,
+    nullable: false,
+  })
+  public subscribeSecretHash: string;
+
+  @Column({
     type: 'datetime',
   })
   public expiresAt: Date;
@@ -107,6 +120,13 @@ export default class QRAuthenticator extends BaseEntityWithoutId {
     nullable: true,
   })
   public confirmedAt: Date | null;
+
+  /**
+   * The plaintext subscribe secret, only known to the client that created the
+   * session via the /generate response. Not persisted; only the hash above is
+   * stored.
+   */
+  private subscribeSecret: string;
 
   public get status(): QRAuthenticatorStatus {
     if (this.confirmedAt !== null) {
@@ -127,14 +147,17 @@ export default class QRAuthenticator extends BaseEntityWithoutId {
       sessionId: this.sessionId,
       qrCodeUrl: `${config.app.frontendUrl}/auth/qr/confirm?sessionId=${this.sessionId}`,
       expiresAt: this.expiresAt.toISOString(),
+      subscriberSecret: this.subscribeSecret,
     };
   }
-  
+
   constructor() {
     super();
     this.sessionId = uuidv4();
     this.user = null;
     this.cancelled = false;
+    this.subscribeSecret = `${uuidv4()}${uuidv4()}`;
+    this.subscribeSecretHash = createHash('sha256').update(this.subscribeSecret).digest('hex');
     this.expiresAt = new Date(Date.now() + Config.get().auth.qrAuthenticatorExpiresInMs);
     this.confirmedAt = null;
   }
