@@ -100,28 +100,24 @@ export default class AuthenticationSecureController extends BaseController {
         POST: {
           policy: async () => Promise.resolve(true),
           handler: this.confirmQRCode.bind(this),
-          restrictions: { lesser: false },
         },
       },
       '/pin': {
         POST: {
           policy: async () => Promise.resolve(true),
           handler: this.pinLogin.bind(this),
-          restrictions: { lesser: false },
         },
       },
       '/nfc': {
         POST: {
           policy: async () => Promise.resolve(true),
           handler: this.nfcLogin.bind(this),
-          restrictions: { lesser: false },
         },
       },
       '/ean': {
         POST: {
           policy: async () => Promise.resolve(true),
           handler: this.eanLogin.bind(this),
-          restrictions: { lesser: false },
         },
       },
     };
