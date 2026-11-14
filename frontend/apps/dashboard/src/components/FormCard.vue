@@ -15,7 +15,13 @@
           <Button icon="pi pi-pencil" :label="t('common.edit')" severity="primary" @click="toggleEdit(true)" />
         </div>
         <div v-else class="flex flex-row gap-2">
-          <Button icon="pi pi-check" :label="t('common.save')" severity="primary" @click="handleSave" />
+          <Button
+            icon="pi pi-check"
+            :label="t('common.save')"
+            :loading="saving"
+            severity="primary"
+            @click="handleSave"
+          />
           <Button icon="pi pi-times" :label="t('common.close')" severity="secondary" @click="cancel" />
         </div>
       </div>
@@ -55,20 +61,23 @@ const props = withDefaults(
     create?: boolean;
     form?: Form<T>;
     simpleSave?: boolean;
+    onSave?: () => unknown;
   }>(),
   {
     enableEdit: true,
     create: false,
     form: undefined,
     simpleSave: false,
+    onSave: undefined,
   },
 );
 
-const emit = defineEmits(['update:modelValue', 'save', 'cancel']);
+const emit = defineEmits(['update:modelValue', 'cancel']);
 
 const showEdit = computed(() => props.enableEdit && !props.create && !props.simpleSave);
 
 const edit = ref(props.modelValue);
+const saving = ref(false);
 
 const toggleEdit = (value: boolean) => {
   edit.value = value;
@@ -84,9 +93,16 @@ const cancel = () => {
   toggleEdit(false);
 };
 
-const handleSave = () => {
-  const dirty = props.form?.context.meta.value.dirty;
-  if (dirty) emit('save');
+// A save handler that resolves to false keeps the card in edit mode.
+const handleSave = async () => {
+  if (props.form?.context.meta.value.dirty) {
+    saving.value = true;
+    try {
+      if ((await props.onSave?.()) === false) return;
+    } finally {
+      saving.value = false;
+    }
+  }
   toggleEdit(false);
 };
 
@@ -94,7 +110,7 @@ const handleSimpleSave = () => {
   if (props.form) {
     void props.form.submit();
   } else {
-    emit('save');
+    void props.onSave?.();
   }
 };
 </script>

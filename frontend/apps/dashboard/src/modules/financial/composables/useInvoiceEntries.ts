@@ -1,7 +1,7 @@
 import { computed, type Ref } from 'vue';
-import type { DineroObjectResponse, InvoiceEntryResponse, InvoiceResponse } from '@gewis/sudosos-client';
-import { isDirty } from '@/utils/invoiceUtil';
+import type { DineroObjectResponse, InvoiceEntryResponse, TransferResponse } from '@gewis/sudosos-client';
 import i18n from '@/utils/i18nUtils';
+import { formatPrice } from '@/utils/formatterUtils';
 
 export interface VatEntry {
   vatPercentage: number;
@@ -10,30 +10,23 @@ export interface VatEntry {
   vatAmount: DineroObjectResponse;
 }
 
-export type RowEntry = InvoiceEntryResponse & {
-  class?: object;
+export type TotalRow = {
   description: string;
   amount: number;
   priceInclVat: DineroObjectResponse;
-  vatPercentage: number;
-  custom?: boolean;
+  muted?: boolean;
+  class?: object;
 };
 
 const t = i18n.global.t;
-export function useInvoiceEntries(invoice: Ref<InvoiceResponse>) {
-  // Build product entries
-  const productEntries = computed<RowEntry[]>(() =>
-    invoice.value.invoiceEntries.map((entry) => ({
-      ...entry,
-      custom: false,
-      class: {},
-    })),
-  );
-
-  // VAT entries (for VAT card)
+/**
+ * Rows and totals for a list of invoice entries.
+ * `transfer` is the invoice's transfer; an invoice that is not created yet has none.
+ */
+export function useInvoiceEntries(entries: Ref<InvoiceEntryResponse[]>, transfer: Ref<TransferResponse | undefined>) {
   const vatEntries = computed<VatEntry[]>(() => {
     const map = new Map<number, VatEntry>();
-    invoice.value.invoiceEntries.forEach((entry) => {
+    entries.value.forEach((entry) => {
       const totalInclVat = entry.priceInclVat.amount * entry.amount;
       const base = Math.round(entry.priceInclVat.amount / (1 + entry.vatPercentage / 100)) * entry.amount;
       const vatAmt = totalInclVat - base;
@@ -50,7 +43,7 @@ export function useInvoiceEntries(invoice: Ref<InvoiceResponse>) {
       vatEntry.amountInclVat.amount += totalInclVat;
       vatEntry.vatAmount.amount += vatAmt;
     });
-    return Array.from(map.values());
+    return Array.from(map.values()).sort((a, b) => a.vatPercentage - b.vatPercentage);
   });
 
   // Total calculation
@@ -66,34 +59,36 @@ export function useInvoiceEntries(invoice: Ref<InvoiceResponse>) {
   }));
 
   // Total rows
-  const totalRows = computed<RowEntry[]>(() => {
-    const rows: RowEntry[] = [
+  const totalRows = computed<TotalRow[]>(() => {
+    const rows: TotalRow[] = [
       {
         description: t('common.excl'),
         amount: 1,
-        vatPercentage: 0,
         priceInclVat: exclVat.value,
-        custom: false,
-        class: {},
       },
+      // One row per VAT rate, like the VAT summary on the invoice PDF.
+      ...vatEntries.value.map((vat) => ({
+        description: t('modules.financial.invoice.vat.over', {
+          percentage: vat.vatPercentage,
+          base: formatPrice(vat.baseAmount),
+        }),
+        amount: 1,
+        priceInclVat: vat.vatAmount,
+        muted: true,
+      })),
       {
         description: t('common.incl'),
         amount: 1,
-        vatPercentage: 0,
         priceInclVat: inclVat.value,
-        custom: false,
-        class: {},
       },
     ];
 
-    // Add transfer warning row if needed
-    if (invoice.value.transfer && isDirty(invoice.value)) {
+    // Add a warning row if the entries do not add up to the transfer (see isDirty)
+    if (transfer.value && inclVat.value.amount !== transfer.value.amountInclVat.amount) {
       rows.push({
         description: t('modules.financial.invoice.transfer'),
         amount: 1,
-        vatPercentage: 0,
-        priceInclVat: invoice.value.transfer.amountInclVat,
-        custom: false,
+        priceInclVat: transfer.value.amountInclVat,
         class: { 'text-red-500': true },
       });
     }
@@ -101,12 +96,8 @@ export function useInvoiceEntries(invoice: Ref<InvoiceResponse>) {
     return rows;
   });
 
-  // allRows: products + totals/warning
-  const allRows = computed<RowEntry[]>(() => [...productEntries.value, ...totalRows.value]);
-  const totalRowCutoff = computed(() => productEntries.value.length);
-
   // rowTotal helper
-  function rowTotal(row: RowEntry): DineroObjectResponse {
+  function rowTotal(row: Pick<TotalRow, 'amount' | 'priceInclVat'>): DineroObjectResponse {
     return {
       ...row.priceInclVat,
       amount: row.amount * row.priceInclVat.amount,
@@ -114,11 +105,7 @@ export function useInvoiceEntries(invoice: Ref<InvoiceResponse>) {
   }
 
   return {
-    productEntries,
     totalRows,
-    allRows,
-    totalRowCutoff,
     rowTotal,
-    vatEntries,
   };
 }

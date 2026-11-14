@@ -1,27 +1,32 @@
 <template>
-  <PageContainer class="max-w-[100rem]">
+  <PageContainer>
     <div class="flex flex-col">
       <InvoiceAccountOverview />
       <EntityTable
         v-model:search="search"
         v-model:year="year"
-        :create-label="t('modules.financial.invoice.create.create')"
         :data-table-props="{ filterDisplay: 'menu', filters }"
         :is-loading="isLoading"
         :records="records"
         :rows="rows"
+        :search-placeholder="t('common.description')"
         :title="t('modules.financial.invoice.header')"
         :total-records="totalRecords"
         :years="years"
-        @create="navigateToCreateInvoice"
         @page="onPage"
-        @search="searchById"
       >
         <template #columns="{ isLoading: loading }">
           <Column class="max-w-[2rem]" field="id" :header="t('common.id')">
             <template #body="{ data }">
               <Skeleton v-if="loading" class="skeleton-fixed surface-300 max-w-[2rem]" />
               <span v-else>{{ data.id }}</span>
+            </template>
+          </Column>
+
+          <Column class="max-w-[4rem]" field="reference" :header="t('modules.financial.forms.invoice.reference')">
+            <template #body="{ data }">
+              <Skeleton v-if="loading" class="skeleton-fixed surface-300 w-6" />
+              <span v-else class="whitespace-nowrap">{{ data.reference }}</span>
             </template>
           </Column>
 
@@ -40,11 +45,11 @@
                 v-tooltip="
                   t('modules.financial.invoice.backDate', { date: formatDateFromString(data.transfer.createdAt) })
                 "
-                class="text-red-500"
+                class="text-red-500 whitespace-nowrap"
               >
                 {{ formatDateFromString(data.date) }}
               </span>
-              <span v-else>{{ formatDateFromString(data.date) }}</span>
+              <span v-else class="whitespace-nowrap">{{ formatDateFromString(data.date) }}</span>
             </template>
           </Column>
 
@@ -114,7 +119,6 @@
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { type InvoiceResponse, type InvoiceResponseTypes, InvoiceStatusResponseStateEnum } from '@gewis/sudosos-client';
-import { useRouter } from 'vue-router';
 import { useInvoiceStore } from '@/stores/invoice.store';
 import { useEntityTable } from '@/composables/useEntityTable';
 import { useFiscalYear } from '@/composables/fiscalYear';
@@ -125,7 +129,6 @@ import EntityTable from '@/components/EntityTable.vue';
 import AppLink from '@/components/AppLink.vue';
 
 const { t } = useI18n();
-const router = useRouter();
 const invoiceStore = useInvoiceStore();
 const { getFiscalYear } = useFiscalYear();
 
@@ -142,6 +145,8 @@ function isBackDate(invoice: InvoiceResponse): boolean {
   return getFiscalYear(invoice.createdAt) !== getFiscalYear(invoice.date);
 }
 
+type InvoiceFilters = { state?: InvoiceStatusResponseStateEnum; description?: string };
+
 async function fetchInvoices({
   page,
   rows,
@@ -152,7 +157,7 @@ async function fetchInvoices({
   year: number;
   page: number;
   rows: number;
-  filters: { state?: InvoiceStatusResponseStateEnum };
+  filters: InvoiceFilters;
   fiscalStart: string;
   fiscalEnd: string;
 }) {
@@ -160,11 +165,8 @@ async function fetchInvoices({
     fromDate: fiscalStart,
     tillDate: fiscalEnd,
     state: f.state,
+    description: f.description,
   });
-}
-
-async function fetchSingleInvoice(id: number) {
-  return invoiceStore.fetchInvoice(id);
 }
 
 const {
@@ -177,22 +179,19 @@ const {
   totalRecords,
   onPage,
   setFilter,
-  searchById,
   filters: entityFilters,
-} = useEntityTable<InvoiceResponseTypes, { state?: InvoiceStatusResponseStateEnum }>(
-  fetchInvoices,
-  fetchSingleInvoice,
-  {
-    initialFilters: { state: undefined },
-    defaultRows: 10,
-    syncQueryParams: {
-      serializeFilters: (f) => ({ state: f.state }),
-      deserializeFilters: (q) => ({
-        state: typeof q.state === 'string' ? (q.state as InvoiceStatusResponseStateEnum) : undefined,
-      }),
-    },
+} = useEntityTable<InvoiceResponseTypes, InvoiceFilters>(fetchInvoices, undefined, {
+  initialFilters: { state: undefined, description: undefined },
+  // Search the description (partial match) as you type; the API cannot search by reference.
+  searchKey: 'description',
+  defaultRows: 10,
+  syncQueryParams: {
+    serializeFilters: (f) => ({ state: f.state }),
+    deserializeFilters: (q) => ({
+      state: typeof q.state === 'string' ? (q.state as InvoiceStatusResponseStateEnum) : undefined,
+    }),
   },
-);
+});
 
 const filters = ref({
   'currentState.state': { value: entityFilters.value.state ?? null, matchMode: 'equals' as const },
@@ -204,10 +203,6 @@ watch(
     filters.value['currentState.state'].value = state ?? null;
   },
 );
-
-const navigateToCreateInvoice = () => {
-  void router.push({ name: 'invoiceCreate' });
-};
 </script>
 
 <style scoped lang="scss">

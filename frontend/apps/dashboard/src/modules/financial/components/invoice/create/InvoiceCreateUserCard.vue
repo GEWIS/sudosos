@@ -1,7 +1,9 @@
 <template>
-  <CardComponent header="User Selection">
+  <CardComponent :header="t('modules.financial.invoice.create.account')">
     <!-- TODO: Improve two way binding such that resetting the form will also reset the user selection -->
+    <Skeleton v-if="queryUserLoading" class="mb-3 max-w-[15rem]" height="2.5rem" />
     <InputUserSpan
+      v-else
       v-model:value="selectedUser"
       class="mb-3 max-w-[15rem]"
       :default="queryUser"
@@ -67,6 +69,7 @@ const props = defineProps({
 
 const selectedUser = ref<BaseUserResponse | undefined>(undefined);
 const route = useRoute();
+const toast = useToast();
 const userStore = useUserStore();
 
 const transactionTotal = computed(() => {
@@ -150,24 +153,40 @@ const updateDefaultUser = (forId: number) => {
       props.form.context.setFieldValue('city', user.city);
       props.form.context.setFieldValue('country', user.country);
     })
-    .catch((err) => handleError(err, useToast()));
+    .catch((err) => handleError(err, toast));
 };
 
 const queryUser: Ref<BaseUserResponse | undefined> = ref(undefined);
+// FindUser only reads its default on mount, so hold the picker back until the query user is known.
+const queryUserLoading = ref(false);
 
 onBeforeMount(() => {
-  if (route.query.userId) {
-    const userId = route.query.userId as unknown as number;
-    props.form.context.setFieldValue('forId', userId);
+  if (!route.query.userId) return;
+  const userId = Number(route.query.userId);
+  if (!Number.isInteger(userId)) return;
 
-    const user = userStore.getUserById(userId);
-    if (user) {
-      queryUser.value = user;
-    }
+  props.form.context.setFieldValue('forId', userId);
+  updateUserBalance();
+  updateDefaultUser(userId);
 
-    updateUserBalance();
-    updateDefaultUser(userId);
+  // The user store only holds users some other view already loaded, so fall back to the API.
+  const cached = userStore.getUserById(userId);
+  if (cached) {
+    queryUser.value = cached;
+    return;
   }
+
+  queryUserLoading.value = true;
+  apiService.user
+    .getIndividualUser({ id: userId })
+    .then((res) => {
+      userStore.addUser(res.data);
+      queryUser.value = res.data;
+    })
+    .catch((err) => handleError(err, toast))
+    .finally(() => {
+      queryUserLoading.value = false;
+    });
 });
 </script>
 
