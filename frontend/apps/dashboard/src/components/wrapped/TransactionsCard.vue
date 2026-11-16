@@ -1,5 +1,5 @@
 <template>
-  <div class="card-root text-black" :class="{ active }">
+  <div class="card-root text-white" :class="{ active }">
     <div class="bg pos-bg"></div>
 
     <div class="content">
@@ -72,7 +72,8 @@ const count = useCountUp(
 .pos-bg {
   background-image: url('../../assets/img/wrapped/pos.png');
   background-size: 60%;
-  opacity: 0.2;
+  opacity: 0.15;
+  filter: brightness(0) invert(1);
   transform: translate(-20%, 20%) rotate(8deg);
 }
 </style>

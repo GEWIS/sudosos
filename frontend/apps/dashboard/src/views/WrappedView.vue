@@ -202,7 +202,7 @@ const cards = computed<Card[]>(() => {
   ];
   if (wrapped.value.transactions.transactionCount > 0) {
     deck.push(
-      { component: TransactionsCard, background: '#ffffff', dark: false },
+      { component: TransactionsCard, background: 'linear-gradient(160deg, #b40000 0%, #3d0000 100%)' },
       { component: CalendarHeatmapCard, background: 'linear-gradient(90deg, #0d1117 0%, #1f2937 100%)' },
       { component: TopProductCard, background: 'linear-gradient(135deg, #004ff9 0%, #000000 100%)' },
       { component: ProductsCard, background: 'linear-gradient(135deg, #662d8c 0%, #ed1e79 100%)' },
