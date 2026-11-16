@@ -48,7 +48,9 @@ const COUNT_DURATION = 2500;
 
 const transactions = computed(() => props.wrapped.transactions);
 const difference = computed(() => transactions.value.transactionCount - transactions.value.previousTransactionCount);
-const percentile = computed(() => transactions.value.transactionPercentile.toLocaleString(locale.value));
+const percentile = computed(() =>
+  transactions.value.transactionPercentile.toLocaleString(locale.value, { maximumFractionDigits: 1 }),
+);
 
 const comparison = computed(() => {
   if (difference.value === 0) return t('components.wrapped.transactions.same');
