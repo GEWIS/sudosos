@@ -143,6 +143,7 @@ import TopProductCard from '@/components/wrapped/TopProductCard.vue';
 import ProductsCard from '@/components/wrapped/ProductsCard.vue';
 import TotalSpentCard from '@/components/wrapped/TotalSpentCard.vue';
 import SpendingDistributionCard from '@/components/wrapped/SpendingDistributionCard.vue';
+import QuietYearCard from '@/components/wrapped/QuietYearCard.vue';
 import FinalCard from '@/components/wrapped/FinalCard.vue';
 import OrgansCard from '@/components/wrapped/OrgansCard.vue';
 import OrgansOverviewCard from '@/components/wrapped/OrgansOverviewCard.vue';
@@ -198,19 +199,19 @@ const cards = computed<Card[]>(() => {
 
   const deck: Card[] = [
     { component: WelcomeCard, background: '#b40000', props: { firstName: authStore.getUser?.firstName } },
-    { component: TransactionsCard, background: '#ffffff', dark: false },
-    { component: CalendarHeatmapCard, background: 'linear-gradient(90deg, #0d1117 0%, #1f2937 100%)' },
   ];
-  if (wrapped.value.topProducts.length > 0) {
+  if (wrapped.value.transactions.transactionCount > 0) {
     deck.push(
+      { component: TransactionsCard, background: '#ffffff', dark: false },
+      { component: CalendarHeatmapCard, background: 'linear-gradient(90deg, #0d1117 0%, #1f2937 100%)' },
       { component: TopProductCard, background: 'linear-gradient(135deg, #004ff9 0%, #000000 100%)' },
       { component: ProductsCard, background: 'linear-gradient(135deg, #662d8c 0%, #ed1e79 100%)' },
+      { component: TotalSpentCard, background: 'linear-gradient(45deg, #233329 0%, #63d471 100%)' },
+      { component: SpendingDistributionCard, background: 'linear-gradient(135deg, #ff8800 0%, #ff3300 100%)' },
     );
+  } else {
+    deck.push({ component: QuietYearCard, background: 'linear-gradient(90deg, #0d1117 0%, #1f2937 100%)' });
   }
-  deck.push(
-    { component: TotalSpentCard, background: 'linear-gradient(45deg, #233329 0%, #63d471 100%)' },
-    { component: SpendingDistributionCard, background: 'linear-gradient(135deg, #ff8800 0%, #ff3300 100%)' },
-  );
 
   const organ = bestOrgan(wrapped.value);
   if (organ) {

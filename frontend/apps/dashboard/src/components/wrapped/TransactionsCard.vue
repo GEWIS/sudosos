@@ -19,6 +19,7 @@
       <h1 class="text-2xl">{{ t('components.wrapped.transactions.unit', transactions.transactionCount) }}</h1>
 
       <i18n-t
+        v-if="transactions.transactionPercentile <= 50"
         :aria-hidden="step < 3"
         class="mt-2 fade-slide"
         keypath="components.wrapped.transactions.percentile"

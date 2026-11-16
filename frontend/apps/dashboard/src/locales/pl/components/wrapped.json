@@ -63,6 +63,10 @@
         "title": "Twoje organy",
         "summary": "Sprzedawca numer {seller}, numer {transactions} pod względem transakcji"
       },
+      "quiet": {
+        "title": "Spokojny rok",
+        "text": "W {year} roku nie było żadnych zakupów przez SudoSOS. Do zobaczenia na następnym borrelu?"
+      },
       "final": {
         "thanks": "Dziękujemy za korzystanie z {sudosos} w {year} roku!",
         "wishes": "Wesołych Świąt i szczęśliwego Nowego Roku życzy {abc}!",

@@ -23,6 +23,7 @@
           {{ comparison }}
         </p>
         <i18n-t
+          v-if="wrapped.spentPercentile <= 50"
           :aria-hidden="step < 3"
           class="text-xl mt-8 self-start fade-slide"
           keypath="components.wrapped.totalSpent.percentile"

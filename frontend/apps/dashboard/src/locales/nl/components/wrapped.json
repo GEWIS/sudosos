@@ -63,6 +63,10 @@
         "title": "Je organen",
         "summary": "Nummer {seller} verkoper, nummer {transactions} in transacties"
       },
+      "quiet": {
+        "title": "Een rustig jaar",
+        "text": "Je hebt in {year} niets gekocht via SudoSOS. Tot de volgende borrel?"
+      },
       "final": {
         "thanks": "Bedankt voor het gebruiken van {sudosos} in {year}!",
         "wishes": "Fijne kerstdagen en een gelukkig nieuwjaar van de {abc}!",

@@ -63,6 +63,10 @@
         "title": "Your organs",
         "summary": "Number {seller} seller, number {transactions} in transactions"
       },
+      "quiet": {
+        "title": "A quiet year",
+        "text": "You did not buy anything with SudoSOS in {year}. See you at the next borrel?"
+      },
       "final": {
         "thanks": "Thank you for using {sudosos} in {year}!",
         "wishes": "Merry Christmas and a happy new year from the {abc}!",
