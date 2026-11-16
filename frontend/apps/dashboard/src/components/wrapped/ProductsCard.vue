@@ -1,8 +1,7 @@
-<!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
 <template>
   <div class="card-root text-white" :class="{ active }">
     <div class="content">
-      <h2 class="text-2xl mb-5">Your <span class="font-bold">top products</span> were:</h2>
+      <h2 class="text-2xl font-bold mb-5">{{ t('components.wrapped.products.title') }}</h2>
       <div class="grid gap-2">
         <div
           v-for="(product, index) in wrapped.topProducts"
@@ -19,9 +18,11 @@
           </div>
           <div class="w-full">
             <h3 class="font-bold text-xl">{{ product.name }}</h3>
-            <h4>
-              Bought <span class="font-bold">{{ product.count }}</span> time{{ product.count == 1 ? '' : 's' }}!
-            </h4>
+            <i18n-t keypath="components.wrapped.products.bought" :plural="product.count" scope="global" tag="h4">
+              <template #count>
+                <span class="font-bold">{{ product.count.toLocaleString(locale) }}</span>
+              </template>
+            </i18n-t>
           </div>
         </div>
       </div>
@@ -30,11 +31,14 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import type { WrappedResponse } from '@gewis/sudosos-client';
 import { useCardReveal } from '@/composables/wrappedCard';
 import { getProductImageSrcFromString } from '@/utils/urlUtils';
 
 const props = defineProps<{ active?: boolean; wrapped: WrappedResponse }>();
+
+const { t, locale } = useI18n();
 
 const { step } = useCardReveal(
   () => props.active,

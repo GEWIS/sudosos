@@ -1,5 +1,3 @@
-<!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
-<!-- eslint-disable @intlify/vue-i18n/no-missing-keys -->
 <template>
   <div
     class="fixed inset-0 z-50 w-screen h-dvh flex items-center justify-center sm:static sm:inset-auto sm:w-auto sm:h-auto sm:items-center sm:justify-center"
@@ -29,7 +27,12 @@
             :paused="paused"
             @complete="next"
           />
-          <button aria-label="Close" class="cursor-pointer" type="button" @click="close">
+          <button
+            :aria-label="t('components.wrapped.controls.close')"
+            class="cursor-pointer"
+            type="button"
+            @click="close"
+          >
             <i aria-hidden="true" class="pi pi-times"></i>
           </button>
         </div>
@@ -74,35 +77,37 @@
       class="absolute inset-0 z-50 flex items-center justify-center p-4 sm:static sm:inset-auto sm:flex-1"
     >
       <div class="flex flex-col items-center gap-3 text-center">
-        <ProgressSpinner aria-label="Loading wrapped" stroke-width="6" style="width: 64px; height: 64px" />
+        <ProgressSpinner
+          :aria-label="t('components.wrapped.loading')"
+          stroke-width="6"
+          style="width: 64px; height: 64px"
+        />
         <div class="mt-4 text-lg font-medium">
-          {{ t('views.wrapped.gettingReady', 'Getting your wrapped ready...') }}
+          {{ t('components.wrapped.loading') }}
         </div>
       </div>
     </div>
     <Dialog
       :closable="false"
       :draggable="false"
-      :header="t('views.wrapped.dataAnalysisRequired', 'Data Analysis Required')"
+      :header="t('components.wrapped.consent.header')"
       modal
       :style="{ width: '25rem' }"
       :visible="showDataAnalysisDialog"
     >
       <div class="flex flex-col gap-4">
         <p>
-          {{
-            t('views.wrapped.dataAnalysisMessage', 'You need to enable extensive data analysis to view your wrapped.')
-          }}
+          {{ t('components.wrapped.consent.message') }}
         </p>
         <p class="text-sm text-gray-600">
-          {{ t('views.wrapped.dataAnalysisSubtext', 'You can always disable this later in your settings.') }}
+          {{ t('components.wrapped.consent.subtext') }}
         </p>
       </div>
       <template #footer>
         <div class="flex justify-end gap-2">
           <Button :label="t('common.cancel')" severity="secondary" @click="handleCancelDataAnalysis" />
           <Button
-            :label="t('views.wrapped.enable', 'Enable')"
+            :label="t('components.wrapped.consent.enable')"
             :loading="isEnablingDataAnalysis"
             @click="handleEnableDataAnalysis"
           />

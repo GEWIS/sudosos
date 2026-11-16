@@ -1,0 +1,73 @@
+{
+  "components": {
+    "wrapped": {
+      "loading": "Getting your Wrapped ready...",
+      "consent": {
+        "header": "Data analysis required",
+        "message": "You need to enable extensive data analysis to view your Wrapped.",
+        "subtext": "You can always disable this later in your settings.",
+        "enable": "Enable"
+      },
+      "controls": {
+        "close": "Close",
+        "previous": "Previous card",
+        "next": "Next card"
+      },
+      "top": "top {percentile}%",
+      "welcome": {
+        "hello": "Hello {name}!",
+        "intro": "Welcome to your",
+        "title": "SudoSOS Wrapped {year}",
+        "hint": "Tap to get started"
+      },
+      "transactions": {
+        "intro": "In {year}, you made",
+        "unit": "transaction | transactions",
+        "more": "{count} more than last year",
+        "fewer": "{count} fewer than last year",
+        "same": "Exactly as many as last year",
+        "percentile": "That puts you in the {top} of SudoSOS users!"
+      },
+      "heatmap": {
+        "on": "On {date},",
+        "made": "you made",
+        "busiest": "This was your busiest day of the year."
+      },
+      "topProduct": {
+        "intro": "In {year}, your favourite product was",
+        "bought": "You bought it {count} time! | You bought it {count} times!"
+      },
+      "products": {
+        "title": "Your top products",
+        "bought": "Bought {count} time | Bought {count} times"
+      },
+      "totalSpent": {
+        "intro": "In {year}, you spent a total of",
+        "using": "using {sudosos}",
+        "more": "{amount} more than last year",
+        "less": "{amount} less than last year",
+        "same": "Exactly the same as last year",
+        "percentile": "That puts you in the {top} of spenders!"
+      },
+      "distribution": {
+        "borrel": "Of the {total} you spent, {borrel} was spent at borrels.",
+        "share": "That is {share}!",
+        "categories": "Most of your money went to",
+        "category": "{amount} ({share}) on {category}"
+      },
+      "organs": {
+        "workedFor": "You worked hard for {organ}!",
+        "sellerRank": "You were their {rank} seller!",
+        "transactionRank": "And also {rank} in transactions rung up!",
+        "rank": "number {rank}",
+        "title": "Your organs",
+        "summary": "Number {seller} seller, number {transactions} in transactions"
+      },
+      "final": {
+        "thanks": "Thank you for using {sudosos} in {year}!",
+        "wishes": "Merry Christmas and a happy new year from the {abc}!",
+        "back": "Back to SudoSOS"
+      }
+    }
+  }
+}

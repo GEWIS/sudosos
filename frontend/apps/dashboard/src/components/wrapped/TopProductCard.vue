@@ -1,32 +1,40 @@
-<!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
 <template>
   <div class="card-root text-white" :class="{ active }">
     <div class="content">
-      <h2 class="text-2xl mb-5">
-        In <span class="font-bold">{{ wrapped.year }}</span
-        >, your favorite product was:
-      </h2>
+      <h2 class="text-2xl mb-5">{{ t('components.wrapped.topProduct.intro', { year: wrapped.year }) }}</h2>
       <PosProduct
         class="w-[70%] ml-auto mr-auto -rotate-5"
         :class="step >= 1 ? 'slide-in' : 'invisible'"
         :image="getProductImageSrcFromString(product.image ?? '')"
         :name="product.name"
       />
-      <h3 :aria-hidden="step < 2" class="mt-8 text-xl fade-slide float-right">
-        You bought this item <span class="font-bold">{{ product.count }}</span> time{{ product.count == 1 ? '' : 's' }}!
-      </h3>
+      <i18n-t
+        :aria-hidden="step < 2"
+        class="mt-8 text-xl fade-slide text-right"
+        keypath="components.wrapped.topProduct.bought"
+        :plural="product.count"
+        scope="global"
+        tag="h3"
+      >
+        <template #count>
+          <span class="font-bold">{{ product.count.toLocaleString(locale) }}</span>
+        </template>
+      </i18n-t>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { WrappedResponse } from '@gewis/sudosos-client';
 import PosProduct from '@/components/wrapped/Product/PosProduct.vue';
 import { useCardReveal } from '@/composables/wrappedCard';
 import { getProductImageSrcFromString } from '@/utils/urlUtils';
 
 const props = defineProps<{ active?: boolean; wrapped: WrappedResponse }>();
+
+const { t, locale } = useI18n();
 
 const product = computed(() => props.wrapped.topProducts[0]);
 

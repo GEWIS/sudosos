@@ -1,41 +1,62 @@
-<!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
 <template>
   <div class="card-root text-black" :class="{ active }">
     <div class="bg pos-bg"></div>
 
     <div class="content">
-      <h2 class="text-xl">Over the past year,</h2>
-      <h1 class="text-2xl">You have made a total of</h1>
+      <h2 class="text-2xl">{{ t('components.wrapped.transactions.intro', { year: wrapped.year }) }}</h2>
       <div class="flex flex-row items-center gap-2 mt-2">
-        <span class="text-5xl font-bold">{{ count.toLocaleString() }}</span>
+        <span class="text-5xl font-bold">{{ count.toLocaleString(locale) }}</span>
         <p :aria-hidden="step < 2" class="text-sm m-0 fade-slide">
-          <span v-if="difference > 0" aria-hidden="true" class="pi pi-arrow-up" />
-          <span v-if="difference < 0" aria-hidden="true" class="pi pi-arrow-down" />
-          <template v-if="difference === 0">This is exactly the same as last year!</template>
-          <template v-else>{{ Math.abs(difference).toLocaleString() }} from last year!</template>
+          <span
+            v-if="difference !== 0"
+            aria-hidden="true"
+            class="pi"
+            :class="difference > 0 ? 'pi-arrow-up' : 'pi-arrow-down'"
+          />
+          {{ comparison }}
         </p>
       </div>
-      <h1 class="text-2xl">Transaction{{ transactions.transactionCount == 1 ? '' : 's' }}!</h1>
+      <h1 class="text-2xl">{{ t('components.wrapped.transactions.unit', transactions.transactionCount) }}</h1>
 
-      <p :aria-hidden="step < 3" class="mt-2 fade-slide">
-        This puts you in the <span class="font-bold">top {{ percentile }}%</span> of SudoSOS users!
-      </p>
+      <i18n-t
+        :aria-hidden="step < 3"
+        class="mt-2 fade-slide"
+        keypath="components.wrapped.transactions.percentile"
+        scope="global"
+        tag="p"
+      >
+        <template #top>
+          <span class="font-bold">{{ t('components.wrapped.top', { percentile }) }}</span>
+        </template>
+      </i18n-t>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { WrappedResponse } from '@gewis/sudosos-client';
 import { useCardReveal, useCountUp } from '@/composables/wrappedCard';
 
 const props = defineProps<{ active?: boolean; wrapped: WrappedResponse }>();
 
+const { t, locale } = useI18n();
+
 const COUNT_DURATION = 2500;
 
 const transactions = computed(() => props.wrapped.transactions);
 const difference = computed(() => transactions.value.transactionCount - transactions.value.previousTransactionCount);
-const percentile = computed(() => Math.round(transactions.value.transactionPercentile * 10) / 10);
+const percentile = computed(() => transactions.value.transactionPercentile.toLocaleString(locale.value));
+
+const comparison = computed(() => {
+  if (difference.value === 0) return t('components.wrapped.transactions.same');
+
+  const count = Math.abs(difference.value).toLocaleString(locale.value);
+  return difference.value > 0
+    ? t('components.wrapped.transactions.more', { count })
+    : t('components.wrapped.transactions.fewer', { count });
+});
 
 const { step, done } = useCardReveal(() => props.active, [0, COUNT_DURATION + 300, 600]);
 const count = useCountUp(

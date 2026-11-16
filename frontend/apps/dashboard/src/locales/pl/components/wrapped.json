@@ -1,0 +1,73 @@
+{
+  "components": {
+    "wrapped": {
+      "loading": "Przygotowujemy Twoje Wrapped...",
+      "consent": {
+        "header": "Wymagana analiza danych",
+        "message": "Aby zobaczyć swoje Wrapped, musisz włączyć rozszerzoną analizę danych.",
+        "subtext": "Zawsze możesz ją później wyłączyć w ustawieniach.",
+        "enable": "Włącz"
+      },
+      "controls": {
+        "close": "Zamknij",
+        "previous": "Poprzednia karta",
+        "next": "Następna karta"
+      },
+      "top": "top {percentile}%",
+      "welcome": {
+        "hello": "Cześć {name}!",
+        "intro": "Witaj w swoim",
+        "title": "SudoSOS Wrapped {year}",
+        "hint": "Dotknij, aby zacząć"
+      },
+      "transactions": {
+        "intro": "W {year} roku liczba Twoich transakcji to",
+        "unit": "transakcja | transakcji",
+        "more": "o {count} więcej niż rok temu",
+        "fewer": "o {count} mniej niż rok temu",
+        "same": "Dokładnie tyle samo co rok temu",
+        "percentile": "To daje Ci miejsce w {top} użytkowników SudoSOS!"
+      },
+      "heatmap": {
+        "on": "Dnia {date}",
+        "made": "liczba Twoich transakcji:",
+        "busiest": "To był Twój najbardziej pracowity dzień w roku."
+      },
+      "topProduct": {
+        "intro": "W {year} roku Twoim ulubionym produktem był",
+        "bought": "Liczba zakupów: {count}!"
+      },
+      "products": {
+        "title": "Twoje ulubione produkty",
+        "bought": "Liczba zakupów: {count}"
+      },
+      "totalSpent": {
+        "intro": "W {year} roku wydałeś łącznie",
+        "using": "przez {sudosos}",
+        "more": "o {amount} więcej niż rok temu",
+        "less": "o {amount} mniej niż rok temu",
+        "same": "Dokładnie tyle samo co rok temu",
+        "percentile": "To daje Ci miejsce w {top} wydających!"
+      },
+      "distribution": {
+        "borrel": "Z wydanych {total} aż {borrel} poszło na borrele.",
+        "share": "To {share}!",
+        "categories": "Najwięcej pieniędzy poszło na",
+        "category": "{amount} ({share}) na {category}"
+      },
+      "organs": {
+        "workedFor": "Ciężko pracowałeś dla {organ}!",
+        "sellerRank": "Byłeś ich sprzedawcą {rank}!",
+        "transactionRank": "A także {rank} pod względem liczby transakcji!",
+        "rank": "numer {rank}",
+        "title": "Twoje organy",
+        "summary": "Sprzedawca numer {seller}, numer {transactions} pod względem transakcji"
+      },
+      "final": {
+        "thanks": "Dziękujemy za korzystanie z {sudosos} w {year} roku!",
+        "wishes": "Wesołych Świąt i szczęśliwego Nowego Roku życzy {abc}!",
+        "back": "Wróć do SudoSOS"
+      }
+    }
+  }
+}

@@ -1,24 +1,32 @@
-<!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
 <template>
   <div class="card-root text-white" :class="{ active }">
     <div class="bg chart-bg">
       <i aria-hidden="true" class="pi pi-chart-line"></i>
     </div>
     <div class="content">
-      <h1 class="text-2xl">
-        Of the <span class="font-bold">{{ formatDineroObject(wrapped.totalSpent) }}</span> you spent,
-        <span class="font-bold">{{ formatDineroObject(wrapped.borrelSpent) }}</span>
-        was spent during borrels.
-      </h1>
-      <h2 :aria-hidden="step < 1" class="text-2xl pt-2 fade-slide">
-        That is <span class="font-bold">{{ share(wrapped.borrelSpent) }}</span
-        >!
-      </h2>
+      <i18n-t class="text-2xl" keypath="components.wrapped.distribution.borrel" scope="global" tag="h1">
+        <template #total>
+          <span class="font-bold">{{ formatDineroObject(wrapped.totalSpent) }}</span>
+        </template>
+        <template #borrel>
+          <span class="font-bold">{{ formatDineroObject(wrapped.borrelSpent) }}</span>
+        </template>
+      </i18n-t>
+      <i18n-t
+        :aria-hidden="step < 1"
+        class="text-2xl pt-2 fade-slide"
+        keypath="components.wrapped.distribution.share"
+        scope="global"
+        tag="h2"
+      >
+        <template #share>
+          <span class="font-bold">{{ share(wrapped.borrelSpent) }}</span>
+        </template>
+      </i18n-t>
 
       <div class="pt-6">
         <h1 :aria-hidden="step < 2" class="text-xl fade-slide">
-          In <span class="font-bold">{{ wrapped.year }}</span
-          >, you spent:
+          {{ t('components.wrapped.distribution.categories') }}
         </h1>
         <ul>
           <li
@@ -27,10 +35,13 @@
             :aria-hidden="step < index + 3"
             class="fade-slide"
           >
-            <span class="font-bold">
-              {{ formatDineroObject(category.totalInclVat) }} ({{ share(category.totalInclVat) }})
-            </span>
-            on {{ category.name }}.
+            {{
+              t('components.wrapped.distribution.category', {
+                amount: formatDineroObject(category.totalInclVat),
+                share: share(category.totalInclVat),
+                category: category.name,
+              })
+            }}
           </li>
         </ul>
       </div>
@@ -40,11 +51,14 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { DineroObjectResponse, WrappedResponse } from '@gewis/sudosos-client';
 import { useCardReveal } from '@/composables/wrappedCard';
 import { formatDineroObject } from '@/utils/formatterUtils';
 
 const props = defineProps<{ active?: boolean; wrapped: WrappedResponse }>();
+
+const { t } = useI18n();
 
 const categories = computed(() => props.wrapped.categories.slice(0, 3));
 

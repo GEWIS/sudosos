@@ -16,13 +16,21 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{ currentIndex: number; totalCards: number }>();
 
 const emit = defineEmits<{ (e: 'prev' | 'next'): void }>();
 
+const { t } = useI18n();
+
 const arrows = computed(() => [
-  { event: 'prev' as const, label: 'Previous card', icon: 'pi-arrow-left', hiddenAt: 0 },
-  { event: 'next' as const, label: 'Next card', icon: 'pi-arrow-right', hiddenAt: props.totalCards - 1 },
+  { event: 'prev' as const, label: t('components.wrapped.controls.previous'), icon: 'pi-arrow-left', hiddenAt: 0 },
+  {
+    event: 'next' as const,
+    label: t('components.wrapped.controls.next'),
+    icon: 'pi-arrow-right',
+    hiddenAt: props.totalCards - 1,
+  },
 ]);
 </script>

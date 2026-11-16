@@ -1,27 +1,32 @@
-<!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
 <template>
   <div class="card-root relative" :class="{ active }">
     <div class="bg bier-bg"></div>
 
     <div class="content text-white">
-      <h1 class="welcome text-4xl">
-        Hello <span class="font-bold">{{ firstName }}</span>!
-      </h1>
-      <h3 class="text-xl pt-4">Welcome to your</h3>
-      <h1 class="text-3xl font-bold">SudoSOS Wrapped!</h1>
+      <i18n-t class="text-4xl" keypath="components.wrapped.welcome.hello" scope="global" tag="h1">
+        <template #name>
+          <span class="font-bold">{{ firstName }}</span>
+        </template>
+      </i18n-t>
+      <h3 class="text-xl pt-4">{{ t('components.wrapped.welcome.intro') }}</h3>
+      <h1 class="text-3xl font-bold">{{ t('components.wrapped.welcome.title', { year: wrapped.year }) }}</h1>
     </div>
 
-    <div v-if="!showArrows" class="swipe-hint text-white flex flex-row fixed right-4 bottom-4 gap-2 items-center">
-      <p class="m-0">Swipe left to get started</p>
+    <div v-if="!showArrows" class="text-white flex flex-row fixed right-4 bottom-4 gap-2 items-center">
+      <p class="m-0">{{ t('components.wrapped.welcome.hint') }}</p>
       <i class="pi pi-arrow-right"></i>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+import type { WrappedResponse } from '@gewis/sudosos-client';
 import { useCardReveal } from '@/composables/wrappedCard';
 
-const props = defineProps<{ active?: boolean; firstName?: string; showArrows?: boolean }>();
+const props = defineProps<{ active?: boolean; wrapped: WrappedResponse; firstName?: string; showArrows?: boolean }>();
+
+const { t } = useI18n();
 
 useCardReveal(() => props.active, []);
 </script>

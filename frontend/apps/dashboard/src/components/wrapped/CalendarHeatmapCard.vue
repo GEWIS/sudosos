@@ -1,4 +1,3 @@
-<!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
 <template>
   <div class="card-root text-white" :class="{ active }">
     <div class="content flex items-center">
@@ -32,17 +31,18 @@
       </div>
 
       <div :aria-hidden="step < 2" class="side fade-slide">
-        <h1 class="text-2xl">
-          On <span class="font-bold">{{ formatDay(shownDay) }}</span
-          >,
-        </h1>
-        <h2 class="text-xl py-2">you made</h2>
+        <i18n-t class="text-2xl" keypath="components.wrapped.heatmap.on" scope="global" tag="h1">
+          <template #date>
+            <span class="font-bold">{{ formatDay(shownDay) }}</span>
+          </template>
+        </i18n-t>
+        <h2 class="text-xl py-2">{{ t('components.wrapped.heatmap.made') }}</h2>
         <h1 class="text-2xl">
           <span class="font-bold text-4xl">{{ heatmap[shownDay] }}</span>
-          transaction{{ heatmap[shownDay] == 1 ? '' : 's' }}!
+          {{ t('components.wrapped.transactions.unit', heatmap[shownDay]) }}
         </h1>
         <h3 :aria-hidden="step < 3 || shownDay !== busiestDay" class="font-extralight pt-2 fade-slide">
-          This was the highest number of transactions you made on a single day.
+          {{ t('components.wrapped.heatmap.busiest') }}
         </h3>
       </div>
     </div>
@@ -51,12 +51,20 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { WrappedResponse } from '@gewis/sudosos-client';
 import { useCardReveal } from '@/composables/wrappedCard';
 
 const props = defineProps<{ active?: boolean; wrapped: WrappedResponse }>();
 
-const weekdays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const { t, locale } = useI18n();
+
+// 2024 started on a Monday, which is the first column of the heatmap.
+const weekdays = computed(() =>
+  Array.from({ length: 7 }, (_, weekday) =>
+    new Date(2024, 0, 1 + weekday).toLocaleDateString(locale.value, { weekday: 'narrow' }),
+  ),
+);
 
 const heatmap = computed(() => props.wrapped.transactions.transactionHeatmap);
 const busiestDay = computed(() => heatmap.value.indexOf(props.wrapped.transactions.transactionMaxAmount));
@@ -74,7 +82,7 @@ function dateOf(day: number): Date {
 }
 
 function formatDay(day: number): string {
-  return dateOf(day).toLocaleDateString(undefined, { day: 'numeric', month: 'long' });
+  return dateOf(day).toLocaleDateString(locale.value, { day: 'numeric', month: 'long' });
 }
 
 const days = computed(() => {
@@ -101,7 +109,7 @@ const months = computed(() =>
   Array.from({ length: 12 }, (_, month) => {
     const firstDay = new Date(props.wrapped.year, month, 1);
     const dayOfYear = Math.round((firstDay.getTime() - dateOf(0).getTime()) / 86_400_000);
-    return { name: firstDay.toLocaleDateString(undefined, { month: 'short' }), row: rowOf(dayOfYear) };
+    return { name: firstDay.toLocaleDateString(locale.value, { month: 'short' }), row: rowOf(dayOfYear) };
   }),
 );
 
