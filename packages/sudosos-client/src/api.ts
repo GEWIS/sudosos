@@ -6809,6 +6809,50 @@ export interface WaiveFinesRequest {
 /**
  * 
  * @export
+ * @interface WrappedCategoryResponse
+ */
+export interface WrappedCategoryResponse {
+    /**
+     * The ID of the product category
+     * @type {number}
+     * @memberof WrappedCategoryResponse
+     */
+    'id': number;
+    /**
+     * The name of the product category
+     * @type {string}
+     * @memberof WrappedCategoryResponse
+     */
+    'name': string;
+    /**
+     * 
+     * @type {DineroObjectResponse}
+     * @memberof WrappedCategoryResponse
+     */
+    'totalInclVat': DineroObjectResponse;
+}
+/**
+ * 
+ * @export
+ * @interface WrappedCountAndTotalResponse
+ */
+export interface WrappedCountAndTotalResponse {
+    /**
+     * The number of occurrences
+     * @type {number}
+     * @memberof WrappedCountAndTotalResponse
+     */
+    'count': number;
+    /**
+     * 
+     * @type {DineroObjectResponse}
+     * @memberof WrappedCountAndTotalResponse
+     */
+    'total': DineroObjectResponse;
+}
+/**
+ * 
+ * @export
  * @interface WrappedEnabledResponse
  */
 export interface WrappedEnabledResponse {
@@ -6832,6 +6876,12 @@ export interface WrappedOrganMemberResponse {
      */
     'organId': number;
     /**
+     * 
+     * @type {BaseUserResponse}
+     * @memberof WrappedOrganMemberResponse
+     */
+    'organ': BaseUserResponse;
+    /**
      * 0-based ranking for transaction count created
      * @type {number}
      * @memberof WrappedOrganMemberResponse
@@ -6843,6 +6893,73 @@ export interface WrappedOrganMemberResponse {
      * @memberof WrappedOrganMemberResponse
      */
     'ordinalTurnoverCreated': number;
+    /**
+     * The number of transactions the user rang up for the organ
+     * @type {number}
+     * @memberof WrappedOrganMemberResponse
+     */
+    'transactionsCreated': number;
+    /**
+     * 
+     * @type {DineroObjectResponse}
+     * @memberof WrappedOrganMemberResponse
+     */
+    'turnoverCreated': DineroObjectResponse;
+    /**
+     * The number of distinct buyers in those transactions
+     * @type {number}
+     * @memberof WrappedOrganMemberResponse
+     */
+    'customersServed': number;
+    /**
+     * The number of sellers the user is ranked among
+     * @type {number}
+     * @memberof WrappedOrganMemberResponse
+     */
+    'sellerCount': number;
+}
+/**
+ * 
+ * @export
+ * @interface WrappedProductResponse
+ */
+export interface WrappedProductResponse {
+    /**
+     * The ID of the product
+     * @type {number}
+     * @memberof WrappedProductResponse
+     */
+    'id': number;
+    /**
+     * The current name of the product
+     * @type {string}
+     * @memberof WrappedProductResponse
+     */
+    'name': string;
+    /**
+     * The download name of the image of the product
+     * @type {string}
+     * @memberof WrappedProductResponse
+     */
+    'image'?: string;
+    /**
+     * The number of times the user bought the product
+     * @type {number}
+     * @memberof WrappedProductResponse
+     */
+    'count': number;
+    /**
+     * 
+     * @type {DineroObjectResponse}
+     * @memberof WrappedProductResponse
+     */
+    'totalInclVat': DineroObjectResponse;
+    /**
+     * The 1-based rank of the user among the buyers of the product
+     * @type {number}
+     * @memberof WrappedProductResponse
+     */
+    'rank': number;
 }
 /**
  * 
@@ -6851,35 +6968,17 @@ export interface WrappedOrganMemberResponse {
  */
 export interface WrappedResponse {
     /**
-     * The unique id of the entity.
-     * @type {number}
-     * @memberof WrappedResponse
-     */
-    'id': number;
-    /**
-     * The creation Date of the entity.
-     * @type {string}
-     * @memberof WrappedResponse
-     */
-    'createdAt'?: string;
-    /**
-     * The last update Date of the entity.
-     * @type {string}
-     * @memberof WrappedResponse
-     */
-    'updatedAt'?: string;
-    /**
-     * The version of the entity.
-     * @type {number}
-     * @memberof WrappedResponse
-     */
-    'version'?: number;
-    /**
      * The ID of the user
      * @type {number}
      * @memberof WrappedResponse
      */
     'userId': number;
+    /**
+     * The year the statistics are about
+     * @type {number}
+     * @memberof WrappedResponse
+     */
+    'year': number;
     /**
      * 
      * @type {WrappedTransactions}
@@ -6887,11 +6986,77 @@ export interface WrappedResponse {
      */
     'transactions': WrappedTransactions;
     /**
+     * 
+     * @type {DineroObjectResponse}
+     * @memberof WrappedResponse
+     */
+    'totalSpent': DineroObjectResponse;
+    /**
+     * 
+     * @type {DineroObjectResponse}
+     * @memberof WrappedResponse
+     */
+    'previousTotalSpent': DineroObjectResponse;
+    /**
+     * 
+     * @type {DineroObjectResponse}
+     * @memberof WrappedResponse
+     */
+    'borrelSpent': DineroObjectResponse;
+    /**
      * The top percentile of the user based on amount spent
      * @type {number}
      * @memberof WrappedResponse
      */
     'spentPercentile': number;
+    /**
+     * The number of products the user bought
+     * @type {number}
+     * @memberof WrappedResponse
+     */
+    'itemCount': number;
+    /**
+     * The number of alcoholic products the user bought
+     * @type {number}
+     * @memberof WrappedResponse
+     */
+    'alcoholicItemCount': number;
+    /**
+     * The number of different products the user bought
+     * @type {number}
+     * @memberof WrappedResponse
+     */
+    'distinctProducts': number;
+    /**
+     * The most bought products, most bought first
+     * @type {Array<WrappedProductResponse>}
+     * @memberof WrappedResponse
+     */
+    'topProducts': Array<WrappedProductResponse>;
+    /**
+     * The money spent per product category, highest first
+     * @type {Array<WrappedCategoryResponse>}
+     * @memberof WrappedResponse
+     */
+    'categories': Array<WrappedCategoryResponse>;
+    /**
+     * 
+     * @type {WrappedRoundResponse}
+     * @memberof WrappedResponse
+     */
+    'biggestRound'?: WrappedRoundResponse;
+    /**
+     * 
+     * @type {WrappedCountAndTotalResponse}
+     * @memberof WrappedResponse
+     */
+    'topUps': WrappedCountAndTotalResponse;
+    /**
+     * 
+     * @type {WrappedCountAndTotalResponse}
+     * @memberof WrappedResponse
+     */
+    'fines': WrappedCountAndTotalResponse;
     /**
      * The starting date from which the data was considered
      * @type {string}
@@ -6914,6 +7079,31 @@ export interface WrappedResponse {
 /**
  * 
  * @export
+ * @interface WrappedRoundResponse
+ */
+export interface WrappedRoundResponse {
+    /**
+     * The number of products in the transaction
+     * @type {number}
+     * @memberof WrappedRoundResponse
+     */
+    'items': number;
+    /**
+     * 
+     * @type {DineroObjectResponse}
+     * @memberof WrappedRoundResponse
+     */
+    'totalInclVat': DineroObjectResponse;
+    /**
+     * The moment of the transaction
+     * @type {string}
+     * @memberof WrappedRoundResponse
+     */
+    'date': string;
+}
+/**
+ * 
+ * @export
  * @interface WrappedTransactions
  */
 export interface WrappedTransactions {
@@ -6924,17 +7114,23 @@ export interface WrappedTransactions {
      */
     'transactionCount': number;
     /**
+     * The total number of transactions in the year before
+     * @type {number}
+     * @memberof WrappedTransactions
+     */
+    'previousTransactionCount': number;
+    /**
      * The top percentile of the user based on the amount of transactions
      * @type {number}
      * @memberof WrappedTransactions
      */
     'transactionPercentile': number;
     /**
-     * The date the user made the highest amount of transactions
+     * The day on which the user made the most transactions, omitted without transactions
      * @type {string}
      * @memberof WrappedTransactions
      */
-    'transactionMaxDate': string;
+    'transactionMaxDate'?: string;
     /**
      * The highest amount of transactions made by the user on a single day
      * @type {number}
@@ -6947,6 +7143,18 @@ export interface WrappedTransactions {
      * @memberof WrappedTransactions
      */
     'transactionHeatmap': Array<number>;
+    /**
+     * The number of transactions per hour of the day, 24 entries
+     * @type {Array<number>}
+     * @memberof WrappedTransactions
+     */
+    'hourHistogram': Array<number>;
+    /**
+     * The number of transactions between 06:00 and 16:30
+     * @type {number}
+     * @memberof WrappedTransactions
+     */
+    'daytimeTransactionCount': number;
 }
 /**
  * 
@@ -24324,10 +24532,11 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
          * 
          * @summary Get wrapped for a user
          * @param {number} id The id of the user
+         * @param {number} [year] The year to get the wrapped of, defaults to the most recent one
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getWrapped: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getWrapped: async (id: number, year?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getWrapped', 'id', id)
             const localVarPath = `/users/{id}/wrapped`
@@ -24346,6 +24555,10 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
             // authentication JWT required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (year !== undefined) {
+                localVarQueryParameter['year'] = year;
+            }
 
 
     
@@ -24662,7 +24875,7 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
         },
         /**
          * 
-         * @summary Recompute wrapped for a user
+         * @summary Get the current wrapped of a user, computing it when it does not exist yet
          * @param {number} id The id of the user
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -25190,11 +25403,12 @@ export const UsersApiFp = function(configuration?: Configuration) {
          * 
          * @summary Get wrapped for a user
          * @param {number} id The id of the user
+         * @param {number} [year] The year to get the wrapped of, defaults to the most recent one
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getWrapped(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WrappedResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getWrapped(id, options);
+        async getWrapped(id: number, year?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WrappedResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getWrapped(id, year, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['UsersApi.getWrapped']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -25298,7 +25512,7 @@ export const UsersApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary Recompute wrapped for a user
+         * @summary Get the current wrapped of a user, computing it when it does not exist yet
          * @param {number} id The id of the user
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -25632,7 +25846,7 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
          * @throws {RequiredError}
          */
         getWrapped(requestParameters: UsersApiGetWrappedRequest, options?: RawAxiosRequestConfig): AxiosPromise<WrappedResponse> {
-            return localVarFp.getWrapped(requestParameters.id, options).then((request) => request(axios, basePath));
+            return localVarFp.getWrapped(requestParameters.id, requestParameters.year, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -25706,7 +25920,7 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
         },
         /**
          * 
-         * @summary Recompute wrapped for a user
+         * @summary Get the current wrapped of a user, computing it when it does not exist yet
          * @param {UsersApiUpdateWrappedRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -26551,6 +26765,13 @@ export interface UsersApiGetWrappedRequest {
      * @memberof UsersApiGetWrapped
      */
     readonly id: number
+
+    /**
+     * The year to get the wrapped of, defaults to the most recent one
+     * @type {number}
+     * @memberof UsersApiGetWrapped
+     */
+    readonly year?: number
 }
 
 /**
@@ -27093,7 +27314,7 @@ export class UsersApi extends BaseAPI {
      * @memberof UsersApi
      */
     public getWrapped(requestParameters: UsersApiGetWrappedRequest, options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).getWrapped(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+        return UsersApiFp(this.configuration).getWrapped(requestParameters.id, requestParameters.year, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -27182,7 +27403,7 @@ export class UsersApi extends BaseAPI {
 
     /**
      * 
-     * @summary Recompute wrapped for a user
+     * @summary Get the current wrapped of a user, computing it when it does not exist yet
      * @param {UsersApiUpdateWrappedRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
