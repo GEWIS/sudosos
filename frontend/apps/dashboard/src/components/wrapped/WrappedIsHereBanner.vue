@@ -34,12 +34,16 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
+// December and the January after it share a season, so a dismissal lasts until the next Wrapped.
+const now = new Date();
+const season = String(new Date(now.getFullYear(), now.getMonth() - 6).getFullYear());
+
 const isDismissed = ref(false);
 
 function dismiss() {
   isDismissed.value = true;
   try {
-    localStorage.setItem('wrappedBannerDismissed', 'true');
+    localStorage.setItem('wrappedBannerDismissed', season);
   } catch {
     // ignore
   }
@@ -47,7 +51,7 @@ function dismiss() {
 
 if (typeof window !== 'undefined') {
   try {
-    if (localStorage.getItem('wrappedBannerDismissed') === 'true') {
+    if (localStorage.getItem('wrappedBannerDismissed') === season) {
       isDismissed.value = true;
     }
   } catch {
