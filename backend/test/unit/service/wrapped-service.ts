@@ -30,6 +30,12 @@ import User, { UserType } from '../../../src/entity/user/user';
 import Transaction from '../../../src/entity/transactions/transaction';
 import SubTransaction from '../../../src/entity/transactions/sub-transaction';
 import SubTransactionRow from '../../../src/entity/transactions/sub-transaction-row';
+import Transfer from '../../../src/entity/transactions/transfer';
+import StripeDeposit from '../../../src/entity/stripe/stripe-deposit';
+import StripePaymentIntent from '../../../src/entity/stripe/stripe-payment-intent';
+import Fine from '../../../src/entity/fine/fine';
+import FineHandoutEvent from '../../../src/entity/fine/fineHandoutEvent';
+import UserFineGroup from '../../../src/entity/fine/userFineGroup';
 import PointOfSaleRevision from '../../../src/entity/point-of-sale/point-of-sale-revision';
 import ProductRevision from '../../../src/entity/product/product-revision';
 import ContainerRevision from '../../../src/entity/container/container-revision';
@@ -143,15 +149,17 @@ describe('WrappedService', (): void => {
     const [drinks, food] = await ProductCategory.save(['Drinks', 'Food'].map((name) => (
       Object.assign(new ProductCategory(), { name })
     )));
-    const createProduct = (name: string, amount: number, category = drinks) => ProductService.createProduct({
+    const createProduct = (
+      name: string, amount: number, category = drinks, alcoholPercentage = 0,
+    ) => ProductService.createProduct({
       ownerId: organ.id,
       name,
       priceInclVat: { amount, currency: dinero.defaultCurrency, precision: dinero.defaultPrecision },
       vat: vat.id,
       category: category.id,
-      alcoholPercentage: 0,
+      alcoholPercentage,
     });
-    const beer = await createProduct('Beer', 100);
+    const beer = await createProduct('Beer', 100, drinks, 5);
     const snack = await createProduct('Snack', 250, food);
     const sodas: ProductRevision[] = [];
     for (const name of ['Cola', 'Fanta', 'Sprite', 'Cassis']) sodas.push(await createProduct(name, 50));
@@ -176,7 +184,10 @@ describe('WrappedService', (): void => {
   });
 
   beforeEach(async () => {
-    for (const entity of [SubTransactionRow, SubTransaction, Transaction, WrappedOrganMember, Wrapped]) {
+    for (const entity of [
+      SubTransactionRow, SubTransaction, Transaction, WrappedOrganMember, Wrapped,
+      Fine, UserFineGroup, FineHandoutEvent, StripeDeposit, StripePaymentIntent, Transfer,
+    ]) {
       await ctx.connection.manager.createQueryBuilder().delete().from(entity).execute();
     }
   });
@@ -378,6 +389,97 @@ describe('WrappedService', (): void => {
       expect(categories.map((c) => [c.name, c.totalInclVat])).to.deep.equal([['Food', 250], ['Drinks', 150]]);
     });
 
+    it('should count the transactions per hour of the day', async () => {
+      await buy(ctx.alice, new Date(YEAR, 5, 1, 14, 0), [[ctx.beer, 1]]);
+      await buy(ctx.alice, new Date(YEAR, 5, 1, 14, 30), [[ctx.beer, 1]]);
+      await buy(ctx.alice, new Date(YEAR, 5, 2, 23, 0), [[ctx.beer, 1]]);
+      await buy(ctx.alice, new Date(YEAR, 5, 9, 3, 47), [[ctx.beer, 1]]);
+      await buy(ctx.alice, new Date(YEAR, 5, 20, 6, 30), [[ctx.beer, 1]]);
+
+      await update();
+
+      const wrapped = await wrappedOf(ctx.alice);
+      expect(wrapped.hourHistogram).to.have.length(24);
+      expect(wrapped.hourHistogram[14]).to.equal(2);
+      expect(wrapped.hourHistogram[3]).to.equal(1);
+      expect(wrapped.hourHistogram.reduce((a, b) => a + b)).to.equal(5);
+    });
+
+    it('should count the transactions between 06:00 and 16:30', async () => {
+      await buy(ctx.alice, new Date(YEAR, 5, 1, 5, 59), [[ctx.beer, 1]]);
+      await buy(ctx.alice, new Date(YEAR, 5, 1, 6, 0), [[ctx.beer, 1]]);
+      await buy(ctx.alice, new Date(YEAR, 5, 1, 16, 29), [[ctx.beer, 1]]);
+      await buy(ctx.alice, new Date(YEAR, 5, 1, 16, 30), [[ctx.beer, 1]]);
+
+      await update();
+
+      expect((await wrappedOf(ctx.alice)).daytimeTransactionCount).to.equal(2);
+    });
+
+    it('should find the transaction with the most products', async () => {
+      await buy(ctx.alice, new Date(YEAR, 5, 1, 21), [[ctx.snack, 2]]);
+      await buy(ctx.alice, new Date(YEAR, 5, 2, 21), [[ctx.beer, 3], [ctx.sodas[0], 1]]);
+      await buy(ctx.alice, new Date(YEAR, 5, 3, 21), [[ctx.beer, 2], [ctx.snack, 2]]);
+
+      await update();
+
+      const wrapped = await wrappedOf(ctx.alice);
+      expect(wrapped.biggestRoundItems).to.equal(4);
+      expect(wrapped.biggestRoundSpent.getAmount()).to.equal(700);
+      expect(wrapped.biggestRoundDate).to.deep.equal(new Date(YEAR, 5, 3, 21));
+      expect((await wrappedOf(ctx.carol)).biggestRoundDate).to.be.null;
+    });
+
+    it('should count the products, the alcoholic ones and the different ones', async () => {
+      await buy(ctx.alice, new Date(YEAR, 5, 1, 21), [[ctx.beer, 3], [ctx.snack, 2]]);
+      await buy(ctx.alice, new Date(YEAR, 5, 2, 21), [[ctx.beer, 1], [ctx.sodas[0], 1]]);
+
+      await update();
+
+      const wrapped = await wrappedOf(ctx.alice);
+      expect(wrapped.itemCount).to.equal(7);
+      expect(wrapped.alcoholicItemCount).to.equal(4);
+      expect(wrapped.distinctProducts).to.equal(3);
+    });
+
+    it('should total the Stripe deposits and the fines of the year', async () => {
+      const topUp = async (amount: number, createdAt: Date) => {
+        const transfer = await Transfer.save(Object.assign(new Transfer(), {
+          toId: ctx.alice.id, amountInclVat: dinero({ amount }), createdAt,
+        }));
+        const stripePaymentIntent = await StripePaymentIntent.save(Object.assign(new StripePaymentIntent(), {
+          stripeId: `pi_${transfer.id}`, amount: dinero({ amount }), paymentIntentStatuses: [],
+        }));
+        await StripeDeposit.save(Object.assign(new StripeDeposit(), { to: ctx.alice, transfer, stripePaymentIntent }));
+      };
+      const fine = async (amount: number, createdAt: Date) => {
+        const fineHandoutEvent = await FineHandoutEvent.save(Object.assign(new FineHandoutEvent(), {
+          referenceDate: createdAt, createdBy: ctx.bob,
+        }));
+        const userFineGroup = await UserFineGroup.save(Object.assign(new UserFineGroup(), { userId: ctx.alice.id }));
+        await Fine.save(Object.assign(new Fine(), {
+          fineHandoutEvent, userFineGroup, amount: dinero({ amount }), createdAt,
+        }));
+      };
+      await topUp(1000, new Date(YEAR, 2, 1, 12));
+      await topUp(2500, new Date(YEAR, 7, 1, 12));
+      await topUp(5000, new Date(YEAR - 1, 7, 1, 12));
+      await Transfer.save(Object.assign(new Transfer(), {
+        toId: ctx.alice.id, amountInclVat: dinero({ amount: 9000 }), createdAt: new Date(YEAR, 3, 1, 12),
+      }));
+      await fine(500, new Date(YEAR, 4, 1, 12));
+      await fine(500, new Date(YEAR + 1, 4, 1, 12));
+
+      await update();
+
+      const wrapped = await wrappedOf(ctx.alice);
+      expect(wrapped.topUpCount).to.equal(2);
+      expect(wrapped.topUpTotal.getAmount()).to.equal(3500);
+      expect(wrapped.fineCount).to.equal(1);
+      expect(wrapped.fineTotal.getAmount()).to.equal(500);
+      expect((await wrappedOf(ctx.bob)).topUpCount).to.equal(0);
+    });
+
     it('should rank organ members among the sellers of their organ', async () => {
       await buy(ctx.carol, new Date(YEAR, 4, 1, 21), [[ctx.beer, 1], [ctx.snack, 1]], { createdBy: ctx.alice });
       await buy(ctx.carol, new Date(YEAR, 4, 1, 22), [[ctx.beer, 1]], { createdBy: ctx.bob });
@@ -394,6 +496,13 @@ describe('WrappedService', (): void => {
       expect(await organsOf(ctx.alice)).to.deep.equal([{ organId: ctx.bar.organ.id, transactions: 1, turnover: 0 }]);
       expect(await organsOf(ctx.bob)).to.deep.equal([{ organId: ctx.bar.organ.id, transactions: 0, turnover: 1 }]);
       expect(await organsOf(ctx.carol)).to.be.empty;
+
+      const [bob] = WrappedService.asWrappedResponse(await wrappedOf(ctx.bob)).organs;
+      expect(bob.organ.firstName).to.equal('Organ');
+      expect(bob.transactionsCreated).to.equal(2);
+      expect(bob.turnoverCreated.amount).to.equal(200);
+      expect(bob.customersServed).to.equal(1);
+      expect(bob.sellerCount).to.equal(2);
     });
 
     it('should replace the organ rankings of the requested users', async () => {
@@ -447,7 +556,8 @@ describe('WrappedService', (): void => {
 
       const response = WrappedService.asWrappedResponse(await wrappedOf(ctx.alice));
 
-      expect(ctx.specification.validateModel('WrappedResponse', response, false, true).valid).to.be.true;
+      const body = JSON.parse(JSON.stringify(response));
+      expect(ctx.specification.validateModel('WrappedResponse', body, false, true).valid).to.be.true;
       expect(response.transactions.transactionMaxDate).to.equal(new Date(YEAR, 4, 1).toISOString());
       expect(response.totalSpent.amount).to.equal(100);
       expect(response.topProducts[0].totalInclVat.amount).to.equal(100);

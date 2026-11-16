@@ -33,6 +33,8 @@
  * computes:
  * - `transactionCount`: the number of transactions.
  * - `transactionHeatmap`: the number of transactions per day of the year.
+ * - `hourHistogram`: the number of transactions per hour of the day.
+ * - `daytimeTransactionCount`: the number of transactions between 06:00 and 16:30.
  * - `transactionMaxDate` and `transactionMaxAmount`: the busiest day and its number of transactions.
  * - `totalSpent`: the money spent. `borrelSpent` is the part spent at points of sale without
  *   authentication, where a cashier rings up the purchases.
@@ -41,10 +43,17 @@
  *   spent, among the users with at least one transaction that year. 10 means the top 10%.
  * - `topProducts`: the five most bought products, each with the user's rank among its buyers.
  * - `categories`: the money spent per product category.
+ * - `itemCount`, `alcoholicItemCount` and `distinctProducts`: the number of products bought, how
+ *   many of those contain alcohol, and how many different products that were.
+ * - `biggestRoundItems`, `biggestRoundSpent` and `biggestRoundDate`: the transaction with the most
+ *   products.
+ * - `topUpCount` and `topUpTotal`: the Stripe deposits of the user.
+ * - `fineCount` and `fineTotal`: the fines handed out to the user.
  * - `syncedFrom` and `syncedTo`: the start of the year and the time of the last update.
  *
  * A {@link WrappedOrganMember} row ranks the user among the sellers of an organ they are a member
- * of, by transactions and by turnover. 0 is first place.
+ * of, by transactions and by turnover. 0 is first place. It also holds the transactions, turnover
+ * and distinct customers the user rang up for that organ.
  *
  * ### Updates
  * `src/cron.ts` updates all rows every night at 01:45 in December, and once more on January 1st at
@@ -90,12 +99,24 @@ export interface WrappedCategory {
  * @property {string} transactionMaxDate - Date of the maximum transaction
  * @property {number} transactionMaxAmount - Amount of the maximum transaction
  * @property {number[]} transactionHeatmap - Heatmap data of transactions
+ * @property {number[]} hourHistogram - Number of transactions per hour of the day
+ * @property {number} daytimeTransactionCount - Number of transactions between 06:00 and 16:30
  * @property {Dinero.model} totalSpent - Total amount of money spent
  * @property {Dinero.model} previousTotalSpent - Total amount of money spent in the year before
  * @property {Dinero.model} borrelSpent - Amount of money spent at points of sale without authentication
  * @property {number} spentPercentile - Percentile rank of the user's spending
  * @property {Array<object>} topProducts - The most bought products
  * @property {Array<object>} categories - The money spent per product category
+ * @property {number} itemCount - Number of products bought
+ * @property {number} alcoholicItemCount - Number of alcoholic products bought
+ * @property {number} distinctProducts - Number of different products bought
+ * @property {number} biggestRoundItems - Number of products in the largest transaction
+ * @property {Dinero.model} biggestRoundSpent - Price of the largest transaction
+ * @property {string} biggestRoundDate - Date of the largest transaction
+ * @property {number} topUpCount - Number of Stripe deposits
+ * @property {Dinero.model} topUpTotal - Total amount of the Stripe deposits
+ * @property {number} fineCount - Number of fines
+ * @property {Dinero.model} fineTotal - Total amount of the fines
  * @property {string} syncedFrom - The starting date from which the data was considered
  * @property {string} syncedTo - The last time the data was synced
  */
@@ -148,6 +169,17 @@ export default class Wrapped extends BaseEntity {
   public transactionHeatmap: number[];
 
   @Column({
+    type: 'simple-json',
+  })
+  public hourHistogram: number[];
+
+  @Column({
+    type: 'integer',
+    default: 0,
+  })
+  public daytimeTransactionCount: number;
+
+  @Column({
     type: 'integer',
     transformer: DineroTransformer.Instance,
   })
@@ -179,6 +211,60 @@ export default class Wrapped extends BaseEntity {
     type: 'simple-json',
   })
   public categories: WrappedCategory[];
+
+  @Column({
+    type: 'integer',
+  })
+  public itemCount: number;
+
+  @Column({
+    type: 'integer',
+  })
+  public alcoholicItemCount: number;
+
+  @Column({
+    type: 'integer',
+  })
+  public distinctProducts: number;
+
+  @Column({
+    type: 'integer',
+  })
+  public biggestRoundItems: number;
+
+  @Column({
+    type: 'integer',
+    transformer: DineroTransformer.Instance,
+  })
+  public biggestRoundSpent: Dinero;
+
+  @Column({
+    type: 'datetime',
+    nullable: true,
+  })
+  public biggestRoundDate: Date | null;
+
+  @Column({
+    type: 'integer',
+  })
+  public topUpCount: number;
+
+  @Column({
+    type: 'integer',
+    transformer: DineroTransformer.Instance,
+  })
+  public topUpTotal: Dinero;
+
+  @Column({
+    type: 'integer',
+  })
+  public fineCount: number;
+
+  @Column({
+    type: 'integer',
+    transformer: DineroTransformer.Instance,
+  })
+  public fineTotal: Dinero;
 
   @Column({
     type: 'datetime',

@@ -26,9 +26,11 @@
 import {
   Column, Entity, JoinColumn, ManyToOne, PrimaryColumn,
 } from 'typeorm';
+import { Dinero } from 'dinero.js';
 import User from '../user/user';
 import Wrapped from '../wrapped';
 import BaseEntityWithoutId from '../base-entity-without-id';
+import DineroTransformer from '../transformer/dinero-transformer';
 
 /**
  * @typedef {BaseEntityWithoutId} WrappedOrganMember
@@ -37,6 +39,10 @@ import BaseEntityWithoutId from '../base-entity-without-id';
  * @property {number} organId.required - ID of the organ
  * @property {number} ordinalTransactionCreated.required - 0-based ranking for transaction count created
  * @property {number} ordinalTurnoverCreated.required - 0-based ranking for turnover amount created
+ * @property {number} transactionsCreated.required - Number of transactions the user rang up for the organ
+ * @property {Dinero.model} turnoverCreated.required - Turnover of the transactions the user rang up for the organ
+ * @property {number} customersServed.required - Number of distinct buyers in those transactions
+ * @property {number} sellerCount.required - Number of ranked sellers of the organ
  */
 @Entity()
 export default class WrappedOrganMember extends BaseEntityWithoutId {
@@ -83,5 +89,33 @@ export default class WrappedOrganMember extends BaseEntityWithoutId {
     default: 0,
   })
   public ordinalTurnoverCreated: number;
+
+  @Column({
+    type: 'integer',
+    nullable: false,
+    default: 0,
+  })
+  public transactionsCreated: number;
+
+  @Column({
+    type: 'integer',
+    nullable: false,
+    transformer: DineroTransformer.Instance,
+  })
+  public turnoverCreated: Dinero;
+
+  @Column({
+    type: 'integer',
+    nullable: false,
+    default: 0,
+  })
+  public customersServed: number;
+
+  @Column({
+    type: 'integer',
+    nullable: false,
+    default: 0,
+  })
+  public sellerCount: number;
 }
 

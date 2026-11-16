@@ -25,6 +25,7 @@ import User from '../entity/user/user';
 import Transaction from '../entity/transactions/transaction';
 import SubTransaction from '../entity/transactions/sub-transaction';
 import SubTransactionRow from '../entity/transactions/sub-transaction-row';
+import Transfer from '../entity/transactions/transfer';
 import Product from '../entity/product/product';
 import ProductRevision from '../entity/product/product-revision';
 import ProductCategory from '../entity/product/product-category';
@@ -33,9 +34,13 @@ import OrganMembership from '../entity/organ/organ-membership';
 import WrappedOrganMember from '../entity/wrapped/wrapped-organ-member';
 import PointOfSale from '../entity/point-of-sale/point-of-sale';
 import PointOfSaleRevision from '../entity/point-of-sale/point-of-sale-revision';
+import StripeDeposit from '../entity/stripe/stripe-deposit';
+import Fine from '../entity/fine/fine';
+import UserFineGroup from '../entity/fine/userFineGroup';
 import DineroTransformer from '../entity/transformer/dinero-transformer';
 import Config from '../config';
 import { utcToDate } from '../helpers/timestamps';
+import { parseUserToBaseResponse } from '../helpers/revision-to-response';
 
 export interface UpdateWrappedParameters {
   ids?: number[],
@@ -52,6 +57,11 @@ const TOP_PRODUCT_COUNT = 5;
  */
 export const DAY_START_HOUR = 6;
 
+/**
+ * Daytime ends at 16:30, in minutes after midnight. It starts with the Wrapped day, at 06:00.
+ */
+const DAYTIME_END_MINUTE = 16 * 60 + 30;
+
 interface Period {
   year: number;
   start: Date;
@@ -64,7 +74,14 @@ interface ProductPurchase {
   productId: number;
   categoryId: number;
   count: number;
+  alcoholicCount: number;
   total: number;
+}
+
+interface Round {
+  items: number;
+  total: number;
+  date: Date;
 }
 
 interface Statistics {
@@ -72,14 +89,25 @@ interface Statistics {
   totalSpent: number;
   borrelSpent: number;
   heatmap: number[];
+  hours: number[];
+  daytimeCount: number;
+  biggestRound: Round | null;
+  itemCount: number;
+  alcoholicItemCount: number;
   products: Map<number, { count: number, total: number }>;
   categories: Map<number, number>;
+}
+
+interface CountAndTotal {
+  count: number;
+  total: number;
 }
 
 interface Seller {
   sellerId: number;
   transactionCount: number;
   turnover: number;
+  customerCount: number;
 }
 
 const isEligible = (alias: string) => `${alias}.deleted = 0 AND ${alias}.active = 1 AND ${alias}.extensiveDataProcessing = 1`;
@@ -104,7 +132,7 @@ export default class WrappedService extends WithManager {
     return this.manager.findOne(Wrapped, {
       where: { userId, year },
       order: { year: 'DESC' },
-      relations: { organs: true },
+      relations: { organs: { organ: true } },
     });
   }
 
@@ -132,11 +160,16 @@ export default class WrappedService extends WithManager {
         transactionMaxDate: data.transactionMaxDate?.toISOString(),
         transactionMaxAmount: data.transactionMaxAmount,
         transactionHeatmap: data.transactionHeatmap,
+        hourHistogram: data.hourHistogram,
+        daytimeTransactionCount: data.daytimeTransactionCount,
       },
       totalSpent: data.totalSpent.toObject(),
       previousTotalSpent: data.previousTotalSpent.toObject(),
       borrelSpent: data.borrelSpent.toObject(),
       spentPercentile: data.spentPercentile,
+      itemCount: data.itemCount,
+      alcoholicItemCount: data.alcoholicItemCount,
+      distinctProducts: data.distinctProducts,
       topProducts: data.topProducts.map((product) => ({
         ...product,
         totalInclVat: toDinero(product.totalInclVat).toObject(),
@@ -145,12 +178,24 @@ export default class WrappedService extends WithManager {
         ...category,
         totalInclVat: toDinero(category.totalInclVat).toObject(),
       })),
+      biggestRound: data.biggestRoundDate ? {
+        items: data.biggestRoundItems,
+        totalInclVat: data.biggestRoundSpent.toObject(),
+        date: data.biggestRoundDate.toISOString(),
+      } : undefined,
+      topUps: { count: data.topUpCount, total: data.topUpTotal.toObject() },
+      fines: { count: data.fineCount, total: data.fineTotal.toObject() },
       syncedFrom: data.syncedFrom.toISOString(),
       syncedTo: data.syncedTo.toISOString(),
-      organs: (data.organs ?? []).map((organ) => ({
-        organId: organ.organId,
-        ordinalTransactionCreated: organ.ordinalTransactionCreated,
-        ordinalTurnoverCreated: organ.ordinalTurnoverCreated,
+      organs: (data.organs ?? []).map((member) => ({
+        organId: member.organId,
+        organ: parseUserToBaseResponse(member.organ, false),
+        ordinalTransactionCreated: member.ordinalTransactionCreated,
+        ordinalTurnoverCreated: member.ordinalTurnoverCreated,
+        transactionsCreated: member.transactionsCreated,
+        turnoverCreated: member.turnoverCreated.toObject(),
+        customersServed: member.customersServed,
+        sellerCount: member.sellerCount,
       })),
     };
   }
@@ -184,6 +229,11 @@ export default class WrappedService extends WithManager {
         totalSpent: 0,
         borrelSpent: 0,
         heatmap: new Array(period.days).fill(0),
+        hours: new Array(24).fill(0),
+        daytimeCount: 0,
+        biggestRound: null,
+        itemCount: 0,
+        alcoholicItemCount: 0,
         products: new Map(),
         categories: new Map(),
       });
@@ -191,10 +241,18 @@ export default class WrappedService extends WithManager {
 
     for (const purchase of await this.getPurchases(period, ids)) {
       const stats = statistics.get(purchase.userId);
+      const { createdAt, items, total } = purchase;
       stats.transactionCount += 1;
-      stats.totalSpent += purchase.total;
-      if (!purchase.selfService) stats.borrelSpent += purchase.total;
-      stats.heatmap[WrappedService.dayOf(purchase.createdAt, period)] += 1;
+      stats.totalSpent += total;
+      if (!purchase.selfService) stats.borrelSpent += total;
+      stats.heatmap[WrappedService.dayOf(createdAt, period)] += 1;
+      stats.hours[createdAt.getHours()] += 1;
+      const minute = createdAt.getHours() * 60 + createdAt.getMinutes();
+      if (minute >= DAY_START_HOUR * 60 && minute < DAYTIME_END_MINUTE) stats.daytimeCount += 1;
+      const biggest = stats.biggestRound;
+      if (!biggest || items > biggest.items || (items === biggest.items && total > biggest.total)) {
+        stats.biggestRound = { items, total, date: createdAt };
+      }
     }
 
     const productPurchases = await this.getProductPurchases(period, ids);
@@ -206,6 +264,8 @@ export default class WrappedService extends WithManager {
         total: product.total + purchase.total,
       });
       stats.categories.set(purchase.categoryId, (stats.categories.get(purchase.categoryId) ?? 0) + purchase.total);
+      stats.itemCount += purchase.count;
+      stats.alcoholicItemCount += purchase.alcoholicCount;
     }
 
     const totals = ids
@@ -223,6 +283,8 @@ export default class WrappedService extends WithManager {
 
     const topProducts = await this.computeTopProducts(period, statistics, productPurchases, ids);
     const categoryNames = await this.getCategoryNames();
+    const topUps = await this.getTopUps(period, ids);
+    const fines = await this.getFines(period, ids);
 
     const syncedTo = new Date();
     return [...statistics].map(([userId, stats]) => {
@@ -238,14 +300,26 @@ export default class WrappedService extends WithManager {
           : null,
         transactionMaxAmount,
         transactionHeatmap: stats.heatmap,
+        hourHistogram: stats.hours,
+        daytimeTransactionCount: stats.daytimeCount,
         totalSpent: toDinero(stats.totalSpent),
         previousTotalSpent: toDinero(previousTotals.get(userId)?.totalSpent ?? 0),
         borrelSpent: toDinero(stats.borrelSpent),
         spentPercentile: spentPercentiles.get(userId) ?? 100,
+        itemCount: stats.itemCount,
+        alcoholicItemCount: stats.alcoholicItemCount,
+        distinctProducts: stats.products.size,
         topProducts: topProducts.get(userId),
         categories: [...stats.categories]
           .map(([id, totalInclVat]) => ({ id, name: categoryNames.get(id), totalInclVat }))
           .sort((a, b) => b.totalInclVat - a.totalInclVat),
+        biggestRoundItems: stats.biggestRound?.items ?? 0,
+        biggestRoundSpent: toDinero(stats.biggestRound?.total ?? 0),
+        biggestRoundDate: stats.biggestRound?.date ?? null,
+        topUpCount: topUps.get(userId)?.count ?? 0,
+        topUpTotal: toDinero(topUps.get(userId)?.total ?? 0),
+        fineCount: fines.get(userId)?.count ?? 0,
+        fineTotal: toDinero(fines.get(userId)?.total ?? 0),
         syncedFrom: period.start,
         syncedTo,
       });
@@ -351,17 +425,19 @@ export default class WrappedService extends WithManager {
       .select('t.fromId', 'userId')
       .addSelect('t.createdAt', 'createdAt')
       .addSelect('posr.useAuthentication', 'selfService')
+      .addSelect('SUM(str.amount)', 'items')
       .addSelect('SUM(str.amount * pr.priceInclVat)', 'total')
       .groupBy('t.id')
       .addGroupBy('t.fromId')
       .addGroupBy('t.createdAt')
       .addGroupBy('posr.useAuthentication')
-      .getRawMany<{ userId: number, createdAt: string | Date, selfService: number, total: string }>();
+      .getRawMany<{ userId: number, createdAt: string | Date, selfService: number, items: string, total: string }>();
 
     return purchases.map((purchase) => ({
       userId: purchase.userId,
       createdAt: utcToDate(purchase.createdAt),
       selfService: Boolean(purchase.selfService),
+      items: Number(purchase.items),
       total: Number(purchase.total),
     }));
   }
@@ -387,15 +463,19 @@ export default class WrappedService extends WithManager {
       .addSelect('str.productProductId', 'productId')
       .addSelect('pr.categoryId', 'categoryId')
       .addSelect('SUM(str.amount)', 'count')
+      .addSelect('SUM(CASE WHEN pr.alcoholPercentage > 0 THEN str.amount ELSE 0 END)', 'alcoholicCount')
       .addSelect('SUM(str.amount * pr.priceInclVat)', 'total')
       .groupBy('t.fromId')
       .addGroupBy('str.productProductId')
       .addGroupBy('pr.categoryId');
 
-    const purchases = await query.getRawMany<Omit<ProductPurchase, 'count' | 'total'> & { count: string, total: string }>();
+    const purchases = await query.getRawMany<
+    Pick<ProductPurchase, 'userId' | 'productId' | 'categoryId'> & { count: string, alcoholicCount: string, total: string }
+    >();
     return purchases.map((purchase) => ({
       ...purchase,
       count: Number(purchase.count),
+      alcoholicCount: Number(purchase.alcoholicCount),
       total: Number(purchase.total),
     }));
   }
@@ -425,6 +505,43 @@ export default class WrappedService extends WithManager {
     return new Map(categories.map(({ id, name }) => [id, name]));
   }
 
+  private getTopUps(period: Period, userIds?: number[]): Promise<Map<number, CountAndTotal>> {
+    const query = this.manager.createQueryBuilder(StripeDeposit, 'deposit')
+      .innerJoin(Transfer, 'transfer', 'transfer.id = deposit.transferId');
+
+    return WrappedService.countAndTotalPerUser(
+      query, { userId: 'transfer.toId', amount: 'transfer.amountInclVat', createdAt: 'transfer.createdAt' }, period, userIds,
+    );
+  }
+
+  private getFines(period: Period, userIds?: number[]): Promise<Map<number, CountAndTotal>> {
+    const query = this.manager.createQueryBuilder(Fine, 'fine')
+      .innerJoin(UserFineGroup, 'fineGroup', 'fineGroup.id = fine.userFineGroupId');
+
+    return WrappedService.countAndTotalPerUser(
+      query, { userId: 'fineGroup.userId', amount: 'fine.amount', createdAt: 'fine.createdAt' }, period, userIds,
+    );
+  }
+
+  private static async countAndTotalPerUser(
+    query: SelectQueryBuilder<ObjectLiteral>,
+    columns: { userId: string, amount: string, createdAt: string },
+    period: Period,
+    userIds?: number[],
+  ): Promise<Map<number, CountAndTotal>> {
+    query
+      .innerJoin(User, 'user', `user.id = ${columns.userId} AND ${isEligible('user')}`)
+      .select(columns.userId, 'userId')
+      .addSelect('COUNT(*)', 'count')
+      .addSelect(`SUM(${columns.amount})`, 'total')
+      .where(`${columns.createdAt} >= :start AND ${columns.createdAt} < :end`, { start: period.start, end: period.end })
+      .groupBy(columns.userId);
+    if (userIds) query.andWhere(`${columns.userId} IN (:...userIds)`, { userIds });
+
+    const rows = await query.getRawMany<{ userId: number, count: string, total: string }>();
+    return new Map(rows.map((row) => [row.userId, { count: Number(row.count), total: Number(row.total) }]));
+  }
+
   /**
    * Rank each organ member among everyone who rang up transactions at the points of sale of their organ.
    */
@@ -440,6 +557,7 @@ export default class WrappedService extends WithManager {
       .select('pos.ownerId', 'organId')
       .addSelect('t.createdById', 'sellerId')
       .addSelect('COUNT(DISTINCT t.id)', 'transactionCount')
+      .addSelect('COUNT(DISTINCT t.fromId)', 'customerCount')
       .addSelect('SUM(str.amount * pr.priceInclVat)', 'turnover')
       .innerJoin(PointOfSale, 'pos', 'pos.id = t.pointOfSalePointOfSaleId')
       .innerJoin(User, 'organ', 'organ.id = pos.ownerId AND organ.active = 1')
@@ -451,7 +569,7 @@ export default class WrappedService extends WithManager {
       .andWhere('pos.ownerId IN (:...organIds)', { organIds: [...new Set(memberships.map((m) => m.organId))] })
       .groupBy('pos.ownerId')
       .addGroupBy('t.createdById')
-      .getRawMany<{ organId: number, sellerId: number, transactionCount: string, turnover: string }>();
+      .getRawMany<{ organId: number, sellerId: number, transactionCount: string, customerCount: string, turnover: string }>();
 
     const sellersByOrgan = new Map<number, Seller[]>();
     for (const sale of sales) {
@@ -460,28 +578,32 @@ export default class WrappedService extends WithManager {
         sellerId: sale.sellerId,
         transactionCount: Number(sale.transactionCount),
         turnover: Number(sale.turnover),
+        customerCount: Number(sale.customerCount),
       });
       sellersByOrgan.set(sale.organId, sellers);
     }
 
-    const ordinals = (sellers: Seller[], key: 'transactionCount' | 'turnover') => new Map(
-      [...sellers]
-        .sort((a, b) => b[key] - a[key] || a.sellerId - b.sellerId)
-        .map((seller, ordinal) => [seller.sellerId, ordinal]),
-    );
-    const rankings = new Map([...sellersByOrgan].map(([organId, sellers]) => (
-      [organId, { transactions: ordinals(sellers, 'transactionCount'), turnover: ordinals(sellers, 'turnover') }]
-    )));
+    const ordinal = (sellers: Seller[], seller: Seller, key: 'transactionCount' | 'turnover') => sellers
+      .filter((other) => other[key] > seller[key] || (other[key] === seller[key] && other.sellerId < seller.sellerId))
+      .length;
 
-    return memberships
-      .filter(({ userId, organId }) => rankings.get(organId)?.turnover.has(userId))
-      .map(({ userId, organId }) => Object.assign(new WrappedOrganMember(), {
+    return memberships.flatMap(({ userId, organId }): WrappedOrganMember[] => {
+      const sellers = sellersByOrgan.get(organId) ?? [];
+      const seller = sellers.find((s) => s.sellerId === userId);
+      if (!seller) return [];
+
+      return [Object.assign(new WrappedOrganMember(), {
         userId,
         year: period.year,
         organId,
-        ordinalTransactionCreated: rankings.get(organId).transactions.get(userId),
-        ordinalTurnoverCreated: rankings.get(organId).turnover.get(userId),
-      }));
+        ordinalTransactionCreated: ordinal(sellers, seller, 'transactionCount'),
+        ordinalTurnoverCreated: ordinal(sellers, seller, 'turnover'),
+        transactionsCreated: seller.transactionCount,
+        turnoverCreated: toDinero(seller.turnover),
+        customersServed: seller.customerCount,
+        sellerCount: sellers.length,
+      })];
+    });
   }
 
   private static async insertRows<T extends ObjectLiteral>(manager: EntityManager, entity: EntityTarget<T>, rows: T[]) {

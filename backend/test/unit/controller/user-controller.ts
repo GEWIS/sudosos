@@ -2891,6 +2891,18 @@ describe('UserController', (): void => {
     spentPercentile: 80,
     topProducts: [{ id: 1, name: 'Beer', count: 10, totalInclVat: 1000, rank: 1 }],
     categories: [{ id: 1, name: 'Alcoholic', totalInclVat: 1000 }],
+    hourHistogram: new Array(24).fill(0),
+    daytimeTransactionCount: 0,
+    itemCount: 12,
+    alcoholicItemCount: 10,
+    distinctProducts: 2,
+    biggestRoundItems: 4,
+    biggestRoundSpent: Dinero({ amount: 400 }),
+    biggestRoundDate: new Date(year, 6, 15, 22),
+    topUpCount: 1,
+    topUpTotal: Dinero({ amount: 2000 }),
+    fineCount: 0,
+    fineTotal: Dinero({ amount: 0 }),
     syncedFrom: new Date(year, 0, 1),
     syncedTo: new Date(),
   }));
@@ -2913,6 +2925,10 @@ describe('UserController', (): void => {
         organId: ctx.organ.id,
         ordinalTransactionCreated: 0,
         ordinalTurnoverCreated: 1,
+        transactionsCreated: 3,
+        turnoverCreated: Dinero({ amount: 300 }),
+        customersServed: 2,
+        sellerCount: 4,
       }));
 
       const res = await request(ctx.app)
@@ -2923,11 +2939,9 @@ describe('UserController', (): void => {
       expect(ctx.specification.validateModel('WrappedResponse', res.body, false, true).valid).to.be.true;
       expect(res.body.year).to.equal(2023);
       expect(res.body.transactions.transactionHeatmap).to.deep.equal([1, 2, 3]);
-      expect(res.body.organs).to.deep.equal([{
-        organId: ctx.organ.id,
-        ordinalTransactionCreated: 0,
-        ordinalTurnoverCreated: 1,
-      }]);
+      expect(res.body.organs).to.have.length(1);
+      expect(res.body.organs[0].organ.id).to.equal(ctx.organ.id);
+      expect(res.body.organs[0].ordinalTurnoverCreated).to.equal(1);
     });
 
     it('should return the wrapped of the requested year', async () => {
