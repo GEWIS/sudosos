@@ -172,7 +172,7 @@ export default class Config {
   };
 
   public readonly wrapped: {
-    year: number;
+    year?: number;
   };
 
   private constructor() {
@@ -359,7 +359,7 @@ export default class Config {
     };
 
     this.wrapped = {
-      year: getInteger('WRAPPED_YEAR', new Date().getFullYear()),
+      year: getInteger('WRAPPED_YEAR', undefined),
     };
   }
 

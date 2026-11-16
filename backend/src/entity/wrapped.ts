@@ -19,12 +19,14 @@
  */
 
 /**
- * `Wrapped` is a yearly overview of a user's purchases. A {@link Wrapped} row holds precomputed
- * statistics, so the dashboard does not have to query all transactions.
+ * `Wrapped` is a yearly overview of a user's purchases. A {@link Wrapped} row holds the precomputed
+ * statistics of one user for one year, so the dashboard does not have to query all transactions.
  *
- * Only active, non-deleted users with `extensiveDataProcessing` get one. The year is `WRAPPED_YEAR`
- * from the configuration, or the current year. A day of that year runs from 06:00 to 06:00, so a
- * night out counts as a single day.
+ * Only active, non-deleted users with `extensiveDataProcessing` get one. A day of the year runs
+ * from 06:00 to 06:00, so a night out counts as a single day.
+ *
+ * The year defaults to `WRAPPED_YEAR` from the configuration. Without it, Wrapped is about the
+ * current year, except in January, when it is about the year that just ended.
  *
  * ### Statistics
  * {@link service/wrapped-service!WrappedService.updateWrapped | WrappedService.updateWrapped}
@@ -40,22 +42,25 @@
  * of, by transactions and by turnover. 0 is first place.
  *
  * ### Updates
- * `src/cron.ts` updates all rows at startup, and every night at 01:45 in December.
- * `POST /users/{id}/wrapped` updates one user. The {@link internal/server-settings | server setting}
- * `wrappedEnabled` only controls whether the frontends show Wrapped.
+ * `src/cron.ts` updates all rows every night at 01:45 in December, and once more on January 1st at
+ * 06:15 to include New Year's Eve. `POST /users/{id}/wrapped` updates one user.
+ * `GET /users/{id}/wrapped` returns the requested year, or the most recent one. The
+ * {@link internal/server-settings | server setting} `wrappedEnabled` only controls whether the
+ * frontends show Wrapped.
  *
  * For API interactions, refer to the [Swagger Documentation](https://sudosos.gewis.nl/api/api-docs/#/users).
  *
  * @module entity/wrapped
  * @mergeTarget
  */
-import { BaseEntity, Column, Entity, OneToOne, OneToMany, PrimaryColumn, JoinColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryColumn, JoinColumn } from 'typeorm';
 import User from './user/user';
 import WrappedOrganMember from './wrapped/wrapped-organ-member';
 
 /**
  * @typedef {BaseEntity} Wrapped
  * @property {number} userId - ID of the user
+ * @property {number} year - The year the statistics are about
  * @property {number} transactionCount - Total number of transactions
  * @property {number} transactionPercentile - Percentile rank of the user's transactions
  * @property {string} transactionMaxDate - Date of the maximum transaction
@@ -72,7 +77,12 @@ export default class Wrapped extends BaseEntity {
   })
   public userId: number;
 
-  @OneToOne(() => User, { onDelete: 'CASCADE' })
+  @PrimaryColumn({
+    type: 'integer',
+  })
+  public year: number;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   public user: User;
 

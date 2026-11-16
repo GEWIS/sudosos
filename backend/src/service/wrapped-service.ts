@@ -17,7 +17,7 @@
  *
  *  @license
  */
-import { EntityManager, EntityTarget, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
+import { EntityManager, EntityTarget, In, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import WrappedResponse from '../controller/response/wrapped-response';
 import WithManager from '../database/with-manager';
 import Wrapped from '../entity/wrapped';
@@ -34,6 +34,7 @@ import { utcToDate } from '../helpers/timestamps';
 
 export interface UpdateWrappedParameters {
   ids?: number[],
+  year?: number,
 }
 
 const HOUR_MS = 60 * 60 * 1000;
@@ -70,9 +71,20 @@ const isEligible = (alias: string) => `${alias}.deleted = 0 AND ${alias}.active 
  * Computes the yearly "Wrapped" statistics of users.
  */
 export default class WrappedService extends WithManager {
-  public async getWrappedForUser(userId: number): Promise<Wrapped | null> {
+  /**
+   * Wrapped is about the current year, except in January, when it is about the year that just ended.
+   */
+  public static currentYear(now = new Date()): number {
+    return Config.get().wrapped.year ?? (now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear());
+  }
+
+  /**
+   * Get the Wrapped of a user for the given year, or their most recent one.
+   */
+  public async getWrappedForUser(userId: number, year?: number): Promise<Wrapped | null> {
     return this.manager.findOne(Wrapped, {
-      where: { userId },
+      where: { userId, year },
+      order: { year: 'DESC' },
       relations: { organs: true },
     });
   }
@@ -80,6 +92,7 @@ export default class WrappedService extends WithManager {
   public static asWrappedResponse(data: Wrapped): WrappedResponse {
     return {
       userId: data.userId,
+      year: data.year,
       transactions: {
         transactionCount: data.transactionCount,
         transactionPercentile: data.transactionPercentile,
@@ -104,15 +117,16 @@ export default class WrappedService extends WithManager {
    */
   public async updateWrapped(params: UpdateWrappedParameters = {}): Promise<void> {
     const ids = params.ids?.length ? params.ids : undefined;
-    const period = WrappedService.getPeriod(Config.get().wrapped.year);
+    const period = WrappedService.getPeriod(params.year ?? WrappedService.currentYear());
+    const scope = { year: period.year, ...(ids && { userId: In(ids) }) };
 
     await this.manager.transaction(async (manager) => {
       const service = new WrappedService(manager);
       const rows = await service.computeWrapped(period, ids);
       const organMembers = await service.computeOrganMembers(period, ids);
 
-      await WrappedService.deleteRows(manager, WrappedOrganMember, ids);
-      await WrappedService.deleteRows(manager, Wrapped, ids);
+      await manager.delete(WrappedOrganMember, scope);
+      await manager.delete(Wrapped, scope);
       await WrappedService.insertRows(manager, Wrapped, rows);
       await WrappedService.insertRows(manager, WrappedOrganMember, organMembers);
     });
@@ -146,6 +160,7 @@ export default class WrappedService extends WithManager {
       const transactionMaxAmount = Math.max(...stats.heatmap);
       return Object.assign(new Wrapped(), {
         userId,
+        year: period.year,
         transactionCount: stats.transactionCount,
         transactionPercentile: transactionPercentiles.get(userId) ?? 100,
         transactionMaxDate: transactionMaxAmount > 0
@@ -298,16 +313,11 @@ export default class WrappedService extends WithManager {
       .filter(({ userId, organId }) => rankings.get(organId)?.turnover.has(userId))
       .map(({ userId, organId }) => Object.assign(new WrappedOrganMember(), {
         userId,
+        year: period.year,
         organId,
         ordinalTransactionCreated: rankings.get(organId).transactions.get(userId),
         ordinalTurnoverCreated: rankings.get(organId).turnover.get(userId),
       }));
-  }
-
-  private static async deleteRows(manager: EntityManager, entity: EntityTarget<ObjectLiteral>, ids?: number[]) {
-    const query = manager.createQueryBuilder().delete().from(entity);
-    if (ids) query.where('userId IN (:...ids)', { ids });
-    await query.execute();
   }
 
   private static async insertRows<T extends ObjectLiteral>(manager: EntityManager, entity: EntityTarget<T>, rows: T[]) {

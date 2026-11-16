@@ -21,6 +21,7 @@
 /**
  * @typedef {object} WrappedResponse
  * @property {integer} userId.required - The ID of the user
+ * @property {integer} year.required - The year the statistics are about
  * @property {WrappedTransactions} transactions.required - The wrapped transactions info of the user
  * @property {number} spentPercentile.required - The top percentile of the user based on amount spent
  * @property {string} syncedFrom.required - The starting date from which the data was considered
@@ -29,6 +30,7 @@
  */
 export default interface WrappedResponse {
   userId: number;
+  year: number;
   transactions: WrappedTransactions;
   spentPercentile: number;
   syncedFrom: string;

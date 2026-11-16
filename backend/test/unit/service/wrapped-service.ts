@@ -23,7 +23,7 @@ import { DataSource } from 'typeorm';
 import dinero from 'dinero.js';
 import { SwaggerSpecification } from 'swagger-model-validator';
 import Database from '../../../src/database/database';
-import WrappedService from '../../../src/service/wrapped-service';
+import WrappedService, { UpdateWrappedParameters } from '../../../src/service/wrapped-service';
 import Wrapped from '../../../src/entity/wrapped';
 import WrappedOrganMember from '../../../src/entity/wrapped/wrapped-organ-member';
 import User, { UserType } from '../../../src/entity/user/user';
@@ -116,7 +116,9 @@ describe('WrappedService', (): void => {
     })],
   }));
 
-  const wrappedOf = (user: User) => ctx.service.getWrappedForUser(user.id);
+  const update = (params: UpdateWrappedParameters = {}) => ctx.service.updateWrapped({ year: YEAR, ...params });
+
+  const wrappedOf = (user: User) => ctx.service.getWrappedForUser(user.id, YEAR);
 
   beforeAll(async () => {
     const connection = await Database.initialize();
@@ -165,7 +167,6 @@ describe('WrappedService', (): void => {
   });
 
   beforeEach(async () => {
-    process.env.WRAPPED_YEAR = YEAR.toString();
     for (const entity of [SubTransactionRow, SubTransaction, Transaction, WrappedOrganMember, Wrapped]) {
       await ctx.connection.manager.createQueryBuilder().delete().from(entity).execute();
     }
@@ -177,18 +178,18 @@ describe('WrappedService', (): void => {
 
   describe('updateWrapped', () => {
     it('should only create a Wrapped for active users that allow extensive data processing', async () => {
-      await ctx.service.updateWrapped();
+      await update();
 
       const userIds = (await Wrapped.find()).map((w) => w.userId);
       expect(userIds).to.have.members([ctx.alice.id, ctx.bob.id, ctx.carol.id]);
     });
 
     it('should remove the Wrapped of a user that is no longer eligible', async () => {
-      await ctx.service.updateWrapped();
+      await update();
       await User.update(ctx.carol.id, { extensiveDataProcessing: false });
 
       try {
-        await ctx.service.updateWrapped();
+        await update();
         expect(await wrappedOf(ctx.carol)).to.be.null;
       } finally {
         await User.update(ctx.carol.id, { extensiveDataProcessing: true });
@@ -196,9 +197,20 @@ describe('WrappedService', (): void => {
     });
 
     it('should not fail when no requested user is eligible', async () => {
-      await ctx.service.updateWrapped({ ids: [ctx.optedOut.id] });
+      await update({ ids: [ctx.optedOut.id] });
 
       expect(await Wrapped.count()).to.equal(0);
+    });
+
+    it('should keep the Wrapped of other years', async () => {
+      await buy(ctx.alice, new Date(YEAR - 1, 5, 1, 12), [[ctx.beer, 1]]);
+      await update({ year: YEAR - 1 });
+
+      await update();
+      await update({ ids: [ctx.alice.id] });
+
+      expect((await ctx.service.getWrappedForUser(ctx.alice.id, YEAR - 1)).transactionCount).to.equal(1);
+      expect((await wrappedOf(ctx.alice)).transactionCount).to.equal(0);
     });
 
     it('should count the transactions of the year', async () => {
@@ -207,7 +219,7 @@ describe('WrappedService', (): void => {
       await buy(ctx.alice, new Date(YEAR, 5, 2, 12), [[ctx.beer, 1]]);
       await buy(ctx.alice, new Date(YEAR + 1, 5, 1, 12), [[ctx.beer, 1]]);
 
-      await ctx.service.updateWrapped();
+      await update();
 
       const wrapped = await wrappedOf(ctx.alice);
       expect(wrapped.transactionCount).to.equal(2);
@@ -222,7 +234,7 @@ describe('WrappedService', (): void => {
       await buy(ctx.alice, new Date(YEAR, 2, 26, 12), [[ctx.beer, 1]]);
       await buy(ctx.alice, new Date(YEAR + 1, 0, 1, 3), [[ctx.beer, 1]]);
 
-      await ctx.service.updateWrapped();
+      await update();
 
       const { transactionHeatmap, transactionCount } = await wrappedOf(ctx.alice);
       expect(transactionCount).to.equal(4);
@@ -233,12 +245,11 @@ describe('WrappedService', (): void => {
     });
 
     it('should give a leap year 366 days', async () => {
-      process.env.WRAPPED_YEAR = '2024';
       await buy(ctx.alice, new Date(2024, 11, 31, 12), [[ctx.beer, 1]]);
 
-      await ctx.service.updateWrapped();
+      await update({ year: 2024 });
 
-      const { transactionHeatmap } = await wrappedOf(ctx.alice);
+      const { transactionHeatmap } = await ctx.service.getWrappedForUser(ctx.alice.id, 2024);
       expect(transactionHeatmap).to.have.length(366);
       expect(transactionHeatmap[365]).to.equal(1);
     });
@@ -248,7 +259,7 @@ describe('WrappedService', (): void => {
       await buy(ctx.alice, new Date(YEAR, 8, 14, 22), [[ctx.beer, 1]]);
       await buy(ctx.alice, new Date(YEAR, 8, 15, 2), [[ctx.beer, 1]]);
 
-      await ctx.service.updateWrapped();
+      await update();
 
       const wrapped = await wrappedOf(ctx.alice);
       expect(wrapped.transactionMaxAmount).to.equal(2);
@@ -267,7 +278,7 @@ describe('WrappedService', (): void => {
       await buy(ctx.bob, new Date(YEAR - 1, 1, 1, 12), [[ctx.beer, 1]]);
       await buy(ctx.bob, new Date(YEAR - 1, 1, 2, 12), [[ctx.beer, 1]]);
 
-      await ctx.service.updateWrapped();
+      await update();
 
       const [alice, bob, carol] = await Promise.all([ctx.alice, ctx.bob, ctx.carol].map(wrappedOf));
       expect(alice.transactionPercentile).to.equal(50);
@@ -280,14 +291,14 @@ describe('WrappedService', (): void => {
 
     it('should only update the requested users, ranked among all users', async () => {
       await buy(ctx.alice, new Date(YEAR, 1, 1, 12), [[ctx.beer, 1]]);
-      await ctx.service.updateWrapped();
+      await update();
       const before = await wrappedOf(ctx.alice);
 
       await buy(ctx.alice, new Date(YEAR, 1, 2, 12), [[ctx.beer, 1]]);
       await buy(ctx.bob, new Date(YEAR, 1, 2, 12), [[ctx.beer, 1]]);
       await buy(ctx.bob, new Date(YEAR, 1, 3, 12), [[ctx.beer, 1]]);
       await buy(ctx.bob, new Date(YEAR, 1, 4, 12), [[ctx.beer, 1]]);
-      await ctx.service.updateWrapped({ ids: [ctx.bob.id] });
+      await update({ ids: [ctx.bob.id] });
 
       const alice = await wrappedOf(ctx.alice);
       expect(alice.transactionCount).to.equal(1);
@@ -305,7 +316,7 @@ describe('WrappedService', (): void => {
       await buy(ctx.carol, new Date(YEAR - 1, 4, 1, 21), [[ctx.snack, 40]], { createdBy: ctx.bob });
       await buy(ctx.carol, new Date(YEAR, 4, 3, 21), [[ctx.snack, 40]], { createdBy: ctx.bob, shop: ctx.closedBar });
 
-      await ctx.service.updateWrapped();
+      await update();
 
       const organsOf = async (user: User) => (await wrappedOf(user)).organs.map((o) => ({
         organId: o.organId, transactions: o.ordinalTransactionCreated, turnover: o.ordinalTurnoverCreated,
@@ -317,10 +328,10 @@ describe('WrappedService', (): void => {
 
     it('should replace the organ rankings of the requested users', async () => {
       await buy(ctx.carol, new Date(YEAR, 4, 1, 21), [[ctx.beer, 1]], { createdBy: ctx.alice });
-      await ctx.service.updateWrapped();
+      await update();
 
       await buy(ctx.carol, new Date(YEAR, 4, 2, 21), [[ctx.beer, 5]], { createdBy: ctx.bob });
-      await ctx.service.updateWrapped({ ids: [ctx.bob.id] });
+      await update({ ids: [ctx.bob.id] });
 
       expect((await wrappedOf(ctx.alice)).organs[0].ordinalTurnoverCreated).to.equal(0);
       expect((await wrappedOf(ctx.bob)).organs[0].ordinalTurnoverCreated).to.equal(0);
@@ -328,11 +339,41 @@ describe('WrappedService', (): void => {
     });
   });
 
+  describe('getWrappedForUser', () => {
+    it('should return the most recent Wrapped when no year is given', async () => {
+      await update({ year: YEAR - 1 });
+      await update();
+
+      expect((await ctx.service.getWrappedForUser(ctx.alice.id)).year).to.equal(YEAR);
+      expect((await ctx.service.getWrappedForUser(ctx.alice.id, YEAR - 1)).year).to.equal(YEAR - 1);
+      expect(await ctx.service.getWrappedForUser(ctx.alice.id, YEAR - 2)).to.be.null;
+    });
+  });
+
+  describe('currentYear', () => {
+    afterEach(() => {
+      delete process.env.WRAPPED_YEAR;
+    });
+
+    it('should be the current year, and the previous year in January', () => {
+      expect(WrappedService.currentYear(new Date(2026, 10, 19))).to.equal(2026);
+      expect(WrappedService.currentYear(new Date(2026, 11, 31))).to.equal(2026);
+      expect(WrappedService.currentYear(new Date(2027, 0, 31))).to.equal(2026);
+      expect(WrappedService.currentYear(new Date(2027, 1, 1))).to.equal(2027);
+    });
+
+    it('should be overridden by WRAPPED_YEAR', () => {
+      process.env.WRAPPED_YEAR = '2021';
+
+      expect(WrappedService.currentYear(new Date(2026, 11, 1))).to.equal(2021);
+    });
+  });
+
   describe('asWrappedResponse', () => {
     it('should return a valid response', async () => {
       await buy(ctx.carol, new Date(YEAR, 4, 1, 21), [[ctx.beer, 1]], { createdBy: ctx.alice });
       await buy(ctx.alice, new Date(YEAR, 4, 1, 21), [[ctx.beer, 1]]);
-      await ctx.service.updateWrapped();
+      await update();
 
       const response = WrappedService.asWrappedResponse(await wrappedOf(ctx.alice));
 
@@ -343,7 +384,7 @@ describe('WrappedService', (): void => {
     });
 
     it('should omit the busiest day of a user without transactions', async () => {
-      await ctx.service.updateWrapped();
+      await update();
 
       const response = WrappedService.asWrappedResponse(await wrappedOf(ctx.carol));
 

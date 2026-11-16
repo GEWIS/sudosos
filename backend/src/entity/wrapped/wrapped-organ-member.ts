@@ -33,6 +33,7 @@ import BaseEntityWithoutId from '../base-entity-without-id';
 /**
  * @typedef {BaseEntityWithoutId} WrappedOrganMember
  * @property {number} userId.required - ID of the user
+ * @property {number} year.required - The year the ranking is about
  * @property {number} organId.required - ID of the organ
  * @property {number} ordinalTransactionCreated.required - 0-based ranking for transaction count created
  * @property {number} ordinalTurnoverCreated.required - 0-based ranking for turnover amount created
@@ -53,12 +54,20 @@ export default class WrappedOrganMember extends BaseEntityWithoutId {
   })
   public organId: number;
 
+  @PrimaryColumn({
+    type: 'integer',
+  })
+  public year: number;
+
   @ManyToOne(() => User, { nullable: false })
   @JoinColumn({ name: 'organId' })
   public organ: User;
 
   @ManyToOne(() => Wrapped, { nullable: false, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
+  @JoinColumn([
+    { name: 'userId', referencedColumnName: 'userId' },
+    { name: 'year', referencedColumnName: 'year' },
+  ])
   public wrapped: Wrapped;
 
   @Column({

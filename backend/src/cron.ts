@@ -105,15 +105,16 @@ async function createCronTasks(): Promise<void> {
       logger.error('cron.sync_balances.failed', error);
     }));
   });
-  await new WrappedService().updateWrapped();
-  const syncWrapped = cron.schedule('45 1 * 12 *', () => {
+  const updateWrapped = () => {
     logger.debug('cron.sync_wrapped.started');
     new WrappedService().updateWrapped().then(() => {
       logger.debug('cron.sync_wrapped.finished');
     }).catch((error => {
       logger.error('cron.sync_wrapped.failed', error);
     }));
-  });
+  };
+  const syncWrapped = cron.schedule('45 1 * 12 *', updateWrapped);
+  const closeWrapped = cron.schedule('15 6 1 1 *', updateWrapped);
   const syncUserNotificationPreferences = cron.schedule('0 1 * * *', () => {
     logger.debug('cron.sync_notification_preferences.started');
     new UserNotificationPreferenceService().syncAllUserNotificationPreferences().then(() => {
@@ -139,7 +140,7 @@ async function createCronTasks(): Promise<void> {
     });
   });
 
-  application.tasks = [syncBalances, syncWrapped, syncUserNotificationPreferences, deactivateExpiredUsers, notifyNearExpirationUsers];
+  application.tasks = [syncBalances, syncWrapped, closeWrapped, syncUserNotificationPreferences, deactivateExpiredUsers, notifyNearExpirationUsers];
 
   // Create sync services using the factory
   const syncServiceFactory = new UserSyncServiceFactory();
