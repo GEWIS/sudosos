@@ -23,7 +23,8 @@
  * statistics, so the dashboard does not have to query all transactions.
  *
  * Only active, non-deleted users with `extensiveDataProcessing` get one. The year is `WRAPPED_YEAR`
- * from the configuration, or the current year.
+ * from the configuration, or the current year. A day of that year runs from 06:00 to 06:00, so a
+ * night out counts as a single day.
  *
  * ### Statistics
  * {@link service/wrapped-service!WrappedService.updateWrapped | WrappedService.updateWrapped}
@@ -32,7 +33,7 @@
  * - `transactionHeatmap`: the number of transactions per day of the year.
  * - `transactionMaxDate` and `transactionMaxAmount`: the busiest day and its number of transactions.
  * - `transactionPercentile` and `spentPercentile`: the user's rank by transactions and by money
- *   spent. 10 means the top 10%.
+ *   spent, among the users with at least one transaction that year. 10 means the top 10%.
  * - `syncedFrom` and `syncedTo`: the start of the year and the time of the last update.
  *
  * A {@link WrappedOrganMember} row ranks the user among the sellers of an organ they are a member
@@ -97,9 +98,9 @@ export default class Wrapped extends BaseEntity {
   public transactionMaxAmount: number;
 
   @Column({
-    type: 'text',
+    type: 'simple-json',
   })
-  public transactionHeatmap: string;
+  public transactionHeatmap: number[];
 
   @Column({
     type: 'float',

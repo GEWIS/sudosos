@@ -17,10 +17,9 @@
  *
  *  @license
  */
-import BaseResponse from './base-response';
 
 /**
- * @typedef {allOf|BaseResponse} WrappedResponse
+ * @typedef {object} WrappedResponse
  * @property {integer} userId.required - The ID of the user
  * @property {WrappedTransactions} transactions.required - The wrapped transactions info of the user
  * @property {number} spentPercentile.required - The top percentile of the user based on amount spent
@@ -28,7 +27,7 @@ import BaseResponse from './base-response';
  * @property {string} syncedTo.required - The last time the data was synced
  * @property {Array.<WrappedOrganMemberResponse>} organs.required - Organ member statistics for the user
  */
-export default interface WrappedResponse extends BaseResponse {
+export default interface WrappedResponse {
   userId: number;
   transactions: WrappedTransactions;
   spentPercentile: number;
@@ -41,14 +40,14 @@ export default interface WrappedResponse extends BaseResponse {
  * @typedef {object} WrappedTransactions
  * @property {integer} transactionCount.required - The total number of transaction in the past year
  * @property {number} transactionPercentile.required - The top percentile of the user based on the amount of transactions
- * @property {string} transactionMaxDate.required - The date the user made the highest amount of transactions
+ * @property {string} transactionMaxDate - The day on which the user made the most transactions, omitted without transactions
  * @property {number} transactionMaxAmount.required - The highest amount of transactions made by the user on a single day
  * @property {Array.<integer>} transactionHeatmap.required - Heatmap data representing transaction activity over the year
  */
 export interface WrappedTransactions {
   transactionCount: number;
   transactionPercentile: number;
-  transactionMaxDate: string;
+  transactionMaxDate?: string;
   transactionMaxAmount: number;
   transactionHeatmap: number[];
 }

@@ -53,6 +53,7 @@ describe('Database', async (): Promise<void> => {
         'float': ['real', 'float'],
         'integer': ['integer', 'int'],
         'int': ['integer', 'int'],
+        'simple-json': ['text'],
       };
 
       if (typeof type === 'function') {
