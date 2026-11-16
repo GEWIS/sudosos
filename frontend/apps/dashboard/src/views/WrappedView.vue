@@ -20,12 +20,26 @@
       </div>
 
       <div class="card-content relative z-10 flex flex-col h-full">
-        <div class="relative overflow-hidden flex-1">
+        <div class="flex items-center gap-3" :class="cards[currentIndex].dark === false ? 'text-black' : 'text-white'">
+          <WrappedProgress
+            class="flex-1"
+            :count="cards.length"
+            :current="currentIndex"
+            :duration="progressDuration"
+            :paused="paused"
+            @complete="next"
+          />
+          <button aria-label="Close" class="cursor-pointer" type="button" @click="close">
+            <i aria-hidden="true" class="pi pi-times"></i>
+          </button>
+        </div>
+
+        <div ref="viewport" class="relative overflow-hidden flex-1">
           <div
             class="carousel-track h-full flex"
             :style="trackStyle"
-            @lostpointercapture="onPointerUp"
-            @pointercancel="onPointerUp"
+            @lostpointercapture="cancelPointer"
+            @pointercancel="cancelPointer"
             @pointerdown="onPointerDown"
             @pointermove="onPointerMove"
             @pointerup="onPointerUp"
@@ -47,11 +61,10 @@
         </div>
 
         <WrappedControls
+          v-if="showArrows"
           :current-index="currentIndex"
-          :show-arrows="showArrows"
           :total-cards="cards.length"
-          @go="goTo"
-          @next="next"
+          @next="advance"
           @prev="prev"
         />
       </div>
@@ -100,7 +113,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick, onBeforeMount, type Component } from 'vue';
+import {
+  ref,
+  shallowRef,
+  computed,
+  watch,
+  nextTick,
+  provide,
+  onBeforeMount,
+  onMounted,
+  onBeforeUnmount,
+  type Component,
+} from 'vue';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
 import type { WrappedResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
@@ -118,6 +142,8 @@ import FinalCard from '@/components/wrapped/FinalCard.vue';
 import OrgansCard from '@/components/wrapped/OrgansCard.vue';
 import OrgansOverviewCard from '@/components/wrapped/OrgansOverviewCard.vue';
 import WrappedControls from '@/components/wrapped/Controls/WrappedControls.vue';
+import WrappedProgress from '@/components/wrapped/Controls/WrappedProgress.vue';
+import { activeRevealKey, type CardReveal } from '@/composables/wrappedCard';
 import { useSizeBreakpoints } from '@/composables/sizeBreakpoints';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
@@ -132,6 +158,7 @@ import defiImage from '@/assets/img/wrapped/DEFI.webp';
 interface Card {
   component: Component;
   background: string;
+  dark?: boolean;
   props?: Record<string, unknown>;
 }
 
@@ -166,7 +193,7 @@ const cards = computed<Card[]>(() => {
 
   const deck: Card[] = [
     { component: WelcomeCard, background: '#b40000', props: { firstName: authStore.getUser?.firstName } },
-    { component: TransactionsCard, background: '#ffffff' },
+    { component: TransactionsCard, background: '#ffffff', dark: false },
     { component: CalendarHeatmapCard, background: 'linear-gradient(90deg, #0d1117 0%, #1f2937 100%)' },
   ];
   if (wrapped.value.topProducts.length > 0) {
@@ -186,6 +213,7 @@ const cards = computed<Card[]>(() => {
     deck.push({
       component: OrgansCard,
       background: theme.background,
+      dark: theme.dark,
       props: { organ, image: theme.image, dark: theme.dark },
     });
   }
@@ -228,58 +256,92 @@ function prev() {
   goTo(currentIndex.value - 1);
 }
 
-let pointerDown = false;
-let dragging = false;
-let startX = 0;
-let startY = 0;
-let deltaX = 0;
+const READ_TIME = 5000;
+const HOLD_TIME = 250;
+const SWIPE_DISTANCE = 25;
+const BACK_ZONE = 0.3;
 
-const swipeThreshold = 25;
+const activeReveal = shallowRef<CardReveal>();
+provide(activeRevealKey, activeReveal);
 
-const trackStyle = computed(() => {
-  const baseTranslate = -currentIndex.value * 100;
-  if (dragging && deltaX !== 0) {
-    return {
-      transform: `translateX(calc(${baseTranslate}% + ${deltaX}px))`,
-      transition: 'none',
-    };
-  }
+const paused = ref(false);
+const progressDuration = ref(0);
 
-  return {
-    transform: `translateX(${baseTranslate}%)`,
-    transition: 'transform 400ms cubic-bezier(.2,.8,.2,1)',
-  };
+watch(activeReveal, (reveal) => {
+  const stays =
+    !reveal ||
+    currentIndex.value === cards.value.length - 1 ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  progressDuration.value = stays ? 0 : (reveal.done.value ? 0 : reveal.duration) + READ_TIME;
 });
 
+/**
+ * Completes the reveal of the current card, or moves on when it is complete already.
+ */
+function advance() {
+  const reveal = activeReveal.value;
+  if (reveal && !reveal.done.value) reveal.finish();
+  else next();
+}
+
+function close() {
+  void router.push({ name: 'home' });
+}
+
+const viewport = ref<HTMLElement>();
+const drag = ref<{ x: number; y: number; offset: number }>();
+let holdTimer = 0;
+
+const trackStyle = computed(() => ({
+  transform: `translateX(calc(${-currentIndex.value * 100}% + ${drag.value?.offset ?? 0}px))`,
+  transition: drag.value?.offset ? 'none' : 'transform 400ms cubic-bezier(.2,.8,.2,1)',
+}));
+
 function onPointerDown(e: PointerEvent) {
-  pointerDown = true;
-  dragging = false;
-  startX = e.clientX;
-  startY = e.clientY;
-  deltaX = 0;
-  (e.target as Element).setPointerCapture(e.pointerId);
+  if ((e.target as Element).closest('button, a')) return;
+  drag.value = { x: e.clientX, y: e.clientY, offset: 0 };
+  holdTimer = window.setTimeout(() => (paused.value = true), HOLD_TIME);
+  (e.currentTarget as Element).setPointerCapture(e.pointerId);
 }
 
 function onPointerMove(e: PointerEvent) {
-  if (!pointerDown) return;
-  const dx = e.clientX - startX;
-  const dy = e.clientY - startY;
-  if (!dragging && Math.abs(dy) > Math.abs(dx)) return;
-  dragging = true;
-  deltaX = dx;
+  if (!drag.value) return;
+  const dx = e.clientX - drag.value.x;
+  const dy = e.clientY - drag.value.y;
+  if (drag.value.offset === 0 && Math.abs(dy) > Math.abs(dx)) return;
+  drag.value.offset = dx;
+}
+
+function cancelPointer() {
+  clearTimeout(holdTimer);
+  paused.value = false;
+  drag.value = undefined;
 }
 
 function onPointerUp(e: PointerEvent) {
-  if (!pointerDown) return;
-  pointerDown = false;
-  (e.target as Element).releasePointerCapture(e.pointerId);
+  if (!drag.value || !viewport.value) return;
+  const { offset } = drag.value;
+  const held = paused.value;
+  cancelPointer();
 
-  if (dragging && deltaX > swipeThreshold) prev();
-  if (dragging && deltaX < -swipeThreshold) next();
-
-  deltaX = 0;
-  dragging = false;
+  if (offset > SWIPE_DISTANCE) prev();
+  else if (offset < -SWIPE_DISTANCE) next();
+  else if (!held) {
+    const { left, width } = viewport.value.getBoundingClientRect();
+    if (e.clientX - left < width * BACK_ZONE) prev();
+    else advance();
+  }
 }
+
+function onKeydown(e: KeyboardEvent) {
+  if (!wrapped.value) return;
+  if (e.key === 'ArrowRight') advance();
+  else if (e.key === 'ArrowLeft') prev();
+  else if (e.key === 'Escape') close();
+}
+
+onMounted(() => window.addEventListener('keydown', onKeydown));
+onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
 
 async function loadWrapped() {
   wrapped.value = (await apiService.user.updateWrapped({ id: authStore.getUser!.id })).data;

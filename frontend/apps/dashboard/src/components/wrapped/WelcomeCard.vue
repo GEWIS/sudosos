@@ -19,7 +19,11 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ active?: boolean; firstName?: string; showArrows?: boolean }>();
+import { useCardReveal } from '@/composables/wrappedCard';
+
+const props = defineProps<{ active?: boolean; firstName?: string; showArrows?: boolean }>();
+
+useCardReveal(() => props.active, []);
 </script>
 
 <style scoped>

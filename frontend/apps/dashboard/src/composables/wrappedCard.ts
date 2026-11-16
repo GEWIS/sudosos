@@ -1,4 +1,15 @@
-import { computed, onUnmounted, ref, watch, type Ref } from 'vue';
+import { computed, inject, onUnmounted, ref, watch, type InjectionKey, type Ref, type ShallowRef } from 'vue';
+
+export interface CardReveal {
+  duration: number;
+  done: Readonly<Ref<boolean>>;
+  finish: () => void;
+}
+
+/**
+ * The reveal of the card that is currently shown, so the deck can time and skip it.
+ */
+export const activeRevealKey: InjectionKey<ShallowRef<CardReveal | undefined>> = Symbol('activeReveal');
 
 const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -9,15 +20,23 @@ const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: r
 export function useCardReveal(active: () => boolean, delays: number[]) {
   const step = ref(0);
   const timers: number[] = [];
+  const activeReveal = inject(activeRevealKey, undefined);
 
   function finish() {
     timers.forEach(clearTimeout);
     step.value = delays.length;
   }
 
+  const reveal: CardReveal = {
+    duration: delays.reduce((total, delay) => total + delay, 0),
+    done: computed(() => step.value >= delays.length),
+    finish,
+  };
+
   watch(
     active,
     (isActive) => {
+      if (isActive && activeReveal) activeReveal.value = reveal;
       if (!isActive || step.value > 0 || timers.length > 0) return;
       if (prefersReducedMotion()) {
         finish();
@@ -35,7 +54,7 @@ export function useCardReveal(active: () => boolean, delays: number[]) {
 
   onUnmounted(() => timers.forEach(clearTimeout));
 
-  return { step, done: computed(() => step.value >= delays.length), finish };
+  return { step, done: reveal.done };
 }
 
 /**
