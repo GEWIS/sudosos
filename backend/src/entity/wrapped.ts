@@ -43,7 +43,8 @@
  *
  * ### Updates
  * `src/cron.ts` updates all rows every night at 01:45 in December, and once more on January 1st at
- * 06:15 to include New Year's Eve. `POST /users/{id}/wrapped` updates one user.
+ * 06:15 to include New Year's Eve. `POST /users/{id}/wrapped` computes the current Wrapped of one
+ * user if it does not exist yet; it never replaces an existing row.
  * `GET /users/{id}/wrapped` returns the requested year, or the most recent one. The
  * {@link internal/server-settings | server setting} `wrappedEnabled` only controls whether the
  * frontends show Wrapped.

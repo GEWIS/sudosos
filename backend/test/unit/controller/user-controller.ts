@@ -2876,24 +2876,26 @@ describe('UserController', (): void => {
     });
   });
 
-  describe('GET /users/:id/wrapped', () => {
-    const saveWrapped = (userId: number, year: number) => Wrapped.save(Object.assign(new Wrapped(), {
-      userId,
-      year,
-      transactionCount: 10,
-      transactionPercentile: 75.5,
-      transactionMaxDate: new Date(year, 6, 15),
-      transactionMaxAmount: 5,
-      transactionHeatmap: [1, 2, 3],
-      spentPercentile: 80,
-      syncedFrom: new Date(year, 0, 1),
-      syncedTo: new Date(),
-    }));
+  const saveWrapped = (userId: number, year: number) => Wrapped.save(Object.assign(new Wrapped(), {
+    userId,
+    year,
+    transactionCount: 10,
+    transactionPercentile: 75.5,
+    transactionMaxDate: new Date(year, 6, 15),
+    transactionMaxAmount: 5,
+    transactionHeatmap: [1, 2, 3],
+    spentPercentile: 80,
+    syncedFrom: new Date(year, 0, 1),
+    syncedTo: new Date(),
+  }));
 
-    beforeEach(async () => {
-      await WrappedOrganMember.createQueryBuilder().delete().execute();
-      await Wrapped.createQueryBuilder().delete().execute();
-    });
+  const deleteWrapped = async () => {
+    await WrappedOrganMember.createQueryBuilder().delete().execute();
+    await Wrapped.createQueryBuilder().delete().execute();
+  };
+
+  describe('GET /users/:id/wrapped', () => {
+    beforeEach(deleteWrapped);
 
     it('should return the most recent wrapped of the user', async () => {
       const user = ctx.users[0];
@@ -2971,63 +2973,57 @@ describe('UserController', (): void => {
   });
 
   describe('POST /users/:id/wrapped', () => {
-    it('should return 200 after successful computation', async () => {
-      const user = ctx.users[0]; // Use the user that has the token
-      if (!user) return;
+    const setEligible = (extensiveDataProcessing: boolean) => User.update(ctx.users[0].id, { extensiveDataProcessing });
 
+    beforeEach(async () => {
+      await deleteWrapped();
+      await setEligible(true);
       process.env.WRAPPED_YEAR = '2023';
+    });
 
+    afterAll(async () => {
+      delete process.env.WRAPPED_YEAR;
+      await setEligible(ctx.users[0].extensiveDataProcessing);
+    });
+
+    it('should compute and return the wrapped of the user', async () => {
       const res = await request(ctx.app)
-        .post(`/users/${user.id}/wrapped`)
+        .post(`/users/${ctx.users[0].id}/wrapped`)
         .set('Authorization', `Bearer ${ctx.userToken}`);
 
       expect(res.status).to.equal(200);
+      expect(ctx.specification.validateModel('WrappedResponse', res.body, false, true).valid).to.be.true;
+      expect(res.body.userId).to.equal(ctx.users[0].id);
+      expect(res.body.year).to.equal(2023);
     });
 
-    it('should validate authorization policy (own)', async () => {
-      const user = ctx.users[0]; // Use the user that has the token
-      if (!user) return;
-
-      // Reload user without relations to avoid circular references
-      const freshUser = await User.findOne({ where: { id: user.id } });
-      if (!freshUser) return;
-
-      const userToken = await signTokenFor(freshUser, ctx.tokenHandler);
-      process.env.WRAPPED_YEAR = '2023';
+    it('should return an existing wrapped without computing it again', async () => {
+      await saveWrapped(ctx.users[0].id, 2023);
 
       const res = await request(ctx.app)
-        .post(`/users/${user.id}/wrapped`)
-        .set('Authorization', `Bearer ${userToken}`);
+        .post(`/users/${ctx.users[0].id}/wrapped`)
+        .set('Authorization', `Bearer ${ctx.userToken}`);
 
       expect(res.status).to.equal(200);
+      expect(res.body.transactions.transactionHeatmap).to.deep.equal([1, 2, 3]);
     });
 
-    it('should return 403 when user cannot update wrapped (all)', async () => {
-      const user = ctx.users[0]; // Use a regular user
-      const otherUser = ctx.users.find((u) => u.id !== user.id && u.extensiveDataProcessing && u.active && !u.deleted);
-      if (!user || !otherUser) return;
-
-      // Reload user without relations to avoid circular references
-      const freshUser = await User.findOne({ where: { id: user.id } });
-      if (!freshUser) return;
-
-      const userToken = await signTokenFor(freshUser, ctx.tokenHandler);
-      process.env.WRAPPED_YEAR = '2023';
+    it('should return 404 when the user does not allow extensive data processing', async () => {
+      await setEligible(false);
 
       const res = await request(ctx.app)
-        .post(`/users/${otherUser.id}/wrapped`)
-        .set('Authorization', `Bearer ${userToken}`);
+        .post(`/users/${ctx.users[0].id}/wrapped`)
+        .set('Authorization', `Bearer ${ctx.userToken}`);
+
+      expect(res.status).to.equal(404);
+    });
+
+    it('should return 403 for the wrapped of another user', async () => {
+      const res = await request(ctx.app)
+        .post(`/users/${ctx.users[1].id}/wrapped`)
+        .set('Authorization', `Bearer ${ctx.userToken}`);
 
       expect(res.status).to.equal(403);
-    });
-
-    it('should handle invalid userId parameter', async () => {
-      const res = await request(ctx.app)
-        .post('/users/invalid/wrapped')
-        .set('Authorization', `Bearer ${ctx.userToken}`);
-
-      // Should return 404 or 400 depending on route matching
-      expect([400, 404, 405]).to.include(res.status);
     });
   });
 

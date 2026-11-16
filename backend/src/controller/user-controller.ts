@@ -1923,12 +1923,13 @@ export default class UserController extends BaseController {
 
   /**
    * POST /users/{id}/wrapped
-   * @summary Recompute wrapped for a user
+   * @summary Get the current wrapped of a user, computing it when it does not exist yet
    * @operationId updateWrapped
    * @tags users - Operations of user controller
    * @param {integer} id.path.required - The id of the user
    * @security JWT
    * @return {WrappedResponse} 200 - The requested user's wrapped
+   * @return {string} 404 - The user cannot have a wrapped
    * @return {string} 500 - Internal server error
    */
   private async computedWrapped(req: RequestWithToken, res: Response): Promise<void> {
@@ -1937,7 +1938,13 @@ export default class UserController extends BaseController {
     try {
       const userId = parseInt(rawUserId, 10);
 
-      res.json(await new WrappedService().updateWrapped({ ids: [userId] }));
+      const wrapped = await new WrappedService().ensureWrappedForUser(userId);
+      if (wrapped == null) {
+        res.status(404).json('Wrapped not found for user');
+        return;
+      }
+
+      res.json(WrappedService.asWrappedResponse(wrapped));
     } catch (error) {
       res.status(500).json({ message: 'Internal server error' });
     }

@@ -89,6 +89,19 @@ export default class WrappedService extends WithManager {
     });
   }
 
+  /**
+   * Get the current Wrapped of a user, computing it when it does not exist yet.
+   * Returns null for users that cannot have a Wrapped.
+   */
+  public async ensureWrappedForUser(userId: number): Promise<Wrapped | null> {
+    const year = WrappedService.currentYear();
+    const existing = await this.getWrappedForUser(userId, year);
+    if (existing) return existing;
+
+    await this.updateWrapped({ ids: [userId], year });
+    return this.getWrappedForUser(userId, year);
+  }
+
   public static asWrappedResponse(data: Wrapped): WrappedResponse {
     return {
       userId: data.userId,
