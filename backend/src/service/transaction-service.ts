@@ -41,7 +41,6 @@ import {
   parsePOSToBasePOS,
   parseProductToBaseResponse,
   parseUserToBaseResponse,
-  parseVatGroupToResponse,
 } from '../helpers/revision-to-response';
 import QueryFilter, { FilterMapping } from '../helpers/query-filter';
 import WebSocketService from './websocket-service';
@@ -63,24 +62,6 @@ import BalanceService from './balance-service';
 import { asBoolean, asDate, asNumber } from '../helpers/validators';
 import { maxPagination, PaginationParameters } from '../helpers/pagination';
 import { toMySQLString, utcToDate } from '../helpers/timestamps';
-import {
-  TransactionReport,
-  TransactionReportCategoryEntryResponse,
-  TransactionReportData,
-  TransactionReportDataResponse,
-  TransactionReportEntryResponse,
-  TransactionReportResponse,
-  TransactionReportVatEntryResponse,
-} from '../controller/response/transaction-report-response';
-import {
-  collectProductsByCategory,
-  collectProductsByRevision,
-  collectProductsByVat,
-  reduceMapToCategoryEntries,
-  reduceMapToReportEntries,
-  reduceMapToVatEntries,
-} from '../helpers/transaction-mapper';
-import ProductCategoryService from './product-category-service';
 import WithManager from '../database/with-manager';
 import ProductService from './product-service';
 import { convertToPositional } from '../helpers/params';
@@ -1132,158 +1113,6 @@ export default class TransactionService extends WithManager {
 
     // return deleted transaction
     return transaction;
-  }
-
-  /**
-   * Converts a transactionReport to a TransactionReportResponse
-   * @param transactionReport
-   * @private
-   */
-  private static transactionReportToResponse(transactionReport: TransactionReport): TransactionReportResponse {
-    const categories: TransactionReportCategoryEntryResponse[] = [];
-    transactionReport.data.categories.forEach((entry) => {
-      const category: TransactionReportCategoryEntryResponse = {
-        category: ProductCategoryService.asProductCategoryResponse(entry.category),
-        totalExclVat: dinero({ amount: Math.round(entry.totalExclVat) }).toObject(),
-        totalInclVat: entry.totalInclVat.toObject() as DineroObjectResponse,
-      };
-      categories.push(category);
-    });
-
-    let totalExclVat = 0;
-    let totalInclVat = 0;
-
-    const entries: TransactionReportEntryResponse[] = [];
-    transactionReport.data.entries.forEach((productEntry) => {
-      const count = productEntry.count;
-      const amountInclVat = productEntry.product.priceInclVat.getAmount() * count;
-      const amountExclVat = amountInclVat / (1 + (productEntry.product.vat.percentage / 100));
-      totalInclVat += amountInclVat;
-      totalExclVat += amountExclVat;
-      const entry: TransactionReportEntryResponse = {
-        count,
-        product: parseProductToBaseResponse(productEntry.product, false),
-        totalExclVat: dinero({ amount: Math.round(amountExclVat) }).toObject(),
-        totalInclVat: dinero({ amount: amountInclVat }).toObject(),
-      };
-      entries.push(entry);
-    });
-
-    const vat: TransactionReportVatEntryResponse[] = [];
-    transactionReport.data.vat.forEach((vatEntry) => {
-      const entry: TransactionReportVatEntryResponse = {
-        totalExclVat: dinero({ amount: Math.round(vatEntry.totalExclVat) }).toObject(),
-        totalInclVat: vatEntry.totalInclVat.toObject(),
-        vat: parseVatGroupToResponse(vatEntry.vat),
-      };
-      vat.push(entry);
-    });
-
-    const data: TransactionReportDataResponse = {
-      categories,
-      entries,
-      vat,
-    };
-
-    return {
-      data,
-      parameters: transactionReport.parameters,
-      totalExclVat: dinero({ amount: Math.round(totalExclVat) }).toObject(),
-      totalInclVat: dinero({ amount: totalInclVat }).toObject(),
-    };
-  }
-
-  /**
-   * Generates a transaction report object from the given transaction filter parameters
-   * @param parameters - Parameters describing what should be included in the report
-   */
-  public async getTransactionReport(parameters: TransactionFilterParameters): Promise<TransactionReport> {
-    const [baseTransactions] = await this.getTransactions(parameters);
-
-    const transactionReportData = await this.getTransactionReportData(baseTransactions, parameters.exclusiveToId ? parameters.toId : undefined);
-    return {
-      data: transactionReportData,
-      parameters,
-    };
-  }
-
-  /**
-   * Creates a transaction report response from the given parameters
-   * @param parameters
-   */
-  public async getTransactionReportResponse(parameters: TransactionFilterParameters): Promise<TransactionReportResponse> {
-    const transactionReport = await this.getTransactionReport(parameters);
-    return TransactionService.transactionReportToResponse(transactionReport);
-  }
-
-  public async getTransactionsFromBaseTransactions(baseTransactions: BaseTransactionResponse[], dropInvoiced = true): Promise<Transaction[]> {
-    const ids = baseTransactions.map((t) => t.id);
-
-    let transactions = await this.manager.find(Transaction, {
-      where: {
-        id: In(ids),
-      },
-      relations: {
-        subTransactions: {
-          to: true,
-
-          subTransactionRows: {
-            product: {
-              category: true,
-              product: true,
-              vat: true,
-            },
-
-            invoice: true,
-          },
-        },
-
-        from: true,
-      },
-    });
-
-    // Don't consider transactions from invoice accounts
-    if (dropInvoiced) {
-      const invoiceUsers = new Set((await this.manager.find(User, { where: { type: In([UserType.INVOICE]) } })).map((u) => u.id));
-      transactions = transactions.filter((t) => !invoiceUsers.has(t.from.id));
-    }
-
-    return transactions;
-  }
-
-  /**
-   * Creates TransactionReportData for the given baseTransactions
-   * @param baseTransactions - Transactions to parse
-   * @param exclusiveToId - If not undefined it will drop all Sub transactions with a toId different from the param.
-   * @param dropInvoiced - If invoiced SubTransactionRows should be ignored, defaults to true
-   */
-  public async getTransactionReportData(baseTransactions: BaseTransactionResponse[], exclusiveToId: number | undefined, dropInvoiced = true): Promise<TransactionReportData> {
-    const transactions = await this.getTransactionsFromBaseTransactions(baseTransactions, dropInvoiced);
-
-    const productEntryMap = new Map<string, SubTransactionRow[]>();
-    const vatEntryMap = new Map<number, SubTransactionRow[]>();
-    const categoryEntryMap = new Map<number, SubTransactionRow[]>();
-
-    let subTransactions = transactions.reduce<SubTransaction[]>((acc, cur) => acc.concat(cur.subTransactions), []);
-
-    if (exclusiveToId) {
-      subTransactions = subTransactions.filter((st) => st.to.id === exclusiveToId);
-    }
-
-    const subTransactionRows = subTransactions.reduce<SubTransactionRow[]>((acc, cur) => acc.concat(cur.subTransactionRows), []);
-
-    subTransactionRows.forEach((tSubRow) => {
-      if (dropInvoiced && tSubRow.invoice) return;
-      collectProductsByRevision(productEntryMap, tSubRow);
-      collectProductsByCategory(categoryEntryMap, tSubRow);
-      collectProductsByVat(vatEntryMap, tSubRow);
-    });
-
-    return {
-      categories: reduceMapToCategoryEntries(categoryEntryMap),
-      entries: reduceMapToReportEntries(productEntryMap),
-      vat: reduceMapToVatEntries(vatEntryMap),
-    };
   }
 
   /**
