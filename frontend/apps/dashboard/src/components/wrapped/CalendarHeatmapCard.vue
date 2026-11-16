@@ -46,42 +46,33 @@
 </template>
 
 <script setup lang="ts">
-import { toRef, computed, ref, watch, unref } from 'vue';
+import { toRef, computed, ref, watch } from 'vue';
+import type { WrappedResponse } from '@gewis/sudosos-client';
 
-const props = defineProps<{
-  active?: boolean;
-  heatmap: number[];
-  maxDate: Date | null;
-  maxAmount: number;
-}>();
+const props = defineProps<{ active?: boolean; wrapped: WrappedResponse }>();
 const active = toRef(props, 'active');
-const heatmapProp = toRef(props, 'heatmap');
-const maxDateProp = toRef(props, 'maxDate');
-const maxAmountProp = toRef(props, 'maxAmount');
 
-const heatmapValue = computed(() => unref(heatmapProp));
-const maxDateValue = computed(() => unref(maxDateProp));
-const maxAmountValue = computed(() => unref(maxAmountProp));
+const heatmapValue = computed(() => props.wrapped.transactions.transactionHeatmap);
+const maxDateValue = computed(() => {
+  const maxDate = props.wrapped.transactions.transactionMaxDate;
+  return maxDate ? new Date(maxDate) : null;
+});
+const maxAmountValue = computed(() => props.wrapped.transactions.transactionMaxAmount);
 
 const weekdays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
-function daysInYear(heatmap: number[] = []) {
-  const days: { index: number; value: number; weekday: number; week: number }[] = [];
-  const startWeekday = 2; // 2025 started on a Wednesday
-  const totalDays = 365; // 2025 is not a leap year
-  for (let i = 0; i < totalDays; i++) {
-    const value = heatmap[i] ?? 0; // default missing entries to 0
-    const weekday = (startWeekday + i) % 7;
-    const week = Math.floor((startWeekday + i) / 7);
-    days.push({ index: i, value, weekday, week });
-  }
-  return days;
-}
+const startWeekday = computed(() => (new Date(props.wrapped.year, 0, 1).getDay() + 6) % 7);
 
-// make daysOfYear reactive to heatmap prop
-const daysOfYear = computed(() => daysInYear(heatmapValue.value ?? []));
+const daysOfYear = computed(() =>
+  heatmapValue.value.map((value, index) => ({
+    index,
+    value,
+    weekday: (startWeekday.value + index) % 7,
+    week: Math.floor((startWeekday.value + index) / 7),
+  })),
+);
 
-const weeksCount = 53; // 2025 has 53 weeks
+const weeksCount = computed(() => Math.ceil((startWeekday.value + heatmapValue.value.length) / 7));
 
 const wrapperRef = ref<HTMLElement | null>(null);
 const cellSize = ref(9);
@@ -90,9 +81,9 @@ const gridStyle = computed(() => {
   const sizePx = `${cellSize.value}px`;
   return {
     gridTemplateColumns: `repeat(${weekdays.length}, ${sizePx})`,
-    gridTemplateRows: `var(--header-height) repeat(${weeksCount}, ${sizePx})`,
+    gridTemplateRows: `var(--header-height) repeat(${weeksCount.value}, ${sizePx})`,
     width: `${cellSize.value * weekdays.length}px`,
-    height: `${cellSize.value * (weeksCount + 1)}px`,
+    height: `${cellSize.value * (weeksCount.value + 1)}px`,
     '--header-height': sizePx,
   };
 });
