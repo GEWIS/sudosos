@@ -9,7 +9,6 @@ import { adminRoutes, canViewAdminDashboard } from '@/modules/admin/routes';
 import { financialRoutes } from '@/modules/financial/routes';
 import { sellerRoutes } from '@/modules/seller/routes';
 import { userRoutes } from '@/modules/user/routes';
-import WrappedView from '@/views/WrappedView.vue';
 import apiService from '@/services/ApiService';
 import i18n from '@/utils/i18nUtils';
 
@@ -84,7 +83,7 @@ const router = createRouter({
         },
         {
           path: 'wrapped',
-          component: WrappedView,
+          component: () => import('@/views/WrappedView.vue'),
           name: 'wrapped',
           beforeEnter: wrappedGuard,
           meta: {
