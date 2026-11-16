@@ -129,6 +129,9 @@ import {
 } from '../migrations/1785401380818-add-product-self-service-to-user';
 import { RemoveEvents1793530550381 } from '../migrations/1793530550381-remove-events';
 import { AddYearToWrapped1794863168963 } from '../migrations/1794863168963-add-year-to-wrapped';
+import {
+  AddPurchaseStatisticsToWrapped1794863989728,
+} from '../migrations/1794863989728-add-purchase-statistics-to-wrapped';
 
 function getDataSourceOptions(): DataSourceOptions {
   const config = Config.get();
@@ -186,6 +189,7 @@ function getDataSourceOptions(): DataSourceOptions {
       AddProductSelfServiceToUser1785401380818,
       RemoveEvents1793530550381,
       AddYearToWrapped1794863168963,
+      AddPurchaseStatisticsToWrapped1794863989728,
     ],
     extra: {
       authPlugins: {

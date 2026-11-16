@@ -34,8 +34,13 @@
  * - `transactionCount`: the number of transactions.
  * - `transactionHeatmap`: the number of transactions per day of the year.
  * - `transactionMaxDate` and `transactionMaxAmount`: the busiest day and its number of transactions.
+ * - `totalSpent`: the money spent. `borrelSpent` is the part spent at points of sale without
+ *   authentication, where a cashier rings up the purchases.
+ * - `previousTransactionCount` and `previousTotalSpent`: the same totals for the year before.
  * - `transactionPercentile` and `spentPercentile`: the user's rank by transactions and by money
  *   spent, among the users with at least one transaction that year. 10 means the top 10%.
+ * - `topProducts`: the five most bought products, each with the user's rank among its buyers.
+ * - `categories`: the money spent per product category.
  * - `syncedFrom` and `syncedTo`: the start of the year and the time of the last update.
  *
  * A {@link WrappedOrganMember} row ranks the user among the sellers of an organ they are a member
@@ -55,18 +60,42 @@
  * @mergeTarget
  */
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryColumn, JoinColumn } from 'typeorm';
+import { Dinero } from 'dinero.js';
 import User from './user/user';
 import WrappedOrganMember from './wrapped/wrapped-organ-member';
+import DineroTransformer from './transformer/dinero-transformer';
+
+export interface WrappedProduct {
+  id: number;
+  name: string;
+  image?: string;
+  count: number;
+  totalInclVat: number;
+  rank: number;
+}
+
+export interface WrappedCategory {
+  id: number;
+  name: string;
+  totalInclVat: number;
+}
 
 /**
  * @typedef {BaseEntity} Wrapped
  * @property {number} userId - ID of the user
  * @property {number} year - The year the statistics are about
  * @property {number} transactionCount - Total number of transactions
+ * @property {number} previousTransactionCount - Total number of transactions in the year before
  * @property {number} transactionPercentile - Percentile rank of the user's transactions
  * @property {string} transactionMaxDate - Date of the maximum transaction
  * @property {number} transactionMaxAmount - Amount of the maximum transaction
  * @property {number[]} transactionHeatmap - Heatmap data of transactions
+ * @property {Dinero.model} totalSpent - Total amount of money spent
+ * @property {Dinero.model} previousTotalSpent - Total amount of money spent in the year before
+ * @property {Dinero.model} borrelSpent - Amount of money spent at points of sale without authentication
+ * @property {number} spentPercentile - Percentile rank of the user's spending
+ * @property {Array<object>} topProducts - The most bought products
+ * @property {Array<object>} categories - The money spent per product category
  * @property {string} syncedFrom - The starting date from which the data was considered
  * @property {string} syncedTo - The last time the data was synced
  */
@@ -93,6 +122,11 @@ export default class Wrapped extends BaseEntity {
   public transactionCount: number;
 
   @Column({
+    type: 'integer',
+  })
+  public previousTransactionCount: number;
+
+  @Column({
     type: 'float',
   })
   public transactionPercentile: number;
@@ -114,9 +148,37 @@ export default class Wrapped extends BaseEntity {
   public transactionHeatmap: number[];
 
   @Column({
+    type: 'integer',
+    transformer: DineroTransformer.Instance,
+  })
+  public totalSpent: Dinero;
+
+  @Column({
+    type: 'integer',
+    transformer: DineroTransformer.Instance,
+  })
+  public previousTotalSpent: Dinero;
+
+  @Column({
+    type: 'integer',
+    transformer: DineroTransformer.Instance,
+  })
+  public borrelSpent: Dinero;
+
+  @Column({
     type: 'float',
   })
   public spentPercentile: number;
+
+  @Column({
+    type: 'simple-json',
+  })
+  public topProducts: WrappedProduct[];
+
+  @Column({
+    type: 'simple-json',
+  })
+  public categories: WrappedCategory[];
 
   @Column({
     type: 'datetime',

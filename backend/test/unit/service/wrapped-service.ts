@@ -63,7 +63,9 @@ describe('WrappedService', (): void => {
     inactive: User,
     beer: ProductRevision,
     snack: ProductRevision,
+    sodas: ProductRevision[],
     bar: Shop,
+    fridge: Shop,
     closedBar: Shop,
   };
 
@@ -78,7 +80,7 @@ describe('WrappedService', (): void => {
     ...overrides,
   }));
 
-  const createShop = async (organ: User, products: ProductRevision[]): Promise<Shop> => {
+  const createShop = async (organ: User, products: ProductRevision[], useAuthentication = false): Promise<Shop> => {
     const container = await ContainerService.createContainer({
       ownerId: organ.id,
       name: `Fridge of ${organ.firstName}`,
@@ -89,7 +91,7 @@ describe('WrappedService', (): void => {
       ownerId: organ.id,
       name: `Bar of ${organ.firstName}`,
       containers: [container.containerId],
-      useAuthentication: false,
+      useAuthentication,
     });
     return { organ, container, pointOfSale };
   };
@@ -138,8 +140,10 @@ describe('WrappedService', (): void => {
     const vat = await VatGroup.save(Object.assign(new VatGroup(), {
       name: 'High', percentage: 21, deleted: false, hidden: false,
     }));
-    const category = await ProductCategory.save(Object.assign(new ProductCategory(), { name: 'Drinks' }));
-    const createProduct = (name: string, amount: number) => ProductService.createProduct({
+    const [drinks, food] = await ProductCategory.save(['Drinks', 'Food'].map((name) => (
+      Object.assign(new ProductCategory(), { name })
+    )));
+    const createProduct = (name: string, amount: number, category = drinks) => ProductService.createProduct({
       ownerId: organ.id,
       name,
       priceInclVat: { amount, currency: dinero.defaultCurrency, precision: dinero.defaultPrecision },
@@ -148,7 +152,10 @@ describe('WrappedService', (): void => {
       alcoholPercentage: 0,
     });
     const beer = await createProduct('Beer', 100);
-    const snack = await createProduct('Snack', 250);
+    const snack = await createProduct('Snack', 250, food);
+    const sodas: ProductRevision[] = [];
+    for (const name of ['Cola', 'Fanta', 'Sprite', 'Cassis']) sodas.push(await createProduct(name, 50));
+    const products = [beer, snack, ...sodas];
 
     ctx = {
       connection,
@@ -161,8 +168,10 @@ describe('WrappedService', (): void => {
       inactive,
       beer,
       snack,
-      bar: await createShop(organ, [beer, snack]),
-      closedBar: await createShop(closedOrgan, [beer, snack]),
+      sodas,
+      bar: await createShop(organ, products),
+      fridge: await createShop(organ, products, true),
+      closedBar: await createShop(closedOrgan, products),
     };
   });
 
@@ -308,6 +317,67 @@ describe('WrappedService', (): void => {
       expect(bob.transactionPercentile).to.equal(50);
     });
 
+    it('should total the spending of the year and of the year before', async () => {
+      await buy(ctx.alice, new Date(YEAR - 1, 5, 1, 12), [[ctx.beer, 3]]);
+      await buy(ctx.alice, new Date(YEAR, 5, 1, 12), [[ctx.beer, 1], [ctx.snack, 1]]);
+      await buy(ctx.alice, new Date(YEAR, 5, 2, 12), [[ctx.beer, 2]], { shop: ctx.fridge });
+
+      await update();
+
+      const wrapped = await wrappedOf(ctx.alice);
+      expect(wrapped.totalSpent.getAmount()).to.equal(550);
+      expect(wrapped.borrelSpent.getAmount()).to.equal(350);
+      expect(wrapped.previousTotalSpent.getAmount()).to.equal(300);
+      expect(wrapped.previousTransactionCount).to.equal(1);
+    });
+
+    it('should list the five most bought products', async () => {
+      const [cola, fanta, sprite, cassis] = ctx.sodas;
+      await buy(ctx.alice, new Date(YEAR, 5, 1, 12), [[cassis, 1], [sprite, 1], [fanta, 2], [cola, 2], [ctx.snack, 1]]);
+      await buy(ctx.alice, new Date(YEAR, 5, 2, 12), [[ctx.snack, 2], [ctx.beer, 4]]);
+
+      await update();
+
+      const { topProducts } = await wrappedOf(ctx.alice);
+      expect(topProducts.map((p) => [p.name, p.count, p.totalInclVat])).to.deep.equal([
+        ['Beer', 4, 400],
+        ['Snack', 3, 750],
+        ['Cola', 2, 100],
+        ['Fanta', 2, 100],
+        ['Sprite', 1, 50],
+      ]);
+      expect(topProducts[0].id).to.equal(ctx.beer.productId);
+      expect((await wrappedOf(ctx.carol)).topProducts).to.be.empty;
+    });
+
+    it('should rank users among the buyers of their top products', async () => {
+      await buy(ctx.alice, new Date(YEAR, 5, 1, 12), [[ctx.beer, 2]]);
+      await buy(ctx.bob, new Date(YEAR, 5, 1, 12), [[ctx.beer, 5]]);
+      await buy(ctx.carol, new Date(YEAR, 5, 1, 12), [[ctx.beer, 2]]);
+      await buy(ctx.optedOut, new Date(YEAR, 5, 1, 12), [[ctx.beer, 50]]);
+
+      await update();
+
+      const rankOf = async (user: User) => (await wrappedOf(user)).topProducts[0].rank;
+      expect(await rankOf(ctx.bob)).to.equal(1);
+      expect(await rankOf(ctx.alice)).to.equal(2);
+      expect(await rankOf(ctx.carol)).to.equal(2);
+
+      await buy(ctx.carol, new Date(YEAR, 5, 2, 12), [[ctx.beer, 1]]);
+      await update({ ids: [ctx.carol.id] });
+      expect(await rankOf(ctx.carol)).to.equal(2);
+      expect(await rankOf(ctx.alice)).to.equal(2);
+    });
+
+    it('should total the spending per product category', async () => {
+      await buy(ctx.alice, new Date(YEAR, 5, 1, 12), [[ctx.beer, 1], [ctx.snack, 1], [ctx.sodas[0], 1]]);
+
+      await update();
+
+      const { categories } = await wrappedOf(ctx.alice);
+      expect(categories.map((c) => [c.name, c.totalInclVat])).to.deep.equal([['Food', 250], ['Drinks', 150]]);
+    });
+
     it('should rank organ members among the sellers of their organ', async () => {
       await buy(ctx.carol, new Date(YEAR, 4, 1, 21), [[ctx.beer, 1], [ctx.snack, 1]], { createdBy: ctx.alice });
       await buy(ctx.carol, new Date(YEAR, 4, 1, 22), [[ctx.beer, 1]], { createdBy: ctx.bob });
@@ -377,9 +447,11 @@ describe('WrappedService', (): void => {
 
       const response = WrappedService.asWrappedResponse(await wrappedOf(ctx.alice));
 
-      const validation = ctx.specification.validateModel('WrappedResponse', response, false, true);
-      expect(validation.valid, JSON.stringify(validation.errors)).to.be.true;
+      expect(ctx.specification.validateModel('WrappedResponse', response, false, true).valid).to.be.true;
       expect(response.transactions.transactionMaxDate).to.equal(new Date(YEAR, 4, 1).toISOString());
+      expect(response.totalSpent.amount).to.equal(100);
+      expect(response.topProducts[0].totalInclVat.amount).to.equal(100);
+      expect(response.categories[0].totalInclVat.amount).to.equal(100);
       expect(response.organs).to.have.length(1);
     });
 

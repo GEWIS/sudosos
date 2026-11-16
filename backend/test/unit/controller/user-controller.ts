@@ -2884,7 +2884,13 @@ describe('UserController', (): void => {
     transactionMaxDate: new Date(year, 6, 15),
     transactionMaxAmount: 5,
     transactionHeatmap: [1, 2, 3],
+    previousTransactionCount: 8,
+    totalSpent: Dinero({ amount: 1000 }),
+    previousTotalSpent: Dinero({ amount: 800 }),
+    borrelSpent: Dinero({ amount: 600 }),
     spentPercentile: 80,
+    topProducts: [{ id: 1, name: 'Beer', count: 10, totalInclVat: 1000, rank: 1 }],
+    categories: [{ id: 1, name: 'Alcoholic', totalInclVat: 1000 }],
     syncedFrom: new Date(year, 0, 1),
     syncedTo: new Date(),
   }));
