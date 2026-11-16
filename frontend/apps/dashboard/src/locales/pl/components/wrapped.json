@@ -35,11 +35,14 @@
       },
       "topProduct": {
         "intro": "W {year} roku Twoim ulubionym produktem był",
-        "bought": "Liczba zakupów: {count}!"
+        "bought": "Liczba zakupów: {count}!",
+        "champion": "Nikt nie kupił go więcej niż Ty!",
+        "rank": "Jesteś jego kupującym numer {rank}!"
       },
       "products": {
         "title": "Twoje ulubione produkty",
-        "bought": "Liczba zakupów: {count}"
+        "bought": "Liczba zakupów: {count}",
+        "variety": "Łącznie kupione sztuki: {items}, różne produkty: {products}."
       },
       "totalSpent": {
         "intro": "W {year} roku wydałeś łącznie",
@@ -55,13 +58,72 @@
         "categories": "Najwięcej pieniędzy poszło na",
         "category": "{amount} ({share}) na {category}"
       },
+      "rhythm": {
+        "weekday": "Twój ulubiony dzień to",
+        "weekdayShare": "{share} Twoich transakcji",
+        "hour": "a najbardziej aktywna godzina to"
+      },
+      "streak": {
+        "active": "Liczba dni z zakupami:",
+        "days": "dzień | dni",
+        "longest": "Twoja najdłuższa seria: {days}.",
+        "inARow": "{count} dzień z rzędu | {count} dni z rzędu",
+        "month": "Twój najbardziej pracowity miesiąc: {month}."
+      },
+      "round": {
+        "title": "Twoja największa kolejka",
+        "items": "sztuka | sztuk",
+        "details": "w jednej transakcji, za {amount}"
+      },
+      "balance": {
+        "title": "Dbanie o saldo",
+        "topUps": "Liczba doładowań: {count}, łącznie {total}.",
+        "fines": "Liczba kar: {count}, na kwotę {total}.",
+        "noFines": "I ani jednej kary."
+      },
+      "archetype": {
+        "title": "To wszystko czyni z Ciebie",
+        "bartender": {
+          "title": "Barman",
+          "description": "Liczba transakcji nabitych dla innych: {count}. To więcej niż Twoich własnych."
+        },
+        "driver": {
+          "title": "Kierowca",
+          "description": "Ani jednego napoju alkoholowego w tym roku."
+        },
+        "nightOwl": {
+          "title": "Nocny Marek",
+          "description": "{share} Twoich zakupów było po północy."
+        },
+        "explorer": {
+          "title": "Odkrywca",
+          "description": "Liczba różnych wypróbowanych produktów: {count}."
+        },
+        "regular": {
+          "title": "Stały Bywalec",
+          "description": "Liczba dni z zakupami: {days}."
+        },
+        "daytimer": {
+          "title": "Dzienny Gość",
+          "description": "{share} Twoich zakupów było przed siedemnastą."
+        },
+        "purist": {
+          "title": "Purysta",
+          "description": "{share} tego, co kupiłeś, zawiera alkohol."
+        },
+        "allRounder": {
+          "title": "Wszechstronny",
+          "description": "Wszystkiego po trochu, o każdej porze dnia."
+        }
+      },
       "organs": {
         "workedFor": "Ciężko pracowałeś dla {organ}!",
         "sellerRank": "Byłeś ich sprzedawcą {rank}!",
-        "transactionRank": "A także {rank} pod względem liczby transakcji!",
         "rank": "numer {rank}",
         "title": "Twoje organy",
-        "summary": "Sprzedawca numer {seller}, numer {transactions} pod względem transakcji"
+        "summary": "{turnover}, transakcje: {transactions}",
+        "topShare": "Byłeś w {top} ich sprzedawców!",
+        "totals": "Nabite transakcje: {transactions}, obsłużeni klienci: {customers}, obrót: {turnover}."
       },
       "quiet": {
         "title": "Spokojny rok",

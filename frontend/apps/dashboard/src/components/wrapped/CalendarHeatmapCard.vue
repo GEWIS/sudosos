@@ -54,16 +54,14 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WrappedResponse } from '@gewis/sudosos-client';
 import { useCardReveal } from '@/composables/wrappedCard';
+import { dateOfDay, formatDate, weekdayName } from '@/utils/wrappedUtils';
 
 const props = defineProps<{ active?: boolean; wrapped: WrappedResponse }>();
 
 const { t, locale } = useI18n();
 
-// 2024 started on a Monday, which is the first column of the heatmap.
 const weekdays = computed(() =>
-  Array.from({ length: 7 }, (_, weekday) =>
-    new Date(2024, 0, 1 + weekday).toLocaleDateString(locale.value, { weekday: 'narrow' }),
-  ),
+  Array.from({ length: 7 }, (_, weekday) => weekdayName(weekday, locale.value, 'narrow')),
 );
 
 const heatmap = computed(() => props.wrapped.transactions.transactionHeatmap);
@@ -77,12 +75,8 @@ function rowOf(day: number): number {
   return Math.floor((firstWeekday.value + day) / 7) + 2;
 }
 
-function dateOf(day: number): Date {
-  return new Date(props.wrapped.year, 0, 1 + day);
-}
-
 function formatDay(day: number): string {
-  return dateOf(day).toLocaleDateString(locale.value, { day: 'numeric', month: 'long' });
+  return formatDate(dateOfDay(props.wrapped.year, day), locale.value, { day: 'numeric', month: 'long' });
 }
 
 const days = computed(() => {
@@ -108,7 +102,7 @@ const days = computed(() => {
 const months = computed(() =>
   Array.from({ length: 12 }, (_, month) => {
     const firstDay = new Date(props.wrapped.year, month, 1);
-    const dayOfYear = Math.round((firstDay.getTime() - dateOf(0).getTime()) / 86_400_000);
+    const dayOfYear = Math.round((firstDay.getTime() - dateOfDay(props.wrapped.year, 0).getTime()) / 86_400_000);
     return { name: firstDay.toLocaleDateString(locale.value, { month: 'short' }), row: rowOf(dayOfYear) };
   }),
 );

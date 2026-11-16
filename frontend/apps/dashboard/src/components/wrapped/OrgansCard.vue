@@ -14,6 +14,7 @@
         </template>
       </i18n-t>
       <i18n-t
+        v-if="organ.ordinalTurnoverCreated < PODIUM"
         :aria-hidden="step < 2"
         class="text-4xl mb-4 fade-slide"
         keypath="components.wrapped.organs.sellerRank"
@@ -27,16 +28,32 @@
         </template>
       </i18n-t>
       <i18n-t
+        v-else-if="topShare <= 50"
+        :aria-hidden="step < 2"
+        class="text-4xl mb-4 fade-slide"
+        keypath="components.wrapped.organs.topShare"
+        scope="global"
+        tag="h1"
+      >
+        <template #top>
+          <span class="font-bold">{{ t('components.wrapped.top', { percentile: topShare }) }}</span>
+        </template>
+      </i18n-t>
+      <i18n-t
         :aria-hidden="step < 3"
         class="text-xl fade-slide"
-        keypath="components.wrapped.organs.transactionRank"
+        keypath="components.wrapped.organs.totals"
         scope="global"
         tag="h3"
       >
-        <template #rank>
-          <span class="font-bold">
-            {{ t('components.wrapped.organs.rank', { rank: organ.ordinalTransactionCreated + 1 }) }}
-          </span>
+        <template #transactions>
+          <span class="font-bold">{{ organ.transactionsCreated.toLocaleString(locale) }}</span>
+        </template>
+        <template #customers>
+          <span class="font-bold">{{ organ.customersServed.toLocaleString(locale) }}</span>
+        </template>
+        <template #turnover>
+          <span class="font-bold">{{ formatDineroObject(organ.turnoverCreated) }}</span>
         </template>
       </i18n-t>
     </div>
@@ -44,9 +61,11 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WrappedOrganMemberResponse } from '@gewis/sudosos-client';
 import { useCardReveal } from '@/composables/wrappedCard';
+import { formatDineroObject } from '@/utils/formatterUtils';
 import { organName } from '@/utils/wrappedUtils';
 
 const props = defineProps<{
@@ -56,7 +75,11 @@ const props = defineProps<{
   dark: boolean;
 }>();
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
+
+const PODIUM = 3;
+
+const topShare = computed(() => Math.ceil(((props.organ.ordinalTurnoverCreated + 1) / props.organ.sellerCount) * 100));
 
 const { step } = useCardReveal(() => props.active, [500, 1500, 800]);
 </script>

@@ -26,6 +26,20 @@
           </div>
         </div>
       </div>
+      <i18n-t
+        :aria-hidden="step <= wrapped.topProducts.length"
+        class="pt-5 fade-slide"
+        keypath="components.wrapped.products.variety"
+        scope="global"
+        tag="p"
+      >
+        <template #items>
+          <span class="font-bold">{{ wrapped.itemCount.toLocaleString(locale) }}</span>
+        </template>
+        <template #products>
+          <span class="font-bold">{{ wrapped.distinctProducts.toLocaleString(locale) }}</span>
+        </template>
+      </i18n-t>
     </div>
   </div>
 </template>
@@ -42,6 +56,6 @@ const { t, locale } = useI18n();
 
 const { step } = useCardReveal(
   () => props.active,
-  props.wrapped.topProducts.map((_, index) => (index === 0 ? 500 : 800)),
+  [...props.wrapped.topProducts.map((_, index) => (index === 0 ? 500 : 800)), 800],
 );
 </script>

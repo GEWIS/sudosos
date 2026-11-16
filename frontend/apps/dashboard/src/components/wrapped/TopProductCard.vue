@@ -20,6 +20,13 @@
           <span class="font-bold">{{ product.count.toLocaleString(locale) }}</span>
         </template>
       </i18n-t>
+      <p v-if="product.rank <= PODIUM" :aria-hidden="step < 3" class="mt-4 text-lg fade-slide text-right">
+        {{
+          product.rank === 1
+            ? t('components.wrapped.topProduct.champion')
+            : t('components.wrapped.topProduct.rank', { rank: product.rank })
+        }}
+      </p>
     </div>
   </div>
 </template>
@@ -36,9 +43,11 @@ const props = defineProps<{ active?: boolean; wrapped: WrappedResponse }>();
 
 const { t, locale } = useI18n();
 
+const PODIUM = 3;
+
 const product = computed(() => props.wrapped.topProducts[0]);
 
-const { step } = useCardReveal(() => props.active, [500, 1500]);
+const { step } = useCardReveal(() => props.active, [500, 1500, 1000]);
 </script>
 
 <style scoped lang="scss">

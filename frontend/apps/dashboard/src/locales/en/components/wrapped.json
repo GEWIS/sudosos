@@ -35,11 +35,14 @@
       },
       "topProduct": {
         "intro": "In {year}, your favourite product was",
-        "bought": "You bought it {count} time! | You bought it {count} times!"
+        "bought": "You bought it {count} time! | You bought it {count} times!",
+        "champion": "Nobody bought more of it than you!",
+        "rank": "You were its number {rank} buyer!"
       },
       "products": {
         "title": "Your top products",
-        "bought": "Bought {count} time | Bought {count} times"
+        "bought": "Bought {count} time | Bought {count} times",
+        "variety": "In total you bought {items} items, {products} different products."
       },
       "totalSpent": {
         "intro": "In {year}, you spent a total of",
@@ -55,13 +58,72 @@
         "categories": "Most of your money went to",
         "category": "{amount} ({share}) on {category}"
       },
+      "rhythm": {
+        "weekday": "Your favourite day was",
+        "weekdayShare": "{share} of your transactions",
+        "hour": "and you were most active around"
+      },
+      "streak": {
+        "active": "You bought something on",
+        "days": "day | days",
+        "longest": "Your longest streak was {days}.",
+        "inARow": "{count} day in a row | {count} days in a row",
+        "month": "{month} was your busiest month."
+      },
+      "round": {
+        "title": "Your biggest round",
+        "items": "item | items",
+        "details": "in one transaction, for {amount}"
+      },
+      "balance": {
+        "title": "Keeping your balance up",
+        "topUps": "You topped up {count} time, {total} in total. | You topped up {count} times, {total} in total.",
+        "fines": "You were fined {count} time, for {total}. | You were fined {count} times, for {total}.",
+        "noFines": "And not a single fine."
+      },
+      "archetype": {
+        "title": "All of that makes you",
+        "bartender": {
+          "title": "The Bartender",
+          "description": "You rang up {count} transactions for others, more than you made yourself."
+        },
+        "driver": {
+          "title": "The Designated Driver",
+          "description": "Not a single alcoholic drink this year."
+        },
+        "nightOwl": {
+          "title": "The Night Owl",
+          "description": "{share} of your purchases were made after midnight."
+        },
+        "explorer": {
+          "title": "The Explorer",
+          "description": "You tried {count} different products."
+        },
+        "regular": {
+          "title": "The Regular",
+          "description": "You bought something on {days} different days."
+        },
+        "daytimer": {
+          "title": "The Daytimer",
+          "description": "{share} of your purchases were made before five in the afternoon."
+        },
+        "purist": {
+          "title": "The Purist",
+          "description": "{share} of what you bought contains alcohol."
+        },
+        "allRounder": {
+          "title": "The All-rounder",
+          "description": "A bit of everything, at any time of the day."
+        }
+      },
       "organs": {
         "workedFor": "You worked hard for {organ}!",
         "sellerRank": "You were their {rank} seller!",
-        "transactionRank": "And also {rank} in transactions rung up!",
         "rank": "number {rank}",
         "title": "Your organs",
-        "summary": "Number {seller} seller, number {transactions} in transactions"
+        "summary": "{turnover} from {transactions} transactions",
+        "topShare": "You were in their {top} of sellers!",
+        "totals": "You rang up {transactions} transactions for {customers} customers, good for {turnover}."
       },
       "quiet": {
         "title": "A quiet year",

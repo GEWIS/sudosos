@@ -12,11 +12,11 @@
         >
           <h3 class="font-bold text-xl">{{ organName(organ) }}</h3>
           <i18n-t keypath="components.wrapped.organs.summary" scope="global" tag="h4">
-            <template #seller>
-              <span class="font-bold">{{ organ.ordinalTurnoverCreated + 1 }}</span>
+            <template #turnover>
+              <span class="font-bold">{{ formatDineroObject(organ.turnoverCreated) }}</span>
             </template>
             <template #transactions>
-              <span class="font-bold">{{ organ.ordinalTransactionCreated + 1 }}</span>
+              <span class="font-bold">{{ organ.transactionsCreated.toLocaleString(locale) }}</span>
             </template>
           </i18n-t>
         </div>
@@ -29,11 +29,12 @@
 import { useI18n } from 'vue-i18n';
 import type { WrappedResponse } from '@gewis/sudosos-client';
 import { useCardReveal } from '@/composables/wrappedCard';
+import { formatDineroObject } from '@/utils/formatterUtils';
 import { bestOrgan, organName } from '@/utils/wrappedUtils';
 
 const props = defineProps<{ active?: boolean; wrapped: WrappedResponse }>();
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const { step } = useCardReveal(
   () => props.active,

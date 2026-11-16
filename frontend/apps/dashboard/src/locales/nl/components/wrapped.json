@@ -35,11 +35,14 @@
       },
       "topProduct": {
         "intro": "In {year} was dit je favoriete product",
-        "bought": "Je kocht het {count} keer!"
+        "bought": "Je kocht het {count} keer!",
+        "champion": "Niemand kocht er meer van dan jij!",
+        "rank": "Je was de nummer {rank} koper ervan!"
       },
       "products": {
         "title": "Je topproducten",
-        "bought": "{count} keer gekocht"
+        "bought": "{count} keer gekocht",
+        "variety": "In totaal kocht je {items} items, {products} verschillende producten."
       },
       "totalSpent": {
         "intro": "In {year} gaf je in totaal",
@@ -55,13 +58,72 @@
         "categories": "Het meeste geld ging naar",
         "category": "{amount} ({share}) aan {category}"
       },
+      "rhythm": {
+        "weekday": "Je favoriete dag was",
+        "weekdayShare": "{share} van je transacties",
+        "hour": "en je was het meest actief rond"
+      },
+      "streak": {
+        "active": "Je kocht iets op",
+        "days": "dag | dagen",
+        "longest": "Je langste reeks was {days}.",
+        "inARow": "{count} dag op rij | {count} dagen op rij",
+        "month": "{month} was je drukste maand."
+      },
+      "round": {
+        "title": "Je grootste rondje",
+        "items": "item | items",
+        "details": "in één transactie, voor {amount}"
+      },
+      "balance": {
+        "title": "Je saldo op peil",
+        "topUps": "Je waardeerde {count} keer op, {total} in totaal.",
+        "fines": "Je kreeg {count} boete, voor {total}. | Je kreeg {count} boetes, voor {total}.",
+        "noFines": "En geen enkele boete."
+      },
+      "archetype": {
+        "title": "Dat alles maakt jou",
+        "bartender": {
+          "title": "De Barman",
+          "description": "Je sloeg {count} transacties aan voor anderen, meer dan je er zelf deed."
+        },
+        "driver": {
+          "title": "De Bob",
+          "description": "Geen enkel alcoholisch drankje dit jaar."
+        },
+        "nightOwl": {
+          "title": "De Nachtuil",
+          "description": "{share} van je aankopen deed je na middernacht."
+        },
+        "explorer": {
+          "title": "De Ontdekker",
+          "description": "Je probeerde {count} verschillende producten."
+        },
+        "regular": {
+          "title": "De Stamgast",
+          "description": "Je kocht iets op {days} verschillende dagen."
+        },
+        "daytimer": {
+          "title": "De Dagjesmens",
+          "description": "{share} van je aankopen deed je voor vijf uur 's middags."
+        },
+        "purist": {
+          "title": "De Purist",
+          "description": "{share} van wat je kocht bevat alcohol."
+        },
+        "allRounder": {
+          "title": "De Allrounder",
+          "description": "Van alles wat, op elk moment van de dag."
+        }
+      },
       "organs": {
         "workedFor": "Je hebt hard gewerkt voor {organ}!",
         "sellerRank": "Je was hun {rank} verkoper!",
-        "transactionRank": "En ook {rank} in aangeslagen transacties!",
         "rank": "nummer {rank}",
         "title": "Je organen",
-        "summary": "Nummer {seller} verkoper, nummer {transactions} in transacties"
+        "summary": "{turnover} uit {transactions} transacties",
+        "topShare": "Je zat in hun {top} van verkopers!",
+        "totals": "Je sloeg {transactions} transacties aan voor {customers} klanten, goed voor {turnover}."
       },
       "quiet": {
         "title": "Een rustig jaar",
