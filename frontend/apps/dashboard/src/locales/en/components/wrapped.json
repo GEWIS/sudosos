@@ -129,6 +129,15 @@
         "title": "A quiet year",
         "text": "You did not buy anything with SudoSOS in {year}. See you at the next borrel?"
       },
+      "summary": {
+        "transactions": "Transactions",
+        "spent": "Spent",
+        "product": "Favourite product",
+        "weekday": "Favourite day",
+        "days": "Active days",
+        "share": "Share",
+        "failed": "Your summary could not be shared."
+      },
       "final": {
         "thanks": "Thank you for using {sudosos} in {year}!",
         "wishes": "Merry Christmas and a happy new year from the {abc}!",

@@ -129,6 +129,15 @@
         "title": "Spokojny rok",
         "text": "W {year} roku nie było żadnych zakupów przez SudoSOS. Do zobaczenia na następnym borrelu?"
       },
+      "summary": {
+        "transactions": "Transakcje",
+        "spent": "Wydano",
+        "product": "Ulubiony produkt",
+        "weekday": "Ulubiony dzień",
+        "days": "Aktywne dni",
+        "share": "Udostępnij",
+        "failed": "Nie udało się udostępnić podsumowania."
+      },
       "final": {
         "thanks": "Dziękujemy za korzystanie z {sudosos} w {year} roku!",
         "wishes": "Wesołych Świąt i szczęśliwego Nowego Roku życzy {abc}!",

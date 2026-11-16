@@ -148,6 +148,7 @@ import StreakCard from '@/components/wrapped/StreakCard.vue';
 import BiggestRoundCard from '@/components/wrapped/BiggestRoundCard.vue';
 import BalanceCard from '@/components/wrapped/BalanceCard.vue';
 import ArchetypeCard from '@/components/wrapped/ArchetypeCard.vue';
+import SummaryCard from '@/components/wrapped/SummaryCard.vue';
 import QuietYearCard from '@/components/wrapped/QuietYearCard.vue';
 import FinalCard from '@/components/wrapped/FinalCard.vue';
 import OrgansCard from '@/components/wrapped/OrgansCard.vue';
@@ -170,6 +171,7 @@ interface Card {
   component: Component;
   background: string;
   dark?: boolean;
+  autoAdvance?: boolean;
   props?: Record<string, unknown>;
 }
 
@@ -239,7 +241,15 @@ const cards = computed<Card[]>(() => {
   }
 
   if (wrapped.value.transactions.transactionCount > 0) {
-    deck.push({ component: ArchetypeCard, background: 'linear-gradient(135deg, #7c3aed 0%, #1e1b4b 100%)' });
+    deck.push(
+      { component: ArchetypeCard, background: 'linear-gradient(135deg, #7c3aed 0%, #1e1b4b 100%)' },
+      {
+        component: SummaryCard,
+        background: '#b40000',
+        autoAdvance: false,
+        props: { firstName: authStore.getUser?.firstName },
+      },
+    );
   }
   deck.push({ component: FinalCard, background: 'linear-gradient(135deg, #b40000 0%, #004b31 100%)' });
   return deck;
@@ -290,6 +300,7 @@ const progressDuration = ref(0);
 watch(activeReveal, (reveal) => {
   const stays =
     !reveal ||
+    cards.value[currentIndex.value].autoAdvance === false ||
     currentIndex.value === cards.value.length - 1 ||
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   progressDuration.value = stays ? 0 : (reveal.done.value ? 0 : reveal.duration) + READ_TIME;
