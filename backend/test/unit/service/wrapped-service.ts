@@ -24,6 +24,9 @@ import dinero from 'dinero.js';
 import { SwaggerSpecification } from 'swagger-model-validator';
 import Database from '../../../src/database/database';
 import WrappedService, { UpdateWrappedParameters } from '../../../src/service/wrapped-service';
+import UserService from '../../../src/service/user-service';
+import TermsOfServiceService from '../../../src/service/terms-of-service-service';
+import TermsOfServiceAcceptance from '../../../src/entity/user/terms-of-service-acceptance';
 import Wrapped from '../../../src/entity/wrapped';
 import WrappedOrganMember from '../../../src/entity/wrapped/wrapped-organ-member';
 import User, { UserType } from '../../../src/entity/user/user';
@@ -515,6 +518,48 @@ describe('WrappedService', (): void => {
       expect((await wrappedOf(ctx.alice)).organs[0].ordinalTurnoverCreated).to.equal(0);
       expect((await wrappedOf(ctx.bob)).organs[0].ordinalTurnoverCreated).to.equal(0);
       expect(await WrappedOrganMember.count()).to.equal(2);
+    });
+  });
+
+  describe('deleteWrappedForUser', () => {
+    it('should run when a user withdraws their consent for extensive data processing', async () => {
+      await buy(ctx.carol, new Date(YEAR, 4, 1, 21), [[ctx.beer, 1]], { createdBy: ctx.bob });
+      await buy(ctx.bob, new Date(YEAR, 4, 1, 22), [[ctx.beer, 1]]);
+      await update({ year: YEAR - 1 });
+      await update();
+
+      await UserService.updateUser(ctx.bob.id, { extensiveDataProcessing: false });
+
+      try {
+        expect(await Wrapped.countBy({ userId: ctx.bob.id })).to.equal(0);
+        expect(await WrappedOrganMember.countBy({ userId: ctx.bob.id })).to.equal(0);
+        expect((await wrappedOf(ctx.carol)).transactionCount).to.equal(1);
+      } finally {
+        await UserService.updateUser(ctx.bob.id, { extensiveDataProcessing: true });
+      }
+    });
+
+    it('should run when a user accepts the terms of service without extensive data processing', async () => {
+      await update();
+      await TermsOfServiceAcceptance.delete({ userId: ctx.bob.id });
+
+      await UserService.acceptToS(ctx.bob.id, {
+        extensiveDataProcessing: false, version: await TermsOfServiceService.getCurrentVersion(),
+      });
+
+      try {
+        expect(await Wrapped.countBy({ userId: ctx.bob.id })).to.equal(0);
+      } finally {
+        await UserService.updateUser(ctx.bob.id, { extensiveDataProcessing: true });
+      }
+    });
+
+    it('should keep the Wrapped when other properties of the user change', async () => {
+      await update();
+
+      await UserService.updateUser(ctx.bob.id, { nickname: 'Bobby' });
+
+      expect(await wrappedOf(ctx.bob)).to.not.be.null;
     });
   });
 

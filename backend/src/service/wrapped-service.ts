@@ -149,6 +149,14 @@ export default class WrappedService extends WithManager {
     return this.getWrappedForUser(userId, year);
   }
 
+  /**
+   * Remove the Wrapped and the organ rankings of a user, of all years.
+   */
+  public async deleteWrappedForUser(userId: number): Promise<void> {
+    await this.manager.delete(WrappedOrganMember, { userId });
+    await this.manager.delete(Wrapped, { userId });
+  }
+
   public static asWrappedResponse(data: Wrapped): WrappedResponse {
     return {
       userId: data.userId,
