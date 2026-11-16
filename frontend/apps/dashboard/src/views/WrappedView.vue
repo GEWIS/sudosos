@@ -114,11 +114,11 @@ import WrappedControls from '@/components/wrapped/Controls/WrappedControls.vue';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
 import posImage from '@/assets/img/wrapped/pos.png';
-import bacImage from '@/assets/img/wrapped/BAC.png';
+import bacImage from '@/assets/img/wrapped/BAC.webp';
 import ivvImage from '@/assets/img/wrapped/IVV.png';
-import boomImage from '@/assets/img/wrapped/BOOM.png';
-import athenaImage from '@/assets/img/wrapped/ATHENA.png';
-import defiImage from '@/assets/img/wrapped/DEFI.png';
+import boomImage from '@/assets/img/wrapped/BOOM.webp';
+import athenaImage from '@/assets/img/wrapped/ATHENA.webp';
+import defiImage from '@/assets/img/wrapped/DEFI.webp';
 
 const authStore = useAuthStore();
 const toast = useToast();
