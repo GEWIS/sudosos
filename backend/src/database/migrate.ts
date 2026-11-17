@@ -47,20 +47,22 @@ export default async function migrate() {
   try {
     application.logger.log('database.migrations.started');
     await application.connection.runMigrations({ transaction: 'all' });
-    await application.connection.destroy();
     application.logger.log('database.migrations.finished');
-  } catch (e) {
-    application.logger.error('database.migrations.failed', e);
+  } finally {
+    await application.connection.destroy();
   }
 }
 
 if (require.main === module) {
   // Only execute the application directly if this is the main execution file.
+  const logger = log4js.getLogger('Migration');
+  applyConfiguredLogLevel(logger);
   if (Config.get().database.isSqlite) {
-    const logger = log4js.getLogger('Migration');
-    applyConfiguredLogLevel(logger);
     logger.warn('database.migrations_sqlite_no_effect');
   }
-  // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  migrate();
+  migrate().catch((e) => {
+    logger.error('database.migrations.failed', e);
+    // Non-zero exit so callers (CI, `init:migrate`) stop instead of continuing on a half-migrated schema.
+    process.exitCode = 1;
+  });
 }
