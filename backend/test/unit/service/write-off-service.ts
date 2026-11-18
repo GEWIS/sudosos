@@ -34,6 +34,8 @@ import User from '../../../src/entity/user/user';
 import VatGroup from '../../../src/entity/vat-group';
 import ServerSettingsStore from '../../../src/server-settings/server-settings-store';
 import { WriteOffSeeder } from '../../seed';
+import Transfer from '../../../src/entity/transactions/transfer';
+import BalanceService from '../../../src/service/balance-service';
 
 chai.use(deepEqualInAnyOrder);
 describe('WriteOffService', () => {
@@ -127,6 +129,27 @@ describe('WriteOffService', () => {
       await inUserContext([await builder.get()], async (user: User) => {
         const func = async () => (new WriteOffService()).createWriteOffAndCloseUser(user);
         await expect(func()).to.be.rejectedWith('High vat group not found');
+      });
+
+      await ServerSettingsStore.getInstance().setSetting('highVatGroupId', id);
+    });
+    it('should not leave a partial write-off behind if it fails', async () => {
+      const id = ServerSettingsStore.getInstance().getSetting('highVatGroupId');
+      await ServerSettingsStore.getInstance().setSetting('highVatGroupId', -1);
+
+      const amount = -100;
+      const builder = await (await UserFactory()).addBalance(amount);
+      await inUserContext([await builder.get()], async (user: User) => {
+        const func = async () => (new WriteOffService()).createWriteOffAndCloseUser(user);
+        await expect(func()).to.be.rejectedWith('High vat group not found');
+
+        expect(await WriteOff.count({ where: { to: { id: user.id } } })).to.equal(0);
+        expect(await Transfer.count({ where: { to: { id: user.id }, description: 'Write off' } })).to.equal(0);
+        const balance = await new BalanceService().getBalance(user.id);
+        expect(balance.amount.amount).to.equal(amount);
+        const u = await User.findOne({ where: { id: user.id } });
+        expect(u.active).to.be.true;
+        expect(u.deleted).to.be.false;
       });
 
       await ServerSettingsStore.getInstance().setSetting('highVatGroupId', id);
