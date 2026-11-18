@@ -77,18 +77,21 @@ export default class TransactionController extends BaseController {
           body: { modelName: 'TransactionRequest' },
           policy: async (req) => this.roleManager.can(req.token.roles, 'create', await TransactionController.postRelation(req), 'Transaction', ['*']),
           handler: this.createTransaction.bind(this),
+          // Kiosk purchases are made with the buyer's lesser (posId) token, which
+          // must additionally pass the POSTokenVerifier check in the handler.
+          restrictions: { lesser: true },
         },
       },
       '/:id(\\d+)': {
         GET: {
           policy: async (req) => this.roleManager.can(req.token.roles, 'get', await TransactionController.getRelation(req), 'Transaction', ['*']),
           handler: this.getTransaction.bind(this),
+          restrictions: { lesser: true },
         },
         PATCH: {
           body: { modelName: 'TransactionRequest' },
           policy: async (req) => this.roleManager.can(req.token.roles, 'update', await TransactionController.postRelation(req), 'Transaction', ['*']),
           handler: this.updateTransaction.bind(this),
-          restrictions: { lesser: false },
         },
         DELETE: {
           policy: async (req) => this.roleManager.can(req.token.roles, 'delete', await TransactionController.getRelation(req), 'Transaction', ['*']),
@@ -111,6 +114,10 @@ export default class TransactionController extends BaseController {
         POST: {
           policy: async (req) => this.roleManager.can(req.token.roles, 'create', await TransactionController.postRelation(req), 'Transaction', ['*']),
           handler: this.validateTransaction.bind(this),
+          // Same trust boundary as transaction creation: kiosks validate the
+          // purchase with the buyer's lesser (posId) token, which must
+          // additionally pass the POSTokenVerifier check in the handler.
+          restrictions: { lesser: true },
         },
       },
     };

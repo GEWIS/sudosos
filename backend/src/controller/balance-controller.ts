@@ -72,6 +72,9 @@ export default class BalanceController extends BaseController {
         GET: {
           policy: async (req) => this.roleManager.can(req.token.roles, 'get', UserController.getRelation(req), 'Balance', ['*']),
           handler: this.getBalance.bind(this),
+          // The POS shows the logged-in buyer's balance, fetched with that
+          // buyer's lesser (posId) token for their own account.
+          restrictions: { lesser: true },
         },
       },
       '/summary': {
