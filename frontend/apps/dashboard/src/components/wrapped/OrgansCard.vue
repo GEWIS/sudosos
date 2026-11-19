@@ -1,6 +1,7 @@
 <template>
   <div class="card-root" :class="[{ active }, dark ? 'text-white' : 'text-black']">
     <div class="bg seller-bg" :style="{ backgroundImage: `url('${image}')` }"></div>
+    <WrappedConfetti v-if="active && organ.ordinalTurnoverCreated === 0 && step >= 2" />
     <div class="content">
       <i18n-t
         :aria-hidden="step < 1"
@@ -64,6 +65,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WrappedOrganMemberResponse } from '@gewis/sudosos-client';
+import WrappedConfetti from '@/components/wrapped/WrappedConfetti.vue';
 import { useCardReveal } from '@/composables/wrappedCard';
 import { formatDineroObject } from '@/utils/formatterUtils';
 import { organName } from '@/utils/wrappedUtils';

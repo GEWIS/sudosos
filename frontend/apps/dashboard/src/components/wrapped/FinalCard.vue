@@ -2,6 +2,7 @@
 <template>
   <div class="card-root text-white" :class="{ active }">
     <div class="bg bier-bg"></div>
+    <WrappedConfetti v-if="active && step >= 1" />
     <div class="content">
       <i18n-t class="text-4xl" keypath="components.wrapped.final.thanks" scope="global" tag="h1">
         <template #sudosos>
@@ -36,6 +37,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import type { WrappedResponse } from '@gewis/sudosos-client';
+import WrappedConfetti from '@/components/wrapped/WrappedConfetti.vue';
 import { useCardReveal } from '@/composables/wrappedCard';
 
 const props = defineProps<{ active?: boolean; wrapped: WrappedResponse; showArrows?: boolean }>();

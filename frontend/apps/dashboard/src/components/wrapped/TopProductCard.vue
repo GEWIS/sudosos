@@ -1,5 +1,6 @@
 <template>
   <div class="card-root text-white" :class="{ active }">
+    <WrappedConfetti v-if="active && product.rank === 1 && step >= 3" />
     <div class="content">
       <h2 class="text-2xl mb-5">{{ t('components.wrapped.topProduct.intro', { year: wrapped.year }) }}</h2>
       <PosProduct
@@ -36,6 +37,7 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WrappedResponse } from '@gewis/sudosos-client';
 import PosProduct from '@/components/wrapped/Product/PosProduct.vue';
+import WrappedConfetti from '@/components/wrapped/WrappedConfetti.vue';
 import { useCardReveal } from '@/composables/wrappedCard';
 import { getProductImageSrcFromString } from '@/utils/urlUtils';
 
