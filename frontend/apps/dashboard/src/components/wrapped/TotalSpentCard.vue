@@ -5,7 +5,7 @@
     </div>
     <div class="content w-full">
       <h2 class="text-xl">{{ t('components.wrapped.totalSpent.intro', { year: wrapped.year }) }}</h2>
-      <h1 class="font-black text-6xl pt-2">{{ formatDineroObject(toDineroResponse(cents)) }}</h1>
+      <h1 class="pop font-black text-6xl pt-2">{{ formatDineroObject(toDineroResponse(cents)) }}</h1>
       <div class="mt-2 flex flex-col items-end">
         <i18n-t class="text-2xl" keypath="components.wrapped.totalSpent.using" scope="global" tag="h2">
           <template #sudosos>
@@ -31,7 +31,7 @@
           tag="h2"
         >
           <template #top>
-            <span class="font-bold">{{ t('components.wrapped.top', { percentile }) }}</span>
+            <span class="mark font-bold">{{ t('components.wrapped.top', { percentile }) }}</span>
           </template>
         </i18n-t>
       </div>

@@ -3,7 +3,7 @@
     <div class="content w-full">
       <h2 class="text-xl">{{ t('components.wrapped.streak.active') }}</h2>
       <h1 class="text-2xl">
-        <span class="text-6xl font-black">{{ days }}</span>
+        <span class="pop text-6xl font-black">{{ days }}</span>
         {{ t('components.wrapped.streak.days', days) }}
       </h1>
 

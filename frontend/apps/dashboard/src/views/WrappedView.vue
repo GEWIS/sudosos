@@ -11,14 +11,23 @@
           v-if="prevBackground"
           class="bg-layer absolute inset-0 bg-cover bg-center prev"
           :class="{ fading: prevFading }"
-          :style="{ background: prevBackground }"
+          :style="{ background: prevBackground, backgroundSize: '200% 200%' }"
         />
 
-        <div class="bg-layer absolute inset-0 bg-cover bg-center current" :style="{ background: currentBackground }" />
+        <div
+          class="bg-layer absolute inset-0 bg-cover bg-center current"
+          :style="{ background: currentBackground, backgroundSize: '200% 200%' }"
+        />
+        <div class="grain absolute inset-0"></div>
       </div>
 
       <div class="card-content relative z-10 flex flex-col h-full">
-        <div class="flex items-center gap-3" :class="cards[currentIndex].dark === false ? 'text-black' : 'text-white'">
+        <!-- On phones the cards fill the screen, so the progress bar sits on top of them with a shade behind it. -->
+        <div class="scrim absolute -inset-x-4 -top-4 h-20 z-10 pointer-events-none sm:hidden"></div>
+        <div
+          class="relative z-20 flex items-center gap-3"
+          :class="cards[currentIndex].dark === false ? 'text-black' : 'text-white'"
+        >
           <WrappedProgress
             class="flex-1"
             :count="cards.length"
@@ -37,7 +46,7 @@
           </button>
         </div>
 
-        <div ref="viewport" class="relative overflow-hidden flex-1">
+        <div ref="viewport" class="absolute -inset-4 overflow-hidden sm:relative sm:inset-auto sm:flex-1">
           <div
             class="carousel-track h-full flex"
             :style="trackStyle"
@@ -50,8 +59,9 @@
             <div
               v-for="(card, index) in cards"
               :key="index"
-              class="card min-h-0 min-w-full p-4 flex flex-col justify-center items-start h-full rounded-none sm:rounded-4xl overflow-hidden"
+              class="card relative min-h-0 min-w-full pt-14 px-8 pb-8 sm:p-4 flex flex-col justify-center items-start h-full rounded-none sm:rounded-4xl overflow-hidden"
             >
+              <WrappedShapes v-if="card.shapes" :active="currentIndex === index" :variant="card.shapes" />
               <component
                 :is="card.component"
                 v-bind="card.props"
@@ -157,6 +167,8 @@ import WrappedControls from '@/components/wrapped/Controls/WrappedControls.vue';
 import WrappedProgress from '@/components/wrapped/Controls/WrappedProgress.vue';
 import { activeRevealKey, type CardReveal } from '@/composables/wrappedCard';
 import { useSizeBreakpoints } from '@/composables/sizeBreakpoints';
+import WrappedShapes from '@/components/wrapped/WrappedShapes.vue';
+import type { ShapeVariant } from '@/components/wrapped/shapes';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
 import { bestOrgan } from '@/utils/wrappedUtils';
@@ -171,6 +183,7 @@ interface Card {
   component: Component;
   background: string;
   dark?: boolean;
+  shapes?: ShapeVariant;
   autoAdvance?: boolean;
   props?: Record<string, unknown>;
 }
@@ -205,25 +218,58 @@ const cards = computed<Card[]>(() => {
   if (!wrapped.value) return [];
 
   const deck: Card[] = [
-    { component: WelcomeCard, background: '#b40000', props: { firstName: authStore.getUser?.firstName } },
+    {
+      component: WelcomeCard,
+      background: '#b40000',
+      shapes: 'welcome',
+      props: { firstName: authStore.getUser?.firstName },
+    },
   ];
   if (wrapped.value.transactions.transactionCount > 0) {
     deck.push(
-      { component: TransactionsCard, background: 'linear-gradient(160deg, #b40000 0%, #3d0000 100%)' },
-      { component: CalendarHeatmapCard, background: 'linear-gradient(90deg, #0d1117 0%, #1f2937 100%)' },
-      { component: RhythmCard, background: 'linear-gradient(160deg, #1e3a8a 0%, #0f172a 100%)' },
-      { component: StreakCard, background: 'linear-gradient(135deg, #0f766e 0%, #134e4a 100%)' },
-      { component: TopProductCard, background: 'linear-gradient(135deg, #004ff9 0%, #000000 100%)' },
-      { component: ProductsCard, background: 'linear-gradient(135deg, #662d8c 0%, #ed1e79 100%)' },
-      { component: BiggestRoundCard, background: 'linear-gradient(135deg, #d97706 0%, #7c2d12 100%)' },
-      { component: TotalSpentCard, background: 'linear-gradient(45deg, #233329 0%, #63d471 100%)' },
-      { component: SpendingDistributionCard, background: 'linear-gradient(135deg, #ff8800 0%, #ff3300 100%)' },
+      {
+        component: TransactionsCard,
+        background: 'linear-gradient(160deg, #b40000 0%, #3d0000 100%)',
+        shapes: 'circles',
+      },
+      {
+        component: CalendarHeatmapCard,
+        background: 'linear-gradient(90deg, #0d1117 0%, #1f2937 100%)',
+        shapes: 'sparkles',
+      },
+      { component: RhythmCard, background: 'linear-gradient(160deg, #1e3a8a 0%, #0f172a 100%)', shapes: 'rings' },
+      { component: StreakCard, background: 'linear-gradient(135deg, #0f766e 0%, #134e4a 100%)', shapes: 'squiggles' },
+      {
+        component: TopProductCard,
+        background: 'linear-gradient(135deg, #004ff9 0%, #000000 100%)',
+        shapes: 'spotlight',
+      },
+      { component: ProductsCard, background: 'linear-gradient(135deg, #662d8c 0%, #ed1e79 100%)', shapes: 'pills' },
+      {
+        component: BiggestRoundCard,
+        background: 'linear-gradient(135deg, #d97706 0%, #7c2d12 100%)',
+        shapes: 'bursts',
+      },
+      { component: TotalSpentCard, background: 'linear-gradient(45deg, #233329 0%, #63d471 100%)', shapes: 'blobs' },
+      {
+        component: SpendingDistributionCard,
+        background: 'linear-gradient(135deg, #ff8800 0%, #ff3300 100%)',
+        shapes: 'halves',
+      },
     );
   } else {
-    deck.push({ component: QuietYearCard, background: 'linear-gradient(90deg, #0d1117 0%, #1f2937 100%)' });
+    deck.push({
+      component: QuietYearCard,
+      background: 'linear-gradient(90deg, #0d1117 0%, #1f2937 100%)',
+      shapes: 'squiggles',
+    });
   }
   if (wrapped.value.topUps.count > 0 || wrapped.value.fines.count > 0) {
-    deck.push({ component: BalanceCard, background: 'linear-gradient(135deg, #0369a1 0%, #164e63 100%)' });
+    deck.push({
+      component: BalanceCard,
+      background: 'linear-gradient(135deg, #0369a1 0%, #164e63 100%)',
+      shapes: 'rings',
+    });
   }
 
   const organ = bestOrgan(wrapped.value);
@@ -233,16 +279,25 @@ const cards = computed<Card[]>(() => {
       component: OrgansCard,
       background: theme.background,
       dark: theme.dark,
+      shapes: 'mono',
       props: { organ, image: theme.image, dark: theme.dark },
     });
   }
   if (wrapped.value.organs.length > 1) {
-    deck.push({ component: OrgansOverviewCard, background: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)' });
+    deck.push({
+      component: OrgansOverviewCard,
+      background: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)',
+      shapes: 'pills',
+    });
   }
 
   if (wrapped.value.transactions.transactionCount > 0) {
     deck.push(
-      { component: ArchetypeCard, background: 'linear-gradient(135deg, #7c3aed 0%, #1e1b4b 100%)' },
+      {
+        component: ArchetypeCard,
+        background: 'linear-gradient(135deg, #7c3aed 0%, #1e1b4b 100%)',
+        shapes: 'bursts',
+      },
       {
         component: SummaryCard,
         background: '#b40000',
@@ -251,7 +306,11 @@ const cards = computed<Card[]>(() => {
       },
     );
   }
-  deck.push({ component: FinalCard, background: 'linear-gradient(135deg, #b40000 0%, #004b31 100%)' });
+  deck.push({
+    component: FinalCard,
+    background: 'linear-gradient(135deg, #b40000 0%, #004b31 100%)',
+    shapes: 'welcome',
+  });
   return deck;
 });
 
@@ -443,6 +502,27 @@ async function handleEnableDataAnalysis() {
 
 .bg-layer.current {
   z-index: 0; /* underneath while prev fades out on top */
+  animation: drift 14s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  from {
+    background-position: 0% 30%;
+  }
+  to {
+    background-position: 100% 70%;
+  }
+}
+
+.grain {
+  z-index: 2;
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.scrim {
+  background: linear-gradient(rgb(0 0 0 / 0.3), transparent);
 }
 
 .bg-layer.prev {
@@ -465,13 +545,14 @@ async function handleEnableDataAnalysis() {
   padding: 1rem;
   box-sizing: border-box;
   transition:
-    transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 650ms cubic-bezier(0.34, 1.56, 0.64, 1),
     opacity 340ms ease;
-  transform: translateY(10px) scale(0.99);
+  transform: scale(0.88) rotate(-2deg);
+  opacity: 0.5;
 }
 
 .card-root.active {
-  transform: translateY(0) scale(1);
+  transform: none;
   opacity: 1;
 }
 
@@ -493,15 +574,84 @@ async function handleEnableDataAnalysis() {
 
 .fade-slide {
   opacity: 0;
-  transform: translateY(6px);
+  transform: translateY(1.75rem) rotate(-2deg) scale(0.96);
   transition:
-    opacity 240ms ease,
-    transform 240ms ease;
+    opacity 250ms ease,
+    transform 650ms cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: none;
+}
+.fade-slide.pop {
+  transform: scale(0.3) rotate(-10deg);
 }
 .fade-slide[aria-hidden='false'] {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
   pointer-events: auto;
+}
+
+.card-root.active .content > :is(h1, h2, h3, p):not(.fade-slide) {
+  animation: rise-in 700ms cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+.card-root.active .content > :is(h1, h2, h3, p):not(.fade-slide):nth-child(2) {
+  animation-delay: 100ms;
+}
+.card-root.active .content > :is(h1, h2, h3, p):not(.fade-slide):nth-child(3) {
+  animation-delay: 200ms;
+}
+.card-root.active .content > :is(h1, h2, h3, p):not(.fade-slide):nth-child(n + 4) {
+  animation-delay: 300ms;
+}
+
+.pop {
+  display: inline-block;
+}
+.card-root.active .content .pop:not(.fade-slide) {
+  animation: pop-in 900ms cubic-bezier(0.34, 1.56, 0.64, 1) 200ms backwards;
+}
+
+.mark {
+  padding: 0 0.2em;
+  border-radius: 0.2em;
+  background: linear-gradient(#cdf564, #cdf564) no-repeat left / 0% 100%;
+  box-decoration-break: clone;
+  transition:
+    background-size 500ms cubic-bezier(0.65, 0, 0.35, 1) 400ms,
+    color 0s 550ms;
+}
+.card-root.active .mark {
+  background-size: 100% 100%;
+  color: #111;
+}
+.card-root .fade-slide[aria-hidden='true'] .mark {
+  background-size: 0% 100%;
+  color: inherit;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(2.5rem) rotate(-3deg) scale(0.95);
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.2) rotate(-12deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-layer.current,
+  .card-root.active .content > *,
+  .card-root.active .content .pop {
+    animation: none;
+  }
+
+  .card-root,
+  .fade-slide,
+  .fade-slide.pop {
+    transform: none;
+  }
 }
 </style>

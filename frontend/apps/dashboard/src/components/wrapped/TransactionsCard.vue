@@ -5,7 +5,7 @@
     <div class="content">
       <h2 class="text-2xl">{{ t('components.wrapped.transactions.intro', { year: wrapped.year }) }}</h2>
       <div class="flex flex-row items-center gap-2 mt-2">
-        <span class="text-5xl font-bold">{{ count.toLocaleString(locale) }}</span>
+        <span class="pop text-5xl font-bold">{{ count.toLocaleString(locale) }}</span>
         <p :aria-hidden="step < 2" class="text-sm m-0 fade-slide">
           <span
             v-if="difference !== 0"
@@ -27,7 +27,7 @@
         tag="p"
       >
         <template #top>
-          <span class="font-bold">{{ t('components.wrapped.top', { percentile }) }}</span>
+          <span class="mark font-bold">{{ t('components.wrapped.top', { percentile }) }}</span>
         </template>
       </i18n-t>
     </div>

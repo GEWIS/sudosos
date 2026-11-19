@@ -6,7 +6,7 @@
     <div class="content w-full">
       <h2 class="text-xl">{{ t('components.wrapped.round.title') }}</h2>
       <h1 class="text-2xl">
-        <span class="text-6xl font-black">{{ round.items }}</span>
+        <span class="pop text-6xl font-black">{{ round.items }}</span>
         {{ t('components.wrapped.round.items', round.items) }}
       </h1>
       <i18n-t

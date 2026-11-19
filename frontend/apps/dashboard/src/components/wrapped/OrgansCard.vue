@@ -22,7 +22,7 @@
         tag="h1"
       >
         <template #rank>
-          <span class="font-bold">
+          <span class="mark font-bold">
             {{ t('components.wrapped.organs.rank', { rank: organ.ordinalTurnoverCreated + 1 }) }}
           </span>
         </template>
@@ -36,7 +36,7 @@
         tag="h1"
       >
         <template #top>
-          <span class="font-bold">{{ t('components.wrapped.top', { percentile: topShare }) }}</span>
+          <span class="mark font-bold">{{ t('components.wrapped.top', { percentile: topShare }) }}</span>
         </template>
       </i18n-t>
       <i18n-t

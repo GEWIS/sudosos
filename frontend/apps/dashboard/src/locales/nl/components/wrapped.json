@@ -17,6 +17,7 @@
       "welcome": {
         "hello": "Hallo {name}!",
         "intro": "Welkom bij jouw",
+        "name": "SudoSOS Wrapped",
         "title": "SudoSOS Wrapped {year}",
         "hint": "Tik om te beginnen"
       },

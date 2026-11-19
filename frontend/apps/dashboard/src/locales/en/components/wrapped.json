@@ -17,6 +17,7 @@
       "welcome": {
         "hello": "Hello {name}!",
         "intro": "Welcome to your",
+        "name": "SudoSOS Wrapped",
         "title": "SudoSOS Wrapped {year}",
         "hint": "Tap to get started"
       },
