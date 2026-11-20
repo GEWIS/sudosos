@@ -20,11 +20,13 @@
 
 import log4js from 'log4js';
 import { createServer } from 'http';
+import * as crypto from 'crypto';
 import { Server, Socket } from 'socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
 import Redis from 'ioredis';
 import ServerSettingsStore from '../server-settings/server-settings-store';
-import QRAuthenticator from '../entity/authenticator/qr-authenticator';
+import QRAuthenticator, { QRAuthenticatorStatus } from '../entity/authenticator/qr-authenticator';
+import QRService from './qr-service';
 import AuthenticationResponse from '../controller/response/authentication-response';
 import TokenHandler from '../authentication/token-handler';
 import JsonWebToken from '../authentication/json-web-token';
@@ -411,8 +413,8 @@ export default class WebSocketService {
       this.handleUnsubscribe(client, room);
     });
 
-    client.on('subscribe-qr-session', (sessionId: string) => {
-      this.handleQRSessionSubscribe(client, sessionId);
+    client.on('subscribe-qr-session', async (data: unknown) => {
+      await this.handleQRSessionSubscribe(client, data);
     });
 
     client.on('unsubscribe-qr-session', (sessionId: string) => {
@@ -500,11 +502,61 @@ export default class WebSocketService {
   }
 
   /**
-   * Handles QR session subscription requests.
-   * @param client - The socket client requesting subscription.
-   * @param sessionId - The QR session ID to subscribe to.
+   * Checks whether the given subscribe secret matches the hash stored on the QR
+   * session. The secret is only ever returned to the caller of
+   * POST /authentication/qr/generate, so only the client that created the
+   * session can subscribe to its room.
+   * @param qr - The QR authenticator to check the secret against.
+   * @param secret - The plaintext subscribe secret provided by the client.
    */
-  private handleQRSessionSubscribe(client: Socket, sessionId: string): void {
+  private isSubscribeSecretValid(qr: QRAuthenticator, secret: string): boolean {
+    try {
+      const provided = crypto.createHash('sha256').update(secret).digest();
+      return crypto.timingSafeEqual(provided, Buffer.from(qr.subscribeSecretHash, 'hex'));
+    } catch {
+      // Malformed stored hash or other input problems count as a failed check.
+      return false;
+    }
+  }
+
+  /**
+   * Handles QR session subscription requests. The subscribe event must carry
+   * the per-session secret from the /generate response; subscriptions without
+   * it (or for sessions that are not pending) are rejected, so the token can
+   * never be delivered to a party that only knows the publicly displayed
+   * sessionId.
+   * @param client - The socket client requesting subscription.
+   * @param data - The subscribe payload containing the sessionId and secret.
+   */
+  private async handleQRSessionSubscribe(client: Socket, data: unknown): Promise<void> {
+    // The payload comes straight off the wire from an unauthenticated client, so
+    // it is validated with runtime guards instead of being cast to the expected shape.
+    if (
+      typeof data !== 'object' || data === null
+      || !('sessionId' in data) || !('secret' in data)
+      || typeof data.sessionId !== 'string' || typeof data.secret !== 'string'
+    ) {
+      this.logger.warn('websocket.qr_session_subscribe_rejected', {
+        clientId: client.id,
+        reason: 'malformed_payload',
+      });
+      client.emit('error', { message: 'QR session subscription requires a sessionId and secret.' });
+      return;
+    }
+
+    const { sessionId, secret } = data;
+
+    const qr = await new QRService().get(sessionId);
+
+    if (!qr || qr.status !== QRAuthenticatorStatus.PENDING || !this.isSubscribeSecretValid(qr, secret)) {
+      this.logger.warn('websocket.qr_session_subscribe_rejected', {
+        clientId: client.id,
+        reason: !qr ? 'unknown_session' : qr.status === QRAuthenticatorStatus.PENDING ? 'invalid_secret' : qr.status,
+      });
+      client.emit('error', { message: 'QR session not found or invalid secret.' });
+      return;
+    }
+
     this.logger.trace('websocket.qr_session_subscribe', { clientId: client.id });
     void client.join(`qr-session-${sessionId}`);
   }
