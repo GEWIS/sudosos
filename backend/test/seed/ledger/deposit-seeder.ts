@@ -40,7 +40,9 @@ export default class DepositSeeder extends WithManager {
     const amount = DineroTransformer.Instance.from(amountInCents);
 
     const stripePaymentIntent = await this.manager.save(StripePaymentIntent, {
-      stripeId: `FakeStripeIDDevSeed_${user.id}_${amountInCents}`,
+      // Unique per call, not per user: callers may seed more than one deposit
+      // for the same user, and stripeId is a unique column.
+      stripeId: `FakeStripeIDDevSeed_${user.id}_${Date.now()}_${Math.floor(Math.random() * 1e6)}`,
       amount,
       paymentIntentStatuses: [],
     });
