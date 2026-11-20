@@ -18,7 +18,7 @@
  *  @license
  */
 import createSMTPTransporter from '../mailer/transporter';
-import Mail from 'nodemailer/lib/mailer';
+import type { Mail, SendMailOptions } from 'nodemailer';
 import log4js from 'log4js';
 import { ConnectionOptions, Job, Worker } from 'bullmq';
 import Redis from 'ioredis';
@@ -41,7 +41,7 @@ const getDefaultTransporter = (): Mail => {
  * transporter; production code calls it via {@link startMailWorker}.
  */
 export const processMailJob = async (
-  job: Job<Mail.Options>,
+  job: Job<SendMailOptions>,
   mailTransporter: Pick<Mail, 'sendMail'> = getDefaultTransporter(),
 ): Promise<unknown> => {
   logger.info('mail_worker.process_job', { jobId: job.id });
@@ -60,7 +60,7 @@ export const processMailJob = async (
 /**
  * Event handler invoked when a mail job completes.
  */
-export const handleJobCompleted = (job: Job<Mail.Options>): void => {
+export const handleJobCompleted = (job: Job<SendMailOptions>): void => {
   logger.info('mail_worker.job_completed', { jobId: job.id });
 };
 
@@ -68,14 +68,14 @@ export const handleJobCompleted = (job: Job<Mail.Options>): void => {
  * Event handler invoked when a mail job fails after all retries.
  */
 export const handleJobFailed = (
-  job: Job<Mail.Options> | undefined,
+  job: Job<SendMailOptions> | undefined,
   err: Error,
 ): void => {
   logger.error('mail_worker.job_failed', { jobId: job?.id }, err);
 };
 
 export const startMailWorker = (redisConnection: Redis) => {
-  const worker = new Worker<Mail.Options>(
+  const worker = new Worker<SendMailOptions>(
     'mail-queue',
     (job) => processMailJob(job),
     {

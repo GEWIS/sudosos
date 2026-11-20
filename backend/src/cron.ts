@@ -31,7 +31,6 @@ import { DataSource } from 'typeorm';
 import cron from 'node-cron';
 import BalanceService from './service/balance-service';
 import RoleManager from './rbac/role-manager';
-import EventService from './service/event-service';
 import DefaultRoles from './rbac/default-roles';
 import UserSyncServiceFactory from './service/sync/user/user-sync-service-factory';
 import UserSyncManager from './service/sync/user/user-sync-manager';
@@ -115,18 +114,6 @@ async function createCronTasks(): Promise<void> {
       logger.error('cron.sync_wrapped.failed', error);
     }));
   });
-  const syncEventShiftAnswers = cron.schedule('39 2 * * *', () => {
-    logger.debug('cron.sync_event_shift_answers.started');
-    EventService.syncAllEventShiftAnswers()
-      .then(() => logger.debug('cron.sync_event_shift_answers.finished'))
-      .catch((error) => logger.error('cron.sync_event_shift_answers.failed', error));
-  });
-  const sendEventPlanningReminders = cron.schedule('39 13 * * *', () => {
-    logger.debug('cron.send_event_planning_reminders.started');
-    EventService.sendEventPlanningReminders()
-      .then(() => logger.debug('cron.send_event_planning_reminders.finished'))
-      .catch((error) => logger.error('cron.send_event_planning_reminders.failed', error));
-  });
   const syncUserNotificationPreferences = cron.schedule('0 1 * * *', () => {
     logger.debug('cron.sync_notification_preferences.started');
     new UserNotificationPreferenceService().syncAllUserNotificationPreferences().then(() => {
@@ -152,7 +139,7 @@ async function createCronTasks(): Promise<void> {
     });
   });
 
-  application.tasks = [syncBalances, syncWrapped, syncEventShiftAnswers, sendEventPlanningReminders, syncUserNotificationPreferences, deactivateExpiredUsers, notifyNearExpirationUsers];
+  application.tasks = [syncBalances, syncWrapped, syncUserNotificationPreferences, deactivateExpiredUsers, notifyNearExpirationUsers];
 
   // Create sync services using the factory
   const syncServiceFactory = new UserSyncServiceFactory();

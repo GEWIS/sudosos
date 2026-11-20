@@ -7,6 +7,7 @@ export default defineConfig({
     include: ['out/test/**/*.js'],
     exclude: [
       'out/test/setup.js',
+      'out/test/reset-modules.js',
       'out/test/root-hooks.js',
       'out/test/vitest.d.js',
       'out/test/seed/**',
@@ -20,11 +21,6 @@ export default defineConfig({
     hookTimeout: 50000,
     pool: 'forks',
     fileParallelism: false,
-    poolOptions: {
-      forks: {
-        singleFork: false,
-      },
-    },
     reporters: ['default'],
     onConsoleLog(log) {
       if (log.includes('ECONNREFUSED') && log.includes('6379')) return false;

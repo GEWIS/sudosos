@@ -85,6 +85,7 @@ import WrappedService from '../service/wrapped-service';
 import UserSettingsStore from '../user-settings/user-settings-store';
 import { PatchUserSettingsRequest } from './request/user-request';
 import TermsOfServiceService from '../service/terms-of-service-service';
+import BalanceService from '../service/balance-service';
 import { UserTosResponse } from './response/terms-of-service-response';
 
 export default class UserController extends BaseController {
@@ -962,7 +963,7 @@ export default class UserController extends BaseController {
    * @param {integer} id.path.required - The id of the user
    * @security JWT
    * @return 204 - User successfully deleted
-   * @return {string} 400 - Cannot delete yourself
+   * @return {string} 400 - Cannot delete yourself, or user has a non-zero balance
    */
   public async deleteUser(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
@@ -980,6 +981,12 @@ export default class UserController extends BaseController {
       // If it does not exist, return a 404 error
       if (user == null) {
         res.status(404).json('Unknown user ID.');
+        return;
+      }
+
+      const balance = await new BalanceService().getBalance(id);
+      if (balance.amount.amount !== 0) {
+        res.status(400).json('Cannot delete user with non-zero balance.');
         return;
       }
 

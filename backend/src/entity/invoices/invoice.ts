@@ -19,17 +19,39 @@
  */
 
 /**
- * This is the module page of invoicing.
+ * An `Invoice` settles purchases that a user pays outside SudoSOS, by bank transfer. Any user
+ * except an organ can be invoiced. The invoice is sent to them as a PDF.
  *
- * ```ts
- * const invoice = await this.manager.findOne(Invoice, {
- *   where: { id: invoiceId },
- *   relations: {
- *     transfer: { from: true },
- *     invoiceStatus: { changedBy: true },
- *   },
- * });
- * ```
+ * ### Creating
+ * `POST /invoices` takes the recipient (`forId`) and their transaction IDs.
+ * `GET /invoices/eligible-transactions` lists transactions that are not invoiced yet.
+ * {@link InvoiceService.createInvoice | createInvoice}:
+ * - refuses transactions not bought by `forId`, or already on an invoice;
+ * - creates a {@link transfers!Transfer | Transfer} from `null` to `forId`, which credits the recipient;
+ * - saves the invoice with status `CREATED` and links its
+ *   {@link transactions/sub-transactions!SubTransactionRow | SubTransactionRows}.
+ *
+ * For `INVOICE` users, missing address fields are filled in from their {@link InvoiceUser}.
+ *
+ * ### Status
+ * The status is the latest {@link InvoiceStatus} row: `CREATED`, `SENT`, `PAID` or `DELETED`.
+ * `PATCH /invoices/{id}` adds a status row only when it changes `state`. `PAID` and `DELETED`
+ * invoices cannot be patched.
+ *
+ * ### Deleting
+ * `DELETE /invoices/{id}`, or a `PATCH` to `DELETED`, adds a credit transfer that reverses the
+ * invoice, unlinks the rows so they can be invoiced again, and adds a `DELETED` status. The invoice
+ * row is kept.
+ *
+ * ### Drift
+ * The transfer amount is not recomputed. `GET /invoices/drift` lists invoices whose transfers no
+ * longer match their rows.
+ *
+ * ### PDF
+ * `GET /invoices/{id}/pdf` renders and stores an {@link InvoicePdf}. Pass `?force=true` to render
+ * it again.
+ *
+ * For API interactions, refer to the [Swagger Documentation](https://sudosos.gewis.nl/api/api-docs/#/invoices).
  *
  * @module invoicing
  * @mergeTarget

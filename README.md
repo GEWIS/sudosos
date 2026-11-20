@@ -53,7 +53,7 @@ per-area follow-ups in [backend/CLAUDE.md](./backend/CLAUDE.md) and
 ## 🚀 Quickstart
 
 ```bash
-nvm install 22 && corepack enable
+nvm install 24 && corepack enable
 git clone git@github.com:GEWIS/sudosos.git && cd sudosos
 pnpm bootstrap   # install, .env files, JWT key, build shared libs, seed dev DB
 pnpm dev         # backend :3000 (+ websocket :8080), dashboard :5173

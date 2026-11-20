@@ -27,11 +27,10 @@
 import log4js, { Logger } from 'log4js';
 import User from '../entity/user/user';
 import MailMessage, { Language } from './mail-message';
-import Mail from 'nodemailer/lib/mailer';
+import type { SendMailOptions, Transporter } from 'nodemailer';
 import { ConnectionOptions, Queue } from 'bullmq';
 import Redis from 'ioredis';
 import createSMTPTransporter from './transporter';
-import { Transporter } from 'nodemailer';
 import { applyConfiguredLogLevel } from '../helpers/logging';
 
 enum MailQueues {
@@ -86,7 +85,7 @@ export default class Mailer {
     to: User,
     template: MailMessage<T>,
     language: Language = Language.ENGLISH,
-    extraOptions?: Mail.Options,
+    extraOptions?: SendMailOptions,
   ) {
     const mailOptions = {
       ...template.getOptions(to, language),

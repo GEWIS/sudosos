@@ -19,9 +19,31 @@
  */
 
 /**
- * This is the module page of the server-setting.
+ * A `ServerSetting` is a key-value pair of runtime configuration for the whole SudoSOS instance.
+ * Secrets and connection details stay in environment variables.
+ *
+ * ### Keys
+ * {@link ISettings} lists the keys. Defaults are in `src/server-settings/setting-defaults.ts`.
+ * - `highVatGroupId`: the {@link catalogue/vat!VatGroup | VatGroup} set on write-off transfers.
+ * - `administrativeCostValue`: the administrative cost for inactive users, in cents.
+ * - `jwtExpiryDefault`: lifetime of a login token, in seconds.
+ * - `jwtExpiryPointOfSale`: lifetime of a point-of-sale token, in seconds.
+ * - `maintenanceMode`: when `true`, most endpoints answer `503`.
+ * - `allowGewisSyncDelete`: whether the GEWISDB sync may close the accounts of former members.
+ * - `strictPosToken`: how strictly `POSTokenVerifier` checks point-of-sale tokens.
+ * - `wrappedEnabled`: whether the frontends show {@link entity/wrapped | Wrapped}.
+ *
+ * ### Reading and writing
+ * {@link ServerSettingsStore} loads all settings at startup and inserts missing defaults. Values
+ * are stored as JSON. `maintenanceMode` and `wrappedEnabled` are read from the database on each
+ * request. Other keys need a restart after a direct database change.
+ *
+ * Only `maintenanceMode` and `wrappedEnabled` can be changed through the API.
+ *
+ * For API interactions, refer to the [Swagger Documentation](https://sudosos.gewis.nl/api/api-docs/#/serverSettings).
  *
  * @module internal/server-settings
+ * @mergeTarget
  */
 
 import { Column, Entity } from 'typeorm';
