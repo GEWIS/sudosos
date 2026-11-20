@@ -41,7 +41,7 @@
     "tailwindcss": "catalog:",
     "tailwindcss-primeui": "catalog:",
     "vue": "catalog:",
-    "vue-router": "^4.6.3"
+    "vue-router": "^4.6.5"
   },
   "devDependencies": {
     "@gewis/eslint-config-typescript": "catalog:",
