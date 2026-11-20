@@ -332,8 +332,8 @@ importers:
         specifier: 3.0.3
         version: 3.0.3
       nodemailer:
-        specifier: 10.5.0
-        version: 10.5.0
+        specifier: 10.6.0
+        version: 10.6.0
       reflect-metadata:
         specifier: 0.2.2
         version: 0.2.2
@@ -6939,8 +6939,8 @@ packages:
     deprecated: 'Please upgrade to @mapbox/node-pre-gyp: the non-scoped node-pre-gyp package is deprecated and only the @mapbox scoped package will recieve updates in the future'
     hasBin: true
 
-  nodemailer@10.5.0:
-    resolution: {integrity: sha512-L/w/HH5MqpzMDuZD7fQdt/+KqymuvrpaApaIjAH2XA3ILePwlcvXCVVvP75xVrXCEt2ggK2marrrHHFB5Qu0kA==}
+  nodemailer@10.6.0:
+    resolution: {integrity: sha512-jWanL7D9GD3jvUDYKmoC5rWTiG8MnBgnN2yV68bgMKip1zUJhiSTyz7Eg+18y8sk5OvdVDzws5nZK5arSI4f5Q==}
     engines: {node: '>=20.0.0'}
 
   nodemon@3.1.14:
@@ -15374,7 +15374,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  nodemailer@10.5.0: {}
+  nodemailer@10.6.0: {}
 
   nodemon@3.1.14:
     dependencies:
