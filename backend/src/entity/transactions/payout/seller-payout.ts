@@ -34,13 +34,21 @@
  * frozen on both the payout and its linked {@link transfers!Transfer | Transfer}; the
  * payout does not re-query the report.
  *
- * That snapshot can drift from reality. If a sub-transaction inside the window is changed
- * or deleted after the payout exists (a refund, an admin correction), the snapshot and a
- * fresh report for the same window no longer agree. Detecting this is what
- * `GET /seller-payouts/{id}/report` is for: it re-runs the sales report with the payout's
- * stored window and `requestedBy`, so the treasurer can compare the live total against
- * `payout.amount`. `PATCH /seller-payouts/{id}` is the lever for reconciling once drift
- * is found.
+ * ### Covered transactions are locked
+ * A transaction is covered by a payout when one of its sub-transactions credits the payout's
+ * seller and the transaction's `createdAt` falls in `[startDate, endDate)`, the same window
+ * the sales report uses. {@link transactions!TransactionService.deleteTransaction | deleteTransaction}
+ * and {@link transactions!TransactionService.updateTransaction | updateTransaction} refuse covered
+ * transactions with a `SellerPaidOutTransactionError` (HTTP 409), so the snapshot cannot
+ * silently go stale. An update is also refused when the new version would sell to a seller
+ * that already paid out that moment. To correct a covered transaction, the treasurer first
+ * deletes the payout, changes the transaction, and creates the payout again.
+ *
+ * The snapshot can still drift from reality through changes the lock does not see, for
+ * example payouts created before the lock existed. `GET /seller-payouts/{id}/report` re-runs
+ * the sales report with the payout's stored window and `requestedBy`, so the treasurer can
+ * compare the live total against `payout.amount`. `PATCH /seller-payouts/{id}` is the lever
+ * for reconciling once drift is found.
  *
  * Overlapping windows for the same seller are still refused, so the same revenue cannot
  * be paid out twice. The refusal only checks date ranges though, not whether the prior

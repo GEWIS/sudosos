@@ -113,6 +113,8 @@ A **seller payout** is a payout transfer for a seller over a time range:
 
 This is where VAT is practically accounted for. A single transaction can contain multiple sellers, so VAT reporting is done **per seller payout** rather than “per transaction”.
 
+The payout amount is a snapshot taken at creation. To keep it correct, transactions inside a payout's window are locked for that seller: `DELETE /transactions/{id}` and `PATCH /transactions/{id}` return **409** when a seller payout covers the transaction (`SellerPaidOutTransactionError` in `TransactionService`). To correct such a transaction, delete the seller payout first, change the transaction, and create the payout again.
+
 ## RBAC (who may do what)
 
 Authorisation checks are expressed as permission strings of the form:

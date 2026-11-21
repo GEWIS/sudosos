@@ -50,6 +50,7 @@ import { PdfError } from '../../../src/errors';
 import StripePaymentIntent from '../../../src/entity/stripe/stripe-payment-intent';
 import TerminalPayment from '../../../src/entity/transactions/terminal/terminal-payment';
 import TransactionPdfService from '../../../src/service/pdf/transaction-pdf-service';
+import SellerPayout from '../../../src/entity/transactions/payout/seller-payout';
 
 const { expect, request } = chai;
 
@@ -191,6 +192,29 @@ describe('TransactionController', (): void => {
     } as TerminalPayment);
 
     return transaction.id;
+  }
+
+  /**
+   * Creates a new transaction and a seller payout whose window covers it.
+   * The caller must remove the payout, otherwise it covers transactions created by later tests.
+   */
+  async function createSellerPaidOutTransaction(): Promise<{ id: number, payout: SellerPayout }> {
+    const createRes = await request(ctx.app)
+      .post('/transactions')
+      .set('Authorization', `Bearer ${ctx.adminToken}`)
+      .send(ctx.validTransReq);
+    expect(createRes.status).to.equal(200);
+    const transaction = await Transaction.findOne({ where: { id: createRes.body.id } });
+
+    const payout = await SellerPayout.save({
+      requestedBy: { id: ctx.validTransReq.subTransactions[0].to },
+      amount: dinero({ amount: 0 }),
+      startDate: new Date(transaction.createdAt.getTime() - 60 * 60 * 1000),
+      endDate: new Date(transaction.createdAt.getTime() + 60 * 60 * 1000),
+      reference: 'test',
+    } as SellerPayout);
+
+    return { id: transaction.id, payout };
   }
 
   describe('GET /transactions', () => {
@@ -1026,6 +1050,28 @@ describe('TransactionController', (): void => {
         .set('Authorization', `Bearer ${ctx.adminToken}`);
       expect(res.body).to.eql(toUpdate);
     });
+    it('should return an HTTP 409 if the transaction is included in a seller payout', async () => {
+      const { id, payout } = await createSellerPaidOutTransaction();
+      try {
+        const before = await request(ctx.app)
+          .get(`/transactions/${id}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`);
+
+        const res = await request(ctx.app)
+          .patch(`/transactions/${id}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`)
+          .send({ ...ctx.validTransReq, from: ctx.users[0].id });
+        expect(res.status).to.equal(409);
+        expect(res.body).to.equal(`Transaction ${id} is included in seller payout ${payout.id} and cannot be modified.`);
+
+        const after = await request(ctx.app)
+          .get(`/transactions/${id}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`);
+        expect(after.body).to.eql(before.body);
+      } finally {
+        await SellerPayout.remove(payout);
+      }
+    });
     it('should return an HTTP 409 if the transaction was paid by card terminal', async () => {
       const id = await createTerminalPaidTransaction();
       const before = await request(ctx.app)
@@ -1090,6 +1136,19 @@ describe('TransactionController', (): void => {
   });
 
   describe('DELETE /transactions', () => {
+    it('should return an HTTP 409 if the transaction is included in a seller payout', async () => {
+      const { id, payout } = await createSellerPaidOutTransaction();
+      try {
+        const res = await request(ctx.app)
+          .delete(`/transactions/${id}`)
+          .set('Authorization', `Bearer ${ctx.adminToken}`);
+        expect(res.status).to.equal(409);
+        expect(res.body).to.equal(`Transaction ${id} is included in seller payout ${payout.id} and cannot be modified.`);
+        expect(await Transaction.findOne({ where: { id } })).to.not.be.null;
+      } finally {
+        await SellerPayout.remove(payout);
+      }
+    });
     it('should return an HTTP 409 if the transaction was paid by card terminal', async () => {
       const id = await createTerminalPaidTransaction();
       const res = await request(ctx.app)

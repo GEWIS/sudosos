@@ -27,7 +27,11 @@ import dinero from 'dinero.js';
 import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import Transaction from '../../../src/entity/transactions/transaction';
 import Database, { AppDataSource } from '../../../src/database/database';
-import TransactionService, { TransactionFilterParameters } from '../../../src/service/transaction-service';
+import TransactionService, {
+  SellerPaidOutTransactionError,
+  TransactionFilterParameters,
+} from '../../../src/service/transaction-service';
+import SellerPayout from '../../../src/entity/transactions/payout/seller-payout';
 import { verifyBaseTransactionEntity } from '../validators';
 import Swagger from '../../../src/start/swagger';
 import {
@@ -981,6 +985,119 @@ describe('TransactionService', (): void => {
             .to.eql(updateReq.subTransactions[i].subTransactionRows[j].totalPriceInclVat);
         }
       }
+    });
+  });
+
+  describe('Transactions included in a seller payout', () => {
+    const HOUR = 60 * 60 * 1000;
+    let payouts: SellerPayout[] = [];
+
+    afterEach(async () => {
+      await SellerPayout.remove(payouts);
+      payouts = [];
+    });
+
+    async function createTransaction(req: TransactionRequest = ctx.validTransReq): Promise<Transaction> {
+      const transactionService = new TransactionService();
+      const verification = await transactionService.verifyTransaction(req);
+      if (!verification.valid || !verification.context) {
+        throw new Error('Invalid transaction in test');
+      }
+      const { id } = await transactionService.createTransaction(req, verification.context);
+      // Read createdAt back, so it has the precision the database stores
+      return transactionService.getSingleTransaction(id);
+    }
+
+    async function createPayout(sellerId: number, startDate: Date, endDate: Date): Promise<SellerPayout> {
+      const payout = await SellerPayout.save({
+        requestedBy: { id: sellerId },
+        amount: dinero({ amount: 0 }),
+        startDate,
+        endDate,
+        reference: 'test',
+      } as SellerPayout);
+      payouts.push(payout);
+      return payout;
+    }
+
+    function sellerOf(transaction: Transaction): number {
+      return transaction.subTransactions[0].to.id;
+    }
+
+    it('should not delete a transaction inside the payout window of its seller', async () => {
+      const transaction = await createTransaction();
+      const payout = await createPayout(sellerOf(transaction),
+        new Date(transaction.createdAt.getTime() - HOUR), new Date(transaction.createdAt.getTime() + HOUR));
+
+      await expect(new TransactionService().deleteTransaction(transaction.id))
+        .to.be.rejectedWith(SellerPaidOutTransactionError)
+        .and.eventually.have.property('sellerPayoutIds').that.eql([payout.id]);
+      expect(await Transaction.findOne({ where: { id: transaction.id } })).to.not.be.null;
+    });
+
+    it('should treat the payout start date as inside the window', async () => {
+      const transaction = await createTransaction();
+      await createPayout(sellerOf(transaction), transaction.createdAt, new Date(transaction.createdAt.getTime() + HOUR));
+
+      await expect(new TransactionService().deleteTransaction(transaction.id))
+        .to.be.rejectedWith(SellerPaidOutTransactionError);
+    });
+
+    it('should treat the payout end date as outside the window', async () => {
+      const transaction = await createTransaction();
+      await createPayout(sellerOf(transaction), new Date(transaction.createdAt.getTime() - HOUR), transaction.createdAt);
+
+      await new TransactionService().deleteTransaction(transaction.id);
+      expect(await Transaction.findOne({ where: { id: transaction.id } })).to.be.null;
+    });
+
+    it('should delete a transaction outside the payout window of its seller', async () => {
+      const transaction = await createTransaction();
+      await createPayout(sellerOf(transaction),
+        new Date(transaction.createdAt.getTime() - 3 * HOUR), new Date(transaction.createdAt.getTime() - 2 * HOUR));
+
+      await new TransactionService().deleteTransaction(transaction.id);
+      expect(await Transaction.findOne({ where: { id: transaction.id } })).to.be.null;
+    });
+
+    it('should delete a transaction inside the payout window of another seller', async () => {
+      const transaction = await createTransaction();
+      const sellers = new Set(transaction.subTransactions.map((s) => s.to.id));
+      const otherSeller = ctx.users.find((u) => u.type === UserType.ORGAN && !sellers.has(u.id));
+      await createPayout(otherSeller.id,
+        new Date(transaction.createdAt.getTime() - HOUR), new Date(transaction.createdAt.getTime() + HOUR));
+
+      await new TransactionService().deleteTransaction(transaction.id);
+      expect(await Transaction.findOne({ where: { id: transaction.id } })).to.be.null;
+    });
+
+    it('should not update a transaction inside the payout window of its seller', async () => {
+      const transaction = await createTransaction();
+      await createPayout(sellerOf(transaction),
+        new Date(transaction.createdAt.getTime() - HOUR), new Date(transaction.createdAt.getTime() + HOUR));
+
+      await expect(new TransactionService().updateTransaction(transaction.id, ctx.validTransReq))
+        .to.be.rejectedWith(SellerPaidOutTransactionError);
+      const current = await new TransactionService().getSingleTransaction(transaction.id);
+      expect(current.subTransactions.map((s) => s.id)).to.deep.equalInAnyOrder(transaction.subTransactions.map((s) => s.id));
+    });
+
+    it('should not update a transaction to sell to a seller that paid out its moment', async () => {
+      const transaction = await createTransaction();
+      const sellers = new Set(transaction.subTransactions.map((s) => s.to.id));
+
+      // An update request that sells from a point of sale of another owner
+      const otherPos = ctx.pointsOfSale.find((p) => p.pointOfSale.deletedAt == null && !sellers.has(p.pointOfSale.owner.id));
+      const updateReq = await createValidTransactionRequest(ctx.validTransReq.from, otherPos.pointOfSale.owner.id);
+      const newSeller = updateReq.subTransactions.map((s) => s.to).find((id) => !sellers.has(id));
+      expect(newSeller, 'test needs a seller that is not in the original transaction').to.not.be.undefined;
+      await createPayout(newSeller,
+        new Date(transaction.createdAt.getTime() - HOUR), new Date(transaction.createdAt.getTime() + HOUR));
+
+      await expect(new TransactionService().updateTransaction(transaction.id, updateReq))
+        .to.be.rejectedWith(SellerPaidOutTransactionError);
+      const current = await new TransactionService().getSingleTransaction(transaction.id);
+      expect(current.subTransactions.map((s) => s.id)).to.deep.equalInAnyOrder(transaction.subTransactions.map((s) => s.id));
     });
   });
 

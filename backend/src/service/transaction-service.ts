@@ -24,7 +24,7 @@
  * @module transactions
  */
 
-import { In, IsNull, SelectQueryBuilder } from 'typeorm';
+import { In, IsNull, LessThanOrEqual, MoreThan, SelectQueryBuilder } from 'typeorm';
 import dinero from 'dinero.js';
 import { RequestWithToken } from '../middleware/token-middleware';
 import {
@@ -58,6 +58,7 @@ import SubTransactionRow from '../entity/transactions/sub-transaction-row';
 import ProductRevision from '../entity/product/product-revision';
 import PointOfSaleRevision from '../entity/point-of-sale/point-of-sale-revision';
 import { DineroObjectRequest } from '../controller/request/dinero-request';
+import SellerPayout from '../entity/transactions/payout/seller-payout';
 import { DineroObjectResponse } from '../controller/response/dinero-response';
 import BalanceService from './balance-service';
 import { asBoolean, asDate, asNumber } from '../helpers/validators';
@@ -156,6 +157,20 @@ export class TerminalPaidTransactionError extends Error {
   public constructor(id: number) {
     super(`Transaction ${id} was paid by card terminal and cannot be modified.`);
     this.name = 'TerminalPaidTransactionError';
+  }
+}
+
+/**
+ * Thrown when a transaction that is included in a seller payout is edited or deleted.
+ * The payout froze the revenue of its window, so changing the transaction would make it wrong.
+ */
+export class SellerPaidOutTransactionError extends Error {
+  public readonly sellerPayoutIds: number[];
+
+  public constructor(id: number, sellerPayoutIds: number[]) {
+    super(`Transaction ${id} is included in seller payout ${sellerPayoutIds.join(', ')} and cannot be modified.`);
+    this.name = 'SellerPaidOutTransactionError';
+    this.sellerPayoutIds = sellerPayoutIds;
   }
 }
 
@@ -679,6 +694,37 @@ export default class TransactionService extends WithManager {
   }
 
   /**
+   * Get the seller payouts whose window contains the given moment for any of the given sellers.
+   * Uses the same `[startDate, endDate)` window as the sales report a payout is created from.
+   * @param createdAt - the moment the transaction was created
+   * @param sellerIds - the ids of the sellers (sub-transaction `to` users)
+   */
+  public async getCoveringSellerPayouts(createdAt: Date, sellerIds: number[]): Promise<SellerPayout[]> {
+    if (sellerIds.length === 0) return [];
+    return this.manager.find(SellerPayout, {
+      where: {
+        requestedBy: { id: In(sellerIds) },
+        startDate: LessThanOrEqual(createdAt),
+        endDate: MoreThan(createdAt),
+      },
+    });
+  }
+
+  /**
+   * Throws when any of the given sellers has a seller payout covering the transaction.
+   * @param id - the id of the transaction
+   * @param createdAt - the moment the transaction was created
+   * @param sellerIds - the ids of the sellers to check
+   * @throws {SellerPaidOutTransactionError} when a seller payout covers the transaction
+   */
+  private async assertNotPaidOut(id: number, createdAt: Date, sellerIds: number[]): Promise<void> {
+    const payouts = await this.getCoveringSellerPayouts(createdAt, [...new Set(sellerIds)]);
+    if (payouts.length > 0) {
+      throw new SellerPaidOutTransactionError(id, payouts.map((p) => p.id));
+    }
+  }
+
+  /**
    * Creates a sub transaction from a sub transaction request
    * @param {SubTransactionRequest.model} req - the sub transaction request to cast
    * @param context - transaction context with loaded entities (required)
@@ -1084,6 +1130,8 @@ export default class TransactionService extends WithManager {
    * @param {TransactionRequest.model} req - new transaction request
    * @returns {TransactionResponse.model} updated transaction
    * @returns {undefined} undefined when transaction not found
+   * @throws {TerminalPaidTransactionError} when the transaction was paid by card terminal
+   * @throws {SellerPaidOutTransactionError} when the old or new version is included in a seller payout
    */
   public async updateTransaction(id: number, req: TransactionRequest):
   Promise<Transaction | undefined> {
@@ -1094,6 +1142,11 @@ export default class TransactionService extends WithManager {
     }
 
     const existingTransaction = await this.manager.findOne(Transaction, { where: { id } });
+
+    // The update keeps createdAt, so the new sellers must not have paid out that moment either.
+    if (existingTransaction) {
+      await this.assertNotPaidOut(id, existingTransaction.createdAt, req.subTransactions.map((s) => s.to));
+    }
     const transaction = await this.asTransaction(req, verification.context, existingTransaction);
 
     // delete old transaction
@@ -1116,6 +1169,7 @@ export default class TransactionService extends WithManager {
    * @param {number} id - the id of the requested transaction
    * @returns {TransactionResponse.model} - the deleted transaction
    * @throws {TerminalPaidTransactionError} when the transaction was paid by card terminal
+   * @throws {SellerPaidOutTransactionError} when the transaction is included in a seller payout
    */
   public async deleteTransaction(id: number):
   Promise<Transaction | undefined> {
@@ -1125,6 +1179,9 @@ export default class TransactionService extends WithManager {
 
     // get the transaction we should delete
     const transaction = await this.getSingleTransaction(id);
+    if (transaction) {
+      await this.assertNotPaidOut(id, transaction.createdAt, transaction.subTransactions.map((s) => s.to.id));
+    }
     await this.manager.delete(Transaction, id);
 
     // invalidate user balance cache

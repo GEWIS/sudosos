@@ -56,6 +56,7 @@ import { computed, ref, toRef } from 'vue';
 import { addListenerOnDialogueOverlay, isAllowed } from '@sudosos/sudosos-frontend-common';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'openvue/usetoast';
+import type { AxiosError } from 'axios';
 import apiService from '@/services/ApiService';
 import TransactionDetailModal from '@/components/mutations/mutationmodal/ModalDetailTransaction.vue';
 import PayoutRequestDetailModal from '@/components/mutations/mutationmodal/ModalDetailPayoutRequest.vue';
@@ -68,6 +69,7 @@ import router from '@/router';
 import { FinancialMutationType, isTransaction } from '@/utils/mutationUtils';
 import ConfirmButton from '@/components/ConfirmButton.vue';
 import { useMutationDetails } from '@/composables/mutationDetails';
+import { handleError } from '@/utils/errorUtils';
 
 const props = defineProps<{ type: FinancialMutationType; id: number }>();
 
@@ -147,7 +149,7 @@ const deleteMutation = async () => {
       return;
     }
   } catch (err) {
-    console.error(err);
+    handleError(err as AxiosError, toast);
   }
 };
 </script>

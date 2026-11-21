@@ -31,6 +31,7 @@ import Policy from './policy';
 import { RequestWithToken } from '../middleware/token-middleware';
 import TransactionService, {
   parseGetTransactionsFilters,
+  SellerPaidOutTransactionError,
   TerminalPaidTransactionError,
 } from '../service/transaction-service';
 import { parseRequestPagination, toResponse } from '../helpers/pagination';
@@ -264,7 +265,7 @@ export default class TransactionController extends BaseController {
    * @return {string} 400 - Validation error
    * @return {string} 403 - Lesser tokens cannot update transactions
    * @return {string} 404 - Not found error
-   * @return {string} 409 - Transaction was paid by card terminal
+   * @return {string} 409 - Transaction was paid by card terminal or is included in a seller payout
    * @return {string} 500 - Internal server error
    */
   public async updateTransaction(req: RequestWithToken, res: Response): Promise<void> {
@@ -297,6 +298,10 @@ export default class TransactionController extends BaseController {
         res.status(409).json('Transaction was paid by card terminal and cannot be modified.');
         return;
       }
+      if (error instanceof SellerPaidOutTransactionError) {
+        res.status(409).json(error.message);
+        return;
+      }
       this.logger.error('transaction.update.failed', error);
       res.status(500).json('Internal server error.');
     }
@@ -311,7 +316,7 @@ export default class TransactionController extends BaseController {
    * @security JWT
    * @return 204 - No content
    * @return {string} 404 - Nonexistent transaction id
-   * @return {string} 409 - Transaction was paid by card terminal
+   * @return {string} 409 - Transaction was paid by card terminal or is included in a seller payout
    */
   // eslint-disable-next-line class-methods-use-this
   public async deleteTransaction(req: RequestWithToken, res: Response): Promise<void> {
@@ -329,6 +334,10 @@ export default class TransactionController extends BaseController {
     } catch (error) {
       if (error instanceof TerminalPaidTransactionError) {
         res.status(409).json('Transaction was paid by card terminal and cannot be modified.');
+        return;
+      }
+      if (error instanceof SellerPaidOutTransactionError) {
+        res.status(409).json(error.message);
         return;
       }
       this.logger.error('transaction.delete.failed', error);
