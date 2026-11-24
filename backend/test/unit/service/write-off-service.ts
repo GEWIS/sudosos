@@ -120,39 +120,28 @@ describe('WriteOffService', () => {
         await expect(func()).to.be.rejectedWith('User has balance, cannot create write off');
       });
     });
-    it('should error if HIGH VAT is not set', async () => {
+    it('should error and save nothing if HIGH VAT is not set', async () => {
       const id = ServerSettingsStore.getInstance().getSetting('highVatGroupId');
       await ServerSettingsStore.getInstance().setSetting('highVatGroupId', -1);
 
-      const amount = -100;
-      const builder = await (await UserFactory()).addBalance(amount);
-      await inUserContext([await builder.get()], async (user: User) => {
-        const func = async () => (new WriteOffService()).createWriteOffAndCloseUser(user);
-        await expect(func()).to.be.rejectedWith('High vat group not found');
-      });
+      try {
+        const amount = -100;
+        const builder = await (await UserFactory()).addBalance(amount);
+        await inUserContext([await builder.get()], async (user: User) => {
+          const func = async () => (new WriteOffService()).createWriteOffAndCloseUser(user);
+          await expect(func()).to.be.rejectedWith('High vat group not found');
 
-      await ServerSettingsStore.getInstance().setSetting('highVatGroupId', id);
-    });
-    it('should not leave a partial write-off behind if it fails', async () => {
-      const id = ServerSettingsStore.getInstance().getSetting('highVatGroupId');
-      await ServerSettingsStore.getInstance().setSetting('highVatGroupId', -1);
-
-      const amount = -100;
-      const builder = await (await UserFactory()).addBalance(amount);
-      await inUserContext([await builder.get()], async (user: User) => {
-        const func = async () => (new WriteOffService()).createWriteOffAndCloseUser(user);
-        await expect(func()).to.be.rejectedWith('High vat group not found');
-
-        expect(await WriteOff.count({ where: { to: { id: user.id } } })).to.equal(0);
-        expect(await Transfer.count({ where: { to: { id: user.id }, description: 'Write off' } })).to.equal(0);
-        const balance = await new BalanceService().getBalance(user.id);
-        expect(balance.amount.amount).to.equal(amount);
-        const u = await User.findOne({ where: { id: user.id } });
-        expect(u.active).to.be.true;
-        expect(u.deleted).to.be.false;
-      });
-
-      await ServerSettingsStore.getInstance().setSetting('highVatGroupId', id);
+          expect(await WriteOff.count({ where: { to: { id: user.id } } })).to.equal(0);
+          expect(await Transfer.count({ where: { to: { id: user.id }, description: 'Write off' } })).to.equal(0);
+          const balance = await new BalanceService().getBalance(user.id);
+          expect(balance.amount.amount).to.equal(amount);
+          const u = await User.findOne({ where: { id: user.id } });
+          expect(u.active).to.be.true;
+          expect(u.deleted).to.be.false;
+        });
+      } finally {
+        await ServerSettingsStore.getInstance().setSetting('highVatGroupId', id);
+      }
     });
   });
 });

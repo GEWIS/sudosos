@@ -128,7 +128,7 @@ export default class WriteOffService extends WithManager {
    * Creates a write-off for the given user
    * @param user - The user to create the write-off for
    */
-  public async createWriteOff(user: User): Promise<WriteOff> {
+  private async createWriteOff(user: User): Promise<WriteOff> {
     const balance = await new BalanceService(this.manager).getBalance(user.id);
     if (balance.amount.amount > 0) {
       throw new Error('User has balance, cannot create write off');
