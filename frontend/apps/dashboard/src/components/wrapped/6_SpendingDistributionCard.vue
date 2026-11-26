@@ -11,8 +11,7 @@
         was spent during borrels.
       </h1>
       <h2 :aria-hidden="!showPercentage" class="text-2xl pt-2 fade-slide">
-        That is <span class="font-bold">{{ computePercentage(totalSpentBorrel) }}</span
-        >!
+        That is <span class="font-bold">{{ computePercentage(totalSpentBorrel) }}</span>!
       </h2>
 
       <div class="pt-6">

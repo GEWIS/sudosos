@@ -12,8 +12,7 @@
 
     <div class="content text-white">
       <h1 class="welcome text-4xl">
-        Hello <span class="font-bold">{{ firstName }}</span
-        >!
+        Hello <span class="font-bold">{{ firstName }}</span>!
       </h1>
       <h3 class="text-xl pt-4">Welcome to your</h3>
       <h1 class="text-3xl font-bold">SudoSOS Wrapped!</h1>

@@ -5,8 +5,7 @@
     <div class="content">
       <div v-if="bestOrgan" :aria-hidden="!showOrganName" class="fade-slide">
         <h2 class="text-2xl mb-4">
-          You worked hard for <span class="font-bold">{{ bestOrgan.organName }}</span
-          >!
+          You worked hard for <span class="font-bold">{{ bestOrgan.organName }}</span>!
         </h2>
       </div>
       <div v-if="bestOrgan" :aria-hidden="!showSellerRank" class="fade-slide">

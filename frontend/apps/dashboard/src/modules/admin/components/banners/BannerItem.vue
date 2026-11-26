@@ -30,8 +30,7 @@
       </div>
       <div class="flex flex-row justify-between w-1/2">
         <div class="flex flex-col pr-3">
-          <span class="text-xl">{{ banner.name }}</span
-          ><br />
+          <span class="text-xl">{{ banner.name }}</span><br />
           <span class="items-center flex flex-row font-italic">
             <i class="mr-1 pi pi-clock"></i>
             {{ displaySeconds }}
