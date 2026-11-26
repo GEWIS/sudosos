@@ -1004,4 +1004,5 @@ describe('TerminalPaymentService', () => {
       expect(paymentIntentsCancelStub).to.not.have.been.called;
     });
   });
+
 });
