@@ -78,7 +78,8 @@ import {
 
 const props = defineProps<{ variant: ShapeVariant; active: boolean }>();
 
-const TEXT = 'h1, h2, h3, h4, p, li, dt, dd, a, span, button';
+// The icon of a button counts as text, so a shape never hides a button without a label, like close.
+const TEXT = 'h1, h2, h3, h4, p, li, dt, dd, a, span, button, button > i';
 const TEXT_MARGIN = 8;
 
 const root = ref<HTMLElement>();
@@ -166,7 +167,7 @@ function findCoveringShapes() {
 
   const text = [...card.querySelectorAll<HTMLElement>(TEXT)]
     .filter((element) => !root.value!.contains(element) && element.offsetWidth > 0)
-    .filter((element) => element.textContent?.trim())
+    .filter((element) => element.textContent?.trim() || element.tagName === 'I')
     .filter((element) => !onOpaquePanel(element, card))
     .map((element) => textBoxOf(element, card));
   fits.value = shapes.value.map((shape) => {

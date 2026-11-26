@@ -160,6 +160,24 @@ const variants = {
       size: 14,
     },
   ],
+  banner: [
+    { kind: 'blob', motion: 'morph', gradient: lime, x: 60, y: 115, size: 14 },
+    { kind: 'sparkle', motion: 'spin', gradient: yellow, x: 57.5, y: 28, size: 4 },
+    { kind: 'squiggle', motion: 'sway', gradient: cream, x: 64.5, y: 24, size: 6, rotate: -10 },
+    { kind: 'ring', motion: 'float', gradient: pink, x: 71, y: 14, size: 5 },
+    { kind: 'dots', motion: 'pulse', gradient: sky, x: 67, y: 72, size: 3.5 },
+    { kind: 'half', motion: 'drift', gradient: orange, x: 84, y: 100, size: 12 },
+    { kind: 'circle', motion: 'float', gradient: violet, x: 97, y: 0, size: 9 },
+  ],
+  /** The banner on phones, where its title and button stack on the left. */
+  bannerNarrow: [
+    { kind: 'circle', motion: 'float', gradient: violet, x: 98, y: 0, size: 22 },
+    { kind: 'sparkle', motion: 'spin', gradient: yellow, x: 86, y: 50, size: 9 },
+    { kind: 'dots', motion: 'pulse', gradient: sky, x: 95, y: 70, size: 7 },
+    { kind: 'ring', motion: 'float', gradient: pink, x: 72, y: 78, size: 10 },
+    { kind: 'blob', motion: 'morph', gradient: lime, x: 58, y: 112, size: 22 },
+    { kind: 'half', motion: 'drift', gradient: orange, x: 90, y: 100, size: 28 },
+  ],
 } satisfies Record<string, Shape[]>;
 
 export type ShapeVariant = keyof typeof variants;

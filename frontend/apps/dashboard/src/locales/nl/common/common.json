@@ -314,7 +314,7 @@
       "fav": "Je absolute favorieten waren:",
       "christmas": "Fijne kerst en een gelukkig nieuw jaar van de ABC!",
       "banner": {
-        "title": "SudoSOS Wrapped is hier!",
+        "title": "SudoSOS Wrapped {year} is hier!",
         "open": "Open Wrapped"
       }
     },

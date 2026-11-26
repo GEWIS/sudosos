@@ -314,7 +314,7 @@
       "fav": "Lastly your favourites were:",
       "christmas": "Merry christmas and a happy new year from the ABC!",
       "banner": {
-        "title": "SudoSOS Wrapped is here!",
+        "title": "SudoSOS Wrapped {year} is here!",
         "open": "Open Wrapped"
       }
     },
