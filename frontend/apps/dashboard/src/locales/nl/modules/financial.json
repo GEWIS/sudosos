@@ -68,11 +68,8 @@
       },
       "invoice": {
         "vat": {
-          "title": "BTW",
           "percentage": "BTW %",
-          "baseExclVat": "Grondslag (excl. BTW)",
-          "inclVat": "Incl. BTW",
-          "vat": "BTW-bedrag"
+          "over": "{percentage}% btw over {base}"
         },
         "header": "Facturen",
         "invoice": "Factuur",
@@ -89,14 +86,21 @@
         "deleted": "Factuur is verwijderd.",
         "dirty": "De factuurbedrag komt niet overeen met de overboeking.",
         "total": "Het huidige totaal op de factuur is {total}",
-        "for": "Invoice for",
+        "for": "Factuur voor",
         "create": {
           "create": "Factuur aanmaken",
           "userBalance": "Geselecteerde gebruikers saldo",
           "invocieAmount": "Voorgestelde factuurbedrag",
           "balanceAfter": "Saldo na factuur",
-          "pos": "POS's die in de factuur zijn opgenomen:",
-          "warning": "Controleer de factuur voordat je deze aanmaakt."
+          "period": "Factuurperiode",
+          "account": "Factuuraccount",
+          "entries": "Factuurregels",
+          "next": "Volgende",
+          "steps": {
+            "account": "Account & periode",
+            "details": "Gegevens",
+            "summary": "Overzicht"
+          }
         },
         "account": {
           "lastTransaction": "Laatste transactie",
@@ -145,6 +149,7 @@
         "invoice": {
           "reference": "Referentie",
           "settings": "Instellingen",
+          "details": "Factuurgegevens",
           "addressing": "Adressering",
           "addressee": "Geadresseerde",
           "attention": "Ter attentie van",

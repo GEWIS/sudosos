@@ -138,8 +138,9 @@ export function useDataTableYear<T, F extends Record<string, unknown>>(
   }
 
   onMounted(() => {
-    // If a search ID was restored from the URL, show that single record immediately
-    if (qps?.searchKey && search.value) {
+    // If a search ID was restored from the URL, show that single record immediately.
+    // Tables that search with a filter (no fetchSingleRecord) just load with that filter.
+    if (fetchSingleRecord && qps?.searchKey && search.value) {
       const id = Number(search.value);
       if (!isNaN(id) && id > 0) {
         void onSingle(id).catch(() => void reload());

@@ -42,7 +42,7 @@
       />
     </div>
     <div class="overflow-scroll pdf-display" :class="{ hidden: !showTable }">
-      <InvoiceEntriesTable :invoice="invoice" />
+      <InvoiceEntriesTable :entries="invoice.invoiceEntries" :transfer="invoice.transfer" />
     </div>
   </CardComponent>
 </template>
