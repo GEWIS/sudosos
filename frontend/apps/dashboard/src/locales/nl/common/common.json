@@ -160,6 +160,7 @@
     },
     "navigation": {
       "transactions": "Transacties",
+      "wrapped": "Wrapped",
       "admin": "Beheer",
       "financial": "Financieel",
       "seller": "Verkoper",

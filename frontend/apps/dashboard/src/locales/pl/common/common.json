@@ -160,6 +160,7 @@
     },
     "navigation": {
       "transactions": "Transakcje",
+      "wrapped": "Wrapped",
       "admin": "Admin",
       "financial": "Finanse",
       "seller": "Sprzedawca",
