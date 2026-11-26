@@ -28,8 +28,7 @@
         <div :aria-hidden="!showText" class="text fade-slide">
           <div class="flex flex-column items-center">
             <h1 class="text-2xl whitespace-nowrap">
-              On <span class="font-bold">{{ formattedMaxDate }}</span
-              >,
+              On <span class="font-bold">{{ formattedMaxDate }}</span>,
             </h1>
           </div>
           <h2 class="text-xl py-2">you made</h2>
