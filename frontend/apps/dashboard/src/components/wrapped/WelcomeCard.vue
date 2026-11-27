@@ -1,5 +1,6 @@
 <template>
   <div class="card-root relative" :class="{ active }">
+    <div class="bg logo-bg"></div>
     <div class="content text-white">
       <i18n-t class="text-4xl" keypath="components.wrapped.welcome.hello" scope="global" tag="h1">
         <template #name>
@@ -35,6 +36,26 @@ useCardReveal(() => props.active, []);
 </script>
 
 <style scoped>
+.logo-bg {
+  inset: auto -18% -6% auto;
+  width: 85%;
+  aspect-ratio: 1;
+  background-image: url('../../assets/img/bier.png');
+  background-size: contain;
+  opacity: 0.2;
+  transform: rotate(-14deg);
+}
+
+.active .logo-bg {
+  animation: logo-sway 6s ease-in-out infinite alternate;
+}
+
+@keyframes logo-sway {
+  to {
+    transform: rotate(-6deg) translateY(-3%);
+  }
+}
+
 .year {
   color: #cdf564;
 }
@@ -62,7 +83,8 @@ useCardReveal(() => props.active, []);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .active .year span {
+  .active .year span,
+  .active .logo-bg {
     animation: none;
   }
 }
