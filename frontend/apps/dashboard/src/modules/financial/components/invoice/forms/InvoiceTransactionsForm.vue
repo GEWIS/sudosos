@@ -34,7 +34,7 @@
  */
 
 import { useI18n } from 'vue-i18n';
-import { computed, type ComputedRef, type PropType, type Ref, ref, watch } from 'vue';
+import { computed, type ComputedRef, onMounted, type PropType, type Ref, ref, watch } from 'vue';
 import * as yup from 'yup';
 import {
   type BasePointOfSaleResponse,
@@ -61,6 +61,7 @@ const transactionCalendar = ref(0);
 const includedPOS: Ref<{ [key: number]: BasePointOfSaleResponse }> = ref({});
 const selectedUser: ComputedRef<number | undefined> = computed(() => getProperty(props.form, 'forId'));
 const isLoading: Ref<boolean> = ref(false);
+const toast = useToast();
 
 const disabled = computed(() => {
   return isLoading.value || loadingHeatmap.value || !getProperty(props.form, 'forId');
@@ -103,7 +104,7 @@ const getTransactions = () => {
       props.form.context.setFieldValue('transactionIDs', transactionsIds);
     })
     .catch((err) => {
-      handleError(err, useToast());
+      handleError(err, toast);
     })
     .finally(() => {
       isLoading.value = false;
@@ -125,9 +126,9 @@ const showTransactions = () => {
 };
 
 /**
- * Clear the transactions and reset the heatmap when the selected user changes.
+ * Clear the transactions and reset the heatmap for the selected user.
  */
-watch(selectedUser, () => {
+const loadForUser = () => {
   clearHeatmap();
 
   if (selectedUser.value) {
@@ -135,6 +136,13 @@ watch(selectedUser, () => {
     getTransactionsHeatMap({ month: now.getMonth() + 1, year: now.getFullYear() });
   }
   if (showTransactions()) getTransactions();
+};
+
+watch(selectedUser, loadForUser);
+
+// The user can already be set before this mounts, e.g. from the `userId` query in InvoiceCreateUserCard.
+onMounted(() => {
+  if (selectedUser.value) loadForUser();
 });
 
 /**
@@ -178,7 +186,7 @@ const getTransactionsHeatMap = (event: { month: number; year: number }) => {
         transactionsPerDay.value[dateKey] = true;
       });
     })
-    .catch((err) => handleError(err, useToast()))
+    .catch((err) => handleError(err, toast))
     .finally(() => {
       loadingHeatmap.value = false;
     });

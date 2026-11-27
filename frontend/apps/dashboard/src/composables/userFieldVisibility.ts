@@ -15,7 +15,7 @@ export function useUserFieldVisibility(userType: Ref<USER_TYPES, string>, isCrea
     const type = userType.value;
     return {
       nickname: [USER_TYPES.LOCAL_USER, USER_TYPES.MEMBER].includes(type),
-      lastName: ![USER_TYPES.ORGAN, USER_TYPES.INTEGRATION].includes(type),
+      lastName: ![USER_TYPES.ORGAN, USER_TYPES.INTEGRATION, USER_TYPES.TAB].includes(type),
       debt: ![USER_TYPES.INVOICE, USER_TYPES.AUTOMATIC_INVOICE, USER_TYPES.ORGAN, USER_TYPES.INTEGRATION].includes(
         type,
       ),

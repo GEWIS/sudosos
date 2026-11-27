@@ -292,6 +292,47 @@
           "remaining": "Pozostało (€)",
           "fetchError": "Nie udało się wczytać sum transferów. Spróbuj ponownie."
         }
+      },
+      "tab": {
+        "overview": {
+          "header": "Rachunki",
+          "empty": "Nie znaleziono rachunków."
+        },
+        "contact": "Kontakt",
+        "contactName": "Osoba kontaktowa",
+        "outstanding": "Do zapłaty",
+        "status": {
+          "ALL": "Wszystkie",
+          "OPEN": "Otwarty",
+          "LOCKED": "W trakcie płatności",
+          "PAID": "Opłacony",
+          "INVOICED": "Zafakturowany",
+          "CANCELLED": "Anulowany"
+        },
+        "detail": {
+          "subtitle": "Rachunek",
+          "openedBy": "Otworzył(a)",
+          "lockedHint": "Trwa płatność kartą na terminalu {terminal}. Nie można dodawać zakupów, dopóki się nie zakończy lub nie zostanie anulowana.",
+          "invoicedHint": "Ten rachunek został zamieniony na konto fakturowe. Wystaw fakturę za jego transakcje, aby go rozliczyć.",
+          "cancelTab": "Anuluj rachunek",
+          "cancelTabConfirm": "Anulować ten rachunek? Nic na nim nie kupiono i nie można go ponownie otworzyć.",
+          "cancelTabSuccess": "Rachunek został anulowany.",
+          "cancelPayment": "Anuluj płatność",
+          "cancelPaymentConfirm": "Anulować trwającą płatność kartą? Rachunek zostanie ponownie otwarty.",
+          "cancelPaymentSuccess": "Płatność została anulowana, a rachunek jest ponownie otwarty.",
+          "resendReceipt": "Wyślij paragon ponownie",
+          "resendSuccess": "Paragon został wysłany na {email}."
+        },
+        "edit": {
+          "header": "Edytuj rachunek",
+          "success": "Rachunek został zaktualizowany."
+        },
+        "convert": {
+          "action": "Zamień na konto fakturowe",
+          "confirmHeader": "Potwierdź zamianę na fakturę",
+          "confirm": "Czy na pewno chcesz zamienić ten rachunek na fakturę?",
+          "success": "Rachunek jest teraz kontem fakturowym."
+        }
       }
     }
   }

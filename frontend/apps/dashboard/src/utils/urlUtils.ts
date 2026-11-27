@@ -41,6 +41,10 @@ export function getWriteOffPdfSrc(pdf: string): string {
   return `${window.location.origin}/static/writeOffs/${pdf}`;
 }
 
+export function getTabReceiptPdfSrc(pdf: string): string {
+  return `${window.location.origin}/static/tabReceipts/${pdf}`;
+}
+
 /**
  * Link to a member's profile on the GEWIS website.
  */

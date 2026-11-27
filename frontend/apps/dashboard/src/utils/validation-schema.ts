@@ -26,6 +26,7 @@ export enum USER_TYPES {
   INVOICE = 'INVOICE',
   AUTOMATIC_INVOICE = 'AUTOMATIC_INVOICE',
   INTEGRATION = 'INTEGRATION',
+  TAB = 'TAB',
 }
 
 export const userUpsertSchema = yup.object({
@@ -102,6 +103,7 @@ export const userTypes: Ref<Array<{ name: string; value: string }>> = ref([
   { name: 'ORGAN', value: USER_TYPES.ORGAN },
   { name: 'VOUCHER', value: USER_TYPES.VOUCHER },
   { name: 'INTEGRATION', value: USER_TYPES.INTEGRATION },
+  { name: 'TAB', value: USER_TYPES.TAB },
 ]);
 
 export const createPayoutSchema = yup.object({

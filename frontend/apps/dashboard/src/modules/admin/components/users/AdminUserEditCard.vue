@@ -44,7 +44,11 @@ const props = defineProps<{
 
 const edit = ref(false);
 
-const canEdit = isAllowed('update', ['all'], 'User', ['*']);
+const canEdit = computed(() => {
+  if (!isAllowed('update', ['all'], 'User', ['*'])) return false;
+  // Tab accounts are changed through their tab; the backend rejects PATCH /users/:id for them.
+  return (props.user?.type as USER_TYPES) !== USER_TYPES.TAB;
+});
 
 const showDelete = computed(() => {
   if (!isAllowed('delete', ['all'], 'User', ['*'])) return false;

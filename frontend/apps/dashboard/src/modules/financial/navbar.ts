@@ -27,6 +27,7 @@ export function useFinancialNav() {
           isAllowed('get', ['all'], 'Invoice', ['any']) ||
           isAllowed('get', ['all'], 'Fine', ['any']) ||
           isAllowed('get', ['all'], 'SellerPayout', ['any']) ||
+          isAllowed('get', ['all'], 'Tab', ['any']) ||
           isAllowed('get', ['all'], 'FinancialOverview', ['any']),
         items: [
           {
@@ -61,6 +62,11 @@ export function useFinancialNav() {
             route: '/financial/write-off',
             visible: isAllowed('get', ['all'], 'WriteOff', ['any']),
             notifications: inactiveDebtors.value,
+          },
+          {
+            label: t('common.navigation.tabs'),
+            route: '/financial/tab',
+            visible: isAllowed('get', ['all'], 'Tab', ['any']),
           },
           {
             label: t('common.navigation.transactions'),

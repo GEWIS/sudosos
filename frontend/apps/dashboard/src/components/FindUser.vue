@@ -52,6 +52,7 @@ const props = withDefaults(
 const lastQuery = ref('');
 const selectedUser: Ref<BaseUserResponse | undefined> = ref(undefined);
 const userStore = useUserStore();
+const toast = useToast();
 
 const loading = ref(false);
 const users: Ref<(BaseUserResponse & { fullName: string })[]> = ref([]);
@@ -93,7 +94,7 @@ const debouncedSearch = debounce((e: SelectFilterEvent) => {
       users.value = transformUsers(res.data.records);
     })
     .catch((err) => {
-      handleError(err, useToast());
+      handleError(err, toast);
     })
     .finally(() => {
       loading.value = false;
@@ -114,13 +115,27 @@ function isNegative(user: BaseUserResponse) {
   else return balance.amount.amount < 0;
 }
 
+// The default user, kept so the full user list loaded on mount does not drop it.
+let selected: (BaseUserResponse & { fullName: string }) | undefined = undefined;
+
+function selectDefault(user: BaseUserResponse) {
+  selected = transformUsers([user])[0]!;
+  users.value = [...users.value.filter((u) => u.id !== user.id), selected];
+  selectedUser.value = selected;
+}
+
+// The default can arrive after mount, e.g. when the parent still has to fetch it.
+watch(
+  () => props.default,
+  (user) => {
+    if (user && !selectedUser.value) selectDefault(user);
+  },
+);
+
 onMounted(() => {
-  let selected = undefined;
   if (props.default) {
     // Quick load the default user
-    selected = transformUsers([props.default])[0]!;
-    users.value = [selected];
-    selectedUser.value = selected;
+    selectDefault(props.default);
   }
 
   apiService.user
@@ -128,9 +143,13 @@ onMounted(() => {
     .then((res) => {
       userStore.addUsers(res.data.records);
       void userStore.fetchUserBalances(res.data.records, apiService).then(() => {
+        // Searching or picking another user before this resolved wins over the initial list.
+        const pickedOther = selectedUser.value && selectedUser.value.id !== selected?.id;
+        if (lastQuery.value || pickedOther) return;
+
         const transformed = transformUsers(res.data.records);
         if (selected) {
-          users.value = [...transformed, selected];
+          users.value = [...transformed.filter((u) => u.id !== selected!.id), selected];
           selectedUser.value = selected;
         } else {
           users.value = transformed;
@@ -138,7 +157,7 @@ onMounted(() => {
       });
     })
     .catch((err) => {
-      handleError(err, useToast());
+      handleError(err, toast);
     });
 });
 

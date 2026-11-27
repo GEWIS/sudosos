@@ -292,6 +292,47 @@
           "remaining": "Resterend (€)",
           "fetchError": "Laden van de transactietotalen mislukt. Probeer het opnieuw."
         }
+      },
+      "tab": {
+        "overview": {
+          "header": "Rekeningen",
+          "empty": "Geen rekeningen gevonden."
+        },
+        "contact": "Contactpersoon",
+        "contactName": "Contactpersoon",
+        "outstanding": "Openstaand",
+        "status": {
+          "ALL": "Alle",
+          "OPEN": "Open",
+          "LOCKED": "Wordt betaald",
+          "PAID": "Betaald",
+          "INVOICED": "Gefactureerd",
+          "CANCELLED": "Geannuleerd"
+        },
+        "detail": {
+          "subtitle": "Rekening",
+          "openedBy": "Geopend door",
+          "lockedHint": "Er loopt een pinbetaling op terminal {terminal}. Er kunnen geen aankopen worden toegevoegd tot deze klaar is of wordt geannuleerd.",
+          "invoicedHint": "Deze rekening is omgezet naar een factuuraccount. Maak een factuur voor de transacties om de rekening af te sluiten.",
+          "cancelTab": "Rekening annuleren",
+          "cancelTabConfirm": "Deze rekening annuleren? Er is niets op gekocht en hij kan niet worden heropend.",
+          "cancelTabSuccess": "De rekening is geannuleerd.",
+          "cancelPayment": "Betaling annuleren",
+          "cancelPaymentConfirm": "De lopende pinbetaling annuleren? De rekening gaat weer open.",
+          "cancelPaymentSuccess": "De betaling is geannuleerd en de rekening is weer open.",
+          "resendReceipt": "Bon opnieuw versturen",
+          "resendSuccess": "De bon is verstuurd naar {email}."
+        },
+        "edit": {
+          "header": "Rekening bewerken",
+          "success": "De rekening is bijgewerkt."
+        },
+        "convert": {
+          "action": "Omzetten naar factuuraccount",
+          "confirmHeader": "Omzetting naar factuur bevestigen",
+          "confirm": "Weet je zeker dat je deze rekening wilt omzetten naar een factuur?",
+          "success": "De rekening is nu een factuuraccount."
+        }
       }
     }
   }
