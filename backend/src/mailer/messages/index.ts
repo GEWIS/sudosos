@@ -37,3 +37,4 @@ export * from './user-near-expiration';
 export * from './user-account-expired';
 export * from './user-type-updated';
 export * from './user-type-updated-with-reset';
+export * from './tab-receipt';

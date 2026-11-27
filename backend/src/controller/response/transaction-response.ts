@@ -43,7 +43,7 @@ import { PaginationResult } from '../../helpers/pagination';
  * has been created
  * @property {Dinero} value.required - Total sum of subtransactions
  * @property {boolean} paidByTerminal.required - Whether this transaction was paid with a
- * card terminal. Such transactions cannot be edited or deleted.
+ * card terminal, directly or as part of a paid tab. Such transactions cannot be edited or deleted.
  */
 export interface BaseTransactionResponse extends BaseResponse {
   from: BaseUserResponse,
@@ -66,7 +66,7 @@ export interface BaseTransactionResponse extends BaseResponse {
  * @property {DineroObjectResponse} totalPriceInclVat.required - The total cost of the
  * transaction
  * @property {boolean} paidByTerminal.required - Whether this transaction was paid with a
- * card terminal. Such transactions cannot be edited or deleted.
+ * card terminal, directly or as part of a paid tab. Such transactions cannot be edited or deleted.
  */
 export interface TransactionResponse extends BaseResponse {
   from: BaseUserResponse,

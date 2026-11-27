@@ -32,6 +32,7 @@ import { Dinero } from 'dinero.js';
 import StripeDeposit from './stripe-deposit';
 import type TerminalPayment from '../transactions/terminal/terminal-payment';
 import PaymentRequestAttempt from '../payment-request/payment-request-attempt';
+import type TabPaymentAttempt from '../tab/tab-payment-attempt';
 
 /**
  * @typedef {BaseEntity} StripePaymentIntent
@@ -73,6 +74,9 @@ export default class StripePaymentIntent extends BaseEntity {
 
   @OneToOne('TerminalPayment', (t: TerminalPayment) => t.stripePaymentIntent, { nullable: true })
   public terminalPayment?: TerminalPayment | null;
+
+  @OneToOne('TabPaymentAttempt', (a: TabPaymentAttempt) => a.paymentIntent, { nullable: true })
+  public tabPaymentAttempt?: TabPaymentAttempt | null;
 
   /**
    * Whether this PaymentIntent is cancelled via the API. If the

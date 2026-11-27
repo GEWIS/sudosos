@@ -36,6 +36,8 @@
  * - `POINT_OF_SALE`: the account a {@link catalogue/point-of-sale!PointOfSale | PointOfSale} logs
  *   in as. Hidden from user lists.
  * - `INTEGRATION`: a service account for an external system, created by the LDAP sync.
+ * - `TAB`: the account behind a group {@link tabs!Tab | Tab}. Cannot log in. Created and
+ *   managed by `TabService`.
  *
  * ### Authentication
  * The {@link authentication} module holds the authenticators: LDAP, local password, PIN, NFC, EAN,
@@ -89,6 +91,7 @@ export enum UserType {
   INVOICE = 'INVOICE',
   POINT_OF_SALE = 'POINT_OF_SALE',
   INTEGRATION = 'INTEGRATION',
+  TAB = 'TAB',
 }
 
 /**

@@ -32,13 +32,14 @@ import User from '../entity/user/user';
 import UserService from './user-service';
 import { TransactionResponse } from '../controller/response/transaction-response';
 import { TerminalPaymentResponse } from '../controller/response/terminal-payment-response';
+import { TabResponse } from '../controller/response/tab-response';
 import { parseRoom } from './websocket/room-parser';
 import {
   RoomPolicyRegistry,
   RoomRegistration,
   WebSocketRequestContext,
 } from './websocket/room-policy';
-import { InPosGuard, ForUserGuard, ForTerminalPaymentGuard } from './websocket/event-guards';
+import { InPosGuard, ForUserGuard, ForTerminalPaymentGuard, ForTabGuard } from './websocket/event-guards';
 import { EventRegistry, ResolvedRoom } from './websocket/event-registry';
 import { getPointOfSaleRelation } from './websocket/pos-relation-helper';
 import { getTerminalPaymentRelation } from './websocket/terminal-payment-relation-helper';
@@ -285,6 +286,24 @@ export default class WebSocketService {
         entityId: terminalPayment.id,
       }],
       guard: async (terminalPayment, roomContext) => ForTerminalPaymentGuard(terminalPayment, roomContext),
+    });
+
+    // Register per-tab rooms, so the point of sale can follow the terminal
+    // payment of a tab.
+    this.registerRoom({
+      pattern: 'tab:{id}:updates',
+      policy: async (context) => {
+        if (!context.parsedRoom?.entityId) return false;
+        return this.roleManager.can(context.token.roles, 'get', 'all', 'Tab', ['*']);
+      },
+    });
+
+    this.eventRegistry.register<TabResponse>('tab:updated', {
+      resolver: (tab) => [{
+        roomName: `tab:${tab.id}:updates`,
+        entityId: tab.id,
+      }],
+      guard: async (tab, roomContext) => ForTabGuard(tab, roomContext),
     });
   }
 
@@ -595,6 +614,16 @@ export default class WebSocketService {
   }
 
   /**
+   * Emits a tab update to the subscribers of that tab.
+   * Callers must only emit after the database transaction that changed the
+   * tab has committed.
+   * @param tab - The tab response to emit.
+   */
+  public async emitTabUpdated(tab: TabResponse): Promise<void> {
+    await this.emit('tab:updated', tab);
+  }
+
+  /**
    * Static method for backward compatibility.
    * Delegates to the singleton instance.
    * @throws Error if WebSocketService has not been initialized.
@@ -628,6 +657,14 @@ export default class WebSocketService {
    */
   public static async emitTerminalPaymentUpdated(terminalPayment: TerminalPaymentResponse): Promise<void> {
     await this.getInstance().emitTerminalPaymentUpdated(terminalPayment);
+  }
+
+  /**
+   * Static wrapper for {@link WebSocketService.emitTabUpdated}.
+   * @param tab - The tab response to emit.
+   */
+  public static async emitTabUpdated(tab: TabResponse): Promise<void> {
+    await this.getInstance().emitTabUpdated(tab);
   }
 
   /**

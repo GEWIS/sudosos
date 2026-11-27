@@ -24,7 +24,9 @@
  * @module transactions
  */
 
-import { In, IsNull, SelectQueryBuilder } from 'typeorm';
+import {
+  In, IsNull, Not, SelectQueryBuilder,
+} from 'typeorm';
 import dinero from 'dinero.js';
 import { RequestWithToken } from '../middleware/token-middleware';
 import {
@@ -52,6 +54,8 @@ import {
   TransactionRequest,
 } from '../controller/request/transaction-request';
 import User, { UserType } from '../entity/user/user';
+import Tab, { TabStatus } from '../entity/tab/tab';
+import { writeLock } from '../database/row-lock';
 import TermsOfServiceService from './terms-of-service-service';
 import ContainerRevision from '../entity/container/container-revision';
 import SubTransactionRow from '../entity/transactions/sub-transaction-row';
@@ -156,6 +160,24 @@ export class TerminalPaidTransactionError extends Error {
   public constructor(id: number) {
     super(`Transaction ${id} was paid by card terminal and cannot be modified.`);
     this.name = 'TerminalPaidTransactionError';
+  }
+}
+
+/**
+ * Thrown when a transaction on a tab is edited or deleted while the tab is
+ * being paid or after it was paid. The amount charged on the card reader must
+ * match the ledger.
+ */
+export class LockedTabTransactionError extends Error {
+  /**
+   * @param id - The transaction that was to be changed, or none when a new
+   * purchase was to be added to the tab.
+   */
+  public constructor(id?: number) {
+    super(id === undefined
+      ? 'The tab is being paid or was paid, so no purchases can be added to it.'
+      : `Transaction ${id} is on a tab that is being paid or was paid, and cannot be modified.`);
+    this.name = 'LockedTabTransactionError';
   }
 }
 
@@ -397,6 +419,27 @@ export default class TransactionService extends WithManager {
     const fromUser = context.users.get(req.from);
     if (!fromUser || fromUser.type === UserType.ORGAN) {
       return { valid: false };
+    }
+
+    // Purchases can only be added to an open tab. Corrections to an existing
+    // transaction are also allowed once the tab became an invoice account.
+    if (fromUser.type === UserType.TAB || fromUser.type === UserType.INVOICE) {
+      const tab = await this.manager.findOne(Tab, { where: { user: { id: fromUser.id } } });
+      const allowed = isUpdate ? [TabStatus.OPEN, TabStatus.INVOICED] : [TabStatus.OPEN];
+      if (tab && !allowed.includes(tab.status)) {
+        return { valid: false };
+      }
+
+      // Tabs only exist at the borrel-mode point of sale (one that does not
+      // make people log in), so new purchases on a tab are rung up there.
+      if (tab && !isUpdate) {
+        const posRevision = await this.manager.findOne(PointOfSaleRevision, {
+          where: { pointOfSaleId: req.pointOfSale.id, revision: req.pointOfSale.revision },
+        });
+        if (!posRevision || posRevision.useAuthentication) {
+          return { valid: false };
+        }
+      }
     }
 
     // Collect all product IDs/revisions for batch loading
@@ -669,13 +712,65 @@ export default class TransactionService extends WithManager {
   }
 
   /**
-   * Whether the transaction was paid with a card terminal. The payment is already captured
-   * by Stripe, so such a transaction must not be edited or deleted.
+   * Whether the transaction was paid with a card terminal, either directly or
+   * as one of the purchases on a paid tab. The payment is already captured by
+   * Stripe, so such a transaction must not be edited or deleted.
    * @param id - the id of the transaction
    */
   public async isPaidByTerminal(id: number): Promise<boolean> {
     // Referenced by name, importing the entity here causes a circular import.
-    return this.manager.exists('TerminalPayment', { where: { finalTransaction: { id } } });
+    if (await this.manager.exists('TerminalPayment', { where: { finalTransaction: { id } } })) return true;
+    const buyerId = await this.getBuyerId(id);
+    if (buyerId === undefined) return false;
+    return this.manager.exists(Tab, { where: { user: { id: buyerId }, paidAt: Not(IsNull()) } });
+  }
+
+  /**
+   * Lock the tab rows of the given buyers, in ID order, and return them. A
+   * change to the purchases on a tab must not interleave with starting its
+   * payment (TabService.startPayment), or the card reader could charge a
+   * different amount than the ledger says. Outside a transaction, the tabs are
+   * returned without locking them.
+   * @param userIds - IDs of the buyers; buyers without a tab are skipped.
+   */
+  private async lockTabsOf(userIds: (number | undefined)[]): Promise<Tab[]> {
+    const ids = [...new Set(userIds.filter((u): u is number => u !== undefined))];
+    if (ids.length === 0) return [];
+    return this.manager.find(Tab, {
+      where: { user: { id: In(ids) } },
+      lock: writeLock(this.manager),
+      loadEagerRelations: false,
+      order: { id: 'ASC' },
+    });
+  }
+
+  /**
+   * Whether the tab is being paid or was paid, so its transactions must not
+   * be edited or deleted.
+   */
+  private static isLockedTab(tab: Tab): boolean {
+    return [TabStatus.LOCKED, TabStatus.PAID].includes(tab.status);
+  }
+
+  /**
+   * The ID of the buyer of the given transaction, if it exists.
+   */
+  private async getBuyerId(id: number): Promise<number | undefined> {
+    const transaction = await this.manager.findOne(Transaction, { where: { id }, relations: { from: true } });
+    return transaction?.from?.id;
+  }
+
+  /**
+   * Whether the transaction is on a tab that is being paid or was paid. Such
+   * a transaction must not be edited or deleted, so the amount charged on the
+   * card reader matches the ledger.
+   * @param id - the id of the transaction
+   */
+  public async isOnLockedTab(id: number): Promise<boolean> {
+    const transaction = await this.manager.findOne(Transaction, { where: { id }, relations: { from: true } });
+    if (!transaction?.from) return false;
+    const tab = await this.manager.findOne(Tab, { where: { user: { id: transaction.from.id } }, loadEagerRelations: false });
+    return !!tab && TransactionService.isLockedTab(tab);
   }
 
   /**
@@ -835,6 +930,9 @@ export default class TransactionService extends WithManager {
       .leftJoin('TerminalPayment', 'terminalPayment', 'terminalPayment.finalTransactionId = transaction.id')
       .addSelect('SUM(subTransactionRow.amount * product.priceInclVat)', 'value')
       .addSelect('MAX(terminalPayment.id)', 'terminalPaymentId')
+      // Purchases on a paid tab were paid by card terminal as well, see isPaidByTerminal.
+      .leftJoin(Tab, 'paidTab', 'paidTab.userId = transaction.fromId AND paidTab.paidAt IS NOT NULL')
+      .addSelect('MAX(paidTab.id)', 'paidTabId')
       .groupBy('transaction.id')
       .addGroupBy('from.id')
       .addGroupBy('createdBy.id')
@@ -905,7 +1003,7 @@ export default class TransactionService extends WithManager {
         useAuthentication: Boolean(o.pointOfSaleRev_useAuthentication),
       },
       value: value.toObject(),
-      paidByTerminal: o.terminalPaymentId != null,
+      paidByTerminal: o.terminalPaymentId != null || o.paidTabId != null,
     };
   }
 
@@ -1013,11 +1111,22 @@ export default class TransactionService extends WithManager {
    * @param {TransactionRequest.model} req - the transaction request to save
    * @param context - transaction context with loaded entities (required)
    * @returns {TransactionResponse.model} - the saved transaction
+   * @throws {LockedTabTransactionError} when the buyer is a tab that is no longer open
    */
   public async createTransaction(
     req: TransactionRequest,
     context: TransactionContext,
   ): Promise<Transaction> {
+    // A purchase on a tab locks the tab and checks it is still open, in the
+    // same database transaction as the insert. See lockTabsOf.
+    if (context.users.get(req.from)?.type === UserType.TAB) {
+      if (!this.manager.queryRunner?.isTransactionActive) {
+        return this.manager.transaction((manager) => new TransactionService(manager).createTransaction(req, context));
+      }
+      const [tab] = await this.lockTabsOf([req.from]);
+      if (tab && tab.status !== TabStatus.OPEN) throw new LockedTabTransactionError();
+    }
+
     const transaction = await this.asTransaction(req, context);
 
     // Use manager.save() instead of entity.save() for better batch performance
@@ -1084,20 +1193,31 @@ export default class TransactionService extends WithManager {
    * @param {TransactionRequest.model} req - new transaction request
    * @returns {TransactionResponse.model} updated transaction
    * @returns {undefined} undefined when transaction not found
+   * @throws {TerminalPaidTransactionError} when the transaction was paid by card terminal
+   * @throws {LockedTabTransactionError} when the old or new buyer is a tab that is being paid or was paid
    */
   public async updateTransaction(id: number, req: TransactionRequest):
   Promise<Transaction | undefined> {
+    // Changes on a tab run in one database transaction that locks the tab, see
+    // lockTabsOf. Verification runs after the lock, so it sees the tab's
+    // current state.
+    const existingTransaction = await this.manager.findOne(Transaction, { where: { id }, relations: { from: true } });
+    const tabs = await this.lockTabsOf([existingTransaction?.from?.id, req.from]);
+    if (tabs.length > 0 && !this.manager.queryRunner?.isTransactionActive) {
+      return this.manager.transaction((manager) => new TransactionService(manager).updateTransaction(id, req));
+    }
+    await this.assertChangeable(id, tabs);
+
     // Verify and get context
     const verification = await this.verifyTransaction(req, true);
     if (!verification.valid || !verification.context) {
       return undefined;
     }
 
-    const existingTransaction = await this.manager.findOne(Transaction, { where: { id } });
     const transaction = await this.asTransaction(req, verification.context, existingTransaction);
 
     // delete old transaction
-    await this.deleteTransaction(id);
+    await this.removeTransaction(id);
 
     // save updated transaction with same id
     await this.manager.save(Transaction, transaction);
@@ -1116,13 +1236,42 @@ export default class TransactionService extends WithManager {
    * @param {number} id - the id of the requested transaction
    * @returns {TransactionResponse.model} - the deleted transaction
    * @throws {TerminalPaidTransactionError} when the transaction was paid by card terminal
+   * @throws {LockedTabTransactionError} when the transaction is on a tab that is being paid or was paid
    */
   public async deleteTransaction(id: number):
   Promise<Transaction | undefined> {
+    // Like updateTransaction: lock the tab, then check it is still open.
+    const tabs = await this.lockTabsOf([await this.getBuyerId(id)]);
+    if (tabs.length > 0 && !this.manager.queryRunner?.isTransactionActive) {
+      return this.manager.transaction((manager) => new TransactionService(manager).deleteTransaction(id));
+    }
+    await this.assertChangeable(id, tabs);
+    return this.removeTransaction(id);
+  }
+
+  /**
+   * Throw when the transaction must not be edited or deleted.
+   * @param id - the id of the transaction
+   * @param tabs - the locked tabs of the buyers involved, see lockTabsOf
+   * @throws {TerminalPaidTransactionError} when the transaction was paid by card terminal
+   * @throws {LockedTabTransactionError} when one of the tabs is being paid or was paid
+   */
+  private async assertChangeable(id: number, tabs: Tab[]): Promise<void> {
     if (await this.isPaidByTerminal(id)) {
       throw new TerminalPaidTransactionError(id);
     }
+    if (tabs.some(TransactionService.isLockedTab)) {
+      throw new LockedTabTransactionError(id);
+    }
+  }
 
+  /**
+   * Delete a transaction without any checks, and invalidate the balance
+   * cache of its users.
+   * @param id - the id of the transaction
+   * @returns the deleted transaction
+   */
+  private async removeTransaction(id: number): Promise<Transaction | undefined> {
     // get the transaction we should delete
     const transaction = await this.getSingleTransaction(id);
     await this.manager.delete(Transaction, id);
@@ -1289,7 +1438,7 @@ export default class TransactionService extends WithManager {
   /**
    * Returns the distinct set of users that the given user has most recently charged
    * via an authenticated point of sale (useAuthentication = true), ordered by the
-   * most recent transaction timestamp descending.
+   * most recent transaction timestamp descending. Tab accounts are left out.
    * @param createdById - The user whose cashier history to query
    * @param take - Maximum number of users to return
    */
@@ -1301,6 +1450,9 @@ export default class TransactionService extends WithManager {
       .innerJoin('t.pointOfSale', 'pos')
       .where('t.createdById = :createdById', { createdById })
       .andWhere('pos.useAuthentication = :auth', { auth: true })
+      // Tab accounts are charged at the borrel-mode point of sale only, so they
+      // are never a useful suggestion here (also after a tab was converted).
+      .andWhere((qb) => `t.fromId NOT IN ${qb.subQuery().select('tab.userId').from(Tab, 'tab').getQuery()}`)
       .groupBy('t.fromId')
       .orderBy('MAX(t.createdAt)', 'DESC')
       .limit(take)

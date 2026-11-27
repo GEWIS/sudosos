@@ -874,7 +874,7 @@ export default class UserController extends BaseController {
    * @param {UpdateUserRequest} request.body.required - The user which should be updated
    * @security JWT
    * @return {UserResponse} 200 - New user
-   * @return {string} 400 - Bad request
+   * @return {string} 400 - Bad request, or the user is a tab account
    */
   public async updateUser(req: RequestWithToken, res: Response): Promise<void> {
     const body = req.body as UpdateUserRequest;
@@ -927,6 +927,11 @@ export default class UserController extends BaseController {
         res.status(404).json('Unknown user ID.');
         return;
       }
+      // A tab user is kept in sync with its tab, so it is changed through /tabs.
+      if (user.type === UserType.TAB) {
+        res.status(400).json('A tab account can only be changed through its tab.');
+        return;
+      }
 
       const isLocalUser = LocalUserTypes.includes(user.type);
       if (parsedExpiryDate !== undefined && !isLocalUser) {
@@ -963,7 +968,7 @@ export default class UserController extends BaseController {
    * @param {integer} id.path.required - The id of the user
    * @security JWT
    * @return 204 - User successfully deleted
-   * @return {string} 400 - Cannot delete yourself, or user has a non-zero balance
+   * @return {string} 400 - Cannot delete yourself, user has a non-zero balance, or user is a tab account
    */
   public async deleteUser(req: RequestWithToken, res: Response): Promise<void> {
     const parameters = req.params;
@@ -981,6 +986,12 @@ export default class UserController extends BaseController {
       // If it does not exist, return a 404 error
       if (user == null) {
         res.status(404).json('Unknown user ID.');
+        return;
+      }
+
+      // A tab user is closed by cancelling or paying its tab, never deleted.
+      if (user.type === UserType.TAB) {
+        res.status(400).json('A tab account cannot be deleted; cancel its tab instead.');
         return;
       }
 

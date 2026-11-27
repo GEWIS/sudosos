@@ -60,3 +60,13 @@ export const ForTerminalPaymentGuard: EventGuard<{ id?: number }> = (eventData, 
   }
   return eventData.id === roomContext.entityId;
 };
+
+/**
+ * ForTab guard checks whether the event is about the tab the room is scoped to.
+ */
+export const ForTabGuard: EventGuard<{ id?: number }> = (eventData, roomContext) => {
+  if (roomContext.entityType !== 'tab' || roomContext.entityId === null) {
+    return false;
+  }
+  return eventData.id === roomContext.entityId;
+};
