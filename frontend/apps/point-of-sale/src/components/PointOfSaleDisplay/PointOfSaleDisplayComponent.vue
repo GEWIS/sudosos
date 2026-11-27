@@ -50,6 +50,7 @@
     <div class="mr-6 h-full overflow-hidden">
       <ScrollPanel class="products-scroll-panel" style="width: 100%; height: 100%">
         <PointOfSaleProductsComponent
+          :compact="compact"
           :is-product-search="isSearchViewVisible"
           :point-of-sale="pointOfSale"
           :search-query="searchQuery"
@@ -72,6 +73,10 @@ const props = defineProps({
   pointOfSale: {
     type: Object as () => PointOfSaleWithContainersResponse | undefined,
     required: true,
+  },
+  compact: {
+    type: Boolean,
+    default: false,
   },
 });
 

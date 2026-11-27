@@ -1,7 +1,7 @@
 <template>
   <Dialog
     v-model:visible="visible"
-    class="w-[35rem]"
+    class="w-[35rem] max-w-[95vw]"
     :closable="false"
     :close-on-escape="false"
     :dismissable-mask="false"
@@ -17,7 +17,7 @@
     </Message>
 
     <div class="flex justify-center mt-4">
-      <img alt="SudoSOS QR Code" class="w-[25rem]" src="@/assets/sudosos-qr.png" />
+      <img alt="SudoSOS QR Code" class="w-[25rem] max-w-full" src="@/assets/sudosos-qr.png" />
     </div>
 
     <div v-if="topUpProgress > 0" class="relative w-[100px] h-[100px] mx-auto my-4">

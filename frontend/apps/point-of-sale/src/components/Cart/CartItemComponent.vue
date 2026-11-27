@@ -2,7 +2,7 @@
   <div class="mt-1">
     <div class="flex-1 flex flex-row items-center justify-start mb-2 h-15 min-h-0 max-w-full">
       <img
-        :id="product.name"
+        :id="listing ? undefined : product.name"
         :alt="product.name"
         class="size-12 object-contain rounded bg-white"
         :src="getProductImageSrc(product)"
@@ -10,15 +10,20 @@
 
       <div class="flex-1 ml-2 min-w-0">
         <h4 class="font-bold truncate">{{ product.name }}</h4>
-        <p class="text-sm">{{ product.category.name }}</p>
+        <p v-if="listing" class="text-sm">
+          €{{ unitPrice }}<template v-if="alcohol"> · {{ alcohol }}</template>
+        </p>
+        <p v-else class="text-sm">{{ product.category.name }}</p>
       </div>
       <div class="flex items-center gap-1">
-        <Button
-          class="bg-red w-[34px] h-[34px] shadow-sm text-2xl flex items-center justify-center p-0 leading-none cart-button"
-          @click="decreaseQuantity"
-          >-</Button
-        >
-        <span class="font-bold w-8 text-center">{{ cartProduct.count }}</span>
+        <template v-if="!listing || cartProduct.count > 0">
+          <Button
+            class="bg-red w-[34px] h-[34px] shadow-sm text-2xl flex items-center justify-center p-0 leading-none cart-button"
+            @click="decreaseQuantity"
+            >-</Button
+          >
+          <span class="font-bold w-8 text-center">{{ cartProduct.count }}</span>
+        </template>
         <Button
           class="w-[34px] h-[34px] shadow-sm text-2xl flex items-center justify-center p-0 leading-none cart-button"
           @click="increaseQuantity"
@@ -26,7 +31,7 @@
         >
       </div>
 
-      <p class="font-bold text-right basis-1/5">€{{ totalPrice }}</p>
+      <p v-if="!listing" class="font-bold text-right basis-1/5">€{{ totalPrice }}</p>
     </div>
   </div>
 </template>
@@ -45,6 +50,12 @@ const props = defineProps({
     type: Object as () => CartProduct,
     required: true,
   },
+  // A row in a product list rather than a cart line: shows the unit price,
+  // and only a + button until the product is in the cart (count > 0).
+  listing: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const product = ref<ProductResponse>(props.cartProduct.product);
@@ -60,6 +71,10 @@ const totalPrice = computed(() => {
   const price = product.value.priceInclVat.amount * props.cartProduct.count;
   return formatPrice(price);
 });
+
+const unitPrice = formatPrice(props.cartProduct.product.priceInclVat.amount);
+const alcohol =
+  props.cartProduct.product.alcoholPercentage > 0 ? `${props.cartProduct.product.alcoholPercentage}%` : '';
 </script>
 
 <style scoped lang="scss">

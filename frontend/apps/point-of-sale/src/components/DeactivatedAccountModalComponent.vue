@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    class="w-[35rem]"
+    class="w-[35rem] max-w-[95vw]"
     :closable="false"
     :close-on-escape="false"
     :dismissable-mask="false"

@@ -36,7 +36,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Toast />
+  <Toast :breakpoints="{ '767px': { width: 'calc(100vw - 2rem)', left: '1rem', right: '1rem' } }" />
   <MaintenanceModeOverlay />
   <ConnectionLostOverlay />
   <RouterView />

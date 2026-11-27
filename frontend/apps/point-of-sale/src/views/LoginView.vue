@@ -1,6 +1,23 @@
 <template>
-  <div class="flex flex-col h-screen">
-    <div class="m-5 mb-0 p-5 bg-[#ffffffEE] shadow-lg rounded-lg flex-grow">
+  <div class="flex flex-col" :class="isMobile ? 'h-dvh' : 'h-screen'">
+    <div v-if="isMobile && loggingIn" class="flex-1 flex items-center justify-center">
+      <ProgressSpinner aria-label="Loading" />
+    </div>
+    <MobileLoginComponent
+      v-else-if="isMobile"
+      class="flex-1 min-h-0"
+      :entering-user-id="enteringUserId"
+      :external="external"
+      :pin-code="pinCode"
+      :user-id="userId"
+      :wrong-pin="wrongPin"
+      @backspace="handleBackspace"
+      @change="focusUserId"
+      @continue="handleContinue"
+      @external="handleExternal"
+      @input="handleInput"
+    />
+    <div v-else class="m-5 mb-0 p-5 bg-[#ffffffEE] shadow-lg rounded-lg flex-grow">
       <div v-if="loggingIn" class="items-center flex h-full justify-center">
         <div>
           <ProgressSpinner aria-label="Loading" />
@@ -32,7 +49,7 @@
         <BannerComponent v-if="shouldShowBanner" />
       </div>
     </div>
-    <div class="m-2 flex justify-between">
+    <div v-if="!isMobile" class="m-2 flex justify-between">
       <PosInfo />
       <GitInfo />
     </div>
@@ -55,9 +72,12 @@ import GitInfo from '@/components/GitInfo.vue';
 import PosInfo from '@/components/PosInfo.vue';
 import { useLoginForm } from '@/composables/useLoginForm';
 import { usePointOfSaleStore } from '@/stores/pos.store';
+import { useMobileLayout } from '@/composables/useMobileLayout';
+import MobileLoginComponent from '@/components/Mobile/MobileLoginComponent.vue';
 
 const authStore = useAuthStore();
 const posStore = usePointOfSaleStore();
+const { isMobile } = useMobileLayout();
 
 let escaped = false;
 

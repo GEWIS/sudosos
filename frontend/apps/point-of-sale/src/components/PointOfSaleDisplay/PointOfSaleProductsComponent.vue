@@ -1,5 +1,14 @@
 <template>
-  <div ref="wrapper" class="container-grid-wrapper flex-1 mb-2 mr-0 pl-1 pr-6">
+  <div v-if="compact" class="product-list mb-2">
+    <!-- Rows look like cart lines, so far more products fit on a phone screen. -->
+    <CartItemComponent
+      v-for="product in sortedProducts"
+      :key="`${product.product.id}-${product.container.id}`"
+      :cart-product="cartLine(product)"
+      listing
+    />
+  </div>
+  <div v-else ref="wrapper" class="container-grid-wrapper flex-1 mb-2 mr-0 pl-1 pr-6">
     <div class="container gap-2">
       <ProductComponent
         v-for="product in sortedProducts"
@@ -13,16 +22,34 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { PointOfSaleWithContainersResponse } from '@gewis/sudosos-client';
+import {
+  ContainerWithProductsResponse,
+  PointOfSaleWithContainersResponse,
+  ProductResponse,
+} from '@gewis/sudosos-client';
 import Fuse from 'fuse.js';
 import ProductComponent from '@/components/ProductComponent.vue';
+import CartItemComponent from '@/components/Cart/CartItemComponent.vue';
+import { CartProduct, useCartStore } from '@/stores/cart.store';
 
 const props = defineProps<{
   isProductSearch: boolean;
   pointOfSale?: PointOfSaleWithContainersResponse;
   selectedCategoryId?: string;
   searchQuery: string;
+  compact?: boolean;
 }>();
+
+const cartStore = useCartStore();
+
+// The cart line for a listed product, so its row shows the quantity already ordered.
+const cartLine = (item: { product: ProductResponse; container: ContainerWithProductsResponse }): CartProduct =>
+  cartStore.products.find(
+    (p) =>
+      p.container.id === item.container.id &&
+      p.product.id === item.product.id &&
+      p.product.revision === item.product.revision,
+  ) ?? { ...item, count: 0 };
 
 const searchQuery = ref(props.searchQuery);
 const wrapper = ref();
@@ -110,5 +137,10 @@ const sortedProducts = computed(() => {
     grid-template-columns: repeat(auto-fill, 145px);
     justify-content: space-evenly;
   }
+}
+
+.product-list > * + * {
+  border-top: 1px solid var(--p-surface-200);
+  padding-top: 0.25rem;
 }
 </style>

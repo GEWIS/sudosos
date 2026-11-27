@@ -26,6 +26,12 @@ interface CartState {
   createdBy: BaseUserResponse | null;
   lockedIn: UserResponse | null;
 }
+
+// Buyer lookups resolve asynchronously. Only the latest call may set the buyer,
+// so a slow earlier lookup (e.g. the one fired at login) cannot overwrite a
+// later choice.
+let latestBuyerRequest = 0;
+
 export const useCartStore = defineStore('cart', {
   state: (): CartState => ({
     products: [] as CartProduct[],
@@ -68,6 +74,7 @@ export const useCartStore = defineStore('cart', {
       this.lockedIn = lockedIn;
     },
     setBuyer(buyer: UserResponse | null) {
+      const request = ++latestBuyerRequest;
       if (!buyer) {
         this.buyer = null;
         this.buyerBalance = null;
@@ -75,21 +82,29 @@ export const useCartStore = defineStore('cart', {
       }
 
       // Refetch the data to ensure we have the latest data.
-      return apiService.user.getIndividualUser({ id: buyer.id }).then(async (res) => {
-        this.buyer = res.data;
-        this.buyerBalance = await apiService.balance.getBalanceId({ id: buyer.id }).then((res) => res.data.amount);
-        return this.buyer;
+      return Promise.all([
+        apiService.user.getIndividualUser({ id: buyer.id }),
+        apiService.balance.getBalanceId({ id: buyer.id }),
+      ]).then(([user, balance]) => {
+        if (request === latestBuyerRequest) {
+          this.buyer = user.data;
+          this.buyerBalance = balance.data.amount;
+        }
+        return user.data;
       });
     },
     setCreatedBy(createdBy: BaseUserResponse) {
       this.createdBy = createdBy;
     },
     async setBuyerFromNfc(nfc: string) {
-      return apiService.user.findUserNfc({ nfcCode: nfc }).then(async (res) => {
-        this.buyer = res.data;
-        this.buyerBalance = await apiService.balance.getBalanceId({ id: res.data.id }).then((res) => res.data.amount);
-        return this.buyer;
-      });
+      const request = ++latestBuyerRequest;
+      const user = await apiService.user.findUserNfc({ nfcCode: nfc });
+      const balance = await apiService.balance.getBalanceId({ id: user.data.id });
+      if (request === latestBuyerRequest) {
+        this.buyer = user.data;
+        this.buyerBalance = balance.data.amount;
+      }
+      return user.data;
     },
     addToCart(cartProduct: CartProduct): void {
       const existingProduct = this.products.find(

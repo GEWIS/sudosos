@@ -14,6 +14,7 @@ import Select from 'openvue/select';
 import Toast from 'openvue/toast';
 import Card from 'openvue/card';
 import ScrollPanel from 'openvue/scrollpanel';
+import Drawer from 'openvue/drawer';
 
 import Message from 'openvue/message';
 import ToastService from 'openvue/toastservice';
@@ -57,6 +58,8 @@ app.component('Toast', Toast);
 // eslint-disable-next-line
 app.component('Card', Card);
 app.component('ScrollPanel', ScrollPanel);
+// eslint-disable-next-line
+app.component('Drawer', Drawer);
 app.use(createPinia());
 
 void beforeLoad()

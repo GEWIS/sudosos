@@ -1,18 +1,14 @@
 <template>
-  <div class="flex flex-col h-screen">
-    <div v-if="posNotLoaded" class="items-center flex flex-col h-screen justify-center">
+  <div class="flex flex-col" :class="isMobile ? 'h-dvh' : 'h-screen'">
+    <div v-if="posNotLoaded" class="items-center flex flex-col h-full justify-center">
       <div>
         <ProgressSpinner aria-label="Loading" />
       </div>
     </div>
+    <MobileCashierComponent v-else-if="isMobile" class="flex-grow" :point-of-sale="currentPos" />
     <div v-else class="mx-8 mt-8 bg-[#ffffffEE] shadow-lg flex-grow rounded-3xl min-h-0">
       <div class="wrapper">
         <div class="pos-wrapper">
-          <TopUpWarningComponent
-            v-if="shouldShowTopUpWarning"
-            :show="showTopUpWarning"
-            @update:show="handleTopUpWarningUpdate"
-          />
           <UserSearchComponent v-if="currentState === PointOfSaleState.SEARCH_USER" @cancel-search="cancelSearch()" />
           <PointOfSaleDisplayComponent
             v-if="currentState === PointOfSaleState.DISPLAY_POS"
@@ -29,10 +25,15 @@
         </div>
       </div>
     </div>
-    <div class="flex flex-row">
+    <div v-if="!isMobile" class="flex flex-row">
       <SettingsIconComponent />
       <ScannersUpdateComponent :handle-nfc-delete="nfcDelete" :handle-nfc-update="nfcUpdate" />
     </div>
+    <TopUpWarningComponent
+      v-if="shouldShowTopUpWarning"
+      :show="showTopUpWarning"
+      @update:show="handleTopUpWarningUpdate"
+    />
     <NfcSearchComponent :handle-nfc-search="cartStore.setBuyerFromNfc" />
   </div>
 </template>
@@ -56,6 +57,8 @@ import { userApiService } from '@/services/ApiService';
 import { useCartStore } from '@/stores/cart.store';
 import TopUpWarningComponent from '@/components/TopUpWarningComponent.vue';
 import { useSettingStore } from '@/stores/settings.store';
+import MobileCashierComponent from '@/components/Mobile/MobileCashierComponent.vue';
+import { useMobileLayout } from '@/composables/useMobileLayout';
 
 const authStore = useAuthStore();
 const posNotLoaded = ref(true);
@@ -67,6 +70,7 @@ const { checkBuyerInDebt, buyerBalance } = storeToRefs(cartStore);
 const settingStore = useSettingStore();
 const shouldShowTimers = computed(() => settingStore.showTimers);
 const { getPosIdFromToken } = usePosToken();
+const { isMobile } = useMobileLayout();
 
 enum PointOfSaleState {
   SEARCH_USER,
