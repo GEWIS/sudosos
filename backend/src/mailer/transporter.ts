@@ -37,7 +37,6 @@ export default function createSMTPTransporter() {
       user: config.smtp.username,
       pass: config.smtp.password,
     },
-    from: config.smtp.from,
     pool: true,
     maxConnections: config.smtp.maxConnections,
   });

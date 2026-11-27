@@ -28,6 +28,7 @@ import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import UserController from '../../../src/controller/user-controller';
 import TransactionController from '../../../src/controller/transaction-controller';
 import User, { TermsOfServiceStatus, UserType } from '../../../src/entity/user/user';
+import BalanceService from '../../../src/service/balance-service';
 import Product from '../../../src/entity/product/product';
 import Transaction from '../../../src/entity/transactions/transaction';
 import TokenHandler from '../../../src/authentication/token-handler';
@@ -89,6 +90,7 @@ import Dinero from 'dinero.js';
 import NfcAuthenticator from '../../../src/entity/authenticator/nfc-authenticator';
 import AssignedRole from '../../../src/entity/rbac/assigned-role';
 import Wrapped from '../../../src/entity/wrapped';
+import WrappedOrganMember from '../../../src/entity/wrapped/wrapped-organ-member';
 import Redis from 'ioredis';
 import Mailer from '../../../src/mailer';
 
@@ -1017,6 +1019,13 @@ describe('UserController', (): void => {
   });
 
   describe('DELETE /users/:id', () => {
+    const createUserWithoutBalance = () => User.save(Object.assign(new User(), {
+      firstName: 'Zero',
+      lastName: 'Balance',
+      type: UserType.LOCAL_USER,
+      active: true,
+    } as User));
+
     it('should give HTTP 403 when user is not an admin', async () => {
       const res = await request(ctx.app)
         .delete('/users/24')
@@ -1025,16 +1034,32 @@ describe('UserController', (): void => {
     });
 
     it('should correctly delete user if requester is admin', async () => {
+      const user = await createUserWithoutBalance();
       let res = await request(ctx.app)
-        .delete('/users/24')
+        .delete(`/users/${user.id}`)
         .set('Authorization', `Bearer ${ctx.adminToken}`);
       expect(res.status).to.equal(204);
 
       // User does not exist anymore
       res = await request(ctx.app)
-        .get('/users/24')
+        .get(`/users/${user.id}`)
         .set('Authorization', `Bearer ${ctx.adminToken}`);
       expect(res.status).to.equal(404);
+    });
+
+    it('should give HTTP 400 if user has a non-zero balance', async () => {
+      const userId = 24;
+      const balance = await new BalanceService().getBalance(userId);
+      expect(balance.amount.amount).to.not.equal(0);
+
+      const res = await request(ctx.app)
+        .delete(`/users/${userId}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(400);
+      expect(res.body).to.equal('Cannot delete user with non-zero balance.');
+
+      const user = await User.findOne({ where: { id: userId } });
+      expect(user.deleted).to.be.false;
     });
 
     it('should give HTTP 404 if admin and user does not exist', async () => {
@@ -1052,13 +1077,14 @@ describe('UserController', (): void => {
     });
 
     it('should give HTTP 404 if trying to delete user twice', async () => {
+      const user = await createUserWithoutBalance();
       const res = await request(ctx.app)
-        .delete('/users/4')
+        .delete(`/users/${user.id}`)
         .set('Authorization', `Bearer ${ctx.adminToken}`);
       expect(res.status).to.equal(204);
 
       const res2 = await request(ctx.app)
-        .delete('/users/4')
+        .delete(`/users/${user.id}`)
         .set('Authorization', `Bearer ${ctx.adminToken}`);
       expect(res2.status).to.equal(404);
     });
@@ -2850,220 +2876,174 @@ describe('UserController', (): void => {
     });
   });
 
-  describe('GET /users/:id/wrapped', () => {
-    it('should return 200 with WrappedResponse when wrapped exists', async () => {
-      const user = ctx.users[0]; // Use the user that has the token
-      if (!user) return;
+  const saveWrapped = (userId: number, year: number) => Wrapped.save(Object.assign(new Wrapped(), {
+    userId,
+    year,
+    transactionCount: 10,
+    transactionPercentile: 75.5,
+    transactionMaxDate: new Date(year, 6, 15),
+    transactionMaxAmount: 5,
+    transactionHeatmap: [1, 2, 3],
+    previousTransactionCount: 8,
+    totalSpent: Dinero({ amount: 1000 }),
+    previousTotalSpent: Dinero({ amount: 800 }),
+    borrelSpent: Dinero({ amount: 600 }),
+    spentPercentile: 80,
+    topProducts: [{ id: 1, name: 'Beer', count: 10, totalInclVat: 1000, rank: 1 }],
+    categories: [{ id: 1, name: 'Alcoholic', totalInclVat: 1000 }],
+    hourHistogram: new Array(24).fill(0),
+    daytimeTransactionCount: 0,
+    itemCount: 12,
+    alcoholicItemCount: 10,
+    distinctProducts: 2,
+    biggestRoundItems: 4,
+    biggestRoundSpent: Dinero({ amount: 400 }),
+    biggestRoundDate: new Date(year, 6, 15, 22),
+    topUpCount: 1,
+    topUpTotal: Dinero({ amount: 2000 }),
+    fineCount: 0,
+    fineTotal: Dinero({ amount: 0 }),
+    syncedFrom: new Date(year, 0, 1),
+    syncedTo: new Date(),
+  }));
 
-      // Create wrapped data
-      const wrapped = Object.assign(new Wrapped(), {
+  const deleteWrapped = async () => {
+    await WrappedOrganMember.createQueryBuilder().delete().execute();
+    await Wrapped.createQueryBuilder().delete().execute();
+  };
+
+  describe('GET /users/:id/wrapped', () => {
+    beforeEach(deleteWrapped);
+
+    it('should return the most recent wrapped of the user', async () => {
+      const user = ctx.users[0];
+      await saveWrapped(user.id, 2023);
+      await saveWrapped(user.id, 2022);
+      await WrappedOrganMember.save(Object.assign(new WrappedOrganMember(), {
         userId: user.id,
-        transactionCount: 10,
-        transactionPercentile: 75.5,
-        transactionMaxDate: new Date(2023, 6, 15),
-        transactionMaxAmount: 5,
-        transactionHeatmap: JSON.stringify([1, 2, 3]),
-        spentPercentile: 80.0,
-        syncedFrom: new Date(2023, 0, 1),
-        syncedTo: new Date(2023, 11, 31),
-      });
-      await Wrapped.save(wrapped);
+        year: 2023,
+        organId: ctx.organ.id,
+        ordinalTransactionCreated: 0,
+        ordinalTurnoverCreated: 1,
+        transactionsCreated: 3,
+        turnoverCreated: Dinero({ amount: 300 }),
+        customersServed: 2,
+        sellerCount: 4,
+      }));
 
       const res = await request(ctx.app)
         .get(`/users/${user.id}/wrapped`)
         .set('Authorization', `Bearer ${ctx.userToken}`);
 
       expect(res.status).to.equal(200);
-      expect(res.body).to.have.property('userId');
-      expect(res.body).to.have.property('transactions');
-      expect(res.body).to.have.property('spentPercentile');
-      expect(res.body).to.have.property('syncedFrom');
-      expect(res.body).to.have.property('syncedTo');
-      expect(res.body).to.have.property('organs');
-      expect(res.body.transactions).to.have.property('transactionCount');
-      expect(res.body.transactions).to.have.property('transactionPercentile');
-      expect(res.body.transactions).to.have.property('transactionMaxDate');
-      expect(res.body.transactions).to.have.property('transactionMaxAmount');
-      expect(res.body.transactions).to.have.property('transactionHeatmap');
+      expect(ctx.specification.validateModel('WrappedResponse', res.body, false, true).valid).to.be.true;
+      expect(res.body.year).to.equal(2023);
+      expect(res.body.transactions.transactionHeatmap).to.deep.equal([1, 2, 3]);
+      expect(res.body.organs).to.have.length(1);
+      expect(res.body.organs[0].organ.id).to.equal(ctx.organ.id);
+      expect(res.body.organs[0].ordinalTurnoverCreated).to.equal(1);
     });
 
-    it('should return 404 when wrapped not found', async () => {
-      const user = ctx.users[0]; // Use the user that has the token
-      if (!user) return;
-
-      // Ensure no wrapped exists
-      await Wrapped.delete({ userId: user.id });
+    it('should return the wrapped of the requested year', async () => {
+      const user = ctx.users[0];
+      await saveWrapped(user.id, 2023);
+      await saveWrapped(user.id, 2022);
 
       const res = await request(ctx.app)
         .get(`/users/${user.id}/wrapped`)
+        .query({ year: 2022 })
+        .set('Authorization', `Bearer ${ctx.userToken}`);
+
+      expect(res.status).to.equal(200);
+      expect(res.body.year).to.equal(2022);
+    });
+
+    it('should return 404 when the user has no wrapped for the requested year', async () => {
+      const user = ctx.users[0];
+      await saveWrapped(user.id, 2023);
+
+      const res = await request(ctx.app)
+        .get(`/users/${user.id}/wrapped`)
+        .query({ year: 2021 })
         .set('Authorization', `Bearer ${ctx.userToken}`);
 
       expect(res.status).to.equal(404);
       expect(res.body).to.equal('Wrapped not found for user');
     });
 
-    it('should validate authorization policy (own)', async () => {
-      const user = ctx.users[0]; // Use the user that has the token
-      if (!user) return;
-
-      const wrapped = Object.assign(new Wrapped(), {
-        userId: user.id,
-        transactionCount: 5,
-        transactionPercentile: 50.0,
-        transactionMaxDate: new Date(2023, 5, 15),
-        transactionMaxAmount: 3,
-        transactionHeatmap: JSON.stringify([]),
-        spentPercentile: 60.0,
-        syncedFrom: new Date(2023, 0, 1),
-        syncedTo: new Date(),
-      });
-      await Wrapped.save(wrapped);
-
-      // Reload user without relations to avoid circular references
-      const freshUser = await User.findOne({ where: { id: user.id } });
-      if (!freshUser) return;
-
-      // Create token for the same user to avoid circular references
-      const userToken = await signTokenFor(freshUser, ctx.tokenHandler);
-
+    it('should return 400 when the year is not a number', async () => {
       const res = await request(ctx.app)
-        .get(`/users/${user.id}/wrapped`)
-        .set('Authorization', `Bearer ${userToken}`);
+        .get(`/users/${ctx.users[0].id}/wrapped`)
+        .query({ year: 'last' })
+        .set('Authorization', `Bearer ${ctx.userToken}`);
 
-      expect(res.status).to.equal(200);
+      expect(res.status).to.equal(400);
     });
 
-    it('should return 403 when user cannot access wrapped (all)', async () => {
-      const user = ctx.users[0]; // Use a regular user
-      const otherUser = ctx.users.find((u) => u.id !== user.id && u.extensiveDataProcessing && u.active && !u.deleted);
-      if (!user || !otherUser) return;
-
-      const wrapped = Object.assign(new Wrapped(), {
-        userId: otherUser.id,
-        transactionCount: 5,
-        transactionPercentile: 50.0,
-        transactionMaxDate: new Date(2023, 5, 15),
-        transactionMaxAmount: 3,
-        transactionHeatmap: JSON.stringify([]),
-        spentPercentile: 60.0,
-        syncedFrom: new Date(2023, 0, 1),
-        syncedTo: new Date(),
-      });
-      await Wrapped.save(wrapped);
-
-      // Reload user without relations to avoid circular references
-      const freshUser = await User.findOne({ where: { id: user.id } });
-      if (!freshUser) return;
-
-      // Create token for different user without 'all' permission
-      const userToken = await signTokenFor(freshUser, ctx.tokenHandler);
+    it('should return 403 for the wrapped of another user', async () => {
+      const otherUser = ctx.users[1];
+      await saveWrapped(otherUser.id, 2023);
 
       const res = await request(ctx.app)
         .get(`/users/${otherUser.id}/wrapped`)
-        .set('Authorization', `Bearer ${userToken}`);
-
-      expect(res.status).to.equal(403);
-    });
-
-    it('should include organ member data in response', async () => {
-      const user = ctx.users[0]; // Use the user that has the token
-      if (!user) return;
-
-      const WrappedOrganMember = (await import('../../../src/entity/wrapped/wrapped-organ-member')).default;
-
-      const wrapped = Object.assign(new Wrapped(), {
-        userId: user.id,
-        transactionCount: 5,
-        transactionPercentile: 50.0,
-        transactionMaxDate: new Date(2023, 5, 15),
-        transactionMaxAmount: 3,
-        transactionHeatmap: JSON.stringify([]),
-        spentPercentile: 60.0,
-        syncedFrom: new Date(2023, 0, 1),
-        syncedTo: new Date(),
-      });
-      await Wrapped.save(wrapped);
-
-      const organMember = Object.assign(new WrappedOrganMember(), {
-        userId: user.id,
-        organId: ctx.organ.id,
-        ordinalTransactionCreated: 0,
-        ordinalTurnoverCreated: 1,
-      });
-      await ctx.connection.manager.save(organMember);
-
-      const res = await request(ctx.app)
-        .get(`/users/${user.id}/wrapped`)
         .set('Authorization', `Bearer ${ctx.userToken}`);
 
-      expect(res.status).to.equal(200);
-      expect(res.body.organs).to.be.an('array');
-      if (res.body.organs.length > 0) {
-        expect(res.body.organs[0]).to.have.property('organId');
-        expect(res.body.organs[0]).to.have.property('ordinalTransactionCreated');
-        expect(res.body.organs[0]).to.have.property('ordinalTurnoverCreated');
-      }
+      expect(res.status).to.equal(403);
     });
   });
 
   describe('POST /users/:id/wrapped', () => {
-    it('should return 200 after successful computation', async () => {
-      const user = ctx.users[0]; // Use the user that has the token
-      if (!user) return;
+    const setEligible = (extensiveDataProcessing: boolean) => User.update(ctx.users[0].id, { extensiveDataProcessing });
 
+    beforeEach(async () => {
+      await deleteWrapped();
+      await setEligible(true);
       process.env.WRAPPED_YEAR = '2023';
+    });
 
+    afterAll(async () => {
+      delete process.env.WRAPPED_YEAR;
+      await setEligible(ctx.users[0].extensiveDataProcessing);
+    });
+
+    it('should compute and return the wrapped of the user', async () => {
       const res = await request(ctx.app)
-        .post(`/users/${user.id}/wrapped`)
+        .post(`/users/${ctx.users[0].id}/wrapped`)
         .set('Authorization', `Bearer ${ctx.userToken}`);
 
       expect(res.status).to.equal(200);
+      expect(ctx.specification.validateModel('WrappedResponse', res.body, false, true).valid).to.be.true;
+      expect(res.body.userId).to.equal(ctx.users[0].id);
+      expect(res.body.year).to.equal(2023);
     });
 
-    it('should validate authorization policy (own)', async () => {
-      const user = ctx.users[0]; // Use the user that has the token
-      if (!user) return;
-
-      // Reload user without relations to avoid circular references
-      const freshUser = await User.findOne({ where: { id: user.id } });
-      if (!freshUser) return;
-
-      const userToken = await signTokenFor(freshUser, ctx.tokenHandler);
-      process.env.WRAPPED_YEAR = '2023';
+    it('should return an existing wrapped without computing it again', async () => {
+      await saveWrapped(ctx.users[0].id, 2023);
 
       const res = await request(ctx.app)
-        .post(`/users/${user.id}/wrapped`)
-        .set('Authorization', `Bearer ${userToken}`);
+        .post(`/users/${ctx.users[0].id}/wrapped`)
+        .set('Authorization', `Bearer ${ctx.userToken}`);
 
       expect(res.status).to.equal(200);
+      expect(res.body.transactions.transactionHeatmap).to.deep.equal([1, 2, 3]);
     });
 
-    it('should return 403 when user cannot update wrapped (all)', async () => {
-      const user = ctx.users[0]; // Use a regular user
-      const otherUser = ctx.users.find((u) => u.id !== user.id && u.extensiveDataProcessing && u.active && !u.deleted);
-      if (!user || !otherUser) return;
-
-      // Reload user without relations to avoid circular references
-      const freshUser = await User.findOne({ where: { id: user.id } });
-      if (!freshUser) return;
-
-      const userToken = await signTokenFor(freshUser, ctx.tokenHandler);
-      process.env.WRAPPED_YEAR = '2023';
+    it('should return 404 when the user does not allow extensive data processing', async () => {
+      await setEligible(false);
 
       const res = await request(ctx.app)
-        .post(`/users/${otherUser.id}/wrapped`)
-        .set('Authorization', `Bearer ${userToken}`);
+        .post(`/users/${ctx.users[0].id}/wrapped`)
+        .set('Authorization', `Bearer ${ctx.userToken}`);
+
+      expect(res.status).to.equal(404);
+    });
+
+    it('should return 403 for the wrapped of another user', async () => {
+      const res = await request(ctx.app)
+        .post(`/users/${ctx.users[1].id}/wrapped`)
+        .set('Authorization', `Bearer ${ctx.userToken}`);
 
       expect(res.status).to.equal(403);
-    });
-
-    it('should handle invalid userId parameter', async () => {
-      const res = await request(ctx.app)
-        .post('/users/invalid/wrapped')
-        .set('Authorization', `Bearer ${ctx.userToken}`);
-
-      // Should return 404 or 400 depending on route matching
-      expect([400, 404, 405]).to.include(res.status);
     });
   });
 

@@ -24,7 +24,7 @@ jobs:
     name: coverage-mariadb
     runs-on: ubuntu-latest
     container:
-      image: node:22
+      image: node:24
     services:
       mariadb:
         image: mariadb:lts

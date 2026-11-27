@@ -53,6 +53,7 @@ describe('Database', async (): Promise<void> => {
         'float': ['real', 'float'],
         'integer': ['integer', 'int'],
         'int': ['integer', 'int'],
+        'simple-json': ['text'],
       };
 
       if (typeof type === 'function') {
@@ -107,7 +108,6 @@ describe('Database', async (): Promise<void> => {
           tableName.includes('_roles_role') ||
           tableName.includes('_products_product') ||
           tableName.includes('_containers_container') ||
-          tableName.includes('_shifts_') ||
           tableName.includes('_del_') ||
           tableName.includes('_closure')
         )) {

@@ -23,10 +23,11 @@ export default defineConfig({
   ],
   test: {
     globals: true,
-    setupFiles: ['./test/setup.ts'],
+    setupFiles: ['./test/reset-modules.ts', './test/setup.ts'],
     include: ['test/**/*.ts'],
     exclude: [
       'test/setup.ts',
+      'test/reset-modules.ts',
       'test/root-hooks.ts',
       'test/vitest.d.ts',
       'test/seed/**',
@@ -40,11 +41,11 @@ export default defineConfig({
     testTimeout: 50000,
     hookTimeout: 50000,
     pool: 'forks',
-    poolOptions: {
-      forks: {
-        singleFork: true,
-      },
-    },
+    // Test files share one database, so run them one at a time.
+    fileParallelism: false,
+    // Reuse one process for all files instead of starting a new one per file (about 2x faster).
+    // test/reset-modules.ts clears the module cache before each file to keep files independent.
+    isolate: false,
     reporters: ['default'],
     onConsoleLog(log) {
       if (log.includes('ECONNREFUSED') && log.includes('6379')) return false;

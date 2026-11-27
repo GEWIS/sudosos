@@ -73,7 +73,7 @@ The client is generated from the OpenAPI spec that the backend emits at build ti
 
 ### Prerequisites
 
-- Node.js 22+
+- Node.js 24+
 - Java 11+ runtime (required by `openapi-generator-cli`) — only needed to *regenerate* the client;
   the generated `src/` is committed, so day-to-day frontend work never needs Java.
 - The backend's Swagger output must exist at `../../backend/out/swagger.json` — run `pnpm backend:swagger`

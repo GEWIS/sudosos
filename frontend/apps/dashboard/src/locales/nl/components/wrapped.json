@@ -1,0 +1,149 @@
+{
+  "components": {
+    "wrapped": {
+      "loading": "Je Wrapped wordt klaargezet...",
+      "consent": {
+        "header": "Data-analyse vereist",
+        "message": "Je moet uitgebreide data-analyse aanzetten om je Wrapped te bekijken.",
+        "subtext": "Je kunt dit later altijd weer uitzetten in je instellingen.",
+        "enable": "Aanzetten"
+      },
+      "controls": {
+        "close": "Sluiten",
+        "previous": "Vorige kaart",
+        "next": "Volgende kaart"
+      },
+      "top": "top {percentile}%",
+      "welcome": {
+        "hello": "Hallo {name}!",
+        "intro": "Welkom bij jouw",
+        "name": "SudoSOS Wrapped",
+        "title": "SudoSOS Wrapped {year}",
+        "hint": "Tik om te beginnen"
+      },
+      "transactions": {
+        "intro": "In {year} deed je",
+        "unit": "transactie | transacties",
+        "more": "{count} meer dan vorig jaar",
+        "fewer": "{count} minder dan vorig jaar",
+        "same": "Precies evenveel als vorig jaar",
+        "percentile": "Daarmee zit je in de {top} van de SudoSOS-gebruikers!"
+      },
+      "heatmap": {
+        "on": "Op {date}",
+        "made": "deed je",
+        "busiest": "Dit was je drukste dag van het jaar."
+      },
+      "topProduct": {
+        "intro": "In {year} was dit je favoriete product",
+        "bought": "Je kocht het {count} keer!",
+        "champion": "Niemand kocht er meer van dan jij!",
+        "rank": "Je was de nummer {rank} koper ervan!"
+      },
+      "products": {
+        "title": "Je topproducten",
+        "bought": "{count} keer gekocht",
+        "variety": "In totaal kocht je {items} items, {products} verschillende producten."
+      },
+      "totalSpent": {
+        "intro": "In {year} gaf je in totaal",
+        "using": "uit via {sudosos}",
+        "more": "{amount} meer dan vorig jaar",
+        "less": "{amount} minder dan vorig jaar",
+        "same": "Precies evenveel als vorig jaar",
+        "percentile": "Daarmee zit je in de {top} qua uitgaven!"
+      },
+      "distribution": {
+        "borrel": "Van de {total} die je uitgaf, ging {borrel} op tijdens borrels.",
+        "share": "Dat is {share}!",
+        "categories": "Het meeste geld ging naar",
+        "category": "{amount} ({share}) aan {category}"
+      },
+      "rhythm": {
+        "weekday": "Je favoriete dag was",
+        "weekdayShare": "{share} van je transacties",
+        "hour": "en je was het meest actief rond"
+      },
+      "streak": {
+        "active": "Je kocht iets op",
+        "days": "dag | dagen",
+        "longest": "Je langste reeks was {days}.",
+        "inARow": "{count} dag op rij | {count} dagen op rij",
+        "month": "{month} was je drukste maand."
+      },
+      "round": {
+        "title": "Je grootste rondje",
+        "items": "item | items",
+        "details": "in één transactie, voor {amount}"
+      },
+      "balance": {
+        "title": "Je saldo op peil",
+        "topUps": "Je waardeerde {count} keer op, {total} in totaal.",
+        "fines": "Je kreeg {count} boete, voor {total}. | Je kreeg {count} boetes, voor {total}.",
+        "noFines": "En geen enkele boete."
+      },
+      "archetype": {
+        "title": "Dat alles maakt jou",
+        "bartender": {
+          "title": "De Barman",
+          "description": "Je sloeg {count} transacties aan voor anderen, meer dan je er zelf deed."
+        },
+        "monsterSjaars": {
+          "title": "De Monster Sjaars",
+          "description": "Je kocht dit jaar {count} Monsters. Wie heeft er nou slaap nodig?"
+        },
+        "driver": {
+          "title": "De Bob",
+          "description": "Geen enkel alcoholisch drankje dit jaar."
+        },
+        "explorer": {
+          "title": "De Ontdekker",
+          "description": "Je probeerde {count} verschillende producten."
+        },
+        "regular": {
+          "title": "De Stamgast",
+          "description": "Je kocht iets op {days} verschillende dagen."
+        },
+        "daytimer": {
+          "title": "De Dagjesmens",
+          "description": "{share} van je aankopen deed je voor 16:30."
+        },
+        "purist": {
+          "title": "De Purist",
+          "description": "{share} van wat je kocht bevat alcohol."
+        },
+        "allRounder": {
+          "title": "De Allrounder",
+          "description": "Van alles wat, op elk moment van de dag."
+        }
+      },
+      "organs": {
+        "workedFor": "Je hebt hard gewerkt voor {organ}!",
+        "sellerRank": "Je was hun {rank} verkoper!",
+        "rank": "nummer {rank}",
+        "title": "Je organen",
+        "summary": "{turnover} uit {transactions} transacties",
+        "topShare": "Je zat in hun {top} van verkopers!",
+        "totals": "Je sloeg {transactions} transacties aan voor {customers} klanten, goed voor {turnover}."
+      },
+      "quiet": {
+        "title": "Een rustig jaar",
+        "text": "Je hebt in {year} niets gekocht via SudoSOS. Tot de volgende borrel?"
+      },
+      "summary": {
+        "transactions": "Transacties",
+        "spent": "Uitgegeven",
+        "product": "Favoriete product",
+        "weekday": "Favoriete dag",
+        "days": "Actieve dagen",
+        "share": "Delen",
+        "failed": "Je samenvatting kon niet gedeeld worden."
+      },
+      "final": {
+        "thanks": "Bedankt voor het gebruiken van {sudosos} in {year}!",
+        "wishes": "Fijne kerstdagen en een gelukkig nieuwjaar van de {abc}!",
+        "back": "Terug naar SudoSOS"
+      }
+    }
+  }
+}

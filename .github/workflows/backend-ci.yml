@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
-        with: { node-version: '22', cache: pnpm }
+        with: { node-version: '24', cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - name: No stray lockfiles
         run: '! (find . -name yarn.lock -o -name package-lock.json | grep -v node_modules | grep .)'
@@ -41,7 +41,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
-        with: { node-version: '22', cache: pnpm }
+        with: { node-version: '24', cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm run backend:build
       - run: pnpm run backend:swagger
@@ -59,7 +59,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
-        with: { node-version: '22', cache: pnpm }
+        with: { node-version: '24', cache: pnpm }
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '11' }
       - run: pnpm install --frozen-lockfile
@@ -74,7 +74,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     container:
-      image: node:22
+      image: node:24
     services:
       mariadb:
         image: mariadb:lts

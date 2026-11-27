@@ -19,23 +19,104 @@
  */
 
 /**
- * This is the module page of the wrapped entity.
+ * `Wrapped` is a yearly overview of a user's purchases. A {@link Wrapped} row holds the precomputed
+ * statistics of one user for one year, so the dashboard does not have to query all transactions.
+ *
+ * Only active, non-deleted users with `extensiveDataProcessing` get one. A day of the year runs
+ * from 06:00 to 06:00, so a night out counts as a single day.
+ *
+ * The year defaults to `WRAPPED_YEAR` from the configuration. Without it, Wrapped is about the
+ * current year, except in January, when it is about the year that just ended.
+ *
+ * ### Statistics
+ * {@link service/wrapped-service!WrappedService.updateWrapped | WrappedService.updateWrapped}
+ * computes:
+ * - `transactionCount`: the number of transactions.
+ * - `transactionHeatmap`: the number of transactions per day of the year.
+ * - `hourHistogram`: the number of transactions per hour of the day.
+ * - `daytimeTransactionCount`: the number of transactions between 06:00 and 16:30.
+ * - `transactionMaxDate` and `transactionMaxAmount`: the busiest day and its number of transactions.
+ * - `totalSpent`: the money spent. `borrelSpent` is the part spent at points of sale without
+ *   authentication, where a cashier rings up the purchases.
+ * - `previousTransactionCount` and `previousTotalSpent`: the same totals for the year before.
+ * - `transactionPercentile` and `spentPercentile`: the user's rank by transactions and by money
+ *   spent, among the users with at least one transaction that year. 10 means the top 10%.
+ * - `topProducts`: the five most bought products, each with the user's rank among its buyers.
+ * - `categories`: the money spent per product category.
+ * - `itemCount`, `alcoholicItemCount` and `distinctProducts`: the number of products bought, how
+ *   many of those contain alcohol, and how many different products that were.
+ * - `biggestRoundItems`, `biggestRoundSpent` and `biggestRoundDate`: the transaction with the most
+ *   products.
+ * - `topUpCount` and `topUpTotal`: the Stripe deposits of the user.
+ * - `fineCount` and `fineTotal`: the fines handed out to the user.
+ * - `syncedFrom` and `syncedTo`: the start of the year and the time of the last update.
+ *
+ * A {@link WrappedOrganMember} row ranks the user among the sellers of an organ they are a member
+ * of, by transactions and by turnover. 0 is first place. It also holds the transactions, turnover
+ * and distinct customers the user rang up for that organ.
+ *
+ * ### Updates
+ * `src/cron.ts` updates all rows every night at 01:45 in December, and once more on January 1st at
+ * 06:15 to include New Year's Eve. `POST /users/{id}/wrapped` computes the current Wrapped of one
+ * user if it does not exist yet; it never replaces an existing row.
+ * `GET /users/{id}/wrapped` returns the requested year, or the most recent one. The
+ * {@link internal/server-settings | server setting} `wrappedEnabled` only controls whether the
+ * frontends show Wrapped.
+ *
+ * For API interactions, refer to the [Swagger Documentation](https://sudosos.gewis.nl/api/api-docs/#/users).
  *
  * @module entity/wrapped
  * @mergeTarget
  */
-import { BaseEntity, Column, Entity, OneToOne, OneToMany, PrimaryColumn, JoinColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryColumn, JoinColumn } from 'typeorm';
+import { Dinero } from 'dinero.js';
 import User from './user/user';
 import WrappedOrganMember from './wrapped/wrapped-organ-member';
+import DineroTransformer from './transformer/dinero-transformer';
+
+export interface WrappedProduct {
+  id: number;
+  name: string;
+  image?: string;
+  count: number;
+  totalInclVat: number;
+  rank: number;
+}
+
+export interface WrappedCategory {
+  id: number;
+  name: string;
+  totalInclVat: number;
+}
 
 /**
  * @typedef {BaseEntity} Wrapped
  * @property {number} userId - ID of the user
+ * @property {number} year - The year the statistics are about
  * @property {number} transactionCount - Total number of transactions
+ * @property {number} previousTransactionCount - Total number of transactions in the year before
  * @property {number} transactionPercentile - Percentile rank of the user's transactions
  * @property {string} transactionMaxDate - Date of the maximum transaction
  * @property {number} transactionMaxAmount - Amount of the maximum transaction
  * @property {number[]} transactionHeatmap - Heatmap data of transactions
+ * @property {number[]} hourHistogram - Number of transactions per hour of the day
+ * @property {number} daytimeTransactionCount - Number of transactions between 06:00 and 16:30
+ * @property {Dinero.model} totalSpent - Total amount of money spent
+ * @property {Dinero.model} previousTotalSpent - Total amount of money spent in the year before
+ * @property {Dinero.model} borrelSpent - Amount of money spent at points of sale without authentication
+ * @property {number} spentPercentile - Percentile rank of the user's spending
+ * @property {Array<object>} topProducts - The most bought products
+ * @property {Array<object>} categories - The money spent per product category
+ * @property {number} itemCount - Number of products bought
+ * @property {number} alcoholicItemCount - Number of alcoholic products bought
+ * @property {number} distinctProducts - Number of different products bought
+ * @property {number} biggestRoundItems - Number of products in the largest transaction
+ * @property {Dinero.model} biggestRoundSpent - Price of the largest transaction
+ * @property {string} biggestRoundDate - Date of the largest transaction
+ * @property {number} topUpCount - Number of Stripe deposits
+ * @property {Dinero.model} topUpTotal - Total amount of the Stripe deposits
+ * @property {number} fineCount - Number of fines
+ * @property {Dinero.model} fineTotal - Total amount of the fines
  * @property {string} syncedFrom - The starting date from which the data was considered
  * @property {string} syncedTo - The last time the data was synced
  */
@@ -47,7 +128,12 @@ export default class Wrapped extends BaseEntity {
   })
   public userId: number;
 
-  @OneToOne(() => User, { onDelete: 'CASCADE' })
+  @PrimaryColumn({
+    type: 'integer',
+  })
+  public year: number;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   public user: User;
 
@@ -55,6 +141,11 @@ export default class Wrapped extends BaseEntity {
     type: 'integer',
   })
   public transactionCount: number;
+
+  @Column({
+    type: 'integer',
+  })
+  public previousTransactionCount: number;
 
   @Column({
     type: 'float',
@@ -73,14 +164,107 @@ export default class Wrapped extends BaseEntity {
   public transactionMaxAmount: number;
 
   @Column({
-    type: 'text',
+    type: 'simple-json',
   })
-  public transactionHeatmap: string;
+  public transactionHeatmap: number[];
+
+  @Column({
+    type: 'simple-json',
+  })
+  public hourHistogram: number[];
+
+  @Column({
+    type: 'integer',
+    default: 0,
+  })
+  public daytimeTransactionCount: number;
+
+  @Column({
+    type: 'integer',
+    transformer: DineroTransformer.Instance,
+  })
+  public totalSpent: Dinero;
+
+  @Column({
+    type: 'integer',
+    transformer: DineroTransformer.Instance,
+  })
+  public previousTotalSpent: Dinero;
+
+  @Column({
+    type: 'integer',
+    transformer: DineroTransformer.Instance,
+  })
+  public borrelSpent: Dinero;
 
   @Column({
     type: 'float',
   })
   public spentPercentile: number;
+
+  @Column({
+    type: 'simple-json',
+  })
+  public topProducts: WrappedProduct[];
+
+  @Column({
+    type: 'simple-json',
+  })
+  public categories: WrappedCategory[];
+
+  @Column({
+    type: 'integer',
+  })
+  public itemCount: number;
+
+  @Column({
+    type: 'integer',
+  })
+  public alcoholicItemCount: number;
+
+  @Column({
+    type: 'integer',
+  })
+  public distinctProducts: number;
+
+  @Column({
+    type: 'integer',
+  })
+  public biggestRoundItems: number;
+
+  @Column({
+    type: 'integer',
+    transformer: DineroTransformer.Instance,
+  })
+  public biggestRoundSpent: Dinero;
+
+  @Column({
+    type: 'datetime',
+    nullable: true,
+  })
+  public biggestRoundDate: Date | null;
+
+  @Column({
+    type: 'integer',
+  })
+  public topUpCount: number;
+
+  @Column({
+    type: 'integer',
+    transformer: DineroTransformer.Instance,
+  })
+  public topUpTotal: Dinero;
+
+  @Column({
+    type: 'integer',
+  })
+  public fineCount: number;
+
+  @Column({
+    type: 'integer',
+    transformer: DineroTransformer.Instance,
+  })
+  public fineTotal: Dinero;
 
   @Column({
     type: 'datetime',

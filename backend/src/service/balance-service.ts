@@ -223,7 +223,7 @@ export default class BalanceService extends WithManager {
       return [[], 0];
     }
 
-    const connection = this.manager.connection;
+    const manager = this.manager;
 
     const parameters: any[] = [];
     const d = date ? toMySQLString(date) : undefined;
@@ -362,12 +362,12 @@ export default class BalanceService extends WithManager {
     if (take) recordsQuery += `limit ${take} `;
     if (skip) recordsQuery += `offset ${skip} `;
 
-    const balances = await connection.query(recordsQuery, parameters);
+    const balances = await manager.query(recordsQuery, parameters);
     if (balances.length > 0 && balances[0].amount === undefined) {
       throw new Error('No balance returned');
     }
     const count = take || skip ?
-      (await connection.query(query, parameters)).length
+      (await manager.query(query, parameters)).length
       : balances.length;
 
     return [

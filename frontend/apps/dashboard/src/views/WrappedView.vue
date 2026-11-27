@@ -1,11 +1,9 @@
-<!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
-<!-- eslint-disable @intlify/vue-i18n/no-missing-keys -->
 <template>
   <div
-    class="fixed inset-0 z-50 w-screen h-screen flex items-center justify-center sm:static sm:inset-auto sm:w-auto sm:h-auto sm:items-center sm:justify-center"
+    class="fixed inset-0 z-50 w-screen h-dvh flex items-center justify-center sm:static sm:inset-auto sm:w-auto sm:h-auto sm:items-center sm:justify-center"
   >
     <div
-      v-if="!isLoading"
+      v-if="wrapped"
       class="w-full rounded-none sm:rounded-4xl sm:shadow-2xl h-full p-4 flex flex-col sm:h-160 sm:w-96 overflow-hidden relative"
     >
       <div class="bg-container absolute inset-0 pointer-events-none">
@@ -13,74 +11,113 @@
           v-if="prevBackground"
           class="bg-layer absolute inset-0 bg-cover bg-center prev"
           :class="{ fading: prevFading }"
-          :style="{ background: prevBackground }"
+          :style="{ background: prevBackground, backgroundSize: '200% 200%' }"
         />
 
-        <div class="bg-layer absolute inset-0 bg-cover bg-center current" :style="{ background: currentBackground }" />
+        <div
+          class="bg-layer absolute inset-0 bg-cover bg-center current"
+          :style="{ background: currentBackground, backgroundSize: '200% 200%' }"
+        />
+        <div class="grain absolute inset-0"></div>
       </div>
 
       <div class="card-content relative z-10 flex flex-col h-full">
-        <div class="relative overflow-hidden flex-1">
+        <!-- On phones the cards fill the screen, so the progress bar sits on top of them with a shade behind it. -->
+        <div class="scrim absolute -inset-x-4 -top-4 h-20 z-10 pointer-events-none sm:hidden"></div>
+        <div
+          class="relative z-20 flex items-center gap-3"
+          :class="cards[currentIndex].dark === false ? 'text-black' : 'text-white'"
+        >
+          <WrappedProgress
+            class="flex-1"
+            :count="cards.length"
+            :current="currentIndex"
+            :duration="progressDuration"
+            :paused="paused"
+            @complete="next"
+          />
+          <button
+            :aria-label="t('components.wrapped.controls.close')"
+            class="cursor-pointer"
+            type="button"
+            @click="close"
+          >
+            <i aria-hidden="true" class="pi pi-times"></i>
+          </button>
+        </div>
+
+        <div ref="viewport" class="absolute -inset-4 overflow-hidden sm:relative sm:inset-auto sm:flex-1">
           <div
             class="carousel-track h-full flex"
             :style="trackStyle"
-            @lostpointercapture="onPointerUp"
-            @pointercancel="onPointerUp"
+            @lostpointercapture="cancelPointer"
+            @pointercancel="cancelPointer"
             @pointerdown="onPointerDown"
             @pointermove="onPointerMove"
             @pointerup="onPointerUp"
           >
             <div
-              v-for="(card, index) in cardComponents"
+              v-for="(card, index) in cards"
               :key="index"
-              class="card min-h-0 min-w-full p-4 flex flex-col justify-center items-start h-full rounded-none sm:rounded-4xl overflow-hidden"
+              class="card relative min-h-0 min-w-full pt-14 px-8 pb-8 sm:p-4 flex flex-col justify-center items-start h-full rounded-none sm:rounded-4xl overflow-hidden"
             >
-              <component :is="card" v-bind="cardProps[index]" :active="currentIndex === index" />
+              <WrappedShapes v-if="card.shapes" :active="currentIndex === index" :variant="card.shapes" />
+              <component
+                :is="card.component"
+                v-bind="card.props"
+                :active="currentIndex === index"
+                :show-arrows="showArrows"
+                :wrapped="wrapped"
+              />
             </div>
           </div>
         </div>
 
         <WrappedControls
+          v-if="showArrows"
           :current-index="currentIndex"
-          :show-arrows="showArrows"
-          :total-cards="totalCards"
-          @go="goTo"
-          @next="next"
+          :total-cards="cards.length"
+          @next="advance"
           @prev="prev"
         />
       </div>
     </div>
-    <div v-else class="absolute inset-0 z-50 flex items-center justify-center p-4 sm:static sm:inset-auto sm:flex-1">
+    <div
+      v-else-if="isLoading"
+      class="absolute inset-0 z-50 flex items-center justify-center p-4 sm:static sm:inset-auto sm:flex-1"
+    >
       <div class="flex flex-col items-center gap-3 text-center">
-        <ProgressSpinner aria-label="Loading wrapped" stroke-width="6" style="width: 64px; height: 64px" />
+        <ProgressSpinner
+          :aria-label="t('components.wrapped.loading')"
+          stroke-width="6"
+          style="width: 64px; height: 64px"
+        />
         <div class="mt-4 text-lg font-medium">
-          {{ t('views.wrapped.gettingReady', 'Getting your wrapped ready...') }}
+          {{ t('components.wrapped.loading') }}
         </div>
       </div>
     </div>
     <Dialog
       :closable="false"
       :draggable="false"
-      :header="t('views.wrapped.dataAnalysisRequired', 'Data Analysis Required')"
+      :header="t('components.wrapped.consent.header')"
       modal
       :style="{ width: '25rem' }"
       :visible="showDataAnalysisDialog"
     >
       <div class="flex flex-col gap-4">
         <p>
-          {{
-            t('views.wrapped.dataAnalysisMessage', 'You need to enable extensive data analysis to view your wrapped.')
-          }}
+          {{ t('components.wrapped.consent.message') }}
         </p>
         <p class="text-sm text-gray-600">
-          {{ t('views.wrapped.dataAnalysisSubtext', 'You can always disable this later in your settings.') }}
+          {{ t('components.wrapped.consent.subtext') }}
         </p>
       </div>
       <template #footer>
         <div class="flex justify-end gap-2">
           <Button :label="t('common.cancel')" severity="secondary" @click="handleCancelDataAnalysis" />
           <Button
-            :label="t('views.wrapped.enable', 'Enable')"
+            :label="t('components.wrapped.consent.enable')"
             :loading="isEnablingDataAnalysis"
             @click="handleEnableDataAnalysis"
           />
@@ -91,318 +128,201 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick, onBeforeMount } from 'vue';
+import {
+  ref,
+  shallowRef,
+  computed,
+  watch,
+  nextTick,
+  provide,
+  onBeforeMount,
+  onMounted,
+  onBeforeUnmount,
+  type Component,
+} from 'vue';
 import { useAuthStore } from '@sudosos/sudosos-frontend-common';
-import type { ReportResponse, WrappedResponse, UserResponse, ReportProductEntryResponse } from '@gewis/sudosos-client';
-// eslint-disable-next-line import/no-named-as-default
-import Dinero from 'dinero.js';
+import type { WrappedResponse } from '@gewis/sudosos-client';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'openvue/usetoast';
 import { useRouter } from 'vue-router';
 import type { AxiosError } from 'axios';
-import WelcomeCard from '@/components/wrapped/0_WelcomeCard.vue';
-import TransactionsCard from '@/components/wrapped/1_TransactionsCard.vue';
-import CalendarHeatmapCard from '@/components/wrapped/2_CalendarHeatmapCard.vue';
-import TopProductCard from '@/components/wrapped/3_TopProductCard.vue';
-import ProductsCard from '@/components/wrapped/4_ProductsCard.vue';
-import TotalSpentCard from '@/components/wrapped/5_TotalSpentCard.vue';
-import SpendingDistributionCard from '@/components/wrapped/6_SpendingDistributionCard.vue';
-import FinalCard from '@/components/wrapped/7_FinalCard.vue';
-import OrgansCard from '@/components/wrapped/8_OrgansCard.vue';
-import OrgansOverviewCard from '@/components/wrapped/9_OrgansOverviewCard.vue';
+import WelcomeCard from '@/components/wrapped/WelcomeCard.vue';
+import TransactionsCard from '@/components/wrapped/TransactionsCard.vue';
+import CalendarHeatmapCard from '@/components/wrapped/CalendarHeatmapCard.vue';
+import TopProductCard from '@/components/wrapped/TopProductCard.vue';
+import ProductsCard from '@/components/wrapped/ProductsCard.vue';
+import TotalSpentCard from '@/components/wrapped/TotalSpentCard.vue';
+import SpendingDistributionCard from '@/components/wrapped/SpendingDistributionCard.vue';
+import RhythmCard from '@/components/wrapped/RhythmCard.vue';
+import StreakCard from '@/components/wrapped/StreakCard.vue';
+import BiggestRoundCard from '@/components/wrapped/BiggestRoundCard.vue';
+import BalanceCard from '@/components/wrapped/BalanceCard.vue';
+import ArchetypeCard from '@/components/wrapped/ArchetypeCard.vue';
+import SummaryCard from '@/components/wrapped/SummaryCard.vue';
+import QuietYearCard from '@/components/wrapped/QuietYearCard.vue';
+import FinalCard from '@/components/wrapped/FinalCard.vue';
+import OrgansCard from '@/components/wrapped/OrgansCard.vue';
+import OrgansOverviewCard from '@/components/wrapped/OrgansOverviewCard.vue';
 import WrappedControls from '@/components/wrapped/Controls/WrappedControls.vue';
+import WrappedProgress from '@/components/wrapped/Controls/WrappedProgress.vue';
+import { activeRevealKey, type CardReveal } from '@/composables/wrappedCard';
+import { useSizeBreakpoints } from '@/composables/sizeBreakpoints';
+import WrappedShapes from '@/components/wrapped/WrappedShapes.vue';
+import type { ShapeVariant } from '@/components/wrapped/shapes';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
+import { organsByRank } from '@/utils/wrappedUtils';
 import posImage from '@/assets/img/wrapped/pos.png';
-import bacImage from '@/assets/img/wrapped/BAC.png';
+import bacImage from '@/assets/img/wrapped/BAC.webp';
 import ivvImage from '@/assets/img/wrapped/IVV.png';
-import boomImage from '@/assets/img/wrapped/BOOM.png';
-import athenaImage from '@/assets/img/wrapped/ATHENA.png';
-import defiImage from '@/assets/img/wrapped/DEFI.png';
+import boomImage from '@/assets/img/wrapped/BOOM.webp';
+import athenaImage from '@/assets/img/wrapped/ATHENA.webp';
+import defiImage from '@/assets/img/wrapped/DEFI.webp';
 
+interface Card {
+  component: Component;
+  background: string;
+  dark?: boolean;
+  shapes?: ShapeVariant;
+  autoAdvance?: boolean;
+  props?: Record<string, unknown>;
+}
+
+interface OrganTheme {
+  image: string;
+  background: string;
+  dark: boolean;
+}
+
+const organThemes: Record<string, OrganTheme> = {
+  BAC: { image: bacImage, background: '#004b31', dark: true },
+  'I.V.V': { image: ivvImage, background: '#14213d', dark: true },
+  'B.O.O.M': { image: boomImage, background: '#9EFF00', dark: false },
+  ATHENA: { image: athenaImage, background: '#d53d86', dark: true },
+  Défi: { image: defiImage, background: '#9678d3', dark: true },
+};
+const defaultOrganTheme: OrganTheme = { image: posImage, background: '#b40000', dark: true };
+
+const { t } = useI18n();
 const authStore = useAuthStore();
 const toast = useToast();
 const router = useRouter();
+const { isSm: showArrows } = useSizeBreakpoints();
 
-const report = ref<ReportResponse>();
-const report2024 = ref<ReportResponse>();
 const wrapped = ref<WrappedResponse>();
-const organDetails = ref<Record<number, UserResponse>>({});
 const isLoading = ref(true);
 const showDataAnalysisDialog = ref(false);
 const isEnablingDataAnalysis = ref(false);
 
-const transactionCount = computed(() => {
-  return report.value?.transactionCount || 0;
-});
+const cards = computed<Card[]>(() => {
+  if (!wrapped.value) return [];
 
-const transactionCount2024 = computed(() => {
-  return report2024.value?.transactionCount || 0;
-});
-
-const transactionPercentile = computed(() => {
-  return wrapped.value?.transactions.transactionPercentile || 100;
-});
-
-const transactionHeatmap = computed(() => {
-  return wrapped.value?.transactions.transactionHeatmap || [];
-});
-
-const transactionMaxDate = computed(() => {
-  const maxDate = wrapped.value?.transactions.transactionMaxDate;
-  return maxDate ? new Date(maxDate) : null;
-});
-
-const transactionMaxAmount = computed(() => {
-  return wrapped.value?.transactions.transactionMaxAmount || 0;
-});
-
-const spentPercentile = computed(() => {
-  return wrapped.value?.spentPercentile || 100;
-});
-
-const total = computed(() => {
-  return report.value?.totalInclVat || { amount: 0, currency: 'EUR', precision: 2 };
-});
-
-const total2024 = computed(() => {
-  return report2024.value?.totalInclVat || { amount: 0, currency: 'EUR', precision: 2 };
-});
-
-const totalBorrels = computed(() => {
-  if (report.value == undefined) {
-    return 0;
-  }
-
-  return Dinero(report.value.totalInclVat as Dinero.Options)
-    .subtract(Dinero(report.value.data.pos!.find((p) => p.pos.id == 1)!.totalInclVat as Dinero.Options))
-    .toObject();
-});
-
-const totalAlc = computed(() => {
-  if (report.value == undefined) {
-    return 0;
-  }
-
-  return report.value.data.categories!.find((p) => p.category.id == 1)?.totalInclVat.amount || 0;
-});
-
-const totalSoda = computed(() => {
-  if (report.value == undefined) {
-    return 0;
-  }
-
-  return report.value.data.categories!.find((p) => p.category.id == 2)?.totalInclVat.amount || 0;
-});
-
-const totalSnacks = computed(() => {
-  if (report.value == undefined) {
-    return 0;
-  }
-
-  return report.value.data.categories!.find((p) => p.category.id == 3)?.totalInclVat.amount || 0;
-});
-
-const favoriteProducts = computed(() => {
-  if (report.value == undefined) {
-    return [];
-  }
-
-  const productMap = new Map<number, ReportProductEntryResponse>();
-
-  for (const productEntry of report.value.data.products || []) {
-    const key = productEntry.product?.id;
-    const existing = productMap.get(key);
-
-    if (existing) {
-      existing.count += productEntry.count;
-      existing.product = productEntry.product;
-    } else {
-      productMap.set(key, { ...productEntry });
-    }
-  }
-
-  const aggregated = Array.from(productMap.values());
-
-  return aggregated.sort((a, b) => b.count - a.count).slice(0, 10);
-});
-
-const favoriteProduct = computed(() => {
-  return favoriteProducts.value[0];
-});
-
-const organs = computed(() => {
-  return wrapped.value?.organs || [];
-});
-
-const hasOrgans = computed(() => {
-  return organs.value.length > 0;
-});
-
-const hasMultipleOrgans = computed(() => {
-  return organs.value.length > 1;
-});
-
-const width = ref<number>(window.innerWidth);
-const showArrows = computed(() => width.value >= 640);
-
-const updateWindowWidth = () => {
-  width.value = window.innerWidth;
-};
-
-const userFirstName = computed(() => {
-  return authStore.getUser?.firstName;
-});
-
-type CardProps = Record<string, unknown>;
-
-const cardProps = computed<CardProps[]>(() => {
-  const props: CardProps[] = [
-    { firstName: userFirstName.value, showArrows: showArrows.value },
+  const deck: Card[] = [
     {
-      transactionCount: transactionCount.value,
-      previousTransactionCount: transactionCount2024.value,
-      transactionPercentile: transactionPercentile.value,
-    },
-    {
-      heatmap: transactionHeatmap.value,
-      maxDate: transactionMaxDate.value,
-      maxAmount: transactionMaxAmount.value,
-    },
-    {
-      product: favoriteProduct.value,
-    },
-    {
-      topFiveProducts: favoriteProducts.value.slice(0, 5),
-    },
-    {
-      totalSpent: total.value,
-      previousTotalSpent: total2024.value,
-      totalSpentPercentile: spentPercentile.value,
-    },
-    {
-      totalSpent: total.value,
-      totalSpentBorrel: totalBorrels.value,
-      totalSpentAlcohol: totalAlc.value,
-      totalSpentSoda: totalSoda.value,
-      totalSpentSnacks: totalSnacks.value,
+      component: WelcomeCard,
+      background: '#b40000',
+      shapes: 'welcome',
+      props: { firstName: authStore.getUser?.firstName },
     },
   ];
-
-  if (hasOrgans.value) {
-    const organName = organDetails.value[organs.value[0].organId]?.firstName;
-    let image = posImage;
-    let dark = true;
-    switch (organName) {
-      case 'BAC':
-        image = bacImage;
-        break;
-      case 'I.V.V':
-        image = ivvImage;
-        break;
-      case 'B.O.O.M':
-        image = boomImage;
-        dark = false;
-        break;
-      case 'ATHENA':
-        image = athenaImage;
-        break;
-      case 'Défi':
-        image = defiImage;
-        break;
-    }
-
-    props.push({
-      organs: organs.value,
-      organDetails: organDetails.value,
-      image: image,
-      dark: dark,
+  if (wrapped.value.transactions.transactionCount > 0) {
+    deck.push(
+      {
+        component: TransactionsCard,
+        background: 'linear-gradient(160deg, #b40000 0%, #3d0000 100%)',
+        shapes: 'circles',
+      },
+      {
+        component: CalendarHeatmapCard,
+        background: 'linear-gradient(90deg, #0d1117 0%, #1f2937 100%)',
+        shapes: 'sparkles',
+      },
+      { component: RhythmCard, background: 'linear-gradient(160deg, #1e3a8a 0%, #0f172a 100%)', shapes: 'rings' },
+      { component: StreakCard, background: 'linear-gradient(135deg, #0f766e 0%, #134e4a 100%)', shapes: 'squiggles' },
+      {
+        component: TopProductCard,
+        background: 'linear-gradient(135deg, #004ff9 0%, #000000 100%)',
+        shapes: 'spotlight',
+      },
+      { component: ProductsCard, background: 'linear-gradient(135deg, #662d8c 0%, #ed1e79 100%)', shapes: 'pills' },
+      {
+        component: BiggestRoundCard,
+        background: 'linear-gradient(135deg, #d97706 0%, #7c2d12 100%)',
+        shapes: 'bursts',
+      },
+      { component: TotalSpentCard, background: 'linear-gradient(45deg, #233329 0%, #63d471 100%)', shapes: 'blobs' },
+      {
+        component: SpendingDistributionCard,
+        background: 'linear-gradient(135deg, #ff8800 0%, #ff3300 100%)',
+        shapes: 'halves',
+      },
+    );
+  } else {
+    deck.push({
+      component: QuietYearCard,
+      background: 'linear-gradient(90deg, #0d1117 0%, #1f2937 100%)',
+      shapes: 'squiggles',
+    });
+  }
+  if (wrapped.value.topUps.count > 0 || wrapped.value.fines.count > 0) {
+    deck.push({
+      component: BalanceCard,
+      background: 'linear-gradient(135deg, #0369a1 0%, #164e63 100%)',
+      shapes: 'rings',
     });
   }
 
-  if (hasMultipleOrgans.value) {
-    props.push({
-      organs: organs.value,
-      organDetails: organDetails.value,
+  for (const organ of organsByRank(wrapped.value)) {
+    const theme = organThemes[organ.organ.firstName] ?? defaultOrganTheme;
+    deck.push({
+      component: OrgansCard,
+      background: theme.background,
+      dark: theme.dark,
+      shapes: 'mono',
+      props: { organ, image: theme.image, dark: theme.dark },
+    });
+  }
+  if (wrapped.value.organs.length > 1) {
+    deck.push({
+      component: OrgansOverviewCard,
+      background: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)',
+      shapes: 'pills',
     });
   }
 
-  props.push({ showArrows: showArrows.value });
-  return props;
-});
-
-const cardComponents = computed(() => {
-  const base: unknown[] = [WelcomeCard, TransactionsCard, CalendarHeatmapCard, TopProductCard, ProductsCard];
-
-  base.push(TotalSpentCard, SpendingDistributionCard);
-
-  if (hasOrgans.value) {
-    base.push(OrgansCard);
+  if (wrapped.value.transactions.transactionCount > 0) {
+    deck.push(
+      {
+        component: ArchetypeCard,
+        background: 'linear-gradient(135deg, #7c3aed 0%, #1e1b4b 100%)',
+        shapes: 'bursts',
+      },
+      {
+        component: SummaryCard,
+        background: '#b40000',
+        autoAdvance: false,
+        props: { firstName: authStore.getUser?.firstName },
+      },
+    );
   }
-
-  if (hasMultipleOrgans.value) {
-    base.push(OrgansOverviewCard);
-  }
-
-  base.push(FinalCard);
-  return base;
+  deck.push({
+    component: FinalCard,
+    background: 'linear-gradient(135deg, #b40000 0%, #004b31 100%)',
+    shapes: 'welcome',
+  });
+  return deck;
 });
 
 const currentIndex = ref(0);
-
-const cardBackgrounds = computed(() => {
-  const base = [
-    '#b40000',
-    '#ffffff',
-    'linear-gradient(90deg, #0d1117 0%, #1f2937 100%)',
-    'linear-gradient(135deg, #004ff9 0%, #000000 100%)',
-    'linear-gradient(135deg, #662d8c 0%, #ed1e79 100%)',
-  ];
-
-  base.push('linear-gradient(45deg, #233329 0%, #63d471 100%)', 'linear-gradient(135deg, #ff8800 0%, #ff3300 100%)');
-
-  if (hasOrgans.value) {
-    const organName = organDetails.value[organs.value[0].organId]?.firstName;
-    switch (organName) {
-      case 'BAC':
-        base.push('#004b31');
-        break;
-      case 'I.V.V':
-        base.push('#14213d');
-        break;
-      case 'B.O.O.M':
-        base.push('#9EFF00');
-        break;
-      case 'ATHENA':
-        base.push('#d53d86');
-        break;
-      case 'Défi':
-        base.push('#9678d3');
-        break;
-      default:
-        base.push('#b40000');
-    }
-  }
-
-  if (hasMultipleOrgans.value) {
-    base.push('linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)');
-  }
-
-  base.push('linear-gradient(135deg, #b40000 0%, #004b31 100%)');
-  return base;
-});
-
-const currentBackground = computed(() => cardBackgrounds.value[currentIndex.value] || '#b40000');
-
-const totalCards = computed(() => cardComponents.value.length);
+const currentBackground = computed(() => cards.value[currentIndex.value]?.background);
 
 const prevBackground = ref<string | null>(null);
 const prevFading = ref(false);
 const bgFadeDuration = 420;
 
 watch(currentIndex, async (newIndex, oldIndex) => {
-  if (oldIndex === undefined || oldIndex === newIndex) return;
-  prevBackground.value = cardBackgrounds.value[oldIndex]!;
+  if (oldIndex === newIndex) return;
+  prevBackground.value = cards.value[oldIndex].background;
   prevFading.value = false;
 
   await nextTick();
@@ -414,135 +334,119 @@ watch(currentIndex, async (newIndex, oldIndex) => {
   }, bgFadeDuration);
 });
 
-function clampIndex(i: number) {
-  return Math.max(0, Math.min(i, totalCards.value - 1));
+function goTo(index: number) {
+  currentIndex.value = Math.max(0, Math.min(index, cards.value.length - 1));
 }
-
 function next() {
-  currentIndex.value = clampIndex(currentIndex.value + 1);
+  goTo(currentIndex.value + 1);
 }
 function prev() {
-  currentIndex.value = clampIndex(currentIndex.value - 1);
-}
-function goTo(i: number) {
-  currentIndex.value = clampIndex(i);
+  goTo(currentIndex.value - 1);
 }
 
-let pointerDown = false;
-let dragging = false;
-let startX = 0;
-let currentX = 0;
-let deltaX = 0;
-let startY = 0;
+const READ_TIME = 5000;
+const HOLD_TIME = 250;
+const SWIPE_DISTANCE = 25;
+const BACK_ZONE = 0.3;
 
-const threshold = 25; // px to trigger a swipe
+const activeReveal = shallowRef<CardReveal>();
+provide(activeRevealKey, activeReveal);
 
-const trackStyle = computed(() => {
-  const baseTranslate = -currentIndex.value * 100;
-  if (dragging && deltaX !== 0) {
-    // while dragging, don't animate so movement follows pointer
-    return {
-      transform: `translateX(calc(${baseTranslate}% + ${deltaX}px))`,
-      transition: 'none',
-    };
-  }
+const paused = ref(false);
+const progressDuration = ref(0);
 
-  // smooth transition when snapping to wrapped
-  return {
-    transform: `translateX(${baseTranslate}%)`,
-    transition: 'transform 400ms cubic-bezier(.2,.8,.2,1)',
-  };
+watch(activeReveal, (reveal) => {
+  const stays =
+    !reveal ||
+    cards.value[currentIndex.value].autoAdvance === false ||
+    currentIndex.value === cards.value.length - 1 ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  progressDuration.value = stays ? 0 : (reveal.done.value ? 0 : reveal.duration) + READ_TIME;
 });
 
+/**
+ * Completes the reveal of the current card, or moves on when it is complete already.
+ */
+function advance() {
+  const reveal = activeReveal.value;
+  if (reveal && !reveal.done.value) reveal.finish();
+  else next();
+}
+
+function close() {
+  void router.push({ name: 'home' });
+}
+
+const viewport = ref<HTMLElement>();
+const drag = ref<{ x: number; y: number; offset: number }>();
+let holdTimer = 0;
+
+const trackStyle = computed(() => ({
+  transform: `translateX(calc(${-currentIndex.value * 100}% + ${drag.value?.offset ?? 0}px))`,
+  transition: drag.value?.offset ? 'none' : 'transform 400ms cubic-bezier(.2,.8,.2,1)',
+}));
+
 function onPointerDown(e: PointerEvent) {
-  pointerDown = true;
-  dragging = false;
-  startX = e.clientX;
-  startY = e.clientY;
-  currentX = startX;
-  deltaX = 0;
-  (e.target as Element).setPointerCapture(e.pointerId);
+  if ((e.target as Element).closest('button, a')) return;
+  drag.value = { x: e.clientX, y: e.clientY, offset: 0 };
+  holdTimer = window.setTimeout(() => (paused.value = true), HOLD_TIME);
+  (e.currentTarget as Element).setPointerCapture(e.pointerId);
 }
 
 function onPointerMove(e: PointerEvent) {
-  if (!pointerDown) return;
-  currentX = e.clientX;
-  const dx = currentX - startX;
-  const dy = e.clientY - startY;
-  // if vertical scrolling is dominant, don't treat as horizontal swipe
-  if (!dragging && Math.abs(dy) > Math.abs(dx)) {
-    return;
-  }
-  dragging = true;
-  deltaX = dx;
+  if (!drag.value) return;
+  const dx = e.clientX - drag.value.x;
+  const dy = e.clientY - drag.value.y;
+  if (drag.value.offset === 0 && Math.abs(dy) > Math.abs(dx)) return;
+  drag.value.offset = dx;
+}
+
+function cancelPointer() {
+  clearTimeout(holdTimer);
+  paused.value = false;
+  drag.value = undefined;
 }
 
 function onPointerUp(e: PointerEvent) {
-  if (!pointerDown) return;
-  pointerDown = false;
-  (e.target as Element).releasePointerCapture(e.pointerId);
+  if (!drag.value || !viewport.value) return;
+  const { offset } = drag.value;
+  const held = paused.value;
+  cancelPointer();
 
-  if (!dragging) {
-    deltaX = 0;
-    return;
+  if (offset > SWIPE_DISTANCE) prev();
+  else if (offset < -SWIPE_DISTANCE) next();
+  else if (!held) {
+    const { left, width } = viewport.value.getBoundingClientRect();
+    if (e.clientX - left < width * BACK_ZONE) prev();
+    else advance();
   }
-
-  if (deltaX > threshold) {
-    // swipe right -> previous
-    prev();
-  } else if (deltaX < -threshold) {
-    // swipe left -> next
-    next();
-  }
-
-  // reset drag state
-  deltaX = 0;
-  dragging = false;
 }
 
-async function loadWrappedData() {
-  const userId = authStore.getUser!.id;
+function onKeydown(e: KeyboardEvent) {
+  if (!wrapped.value) return;
+  if (e.key === 'ArrowRight') advance();
+  else if (e.key === 'ArrowLeft') prev();
+  else if (e.key === 'Escape') close();
+}
 
-  report.value = (
-    await apiService.user.getUsersPurchasesReport({ id: userId, fromDate: '2025-01-01', tillDate: '2025-12-31' })
-  ).data;
+onMounted(() => window.addEventListener('keydown', onKeydown));
+onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
 
-  report2024.value = (
-    await apiService.user.getUsersPurchasesReport({ id: userId, fromDate: '2024-01-01', tillDate: '2024-12-31' })
-  ).data;
-
-  wrapped.value = (await apiService.user.getWrapped({ id: userId })).data;
-
-  // Fetch organ details
-  if (wrapped.value?.organs && wrapped.value.organs.length > 0) {
-    const organDetailsMap: Record<number, UserResponse> = {};
-    await Promise.all(
-      wrapped.value.organs.map(async (organ) => {
-        try {
-          const response = await apiService.user.getIndividualUser({ id: organ.organId });
-          organDetailsMap[organ.organId] = response.data;
-        } catch (e) {
-          console.error(`Failed to fetch organ ${organ.organId}`, e);
-        }
-      }),
-    );
-    organDetails.value = organDetailsMap;
-  }
+async function loadWrapped() {
+  wrapped.value = (await apiService.user.updateWrapped({ id: authStore.getUser!.id })).data;
 }
 
 onBeforeMount(async () => {
-  isLoading.value = true;
-  try {
-    const user = authStore.getUser;
-    if (!user?.extensiveDataProcessing) {
-      showDataAnalysisDialog.value = true;
-      isLoading.value = false;
-      return;
-    }
+  if (!authStore.getUser?.extensiveDataProcessing) {
+    showDataAnalysisDialog.value = true;
+    isLoading.value = false;
+    return;
+  }
 
-    await loadWrappedData();
-  } catch (e) {
-    console.error('Failed to load wrapped data', e);
+  try {
+    await loadWrapped();
+  } catch (err: unknown) {
+    handleError(err as AxiosError, toast);
   } finally {
     isLoading.value = false;
   }
@@ -556,15 +460,14 @@ function handleCancelDataAnalysis() {
 async function handleEnableDataAnalysis() {
   isEnablingDataAnalysis.value = true;
   try {
-    const userId = authStore.getUser!.id;
-
-    // Update user preference
-    await apiService.user.updateUser({ id: userId, updateUserRequest: { extensiveDataProcessing: true } });
+    await apiService.user.updateUser({
+      id: authStore.getUser!.id,
+      updateUserRequest: { extensiveDataProcessing: true },
+    });
 
     isLoading.value = true;
     showDataAnalysisDialog.value = false;
-    await apiService.user.updateWrapped({ id: userId });
-    await loadWrappedData();
+    await loadWrapped();
 
     toast.add({
       severity: 'success',
@@ -579,16 +482,6 @@ async function handleEnableDataAnalysis() {
     isLoading.value = false;
   }
 }
-
-onMounted(() => {
-  window.addEventListener('resize', updateWindowWidth);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', updateWindowWidth);
-});
-
-const { t } = useI18n();
 </script>
 
 <style>
@@ -608,6 +501,27 @@ const { t } = useI18n();
 
 .bg-layer.current {
   z-index: 0; /* underneath while prev fades out on top */
+  animation: drift 14s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  from {
+    background-position: 0% 30%;
+  }
+  to {
+    background-position: 100% 70%;
+  }
+}
+
+.grain {
+  z-index: 2;
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.scrim {
+  background: linear-gradient(rgb(0 0 0 / 0.3), transparent);
 }
 
 .bg-layer.prev {
@@ -630,13 +544,14 @@ const { t } = useI18n();
   padding: 1rem;
   box-sizing: border-box;
   transition:
-    transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 650ms cubic-bezier(0.34, 1.56, 0.64, 1),
     opacity 340ms ease;
-  transform: translateY(10px) scale(0.99);
+  transform: scale(0.88) rotate(-2deg);
+  opacity: 0.5;
 }
 
 .card-root.active {
-  transform: translateY(0) scale(1);
+  transform: none;
   opacity: 1;
 }
 
@@ -658,15 +573,84 @@ const { t } = useI18n();
 
 .fade-slide {
   opacity: 0;
-  transform: translateY(6px);
+  transform: translateY(1.75rem) rotate(-2deg) scale(0.96);
   transition:
-    opacity 240ms ease,
-    transform 240ms ease;
+    opacity 250ms ease,
+    transform 650ms cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: none;
+}
+.fade-slide.pop {
+  transform: scale(0.3) rotate(-10deg);
 }
 .fade-slide[aria-hidden='false'] {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
   pointer-events: auto;
+}
+
+.card-root.active .content > :is(h1, h2, h3, p):not(.fade-slide) {
+  animation: rise-in 700ms cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+.card-root.active .content > :is(h1, h2, h3, p):not(.fade-slide):nth-child(2) {
+  animation-delay: 100ms;
+}
+.card-root.active .content > :is(h1, h2, h3, p):not(.fade-slide):nth-child(3) {
+  animation-delay: 200ms;
+}
+.card-root.active .content > :is(h1, h2, h3, p):not(.fade-slide):nth-child(n + 4) {
+  animation-delay: 300ms;
+}
+
+.pop {
+  display: inline-block;
+}
+.card-root.active .content .pop:not(.fade-slide) {
+  animation: pop-in 900ms cubic-bezier(0.34, 1.56, 0.64, 1) 200ms backwards;
+}
+
+.mark {
+  padding: 0 0.2em;
+  border-radius: 0.2em;
+  background: linear-gradient(#cdf564, #cdf564) no-repeat left / 0% 100%;
+  box-decoration-break: clone;
+  transition:
+    background-size 500ms cubic-bezier(0.65, 0, 0.35, 1) 400ms,
+    color 0s 550ms;
+}
+.card-root.active .mark {
+  background-size: 100% 100%;
+  color: #111;
+}
+.card-root .fade-slide[aria-hidden='true'] .mark {
+  background-size: 0% 100%;
+  color: inherit;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(2.5rem) rotate(-3deg) scale(0.95);
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.2) rotate(-12deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-layer.current,
+  .card-root.active .content > *,
+  .card-root.active .content .pop {
+    animation: none;
+  }
+
+  .card-root,
+  .fade-slide,
+  .fade-slide.pop {
+    transform: none;
+  }
 }
 </style>

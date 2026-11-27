@@ -19,9 +19,23 @@
  */
 
 /**
- * This is the module page of the user-setting.
+ * A `UserSetting` is one preference of a {@link users!User | User}, stored as a key-value pair.
+ * The frontends use these settings; the backend only stores them.
+ *
+ * ### Keys
+ * {@link IUserSettings} lists the keys. Defaults are in `src/user-settings/user-settings-defaults.ts`.
+ * - `betaEnabled`: whether the user opted in to dashboard beta features.
+ * - `dashboardTheme`: the organ theme the dashboard shows, as a {@link DashboardTheme}.
+ * - `language`: the preferred language, one of {@link SUPPORTED_LANGUAGES}.
+ *
+ * A user only has rows for settings they changed. {@link UserSettingsStore} fills in the defaults.
+ * `GET /users/{id}/settings` returns all settings. `PATCH /users/{id}/settings` updates the given
+ * keys.
+ *
+ * For API interactions, refer to the [Swagger Documentation](https://sudosos.gewis.nl/api/api-docs/#/users).
  *
  * @module internal/user-settings
+ * @mergeTarget
  */
 
 import { Column, Entity, Index, JoinColumn, ManyToOne, Unique } from 'typeorm';

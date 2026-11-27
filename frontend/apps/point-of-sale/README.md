@@ -18,7 +18,7 @@ Make sure to check your layouts at these sizes for best results.
 
 ## Prerequisites
 
-- **Node.js 22+** ([Download](https://nodejs.org/))
+- **Node.js 24+** ([Download](https://nodejs.org/))
 - **pnpm** (with corepack enabled) — installs happen at the monorepo root, not in this directory.
 
 ## Getting Started
