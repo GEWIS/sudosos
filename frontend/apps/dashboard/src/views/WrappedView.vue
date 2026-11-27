@@ -171,7 +171,7 @@ import WrappedShapes from '@/components/wrapped/WrappedShapes.vue';
 import type { ShapeVariant } from '@/components/wrapped/shapes';
 import apiService from '@/services/ApiService';
 import { handleError } from '@/utils/errorUtils';
-import { bestOrgan } from '@/utils/wrappedUtils';
+import { organsByRank } from '@/utils/wrappedUtils';
 import posImage from '@/assets/img/wrapped/pos.png';
 import bacImage from '@/assets/img/wrapped/BAC.webp';
 import ivvImage from '@/assets/img/wrapped/IVV.png';
@@ -272,8 +272,7 @@ const cards = computed<Card[]>(() => {
     });
   }
 
-  const organ = bestOrgan(wrapped.value);
-  if (organ) {
+  for (const organ of organsByRank(wrapped.value)) {
     const theme = organThemes[organ.organ.firstName] ?? defaultOrganTheme;
     deck.push({
       component: OrgansCard,

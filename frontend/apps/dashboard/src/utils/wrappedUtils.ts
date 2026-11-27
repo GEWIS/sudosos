@@ -5,10 +5,17 @@ export function organName({ organ }: WrappedOrganMemberResponse): string {
 }
 
 /**
+ * The organs the user sold for, best first: by the turnover they created relative to the other sellers.
+ */
+export function organsByRank(wrapped: WrappedResponse): WrappedOrganMemberResponse[] {
+  return [...wrapped.organs].sort((a, b) => a.ordinalTurnoverCreated - b.ordinalTurnoverCreated);
+}
+
+/**
  * The organ for which the user created the most turnover, relative to its other sellers.
  */
 export function bestOrgan(wrapped: WrappedResponse): WrappedOrganMemberResponse | undefined {
-  return [...wrapped.organs].sort((a, b) => a.ordinalTurnoverCreated - b.ordinalTurnoverCreated)[0];
+  return organsByRank(wrapped)[0];
 }
 
 /**
