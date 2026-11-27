@@ -88,6 +88,10 @@
           "title": "Barman",
           "description": "Liczba transakcji nabitych dla innych: {count}. To więcej niż Twoich własnych."
         },
+        "monsterSjaars": {
+          "title": "Monster Sjaars",
+          "description": "Liczba kupionych Monsterów w tym roku: {count}. Kto by potrzebował snu?"
+        },
         "driver": {
           "title": "Kierowca",
           "description": "Ani jednego napoju alkoholowego w tym roku."

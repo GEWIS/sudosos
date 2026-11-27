@@ -88,6 +88,10 @@
           "title": "De Barman",
           "description": "Je sloeg {count} transacties aan voor anderen, meer dan je er zelf deed."
         },
+        "monsterSjaars": {
+          "title": "De Monster Sjaars",
+          "description": "Je kocht dit jaar {count} Monsters. Wie heeft er nou slaap nodig?"
+        },
         "driver": {
           "title": "De Bob",
           "description": "Geen enkel alcoholisch drankje dit jaar."

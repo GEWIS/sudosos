@@ -88,6 +88,10 @@
           "title": "The Bartender",
           "description": "You rang up {count} transactions for others, more than you made yourself."
         },
+        "monsterSjaars": {
+          "title": "The Monster Sjaars",
+          "description": "You bought {count} Monsters this year. Who needs sleep anyway?"
+        },
         "driver": {
           "title": "The Designated Driver",
           "description": "Not a single alcoholic drink this year."

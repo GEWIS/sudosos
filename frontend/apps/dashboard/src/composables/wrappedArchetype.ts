@@ -3,6 +3,10 @@ import { useI18n } from 'vue-i18n';
 import type { WrappedResponse } from '@gewis/sudosos-client';
 import { activeDays } from '@/utils/wrappedUtils';
 
+const MONSTER_PRODUCT_ID = 295;
+// About one a week during the academic year.
+const MONSTER_SJAARS_COUNT = 50;
+
 export interface Archetype {
   title: string;
   description: string;
@@ -15,7 +19,7 @@ export function useWrappedArchetype(wrapped: () => WrappedResponse): ComputedRef
   const { t, locale } = useI18n();
 
   return computed(() => {
-    const { transactions, organs, itemCount, alcoholicItemCount, distinctProducts } = wrapped();
+    const { transactions, organs, itemCount, alcoholicItemCount, distinctProducts, topProducts } = wrapped();
     const { transactionCount, transactionHeatmap, hourHistogram } = transactions;
 
     const percentage = (part: number, total: number) =>
@@ -25,8 +29,17 @@ export function useWrappedArchetype(wrapped: () => WrappedResponse): ComputedRef
 
     const rungUp = organs.reduce((sum, organ) => sum + organ.transactionsCreated, 0);
     const days = activeDays(transactionHeatmap);
+    // The response only holds the five most bought products, so Monster counts when it is one of them.
+    const monsters = topProducts.find((product) => product.id === MONSTER_PRODUCT_ID)?.count ?? 0;
 
     const archetypes: (Archetype & { fits: boolean })[] = [
+      {
+        fits: monsters >= MONSTER_SJAARS_COUNT,
+        title: t('components.wrapped.archetype.monsterSjaars.title'),
+        description: t('components.wrapped.archetype.monsterSjaars.description', {
+          count: monsters.toLocaleString(locale.value),
+        }),
+      },
       {
         fits: rungUp > transactionCount,
         title: t('components.wrapped.archetype.bartender.title'),
