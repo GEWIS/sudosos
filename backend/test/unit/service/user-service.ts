@@ -499,6 +499,46 @@ describe('UserService', async (): Promise<void> => {
 
       expect(records.length).to.equal(0);
     });
+
+    describe('TAB users', () => {
+      let tabUser: User;
+
+      beforeAll(async () => {
+        tabUser = await User.save({
+          firstName: 'Tabby McTabface', lastName: '', type: UserType.TAB, active: true, canGoIntoDebt: true,
+        } as User);
+      });
+
+      afterAll(async () => {
+        await User.delete(tabUser.id);
+      });
+
+      it('should exclude TAB users by default', async () => {
+        const [records] = await UserService.getUsers({}, { take: 1000 });
+
+        expect(records.some((u) => u.type === UserType.TAB)).to.be.false;
+      });
+
+      it('should exclude TAB users from search', async () => {
+        const [records] = await UserService.getUsers({ search: 'Tabby McTabface' }, { take: 100 });
+
+        expect(records.length).to.equal(0);
+      });
+
+      it('should include TAB users when type filter is set', async () => {
+        const [records] = await UserService.getUsers({ type: UserType.TAB, search: 'Tabby' }, { take: 100 });
+
+        expect(records.map((u) => u.id)).to.deep.equal([tabUser.id]);
+      });
+
+      it('should still find TAB users by id', async () => {
+        const [records] = await UserService.getUsers({ id: [tabUser.id] });
+        const single = await UserService.getSingleUser(tabUser.id);
+
+        expect(records.map((u) => u.id)).to.deep.equal([tabUser.id]);
+        expect(single?.id).to.equal(tabUser.id);
+      });
+    });
   });
 
   describe('getSingleUser', () => {
