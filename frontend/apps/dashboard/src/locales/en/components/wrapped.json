@@ -96,10 +96,6 @@
           "title": "The Designated Driver",
           "description": "Not a single alcoholic drink this year."
         },
-        "nightOwl": {
-          "title": "The Night Owl",
-          "description": "{share} of your purchases were made after midnight."
-        },
         "explorer": {
           "title": "The Explorer",
           "description": "You tried {count} different products."
@@ -110,7 +106,7 @@
         },
         "daytimer": {
           "title": "The Daytimer",
-          "description": "{share} of your purchases were made before five in the afternoon."
+          "description": "{share} of your purchases were made before 16:30."
         },
         "purist": {
           "title": "The Purist",

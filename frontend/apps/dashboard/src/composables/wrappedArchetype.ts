@@ -20,12 +20,10 @@ export function useWrappedArchetype(wrapped: () => WrappedResponse): ComputedRef
 
   return computed(() => {
     const { transactions, organs, itemCount, alcoholicItemCount, distinctProducts, topProducts } = wrapped();
-    const { transactionCount, transactionHeatmap, hourHistogram } = transactions;
+    const { transactionCount, transactionHeatmap, daytimeTransactionCount } = transactions;
 
     const percentage = (part: number, total: number) =>
       (part / total).toLocaleString(locale.value, { style: 'percent', maximumFractionDigits: 0 });
-    const between = (from: number, until: number) =>
-      hourHistogram.slice(from, until).reduce((sum, count) => sum + count, 0);
 
     const rungUp = organs.reduce((sum, organ) => sum + organ.transactionsCreated, 0);
     const days = activeDays(transactionHeatmap);
@@ -53,13 +51,6 @@ export function useWrappedArchetype(wrapped: () => WrappedResponse): ComputedRef
         description: t('components.wrapped.archetype.driver.description'),
       },
       {
-        fits: between(0, 6) >= 0.2 * transactionCount,
-        title: t('components.wrapped.archetype.nightOwl.title'),
-        description: t('components.wrapped.archetype.nightOwl.description', {
-          share: percentage(between(0, 6), transactionCount),
-        }),
-      },
-      {
         fits: distinctProducts >= 15,
         title: t('components.wrapped.archetype.explorer.title'),
         description: t('components.wrapped.archetype.explorer.description', { count: distinctProducts }),
@@ -70,10 +61,10 @@ export function useWrappedArchetype(wrapped: () => WrappedResponse): ComputedRef
         description: t('components.wrapped.archetype.regular.description', { days }),
       },
       {
-        fits: between(6, 17) >= 0.6 * transactionCount,
+        fits: daytimeTransactionCount >= 0.6 * transactionCount,
         title: t('components.wrapped.archetype.daytimer.title'),
         description: t('components.wrapped.archetype.daytimer.description', {
-          share: percentage(between(6, 17), transactionCount),
+          share: percentage(daytimeTransactionCount, transactionCount),
         }),
       },
       {

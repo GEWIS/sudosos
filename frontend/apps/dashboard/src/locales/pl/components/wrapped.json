@@ -96,10 +96,6 @@
           "title": "Kierowca",
           "description": "Ani jednego napoju alkoholowego w tym roku."
         },
-        "nightOwl": {
-          "title": "Nocny Marek",
-          "description": "{share} Twoich zakupów było po północy."
-        },
         "explorer": {
           "title": "Odkrywca",
           "description": "Liczba różnych wypróbowanych produktów: {count}."
@@ -110,7 +106,7 @@
         },
         "daytimer": {
           "title": "Dzienny Gość",
-          "description": "{share} Twoich zakupów było przed siedemnastą."
+          "description": "{share} Twoich zakupów było przed 16:30."
         },
         "purist": {
           "title": "Purysta",

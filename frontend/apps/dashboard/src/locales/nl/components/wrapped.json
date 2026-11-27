@@ -96,10 +96,6 @@
           "title": "De Bob",
           "description": "Geen enkel alcoholisch drankje dit jaar."
         },
-        "nightOwl": {
-          "title": "De Nachtuil",
-          "description": "{share} van je aankopen deed je na middernacht."
-        },
         "explorer": {
           "title": "De Ontdekker",
           "description": "Je probeerde {count} verschillende producten."
@@ -110,7 +106,7 @@
         },
         "daytimer": {
           "title": "De Dagjesmens",
-          "description": "{share} van je aankopen deed je voor vijf uur 's middags."
+          "description": "{share} van je aankopen deed je voor 16:30."
         },
         "purist": {
           "title": "De Purist",
