@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'openvue/usetoast';
 import type { WrappedResponse } from '@gewis/sudosos-client';
@@ -77,12 +77,37 @@ const summary = computed<Summary>(() => {
 
 const sharing = ref(false);
 
+// Safari only opens the share sheet right after a tap, so the image is drawn before the user taps share.
+let image: Promise<File> | undefined;
+
+function renderImage(): Promise<File> {
+  if (!image) {
+    const rendering = renderSummary(summary.value).then(
+      (blob) => new File([blob], `sudosos-wrapped-${props.wrapped.year}.jpg`, { type: blob.type }),
+    );
+    rendering.catch(() => {
+      if (image === rendering) image = undefined;
+    });
+    image = rendering;
+  }
+  return image;
+}
+
+watch(summary, () => {
+  image = undefined;
+});
+watch(
+  () => props.active,
+  (active) => {
+    if (active) void renderImage().catch(() => undefined);
+  },
+  { immediate: true },
+);
+
 async function share() {
   sharing.value = true;
   try {
-    const image = await renderSummary(summary.value);
-    const file = new File([image], `sudosos-wrapped-${props.wrapped.year}.jpg`, { type: image.type });
-    await shareFile(file, summary.value.title);
+    await shareFile(await renderImage());
   } catch {
     toast.add({
       severity: 'error',
