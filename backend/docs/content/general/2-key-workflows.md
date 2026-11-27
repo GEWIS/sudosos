@@ -110,6 +110,38 @@ flowchart TD
 2. Balance is topped up with the amount to be paid for that transaction.
 3. Temporary transaction is transformed into an actual transaction. Temporary transaction is removed.
 
+## Tab (group pays at the end)
+**Trigger +actor**
+- A group (for example an external party) wants to order during an event and pay everything at once with a card on a Stripe Terminal.
+
+**API surface**
+- `POST /tabs` (open a tab with a name, contact name and contact email)
+- `GET /tabs`, `GET /tabs/{id}`, `PATCH /tabs/{id}`, `DELETE /tabs/{id}` (list, read, edit contact details, cancel an empty tab)
+- `POST /tabs/{id}/payment` (charge the outstanding amount on a Stripe Terminal Reader), `DELETE /tabs/{id}/payment` (cancel it)
+- `GET /tabs/{id}/receipt`, `POST /tabs/{id}/receipt/send` (receipt PDF, resend the receipt email)
+- `POST /tabs/{id}/convert-to-invoice-account` (group did not pay: bill it with an invoice instead)
+
+**Entities touched**
+- `Tab`, `TabPaymentAttempt`, `TabReceiptPdf`, `StripeDeposit`
+- A `User` of type `TAB`, which the purchases are made on
+- Everything from `Purchase (create a transaction)` and `Deposit (Stripe top-up)`
+
+**Critical checks**
+- Purchases can only be added while the tab is `OPEN`. While a payment is in progress (`LOCKED`) and after it is `PAID`, transactions on the tab cannot be created, edited or deleted (`TransactionService.verifyTransaction`, `TransactionService.isOnLockedTab`). Once the tab is `PAID`, its transactions count as paid by card terminal, like a direct terminal payment: they report `paidByTerminal: true` and an edit or delete gives the same 409 (`TransactionService.isPaidByTerminal`).
+- The amount charged is the negated balance of the tab user at the moment the payment starts. Starting a payment and selling to, editing or deleting a purchase on the tab all lock the `Tab` row, so a change is either in that amount or refused (`TabService.startPayment`, `TransactionService.createTransaction`, `updateTransaction`, `deleteTransaction`).
+- A payment only starts on a reader that is not busy. The reader is told to collect only after the payment is recorded, in a transaction that holds the tab lock (`TabService.collectOnTerminal`).
+- A successful payment always credits the tab user, even if the tab is no longer `LOCKED`: the card was charged. A tab that was already paid, invoiced or cancelled is left as it is and an error is logged, so the credit can be refunded by hand (`TabService.settlePaidIntent`).
+- `TAB` users are managed through `/tabs` only: `POST /users`, `PATCH /users/{id}` and `DELETE /users/{id}` refuse them. Like `POINT_OF_SALE` users, they are left out of `GET /users` and its search unless `type=TAB` is passed; a lookup by id still finds them (`UserService.getOptions`, `UserService.getUsers`).
+- The receipt is only emailed after the webhook's database transaction has committed (`StripeWebhookController`).
+- The payment is a `StripeDeposit`, so it is booked under Deposits like any Stripe top-up. The purchases are ordinary transactions and count in the sellers' sales. The receipt is a simplified invoice, like a till receipt: it shows the purchases and the VAT per rate, with the seller and its VAT number in the footer, but no buyer name or address (`createTabReceiptPdf`). Only converting the tab creates a full invoice.
+
+**Simplified flow**
+1. The tab and its `TAB` user are created. The point of sale sells to the user like to any buyer; its balance goes negative.
+2. Paying the tab locks it and creates a `StripeDeposit` for the outstanding amount, whose payment intent is sent to the reader.
+3. On `payment_intent.succeeded`, the deposit's void->user transfer brings the balance to zero, the tab becomes `PAID` and the tab user is deactivated. On `payment_intent.payment_failed` (for example a declined card) or `payment_intent.canceled`, the tab is `OPEN` again and can be paid with a new attempt.
+4. The receipt PDF (a simplified invoice with all purchases) is stored and emailed to the contact person.
+5. If the group does not pay, the tab can be converted: the tab user becomes an `INVOICE` user and is billed with the regular invoice flow. Converting asks for no details; the invoice account gets no default address, so the address is entered when the invoice is created (`TabService.convertToInvoiceAccount`).
+
 ## Payment request (shareable payment link)
 
 **Trigger + actor**
