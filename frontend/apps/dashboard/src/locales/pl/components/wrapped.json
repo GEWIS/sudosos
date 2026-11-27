@@ -1,0 +1,149 @@
+{
+  "components": {
+    "wrapped": {
+      "loading": "Przygotowujemy Twoje Wrapped...",
+      "consent": {
+        "header": "Wymagana analiza danych",
+        "message": "Aby zobaczyć swoje Wrapped, musisz włączyć rozszerzoną analizę danych.",
+        "subtext": "Zawsze możesz ją później wyłączyć w ustawieniach.",
+        "enable": "Włącz"
+      },
+      "controls": {
+        "close": "Zamknij",
+        "previous": "Poprzednia karta",
+        "next": "Następna karta"
+      },
+      "top": "top {percentile}%",
+      "welcome": {
+        "hello": "Cześć {name}!",
+        "intro": "Witaj w swoim",
+        "name": "SudoSOS Wrapped",
+        "title": "SudoSOS Wrapped {year}",
+        "hint": "Dotknij, aby zacząć"
+      },
+      "transactions": {
+        "intro": "W {year} roku liczba Twoich transakcji to",
+        "unit": "transakcja | transakcji",
+        "more": "o {count} więcej niż rok temu",
+        "fewer": "o {count} mniej niż rok temu",
+        "same": "Dokładnie tyle samo co rok temu",
+        "percentile": "To daje Ci miejsce w {top} użytkowników SudoSOS!"
+      },
+      "heatmap": {
+        "on": "Dnia {date}",
+        "made": "liczba Twoich transakcji:",
+        "busiest": "To był Twój najbardziej pracowity dzień w roku."
+      },
+      "topProduct": {
+        "intro": "W {year} roku Twoim ulubionym produktem był",
+        "bought": "Liczba zakupów: {count}!",
+        "champion": "Nikt nie kupił go więcej niż Ty!",
+        "rank": "Jesteś jego kupującym numer {rank}!"
+      },
+      "products": {
+        "title": "Twoje ulubione produkty",
+        "bought": "Liczba zakupów: {count}",
+        "variety": "Łącznie kupione sztuki: {items}, różne produkty: {products}."
+      },
+      "totalSpent": {
+        "intro": "W {year} roku wydałeś łącznie",
+        "using": "przez {sudosos}",
+        "more": "o {amount} więcej niż rok temu",
+        "less": "o {amount} mniej niż rok temu",
+        "same": "Dokładnie tyle samo co rok temu",
+        "percentile": "To daje Ci miejsce w {top} wydających!"
+      },
+      "distribution": {
+        "borrel": "Z wydanych {total} aż {borrel} poszło na borrele.",
+        "share": "To {share}!",
+        "categories": "Najwięcej pieniędzy poszło na",
+        "category": "{amount} ({share}) na {category}"
+      },
+      "rhythm": {
+        "weekday": "Twój ulubiony dzień to",
+        "weekdayShare": "{share} Twoich transakcji",
+        "hour": "a najbardziej aktywna godzina to"
+      },
+      "streak": {
+        "active": "Liczba dni z zakupami:",
+        "days": "dzień | dni",
+        "longest": "Twoja najdłuższa seria: {days}.",
+        "inARow": "{count} dzień z rzędu | {count} dni z rzędu",
+        "month": "Twój najbardziej pracowity miesiąc: {month}."
+      },
+      "round": {
+        "title": "Twoja największa kolejka",
+        "items": "sztuka | sztuk",
+        "details": "w jednej transakcji, za {amount}"
+      },
+      "balance": {
+        "title": "Dbanie o saldo",
+        "topUps": "Liczba doładowań: {count}, łącznie {total}.",
+        "fines": "Liczba kar: {count}, na kwotę {total}.",
+        "noFines": "I ani jednej kary."
+      },
+      "archetype": {
+        "title": "To wszystko czyni z Ciebie",
+        "bartender": {
+          "title": "Barman",
+          "description": "Liczba transakcji nabitych dla innych: {count}. To więcej niż Twoich własnych."
+        },
+        "monsterSjaars": {
+          "title": "Monster Sjaars",
+          "description": "Liczba kupionych Monsterów w tym roku: {count}. Kto by potrzebował snu?"
+        },
+        "driver": {
+          "title": "Kierowca",
+          "description": "Ani jednego napoju alkoholowego w tym roku."
+        },
+        "explorer": {
+          "title": "Odkrywca",
+          "description": "Liczba różnych wypróbowanych produktów: {count}."
+        },
+        "regular": {
+          "title": "Stały Bywalec",
+          "description": "Liczba dni z zakupami: {days}."
+        },
+        "daytimer": {
+          "title": "Dzienny Gość",
+          "description": "{share} Twoich zakupów było przed 16:30."
+        },
+        "purist": {
+          "title": "Purysta",
+          "description": "{share} tego, co kupiłeś, zawiera alkohol."
+        },
+        "allRounder": {
+          "title": "Wszechstronny",
+          "description": "Wszystkiego po trochu, o każdej porze dnia."
+        }
+      },
+      "organs": {
+        "workedFor": "Ciężko pracowałeś dla {organ}!",
+        "sellerRank": "Byłeś ich sprzedawcą {rank}!",
+        "rank": "numer {rank}",
+        "title": "Twoje organy",
+        "summary": "{turnover}, transakcje: {transactions}",
+        "topShare": "Byłeś w {top} ich sprzedawców!",
+        "totals": "Nabite transakcje: {transactions}, obsłużeni klienci: {customers}, obrót: {turnover}."
+      },
+      "quiet": {
+        "title": "Spokojny rok",
+        "text": "W {year} roku nie było żadnych zakupów przez SudoSOS. Do zobaczenia na następnym borrelu?"
+      },
+      "summary": {
+        "transactions": "Transakcje",
+        "spent": "Wydano",
+        "product": "Ulubiony produkt",
+        "weekday": "Ulubiony dzień",
+        "days": "Aktywne dni",
+        "share": "Udostępnij",
+        "failed": "Nie udało się udostępnić podsumowania."
+      },
+      "final": {
+        "thanks": "Dziękujemy za korzystanie z {sudosos} w {year} roku!",
+        "wishes": "Wesołych Świąt i szczęśliwego Nowego Roku życzy {abc}!",
+        "back": "Wróć do SudoSOS"
+      }
+    }
+  }
+}

@@ -17,587 +17,606 @@
  *
  *  @license
  */
+import { EntityManager, EntityTarget, In, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import WrappedResponse from '../controller/response/wrapped-response';
 import WithManager from '../database/with-manager';
-import Wrapped from '../entity/wrapped';
+import Wrapped, { WrappedProduct } from '../entity/wrapped';
 import User from '../entity/user/user';
 import Transaction from '../entity/transactions/transaction';
 import SubTransaction from '../entity/transactions/sub-transaction';
 import SubTransactionRow from '../entity/transactions/sub-transaction-row';
+import Transfer from '../entity/transactions/transfer';
+import Product from '../entity/product/product';
 import ProductRevision from '../entity/product/product-revision';
+import ProductCategory from '../entity/product/product-category';
+import ProductImage from '../entity/file/product-image';
 import OrganMembership from '../entity/organ/organ-membership';
 import WrappedOrganMember from '../entity/wrapped/wrapped-organ-member';
+import PointOfSale from '../entity/point-of-sale/point-of-sale';
 import PointOfSaleRevision from '../entity/point-of-sale/point-of-sale-revision';
-import { Between, In } from 'typeorm';
+import StripeDeposit from '../entity/stripe/stripe-deposit';
+import Fine from '../entity/fine/fine';
+import UserFineGroup from '../entity/fine/userFineGroup';
+import DineroTransformer from '../entity/transformer/dinero-transformer';
 import Config from '../config';
+import { utcToDate } from '../helpers/timestamps';
+import { parseUserToBaseResponse } from '../helpers/revision-to-response';
 
 export interface UpdateWrappedParameters {
   ids?: number[],
+  year?: number,
 }
 
+const HOUR_MS = 60 * 60 * 1000;
+const DAY_MS = 24 * HOUR_MS;
+const INSERT_CHUNK_SIZE = 250;
+const TOP_PRODUCT_COUNT = 5;
+
 /**
- * Service responsible for computing and updating the "Wrapped" overview
- * information for users (transaction counts, percentiles, heatmaps, etc.).
- *
- * It extends WithManager to get a transactional EntityManager instance.
+ * A Wrapped day runs from 06:00 to 06:00, so a night out counts as a single day.
+ */
+export const DAY_START_HOUR = 6;
+
+/**
+ * Daytime ends at 16:30, in minutes after midnight. It starts with the Wrapped day, at 06:00.
+ */
+const DAYTIME_END_MINUTE = 16 * 60 + 30;
+
+interface Period {
+  year: number;
+  start: Date;
+  end: Date;
+  days: number;
+}
+
+interface ProductPurchase {
+  userId: number;
+  productId: number;
+  categoryId: number;
+  count: number;
+  alcoholicCount: number;
+  total: number;
+}
+
+interface Round {
+  items: number;
+  total: number;
+  date: Date;
+}
+
+interface Statistics {
+  transactionCount: number;
+  totalSpent: number;
+  borrelSpent: number;
+  heatmap: number[];
+  hours: number[];
+  daytimeCount: number;
+  biggestRound: Round | null;
+  itemCount: number;
+  alcoholicItemCount: number;
+  products: Map<number, { count: number, total: number }>;
+  categories: Map<number, number>;
+}
+
+interface CountAndTotal {
+  count: number;
+  total: number;
+}
+
+interface Seller {
+  sellerId: number;
+  transactionCount: number;
+  turnover: number;
+  customerCount: number;
+}
+
+const isEligible = (alias: string) => `${alias}.deleted = 0 AND ${alias}.active = 1 AND ${alias}.extensiveDataProcessing = 1`;
+
+const toDinero = (amount: number) => DineroTransformer.Instance.from(amount);
+
+/**
+ * Computes the yearly "Wrapped" statistics of users.
  */
 export default class WrappedService extends WithManager {
   /**
-   * Fetch the Wrapped row for a single user and map it to the public response
-   * shape.
-   *
-   * @param userId - database id of the user to fetch
-   * @returns the Wrapped for the user
+   * Wrapped is about the current year, except in January, when it is about the year that just ended.
    */
-  public async getWrappedForUser(userId: number): Promise<Wrapped | null> {
-    const entityManager = this.manager;
+  public static currentYear(now = new Date()): number {
+    return Config.get().wrapped.year ?? (now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear());
+  }
 
-    return entityManager.findOne(Wrapped, {
-      where: { userId },
-      relations: {
-        organs: true,
-      },
+  /**
+   * Get the Wrapped of a user for the given year, or their most recent one.
+   */
+  public async getWrappedForUser(userId: number, year?: number): Promise<Wrapped | null> {
+    return this.manager.findOne(Wrapped, {
+      where: { userId, year },
+      order: { year: 'DESC' },
+      relations: { organs: { organ: true } },
     });
   }
 
   /**
-   * Map internal Wrapped entity to the external response DTO.
-   *
-   * This method normalizes nullable numeric values and parses stored JSON
-   * heatmap strings into number arrays.
-   *
-   * @param data - Wrapped entity from the database
+   * Get the current Wrapped of a user, computing it when it does not exist yet.
+   * Returns null for users that cannot have a Wrapped.
    */
+  public async ensureWrappedForUser(userId: number): Promise<Wrapped | null> {
+    const year = WrappedService.currentYear();
+    const existing = await this.getWrappedForUser(userId, year);
+    if (existing) return existing;
+
+    await this.updateWrapped({ ids: [userId], year });
+    return this.getWrappedForUser(userId, year);
+  }
+
+  /**
+   * Remove the Wrapped and the organ rankings of a user, of all years.
+   */
+  public async deleteWrappedForUser(userId: number): Promise<void> {
+    await this.manager.delete(WrappedOrganMember, { userId });
+    await this.manager.delete(Wrapped, { userId });
+  }
+
   public static asWrappedResponse(data: Wrapped): WrappedResponse {
     return {
       userId: data.userId,
+      year: data.year,
       transactions: {
-        transactionCount: Number(data.transactionCount ?? 0),
-        transactionPercentile: Number(data.transactionPercentile ?? 0),
-        transactionMaxDate: data.transactionMaxDate.toISOString(),
-        transactionMaxAmount: Number(data.transactionMaxAmount ?? 0),
-        transactionHeatmap: this.parseHeatmap(data.transactionHeatmap),
+        transactionCount: data.transactionCount,
+        previousTransactionCount: data.previousTransactionCount,
+        transactionPercentile: data.transactionPercentile,
+        transactionMaxDate: data.transactionMaxDate?.toISOString(),
+        transactionMaxAmount: data.transactionMaxAmount,
+        transactionHeatmap: data.transactionHeatmap,
+        hourHistogram: data.hourHistogram,
+        daytimeTransactionCount: data.daytimeTransactionCount,
       },
-      spentPercentile: Number(data.spentPercentile ?? 0),
+      totalSpent: data.totalSpent.toObject(),
+      previousTotalSpent: data.previousTotalSpent.toObject(),
+      borrelSpent: data.borrelSpent.toObject(),
+      spentPercentile: data.spentPercentile,
+      itemCount: data.itemCount,
+      alcoholicItemCount: data.alcoholicItemCount,
+      distinctProducts: data.distinctProducts,
+      topProducts: data.topProducts.map((product) => ({
+        ...product,
+        totalInclVat: toDinero(product.totalInclVat).toObject(),
+      })),
+      categories: data.categories.map((category) => ({
+        ...category,
+        totalInclVat: toDinero(category.totalInclVat).toObject(),
+      })),
+      biggestRound: data.biggestRoundDate ? {
+        items: data.biggestRoundItems,
+        totalInclVat: data.biggestRoundSpent.toObject(),
+        date: data.biggestRoundDate.toISOString(),
+      } : undefined,
+      topUps: { count: data.topUpCount, total: data.topUpTotal.toObject() },
+      fines: { count: data.fineCount, total: data.fineTotal.toObject() },
       syncedFrom: data.syncedFrom.toISOString(),
       syncedTo: data.syncedTo.toISOString(),
-      organs: (data.organs || []).map((wom) => ({
-        organId: wom.organId,
-        ordinalTransactionCreated: Number(wom.ordinalTransactionCreated ?? 0),
-        ordinalTurnoverCreated: Number(wom.ordinalTurnoverCreated ?? 0),
+      organs: (data.organs ?? []).map((member) => ({
+        organId: member.organId,
+        organ: parseUserToBaseResponse(member.organ, false),
+        ordinalTransactionCreated: member.ordinalTransactionCreated,
+        ordinalTurnoverCreated: member.ordinalTurnoverCreated,
+        transactionsCreated: member.transactionsCreated,
+        turnoverCreated: member.turnoverCreated.toObject(),
+        customersServed: member.customersServed,
+        sellerCount: member.sellerCount,
       })),
-    } as WrappedResponse;
+    };
   }
 
   /**
-   * Parse a stored heatmap string into an array of numbers.
-   *
-   * Returns an empty array when input is null/undefined or parsing fails. The
-   * stored value is expected to be a JSON array (e.g. "[0,1,2,...]").
-   *
-   * @param raw - raw heatmap string from the database
+   * Recompute the Wrapped of all eligible users, or only of the users in `params.ids`.
+   * Percentiles and seller rankings are always relative to all eligible users.
    */
-  private static parseHeatmap(raw: string): number[] {
-    if (raw === undefined || raw === null) return [];
-    try {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return parsed as number[];
-    } catch (e) {
-      throw new Error('Invalid heatmap data');
-    }
-    return [];
+  public async updateWrapped(params: UpdateWrappedParameters = {}): Promise<void> {
+    const ids = params.ids?.length ? params.ids : undefined;
+    const period = WrappedService.getPeriod(params.year ?? WrappedService.currentYear());
+    const scope = { year: period.year, ...(ids && { userId: In(ids) }) };
+
+    await this.manager.transaction(async (manager) => {
+      const service = new WrappedService(manager);
+      const rows = await service.computeWrapped(period, ids);
+      const organMembers = await service.computeOrganMembers(period, ids);
+
+      await manager.delete(WrappedOrganMember, scope);
+      await manager.delete(Wrapped, scope);
+      await WrappedService.insertRows(manager, Wrapped, rows);
+      await WrappedService.insertRows(manager, WrappedOrganMember, organMembers);
+    });
   }
 
-  /**
-   * Create or update Wrapped rows for users and run all per-user update
-   * computation steps (transaction counts, day stats, percentiles, etc.).
-   *
-   * If `params.ids` is provided, the operation is limited to those user ids.
-   *
-   * @param params - optional filter with specific user ids to update
-   */
-  public async updateWrapped(params: UpdateWrappedParameters = {}) {
-    let users : User[];
-    let rows : Wrapped[] = [];
-
-    const wrappedYear = Config.get().wrapped.year;
-
-    if (params.ids && params.ids.length > 0) {
-      users = await this.manager.find(User, {
-        where: { id: In(params.ids), deleted: false, active: true, extensiveDataProcessing: true },
+  private async computeWrapped(period: Period, ids?: number[]): Promise<Wrapped[]> {
+    const statistics = new Map<number, Statistics>();
+    for (const userId of await this.getEligibleUserIds(ids)) {
+      statistics.set(userId, {
+        transactionCount: 0,
+        totalSpent: 0,
+        borrelSpent: 0,
+        heatmap: new Array(period.days).fill(0),
+        hours: new Array(24).fill(0),
+        daytimeCount: 0,
+        biggestRound: null,
+        itemCount: 0,
+        alcoholicItemCount: 0,
+        products: new Map(),
+        categories: new Map(),
       });
-    } else {
-      users = await this.manager.find(User, { where: { deleted: false, active: true, extensiveDataProcessing: true } });
     }
 
-    const userIds = users.map((u) => u.id).filter((id) => !!id);
-    let existingWrapped: Wrapped[] = [];
-    if (userIds.length > 0) {
-      existingWrapped = await this.manager.find(Wrapped, { where: { userId: In(userIds) } });
+    for (const purchase of await this.getPurchases(period, ids)) {
+      const stats = statistics.get(purchase.userId);
+      const { createdAt, items, total } = purchase;
+      stats.transactionCount += 1;
+      stats.totalSpent += total;
+      if (!purchase.selfService) stats.borrelSpent += total;
+      stats.heatmap[WrappedService.dayOf(createdAt, period)] += 1;
+      stats.hours[createdAt.getHours()] += 1;
+      const minute = createdAt.getHours() * 60 + createdAt.getMinutes();
+      if (minute >= DAY_START_HOUR * 60 && minute < DAYTIME_END_MINUTE) stats.daytimeCount += 1;
+      const biggest = stats.biggestRound;
+      if (!biggest || items > biggest.items || (items === biggest.items && total > biggest.total)) {
+        stats.biggestRound = { items, total, date: createdAt };
+      }
     }
 
-    const existingMap = new Map<number, Wrapped>();
-    for (const w of existingWrapped) {
-      existingMap.set(Number(w.userId), w);
+    const productPurchases = await this.getProductPurchases(period, ids);
+    for (const purchase of productPurchases) {
+      const stats = statistics.get(purchase.userId);
+      const product = stats.products.get(purchase.productId) ?? { count: 0, total: 0 };
+      stats.products.set(purchase.productId, {
+        count: product.count + purchase.count,
+        total: product.total + purchase.total,
+      });
+      stats.categories.set(purchase.categoryId, (stats.categories.get(purchase.categoryId) ?? 0) + purchase.total);
+      stats.itemCount += purchase.count;
+      stats.alcoholicItemCount += purchase.alcoholicCount;
     }
 
-    for (const user of users) {
-      let wrapped = existingMap.get(user.id);
-      if (!wrapped) {
-        wrapped = new Wrapped();
-        Object.assign(wrapped, {
-          userId: user.id,
-          transactionCount: 0,
-          transactionPercentile: 0,
-          spentPercentile: 0,
-          transactionMaxAmount: 0,
-          transactionHeatmap: JSON.stringify([]),
-        });
-      }
-      rows.push(wrapped);
-    }
+    const totals = ids
+      ? await this.getTotals(period)
+      : [...statistics].map(([userId, stats]) => ({ userId, ...stats })).filter((p) => p.transactionCount > 0);
+    const transactionPercentiles = WrappedService.computePercentiles(
+      new Map(totals.map((p) => [p.userId, p.transactionCount])),
+    );
+    const spentPercentiles = WrappedService.computePercentiles(
+      new Map(totals.map((p) => [p.userId, p.totalSpent])),
+    );
+    const previousTotals = new Map(
+      (await this.getTotals(WrappedService.getPeriod(period.year - 1), ids)).map((p) => [p.userId, p]),
+    );
 
-    await this.manager.save(rows);
+    const topProducts = await this.computeTopProducts(period, statistics, productPurchases, ids);
+    const categoryNames = await this.getCategoryNames();
+    const topUps = await this.getTopUps(period, ids);
+    const fines = await this.getFines(period, ids);
 
-    await this.updateTransactionCount(rows, wrappedYear);
-    await this.updateTransactionDayStats(rows, wrappedYear);
-    await this.updateTransactionPercentile(rows);
-    await this.updateSpentPercentile(rows);
-
-    await this.updateSyncedDates(rows, wrappedYear);
-    await this.updateWrappedOrganMembers(rows, wrappedYear);
-  }
-
-  /**
-   * Prepare a common context used by update methods: start/end dates for the
-   * Wrapped year, the entity manager and the filtered userIds list.
-   * Returns null when input rows are empty or no valid userIds found.
-   *
-   * @param rows - list of Wrapped rows to operate on
-   * @param wrappedYear - year for the Wrapped computation
-   */
-  private prepareUpdateContext(rows: Wrapped[], wrappedYear: number) {
-    const manager = this.manager;
-    if (!rows || rows.length === 0) throw new Error('No rows provided');
-
-    const userIds = rows.map((r) => Number(r.userId ?? 0)).filter((id) => id > 0);
-    if (userIds.length === 0) return null;
-
-    const start = new Date(wrappedYear, 0, 1, 0, 0, 0);
-    const end = new Date(wrappedYear, 11, 31, 23, 59, 59);
-
-    return { start, end, manager, userIds };
-  }
-
-  /**
-   * Update the transaction count for each Wrapped row using a grouped query.
-   *
-   * The counts are computed only for transactions that fall between the
-   * start and end dates of the Wrapped year.
-   *
-   * @param rows - list of Wrapped rows to operate on
-   * @param wrappedYear - year for the Wrapped computation
-   */
-  private async updateTransactionCount(rows: Wrapped[], wrappedYear: number): Promise<void> {
-    const ctx = this.prepareUpdateContext(rows, wrappedYear);
-    if (!ctx) return;
-    const { start, end, manager, userIds } = ctx;
-
-    const countResults = await manager
-      .createQueryBuilder(Transaction, 't')
-      .select('t.fromId', 'userId')
-      .addSelect('COUNT(*)', 'count')
-      .where('t.fromId IN (:...userIds)', { userIds })
-      .andWhere('t.createdAt BETWEEN :start AND :end', { start, end })
-      .groupBy('t.fromId')
-      .getRawMany();
-
-    const countMap = new Map<number, number>();
-    for (const result of countResults) {
-      countMap.set(Number(result.userId), Number(result.count));
-    }
-
-    const updatePromises = rows.map((wrapped) => {
-      const count = countMap.get(wrapped.userId) ?? 0;
-      return manager.update(Wrapped, { userId: wrapped.userId }, { transactionCount: count });
-    });
-
-    await Promise.all(updatePromises);
-  }
-
-  /**
-   * Compute per-day statistics for transactions in the given year and update
-   * the Wrapped rows with a heatmap and the date with the most transactions.
-   *
-   * The heatmap is a 365-length array where index 0 corresponds to Jan 1st.
-   *
-   * @param rows - list of Wrapped rows to operate on
-   * @param wrappedYear - year for the Wrapped computation
-   */
-  public async updateTransactionDayStats(rows: Wrapped[], wrappedYear: number): Promise<void> {
-    const ctx = this.prepareUpdateContext(rows, wrappedYear);
-    if (!ctx) return;
-    const { start, end, manager, userIds } = ctx;
-
-    const transactions = await manager.find(Transaction, {
-      where: {
-        from: { id: In(userIds) },
-        createdAt: Between(start, end),
-      },
-      select: {
-        id: true,
-        createdAt: true,
-      },
-      relations: {
-        from: true,
-      },
-    });
-
-    // Group transactions by user id
-    const userTransactionsMap = new Map<number, Transaction[]>();
-    for (const transaction of transactions) {
-      const userId = transaction.from.id;
-      if (!userTransactionsMap.has(userId)) {
-        userTransactionsMap.set(userId, []);
-      }
-      userTransactionsMap.get(userId)!.push(transaction);
-    }
-
-    const updatePromises = rows.map(async (wrapped) => {
-      const userId = Number(wrapped.userId ?? 0);
-      if (!userId) return;
-
-      const userTransactions = userTransactionsMap.get(userId) || [];
-
-      if (userTransactions.length === 0) {
-        return manager.update(Wrapped, { userId }, {
-          transactionMaxDate: null,
-          transactionMaxAmount: 0,
-          transactionHeatmap: JSON.stringify(new Array(365).fill(0)),
-        });
-      }
-
-      const dayCountMap = new Map<number, number>();
-      const dateCountMap = new Map<string, number>();
-
-      for (const transaction of userTransactions) {
-        const transDate = new Date(transaction.createdAt);
-
-        // Compute the zero-based day index relative to start of year
-        const dayOfYear = Math.floor((transDate.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-
-        // Only store counts for valid indices inside the 0..364 range.
-        if (dayOfYear >= 0 && dayOfYear < 365) {
-          dayCountMap.set(dayOfYear, (dayCountMap.get(dayOfYear) || 0) + 1);
-        }
-
-        // Also keep a date->count map to find the exact calendar date with
-        // the most transactions (used for transactionMaxDate and transactionMaxAmount)
-        const dateStr = transDate.toISOString().slice(0, 10);
-        dateCountMap.set(dateStr, (dateCountMap.get(dateStr) || 0) + 1);
-      }
-
-      const heatmap = new Array(365).fill(0);
-      for (const [dayIndex, count] of dayCountMap.entries()) {
-        heatmap[dayIndex] = count;
-      }
-
-      // Find the date with the highest number of transactions
-      let maxCount = 0;
-      let maxDateStr = '';
-      for (const [dateStr, count] of dateCountMap.entries()) {
-        if (count > maxCount) {
-          maxCount = count;
-          maxDateStr = dateStr;
-        }
-      }
-
-      const transactionMaxDate = maxDateStr ? new Date(maxDateStr) : null;
-
-      return manager.update(Wrapped, { userId }, {
-        transactionMaxDate,
-        transactionMaxAmount: maxCount,
-        transactionHeatmap: JSON.stringify(heatmap),
+    const syncedTo = new Date();
+    return [...statistics].map(([userId, stats]) => {
+      const transactionMaxAmount = Math.max(...stats.heatmap);
+      return Object.assign(new Wrapped(), {
+        userId,
+        year: period.year,
+        transactionCount: stats.transactionCount,
+        previousTransactionCount: previousTotals.get(userId)?.transactionCount ?? 0,
+        transactionPercentile: transactionPercentiles.get(userId) ?? 100,
+        transactionMaxDate: transactionMaxAmount > 0
+          ? new Date(period.year, 0, 1 + stats.heatmap.indexOf(transactionMaxAmount))
+          : null,
+        transactionMaxAmount,
+        transactionHeatmap: stats.heatmap,
+        hourHistogram: stats.hours,
+        daytimeTransactionCount: stats.daytimeCount,
+        totalSpent: toDinero(stats.totalSpent),
+        previousTotalSpent: toDinero(previousTotals.get(userId)?.totalSpent ?? 0),
+        borrelSpent: toDinero(stats.borrelSpent),
+        spentPercentile: spentPercentiles.get(userId) ?? 100,
+        itemCount: stats.itemCount,
+        alcoholicItemCount: stats.alcoholicItemCount,
+        distinctProducts: stats.products.size,
+        topProducts: topProducts.get(userId),
+        categories: [...stats.categories]
+          .map(([id, totalInclVat]) => ({ id, name: categoryNames.get(id), totalInclVat }))
+          .sort((a, b) => b.totalInclVat - a.totalInclVat),
+        biggestRoundItems: stats.biggestRound?.items ?? 0,
+        biggestRoundSpent: toDinero(stats.biggestRound?.total ?? 0),
+        biggestRoundDate: stats.biggestRound?.date ?? null,
+        topUpCount: topUps.get(userId)?.count ?? 0,
+        topUpTotal: toDinero(topUps.get(userId)?.total ?? 0),
+        fineCount: fines.get(userId)?.count ?? 0,
+        fineTotal: toDinero(fines.get(userId)?.total ?? 0),
+        syncedFrom: period.start,
+        syncedTo,
       });
     });
-
-    await Promise.all(updatePromises);
   }
 
   /**
-   * Compute percentile rank for each entry in the input list.
-   *
-   * This function calculates, for each entry, the percentile that its `value`
-   * falls into among all provided values.
-   *
-   * Example: if 2 out of 10 values are strictly less than a value, its percentile
-   * becomes 100 * (1 - 2/10) = 80.00.
-   *
-   * @param values - Array of objects containing `id` and numeric `value`.
-   * @returns Map where each key is the original `id` and the value is the percentile rounded to 2 decimals
+   * The most bought products of each user, each ranked among all eligible buyers of that product.
    */
-  private static computePercentiles(values: { id: number; value: number }[]) {
-    const total = values.length;
-    if (total === 0) return new Map<number, number>();
+  private async computeTopProducts(
+    period: Period, statistics: Map<number, Statistics>, productPurchases: ProductPurchase[], ids?: number[],
+  ): Promise<Map<number, WrappedProduct[]>> {
+    const favourites = new Map([...statistics].map(([userId, stats]) => [
+      userId,
+      [...stats.products]
+        .sort(([aId, a], [bId, b]) => b.count - a.count || b.total - a.total || aId - bId)
+        .slice(0, TOP_PRODUCT_COUNT),
+    ]));
+    const productIds = [...new Set([...favourites.values()].flatMap((products) => products.map(([id]) => id)))];
+    const products = await this.getProducts(productIds);
 
-    const sorted = [...values].sort((a, b) => a.value - b.value);
-
-    // Map value -> count of items strictly less than that value
-    const lessCountMap = new Map<number, number>();
-    for (let i = 0; i < sorted.length; i++) {
-      const value = sorted[i].value;
-      if (!lessCountMap.has(value)) {
-        lessCountMap.set(value, i);
-      }
+    const buyerCounts = new Map<number, Map<number, number>>();
+    for (const purchase of ids ? await this.getProductPurchases(period) : productPurchases) {
+      const counts = buyerCounts.get(purchase.productId) ?? new Map<number, number>();
+      counts.set(purchase.userId, (counts.get(purchase.userId) ?? 0) + purchase.count);
+      buyerCounts.set(purchase.productId, counts);
     }
 
-    // Compute percentile for each original entry using the formula:
-    // percentile = 100 * (1 - (count_strictly_less / total))
-    const res = new Map<number, number>();
-    for (const entry of values) {
-      const less = lessCountMap.get(entry.value) ?? 0;
-      const pct = 100 * (1 - (less / total));
-      // Store rounded to two decimals
-      res.set(entry.id, Number(pct.toFixed(2)));
-    }
-    return res;
+    return new Map([...favourites].map(([userId, favouriteProducts]) => [
+      userId,
+      favouriteProducts.map(([id, { count, total }]) => ({
+        id,
+        ...products.get(id),
+        count,
+        totalInclVat: total,
+        rank: 1 + [...buyerCounts.get(id).values()].filter((other) => other > count).length,
+      })),
+    ]));
+  }
+
+  private static getPeriod(year: number): Period {
+    return {
+      year,
+      start: new Date(year, 0, 1, DAY_START_HOUR),
+      end: new Date(year + 1, 0, 1, DAY_START_HOUR),
+      days: (Date.UTC(year + 1, 0, 1) - Date.UTC(year, 0, 1)) / DAY_MS,
+    };
   }
 
   /**
-   * Update transaction percentile for the provided Wrapped rows.
-   *
-   * This method loads the full eligible user list (with their Wrapped
-   * transactionCount) and computes percentiles across that population.
-   *
-   * @param rows - list of Wrapped rows to operate on
+   * Zero-based day of the Wrapped year a moment belongs to.
    */
-  private async updateTransactionPercentile(rows: Wrapped[]) {
-    const manager = this.manager;
-    if (!rows || rows.length === 0) return;
+  private static dayOf(date: Date, period: Period): number {
+    const day = new Date(date.getTime() - DAY_START_HOUR * HOUR_MS);
+    return (Date.UTC(day.getFullYear(), day.getMonth(), day.getDate()) - Date.UTC(period.year, 0, 1)) / DAY_MS;
+  }
 
-    const usersQb = manager.createQueryBuilder(User, 'u')
-      .leftJoin(Wrapped, 'w', 'w.userId = u.id')
-      .select('u.id', 'id')
-      .addSelect('COALESCE(w.transactionCount, 0)', 'transactionCount')
-      .where('u.deleted = 0 AND u.active = 1 AND u.extensiveDataprocessing = 1');
-
-    const allUsers: { id: number; transactionCount: number }[] = await usersQb.getRawMany();
-
-    const valueList = allUsers.map((u) => ({ id: Number(u.id), value: Number(u.transactionCount ?? 0) }));
-    const percentileMap = WrappedService.computePercentiles(valueList);
-
-    const updatePromises = rows.map((wrapped) => {
-      const percentile = percentileMap.get(wrapped.userId) ?? 100;
-      return manager.update(Wrapped, { userId: wrapped.userId }, { transactionPercentile: percentile });
+  /**
+   * The top percentage each value falls in: 10 means only 10% of the values are at least as high.
+   */
+  private static computePercentiles(values: Map<number, number>): Map<number, number> {
+    const sorted = [...values.values()].sort((a, b) => a - b);
+    const lowerCount = new Map<number, number>();
+    sorted.forEach((value, index) => {
+      if (!lowerCount.has(value)) lowerCount.set(value, index);
     });
 
-    await Promise.all(updatePromises);
+    return new Map([...values].map(([id, value]) => (
+      [id, Number((100 * (1 - lowerCount.get(value) / sorted.length)).toFixed(2))]
+    )));
+  }
+
+  private async getEligibleUserIds(ids?: number[]): Promise<number[]> {
+    const query = this.manager.createQueryBuilder(User, 'user')
+      .select('user.id', 'id')
+      .where(isEligible('user'));
+    if (ids) query.andWhere('user.id IN (:...ids)', { ids });
+
+    return (await query.getRawMany<{ id: number }>()).map((user) => user.id);
   }
 
   /**
-   * Update spent-percentile for the provided Wrapped rows.
-   *
-   * The method computes total spent per user by joining transactions ->
-   * subtransactions -> subtransaction rows -> product revisions to multiply
-   * amounts and prices. Users who are inactive / deleted or do not allow
-   * extensive data processing are excluded.
-   *
-   * @param rows - list of Wrapped rows to operate on
+   * Query over the product rows eligible users bought within the period.
    */
-  private async updateSpentPercentile(rows: Wrapped[]) {
-    const manager = this.manager;
-    if (!rows || rows.length === 0) return;
-
-    const userFilterCore = 'u.deleted = 0 AND u.active = 1 AND u.extensiveDataProcessing = 1';
-
-    const qb = manager.createQueryBuilder(Transaction, 't')
-      .select('t.fromId', 'userId')
-      .addSelect('COALESCE(SUM(str.amount * pr.priceInclVat), 0)', 'total_spent')
+  private purchaseRows(period: Period, userIds?: number[]): SelectQueryBuilder<Transaction> {
+    const query = this.manager.createQueryBuilder(Transaction, 't')
+      .innerJoin(User, 'buyer', `buyer.id = t.fromId AND ${isEligible('buyer')}`)
       .innerJoin(SubTransaction, 'st', 'st.transactionId = t.id')
       .innerJoin(SubTransactionRow, 'str', 'str.subTransactionId = st.id')
       .innerJoin(ProductRevision, 'pr', 'pr.productId = str.productProductId AND pr.revision = str.productRevision')
-      .groupBy('t.fromId');
+      .where('t.createdAt >= :start AND t.createdAt < :end', { start: period.start, end: period.end });
+    if (userIds) query.andWhere('t.fromId IN (:...userIds)', { userIds });
 
-    const rowsResult: { userId: number; total_spent: string }[] = await qb.getRawMany();
+    return query;
+  }
 
-    const usersQb = manager.createQueryBuilder(User, 'u')
-      .leftJoin(Wrapped, 'w', 'w.userId = u.id')
-      .select('u.id', 'id')
-      .where(userFilterCore);
-    const eligibleUsers: { id: number }[] = await usersQb.getRawMany();
+  private async getPurchases(period: Period, userIds?: number[]) {
+    const purchases = await this.purchaseRows(period, userIds)
+      .innerJoin(
+        PointOfSaleRevision, 'posr',
+        'posr.pointOfSaleId = t.pointOfSalePointOfSaleId AND posr.revision = t.pointOfSaleRevision',
+      )
+      .select('t.fromId', 'userId')
+      .addSelect('t.createdAt', 'createdAt')
+      .addSelect('posr.useAuthentication', 'selfService')
+      .addSelect('SUM(str.amount)', 'items')
+      .addSelect('SUM(str.amount * pr.priceInclVat)', 'total')
+      .groupBy('t.id')
+      .addGroupBy('t.fromId')
+      .addGroupBy('t.createdAt')
+      .addGroupBy('posr.useAuthentication')
+      .getRawMany<{ userId: number, createdAt: string | Date, selfService: number, items: string, total: string }>();
 
-    // Initialize spent map with zero for all eligible users so that users
-    // without transactions still appear in percentile computation.
-    const spentMap = new Map<number, number>();
-    for (const e of eligibleUsers) spentMap.set(Number(e.id), 0);
-    for (const r of rowsResult) spentMap.set(Number(r.userId), Number(r.total_spent ?? 0));
+    return purchases.map((purchase) => ({
+      userId: purchase.userId,
+      createdAt: utcToDate(purchase.createdAt),
+      selfService: Boolean(purchase.selfService),
+      items: Number(purchase.items),
+      total: Number(purchase.total),
+    }));
+  }
 
-    const valueList = Array.from(spentMap.entries()).map(([id, value]) => ({ id, value }));
-    const percentileMap = WrappedService.computePercentiles(valueList);
+  private async getTotals(period: Period, userIds?: number[]) {
+    const totals = await this.purchaseRows(period, userIds)
+      .select('t.fromId', 'userId')
+      .addSelect('COUNT(DISTINCT t.id)', 'transactionCount')
+      .addSelect('SUM(str.amount * pr.priceInclVat)', 'totalSpent')
+      .groupBy('t.fromId')
+      .getRawMany<{ userId: number, transactionCount: string, totalSpent: string }>();
 
-    const updatePromises = rows.map((wrapped) => {
-      const pct = percentileMap.get(wrapped.userId) ?? 100;
-      return manager.update(Wrapped, { userId: wrapped.userId }, { spentPercentile: pct });
-    });
+    return totals.map((user) => ({
+      userId: user.userId,
+      transactionCount: Number(user.transactionCount),
+      totalSpent: Number(user.totalSpent),
+    }));
+  }
 
-    await Promise.all(updatePromises);
+  private async getProductPurchases(period: Period, userIds?: number[]): Promise<ProductPurchase[]> {
+    const query = this.purchaseRows(period, userIds)
+      .select('t.fromId', 'userId')
+      .addSelect('str.productProductId', 'productId')
+      .addSelect('pr.categoryId', 'categoryId')
+      .addSelect('SUM(str.amount)', 'count')
+      .addSelect('SUM(CASE WHEN pr.alcoholPercentage > 0 THEN str.amount ELSE 0 END)', 'alcoholicCount')
+      .addSelect('SUM(str.amount * pr.priceInclVat)', 'total')
+      .groupBy('t.fromId')
+      .addGroupBy('str.productProductId')
+      .addGroupBy('pr.categoryId');
+
+    const purchases = await query.getRawMany<
+    Pick<ProductPurchase, 'userId' | 'productId' | 'categoryId'> & { count: string, alcoholicCount: string, total: string }
+    >();
+    return purchases.map((purchase) => ({
+      ...purchase,
+      count: Number(purchase.count),
+      alcoholicCount: Number(purchase.alcoholicCount),
+      total: Number(purchase.total),
+    }));
+  }
+
+  private async getProducts(ids: number[]) {
+    if (ids.length === 0) return new Map<number, Pick<WrappedProduct, 'name' | 'image'>>();
+
+    const products = await this.manager.createQueryBuilder(ProductRevision, 'pr')
+      .withDeleted()
+      .innerJoin(Product, 'product', 'product.id = pr.productId AND product.currentRevision = pr.revision')
+      .leftJoin(ProductImage, 'image', 'image.id = product.imageId')
+      .select('pr.productId', 'id')
+      .addSelect('pr.name', 'name')
+      .addSelect('image.downloadName', 'image')
+      .where('pr.productId IN (:...ids)', { ids })
+      .getRawMany<{ id: number, name: string, image: string | null }>();
+
+    return new Map(products.map(({ id, name, image }) => [id, { name, image: image ?? undefined }]));
+  }
+
+  private async getCategoryNames(): Promise<Map<number, string>> {
+    const categories = await this.manager.createQueryBuilder(ProductCategory, 'category')
+      .select('category.id', 'id')
+      .addSelect('category.name', 'name')
+      .getRawMany<{ id: number, name: string }>();
+
+    return new Map(categories.map(({ id, name }) => [id, name]));
+  }
+
+  private getTopUps(period: Period, userIds?: number[]): Promise<Map<number, CountAndTotal>> {
+    const query = this.manager.createQueryBuilder(StripeDeposit, 'deposit')
+      .innerJoin(Transfer, 'transfer', 'transfer.id = deposit.transferId');
+
+    return WrappedService.countAndTotalPerUser(
+      query, { userId: 'transfer.toId', amount: 'transfer.amountInclVat', createdAt: 'transfer.createdAt' }, period, userIds,
+    );
+  }
+
+  private getFines(period: Period, userIds?: number[]): Promise<Map<number, CountAndTotal>> {
+    const query = this.manager.createQueryBuilder(Fine, 'fine')
+      .innerJoin(UserFineGroup, 'fineGroup', 'fineGroup.id = fine.userFineGroupId');
+
+    return WrappedService.countAndTotalPerUser(
+      query, { userId: 'fineGroup.userId', amount: 'fine.amount', createdAt: 'fine.createdAt' }, period, userIds,
+    );
+  }
+
+  private static async countAndTotalPerUser(
+    query: SelectQueryBuilder<ObjectLiteral>,
+    columns: { userId: string, amount: string, createdAt: string },
+    period: Period,
+    userIds?: number[],
+  ): Promise<Map<number, CountAndTotal>> {
+    query
+      .innerJoin(User, 'user', `user.id = ${columns.userId} AND ${isEligible('user')}`)
+      .select(columns.userId, 'userId')
+      .addSelect('COUNT(*)', 'count')
+      .addSelect(`SUM(${columns.amount})`, 'total')
+      .where(`${columns.createdAt} >= :start AND ${columns.createdAt} < :end`, { start: period.start, end: period.end })
+      .groupBy(columns.userId);
+    if (userIds) query.andWhere(`${columns.userId} IN (:...userIds)`, { userIds });
+
+    const rows = await query.getRawMany<{ userId: number, count: string, total: string }>();
+    return new Map(rows.map((row) => [row.userId, { count: Number(row.count), total: Number(row.total) }]));
   }
 
   /**
-   * Update the syncedFrom/syncedTo timestamps for the provided rows. syncedFrom
-   * is set to the beginning of the Wrapped year and syncedTo to 'now'.
-   *
-   * @param rows - list of Wrapped rows to operate on
-   * @param wrappedYear - year for the Wrapped computation
+   * Rank each organ member among everyone who rang up transactions at the points of sale of their organ.
    */
-  private async updateSyncedDates(rows: Wrapped[], wrappedYear: number): Promise<void> {
-    if (!rows || rows.length === 0) return;
+  private async computeOrganMembers(period: Period, ids?: number[]): Promise<WrappedOrganMember[]> {
+    const membershipQuery = this.manager.createQueryBuilder(OrganMembership, 'membership')
+      .select('membership.userId', 'userId')
+      .addSelect('membership.organId', 'organId');
+    if (ids) membershipQuery.where('membership.userId IN (:...ids)', { ids });
+    const memberships = await membershipQuery.getRawMany<{ userId: number, organId: number }>();
+    if (memberships.length === 0) return [];
 
-    const manager = this.manager;
-    const userIds = rows.map((r) => Number(r.userId ?? 0)).filter((id) => id > 0);
-    if (userIds.length === 0) return;
+    const sales = await this.manager.createQueryBuilder(Transaction, 't')
+      .select('pos.ownerId', 'organId')
+      .addSelect('t.createdById', 'sellerId')
+      .addSelect('COUNT(DISTINCT t.id)', 'transactionCount')
+      .addSelect('COUNT(DISTINCT t.fromId)', 'customerCount')
+      .addSelect('SUM(str.amount * pr.priceInclVat)', 'turnover')
+      .innerJoin(PointOfSale, 'pos', 'pos.id = t.pointOfSalePointOfSaleId')
+      .innerJoin(User, 'organ', 'organ.id = pos.ownerId AND organ.active = 1')
+      .innerJoin(User, 'seller', `seller.id = t.createdById AND ${isEligible('seller')}`)
+      .innerJoin(SubTransaction, 'st', 'st.transactionId = t.id')
+      .innerJoin(SubTransactionRow, 'str', 'str.subTransactionId = st.id')
+      .innerJoin(ProductRevision, 'pr', 'pr.productId = str.productProductId AND pr.revision = str.productRevision')
+      .where('t.createdAt >= :start AND t.createdAt < :end', { start: period.start, end: period.end })
+      .andWhere('pos.ownerId IN (:...organIds)', { organIds: [...new Set(memberships.map((m) => m.organId))] })
+      .groupBy('pos.ownerId')
+      .addGroupBy('t.createdById')
+      .getRawMany<{ organId: number, sellerId: number, transactionCount: string, customerCount: string, turnover: string }>();
 
-    const syncedFrom = new Date(wrappedYear, 0, 1, 0, 0, 0);
-    const syncedTo = new Date();
+    const sellersByOrgan = new Map<number, Seller[]>();
+    for (const sale of sales) {
+      const sellers = sellersByOrgan.get(sale.organId) ?? [];
+      sellers.push({
+        sellerId: sale.sellerId,
+        transactionCount: Number(sale.transactionCount),
+        turnover: Number(sale.turnover),
+        customerCount: Number(sale.customerCount),
+      });
+      sellersByOrgan.set(sale.organId, sellers);
+    }
 
-    // Update all matched Wrapped rows in a single query
-    await manager.createQueryBuilder()
-      .update(Wrapped)
-      .set({ syncedFrom, syncedTo })
-      .where('userId IN (:...userIds)', { userIds })
-      .execute();
+    const ordinal = (sellers: Seller[], seller: Seller, key: 'transactionCount' | 'turnover') => sellers
+      .filter((other) => other[key] > seller[key] || (other[key] === seller[key] && other.sellerId < seller.sellerId))
+      .length;
+
+    return memberships.flatMap(({ userId, organId }): WrappedOrganMember[] => {
+      const sellers = sellersByOrgan.get(organId) ?? [];
+      const seller = sellers.find((s) => s.sellerId === userId);
+      if (!seller) return [];
+
+      return [Object.assign(new WrappedOrganMember(), {
+        userId,
+        year: period.year,
+        organId,
+        ordinalTransactionCreated: ordinal(sellers, seller, 'transactionCount'),
+        ordinalTurnoverCreated: ordinal(sellers, seller, 'turnover'),
+        transactionsCreated: seller.transactionCount,
+        turnoverCreated: toDinero(seller.turnover),
+        customersServed: seller.customerCount,
+        sellerCount: sellers.length,
+      })];
+    });
   }
 
-  /**
-   * Update organ member statistics for the provided Wrapped rows.
-   *
-   * For each user, finds all organs they're a member of, then computes ordinal
-   * rankings (0-based, sequential) for transaction count and turnover among all
-   * sellers (createdBy users) who created transactions for that organ's POS.
-   *
-   * @param rows - list of Wrapped rows to operate on
-   * @param wrappedYear - year for the Wrapped computation
-   */
-  private async updateWrappedOrganMembers(rows: Wrapped[], wrappedYear: number): Promise<void> {
-    const ctx = this.prepareUpdateContext(rows, wrappedYear);
-    if (!ctx) return;
-    const { start, end, manager, userIds } = ctx;
-
-    // Get all organ memberships for the users
-    const organMemberships = await manager.find(OrganMembership, {
-      where: { userId: In(userIds) },
-    });
-
-    if (organMemberships.length === 0) {
-      // Delete any existing WrappedOrganMember records for these users
-      await manager.delete(WrappedOrganMember, { userId: In(userIds) });
-      return;
-    }
-
-    // Group memberships by organId
-    const organIds = [...new Set(organMemberships.map((om) => om.organId))];
-    const userOrgansMap = new Map<number, number[]>();
-    for (const om of organMemberships) {
-      const userId = Number(om.userId);
-      if (!userOrgansMap.has(userId)) {
-        userOrgansMap.set(userId, []);
-      }
-      userOrgansMap.get(userId)!.push(Number(om.organId));
-    }
-
-    // For each organ, compute seller statistics
-    const organStatsMap = new Map<number, Map<number, { count: number; turnover: number }>>();
-
-    for (const organId of organIds) {
-      // Query transactions for this organ's POS
-      const transactionStats = await manager
-        .createQueryBuilder(Transaction, 't')
-        .select('t.createdById', 'sellerId')
-        .addSelect('COUNT(*)', 'transactionCount')
-        .addSelect('COALESCE(SUM(str.amount * pr.priceInclVat), 0)', 'turnover')
-        .innerJoin(PointOfSaleRevision, 'posr', 'posr.pointOfSaleId = t.pointOfSalePointOfSaleId AND posr.revision = t.pointOfSaleRevision')
-        .innerJoin('posr.pointOfSale', 'pos')
-        .innerJoin('pos.owner', 'owner')
-        .innerJoin(SubTransaction, 'st', 'st.transactionId = t.id')
-        .innerJoin(SubTransactionRow, 'str', 'str.subTransactionId = st.id')
-        .innerJoin(ProductRevision, 'pr', 'pr.productId = str.productProductId AND pr.revision = str.productRevision')
-        .innerJoin(User, 'seller', 'seller.id = t.createdById')
-        .where('owner.id = :organId', { organId })
-        .andWhere('owner.active = 1')
-        .andWhere('t.createdAt BETWEEN :start AND :end', { start, end })
-        .andWhere('seller.extensiveDataProcessing = 1')
-        .andWhere('seller.deleted = 0')
-        .andWhere('seller.active = 1')
-        .groupBy('t.createdById')
-        .getRawMany();
-
-      const sellerStats = new Map<number, { count: number; turnover: number }>();
-      for (const stat of transactionStats) {
-        sellerStats.set(Number(stat.sellerId), {
-          count: Number(stat.transactionCount),
-          turnover: Number(stat.turnover),
-        });
-      }
-      organStatsMap.set(organId, sellerStats);
-    }
-
-    // Compute ordinals for each organ
-    const organOrdinalsMap = new Map<number, Map<number, { transactionOrdinal: number; turnoverOrdinal: number }>>();
-
-    for (const [organId, sellerStats] of organStatsMap.entries()) {
-      // Sort sellers by transaction count (descending)
-      const sortedByCount = Array.from(sellerStats.entries())
-        .sort((a, b) => b[1].count - a[1].count);
-
-      // Sort sellers by turnover (descending)
-      const sortedByTurnover = Array.from(sellerStats.entries())
-        .sort((a, b) => b[1].turnover - a[1].turnover);
-
-      // Assign 0-based sequential ordinals
-      const transactionOrdinals = new Map<number, number>();
-      for (let i = 0; i < sortedByCount.length; i++) {
-        transactionOrdinals.set(sortedByCount[i][0], i);
-      }
-
-      const turnoverOrdinals = new Map<number, number>();
-      for (let i = 0; i < sortedByTurnover.length; i++) {
-        turnoverOrdinals.set(sortedByTurnover[i][0], i);
-      }
-
-      const ordinalsMap = new Map<number, { transactionOrdinal: number; turnoverOrdinal: number }>();
-      for (const [sellerId] of sellerStats.entries()) {
-        ordinalsMap.set(sellerId, {
-          transactionOrdinal: transactionOrdinals.get(sellerId) ?? sortedByCount.length,
-          turnoverOrdinal: turnoverOrdinals.get(sellerId) ?? sortedByTurnover.length,
-        });
-      }
-      organOrdinalsMap.set(organId, ordinalsMap);
-    }
-
-    // Delete existing WrappedOrganMember records for these users
-    await manager.delete(WrappedOrganMember, { userId: In(userIds) });
-
-    // Create new WrappedOrganMember records
-    const wrappedOrganMembers: WrappedOrganMember[] = [];
-    for (const wrapped of rows) {
-      const userId = Number(wrapped.userId);
-      const oIds = userOrgansMap.get(userId) || [];
-
-      for (const organId of oIds) {
-        const ordinals = organOrdinalsMap.get(organId)?.get(userId);
-        if (ordinals !== undefined) {
-          const wom = new WrappedOrganMember();
-          wom.userId = userId;
-          wom.organId = organId;
-          wom.ordinalTransactionCreated = ordinals.transactionOrdinal;
-          wom.ordinalTurnoverCreated = ordinals.turnoverOrdinal;
-          wrappedOrganMembers.push(wom);
-        }
-      }
-    }
-
-    if (wrappedOrganMembers.length > 0) {
-      await manager.save(wrappedOrganMembers);
+  private static async insertRows<T extends ObjectLiteral>(manager: EntityManager, entity: EntityTarget<T>, rows: T[]) {
+    for (let i = 0; i < rows.length; i += INSERT_CHUNK_SIZE) {
+      await manager.insert(entity, rows.slice(i, i + INSERT_CHUNK_SIZE));
     }
   }
 }

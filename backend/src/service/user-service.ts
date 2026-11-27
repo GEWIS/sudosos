@@ -52,6 +52,7 @@ import { AppDataSource } from '../database/database';
 import PointOfSaleService from './point-of-sale-service';
 import { UserTypeUpdatedOptions, UserTypeUpdatedWithResetOptions } from '../notifications/notification-options';
 import LocalAuthenticator from '../entity/authenticator/local-authenticator';
+import WrappedService from './wrapped-service';
 
 /**
  * Parameters used to filter on Get Users functions.
@@ -436,7 +437,8 @@ export default class UserService {
   }
 
   /**
-   * Updates the user object with the new properties.
+   * Updates the user object with the new properties. A user that withdraws their consent for
+   * extensive data processing loses their Wrapped.
    * @param userId - ID of the user to update.
    * @param updateUserRequest - The update object.
    */
@@ -445,8 +447,10 @@ export default class UserService {
     const options = this.getOptions({ id: userId, allowDeleted: true });
     const user = await User.findOne(options);
     if (!user) return undefined;
+    const withdrawsConsent = user.extensiveDataProcessing && updateUserRequest.extensiveDataProcessing === false;
     Object.assign(user, updateUserRequest);
     await user.save();
+    if (withdrawsConsent) await new WrappedService().deleteWrappedForUser(user.id);
     return user;
   }
 
@@ -477,8 +481,10 @@ export default class UserService {
       if (error instanceof QueryFailedError) return AcceptTosResult.ALREADY_ACCEPTED;
       throw error;
     }
+    const withdrawsConsent = user.extensiveDataProcessing && !params.extensiveDataProcessing;
     user.extensiveDataProcessing = params.extensiveDataProcessing;
     await user.save();
+    if (withdrawsConsent) await new WrappedService().deleteWrappedForUser(user.id);
     return AcceptTosResult.SUCCESS;
   }
 

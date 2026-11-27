@@ -160,6 +160,7 @@
     },
     "navigation": {
       "transactions": "Transakcje",
+      "wrapped": "Wrapped",
       "admin": "Admin",
       "financial": "Finanse",
       "seller": "Sprzedawca",
@@ -314,7 +315,7 @@
       "fav": "Na koniec, twoje ulubione były:",
       "christmas": "Wesołych Świąt i szczęśliwego Nowego Roku od ABC!",
       "banner": {
-        "title": "SudoSOS Wrapped jest tutaj!",
+        "title": "SudoSOS Wrapped {year} jest tutaj!",
         "open": "Otwórz Wrapped"
       }
     },

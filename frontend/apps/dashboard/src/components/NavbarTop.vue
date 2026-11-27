@@ -39,6 +39,7 @@ import NavbarMenu from '@/components/NavbarMenu.vue';
 import { useProfileNav } from '@/composables/profileNavbar';
 import { useSizeBreakpoints } from '@/composables/sizeBreakpoints';
 import GewisLogo from '@/components/GewisLogo.vue';
+import { useIsWrapped } from '@/composables/isWrapped';
 
 const { t } = useI18n();
 const { isLg } = useSizeBreakpoints();
@@ -50,11 +51,17 @@ const adminNav = useAdminNav();
 const financialNav = useFinancialNav();
 const sellerNav = useSellerNav();
 const profileNav = useProfileNav();
+const { isWrapped } = useIsWrapped();
 
 const navItems = computed(() => [
   {
     label: t('common.navigation.transactions'),
     route: '/transaction',
+  },
+  {
+    label: t('common.navigation.wrapped'),
+    route: '/wrapped',
+    visible: isWrapped.value,
   },
   ...adminNav.value,
   ...financialNav.value,
