@@ -292,6 +292,47 @@
           "remaining": "Remaining (€)",
           "fetchError": "Failed to load the transfer totals. Please try again."
         }
+      },
+      "tab": {
+        "overview": {
+          "header": "Tabs",
+          "empty": "No tabs found."
+        },
+        "contact": "Contact",
+        "contactName": "Contact person",
+        "outstanding": "Outstanding",
+        "status": {
+          "ALL": "All",
+          "OPEN": "Open",
+          "LOCKED": "Paying",
+          "PAID": "Paid",
+          "INVOICED": "Invoiced",
+          "CANCELLED": "Cancelled"
+        },
+        "detail": {
+          "subtitle": "Tab",
+          "openedBy": "Opened by",
+          "lockedHint": "A card payment is in progress on terminal {terminal}. No purchases can be added until it finishes or is cancelled.",
+          "invoicedHint": "This tab was converted to an invoice account. Create an invoice for its transactions to settle it.",
+          "cancelTab": "Cancel tab",
+          "cancelTabConfirm": "Cancel this tab? Nothing has been bought on it, and it cannot be reopened.",
+          "cancelTabSuccess": "The tab was cancelled.",
+          "cancelPayment": "Cancel payment",
+          "cancelPaymentConfirm": "Cancel the card payment in progress? The tab will be open again.",
+          "cancelPaymentSuccess": "The payment was cancelled and the tab is open again.",
+          "resendReceipt": "Resend receipt",
+          "resendSuccess": "The receipt was sent to {email}."
+        },
+        "edit": {
+          "header": "Edit tab",
+          "success": "The tab was updated."
+        },
+        "convert": {
+          "action": "Convert to invoice account",
+          "confirmHeader": "Confirm Invoice Conversion",
+          "confirm": "Are you sure you want to convert this tab to an invoice?",
+          "success": "The tab is now an invoice account."
+        }
       }
     }
   }

@@ -68,6 +68,7 @@ const props = defineProps({
 const selectedUser = ref<BaseUserResponse | undefined>(undefined);
 const route = useRoute();
 const userStore = useUserStore();
+const toast = useToast();
 
 const transactionTotal = computed(() => {
   const total = getProperty(props.form, 'transactionTotal');
@@ -99,7 +100,8 @@ const balanceAfterInvoice: Ref<DineroObjectResponse> = computed(() => {
  * @param event - User to be selected.
  */
 const updateUser = (event: UserResponse) => {
-  if (event.id) {
+  // The preselected user from the route is echoed back by the selector; its data is already being fetched.
+  if (event.id && event.id !== getProperty(props.form, 'forId')) {
     props.form.context.setFieldValue('forId', event.id);
     updateUserBalance();
     updateDefaultUser(event.id);
@@ -150,19 +152,27 @@ const updateDefaultUser = (forId: number) => {
       props.form.context.setFieldValue('city', user.city);
       props.form.context.setFieldValue('country', user.country);
     })
-    .catch((err) => handleError(err, useToast()));
+    .catch((err) => handleError(err, toast));
 };
 
 const queryUser: Ref<BaseUserResponse | undefined> = ref(undefined);
 
 onBeforeMount(() => {
-  if (route.query.userId) {
-    const userId = route.query.userId as unknown as number;
+  const userId = Number(route.query.userId);
+  if (Number.isInteger(userId) && userId > 0) {
     props.form.context.setFieldValue('forId', userId);
 
     const user = userStore.getUserById(userId);
     if (user) {
       queryUser.value = user;
+    } else {
+      // Not cached when coming straight from another page (e.g. a tab), so fetch it for the selector.
+      apiService.user
+        .getIndividualUser({ id: userId })
+        .then((res) => {
+          queryUser.value = res.data;
+        })
+        .catch((err) => handleError(err, toast));
     }
 
     updateUserBalance();

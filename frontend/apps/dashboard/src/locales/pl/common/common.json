@@ -189,7 +189,8 @@
       "financialOverview": "Przegląd finansowy",
       "maintainer": "Utrzymanie",
       "sellers": "Sprzedawcy",
-      "rbac": "RBAC"
+      "rbac": "RBAC",
+      "tabs": "Rachunki"
     },
     "validation": {
       "number": {
@@ -357,7 +358,9 @@
       "error": "Błąd",
       "wrapped": "Wrapped",
       "financialOverview": "Przegląd finansowy",
-      "transferView": "Przegląd Transferów"
+      "transferView": "Przegląd Transferów",
+      "tabs": "Rachunki",
+      "tab": "Rachunek"
     }
   }
 }

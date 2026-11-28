@@ -14,6 +14,8 @@ import VatView from '@/modules/financial/views/vat/VatView.vue';
 import AdministrativeView from '@/modules/financial/views/administrative/AdministrativeView.vue';
 import FinancialOverviewView from '@/modules/financial/views/overview/FinancialOverviewView.vue';
 import TransferView from '@/modules/financial/views/transfer/TransferView.vue';
+import TabsView from '@/modules/financial/views/tab/TabsView.vue';
+import TabDetailView from '@/modules/financial/views/tab/TabDetailView.vue';
 import { isTransferCategory } from '@/modules/financial/utils/transferCategories';
 
 export function financialRoutes(): RouteRecordRaw[] {
@@ -102,6 +104,27 @@ export function financialRoutes(): RouteRecordRaw[] {
             requiresAuth: true,
             isAllowed: () => isAllowed('get', ['all'], 'WriteOff', ['any']),
             title: 'common.titles.writeOffs',
+          },
+        },
+        {
+          path: '/financial/tab',
+          component: TabsView,
+          name: 'tabs',
+          meta: {
+            requiresAuth: true,
+            isAllowed: () => isAllowed('get', ['all'], 'Tab', ['any']),
+            title: 'common.titles.tabs',
+          },
+        },
+        {
+          path: '/financial/tab/:id',
+          component: TabDetailView,
+          name: 'tabDetail',
+          props: true,
+          meta: {
+            requiresAuth: true,
+            isAllowed: () => isAllowed('get', ['all'], 'Tab', ['any']),
+            title: 'common.titles.tab',
           },
         },
         {
