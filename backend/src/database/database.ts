@@ -133,6 +133,10 @@ import {
   AddPurchaseStatisticsToWrapped1794863989728,
 } from '../migrations/1794863989728-add-purchase-statistics-to-wrapped';
 import { AddHighlightsToWrapped1794864319826 } from '../migrations/1794864319826-add-highlights-to-wrapped';
+import { Tab1795737600000 } from '../migrations/1795737600000-tab';
+import Tab from '../entity/tab/tab';
+import TabPaymentAttempt from '../entity/tab/tab-payment-attempt';
+import TabReceiptPdf from '../entity/file/tab-receipt-pdf';
 
 function getDataSourceOptions(): DataSourceOptions {
   const config = Config.get();
@@ -192,6 +196,7 @@ function getDataSourceOptions(): DataSourceOptions {
       AddYearToWrapped1794863168963,
       AddPurchaseStatisticsToWrapped1794863989728,
       AddHighlightsToWrapped1794864319826,
+      Tab1795737600000,
     ],
     extra: {
       authPlugins: {
@@ -266,6 +271,9 @@ function getDataSourceOptions(): DataSourceOptions {
       UserSetting,
       PaymentRequest,
       PaymentRequestAttempt,
+      Tab,
+      TabPaymentAttempt,
+      TabReceiptPdf,
       TermsOfServiceAcceptance,
     ],
     subscribers: [

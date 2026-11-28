@@ -34,6 +34,7 @@ import Config from '../config';
 import StripeService, { StripeFactory } from './stripe-service';
 import PaymentRequestService from './payment-request-service';
 import TerminalPaymentService from './terminal-payment-service';
+import TabService from './tab-service';
 import { TerminalPaymentState } from '../entity/transactions/terminal/terminal-payment';
 
 export default class StripeWebhookService extends WithManager {
@@ -67,8 +68,9 @@ export default class StripeWebhookService extends WithManager {
    * Append a new status to a {@link StripePaymentIntent} and, when the new
    * state is terminal, run the side effects for whatever the intent is linked
    * to. On `SUCCEEDED` this settles the deposit (and marks any linked
-   * PaymentRequest as paid) or finalises the terminal payment; on `CANCELLED`
-   * it propagates a Stripe-initiated cancellation to a linked terminal payment.
+   * PaymentRequest as paid), finalises the terminal payment or settles the
+   * tab; on `CANCELLED` it propagates a Stripe-initiated cancellation to a
+   * linked terminal payment or tab; on `FAILED` it reopens a linked tab.
    *
    * Rejects when the intent does not exist, when the status already exists, or
    * when it would conflict with a mutually exclusive terminal state already
@@ -81,7 +83,7 @@ export default class StripeWebhookService extends WithManager {
     paymentIntentId: number, state: StripePaymentIntentState,
   ): Promise<StripePaymentIntentStatus> {
     const paymentIntent = await this.manager.getRepository(StripePaymentIntent)
-      .findOne({ where: { id: paymentIntentId }, relations: { deposit: true, paymentRequestAttempt: { paymentRequest: true }, terminalPayment: true } });
+      .findOne({ where: { id: paymentIntentId }, relations: { deposit: true, paymentRequestAttempt: { paymentRequest: true }, terminalPayment: true, tabPaymentAttempt: true } });
     if (!paymentIntent) {
       throw new Error(`PaymentIntent with id "${paymentIntentId}" not found.`);
     }
@@ -138,10 +140,19 @@ export default class StripeWebhookService extends WithManager {
     if (state === StripePaymentIntentState.SUCCEEDED && !!paymentIntent.terminalPayment) {
       await new TerminalPaymentService(this.manager).handleTerminalPaymentSuccess(paymentIntent);
     }
+    if (state === StripePaymentIntentState.SUCCEEDED && !!paymentIntent.tabPaymentAttempt) {
+      await new TabService(this.manager).settlePaidIntent(paymentIntent);
+    }
 
     // If payment is cancelled, propagate this to appropriate entity if cancellation is done by Stripe (and not SudoSOS)
     if (state === StripePaymentIntentState.CANCELLED && !!paymentIntent.terminalPayment && paymentIntent.terminalPayment.getState() !== TerminalPaymentState.CANCELLED) {
       await new TerminalPaymentService(this.manager).cancelTerminalPayment(paymentIntent.terminalPayment.id, false);
+    }
+    // A failed tab payment (e.g. a declined card) frees the reader too, so the
+    // tab is reopened to be paid with a new attempt.
+    if ((state === StripePaymentIntentState.CANCELLED || state === StripePaymentIntentState.FAILED)
+      && !!paymentIntent.tabPaymentAttempt) {
+      await new TabService(this.manager).reopenAfterStripe(paymentIntent);
     }
 
     return paymentIntentStatus;
@@ -161,6 +172,7 @@ export default class StripeWebhookService extends WithManager {
           paymentIntentStatuses: true,
           paymentRequestAttempt: { paymentRequest: true },
           terminalPayment: true,
+          tabPaymentAttempt: true,
         },
       });
 

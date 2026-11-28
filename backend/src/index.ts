@@ -94,6 +94,7 @@ import Config from './config';
 import { applyConfiguredLogLevel } from './helpers/logging';
 import { initRedisConnection } from './helpers/redis-connection';
 import TerminalPaymentController from './controller/terminal-payment-controller';
+import TabController from './controller/tab-controller';
 
 export class Application {
   app: express.Express;
@@ -250,6 +251,7 @@ export default async function createApp(): Promise<Application> {
     application.app.use('/static/payouts', express.static('data/payout_requests'));
     application.app.use('/static/sellerPayouts', express.static('data/seller_payouts'));
     application.app.use('/static/writeOffs', express.static('data/write_offs'));
+    application.app.use('/static/tabReceipts', express.static('data/tab_receipts'));
   }
 
   application.roleManager = await new RoleManager().initialize();
@@ -317,6 +319,10 @@ export default async function createApp(): Promise<Application> {
     application.app.use('/v1/payment-requests', new PaymentRequestController(options).getRouter());
     application.app.use('/v1/terminal-payments', new TerminalPaymentController(options).getRouter());
   }
+  // Tabs work without Stripe: opening, selling and invoicing do not need it.
+  // Only paying on a card reader does, and TabController refuses that when
+  // Stripe is not configured.
+  application.app.use('/v1/tabs', new TabController(options).getRouter());
   application.app.use('/v1/payoutrequests', new PayoutRequestController(options).getRouter());
   application.app.use('/v1/invoices', new InvoiceController(options).getRouter());
   application.app.use('/v1/containers', new ContainerController(options).getRouter());

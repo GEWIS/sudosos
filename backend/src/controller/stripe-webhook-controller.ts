@@ -37,6 +37,8 @@ import Config from '../config';
 import StripeWebhookService from '../service/stripe-webhook-service';
 import TerminalPaymentService from '../service/terminal-payment-service';
 import WebSocketService from '../service/websocket-service';
+import TabService from '../service/tab-service';
+import { TabStatus } from '../entity/tab/tab';
 
 export default class StripeWebhookController extends BaseController {
   private logger: Logger = log4js.getLogger('StripeWebhookController');
@@ -144,6 +146,7 @@ export default class StripeWebhookController extends BaseController {
       // reaching `paid` makes the point of sale clear its cart, so telling it
       // about a state that later rolls back would lose a sale.
       await this.emitTerminalPaymentUpdate(paymentIntent.id);
+      await this.finishTabUpdate(paymentIntent.id);
     }).catch((error) => {
       this.logger.error('stripe_webhook.handle.failed', { eventId: webhookEvent.id, type: webhookEvent.type }, error);
     });
@@ -171,6 +174,33 @@ export default class StripeWebhookController extends BaseController {
       await WebSocketService.emitTerminalPaymentUpdated(response);
     } catch (error) {
       this.logger.error('stripe_webhook.emit_terminal_payment_update.failed', { paymentIntentId }, error);
+    }
+  }
+
+  /**
+   * Report the new state of the tab behind a payment intent, if the intent was
+   * an attempt to pay one. When the tab has just been paid, also email its
+   * receipt.
+   *
+   * Only call this once the webhook's database transaction has committed:
+   * the receipt must never be sent for a payment that is rolled back. Failures
+   * are logged and swallowed; a receipt can be resent from the dashboard.
+   * @param paymentIntentId - Database ID of the Stripe payment intent.
+   */
+  private async finishTabUpdate(paymentIntentId: number): Promise<void> {
+    try {
+      const service = new TabService();
+      const tab = await service.getTabByPaymentIntentId(paymentIntentId);
+      if (!tab) return;
+
+      await WebSocketService.emitTabUpdated(await service.toResponse(tab));
+
+      // The receipt PDF is stored once, so its absence means it was not sent yet.
+      if (tab.status === TabStatus.PAID && !tab.pdf) {
+        await service.sendReceipt(tab);
+      }
+    } catch (error) {
+      this.logger.error('stripe_webhook.finish_tab_update.failed', { paymentIntentId }, error);
     }
   }
 }

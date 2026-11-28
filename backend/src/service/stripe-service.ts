@@ -263,12 +263,14 @@ export default class StripeService extends WithManager {
    * @param user User that wants to deposit some money into their account
    * @param amount The amount to be deposited
    * @param metadata Optional metadata to attach to the payment intent
+   * @param paymentMethod How the deposit is paid: online (`digital`, the
+   * default) or on a Stripe Terminal reader (`terminal`, used by tabs)
    * @returns The created deposit entity and the Stripe client secret
    */
   public async createStripeDeposit(
-    user: User, amount: Dinero, metadata?: Record<string, any>,
+    user: User, amount: Dinero, metadata?: Record<string, any>, paymentMethod: 'digital' | 'terminal' = 'digital',
   ): Promise<{ deposit: StripeDeposit, clientSecret: string | null }> {
-    const { stripePaymentIntent, clientSecret } = await this.createStripePaymentIntent(user, amount, 'digital', metadata);
+    const { stripePaymentIntent, clientSecret } = await this.createStripePaymentIntent(user, amount, paymentMethod, metadata);
     const deposit = await this.manager.getRepository(StripeDeposit).save({
       stripePaymentIntent,
       to: user,

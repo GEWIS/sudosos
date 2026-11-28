@@ -48,10 +48,11 @@ function validEmail(mail: string) {
 }
 
 /**
- * Checks if provided type is valid
+ * Checks if provided type is valid. `TAB` users only exist behind a tab, so
+ * they are created by opening one, never directly.
  */
 function validUserType(u: CreateUserRequest) {
-  if (!Object.values(UserType).includes(u.type)) {
+  if (!Object.values(UserType).includes(u.type) || u.type === UserType.TAB) {
     return toFail(INVALID_USER_TYPE());
   }
   return toPass(u);

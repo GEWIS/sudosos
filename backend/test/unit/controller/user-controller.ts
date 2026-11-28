@@ -744,6 +744,14 @@ describe('UserController', (): void => {
   });
 
   describe('POST /users', () => {
+    it('should give an HTTP 400 for a TAB user, which only a tab creates', async () => {
+      const res = await request(ctx.app)
+        .post('/users')
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ ...ctx.user, type: UserType.TAB });
+      expect(res.status).to.equal(400);
+    });
+
     it('should give an HTTP 403 when not an admin', async () => {
       const res = await request(ctx.app)
         .post('/users')
@@ -876,6 +884,17 @@ describe('UserController', (): void => {
       const spec = await Swagger.importSpecification();
       expect(user.firstName).to.deep.equal(firstName);
       verifyUserResponse(spec, user);
+    });
+    it('should give HTTP 400 for a TAB user, which is changed through its tab', async () => {
+      const user = await User.save(Object.assign(new User(), {
+        firstName: 'Tab', lastName: '', type: UserType.TAB, active: true, canGoIntoDebt: true,
+      } as User));
+      const res = await request(ctx.app)
+        .patch(`/users/${user.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`)
+        .send({ active: false });
+      expect(res.status).to.equal(400);
+      expect((await User.findOne({ where: { id: user.id } }))!.active).to.be.true;
     });
     it('should give HTTP 400 if firstName is emtpy', async () => {
       const res = await request(ctx.app)
@@ -1031,6 +1050,17 @@ describe('UserController', (): void => {
         .delete('/users/24')
         .set('Authorization', `Bearer ${ctx.userToken}`);
       expect(res.status).to.equal(403);
+    });
+
+    it('should give HTTP 400 for a TAB user', async () => {
+      const user = await User.save(Object.assign(new User(), {
+        firstName: 'Tab', lastName: '', type: UserType.TAB, active: true, canGoIntoDebt: true,
+      } as User));
+      const res = await request(ctx.app)
+        .delete(`/users/${user.id}`)
+        .set('Authorization', `Bearer ${ctx.adminToken}`);
+      expect(res.status).to.equal(400);
+      expect((await User.findOne({ where: { id: user.id } }))!.deleted).to.be.false;
     });
 
     it('should correctly delete user if requester is admin', async () => {

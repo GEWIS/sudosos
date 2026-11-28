@@ -54,4 +54,9 @@
 		root * /app/data/write_offs
 		file_server
 	}
+	handle_path /static/tabReceipts/* {
+		header Cache-Control "max-age=31536000"
+		root * /app/data/tab_receipts
+		file_server
+	}
 }

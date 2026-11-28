@@ -1218,7 +1218,7 @@ export interface BaseTransactionResponse {
      */
     'value': Dinero;
     /**
-     * Whether this transaction was paid with a card terminal. Such transactions cannot be edited or deleted.
+     * Whether this transaction was paid with a card terminal, directly or as part of a paid tab. Such transactions cannot be edited or deleted.
      * @type {boolean}
      * @memberof BaseTransactionResponse
      */
@@ -1960,6 +1960,37 @@ export interface CreateSellerPayoutRequest {
      * @memberof CreateSellerPayoutRequest
      */
     'endDate': string;
+}
+/**
+ * 
+ * @export
+ * @interface CreateTabRequest
+ */
+export interface CreateTabRequest {
+    /**
+     * Name of the tab, shown at the point of sale.
+     * @type {string}
+     * @memberof CreateTabRequest
+     */
+    'name': string;
+    /**
+     * Name of the contact person of the group.
+     * @type {string}
+     * @memberof CreateTabRequest
+     */
+    'contactName': string;
+    /**
+     * Email address the receipt is sent to.
+     * @type {string}
+     * @memberof CreateTabRequest
+     */
+    'contactEmail': string;
+    /**
+     * Whether the group may buy age-restricted products.
+     * @type {boolean}
+     * @memberof CreateTabRequest
+     */
+    'ofAge': boolean;
 }
 /**
  * 
@@ -3246,6 +3277,25 @@ export interface PaginatedSellerPayoutResponse {
 /**
  * 
  * @export
+ * @interface PaginatedTabResponse
+ */
+export interface PaginatedTabResponse {
+    /**
+     * 
+     * @type {PaginationResult}
+     * @memberof PaginatedTabResponse
+     */
+    '_pagination': PaginationResult;
+    /**
+     * Returned tabs
+     * @type {Array<TabResponse>}
+     * @memberof PaginatedTabResponse
+     */
+    'records': Array<TabResponse>;
+}
+/**
+ * 
+ * @export
  * @interface PaginatedTransferResponse
  */
 export interface PaginatedTransferResponse {
@@ -3428,6 +3478,19 @@ export interface PatchUserTypeRequest {
      * @memberof PatchUserTypeRequest
      */
     'userType': string;
+}
+/**
+ * 
+ * @export
+ * @interface PayTabRequest
+ */
+export interface PayTabRequest {
+    /**
+     * ID of the Stripe Terminal (reader) to pay on.
+     * @type {string}
+     * @memberof PayTabRequest
+     */
+    'stripeTerminalId': string;
 }
 /**
  * Response returned from the \"start payment\" endpoint. Contains just enough to let the browser redirect into the Stripe Payment Element.
@@ -4956,6 +5019,114 @@ export interface SubTransactionRowResponse {
 /**
  * 
  * @export
+ * @interface TabResponse
+ */
+export interface TabResponse {
+    /**
+     * The unique id of the entity.
+     * @type {number}
+     * @memberof TabResponse
+     */
+    'id': number;
+    /**
+     * The creation Date of the entity.
+     * @type {string}
+     * @memberof TabResponse
+     */
+    'createdAt'?: string;
+    /**
+     * The last update Date of the entity.
+     * @type {string}
+     * @memberof TabResponse
+     */
+    'updatedAt'?: string;
+    /**
+     * The version of the entity.
+     * @type {number}
+     * @memberof TabResponse
+     */
+    'version'?: number;
+    /**
+     * Name of the tab.
+     * @type {string}
+     * @memberof TabResponse
+     */
+    'name': string;
+    /**
+     * Name of the contact person of the group.
+     * @type {string}
+     * @memberof TabResponse
+     */
+    'contactName': string;
+    /**
+     * Email address the receipt is sent to.
+     * @type {string}
+     * @memberof TabResponse
+     */
+    'contactEmail': string;
+    /**
+     * Derived status of the tab.
+     * @type {string}
+     * @memberof TabResponse
+     */
+    'status': TabResponseStatusEnum;
+    /**
+     * 
+     * @type {BaseUserResponse}
+     * @memberof TabResponse
+     */
+    'user': BaseUserResponse;
+    /**
+     * 
+     * @type {BaseUserResponse}
+     * @memberof TabResponse
+     */
+    'createdBy': BaseUserResponse;
+    /**
+     * 
+     * @type {DineroObjectResponse}
+     * @memberof TabResponse
+     */
+    'outstanding': DineroObjectResponse;
+    /**
+     * When the tab was paid.
+     * @type {string}
+     * @memberof TabResponse
+     */
+    'paidAt'?: string;
+    /**
+     * When the tab was converted to an invoice account.
+     * @type {string}
+     * @memberof TabResponse
+     */
+    'invoicedAt'?: string;
+    /**
+     * When the tab was cancelled.
+     * @type {string}
+     * @memberof TabResponse
+     */
+    'cancelledAt'?: string;
+    /**
+     * The Stripe Terminal handling the current payment, if the tab is LOCKED.
+     * @type {string}
+     * @memberof TabResponse
+     */
+    'processedByTerminal'?: string;
+}
+
+export const TabResponseStatusEnum = {
+    Open: 'OPEN',
+    Locked: 'LOCKED',
+    Paid: 'PAID',
+    Invoiced: 'INVOICED',
+    Cancelled: 'CANCELLED'
+} as const;
+
+export type TabResponseStatusEnum = typeof TabResponseStatusEnum[keyof typeof TabResponseStatusEnum];
+
+/**
+ * 
+ * @export
  * @interface TerminalPaymentResponse
  */
 export interface TerminalPaymentResponse {
@@ -5411,7 +5582,7 @@ export interface TransactionResponse {
      */
     'totalPriceInclVat': DineroObjectResponse;
     /**
-     * Whether this transaction was paid with a card terminal. Such transactions cannot be edited or deleted.
+     * Whether this transaction was paid with a card terminal, directly or as part of a paid tab. Such transactions cannot be edited or deleted.
      * @type {boolean}
      * @memberof TransactionResponse
      */
@@ -6010,6 +6181,31 @@ export interface UpdateSellerPayoutRequest {
 /**
  * 
  * @export
+ * @interface UpdateTabRequest
+ */
+export interface UpdateTabRequest {
+    /**
+     * Name of the tab, shown at the point of sale.
+     * @type {string}
+     * @memberof UpdateTabRequest
+     */
+    'name'?: string;
+    /**
+     * Name of the contact person of the group.
+     * @type {string}
+     * @memberof UpdateTabRequest
+     */
+    'contactName'?: string;
+    /**
+     * Email address the receipt is sent to.
+     * @type {string}
+     * @memberof UpdateTabRequest
+     */
+    'contactEmail'?: string;
+}
+/**
+ * 
+ * @export
  * @interface UpdateUserRequest
  */
 export interface UpdateUserRequest {
@@ -6484,7 +6680,8 @@ export const UserType = {
     LocalAdmin: 'LOCAL_ADMIN',
     Invoice: 'INVOICE',
     PointOfSale: 'POINT_OF_SALE',
-    Integration: 'INTEGRATION'
+    Integration: 'INTEGRATION',
+    Tab: 'TAB'
 } as const;
 
 export type UserType = typeof UserType[keyof typeof UserType];
@@ -20124,6 +20321,983 @@ export const GetUserSyncResultsServiceEnum = {
     Gewisdb: 'GEWISDB'
 } as const;
 export type GetUserSyncResultsServiceEnum = typeof GetUserSyncResultsServiceEnum[keyof typeof GetUserSyncResultsServiceEnum];
+
+
+/**
+ * TabsApi - axios parameter creator
+ * @export
+ */
+export const TabsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Cancels an open tab that nothing was bought on
+         * @param {number} id The id of the tab
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        cancelTab: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('cancelTab', 'id', id)
+            const localVarPath = `/tabs/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Cancels the terminal payment in progress and reopens the tab
+         * @param {number} id The id of the tab
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        cancelTabPayment: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('cancelTabPayment', 'id', id)
+            const localVarPath = `/tabs/{id}/payment`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * The tab user becomes an INVOICE user. It keeps its transactions, which can then be invoiced with the regular invoice endpoints. The invoice account has no default address: the address is entered when the invoice is created.
+         * @summary Converts an unpaid tab into an invoice account
+         * @param {number} id The id of the tab
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        convertTabToInvoiceAccount: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('convertTabToInvoiceAccount', 'id', id)
+            const localVarPath = `/tabs/{id}/convert-to-invoice-account`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Opens a new tab for a group
+         * @param {CreateTabRequest} createTabRequest The tab to open
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createTab: async (createTabRequest: CreateTabRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createTabRequest' is not null or undefined
+            assertParamExists('createTab', 'createTabRequest', createTabRequest)
+            const localVarPath = `/tabs`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createTabRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Returns all tabs, newest first
+         * @param {GetAllTabsStatusEnum} [status] Only return tabs with this status
+         * @param {number} [take] How many tabs the endpoint should return
+         * @param {number} [skip] How many tabs should be skipped (for pagination)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllTabs: async (status?: GetAllTabsStatusEnum, take?: number, skip?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/tabs`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
+            if (take !== undefined) {
+                localVarQueryParameter['take'] = take;
+            }
+
+            if (skip !== undefined) {
+                localVarQueryParameter['skip'] = skip;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Returns a single tab
+         * @param {number} id The id of the tab
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSingleTab: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getSingleTab', 'id', id)
+            const localVarPath = `/tabs/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Returns the receipt PDF of a paid tab
+         * @param {number} id The id of the tab
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTabReceipt: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getTabReceipt', 'id', id)
+            const localVarPath = `/tabs/{id}/receipt`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Emails the receipt of a paid tab to its contact person (again)
+         * @param {number} id The id of the tab
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        sendTabReceipt: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('sendTabReceipt', 'id', id)
+            const localVarPath = `/tabs/{id}/receipt/send`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Charges the outstanding amount of a tab on a Stripe Terminal
+         * @param {number} id The id of the tab
+         * @param {PayTabRequest} payTabRequest The terminal to pay on
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        startTabPayment: async (id: number, payTabRequest: PayTabRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('startTabPayment', 'id', id)
+            // verify required parameter 'payTabRequest' is not null or undefined
+            assertParamExists('startTabPayment', 'payTabRequest', payTabRequest)
+            const localVarPath = `/tabs/{id}/payment`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(payTabRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Updates the name or contact details of an open tab
+         * @param {number} id The id of the tab
+         * @param {UpdateTabRequest} updateTabRequest The fields to update
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateTab: async (id: number, updateTabRequest: UpdateTabRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateTab', 'id', id)
+            // verify required parameter 'updateTabRequest' is not null or undefined
+            assertParamExists('updateTab', 'updateTabRequest', updateTabRequest)
+            const localVarPath = `/tabs/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateTabRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * TabsApi - functional programming interface
+ * @export
+ */
+export const TabsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = TabsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Cancels an open tab that nothing was bought on
+         * @param {number} id The id of the tab
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async cancelTab(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TabResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.cancelTab(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TabsApi.cancelTab']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Cancels the terminal payment in progress and reopens the tab
+         * @param {number} id The id of the tab
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async cancelTabPayment(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TabResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.cancelTabPayment(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TabsApi.cancelTabPayment']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * The tab user becomes an INVOICE user. It keeps its transactions, which can then be invoiced with the regular invoice endpoints. The invoice account has no default address: the address is entered when the invoice is created.
+         * @summary Converts an unpaid tab into an invoice account
+         * @param {number} id The id of the tab
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async convertTabToInvoiceAccount(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TabResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.convertTabToInvoiceAccount(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TabsApi.convertTabToInvoiceAccount']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Opens a new tab for a group
+         * @param {CreateTabRequest} createTabRequest The tab to open
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createTab(createTabRequest: CreateTabRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TabResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createTab(createTabRequest, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TabsApi.createTab']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Returns all tabs, newest first
+         * @param {GetAllTabsStatusEnum} [status] Only return tabs with this status
+         * @param {number} [take] How many tabs the endpoint should return
+         * @param {number} [skip] How many tabs should be skipped (for pagination)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAllTabs(status?: GetAllTabsStatusEnum, take?: number, skip?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedTabResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllTabs(status, take, skip, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TabsApi.getAllTabs']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Returns a single tab
+         * @param {number} id The id of the tab
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getSingleTab(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TabResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getSingleTab(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TabsApi.getSingleTab']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Returns the receipt PDF of a paid tab
+         * @param {number} id The id of the tab
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTabReceipt(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PdfUrlResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTabReceipt(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TabsApi.getTabReceipt']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Emails the receipt of a paid tab to its contact person (again)
+         * @param {number} id The id of the tab
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async sendTabReceipt(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.sendTabReceipt(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TabsApi.sendTabReceipt']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Charges the outstanding amount of a tab on a Stripe Terminal
+         * @param {number} id The id of the tab
+         * @param {PayTabRequest} payTabRequest The terminal to pay on
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async startTabPayment(id: number, payTabRequest: PayTabRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TabResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.startTabPayment(id, payTabRequest, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TabsApi.startTabPayment']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Updates the name or contact details of an open tab
+         * @param {number} id The id of the tab
+         * @param {UpdateTabRequest} updateTabRequest The fields to update
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateTab(id: number, updateTabRequest: UpdateTabRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TabResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateTab(id, updateTabRequest, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TabsApi.updateTab']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * TabsApi - factory interface
+ * @export
+ */
+export const TabsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = TabsApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Cancels an open tab that nothing was bought on
+         * @param {TabsApiCancelTabRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        cancelTab(requestParameters: TabsApiCancelTabRequest, options?: RawAxiosRequestConfig): AxiosPromise<TabResponse> {
+            return localVarFp.cancelTab(requestParameters.id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Cancels the terminal payment in progress and reopens the tab
+         * @param {TabsApiCancelTabPaymentRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        cancelTabPayment(requestParameters: TabsApiCancelTabPaymentRequest, options?: RawAxiosRequestConfig): AxiosPromise<TabResponse> {
+            return localVarFp.cancelTabPayment(requestParameters.id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * The tab user becomes an INVOICE user. It keeps its transactions, which can then be invoiced with the regular invoice endpoints. The invoice account has no default address: the address is entered when the invoice is created.
+         * @summary Converts an unpaid tab into an invoice account
+         * @param {TabsApiConvertTabToInvoiceAccountRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        convertTabToInvoiceAccount(requestParameters: TabsApiConvertTabToInvoiceAccountRequest, options?: RawAxiosRequestConfig): AxiosPromise<TabResponse> {
+            return localVarFp.convertTabToInvoiceAccount(requestParameters.id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Opens a new tab for a group
+         * @param {TabsApiCreateTabRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createTab(requestParameters: TabsApiCreateTabRequest, options?: RawAxiosRequestConfig): AxiosPromise<TabResponse> {
+            return localVarFp.createTab(requestParameters.createTabRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Returns all tabs, newest first
+         * @param {TabsApiGetAllTabsRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllTabs(requestParameters: TabsApiGetAllTabsRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedTabResponse> {
+            return localVarFp.getAllTabs(requestParameters.status, requestParameters.take, requestParameters.skip, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Returns a single tab
+         * @param {TabsApiGetSingleTabRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSingleTab(requestParameters: TabsApiGetSingleTabRequest, options?: RawAxiosRequestConfig): AxiosPromise<TabResponse> {
+            return localVarFp.getSingleTab(requestParameters.id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Returns the receipt PDF of a paid tab
+         * @param {TabsApiGetTabReceiptRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTabReceipt(requestParameters: TabsApiGetTabReceiptRequest, options?: RawAxiosRequestConfig): AxiosPromise<PdfUrlResponse> {
+            return localVarFp.getTabReceipt(requestParameters.id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Emails the receipt of a paid tab to its contact person (again)
+         * @param {TabsApiSendTabReceiptRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        sendTabReceipt(requestParameters: TabsApiSendTabReceiptRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.sendTabReceipt(requestParameters.id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Charges the outstanding amount of a tab on a Stripe Terminal
+         * @param {TabsApiStartTabPaymentRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        startTabPayment(requestParameters: TabsApiStartTabPaymentRequest, options?: RawAxiosRequestConfig): AxiosPromise<TabResponse> {
+            return localVarFp.startTabPayment(requestParameters.id, requestParameters.payTabRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Updates the name or contact details of an open tab
+         * @param {TabsApiUpdateTabRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateTab(requestParameters: TabsApiUpdateTabRequest, options?: RawAxiosRequestConfig): AxiosPromise<TabResponse> {
+            return localVarFp.updateTab(requestParameters.id, requestParameters.updateTabRequest, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * Request parameters for cancelTab operation in TabsApi.
+ * @export
+ * @interface TabsApiCancelTabRequest
+ */
+export interface TabsApiCancelTabRequest {
+    /**
+     * The id of the tab
+     * @type {number}
+     * @memberof TabsApiCancelTab
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for cancelTabPayment operation in TabsApi.
+ * @export
+ * @interface TabsApiCancelTabPaymentRequest
+ */
+export interface TabsApiCancelTabPaymentRequest {
+    /**
+     * The id of the tab
+     * @type {number}
+     * @memberof TabsApiCancelTabPayment
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for convertTabToInvoiceAccount operation in TabsApi.
+ * @export
+ * @interface TabsApiConvertTabToInvoiceAccountRequest
+ */
+export interface TabsApiConvertTabToInvoiceAccountRequest {
+    /**
+     * The id of the tab
+     * @type {number}
+     * @memberof TabsApiConvertTabToInvoiceAccount
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for createTab operation in TabsApi.
+ * @export
+ * @interface TabsApiCreateTabRequest
+ */
+export interface TabsApiCreateTabRequest {
+    /**
+     * The tab to open
+     * @type {CreateTabRequest}
+     * @memberof TabsApiCreateTab
+     */
+    readonly createTabRequest: CreateTabRequest
+}
+
+/**
+ * Request parameters for getAllTabs operation in TabsApi.
+ * @export
+ * @interface TabsApiGetAllTabsRequest
+ */
+export interface TabsApiGetAllTabsRequest {
+    /**
+     * Only return tabs with this status
+     * @type {'OPEN' | 'LOCKED' | 'PAID' | 'INVOICED' | 'CANCELLED'}
+     * @memberof TabsApiGetAllTabs
+     */
+    readonly status?: GetAllTabsStatusEnum
+
+    /**
+     * How many tabs the endpoint should return
+     * @type {number}
+     * @memberof TabsApiGetAllTabs
+     */
+    readonly take?: number
+
+    /**
+     * How many tabs should be skipped (for pagination)
+     * @type {number}
+     * @memberof TabsApiGetAllTabs
+     */
+    readonly skip?: number
+}
+
+/**
+ * Request parameters for getSingleTab operation in TabsApi.
+ * @export
+ * @interface TabsApiGetSingleTabRequest
+ */
+export interface TabsApiGetSingleTabRequest {
+    /**
+     * The id of the tab
+     * @type {number}
+     * @memberof TabsApiGetSingleTab
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for getTabReceipt operation in TabsApi.
+ * @export
+ * @interface TabsApiGetTabReceiptRequest
+ */
+export interface TabsApiGetTabReceiptRequest {
+    /**
+     * The id of the tab
+     * @type {number}
+     * @memberof TabsApiGetTabReceipt
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for sendTabReceipt operation in TabsApi.
+ * @export
+ * @interface TabsApiSendTabReceiptRequest
+ */
+export interface TabsApiSendTabReceiptRequest {
+    /**
+     * The id of the tab
+     * @type {number}
+     * @memberof TabsApiSendTabReceipt
+     */
+    readonly id: number
+}
+
+/**
+ * Request parameters for startTabPayment operation in TabsApi.
+ * @export
+ * @interface TabsApiStartTabPaymentRequest
+ */
+export interface TabsApiStartTabPaymentRequest {
+    /**
+     * The id of the tab
+     * @type {number}
+     * @memberof TabsApiStartTabPayment
+     */
+    readonly id: number
+
+    /**
+     * The terminal to pay on
+     * @type {PayTabRequest}
+     * @memberof TabsApiStartTabPayment
+     */
+    readonly payTabRequest: PayTabRequest
+}
+
+/**
+ * Request parameters for updateTab operation in TabsApi.
+ * @export
+ * @interface TabsApiUpdateTabRequest
+ */
+export interface TabsApiUpdateTabRequest {
+    /**
+     * The id of the tab
+     * @type {number}
+     * @memberof TabsApiUpdateTab
+     */
+    readonly id: number
+
+    /**
+     * The fields to update
+     * @type {UpdateTabRequest}
+     * @memberof TabsApiUpdateTab
+     */
+    readonly updateTabRequest: UpdateTabRequest
+}
+
+/**
+ * TabsApi - object-oriented interface
+ * @export
+ * @class TabsApi
+ * @extends {BaseAPI}
+ */
+export class TabsApi extends BaseAPI {
+    /**
+     * 
+     * @summary Cancels an open tab that nothing was bought on
+     * @param {TabsApiCancelTabRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TabsApi
+     */
+    public cancelTab(requestParameters: TabsApiCancelTabRequest, options?: RawAxiosRequestConfig) {
+        return TabsApiFp(this.configuration).cancelTab(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Cancels the terminal payment in progress and reopens the tab
+     * @param {TabsApiCancelTabPaymentRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TabsApi
+     */
+    public cancelTabPayment(requestParameters: TabsApiCancelTabPaymentRequest, options?: RawAxiosRequestConfig) {
+        return TabsApiFp(this.configuration).cancelTabPayment(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * The tab user becomes an INVOICE user. It keeps its transactions, which can then be invoiced with the regular invoice endpoints. The invoice account has no default address: the address is entered when the invoice is created.
+     * @summary Converts an unpaid tab into an invoice account
+     * @param {TabsApiConvertTabToInvoiceAccountRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TabsApi
+     */
+    public convertTabToInvoiceAccount(requestParameters: TabsApiConvertTabToInvoiceAccountRequest, options?: RawAxiosRequestConfig) {
+        return TabsApiFp(this.configuration).convertTabToInvoiceAccount(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Opens a new tab for a group
+     * @param {TabsApiCreateTabRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TabsApi
+     */
+    public createTab(requestParameters: TabsApiCreateTabRequest, options?: RawAxiosRequestConfig) {
+        return TabsApiFp(this.configuration).createTab(requestParameters.createTabRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Returns all tabs, newest first
+     * @param {TabsApiGetAllTabsRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TabsApi
+     */
+    public getAllTabs(requestParameters: TabsApiGetAllTabsRequest = {}, options?: RawAxiosRequestConfig) {
+        return TabsApiFp(this.configuration).getAllTabs(requestParameters.status, requestParameters.take, requestParameters.skip, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Returns a single tab
+     * @param {TabsApiGetSingleTabRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TabsApi
+     */
+    public getSingleTab(requestParameters: TabsApiGetSingleTabRequest, options?: RawAxiosRequestConfig) {
+        return TabsApiFp(this.configuration).getSingleTab(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Returns the receipt PDF of a paid tab
+     * @param {TabsApiGetTabReceiptRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TabsApi
+     */
+    public getTabReceipt(requestParameters: TabsApiGetTabReceiptRequest, options?: RawAxiosRequestConfig) {
+        return TabsApiFp(this.configuration).getTabReceipt(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Emails the receipt of a paid tab to its contact person (again)
+     * @param {TabsApiSendTabReceiptRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TabsApi
+     */
+    public sendTabReceipt(requestParameters: TabsApiSendTabReceiptRequest, options?: RawAxiosRequestConfig) {
+        return TabsApiFp(this.configuration).sendTabReceipt(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Charges the outstanding amount of a tab on a Stripe Terminal
+     * @param {TabsApiStartTabPaymentRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TabsApi
+     */
+    public startTabPayment(requestParameters: TabsApiStartTabPaymentRequest, options?: RawAxiosRequestConfig) {
+        return TabsApiFp(this.configuration).startTabPayment(requestParameters.id, requestParameters.payTabRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Updates the name or contact details of an open tab
+     * @param {TabsApiUpdateTabRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TabsApi
+     */
+    public updateTab(requestParameters: TabsApiUpdateTabRequest, options?: RawAxiosRequestConfig) {
+        return TabsApiFp(this.configuration).updateTab(requestParameters.id, requestParameters.updateTabRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+/**
+ * @export
+ */
+export const GetAllTabsStatusEnum = {
+    Open: 'OPEN',
+    Locked: 'LOCKED',
+    Paid: 'PAID',
+    Invoiced: 'INVOICED',
+    Cancelled: 'CANCELLED'
+} as const;
+export type GetAllTabsStatusEnum = typeof GetAllTabsStatusEnum[keyof typeof GetAllTabsStatusEnum];
 
 
 /**

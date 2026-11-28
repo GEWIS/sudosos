@@ -93,7 +93,7 @@ export default class FileService {
   /**
    * Read and return the given file from storage
    */
-  private async readFile(file: BaseFile): Promise<Buffer> {
+  public async readFile(file: BaseFile): Promise<Buffer> {
     return this.fileStorage.getFile(file);
   }
 

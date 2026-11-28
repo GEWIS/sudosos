@@ -242,8 +242,12 @@ export default class UserService {
       where.pointOfSale = { id: params.pointOfSaleId };
       // When filtering by pointOfSaleId, we need to allow POINT_OF_SALE type users
     } else if (!params.type && !params.allowPos) {
-      // Exclude POINT_OF_SALE type unless type filter is explicitly set or allowPos is true
-      where.type = Not(UserType.POINT_OF_SALE);
+      // Exclude POINT_OF_SALE type unless type filter is explicitly set or allowPos is true.
+      // TAB users live behind their tab, so they are left out of listings as well,
+      // but a lookup by id (e.g. a tab's transactions) must still find them.
+      where.type = idFilter === undefined
+        ? Not(In([UserType.POINT_OF_SALE, UserType.TAB]))
+        : Not(UserType.POINT_OF_SALE);
     }
 
     const options: FindManyOptions<User> = {
@@ -298,9 +302,13 @@ export default class UserService {
       const searchTerms = processedFilters.search.split(' ').slice(0, 2).map(term => `%${escapeLikeWildcard(term)}%`);
       const fullNameSearch = `%${escapeLikeWildcard(processedFilters.search)}%`;
 
+      // Search is a listing, so TAB users are hidden here too, unless they are explicitly asked for.
+      const hiddenTypes = processedFilters.type === UserType.TAB
+        ? [UserType.POINT_OF_SALE]
+        : [UserType.POINT_OF_SALE, UserType.TAB];
       const searchBuilder = User.createQueryBuilder('user')
         .select('user.id', 'id')
-        .where('user.type != :posType', { posType: UserType.POINT_OF_SALE });
+        .where('user.type NOT IN (:...hiddenTypes)', { hiddenTypes });
 
       // Only filter by deleted if allowDeleted is not true
       if (!processedFilters.allowDeleted) {

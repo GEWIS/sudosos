@@ -31,7 +31,7 @@ import { SupportedLanguage } from '../../entity/user-setting';
 import { TermsOfServiceStatus } from '../../entity/user/user';
 
 /**
- * enum:MEMBER,ORGAN,VOUCHER,LOCAL_USER,LOCAL_ADMIN,INVOICE,POINT_OF_SALE,INTEGRATION - The type of a user
+ * enum:MEMBER,ORGAN,VOUCHER,LOCAL_USER,LOCAL_ADMIN,INVOICE,POINT_OF_SALE,INTEGRATION,TAB - The type of a user
  * @typedef {string} UserType
  */
 

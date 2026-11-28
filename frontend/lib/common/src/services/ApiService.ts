@@ -16,6 +16,7 @@ import {
   RootApi,
   StripeApi,
   TerminalPaymentsApi,
+  TabsApi,
   TransactionsApi,
   TransfersApi,
   UsersApi,
@@ -71,6 +72,8 @@ export class ApiService {
 
   private readonly _terminalPaymentsApi: TerminalPaymentsApi;
 
+  private readonly _tabsApi: TabsApi;
+
   private readonly _rbacApi: RbacApi;
 
   private readonly _openBannerApi: BannersApi;
@@ -125,6 +128,7 @@ export class ApiService {
     this._vatGroupsApi = new VatGroupsApi(withKeyConfiguration, basePath, this._axiosInstance);
     this._stripeApi = new StripeApi(withKeyConfiguration, basePath, this._axiosInstance);
     this._terminalPaymentsApi = new TerminalPaymentsApi(withKeyConfiguration, basePath, this._axiosInstance);
+    this._tabsApi = new TabsApi(withKeyConfiguration, basePath, this._axiosInstance);
     this._rbacApi = new RbacApi(withKeyConfiguration, basePath, this._axiosInstance);
     this._sellerPayoutsApi = new SellerPayoutsApi(withKeyConfiguration, basePath, this._axiosInstance);
     this._writeOffsApi = new WriteoffsApi(withKeyConfiguration, basePath, this._axiosInstance);
@@ -212,6 +216,10 @@ export class ApiService {
 
   get terminalPayments(): TerminalPaymentsApi {
     return this._terminalPaymentsApi;
+  }
+
+  get tabs(): TabsApi {
+    return this._tabsApi;
   }
 
   get rbac(): RbacApi {

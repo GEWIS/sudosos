@@ -26,7 +26,7 @@
 
 import { EntitySubscriberInterface, EventSubscriber, InsertEvent } from 'typeorm';
 import Transaction from '../entity/transactions/transaction';
-import User, { NotifyDebtUserTypes } from '../entity/user/user';
+import User, { NotifyDebtUserTypes, UserType } from '../entity/user/user';
 import BalanceService from '../service/balance-service';
 import DineroTransformer from '../entity/transformer/dinero-transformer';
 import { NotificationTypes } from '../notifications/notification-types';
@@ -101,7 +101,8 @@ export default class TransactionSubscriber implements EntitySubscriberInterface 
 
     // A terminal payment links its final transaction only after insert, so it cannot be paid by terminal yet.
     const transaction = await new TransactionService().asTransactionResponse(entity, undefined, undefined, false);
-    if (transaction) {
+    // A tab gets a single receipt when it is paid, not one per round.
+    if (transaction && user.type !== UserType.TAB) {
       await this.sendReceipt(user, transaction, currentBalance);
     }
 

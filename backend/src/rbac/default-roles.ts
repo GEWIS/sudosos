@@ -201,6 +201,14 @@ export default class DefaultRoles {
           get: { own: star },
           cancel: { own: star },
         },
+        Tab: {
+          get: { all: star },
+          create: { all: star },
+          update: { all: star },
+          // Only possible while nothing was bought on the tab.
+          delete: { all: star },
+          pay: { all: star },
+        },
       },
     }, {
       name: 'Super admin',
@@ -225,6 +233,10 @@ export default class DefaultRoles {
         TerminalPayment: {
           ...admin,
           cancel: { all: star },
+        },
+        Tab: {
+          ...admin,
+          pay: { all: star },
         },
         Permission: admin,
         PointOfSale: admin,
